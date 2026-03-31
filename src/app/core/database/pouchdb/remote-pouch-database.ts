@@ -10,6 +10,7 @@ import { NgZone } from "@angular/core";
 import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
+import { isVersionNewer } from "./version-comparison.utils";
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -265,7 +266,7 @@ export class RemotePouchDatabase extends PouchDatabase {
   protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {
     if (
       existingDesignDoc.aam_version &&
-      existingDesignDoc.aam_version > environment.appVersion
+      isVersionNewer(existingDesignDoc.aam_version, environment.appVersion)
     ) {
       Logging.debug(
         `skipping index update for ${existingDesignDoc._id}: server has version ${existingDesignDoc.aam_version}, we are ${environment.appVersion}`,

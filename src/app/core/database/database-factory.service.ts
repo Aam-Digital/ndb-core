@@ -51,6 +51,7 @@ export class DatabaseFactoryService {
         this.authService,
         syncState,
         this.ngZone,
+        this.alertService,
       );
       return db;
     } else if (environment.session_type === SessionType.local) {

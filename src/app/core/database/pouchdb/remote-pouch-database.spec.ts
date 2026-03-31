@@ -417,20 +417,34 @@ describe("RemotePouchDatabase tests", () => {
   describe("shouldSkipIndexUpdate", () => {
     it("should skip update if existing design doc has a newer aam_version", () => {
       const remoteDb = database as RemotePouchDatabase;
-      const result = (remoteDb as any).shouldSkipIndexUpdate({
-        _id: "_design/test",
-        aam_version: "v99.0.0",
-      });
-      expect(result).toBe(true);
+      const appVersionBefore = environment.appVersion;
+      environment.appVersion = "1.0.0";
+
+      try {
+        const result = (remoteDb as any).shouldSkipIndexUpdate({
+          _id: "_design/test",
+          aam_version: "v99.0.0",
+        });
+        expect(result).toBe(true);
+      } finally {
+        environment.appVersion = appVersionBefore;
+      }
     });
 
     it("should not skip update if existing design doc has an older aam_version", () => {
       const remoteDb = database as RemotePouchDatabase;
-      const result = (remoteDb as any).shouldSkipIndexUpdate({
-        _id: "_design/test",
-        aam_version: "0.0.1",
-      });
-      expect(result).toBe(false);
+      const appVersionBefore = environment.appVersion;
+      environment.appVersion = "1.0.0";
+
+      try {
+        const result = (remoteDb as any).shouldSkipIndexUpdate({
+          _id: "_design/test",
+          aam_version: "0.0.1",
+        });
+        expect(result).toBe(false);
+      } finally {
+        environment.appVersion = appVersionBefore;
+      }
     });
 
     it("should not skip update if existing design doc has no aam_version", () => {
@@ -439,6 +453,54 @@ describe("RemotePouchDatabase tests", () => {
         _id: "_design/test",
       });
       expect(result).toBe(false);
+    });
+
+    it("should not skip update when server version is 9.0.0 and client is 10.0.0", () => {
+      const remoteDb = database as RemotePouchDatabase;
+      const appVersionBefore = environment.appVersion;
+      environment.appVersion = "10.0.0";
+
+      try {
+        const result = (remoteDb as any).shouldSkipIndexUpdate({
+          _id: "_design/test",
+          aam_version: "9.0.0",
+        });
+        expect(result).toBe(false);
+      } finally {
+        environment.appVersion = appVersionBefore;
+      }
+    });
+
+    it("should skip update when server version is 10.2.0 and client is 10.1.9", () => {
+      const remoteDb = database as RemotePouchDatabase;
+      const appVersionBefore = environment.appVersion;
+      environment.appVersion = "10.1.9";
+
+      try {
+        const result = (remoteDb as any).shouldSkipIndexUpdate({
+          _id: "_design/test",
+          aam_version: "10.2.0",
+        });
+        expect(result).toBe(true);
+      } finally {
+        environment.appVersion = appVersionBefore;
+      }
+    });
+
+    it("should not skip update when server version is 10.0 and client is 10.0.0", () => {
+      const remoteDb = database as RemotePouchDatabase;
+      const appVersionBefore = environment.appVersion;
+      environment.appVersion = "10.0.0";
+
+      try {
+        const result = (remoteDb as any).shouldSkipIndexUpdate({
+          _id: "_design/test",
+          aam_version: "10.0",
+        });
+        expect(result).toBe(false);
+      } finally {
+        environment.appVersion = appVersionBefore;
+      }
     });
   });
 });
