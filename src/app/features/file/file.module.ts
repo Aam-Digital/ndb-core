@@ -1,7 +1,7 @@
 import { Injector, NgModule, inject } from "@angular/core";
 import { CouchdbFileService } from "./couchdb-file.service";
+import { hasRemoteSession } from "../../core/session/session-type";
 import { environment } from "../../../environments/environment";
-import { SessionType } from "../../core/session/session-type";
 import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
@@ -16,7 +16,7 @@ import { PhotoDatatype } from "./photo.datatype";
     CouchdbFileService,
     MockFileService,
     serviceProvider(FileService, (injector: Injector) => {
-      return environment.session_type === SessionType.synced
+      return hasRemoteSession(environment.session_type)
         ? injector.get(CouchdbFileService)
         : injector.get(MockFileService);
     }),

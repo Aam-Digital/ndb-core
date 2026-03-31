@@ -5,6 +5,7 @@ import { Logging } from "../../logging/logging.service";
 import { HttpStatusCode } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "app/core/session/session-type";
+import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { NgZone } from "@angular/core";
 import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
@@ -80,6 +81,9 @@ export class RemotePouchDatabase extends PouchDatabase {
       options,
     );
     this.databaseInitialized.complete();
+
+    // No local sync needed — immediately signal that data is available
+    this.globalSyncState?.next(SyncState.COMPLETED);
   }
 
   /**
@@ -217,6 +221,19 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected = this.pendingLostPermissions;
     this.pendingLostPermissions = [];
     return collected;
+  }
+
+  protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {
+    if (
+      existingDesignDoc.aam_version &&
+      existingDesignDoc.aam_version > environment.appVersion
+    ) {
+      Logging.debug(
+        `skipping index update for ${existingDesignDoc._id}: server has version ${existingDesignDoc.aam_version}, we are ${environment.appVersion}`,
+      );
+      return true;
+    }
+    return false;
   }
 
   /**

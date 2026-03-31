@@ -24,21 +24,36 @@ export class KeycloakAuthService {
   private thirdPartyAuthService = inject(ThirdPartyAuthenticationService);
 
   /**
-   * Check for an existing session or forward to the login page.
+   * Check for an existing SSO session without redirecting to Keycloak.
+   * Returns the session info if already authenticated, or null if not.
    */
-  login = reuseFirstAsync(async (): Promise<SessionInfo> => {
+  checkSession = reuseFirstAsync(async (): Promise<SessionInfo | null> => {
     await this.initKeycloak();
 
     await this.keycloak.updateToken();
-    let token = await this.keycloak.getToken();
+    const token = await this.keycloak.getToken();
     if (!token) {
-      // Forward to the keycloak login page.
-      await this.keycloak.login({
-        redirectUri: location.href,
-        ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
-      });
-      token = await this.keycloak.getToken();
+      return null;
     }
+
+    return this.processToken(token);
+  });
+
+  /**
+   * Check for an existing session or forward to the keycloak login page.
+   */
+  login = reuseFirstAsync(async (): Promise<SessionInfo> => {
+    const existing = await this.checkSession();
+    if (existing) {
+      return existing;
+    }
+
+    // Forward to the keycloak login page.
+    await this.keycloak.login({
+      redirectUri: location.href,
+      ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
+    });
+    const token = await this.keycloak.getToken();
 
     return this.processToken(token);
   });

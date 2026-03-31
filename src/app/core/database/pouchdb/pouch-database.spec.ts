@@ -151,7 +151,13 @@ describe("PouchDatabase tests", () => {
     vi.spyOn(database, "put").mockResolvedValue(undefined);
 
     await database.saveDatabaseIndex(testIndex);
-    expect(database.put).toHaveBeenCalledWith(testIndex, true);
+    expect(database.put).toHaveBeenCalledWith(
+      expect.objectContaining({
+        _id: testIndex._id,
+        views: testIndex.views,
+        aam_version: "test",
+      }),
+    );
   });
 
   it("saveDatabaseIndex updates existing index", async () => {
@@ -165,12 +171,12 @@ describe("PouchDatabase tests", () => {
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).toHaveBeenCalledWith(
-      {
+      expect.objectContaining({
         _id: testIndex._id,
         _rev: existingIndex._rev,
         views: testIndex.views,
-      },
-      true,
+        aam_version: "test",
+      }),
     );
   });
 
@@ -185,6 +191,28 @@ describe("PouchDatabase tests", () => {
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).not.toHaveBeenCalled();
+  });
+
+  it("saveDatabaseIndex always updates local index even if server has newer version", async () => {
+    const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
+    const existingIndex = {
+      _id: "_design/test_index",
+      views: { old: {} },
+      aam_version: "v99.0.0",
+    };
+    await database.put(existingIndex);
+    const existingDoc = await database.get(existingIndex._id);
+    vi.spyOn(database, "put").mockResolvedValue(undefined);
+
+    await database.saveDatabaseIndex(testIndex);
+    expect(database.put).toHaveBeenCalledWith(
+      expect.objectContaining({
+        _id: testIndex._id,
+        _rev: existingDoc._rev,
+        views: testIndex.views,
+        aam_version: "test",
+      }),
+    );
   });
 
   it("query simply calls through to pouchDB query", async () => {

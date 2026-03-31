@@ -42,6 +42,14 @@ export class DatabaseFactoryService {
         this.loginStateSubject,
         this.ngZone,
       );
+    } else if (environment.session_type === SessionType.online) {
+      const db = new RemotePouchDatabase(
+        dbName,
+        this.authService,
+        syncState,
+        this.ngZone,
+      );
+      return db;
     } else if (environment.session_type === SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
     } else {

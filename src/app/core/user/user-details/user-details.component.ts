@@ -36,7 +36,7 @@ import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.s
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
-import { SessionType } from "../../session/session-type";
+import { hasRemoteSession } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
 import { lastValueFrom, of } from "rxjs";
 import { Entity } from "../../entity/model/entity";
@@ -129,7 +129,7 @@ export class UserDetailsComponent {
   passwordChangeDisabled = computed(() => {
     if (!this.isProfileMode()) return false;
 
-    if (environment.session_type !== SessionType.synced) {
+    if (!hasRemoteSession(environment.session_type)) {
       return true; // Disabled in demo mode
     }
     if (typeof navigator !== "undefined" && !navigator.onLine) {
