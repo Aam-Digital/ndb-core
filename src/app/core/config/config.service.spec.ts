@@ -4,8 +4,10 @@ import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityConfig } from "../entity/entity-config";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { UpdatedEntity } from "../entity/model/entity-update";
+import { HttpStatusCode } from "@angular/common/http";
 import { Config } from "./config";
 import { ConfigService } from "./config.service";
+import { Logging } from "../logging/logging.service";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -86,7 +88,7 @@ describe("ConfigService", () => {
 
       service.loadOnce();
       await vi.advanceTimersByTimeAsync(0);
-      expect(() => service.getConfig("testKey")).toThrowError();
+      expect(service.getConfig("testKey")).toBeUndefined();
 
       const testConfig = new Config();
       testConfig.data = { testKey: "testValue" };
@@ -685,5 +687,128 @@ describe("ConfigService", () => {
     };
 
     testConfigMigration(oldConfig, expectedConfig);
+  });
+
+  describe("undefined config handling", () => {
+    it("should return empty array from getAllConfigs when config is not loaded", () => {
+      expect(service.getAllConfigs("view:")).toEqual([]);
+    });
+
+    it("should return undefined from getConfig when config is not loaded", () => {
+      expect(service.getConfig("anyKey")).toBeUndefined();
+    });
+
+    it("should return empty export when config is not loaded", () => {
+      expect(service.exportConfig()).toBe("{}");
+      expect(service.exportConfig(true)).toEqual({});
+    });
+
+    it("should return empty array from getAllConfigs when config data is undefined", async () => {
+      vi.useFakeTimers();
+      try {
+        const config = new Config();
+        config.data = undefined;
+        entityMapper.load.mockResolvedValue(config);
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(service.getAllConfigs("view:")).toEqual([]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should return undefined from getConfig when config data is undefined", async () => {
+      vi.useFakeTimers();
+      try {
+        const config = new Config();
+        config.data = undefined;
+        entityMapper.load.mockResolvedValue(config);
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(service.getConfig("anyKey")).toBeUndefined();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should abort app on non-404 config load error", async () => {
+      vi.useFakeTimers();
+      try {
+        const reloadMock = vi.fn();
+        Object.defineProperty(window, "location", {
+          value: { reload: reloadMock },
+          writable: true,
+        });
+        vi.spyOn(window, "alert").mockImplementation(() => {});
+        vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+        const dbError = { status: 500, message: "Internal Server Error" };
+        entityMapper.load.mockRejectedValue(dbError);
+
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(Logging.error).toHaveBeenCalled();
+        expect(window.alert).toHaveBeenCalled();
+        expect(reloadMock).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+      }
+    });
+
+    it("should abort app when config loads with undefined data", async () => {
+      vi.useFakeTimers();
+      try {
+        const reloadMock = vi.fn();
+        Object.defineProperty(window, "location", {
+          value: { reload: reloadMock },
+          writable: true,
+        });
+        vi.spyOn(window, "alert").mockImplementation(() => {});
+        vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+        const config = new Config();
+        config.data = undefined;
+        entityMapper.load.mockResolvedValue(config);
+
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(Logging.error).toHaveBeenCalled();
+        expect(window.alert).toHaveBeenCalled();
+        expect(reloadMock).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+      }
+    });
+
+    it("should not abort on 404 error (first-time setup)", async () => {
+      vi.useFakeTimers();
+      try {
+        const reloadMock = vi.fn();
+        Object.defineProperty(window, "location", {
+          value: { reload: reloadMock },
+          writable: true,
+        });
+        vi.spyOn(window, "alert").mockImplementation(() => {});
+
+        const notFoundError = { status: HttpStatusCode.NotFound };
+        entityMapper.load.mockRejectedValue(notFoundError);
+
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(service.hasConfig()).toBe(false);
+        expect(window.alert).not.toHaveBeenCalled();
+        expect(reloadMock).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+      }
+    });
   });
 });

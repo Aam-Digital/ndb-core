@@ -13,6 +13,7 @@ import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { Entity } from "../entity/model/entity";
+import { AlertService } from "../alerts/alert.service";
 
 /**
  * Provides a method to generate Database instances
@@ -27,6 +28,7 @@ export class DatabaseFactoryService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN, { optional: true });
   private loginStateSubject = inject(LoginStateSubject, { optional: true });
   private readonly ngZone = inject(NgZone);
+  private readonly alertService = inject(AlertService);
 
   createDatabase(dbName: string): Database {
     // only the "primary" (app) database should manage the global login state
@@ -41,6 +43,7 @@ export class DatabaseFactoryService {
         this.navigator,
         this.loginStateSubject,
         this.ngZone,
+        this.alertService,
       );
     } else if (environment.session_type === SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
@@ -59,6 +62,7 @@ export class DatabaseFactoryService {
       this.authService,
       syncState,
       this.ngZone,
+      this.alertService,
     );
     db.init(dbName);
     return db;
