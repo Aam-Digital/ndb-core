@@ -57,7 +57,7 @@
       aria-label="Table showing disaggregation of the beneficiaries"
     >
       <ng-container matColumnDef="label">
-        <td *matCellDef="let group">
+        <td *matCellDef="let group" class="label-cell">
           @if (group.isInvalidOption) {
             <span
               class="invalid-label"
