@@ -58,6 +58,21 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
     entityOrType: Entity | EntityConstructor,
     dataTypes: string | string[],
   ): string | undefined {
+    const fields = this.detectAllFieldsInEntity(entityOrType, dataTypes);
+    return fields.length > 0 ? fields[0].fieldId : undefined;
+  }
+
+  /**
+   * Detect all fields of the given datatype(s) in an entity's schema.
+   *
+   * @param entityOrType An entity instance or entity constructor to inspect.
+   * @param dataTypes One or more datatype identifiers to match against.
+   * @returns Array of matching fields with their id and schema definition.
+   */
+  static detectAllFieldsInEntity(
+    entityOrType: Entity | EntityConstructor,
+    dataTypes: string | string[],
+  ): { fieldId: string; schemaField: EntitySchemaField }[] {
     dataTypes = asArray(dataTypes);
 
     const schema =
@@ -65,12 +80,13 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
         ? (entityOrType as EntityConstructor).schema
         : entityOrType.getConstructor().schema;
 
+    const result: { fieldId: string; schemaField: EntitySchemaField }[] = [];
     for (const [fieldId, field] of schema.entries()) {
       if (dataTypes.includes(field.dataType)) {
-        return fieldId;
+        result.push({ fieldId, schemaField: field });
       }
     }
-    return undefined;
+    return result;
   }
 
   /**

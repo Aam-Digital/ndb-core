@@ -41,13 +41,28 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
     return { ...schemaField, isArray: true };
   }
 
+  private static readonly ATTENDANCE_DATATYPES = [
+    AttendanceDatatype.dataType,
+    EventAttendanceMapDatatype.dataType,
+  ];
+
   /** @override Detects the first `attendance` or legacy `event-attendance-map` field in the entity schema. */
   static override detectFieldInEntity(
     entityOrType: Entity | EntityConstructor,
   ): string | undefined {
-    return DefaultDatatype.detectFieldInEntity(entityOrType, [
-      AttendanceDatatype.dataType,
-      EventAttendanceMapDatatype.dataType,
-    ]);
+    return DefaultDatatype.detectFieldInEntity(
+      entityOrType,
+      AttendanceDatatype.ATTENDANCE_DATATYPES,
+    );
+  }
+
+  /** Detect all `attendance` or legacy `event-attendance-map` fields in the entity schema. */
+  static override detectAllFieldsInEntity(
+    entityOrType: Entity | EntityConstructor,
+  ): { fieldId: string; schemaField: EntitySchemaField }[] {
+    return DefaultDatatype.detectAllFieldsInEntity(
+      entityOrType,
+      AttendanceDatatype.ATTENDANCE_DATATYPES,
+    );
   }
 }
