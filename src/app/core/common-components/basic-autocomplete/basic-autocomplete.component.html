@@ -86,7 +86,7 @@ Autocomplete
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    @if (truncateOptionLabels) {
+    @if (truncateOptionLabels()) {
       <cdk-virtual-scroll-viewport
         [style.height.px]="viewportHeight()"
         [itemSize]="48"
@@ -116,7 +116,7 @@ Autocomplete
             }
             @if (!templateRef) {
               <span
-                class="text-truncate"
+                [class.text-truncate]="truncateOptionLabels()"
                 [matTooltip]="item.asString"
                 matTooltipPosition="above"
                 [class.not-defined-label]="item.isEmpty"

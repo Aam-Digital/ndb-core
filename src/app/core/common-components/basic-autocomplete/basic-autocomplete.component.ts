@@ -5,6 +5,7 @@ import {
   ContentChild,
   ElementRef,
   EventEmitter,
+  input,
   Input,
   OnChanges,
   OnInit,
@@ -164,7 +165,7 @@ export class BasicAutocompleteComponent<O, V = O>
    * Whether option labels should be truncated with ellipsis in the dropdown list.
    * Set to false to allow full labels to wrap to multiple lines.
    */
-  @Input() truncateOptionLabels = true;
+  truncateOptionLabels = input(true);
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
