@@ -60,9 +60,11 @@ export type FileDownloadFormat = "csv" | "json" | "pdf";
  */
 @Injectable({ providedIn: "root" })
 export class DownloadService {
-  private dataTransformationService = inject(DataTransformationService);
-  private papa = inject(Papa);
-  private entitySchemaService = inject(EntitySchemaService);
+  private readonly dataTransformationService = inject(
+    DataTransformationService,
+  );
+  private readonly papa = inject(Papa);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   /** CSV row separator */
   static readonly SEPARATOR_ROW = "\n";

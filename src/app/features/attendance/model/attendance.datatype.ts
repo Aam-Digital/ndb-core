@@ -30,7 +30,7 @@ import {
  */
 @Injectable()
 export class AttendanceDatatype extends SchemaEmbedDatatype {
-  private entityMapper = inject(EntityMapperService);
+  private readonly entityMapper = inject(EntityMapperService);
 
   static override readonly dataType = "attendance";
   static override label: string = $localize`:datatype-label:attendance (participants with status)`;

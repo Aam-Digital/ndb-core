@@ -13,9 +13,9 @@ import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity
 
 @DatabaseEntity("AttendanceTestEntity")
 class AttendanceTestEntity extends Entity {
-  static override ENTITY_TYPE = "AttendanceTestEntity";
-  static override label = "Test Event";
-  static override toStringAttributes = ["subject"];
+  static override readonly ENTITY_TYPE = "AttendanceTestEntity";
+  static override readonly label = "Test Event";
+  static override readonly toStringAttributes = ["subject"];
 
   @DatabaseField({ label: "Subject" })
   subject: string;
