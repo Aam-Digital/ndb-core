@@ -1,0 +1,638 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  AccountMergeDecision</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#accountUpdate" 
+>
+                                            accountUpdate
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#deleteSecondaryAccount" 
+>
+                                            deleteSecondaryAccount
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="accountUpdate"></a>
+                                        <span class="name "><b>accountUpdate</b>
+                                            <a href="#accountUpdate">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>accountUpdate:     <code>literal type | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="deleteSecondaryAccount"></a>
+                                        <span class="name "><b>deleteSecondaryAccount</b>
+                                            <a href="#deleteSecondaryAccount">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>deleteSecondaryAccount:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from &quot;@angular/core&quot;;
+import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
+import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
+import { MatExpansionModule } from &quot;@angular/material/expansion&quot;;
+import { MatError, MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatRadioModule } from &quot;@angular/material/radio&quot;;
+import { MatSelectModule } from &quot;@angular/material/select&quot;;
+import { YesNoCancelButtons } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { ConfirmationDialogService } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { Entity, EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
+import { UserAdminService } from &quot;app/core/user/user-admin-service/user-admin.service&quot;;
+import {
+  Role,
+  UserAccount,
+} from &quot;app/core/user/user-admin-service/user-account&quot;;
+import { catchError, lastValueFrom, of } from &quot;rxjs&quot;;
+
+export interface AccountMergeDecision {
+  accountUpdate: {
+    accountId: string;
+    update: Partial&lt;UserAccount&gt;;
+  } | null;
+  deleteSecondaryAccount: boolean;
+}
+
+@Component({
+  selector: &quot;app-merge-account-section&quot;,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { style: &quot;display: contents&quot; },
+  imports: [
+    ReactiveFormsModule,
+    MatError,
+    MatRadioModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatSelectModule,
+  ],
+  templateUrl: &quot;./merge-account-section.component.html&quot;,
+  styleUrl: &quot;./merge-account-section.component.scss&quot;,
+})
+export class MergeAccountSectionComponent implements OnInit {
+  private readonly userAdminService &#x3D; inject(UserAdminService);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+
+  entitiesToMerge &#x3D; input.required&lt;Entity[]&gt;();
+  entityConstructor &#x3D; input.required&lt;EntityConstructor&gt;();
+
+  readonly entityAccounts &#x3D; signal&lt;(UserAccount | null)[]&gt;([null, null]);
+  readonly accountLoadError &#x3D; signal&lt;boolean&gt;(false);
+  /** Index of the entity whose ID will be retained after merge. */
+  readonly primaryIndex &#x3D; signal&lt;number&gt;(0);
+  readonly selectedAccountIndex &#x3D; signal&lt;number | null&gt;(null);
+  readonly availableRoles &#x3D; signal&lt;Role[]&gt;([]);
+  readonly selectedRolesControl &#x3D; signal&lt;FormControl&lt;Role[]&gt;&gt;(
+    new FormControl&lt;Role[]&gt;([], { nonNullable: true }),
+  );
+  readonly deleteSecondaryAccount &#x3D; signal&lt;boolean&gt;(true);
+
+  readonly hasAnyUserAccount &#x3D; computed(() &#x3D;&gt;
+    this.entityAccounts().some((a) &#x3D;&gt; a !&#x3D; null),
+  );
+  readonly selectedAccountIndexValue &#x3D; computed(() &#x3D;&gt; {
+    const selectedIndex &#x3D; this.selectedAccountIndex();
+    return selectedIndex &#x3D;&#x3D; null ? null : String(selectedIndex);
+  });
+
+  ngOnInit(): Promise&lt;void&gt; {
+    return this.initializeAccountData();
+  }
+
+  private async initializeAccountData(): Promise&lt;void&gt; {
+    await this.loadAccounts();
+    if (!this.hasAnyUserAccount()) return;
+
+    await this.loadAvailableRoles();
+    this.setPrimaryIndex(this.primaryIndex());
+  }
+
+  private async loadAccounts(): Promise&lt;void&gt; {
+    if (!this.entityConstructor().enableUserAccounts) return;
+
+    const results &#x3D; await Promise.all(
+      this.entitiesToMerge().map((e) &#x3D;&gt; this.fetchUserAccount(e)),
+    );
+    this.entityAccounts.set(results.map((r) &#x3D;&gt; r.account));
+    this.accountLoadError.set(results.some((r) &#x3D;&gt; r.error));
+
+    if (!results[0].account &amp;&amp; results[1]?.account) {
+      this.primaryIndex.set(1);
+    } else {
+      this.primaryIndex.set(0);
+    }
+  }
+
+  private async fetchUserAccount(
+    entity: Entity,
+  ): Promise&lt;{ account: UserAccount | null; error: boolean }&gt; {
+    try {
+      const account &#x3D; await lastValueFrom(
+        this.userAdminService.getUser(entity.getId()).pipe(
+          catchError((err) &#x3D;&gt; {
+            if (err?.status &#x3D;&#x3D;&#x3D; 404) return of(null);
+            throw err;
+          }),
+        ),
+      );
+      return { account, error: false };
+    } catch {
+      return { account: null, error: true };
+    }
+  }
+
+  private async loadAvailableRoles(): Promise&lt;void&gt; {
+    try {
+      this.availableRoles.set(
+        await lastValueFrom(this.userAdminService.getAllRoles()),
+      );
+    } catch {
+      this.availableRoles.set(
+        this.uniqueRoles(
+          this.entityAccounts().flatMap((account) &#x3D;&gt; account?.roles ?? []),
+        ),
+      );
+    }
+  }
+
+  hasSelectableAccount(index: number): boolean {
+    return this.entityAccounts()[index] !&#x3D; null;
+  }
+
+  hasAccountEmail(index: number): boolean {
+    return !!this.entityAccounts()[index]?.email;
+  }
+
+  selectAccountToKeep(index: number | string): void {
+    const parsedIndex &#x3D; Number(index);
+    if (
+      !Number.isInteger(parsedIndex) ||
+      !this.hasSelectableAccount(parsedIndex)
+    ) {
+      return;
+    }
+    this.setPrimaryIndex(parsedIndex);
+  }
+
+  private setPrimaryIndex(index: number): void {
+    this.primaryIndex.set(index);
+    this.selectedAccountIndex.set(index);
+    this.resetSelectedRolesForIndex(index);
+  }
+
+  private resetSelectedRolesForIndex(index: number): void {
+    const roles &#x3D; this.getAccountRoles(index);
+    const control &#x3D; this.selectedRolesControl();
+    control.setValue(roles);
+    control.markAsPristine();
+  }
+
+  formatRoles(account: UserAccount | null | undefined): string {
+    if (!account?.roles?.length) return &quot;-&quot;;
+    return account.roles.map((r) &#x3D;&gt; r.name).join(&quot;, &quot;);
+  }
+
+  formatAccountStatus(account: UserAccount | null | undefined): string {
+    if (!account) return &quot;-&quot;;
+    return account.enabled ? $localize&#x60;Enabled&#x60; : $localize&#x60;Disabled&#x60;;
+  }
+
+  formatSelectedAccountStatus(): string {
+    const selectedIndex &#x3D; this.selectedAccountIndex();
+    if (selectedIndex &#x3D;&#x3D; null) return &quot;-&quot;;
+    return this.formatAccountStatus(this.entityAccounts()[selectedIndex]);
+  }
+
+  isAccountRolesSelected(index: number): boolean {
+    const selectedRoles &#x3D; this.selectedRolesControl().value;
+    const selectedRoleIds &#x3D; new Set(selectedRoles.map((r) &#x3D;&gt; r.id));
+    const accountRoles &#x3D; this.getAccountRoles(index);
+
+    if (!accountRoles.length) return false;
+    return accountRoles.every((role) &#x3D;&gt; selectedRoleIds.has(role.id));
+  }
+
+  toggleAccountRoles(index: number, checked: boolean): void {
+    const selectedRoles &#x3D; this.selectedRolesControl().value;
+    const accountRoles &#x3D; this.getAccountRoles(index);
+    if (!accountRoles.length) return;
+
+    const selectedMap &#x3D; new Map(selectedRoles.map((r) &#x3D;&gt; [r.id, r]));
+    if (checked) {
+      accountRoles.forEach((role) &#x3D;&gt; selectedMap.set(role.id, role));
+    } else {
+      accountRoles.forEach((role) &#x3D;&gt; selectedMap.delete(role.id));
+    }
+
+    this.selectedRolesControl().setValue(Array.from(selectedMap.values()));
+    this.selectedRolesControl().markAsDirty();
+  }
+
+  getAccountRoles(index: number): Role[] {
+    return this.uniqueRoles(
+      (this.entityAccounts()[index]?.roles ?? []).map(
+        (role) &#x3D;&gt;
+          this.availableRoles().find(
+            (availableRole) &#x3D;&gt; availableRole.id &#x3D;&#x3D;&#x3D; role.id,
+          ) ?? role,
+      ),
+    );
+  }
+
+  private uniqueRoles(roles: Role[]): Role[] {
+    const roleMap &#x3D; new Map(roles.map((role) &#x3D;&gt; [role.id, role]));
+    return Array.from(roleMap.values());
+  }
+
+  private buildAccountUpdate(): {
+    accountId: string;
+    update: Partial&lt;UserAccount&gt;;
+  } | null {
+    const selectedIndex &#x3D; this.selectedAccountIndex();
+    if (selectedIndex &#x3D;&#x3D; null) return null;
+
+    const selectedAccount &#x3D; this.entityAccounts()[selectedIndex];
+    if (!selectedAccount?.id) return null;
+
+    const control &#x3D; this.selectedRolesControl();
+    if (!control.dirty) return null;
+
+    const selectedRoles &#x3D; control.value ?? [];
+    const existingRoles &#x3D; selectedAccount.roles ?? [];
+
+    const selectedIds &#x3D; new Set(selectedRoles.map((r) &#x3D;&gt; r.id));
+    const existingIds &#x3D; new Set(existingRoles.map((r) &#x3D;&gt; r.id));
+    const rolesChanged &#x3D;
+      selectedIds.size !&#x3D;&#x3D; existingIds.size ||
+      [...selectedIds].some((id) &#x3D;&gt; !existingIds.has(id));
+
+    if (!rolesChanged) return null;
+
+    return {
+      accountId: selectedAccount.id,
+      update: { roles: selectedRoles },
+    };
+  }
+
+  async validateAndGetDecision(): Promise&lt;false | AccountMergeDecision&gt; {
+    this.deleteSecondaryAccount.set(true);
+
+    if (
+      this.accountLoadError() &amp;&amp;
+      this.entityConstructor().enableUserAccounts
+    ) {
+      const confirmed &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:merge account load error title:Warning! User account status unknown&#x60;,
+        $localize&#x60;:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?&#x60;,
+      );
+      if (!confirmed) return false;
+    }
+
+    const accountsFound &#x3D; this.entityAccounts().filter((a) &#x3D;&gt; a !&#x3D; null);
+    if (accountsFound.length &#x3D;&#x3D;&#x3D; 1) {
+      const confirmed &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:merge account warning title:Warning! User account(s) found&#x60;,
+        $localize&#x60;:merge account warning one account:One of the records has a linked user account. This account will remain linked as a login for the merged record.\nAre you sure you want to continue?&#x60;,
+      );
+      if (!confirmed) return false;
+    }
+
+    if (accountsFound.length &#x3D;&#x3D;&#x3D; 2) {
+      const selectedIndex &#x3D; this.selectedAccountIndex() ?? this.primaryIndex();
+      const secondaryIndex &#x3D; selectedIndex &#x3D;&#x3D;&#x3D; 0 ? 1 : 0;
+      const selectedEmail &#x3D; this.entityAccounts()[selectedIndex]?.email ?? &quot;-&quot;;
+      const secondaryEmail &#x3D;
+        this.entityAccounts()[secondaryIndex]?.email ?? &quot;-&quot;;
+
+      const result &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:merge account warning title:Warning! User account(s) found&#x60;,
+        $localize&#x60;:merge account warning both accounts:Both records have a linked user account. You have selected the account for ${selectedEmail}:selectedEmail: to remain linked to the merged record.\nDo you want to delete the second account ${secondaryEmail}:secondaryEmail: (which will not have a linked record after this merge)?&#x60;,
+        YesNoCancelButtons,
+      );
+
+      if (result &#x3D;&#x3D;&#x3D; undefined) {
+        return false;
+      }
+      this.deleteSecondaryAccount.set(result &#x3D;&#x3D;&#x3D; true);
+    }
+
+    return {
+      accountUpdate: this.buildAccountUpdate(),
+      deleteSecondaryAccount: this.deleteSecondaryAccount(),
+    };
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'AccountMergeDecision.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

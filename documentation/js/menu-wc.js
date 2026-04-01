@@ -1340,6 +1340,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/MenuItemListEditorComponent.html" data-type="entity-link" >MenuItemListEditorComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/MergeAccountSectionComponent.html" data-type="entity-link" >MergeAccountSectionComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/MergeFieldsComponent.html" data-type="entity-link" >MergeFieldsComponent</a>
                             </li>
                             <li class="link">
@@ -2146,6 +2149,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             <span class="icon ion-ios-arrow-down"></span>
                         </div>
                         <ul class="links collapse " ${ isNormalMode ? ' id="interfaces-links"' : 'id="xs-interfaces-links"' }>
+                            <li class="link">
+                                <a href="interfaces/AccountMergeDecision.html" data-type="entity-link" >AccountMergeDecision</a>
+                            </li>
                             <li class="link">
                                 <a href="interfaces/ActivityEntity.html" data-type="entity-link" >ActivityEntity</a>
                             </li>

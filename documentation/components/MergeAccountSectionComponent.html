@@ -1,0 +1,1887 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  MergeAccountSectionComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+            <tr>
+                <td class="col-md-3">changeDetection</td>
+                <td class="col-md-9"><code>ChangeDetectionStrategy.OnPush</code></td>
+            </tr>
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">host</td>
+                <td class="col-md-9"><code>{<br>}</code></td>
+            </tr>
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-merge-account-section</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="https://angular.io/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+                            <code>MatError</code>
+                            <code>MatRadioModule</code>
+                            <code>MatExpansionModule</code>
+                            <code>MatCheckboxModule</code>
+                            <code>MatFormFieldModule</code>
+                            <code>MatSelectModule</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./merge-account-section.component.html</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">styleUrl</td>
+                <td class="col-md-9"><code>./merge-account-section.component.scss</code></td>
+            </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#accountLoadError" >accountLoadError</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#availableRoles" >availableRoles</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#deleteSecondaryAccount" >deleteSecondaryAccount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#entityAccounts" >entityAccounts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hasAnyUserAccount" >hasAnyUserAccount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#primaryIndex" >primaryIndex</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#selectedAccountIndex" >selectedAccountIndex</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#selectedAccountIndexValue" >selectedAccountIndexValue</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#selectedRolesControl" >selectedRolesControl</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#formatAccountStatus" >formatAccountStatus</a>
+                            </li>
+                            <li>
+                                <a href="#formatRoles" >formatRoles</a>
+                            </li>
+                            <li>
+                                <a href="#formatSelectedAccountStatus" >formatSelectedAccountStatus</a>
+                            </li>
+                            <li>
+                                <a href="#getAccountRoles" >getAccountRoles</a>
+                            </li>
+                            <li>
+                                <a href="#hasAccountEmail" >hasAccountEmail</a>
+                            </li>
+                            <li>
+                                <a href="#hasSelectableAccount" >hasSelectableAccount</a>
+                            </li>
+                            <li>
+                                <a href="#isAccountRolesSelected" >isAccountRolesSelected</a>
+                            </li>
+                            <li>
+                                <a href="#selectAccountToKeep" >selectAccountToKeep</a>
+                            </li>
+                            <li>
+                                <a href="#toggleAccountRoles" >toggleAccountRoles</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateAndGetDecision" >validateAndGetDecision</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#entitiesToMerge" >entitiesToMerge</a>
+                            </li>
+                            <li>
+                                <a href="#entityConstructor" >entityConstructor</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entitiesToMerge"></a>
+                        <b>entitiesToMerge</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Required : </i>&nbsp;<b>true</b>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:54</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entityConstructor"></a>
+                        <b>entityConstructor</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Required : </i>&nbsp;<b>true</b>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:55</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formatAccountStatus"></a>
+                    <span class="name">
+                        <span ><b>formatAccountStatus</b></span>
+                        <a href="#formatAccountStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>formatAccountStatus(account: <a href="../interfaces/UserAccount.html" target="_self">UserAccount | null | undefined</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:173</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>account</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserAccount.html" target="_self" >UserAccount | null | undefined</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formatRoles"></a>
+                    <span class="name">
+                        <span ><b>formatRoles</b></span>
+                        <a href="#formatRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>formatRoles(account: <a href="../interfaces/UserAccount.html" target="_self">UserAccount | null | undefined</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="168"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:168</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>account</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserAccount.html" target="_self" >UserAccount | null | undefined</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formatSelectedAccountStatus"></a>
+                    <span class="name">
+                        <span ><b>formatSelectedAccountStatus</b></span>
+                        <a href="#formatSelectedAccountStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>formatSelectedAccountStatus()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="178"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:178</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAccountRoles"></a>
+                    <span class="name">
+                        <span ><b>getAccountRoles</b></span>
+                        <a href="#getAccountRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAccountRoles(index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="209"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:209</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>index</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Role.html" target="_self" >Role[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasAccountEmail"></a>
+                    <span class="name">
+                        <span ><b>hasAccountEmail</b></span>
+                        <a href="#hasAccountEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hasAccountEmail(index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:140</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>index</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasSelectableAccount"></a>
+                    <span class="name">
+                        <span ><b>hasSelectableAccount</b></span>
+                        <a href="#hasSelectableAccount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hasSelectableAccount(index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:136</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>index</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isAccountRolesSelected"></a>
+                    <span class="name">
+                        <span ><b>isAccountRolesSelected</b></span>
+                        <a href="#isAccountRolesSelected"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isAccountRolesSelected(index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="184"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:184</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>index</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectAccountToKeep"></a>
+                    <span class="name">
+                        <span ><b>selectAccountToKeep</b></span>
+                        <a href="#selectAccountToKeep"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>selectAccountToKeep(index: number | string)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:144</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>index</td>
+                                            <td>
+                                                        <code>number | string</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleAccountRoles"></a>
+                    <span class="name">
+                        <span ><b>toggleAccountRoles</b></span>
+                        <a href="#toggleAccountRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleAccountRoles(index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, checked: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="193"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:193</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>index</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>checked</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateAndGetDecision"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateAndGetDecision</b></span>
+                        <a href="#validateAndGetDecision"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateAndGetDecision()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="255"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:255</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/AccountMergeDecision.html" target="_self" >Promise&lt;unknown | AccountMergeDecision&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="accountLoadError"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>accountLoadError</b></span>
+                        <a href="#accountLoadError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;boolean&gt;(false)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:58</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="availableRoles"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>availableRoles</b></span>
+                        <a href="#availableRoles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;Role[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteSecondaryAccount"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>deleteSecondaryAccount</b></span>
+                        <a href="#deleteSecondaryAccount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;boolean&gt;(true)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:66</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityAccounts"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>entityAccounts</b></span>
+                        <a href="#entityAccounts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;(UserAccount | null)[]&gt;([null, null])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:57</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasAnyUserAccount"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hasAnyUserAccount</b></span>
+                        <a href="#hasAnyUserAccount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.entityAccounts().some((a) &#x3D;&gt; a !&#x3D; null),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:68</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="primaryIndex"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>primaryIndex</b></span>
+                        <a href="#primaryIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;number&gt;(0)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:60</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Index of the entity whose ID will be retained after merge.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedAccountIndex"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>selectedAccountIndex</b></span>
+                        <a href="#selectedAccountIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;number | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:61</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedAccountIndexValue"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>selectedAccountIndexValue</b></span>
+                        <a href="#selectedAccountIndexValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const selectedIndex &#x3D; this.selectedAccountIndex();
+    return selectedIndex &#x3D;&#x3D; null ? null : String(selectedIndex);
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:71</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedRolesControl"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>selectedRolesControl</b></span>
+                        <a href="#selectedRolesControl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;FormControl&lt;Role[]&gt;&gt;(
+    new FormControl&lt;Role[]&gt;([], { nonNullable: true }),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/features/de-duplication/bulk-merge-records/merge-account-section/merge-account-section.component.ts:63</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from &quot;@angular/core&quot;;
+import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
+import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
+import { MatExpansionModule } from &quot;@angular/material/expansion&quot;;
+import { MatError, MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatRadioModule } from &quot;@angular/material/radio&quot;;
+import { MatSelectModule } from &quot;@angular/material/select&quot;;
+import { YesNoCancelButtons } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { ConfirmationDialogService } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { Entity, EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
+import { UserAdminService } from &quot;app/core/user/user-admin-service/user-admin.service&quot;;
+import {
+  Role,
+  UserAccount,
+} from &quot;app/core/user/user-admin-service/user-account&quot;;
+import { catchError, lastValueFrom, of } from &quot;rxjs&quot;;
+
+export interface AccountMergeDecision {
+  accountUpdate: {
+    accountId: string;
+    update: Partial&lt;UserAccount&gt;;
+  } | null;
+  deleteSecondaryAccount: boolean;
+}
+
+@Component({
+  selector: &quot;app-merge-account-section&quot;,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { style: &quot;display: contents&quot; },
+  imports: [
+    ReactiveFormsModule,
+    MatError,
+    MatRadioModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatSelectModule,
+  ],
+  templateUrl: &quot;./merge-account-section.component.html&quot;,
+  styleUrl: &quot;./merge-account-section.component.scss&quot;,
+})
+export class MergeAccountSectionComponent implements OnInit {
+  private readonly userAdminService &#x3D; inject(UserAdminService);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+
+  entitiesToMerge &#x3D; input.required&lt;Entity[]&gt;();
+  entityConstructor &#x3D; input.required&lt;EntityConstructor&gt;();
+
+  readonly entityAccounts &#x3D; signal&lt;(UserAccount | null)[]&gt;([null, null]);
+  readonly accountLoadError &#x3D; signal&lt;boolean&gt;(false);
+  /** Index of the entity whose ID will be retained after merge. */
+  readonly primaryIndex &#x3D; signal&lt;number&gt;(0);
+  readonly selectedAccountIndex &#x3D; signal&lt;number | null&gt;(null);
+  readonly availableRoles &#x3D; signal&lt;Role[]&gt;([]);
+  readonly selectedRolesControl &#x3D; signal&lt;FormControl&lt;Role[]&gt;&gt;(
+    new FormControl&lt;Role[]&gt;([], { nonNullable: true }),
+  );
+  readonly deleteSecondaryAccount &#x3D; signal&lt;boolean&gt;(true);
+
+  readonly hasAnyUserAccount &#x3D; computed(() &#x3D;&gt;
+    this.entityAccounts().some((a) &#x3D;&gt; a !&#x3D; null),
+  );
+  readonly selectedAccountIndexValue &#x3D; computed(() &#x3D;&gt; {
+    const selectedIndex &#x3D; this.selectedAccountIndex();
+    return selectedIndex &#x3D;&#x3D; null ? null : String(selectedIndex);
+  });
+
+  ngOnInit(): Promise&lt;void&gt; {
+    return this.initializeAccountData();
+  }
+
+  private async initializeAccountData(): Promise&lt;void&gt; {
+    await this.loadAccounts();
+    if (!this.hasAnyUserAccount()) return;
+
+    await this.loadAvailableRoles();
+    this.setPrimaryIndex(this.primaryIndex());
+  }
+
+  private async loadAccounts(): Promise&lt;void&gt; {
+    if (!this.entityConstructor().enableUserAccounts) return;
+
+    const results &#x3D; await Promise.all(
+      this.entitiesToMerge().map((e) &#x3D;&gt; this.fetchUserAccount(e)),
+    );
+    this.entityAccounts.set(results.map((r) &#x3D;&gt; r.account));
+    this.accountLoadError.set(results.some((r) &#x3D;&gt; r.error));
+
+    if (!results[0].account &amp;&amp; results[1]?.account) {
+      this.primaryIndex.set(1);
+    } else {
+      this.primaryIndex.set(0);
+    }
+  }
+
+  private async fetchUserAccount(
+    entity: Entity,
+  ): Promise&lt;{ account: UserAccount | null; error: boolean }&gt; {
+    try {
+      const account &#x3D; await lastValueFrom(
+        this.userAdminService.getUser(entity.getId()).pipe(
+          catchError((err) &#x3D;&gt; {
+            if (err?.status &#x3D;&#x3D;&#x3D; 404) return of(null);
+            throw err;
+          }),
+        ),
+      );
+      return { account, error: false };
+    } catch {
+      return { account: null, error: true };
+    }
+  }
+
+  private async loadAvailableRoles(): Promise&lt;void&gt; {
+    try {
+      this.availableRoles.set(
+        await lastValueFrom(this.userAdminService.getAllRoles()),
+      );
+    } catch {
+      this.availableRoles.set(
+        this.uniqueRoles(
+          this.entityAccounts().flatMap((account) &#x3D;&gt; account?.roles ?? []),
+        ),
+      );
+    }
+  }
+
+  hasSelectableAccount(index: number): boolean {
+    return this.entityAccounts()[index] !&#x3D; null;
+  }
+
+  hasAccountEmail(index: number): boolean {
+    return !!this.entityAccounts()[index]?.email;
+  }
+
+  selectAccountToKeep(index: number | string): void {
+    const parsedIndex &#x3D; Number(index);
+    if (
+      !Number.isInteger(parsedIndex) ||
+      !this.hasSelectableAccount(parsedIndex)
+    ) {
+      return;
+    }
+    this.setPrimaryIndex(parsedIndex);
+  }
+
+  private setPrimaryIndex(index: number): void {
+    this.primaryIndex.set(index);
+    this.selectedAccountIndex.set(index);
+    this.resetSelectedRolesForIndex(index);
+  }
+
+  private resetSelectedRolesForIndex(index: number): void {
+    const roles &#x3D; this.getAccountRoles(index);
+    const control &#x3D; this.selectedRolesControl();
+    control.setValue(roles);
+    control.markAsPristine();
+  }
+
+  formatRoles(account: UserAccount | null | undefined): string {
+    if (!account?.roles?.length) return &quot;-&quot;;
+    return account.roles.map((r) &#x3D;&gt; r.name).join(&quot;, &quot;);
+  }
+
+  formatAccountStatus(account: UserAccount | null | undefined): string {
+    if (!account) return &quot;-&quot;;
+    return account.enabled ? $localize&#x60;Enabled&#x60; : $localize&#x60;Disabled&#x60;;
+  }
+
+  formatSelectedAccountStatus(): string {
+    const selectedIndex &#x3D; this.selectedAccountIndex();
+    if (selectedIndex &#x3D;&#x3D; null) return &quot;-&quot;;
+    return this.formatAccountStatus(this.entityAccounts()[selectedIndex]);
+  }
+
+  isAccountRolesSelected(index: number): boolean {
+    const selectedRoles &#x3D; this.selectedRolesControl().value;
+    const selectedRoleIds &#x3D; new Set(selectedRoles.map((r) &#x3D;&gt; r.id));
+    const accountRoles &#x3D; this.getAccountRoles(index);
+
+    if (!accountRoles.length) return false;
+    return accountRoles.every((role) &#x3D;&gt; selectedRoleIds.has(role.id));
+  }
+
+  toggleAccountRoles(index: number, checked: boolean): void {
+    const selectedRoles &#x3D; this.selectedRolesControl().value;
+    const accountRoles &#x3D; this.getAccountRoles(index);
+    if (!accountRoles.length) return;
+
+    const selectedMap &#x3D; new Map(selectedRoles.map((r) &#x3D;&gt; [r.id, r]));
+    if (checked) {
+      accountRoles.forEach((role) &#x3D;&gt; selectedMap.set(role.id, role));
+    } else {
+      accountRoles.forEach((role) &#x3D;&gt; selectedMap.delete(role.id));
+    }
+
+    this.selectedRolesControl().setValue(Array.from(selectedMap.values()));
+    this.selectedRolesControl().markAsDirty();
+  }
+
+  getAccountRoles(index: number): Role[] {
+    return this.uniqueRoles(
+      (this.entityAccounts()[index]?.roles ?? []).map(
+        (role) &#x3D;&gt;
+          this.availableRoles().find(
+            (availableRole) &#x3D;&gt; availableRole.id &#x3D;&#x3D;&#x3D; role.id,
+          ) ?? role,
+      ),
+    );
+  }
+
+  private uniqueRoles(roles: Role[]): Role[] {
+    const roleMap &#x3D; new Map(roles.map((role) &#x3D;&gt; [role.id, role]));
+    return Array.from(roleMap.values());
+  }
+
+  private buildAccountUpdate(): {
+    accountId: string;
+    update: Partial&lt;UserAccount&gt;;
+  } | null {
+    const selectedIndex &#x3D; this.selectedAccountIndex();
+    if (selectedIndex &#x3D;&#x3D; null) return null;
+
+    const selectedAccount &#x3D; this.entityAccounts()[selectedIndex];
+    if (!selectedAccount?.id) return null;
+
+    const control &#x3D; this.selectedRolesControl();
+    if (!control.dirty) return null;
+
+    const selectedRoles &#x3D; control.value ?? [];
+    const existingRoles &#x3D; selectedAccount.roles ?? [];
+
+    const selectedIds &#x3D; new Set(selectedRoles.map((r) &#x3D;&gt; r.id));
+    const existingIds &#x3D; new Set(existingRoles.map((r) &#x3D;&gt; r.id));
+    const rolesChanged &#x3D;
+      selectedIds.size !&#x3D;&#x3D; existingIds.size ||
+      [...selectedIds].some((id) &#x3D;&gt; !existingIds.has(id));
+
+    if (!rolesChanged) return null;
+
+    return {
+      accountId: selectedAccount.id,
+      update: { roles: selectedRoles },
+    };
+  }
+
+  async validateAndGetDecision(): Promise&lt;false | AccountMergeDecision&gt; {
+    this.deleteSecondaryAccount.set(true);
+
+    if (
+      this.accountLoadError() &amp;&amp;
+      this.entityConstructor().enableUserAccounts
+    ) {
+      const confirmed &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:merge account load error title:Warning! User account status unknown&#x60;,
+        $localize&#x60;:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?&#x60;,
+      );
+      if (!confirmed) return false;
+    }
+
+    const accountsFound &#x3D; this.entityAccounts().filter((a) &#x3D;&gt; a !&#x3D; null);
+    if (accountsFound.length &#x3D;&#x3D;&#x3D; 1) {
+      const confirmed &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:merge account warning title:Warning! User account(s) found&#x60;,
+        $localize&#x60;:merge account warning one account:One of the records has a linked user account. This account will remain linked as a login for the merged record.\nAre you sure you want to continue?&#x60;,
+      );
+      if (!confirmed) return false;
+    }
+
+    if (accountsFound.length &#x3D;&#x3D;&#x3D; 2) {
+      const selectedIndex &#x3D; this.selectedAccountIndex() ?? this.primaryIndex();
+      const secondaryIndex &#x3D; selectedIndex &#x3D;&#x3D;&#x3D; 0 ? 1 : 0;
+      const selectedEmail &#x3D; this.entityAccounts()[selectedIndex]?.email ?? &quot;-&quot;;
+      const secondaryEmail &#x3D;
+        this.entityAccounts()[secondaryIndex]?.email ?? &quot;-&quot;;
+
+      const result &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:merge account warning title:Warning! User account(s) found&#x60;,
+        $localize&#x60;:merge account warning both accounts:Both records have a linked user account. You have selected the account for ${selectedEmail}:selectedEmail: to remain linked to the merged record.\nDo you want to delete the second account ${secondaryEmail}:secondaryEmail: (which will not have a linked record after this merge)?&#x60;,
+        YesNoCancelButtons,
+      );
+
+      if (result &#x3D;&#x3D;&#x3D; undefined) {
+        return false;
+      }
+      this.deleteSecondaryAccount.set(result &#x3D;&#x3D;&#x3D; true);
+    }
+
+    return {
+      accountUpdate: this.buildAccountUpdate(),
+      deleteSecondaryAccount: this.deleteSecondaryAccount(),
+    };
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">@if (
+  entityConstructor().enableUserAccounts &amp;&amp;
+  (hasAnyUserAccount() || accountLoadError())
+) {
+  &lt;div class&#x3D;&quot;account-panel-wrapper&quot;&gt;
+    &lt;mat-expansion-panel [expanded]&#x3D;&quot;hasAnyUserAccount()&quot;&gt;
+      &lt;mat-expansion-panel-header&gt;
+        &lt;mat-panel-title i18n&gt;Linked User Accounts&lt;/mat-panel-title&gt;
+        &lt;mat-panel-description i18n&gt;
+          Login account fields (different from entity profile fields)
+        &lt;/mat-panel-description&gt;
+      &lt;/mat-expansion-panel-header&gt;
+
+      @if (accountLoadError()) {
+        &lt;mat-error class&#x3D;&quot;account-load-error&quot; i18n&gt;
+          User account information could not be loaded. You may be offline or
+          lack account_manager permissions. This merge will proceed without
+          changes to user accounts.
+        &lt;/mat-error&gt;
+      }
+
+      @if (hasAnyUserAccount()) {
+        &lt;div class&#x3D;&quot;account-grid&quot;&gt;
+          &lt;div class&#x3D;&quot;label-cell&quot;&gt;
+            &lt;strong i18n&gt;Account To Keep&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;mat-radio-group
+            class&#x3D;&quot;account-select-radio-group&quot;
+            [value]&#x3D;&quot;selectedAccountIndexValue()&quot;
+            (change)&#x3D;&quot;selectAccountToKeep($event.value)&quot;
+          &gt;
+            &lt;div class&#x3D;&quot;account-select-cell&quot;&gt;
+              @if (hasSelectableAccount(0) &amp;&amp; hasAccountEmail(0)) {
+                &lt;mat-radio-button value&#x3D;&quot;0&quot;&gt;
+                  {{ entityAccounts()[0]?.email }}
+                &lt;/mat-radio-button&gt;
+              } @else {
+                &lt;span class&#x3D;&quot;aligned-text&quot;&gt;-&lt;/span&gt;
+              }
+            &lt;/div&gt;
+            &lt;div class&#x3D;&quot;account-select-cell&quot;&gt;
+              @if (hasSelectableAccount(1) &amp;&amp; hasAccountEmail(1)) {
+                &lt;mat-radio-button value&#x3D;&quot;1&quot;&gt;
+                  {{ entityAccounts()[1]?.email }}
+                &lt;/mat-radio-button&gt;
+              } @else {
+                &lt;span class&#x3D;&quot;aligned-text&quot;&gt;-&lt;/span&gt;
+              }
+            &lt;/div&gt;
+          &lt;/mat-radio-group&gt;
+          &lt;div class&#x3D;&quot;preview-cell account-preview&quot;&gt;
+            {{
+              selectedAccountIndex() &#x3D;&#x3D;&#x3D; null
+                ? &quot;-&quot;
+                : (entityAccounts()[selectedAccountIndex() ?? 0]?.email ?? &quot;-&quot;)
+            }}
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;label-cell&quot;&gt;
+            &lt;strong i18n&gt;Account Roles&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;account-select-cell&quot;&gt;
+            @if (getAccountRoles(0).length &gt; 0) {
+              &lt;mat-checkbox
+                [checked]&#x3D;&quot;isAccountRolesSelected(0)&quot;
+                (change)&#x3D;&quot;toggleAccountRoles(0, $event.checked)&quot;
+              &gt;
+                {{ formatRoles(entityAccounts()[0]) }}
+              &lt;/mat-checkbox&gt;
+            } @else {
+              &lt;span class&#x3D;&quot;aligned-text&quot;&gt;-&lt;/span&gt;
+            }
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;account-select-cell&quot;&gt;
+            @if (getAccountRoles(1).length &gt; 0) {
+              &lt;mat-checkbox
+                [checked]&#x3D;&quot;isAccountRolesSelected(1)&quot;
+                (change)&#x3D;&quot;toggleAccountRoles(1, $event.checked)&quot;
+              &gt;
+                {{ formatRoles(entityAccounts()[1]) }}
+              &lt;/mat-checkbox&gt;
+            } @else {
+              &lt;span class&#x3D;&quot;aligned-text&quot;&gt;-&lt;/span&gt;
+            }
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;preview-cell preview-field-cell&quot;&gt;
+            &lt;mat-form-field class&#x3D;&quot;full-width&quot;&gt;
+              &lt;mat-select [formControl]&#x3D;&quot;selectedRolesControl()&quot; multiple&gt;
+                &lt;mat-select-trigger&gt;
+                  @for (role of selectedRolesControl().value; track role.id) {
+                    &lt;span&gt;{{ role.name }} &lt;/span&gt;
+                  }
+                &lt;/mat-select-trigger&gt;
+                @for (role of availableRoles(); track role.id) {
+                  &lt;mat-option [value]&#x3D;&quot;role&quot;&gt;{{ role.name }}&lt;/mat-option&gt;
+                }
+              &lt;/mat-select&gt;
+            &lt;/mat-form-field&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;label-cell&quot;&gt;
+            &lt;strong i18n&gt;Account Status&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;account-select-cell&quot;&gt;
+            &lt;span class&#x3D;&quot;aligned-text&quot;&gt;{{
+              formatAccountStatus(entityAccounts()[0])
+            }}&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;account-select-cell&quot;&gt;
+            &lt;span class&#x3D;&quot;aligned-text&quot;&gt;{{
+              formatAccountStatus(entityAccounts()[1])
+            }}&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;preview-cell account-preview&quot;&gt;
+            {{ formatSelectedAccountStatus() }}
+          &lt;/div&gt;
+        &lt;/div&gt;
+      }
+    &lt;/mat-expansion-panel&gt;
+  &lt;/div&gt;
+}
+</code></pre>
+    </div>
+
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div>@if (  entityConstructor().enableUserAccounts &&  (hasAnyUserAccount() || accountLoadError())) {  <div class="account-panel-wrapper">    <mat-expansion-panel [expanded]="hasAnyUserAccount()">      <mat-expansion-panel-header>        <mat-panel-title i18n>Linked User Accounts</mat-panel-title>        <mat-panel-description i18n>          Login account fields (different from entity profile fields)        </mat-panel-description>      </mat-expansion-panel-header>      @if (accountLoadError()) {        <mat-error class="account-load-error" i18n>          User account information could not be loaded. You may be offline or          lack account_manager permissions. This merge will proceed without          changes to user accounts.        </mat-error>      }      @if (hasAnyUserAccount()) {        <div class="account-grid">          <div class="label-cell">            <strong i18n>Account To Keep</strong>          </div>          <mat-radio-group            class="account-select-radio-group"            [value]="selectedAccountIndexValue()"            (change)="selectAccountToKeep($event.value)"          >            <div class="account-select-cell">              @if (hasSelectableAccount(0) && hasAccountEmail(0)) {                <mat-radio-button value="0">                  {{ entityAccounts()[0]?.email }}                </mat-radio-button>              } @else {                <span class="aligned-text">-</span>              }            </div>            <div class="account-select-cell">              @if (hasSelectableAccount(1) && hasAccountEmail(1)) {                <mat-radio-button value="1">                  {{ entityAccounts()[1]?.email }}                </mat-radio-button>              } @else {                <span class="aligned-text">-</span>              }            </div>          </mat-radio-group>          <div class="preview-cell account-preview">            {{              selectedAccountIndex() === null                ? "-"                : (entityAccounts()[selectedAccountIndex() ?? 0]?.email ?? "-")            }}          </div>          <div class="label-cell">            <strong i18n>Account Roles</strong>          </div>          <div class="account-select-cell">            @if (getAccountRoles(0).length > 0) {              <mat-checkbox                [checked]="isAccountRolesSelected(0)"                (change)="toggleAccountRoles(0, $event.checked)"              >                {{ formatRoles(entityAccounts()[0]) }}              </mat-checkbox>            } @else {              <span class="aligned-text">-</span>            }          </div>          <div class="account-select-cell">            @if (getAccountRoles(1).length > 0) {              <mat-checkbox                [checked]="isAccountRolesSelected(1)"                (change)="toggleAccountRoles(1, $event.checked)"              >                {{ formatRoles(entityAccounts()[1]) }}              </mat-checkbox>            } @else {              <span class="aligned-text">-</span>            }          </div>          <div class="preview-cell preview-field-cell">            <mat-form-field class="full-width">              <mat-select [formControl]="selectedRolesControl()" multiple>                <mat-select-trigger>                  @for (role of selectedRolesControl().value; track role.id) {                    <span>{{ role.name }} </span>                  }                </mat-select-trigger>                @for (role of availableRoles(); track role.id) {                  <mat-option [value]="role">{{ role.name }}</mat-option>                }              </mat-select>            </mat-form-field>          </div>          <div class="label-cell">            <strong i18n>Account Status</strong>          </div>          <div class="account-select-cell">            <span class="aligned-text">{{              formatAccountStatus(entityAccounts()[0])            }}</span>          </div>          <div class="account-select-cell">            <span class="aligned-text">{{              formatAccountStatus(entityAccounts()[1])            }}</span>          </div>          <div class="preview-cell account-preview">            {{ formatSelectedAccountStatus() }}          </div>        </div>      }    </mat-expansion-panel>  </div>}</div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'MergeAccountSectionComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'MergeAccountSectionComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

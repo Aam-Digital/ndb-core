@@ -230,15 +230,15 @@ new changes correctly to the entity.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createEntityForm(formFields: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>, entity: T, forTable: unknown, withPermissionCheck: unknown)</code>
+                    <code>createEntityForm(formFields: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>, entity: T, forTable: unknown, withPermissionCheck: unknown, withDefaultValues: unknown)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="119"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:119</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="120"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:120</a></div>
                         </td>
                     </tr>
 
@@ -336,6 +336,25 @@ Missing fields in the formFields are filled with schema information.</p>
 
                                             <td>
                                                     <p>if true, fields without &#39;update&#39; permissions will stay disabled when enabling form</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>withDefaultValues</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>true</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>if true, default value strategies are initialized and applied</p>
 
                                             </td>
                                         </tr>
@@ -476,8 +495,8 @@ Missing fields in the formFields are filled with schema information.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="314"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:314</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="318"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:318</a></div>
                         </td>
                     </tr>
 
@@ -566,8 +585,8 @@ Missing fields in the formFields are filled with schema information.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="237"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:237</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="241"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:241</a></div>
                         </td>
                     </tr>
 
@@ -770,12 +789,14 @@ export class EntityFormService {
    * @param entity
    * @param forTable
    * @param withPermissionCheck if true, fields without &#x27;update&#x27; permissions will stay disabled when enabling form
+   * @param withDefaultValues if true, default value strategies are initialized and applied
    */
   public async createEntityForm&lt;T extends Entity&gt;(
     formFields: ColumnConfig[],
     entity: T,
     forTable &#x3D; false,
     withPermissionCheck &#x3D; true,
+    withDefaultValues &#x3D; true,
   ): Promise&lt;EntityForm&lt;T&gt;&gt; {
     const fields &#x3D; formFields.map((f) &#x3D;&gt;
       this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
@@ -796,7 +817,9 @@ export class EntityFormService {
       watcher: new Map(),
     };
 
-    await this.defaultValueService.handleEntityForm(entityForm, entity);
+    if (withDefaultValues) {
+      await this.defaultValueService.handleEntityForm(entityForm, entity);
+    }
 
     return entityForm;
   }

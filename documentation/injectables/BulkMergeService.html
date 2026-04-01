@@ -205,8 +205,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="32"
-                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:32</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -270,15 +270,15 @@ Returns true if merge was executed, false otherwise.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>executeMerge(mergedEntity: E, entitiesToMerge: E[])</code>
+                    <code>executeMerge(mergedEntity: E, entitiesToMerge: E[], entityAccounts?: <a href="../interfaces/UserAccount.html" target="_self">(UserAccount | null)[]</a>, deleteSecondaryAccount: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, accountUpdate?: literal type | null)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="80"
-                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:80</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -295,6 +295,8 @@ Returns true if merge was executed, false otherwise.</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Merges the selected entities into a single entity.
 deletes the other entities.</p>
+<p>  that were actually found will be deleted during merge.
+  If false, the account remains and may become orphaned.</p>
 </div>
 
                             <div class="io-description">
@@ -306,6 +308,7 @@ deletes the other entities.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Default value</td>
                                                 <td>Description</td>
                                         </tr>
                                     </thead>
@@ -320,6 +323,8 @@ deletes the other entities.</p>
                                                     No
                                             </td>
 
+                                            <td>
+                                            </td>
 
                                             <td>
                                                     <p>The merged entity.</p>
@@ -336,8 +341,67 @@ deletes the other entities.</p>
                                                     No
                                             </td>
 
+                                            <td>
+                                            </td>
 
                                             <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entityAccounts</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserAccount.html" target="_self" >(UserAccount | null)[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>Accounts explicitly fetched for each entity; only accounts
+that were actually found will be deleted during merge.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>deleteSecondaryAccount</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>true</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Whether account of the discarded record should be deleted.
+If false, the account remains and may become orphaned.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>accountUpdate</td>
+                                            <td>
+                                                        <code>literal type | null</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>Optional update payload for the surviving account (e.g. role changes).</p>
+
                                             </td>
                                         </tr>
                                     </tbody>
@@ -376,8 +440,8 @@ deletes the other entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:53</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="56"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -392,7 +456,7 @@ deletes the other entities.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Opens the merge popup with the selected entities details.</p>
+                        <div class="io-description"><p>Opens the merge dialog for the selected entities.</p>
 </div>
 
                             <div class="io-description">
@@ -464,7 +528,7 @@ deletes the other entities.</p>
 import { EntityMapperService } from &quot;app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { Entity, EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
 import { MatDialog } from &quot;@angular/material/dialog&quot;;
-import { lastValueFrom } from &quot;rxjs&quot;;
+import { catchError, lastValueFrom, of } from &quot;rxjs&quot;;
 import { BulkMergeRecordsComponent } from &quot;app/features/de-duplication/bulk-merge-records/bulk-merge-records.component&quot;;
 import { AlertService } from &quot;app/core/alerts/alert.service&quot;;
 import { UnsavedChangesService } from &quot;app/core/entity-details/form/unsaved-changes.service&quot;;
@@ -475,6 +539,8 @@ import { EntityRelationsService } from &quot;app/core/entity/entity-mapper/entit
 import { FormFieldConfig } from &quot;app/core/common-components/entity-form/FormConfig&quot;;
 import { AttendanceDatatype } from &quot;../attendance/model/attendance.datatype&quot;;
 import { EventAttendanceMapDatatype } from &quot;../attendance/deprecated/event-attendance-map.datatype&quot;;
+import { UserAdminService } from &quot;app/core/user/user-admin-service/user-admin.service&quot;;
+import { UserAccount } from &quot;app/core/user/user-admin-service/user-account&quot;;
 
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -486,6 +552,7 @@ export class BulkMergeService {
   private readonly alert &#x3D; inject(AlertService);
   private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly userAdminService &#x3D; inject(UserAdminService);
 
   /**
    * Validates selection and opens the merge dialog for the given entities.
@@ -507,7 +574,7 @@ export class BulkMergeService {
   }
 
   /**
-   * Opens the merge popup with the selected entities details.
+   * Opens the merge dialog for the selected entities.
    *
    * @param entitiesToMerge The entities to merge.
    * @param entityType The type of the entities.
@@ -518,15 +585,32 @@ export class BulkMergeService {
   ): Promise&lt;boolean&gt; {
     const dialogRef &#x3D; this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: &quot;90vh&quot;,
-      data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
+      data: {
+        entityConstructor: entityType,
+        entitiesToMerge: entitiesToMerge,
+      },
     });
-    const mergedEntity: E | undefined &#x3D; await lastValueFrom(
-      dialogRef.afterClosed(),
+    const dialogResult:
+      | {
+          mergedEntity: E;
+          accountUpdate: {
+            accountId: string;
+            update: Partial&lt;UserAccount&gt;;
+          } | null;
+          deleteSecondaryAccount: boolean;
+          entityAccounts: (UserAccount | null)[];
+        }
+      | undefined &#x3D; await lastValueFrom(dialogRef.afterClosed());
+
+    if (!dialogResult) return false;
+
+    await this.executeMerge(
+      dialogResult.mergedEntity,
+      entitiesToMerge,
+      dialogResult.entityAccounts,
+      dialogResult.deleteSecondaryAccount,
+      dialogResult.accountUpdate,
     );
-
-    if (!mergedEntity) return false;
-
-    await this.executeMerge(mergedEntity, entitiesToMerge);
     this.unsavedChangesService.pending &#x3D; false;
     this.alert.addInfo($localize&#x60;Records merged successfully.&#x60;);
     return true;
@@ -538,20 +622,56 @@ export class BulkMergeService {
    *
    * @param mergedEntity The merged entity.
    * @param entitiesToMerge
+   * @param entityAccounts Accounts explicitly fetched for each entity; only accounts
+   *   that were actually found will be deleted during merge.
+   * @param deleteSecondaryAccount Whether account of the discarded record should be deleted.
+   *   If false, the account remains and may become orphaned.
+   * @param accountUpdate Optional update payload for the surviving account (e.g. role changes).
    */
   async executeMerge&lt;E extends Entity&gt;(
     mergedEntity: E,
     entitiesToMerge: E[],
+    entityAccounts?: (UserAccount | null)[],
+    deleteSecondaryAccount: boolean &#x3D; true,
+    accountUpdate?: { accountId: string; update: Partial&lt;UserAccount&gt; } | null,
   ): Promise&lt;void&gt; {
+    const accountByEntityId &#x3D; new Map&lt;string, UserAccount | null&gt;(
+      entitiesToMerge.map((e, i) &#x3D;&gt; [e.getId(), entityAccounts?.[i] ?? null]),
+    );
+
     await this.entityMapper.save(mergedEntity);
 
     // Process all entities to be deleted
-    for (let e of entitiesToMerge) {
+    for (const e of entitiesToMerge) {
       if (e.getId() &#x3D;&#x3D;&#x3D; mergedEntity.getId()) continue;
+
+      // Delete linked user account only if requested and one was explicitly found
+      if (deleteSecondaryAccount &amp;&amp; accountByEntityId.get(e.getId())) {
+        await lastValueFrom(
+          this.userAdminService
+            .deleteUser(e.getId())
+            .pipe(catchError(() &#x3D;&gt; of({ userDeleted: false }))),
+        );
+      }
 
       await this.updateRelatedRefId(e, mergedEntity);
 
       await this.entityMapper.remove(e);
+    }
+
+    if (accountUpdate) {
+      const result &#x3D; await lastValueFrom(
+        this.userAdminService
+          .updateUser(accountUpdate.accountId, accountUpdate.update)
+          .pipe(catchError(() &#x3D;&gt; of({ userUpdated: false }))),
+      );
+      if (!result.userUpdated) {
+        await this.confirmationDialog.getConfirmation(
+          $localize&#x60;:Account update error title:Account update failed&#x60;,
+          $localize&#x60;:Account update error:The merge completed but the user account roles could not be updated. Please update them manually or contact support.&#x60;,
+          OkButton,
+        );
+      }
     }
   }
 
