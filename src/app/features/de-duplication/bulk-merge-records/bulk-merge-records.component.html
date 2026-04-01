@@ -7,6 +7,12 @@
         <div class="header" i18n>Record A</div>
         <div class="header" i18n>Record B</div>
         <div class="header" i18n>Merge Preview</div>
+        @if (entityConstructor.enableUserAccounts) {
+          <app-merge-account-section
+            [entitiesToMerge]="entitiesToMerge"
+            [entityConstructor]="entityConstructor"
+          />
+        }
         @for (field of fieldsToMerge; track field.id) {
           <div class="label-cell">
             <strong>{{ field.label }}</strong>

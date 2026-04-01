@@ -30,9 +30,7 @@
       </div>
     } @else {
       <!-- Actions editing existing account -->
-      <div
-        class="padding-bottom-small flex-row gap-small align-self-end flex-wrap padding-top-small"
-      >
+      <div class="user-account-actions padding-bottom-small padding-top-small">
         @if (formDisabled()) {
           <button
             mat-raised-button
@@ -46,22 +44,20 @@
           @if (userAccount()?.enabled) {
             <button
               mat-stroked-button
-              color="warn"
+              class="action-button"
               (click)="enableAccount(false)"
-              matTooltip="User will not be able to login again, no information will be lost"
-              i18n="button to update disable a user"
+              i18n="button to disable a user account"
             >
-              Deactivate user
+              Deactivate account
             </button>
           } @else {
             <button
-              mat-raised-button
-              color="accent"
+              mat-stroked-button
+              class="action-button"
               (click)="enableAccount(true)"
-              matTooltip="User can login again with the previously used credentials"
-              i18n="button to enable a user"
+              i18n="button to enable a user account"
             >
-              Activate user
+              Activate account
             </button>
           }
 
@@ -83,6 +79,26 @@
           >
             Cancel
           </button>
+          <!-- Three-dots overflow menu for secondary/destructive actions -->
+          <button
+            mat-icon-button
+            color="warn"
+            class="more-actions-button"
+            [matMenuTriggerFor]="userAccountActionsMenu"
+            matTooltip="More actions"
+            i18n-matTooltip
+          >
+            <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+          </button>
+          <mat-menu #userAccountActionsMenu>
+            <button
+              mat-menu-item
+              (click)="deleteAccount()"
+              i18n="button to delete user account"
+            >
+              Delete account
+            </button>
+          </mat-menu>
         }
       </div>
     }
