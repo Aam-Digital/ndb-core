@@ -1,0 +1,56 @@
+.account-panel-wrapper {
+  grid-column: 1 / -1;
+}
+
+mat-error.account-load-error {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 1rem;
+  row-gap: 0.5rem;
+  align-items: start;
+}
+
+.label-cell {
+  padding: 0.5rem 0;
+}
+
+mat-radio-group.account-select-radio-group {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.account-select-cell {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+}
+
+.preview-cell {
+  min-width: 0;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.account-preview {
+  font-weight: 500;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.preview-field-cell {
+  align-items: stretch;
+}
+
+.aligned-text {
+  padding-left: 2.85rem;
+}

@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
-import { lastValueFrom } from "rxjs";
+import { catchError, lastValueFrom, of } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
@@ -13,6 +13,8 @@ import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-rel
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { AttendanceDatatype } from "../attendance/model/attendance.datatype";
 import { EventAttendanceMapDatatype } from "../attendance/deprecated/event-attendance-map.datatype";
+import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
+import { UserAccount } from "app/core/user/user-admin-service/user-account";
 
 @Injectable({
   providedIn: "root",
@@ -24,6 +26,7 @@ export class BulkMergeService {
   private readonly alert = inject(AlertService);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly userAdminService = inject(UserAdminService);
 
   /**
    * Validates selection and opens the merge dialog for the given entities.
@@ -45,7 +48,7 @@ export class BulkMergeService {
   }
 
   /**
-   * Opens the merge popup with the selected entities details.
+   * Opens the merge dialog for the selected entities.
    *
    * @param entitiesToMerge The entities to merge.
    * @param entityType The type of the entities.
@@ -56,15 +59,32 @@ export class BulkMergeService {
   ): Promise<boolean> {
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
-      data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
+      data: {
+        entityConstructor: entityType,
+        entitiesToMerge: entitiesToMerge,
+      },
     });
-    const mergedEntity: E | undefined = await lastValueFrom(
-      dialogRef.afterClosed(),
+    const dialogResult:
+      | {
+          mergedEntity: E;
+          accountUpdate: {
+            accountId: string;
+            update: Partial<UserAccount>;
+          } | null;
+          deleteSecondaryAccount: boolean;
+          entityAccounts: (UserAccount | null)[];
+        }
+      | undefined = await lastValueFrom(dialogRef.afterClosed());
+
+    if (!dialogResult) return false;
+
+    await this.executeMerge(
+      dialogResult.mergedEntity,
+      entitiesToMerge,
+      dialogResult.entityAccounts,
+      dialogResult.deleteSecondaryAccount,
+      dialogResult.accountUpdate,
     );
-
-    if (!mergedEntity) return false;
-
-    await this.executeMerge(mergedEntity, entitiesToMerge);
     this.unsavedChangesService.pending = false;
     this.alert.addInfo($localize`Records merged successfully.`);
     return true;
@@ -76,20 +96,56 @@ export class BulkMergeService {
    *
    * @param mergedEntity The merged entity.
    * @param entitiesToMerge
+   * @param entityAccounts Accounts explicitly fetched for each entity; only accounts
+   *   that were actually found will be deleted during merge.
+   * @param deleteSecondaryAccount Whether account of the discarded record should be deleted.
+   *   If false, the account remains and may become orphaned.
+   * @param accountUpdate Optional update payload for the surviving account (e.g. role changes).
    */
   async executeMerge<E extends Entity>(
     mergedEntity: E,
     entitiesToMerge: E[],
+    entityAccounts?: (UserAccount | null)[],
+    deleteSecondaryAccount: boolean = true,
+    accountUpdate?: { accountId: string; update: Partial<UserAccount> } | null,
   ): Promise<void> {
+    const accountByEntityId = new Map<string, UserAccount | null>(
+      entitiesToMerge.map((e, i) => [e.getId(), entityAccounts?.[i] ?? null]),
+    );
+
     await this.entityMapper.save(mergedEntity);
 
     // Process all entities to be deleted
-    for (let e of entitiesToMerge) {
+    for (const e of entitiesToMerge) {
       if (e.getId() === mergedEntity.getId()) continue;
+
+      // Delete linked user account only if requested and one was explicitly found
+      if (deleteSecondaryAccount && accountByEntityId.get(e.getId())) {
+        await lastValueFrom(
+          this.userAdminService
+            .deleteUser(e.getId())
+            .pipe(catchError(() => of({ userDeleted: false }))),
+        );
+      }
 
       await this.updateRelatedRefId(e, mergedEntity);
 
       await this.entityMapper.remove(e);
+    }
+
+    if (accountUpdate) {
+      const result = await lastValueFrom(
+        this.userAdminService
+          .updateUser(accountUpdate.accountId, accountUpdate.update)
+          .pipe(catchError(() => of({ userUpdated: false }))),
+      );
+      if (!result.userUpdated) {
+        await this.confirmationDialog.getConfirmation(
+          $localize`:Account update error title:Account update failed`,
+          $localize`:Account update error:The merge completed but the user account roles could not be updated. Please update them manually or contact support.`,
+          OkButton,
+        );
+      }
     }
   }
 

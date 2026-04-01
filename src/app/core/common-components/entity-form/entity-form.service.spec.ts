@@ -354,6 +354,26 @@ describe("EntityFormService", () => {
     TestEntity.schema.delete("test");
   });
 
+  it("should allow creating a form without applying default values", async () => {
+    TestEntity.schema.set("test", {
+      defaultValue: {
+        mode: "static",
+        config: { value: 1 },
+      },
+    });
+
+    const form = await service.createEntityForm(
+      [{ id: "test" }],
+      new TestEntity(),
+      false,
+      true,
+      false,
+    );
+    expect(form.formGroup.get("test").value).toEqual(null);
+
+    TestEntity.schema.delete("test");
+  });
+
   it("should not fail if user entity does not exist and current user value is assigned", async () => {
     TestBed.inject(CurrentUserSubject).next(undefined);
 
