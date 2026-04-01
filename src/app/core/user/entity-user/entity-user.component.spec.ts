@@ -10,6 +10,8 @@ import { SyncStateSubject } from "../../session/session-type";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 import type { SessionInfo } from "../../session/auth/session-info";
 import type { Mock } from "vitest";
 
@@ -86,6 +88,8 @@ describe("EntityUserComponent", () => {
         EntityAbility,
       ],
     }).compileComponents();
+
+    TestBed.inject(FaIconLibrary).addIconPacks(fas);
 
     fixture = TestBed.createComponent(EntityUserComponent);
     component = fixture.componentInstance;
