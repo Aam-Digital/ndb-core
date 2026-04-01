@@ -1,6 +1,13 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  viewChild,
+} from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
@@ -10,17 +17,18 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { MatError } from "@angular/material/form-field";
+import { MatError, MatFormFieldModule } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
+import { MergeAccountSectionComponent } from "./merge-account-section/merge-account-section.component";
 
 @Component({
   selector: "app-bulk-merge-records",
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogActions,
     MatDialogContent,
@@ -31,6 +39,8 @@ import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common
     MatDialogClose,
     MergeFieldsComponent,
     WarningNotOptimizedForSmallScreenComponent,
+    MatFormFieldModule,
+    MergeAccountSectionComponent,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -40,6 +50,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     inject<MatDialogRef<BulkMergeRecordsComponent<E>>>(MatDialogRef);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly entityFormService = inject(EntityFormService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  readonly accountSection = viewChild(MergeAccountSectionComponent);
 
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
@@ -58,7 +71,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
-    this.mergedEntity = new this.entityConstructor() as E;
+    // Use the primary entity's values as the base so form validators (e.g. uniqueness)
+    // treat existing values as the "default" and don't incorrectly flag them as duplicates.
+    this.mergedEntity = this.entitiesToMerge[0].copy() as E;
   }
 
   async ngOnInit(): Promise<void> {
@@ -66,7 +81,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeForm = await this.entityFormService.createEntityForm(
       this.fieldsToMerge,
       this.mergedEntity,
+      false,
+      true,
+      false,
     );
+    this.cdr.detectChanges();
   }
 
   private initFieldsToMerge(): void {
@@ -112,6 +131,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
 
+    const accountDecision =
+      await this.accountSection()?.validateAndGetDecision();
+    if (accountDecision === false) {
+      return false;
+    }
+
     if (this.hasDiscardedFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title:Warning! Some file attachments will be lost`,
@@ -122,21 +147,24 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       }
     }
 
-    let confirmationMessage = $localize`:Merge confirmation dialog:Merging of two records will discard the data that is not selected to be merged. This action cannot be undone. Once the two records are merged, there will be only one record left in the system.\nAre you sure you want to continue?`;
     if (
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title:Are you sure you want to merge this?`,
-        confirmationMessage,
+        $localize`:Merge confirmation dialog:Merging of two records will discard the data that is not selected to be merged. This action cannot be undone. Once the two records are merged, there will be only one record left in the system.\nAre you sure you want to continue?`,
       ))
     ) {
       return false;
     }
 
-    this.dialogRef.close(
-      Object.assign(
-        this.entitiesToMerge[0].copy(),
+    const primaryIndex = this.accountSection()?.primaryIndex() ?? 0;
+    this.dialogRef.close({
+      mergedEntity: Object.assign(
+        this.entitiesToMerge[primaryIndex].copy(),
         this.mergeForm.formGroup.value,
       ),
-    );
+      entityAccounts: this.accountSection()?.entityAccounts() ?? [],
+      accountUpdate: accountDecision?.accountUpdate ?? null,
+      deleteSecondaryAccount: accountDecision?.deleteSecondaryAccount ?? true,
+    });
   }
 }
