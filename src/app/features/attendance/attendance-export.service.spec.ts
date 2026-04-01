@@ -162,7 +162,7 @@ describe("AttendanceExportService", () => {
       expect(row2["Subject"]).toBe("Team Meeting");
     });
 
-    it("should handle empty attendance list", async () => {
+    it("should export headers and entity values when attendance list is empty", async () => {
       const entity = new AttendanceTestEntity();
       entity.subject = "Empty Event";
       entity.participants = [];
@@ -174,7 +174,9 @@ describe("AttendanceExportService", () => {
       );
 
       const [rows] = mockDownloadService.triggerDownload.mock.calls[0];
-      expect(rows).toHaveLength(0);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]["Subject"]).toBe("Empty Event");
+      expect(rows[0]).toHaveProperty("participant");
     });
 
     it("should use participant ID as fallback when entity cannot be loaded", async () => {

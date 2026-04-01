@@ -139,7 +139,6 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     expect(event.attendanceItems).toHaveLength(2);
     expect(event.attendanceItems.map((a) => a.participant)).toEqual(
       expect.arrayContaining([
-        ,
         directlyAddedChild.getId(),
         linkedGroupChild.getId(),
       ]),
