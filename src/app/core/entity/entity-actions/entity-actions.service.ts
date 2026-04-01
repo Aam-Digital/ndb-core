@@ -5,7 +5,10 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { EntityDeleteService } from "./entity-delete.service";
+import {
+  EntityDeleteService,
+  EntityDeletionAbortedError,
+} from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { CascadingActionResult } from "./cascading-entity-action";
@@ -159,7 +162,7 @@ export class EntityActionsService {
         $localize`:Delete confirmation dialog:
         This will remove the data permanently as if it never existed. This cannot be undone. Statistical reports (also for past time periods) will change and not include this record anymore.\n
         If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
-        Are you sure you want to delete ${textForDeleteEntity}?`,
+        Do you want to continue?`,
       ))
     ) {
       return false;
@@ -170,8 +173,16 @@ export class EntityActionsService {
     );
     let result = new CascadingActionResult();
 
-    for (let entity of entities) {
-      result.mergeResults(await this.entityDelete.deleteEntity(entity, true));
+    try {
+      for (let entity of entities) {
+        result.mergeResults(await this.entityDelete.deleteEntity(entity));
+      }
+    } catch (error: unknown) {
+      progressDialogRef.close();
+      if (error instanceof EntityDeletionAbortedError) {
+        return false;
+      }
+      throw error;
     }
 
     progressDialogRef.close();

@@ -22,6 +22,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -34,14 +36,16 @@ import { DialogCloseComponent } from "../../common-components/dialog-close/dialo
 import { AlertService } from "../../alerts/alert.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Angulartics2Module } from "angulartics2";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
-import { lastValueFrom, of } from "rxjs";
+import { lastValueFrom, of, firstValueFrom } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { catchError, map } from "rxjs/operators";
+import { UserAccountActionGuardService } from "../user-admin-service/user-account-action-guard.service";
 
 /**
  * Options as input to the UserDetailsComponent when it is opened in a dialog.
@@ -74,6 +78,8 @@ export interface UserDetailsAction {
     MatSelectModule,
     MatTooltipModule,
     MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
     MatDialogModule,
     DialogCloseComponent,
     Angulartics2Module,
@@ -97,6 +103,8 @@ export class UserDetailsComponent {
     optional: true,
   });
   protected currentUser = inject(CurrentUserSubject, { optional: true });
+  private readonly accountActionGuard = inject(UserAccountActionGuardService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   userAccount = model<UserAccount | null>(this._dialogData?.userAccount);
   isInDialog = input<boolean>(!!this._dialogData || false);
@@ -365,7 +373,61 @@ export class UserDetailsComponent {
     );
   }
 
+  async deleteAccount() {
+    const currentAccount = this.userAccount();
+    if (!currentAccount?.userEntityId) {
+      return;
+    }
+
+    if (
+      this.accountActionGuard.isOwnAccount({
+        userAccountId: currentAccount.id,
+        userEntityId: currentAccount.userEntityId,
+      })
+    ) {
+      await this.accountActionGuard.showSelfAccountActionBlockedWarning(
+        "delete",
+      );
+      return;
+    }
+
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      $localize`:delete account confirmation title:Delete user account?`,
+      $localize`:delete account confirmation dialog:Are you sure you want to permanently delete this user account? This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    try {
+      await firstValueFrom(
+        this.userAdminService.deleteUser(currentAccount.userEntityId),
+      );
+      this.alertService.addInfo(
+        $localize`:delete account success message:User account has been deleted.`,
+      );
+      this.userAccount.set(null);
+    } catch (err) {
+      this.alertService.addDanger(
+        err?.["error"]?.message ||
+          err?.["message"] ||
+          $localize`:Error message:Failed to delete user account`,
+      );
+    }
+  }
+
   async enableAccount(enabled: boolean) {
+    if (
+      !enabled &&
+      this.accountActionGuard.isOwnAccount({
+        userAccountId: this.userAccount()?.id,
+        userEntityId: this.userAccount()?.userEntityId,
+      })
+    ) {
+      await this.accountActionGuard.showSelfAccountActionBlockedWarning(
+        "deactivate",
+      );
+      return;
+    }
+
     const message = enabled
       ? $localize`:Snackbar message:Account has been activated, user can login again.`
       : $localize`:Snackbar message:Account has been disabled, user will not be able to login anymore.`;

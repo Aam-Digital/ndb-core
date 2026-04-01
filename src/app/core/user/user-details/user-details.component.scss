@@ -6,6 +6,18 @@
   gap: 1rem;
 }
 
+.user-account-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.more-actions-button {
+  align-self: center;
+}
+
 .field-row {
   display: flex;
   flex-direction: column;
