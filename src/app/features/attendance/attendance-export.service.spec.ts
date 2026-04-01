@@ -32,6 +32,9 @@ class AttendanceTestEntity extends Entity {
 
   @DatabaseField({ label: "Linked Entity", dataType: "entity" })
   linkedEntity: string;
+
+  @DatabaseField({ label: "status" })
+  recordStatus: string;
 }
 
 @DatabaseEntity("NoAttendanceEntity")
@@ -242,6 +245,42 @@ describe("AttendanceExportService", () => {
       const [rows] = mockDownloadService.triggerDownload.mock.calls[0];
       const keys = Object.keys(rows[0]);
       expect(keys).not.toContain("Participants");
+    });
+
+    it("should keep both values when attendance and entity columns share a label", async () => {
+      const entity = new AttendanceTestEntity();
+      entity.recordStatus = "Approved";
+      entity.participants = [
+        new AttendanceItem(
+          {
+            id: "PRESENT",
+            label: "Present",
+            shortName: "P",
+            countAs: "PRESENT" as any,
+          },
+          "",
+          "Child:child-1",
+        ),
+      ];
+
+      const mockChild = new Entity("Child:child-1");
+      mockChild.toString = () => "Alice";
+      mockEntityMapper.load.mockResolvedValue(mockChild);
+
+      await service.exportAttendanceList(
+        entity,
+        "participants",
+        "Participants",
+      );
+
+      const [rows] = mockDownloadService.triggerDownload.mock.calls[0];
+      const statusColumns = Object.entries(rows[0]).filter(([key]) =>
+        key.startsWith("status"),
+      );
+
+      expect(statusColumns).toHaveLength(2);
+      expect(statusColumns.map(([, value]) => value)).toContain("Present");
+      expect(statusColumns.map(([, value]) => value)).toContain("Approved");
     });
   });
 });

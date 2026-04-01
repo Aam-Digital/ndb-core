@@ -46,7 +46,6 @@ export class AttendanceExportService {
   ): Promise<void> {
     const items: AttendanceItem[] = entity[fieldId] ?? [];
     const entityColumns = this.buildEntityColumns(entity, fieldId);
-    const entityRow = await this.buildEntityRow(entity, entityColumns);
     const attendanceSchema = this.getEffectiveAttendanceSchema(
       entity.getConstructor().schema.get(fieldId),
     );
@@ -55,28 +54,51 @@ export class AttendanceExportService {
       this.entitySchemaService,
       true,
     );
+    const entityColumnResolvers = buildExportColumnResolvers(
+      entityColumns,
+      this.entitySchemaService,
+    );
 
-    const rows: Record<string, any>[] = [];
+    const columnLabels = new Map<string, string>();
+    const usedLabels = new Set<string>();
+    const entityRow = await this.buildEntityRow(
+      entity,
+      entityColumns,
+      entityColumnResolvers,
+      (resolver) => this.getEntityInternalKey(resolver),
+      (internalKey, resolver) =>
+        this.registerColumnLabel(
+          columnLabels,
+          usedLabels,
+          internalKey,
+          resolver.column.label,
+          "entity",
+        ),
+    );
+
+    const internalRows: Record<string, any>[] = [];
     for (const item of items) {
-      const row: Record<string, any> = {};
-
-      // Attendance item embedded fields from schema
-      for (const [key, field] of attendanceSchema.entries()) {
-        const label = field.label || key;
-        row[label] = getReadableValue(item[key]);
-      }
-
+      const row: Record<string, any> = { ...entityRow };
       await this.resolveExportColumns(
         row,
         item as Record<string, any>,
         attendanceColumnResolvers,
+        (resolver) => this.getAttendanceInternalKey(fieldId, resolver),
+        (internalKey, resolver) =>
+          this.registerColumnLabel(
+            columnLabels,
+            usedLabels,
+            internalKey,
+            resolver.column.label,
+            fieldLabel,
+          ),
       );
-
-      // event entity fields (duplicated for each row)
-      Object.assign(row, entityRow);
-
-      rows.push(row);
+      internalRows.push(row);
     }
+
+    const rows = internalRows.map((row) =>
+      this.mapInternalRowToDisplayRow(row, columnLabels),
+    );
 
     const filename = this.buildFilename(entity, fieldLabel);
     await this.downloadService.triggerDownload(rows, "csv", filename);
@@ -116,18 +138,26 @@ export class AttendanceExportService {
   private async buildEntityRow(
     entity: Entity,
     columns: Map<string, EntitySchemaField>,
+    columnResolvers: ExportColumnResolver[],
+    getInternalKey: (resolver: ExportColumnResolver) => string,
+    registerLabel: (
+      internalKey: string,
+      resolver: ExportColumnResolver,
+    ) => void,
   ): Promise<Record<string, any>> {
     const raw: Record<string, any> = {};
     for (const [id, field] of columns.entries()) {
       raw[id] = entity[id];
     }
-    const columnResolvers = buildExportColumnResolvers(
-      columns,
-      this.entitySchemaService,
-    );
 
     const row: Record<string, any> = {};
-    await this.resolveExportColumns(row, raw, columnResolvers);
+    await this.resolveExportColumns(
+      row,
+      raw,
+      columnResolvers,
+      getInternalKey,
+      registerLabel,
+    );
 
     return row;
   }
@@ -136,15 +166,72 @@ export class AttendanceExportService {
     row: Record<string, any>,
     source: Record<string, any>,
     columnResolvers: ExportColumnResolver[],
+    getInternalKey: (resolver: ExportColumnResolver) => string,
+    registerLabel: (
+      internalKey: string,
+      resolver: ExportColumnResolver,
+    ) => void,
   ): Promise<void> {
     for (const resolver of columnResolvers) {
+      const internalKey = getInternalKey(resolver);
+      registerLabel(internalKey, resolver);
+
       const resolvedValue = await resolver.column.resolveValue(
         source[resolver.sourceFieldId],
         resolver.schemaField,
       );
 
-      row[resolver.column.label] = this.toCsvValue(resolvedValue);
+      row[internalKey] = this.toCsvValue(resolvedValue);
     }
+  }
+
+  private getAttendanceInternalKey(
+    attendanceFieldId: string,
+    resolver: ExportColumnResolver,
+  ): string {
+    return `att.${attendanceFieldId}.${resolver.sourceFieldId}${resolver.column.keySuffix}`;
+  }
+
+  private getEntityInternalKey(resolver: ExportColumnResolver): string {
+    return `entity.${resolver.sourceFieldId}${resolver.column.keySuffix}`;
+  }
+
+  private registerColumnLabel(
+    columnLabels: Map<string, string>,
+    usedLabels: Set<string>,
+    internalKey: string,
+    preferredLabel: string,
+    fallbackContext: string,
+  ): void {
+    if (columnLabels.has(internalKey)) {
+      return;
+    }
+
+    let label = preferredLabel;
+    if (usedLabels.has(label)) {
+      label = `${preferredLabel} (${fallbackContext})`;
+      let suffix = 2;
+      while (usedLabels.has(label)) {
+        label = `${preferredLabel} (${fallbackContext} ${suffix})`;
+        suffix += 1;
+      }
+    }
+
+    columnLabels.set(internalKey, label);
+    usedLabels.add(label);
+  }
+
+  private mapInternalRowToDisplayRow(
+    row: Record<string, any>,
+    columnLabels: Map<string, string>,
+  ): Record<string, any> {
+    const displayRow: Record<string, any> = {};
+
+    for (const [internalKey, label] of columnLabels.entries()) {
+      displayRow[label] = row[internalKey];
+    }
+
+    return displayRow;
   }
 
   private toCsvValue(value: any): any {

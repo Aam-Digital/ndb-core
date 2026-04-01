@@ -64,7 +64,7 @@ export class EntityDatatype extends StringDatatype {
         keySuffix: "_readable",
         label: schemaField.label + " (readable)",
         resolveValue: async (value: string | string[]) =>
-          this.loadRelatedEntitiesToString(value),
+          this.loadRelatedEntitiesToString(value, schemaField),
       },
     ];
   }
@@ -172,6 +172,7 @@ export class EntityDatatype extends StringDatatype {
 
   private async loadRelatedEntitiesToString(
     value: string | string[],
+    schemaField: EntitySchemaField,
   ): Promise<string[]> {
     if (!value) return [];
 
@@ -179,13 +180,13 @@ export class EntityDatatype extends StringDatatype {
 
     const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
     for (const relatedEntityId of relatedEntitiesIds) {
-      relatedEntitiesToStrings.push(
-        (
-          await this.entityMapper
-            .load(Entity.extractTypeFromId(relatedEntityId), relatedEntityId)
-            .catch(() => "<not_found>")
-        ).toString(),
-      );
+      const entityType =
+        Entity.extractTypeFromId(relatedEntityId) || schemaField.additional;
+      const relatedEntity = await this.entityMapper
+        .load(entityType, relatedEntityId)
+        .catch(() => undefined);
+
+      relatedEntitiesToStrings.push(relatedEntity?.toString() ?? "<not_found>");
     }
 
     return relatedEntitiesToStrings;
