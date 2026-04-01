@@ -76,6 +76,17 @@ export class AttendanceExportService {
         ),
     );
 
+    // Pre-register attendance columns so CSV headers are present even when there are no participants.
+    for (const resolver of attendanceColumnResolvers) {
+      this.registerColumnLabel(
+        columnLabels,
+        usedLabels,
+        this.getAttendanceInternalKey(fieldId, resolver),
+        resolver.column.label,
+        fieldLabel,
+      );
+    }
+
     const internalRows: Record<string, any>[] = [];
     for (const item of items) {
       const row: Record<string, any> = { ...entityRow };
@@ -96,7 +107,8 @@ export class AttendanceExportService {
       internalRows.push(row);
     }
 
-    const rows = internalRows.map((row) =>
+    const rowsToMap = internalRows.length > 0 ? internalRows : [entityRow];
+    const rows = rowsToMap.map((row) =>
       this.mapInternalRowToDisplayRow(row, columnLabels),
     );
 
