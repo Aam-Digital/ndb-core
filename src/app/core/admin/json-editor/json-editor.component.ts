@@ -87,6 +87,10 @@ export class JsonEditorComponent
    * @param updatedContent The updated content from the editor.
    */
   private handleEditorChange(updatedContent: Content): void {
+    // Re-evaluate whether text mode should be disabled based on current content
+    this.textModeDisabledForSession =
+      this.shouldDisableTextModeForContent(updatedContent);
+
     if ("json" in updatedContent) {
       this.handleJSONChange(updatedContent.json as object);
       return;
@@ -98,10 +102,17 @@ export class JsonEditorComponent
   }
 
   /**
-   * Prevents switching to text mode when the session was marked as high-risk
-   * for long-string edits.
+   * Prevents switching to text mode when the current content contains long strings
+   * that could cause performance issues in text mode.
    */
   private handleEditorModeChange(mode: Mode): void {
+    // Re-evaluate based on current editor content before allowing mode switch
+    const currentContent = this.editor?.get();
+    if (currentContent) {
+      this.textModeDisabledForSession =
+        this.shouldDisableTextModeForContent(currentContent);
+    }
+
     if (this.textModeDisabledForSession && mode === Mode.text) {
       this.editor?.updateProps({ mode: Mode.tree });
     }
