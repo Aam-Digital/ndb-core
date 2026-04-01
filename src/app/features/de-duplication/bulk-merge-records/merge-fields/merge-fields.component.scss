@@ -1,0 +1,20 @@
+:host {
+  min-width: 0;
+}
+
+:host ::ng-deep .mdc-form-field,
+:host ::ng-deep .mdc-label,
+:host ::ng-deep app-entity-field-view {
+  min-width: 0;
+}
+
+:host ::ng-deep .bubble-list {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  max-width: 100%;
+}
+
+:host ::ng-deep .colored-bubble {
+  margin-right: 0;
+  max-width: 100%;
+}
