@@ -1318,5 +1318,22 @@
   "7128105921090370602": "Button deaktivieren",
   "8913412788629110330": "Einige Felder sind ungültig. Bitte überprüfen Sie das Formular und senden Sie es erneut ab: ",
   "8162581034435576407": "Dateianhang \"{$PH}\" nicht gefunden.",
-  "2605754826147233315": "Der Download des Dateianhangs ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+  "2605754826147233315": "Der Download des Dateianhangs ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+  "6990844038610476385": "We couldn't load the configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.",
+  "8138045438877123702": "We are observing connection issues while syncing your data. Sync continues and retries automatically but may take longer than usual.",
+  "7466657532342837144": "Hide site name in toolbar",
+  "4640766818637146419": "Linked User Accounts",
+  "741572058435307558": " Login account fields (different from entity profile fields) ",
+  "7879428081004031126": " User account information could not be loaded. You may be offline or lack account_manager permissions. This merge will proceed without changes to user accounts. ",
+  "5334487502285500177": "Account To Keep",
+  "1589281351346216705": "Account Roles",
+  "5020145734761642513": "Account Status",
+  "5769292297914455214": "Disabled",
+  "535100568153864321": "Warning! User account status unknown",
+  "2166859883239067541": "User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?",
+  "1108642631575928409": "Warning! User account(s) found",
+  "431261701859518956": "One of the records has a linked user account. This account will remain linked as a login for the merged record.\nAre you sure you want to continue?",
+  "439101438524613926": "Both records have a linked user account. You have selected the account for {$selectedEmail} to remain linked to the merged record.\nDo you want to delete the second account {$secondaryEmail} (which will not have a linked record after this merge)?",
+  "7960910103983032196": "Account update failed",
+  "3639938801845237048": "The merge completed but the user account roles could not be updated. Please update them manually or contact support."
 }
