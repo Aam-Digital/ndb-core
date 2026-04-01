@@ -49,14 +49,18 @@
             </div>
           </mat-radio-group>
           <div class="preview-cell account-preview">
-            {{ selectedAccountEmail() }}
+            {{
+              selectedAccountIndex() === null
+                ? "-"
+                : (entityAccounts()[selectedAccountIndex() ?? 0]?.email ?? "-")
+            }}
           </div>
 
           <div class="label-cell">
             <strong i18n>Account Roles</strong>
           </div>
           <div class="account-select-cell">
-            @if (hasAccountRoles(0)) {
+            @if (getAccountRoles(0).length > 0) {
               <mat-checkbox
                 [checked]="isAccountRolesSelected(0)"
                 (change)="toggleAccountRoles(0, $event.checked)"
@@ -68,7 +72,7 @@
             }
           </div>
           <div class="account-select-cell">
-            @if (hasAccountRoles(1)) {
+            @if (getAccountRoles(1).length > 0) {
               <mat-checkbox
                 [checked]="isAccountRolesSelected(1)"
                 (change)="toggleAccountRoles(1, $event.checked)"
@@ -83,7 +87,7 @@
             <mat-form-field class="full-width">
               <mat-select [formControl]="selectedRolesControl()" multiple>
                 <mat-select-trigger>
-                  @for (role of selectedRolesControl()?.value; track role.id) {
+                  @for (role of selectedRolesControl().value; track role.id) {
                     <span>{{ role.name }} </span>
                   }
                 </mat-select-trigger>

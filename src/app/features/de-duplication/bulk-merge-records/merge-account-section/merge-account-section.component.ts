@@ -60,7 +60,9 @@ export class MergeAccountSectionComponent implements OnInit {
   readonly primaryIndex = signal<number>(0);
   readonly selectedAccountIndex = signal<number | null>(null);
   readonly availableRoles = signal<Role[]>([]);
-  readonly selectedRolesControl = signal<FormControl<Role[]> | null>(null);
+  readonly selectedRolesControl = signal<FormControl<Role[]>>(
+    new FormControl<Role[]>([], { nonNullable: true }),
+  );
   readonly deleteSecondaryAccount = signal<boolean>(true);
 
   readonly hasAnyUserAccount = computed(() =>
@@ -159,12 +161,6 @@ export class MergeAccountSectionComponent implements OnInit {
   private resetSelectedRolesForIndex(index: number): void {
     const roles = this.getAccountRoles(index);
     const control = this.selectedRolesControl();
-
-    if (!control) {
-      this.selectedRolesControl.set(new FormControl<Role[]>(roles));
-      return;
-    }
-
     control.setValue(roles);
     control.markAsPristine();
   }
@@ -185,18 +181,8 @@ export class MergeAccountSectionComponent implements OnInit {
     return this.formatAccountStatus(this.entityAccounts()[selectedIndex]);
   }
 
-  selectedAccountEmail(): string {
-    const selectedIndex = this.selectedAccountIndex();
-    if (selectedIndex == null) return "-";
-    return this.entityAccounts()[selectedIndex]?.email ?? "-";
-  }
-
-  hasAccountRoles(index: number): boolean {
-    return this.getAccountRoles(index).length > 0;
-  }
-
   isAccountRolesSelected(index: number): boolean {
-    const selectedRoles = this.selectedRolesControl()?.value ?? [];
+    const selectedRoles = this.selectedRolesControl().value;
     const selectedRoleIds = new Set(selectedRoles.map((r) => r.id));
     const accountRoles = this.getAccountRoles(index);
 
@@ -205,7 +191,7 @@ export class MergeAccountSectionComponent implements OnInit {
   }
 
   toggleAccountRoles(index: number, checked: boolean): void {
-    const selectedRoles = this.selectedRolesControl()?.value ?? [];
+    const selectedRoles = this.selectedRolesControl().value;
     const accountRoles = this.getAccountRoles(index);
     if (!accountRoles.length) return;
 
@@ -216,11 +202,11 @@ export class MergeAccountSectionComponent implements OnInit {
       accountRoles.forEach((role) => selectedMap.delete(role.id));
     }
 
-    this.selectedRolesControl()?.setValue(Array.from(selectedMap.values()));
-    this.selectedRolesControl()?.markAsDirty();
+    this.selectedRolesControl().setValue(Array.from(selectedMap.values()));
+    this.selectedRolesControl().markAsDirty();
   }
 
-  private getAccountRoles(index: number): Role[] {
+  getAccountRoles(index: number): Role[] {
     return this.uniqueRoles(
       (this.entityAccounts()[index]?.roles ?? []).map(
         (role) =>
@@ -247,7 +233,7 @@ export class MergeAccountSectionComponent implements OnInit {
     if (!selectedAccount?.id) return null;
 
     const control = this.selectedRolesControl();
-    if (!control?.dirty) return null;
+    if (!control.dirty) return null;
 
     const selectedRoles = control.value ?? [];
     const existingRoles = selectedAccount.roles ?? [];

@@ -104,6 +104,12 @@ describe("MergeAccountSectionComponent", () => {
     expect(component.selectedAccountIndex()).toBe(0);
   });
 
+  it("should render account section without throwing when accounts are present before async init completes", () => {
+    component.entityAccounts.set([mockAccount0, mockAccount1]);
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+  });
+
   it("should hide second record radio button when no second account email exists", async () => {
     mockUserAdminService.getUser.mockImplementation((entityId: string) => {
       if (entityId === entity0.getId()) return of(mockAccount0);
