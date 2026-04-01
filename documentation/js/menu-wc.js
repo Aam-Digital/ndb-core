@@ -1672,6 +1672,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/Entity.html" data-type="entity-link" >Entity</a>
                             </li>
                             <li class="link">
+                                <a href="classes/EntityDeletionAbortedError.html" data-type="entity-link" >EntityDeletionAbortedError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/EntityFieldImportContext.html" data-type="entity-link" >EntityFieldImportContext</a>
                             </li>
                             <li class="link">
@@ -2109,6 +2112,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="injectables/UpdateManagerService.html" data-type="entity-link" >UpdateManagerService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/UserAccountActionGuardService.html" data-type="entity-link" >UserAccountActionGuardService</a>
                                 </li>
                             </ul>
                         </li>

@@ -244,6 +244,8 @@ import { MatInputModule } from &quot;@angular/material/input&quot;;
 import { MatSelectModule } from &quot;@angular/material/select&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatMenuModule } from &quot;@angular/material/menu&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -256,14 +258,16 @@ import { DialogCloseComponent } from &quot;../../common-components/dialog-close/
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
 import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
+import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { Angulartics2Module } from &quot;angulartics2&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { SessionType } from &quot;../../session/session-type&quot;;
 import { EditEntityComponent } from &quot;../../basic-datatypes/entity/edit-entity/edit-entity.component&quot;;
-import { lastValueFrom, of } from &quot;rxjs&quot;;
+import { lastValueFrom, of, firstValueFrom } from &quot;rxjs&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 import { catchError, map } from &quot;rxjs/operators&quot;;
+import { UserAccountActionGuardService } from &quot;../user-admin-service/user-account-action-guard.service&quot;;
 
 /**
  * Options as input to the UserDetailsComponent when it is opened in a dialog.
@@ -296,6 +300,8 @@ export interface UserDetailsAction {
     MatSelectModule,
     MatTooltipModule,
     MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
     MatDialogModule,
     DialogCloseComponent,
     Angulartics2Module,
@@ -319,6 +325,8 @@ export class UserDetailsComponent {
     optional: true,
   });
   protected currentUser &#x3D; inject(CurrentUserSubject, { optional: true });
+  private readonly accountActionGuard &#x3D; inject(UserAccountActionGuardService);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
 
   userAccount &#x3D; model&lt;UserAccount | null&gt;(this._dialogData?.userAccount);
   isInDialog &#x3D; input&lt;boolean&gt;(!!this._dialogData || false);
@@ -587,7 +595,61 @@ export class UserDetailsComponent {
     );
   }
 
+  async deleteAccount() {
+    const currentAccount &#x3D; this.userAccount();
+    if (!currentAccount?.userEntityId) {
+      return;
+    }
+
+    if (
+      this.accountActionGuard.isOwnAccount({
+        userAccountId: currentAccount.id,
+        userEntityId: currentAccount.userEntityId,
+      })
+    ) {
+      await this.accountActionGuard.showSelfAccountActionBlockedWarning(
+        &quot;delete&quot;,
+      );
+      return;
+    }
+
+    const confirmed &#x3D; await this.confirmationDialog.getConfirmation(
+      $localize&#x60;:delete account confirmation title:Delete user account?&#x60;,
+      $localize&#x60;:delete account confirmation dialog:Are you sure you want to permanently delete this user account? This cannot be undone.&#x60;,
+    );
+    if (!confirmed) return;
+
+    try {
+      await firstValueFrom(
+        this.userAdminService.deleteUser(currentAccount.userEntityId),
+      );
+      this.alertService.addInfo(
+        $localize&#x60;:delete account success message:User account has been deleted.&#x60;,
+      );
+      this.userAccount.set(null);
+    } catch (err) {
+      this.alertService.addDanger(
+        err?.[&quot;error&quot;]?.message ||
+          err?.[&quot;message&quot;] ||
+          $localize&#x60;:Error message:Failed to delete user account&#x60;,
+      );
+    }
+  }
+
   async enableAccount(enabled: boolean) {
+    if (
+      !enabled &amp;&amp;
+      this.accountActionGuard.isOwnAccount({
+        userAccountId: this.userAccount()?.id,
+        userEntityId: this.userAccount()?.userEntityId,
+      })
+    ) {
+      await this.accountActionGuard.showSelfAccountActionBlockedWarning(
+        &quot;deactivate&quot;,
+      );
+      return;
+    }
+
     const message &#x3D; enabled
       ? $localize&#x60;:Snackbar message:Account has been activated, user can login again.&#x60;
       : $localize&#x60;:Snackbar message:Account has been disabled, user will not be able to login anymore.&#x60;;
