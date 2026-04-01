@@ -308,6 +308,19 @@ describe("DownloadService", () => {
     expect(columnHeaders).toContain('"_id"');
   });
 
+  it("should stringify object values for plain-row csv exports without schema", async () => {
+    const docs = [
+      { _id: "Test:1", details: { a: 1, nested: { b: "x" } } },
+      { _id: "Test:2", details: { a: 2 } },
+    ];
+
+    const csvExport = await service.createCsv(docs);
+
+    expect(csvExport).not.toContain("[object Object]");
+    expect(csvExport).toContain('""a"":1');
+    expect(csvExport).toContain('""nested"":{');
+  });
+
   it("should only export columns that have labels defined in entity schema and use the schema labels as export headers", async () => {
     const testString: string = "Test 1";
 

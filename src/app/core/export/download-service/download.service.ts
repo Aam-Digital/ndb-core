@@ -156,6 +156,15 @@ export class DownloadService {
     data = data.map(transformToReadableFormat);
 
     if (!entityConstructor) {
+      data = data.map((row) =>
+        Object.fromEntries(
+          Object.entries(row).map(([key, value]) => [
+            key,
+            this.ensureCsvFriendlyValue(value),
+          ]),
+        ),
+      );
+
       return this.papa.unparse(data, {
         quotes: true,
         header: true,
