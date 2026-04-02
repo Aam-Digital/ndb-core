@@ -43,6 +43,7 @@ import { SessionType } from "../../session/session-type";
 import { EditEntityComponent } from "../../basic-datatypes/entity/edit-entity/edit-entity.component";
 import { lastValueFrom, of, firstValueFrom } from "rxjs";
 import { Entity } from "../../entity/model/entity";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { catchError, map } from "rxjs/operators";
 import { UserAccountActionGuardService } from "../user-admin-service/user-account-action-guard.service";
@@ -105,10 +106,18 @@ export class UserDetailsComponent {
   protected currentUser = inject(CurrentUserSubject, { optional: true });
   private readonly accountActionGuard = inject(UserAccountActionGuardService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly entityRegistry = inject(EntityRegistry);
 
   userAccount = model<UserAccount | null>(this._dialogData?.userAccount);
   isInDialog = input<boolean>(!!this._dialogData || false);
   isProfileMode = input<boolean>(false);
+
+  userAccountEntityTypes = computed(() =>
+    this.entityRegistry
+      .getEntityTypes()
+      .filter(({ value }) => value.enableUserAccounts)
+      .map(({ key }) => key),
+  );
 
   /**
    * Signal tracking whether the form is disabled (view mode) or enabled (edit mode).
@@ -128,8 +137,10 @@ export class UserDetailsComponent {
     } else {
       this.form.enable();
 
-      // profile entity is currently always readonly. Updates not supported yet
-      this.form.get("userEntityId").disable();
+      // profile entity is readonly when editing an existing account
+      if (!this.creatingNewAccount()) {
+        this.form.get("userEntityId").disable();
+      }
     }
   });
 
@@ -270,6 +281,16 @@ export class UserDetailsComponent {
     }
 
     if (!formData.email || !formData.roles) {
+      return;
+    }
+
+    const existingAccount = await firstValueFrom(
+      this.userAdminService.getUser(userEntityId),
+    ).catch(() => null);
+    if (existingAccount) {
+      this.alertService.addDanger(
+        $localize`:Error message:A user account already exists for this profile. Each profile can only be linked to one account.`,
+      );
       return;
     }
 
