@@ -15,8 +15,9 @@ This helps us reduce the number of review cycles and use the time of our core re
    - please also avoid changes that are not directly related to the issue of the PR, even small code reformatings make the review process much more complex
 - [ ] 🚦 PR status is changed to "Ready for Review"
   - while you are still working on initial implementation, keep the PR in "Draft" status
-  - once you are done with your initial work, change to "Ready for Review". This will trigger some additional automated checks and reviews.
+  - once you are done with your initial work, change to "Ready for Review". This will trigger some additional automated checks.
   - (PR = "Ready for Review" does not immediately request a manual review yet, first complete the further checks below)
+- [ ] add label **"Ready for AI Review"** to trigger a CodeRabbit review (can also be done while still in Draft)
 - [ ] marked each code review comment as resolved OR commented on it with a question, if unsure
   - both implementing suggestions of automatic code review or discarding them as not applicable is okay
 - [ ] all checkboxes in this checklist are checked (to show the reviewer this really is ready)
