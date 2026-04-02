@@ -93,7 +93,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.filterConfig || changes.entityType || changes.entities) {
       this.filterSelections = await this.filterGenerator.generate(
-        this.filterConfig,
+        this.getEffectiveFilterConfig(),
         this.entityType,
         this.entities,
         this.onlyShowRelevantFilterOptions,
@@ -145,6 +145,25 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
     this.filterObj = newFilter;
     this.filterObjChange.emit(this.filterObj);
+  }
+
+  /**
+   * Returns the filter config extended with any URL params that refer to valid entity
+   * schema fields but are not already covered by the configured filterConfig.
+   * This ensures that navigation links (e.g. from EntityCountDashboard) pre-apply
+   * a filter even when the target list view has not explicitly configured that field
+   * as a filter UI element.
+   */
+  private getEffectiveFilterConfig(): FilterConfig[] {
+    if (!this.useUrlQueryParams || !this.entityType) {
+      return this.filterConfig ?? [];
+    }
+    const params = this.tableStateUrl.getFilterParams();
+    const configuredIds = new Set((this.filterConfig ?? []).map((f) => f.id));
+    const extraConfigs: FilterConfig[] = Object.keys(params)
+      .filter((k) => !configuredIds.has(k) && this.entityType.schema.has(k))
+      .map((k) => ({ id: k }));
+    return [...(this.filterConfig ?? []), ...extraConfigs];
   }
 
   private loadUrlParams() {
