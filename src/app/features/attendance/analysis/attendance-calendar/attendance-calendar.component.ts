@@ -117,7 +117,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       );
 
       if (!eventAttendance || !eventAttendance.status?.style) {
-        classes["attendance-calendar-date-with-unknown-status"] = true;
+        classes["attendance-calendar-date-has-participants-with-unknown-status"] = true;
       } else {
         classes[eventAttendance.status.style] = true;
       }
@@ -133,7 +133,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       const percentageSlab = Math.round(stats.average * 10) * 10;
       classes["w-" + percentageSlab] = true;
 
-      classes["attendance-calendar-date-with-unknown-status"] =
+      classes["attendance-calendar-date-has-participants-with-unknown-status"] =
         stats.excludedUnknown > 0;
     }
 

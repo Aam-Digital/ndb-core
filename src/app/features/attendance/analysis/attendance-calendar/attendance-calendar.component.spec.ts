@@ -146,7 +146,7 @@ describe("AttendanceCalendarComponent", () => {
 
     const classes = component.highlightDate(testDate);
 
-    expect(classes["attendance-calendar-date-with-unknown-status"]).toBe(true);
+    expect(classes["attendance-calendar-date-has-participants-with-unknown-status"]).toBe(true);
   });
 
   it("should mark day with red triangle when highlighted child has NullAttendanceStatus", () => {
@@ -171,7 +171,7 @@ describe("AttendanceCalendarComponent", () => {
 
     const classes = component.highlightDate(testDate);
 
-    expect(classes["attendance-calendar-date-with-unknown-status"]).toBe(true);
+    expect(classes["attendance-calendar-date-has-participants-with-unknown-status"]).toBe(true);
   });
 
   it("should apply status style class when highlighted child has a known attendance status", () => {
@@ -198,7 +198,7 @@ describe("AttendanceCalendarComponent", () => {
     const classes = component.highlightDate(testDate);
 
     expect(classes[presentStatus.style]).toBe(true);
-    expect(classes["attendance-calendar-date-with-unknown-status"]).toBeFalsy();
+    expect(classes["attendance-calendar-date-has-participants-with-unknown-status"]).toBeFalsy();
   });
 
   it("should add focused participant on the fly if not part of event already", () => {
