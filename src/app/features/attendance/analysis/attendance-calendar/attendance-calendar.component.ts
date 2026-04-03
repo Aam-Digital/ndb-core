@@ -116,8 +116,10 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.highlightForChild,
       );
 
-      if (!eventAttendance || !eventAttendance.status?.style) {
-        classes["attendance-calendar-date-has-participants-with-unknown-status"] = true;
+      if (!eventAttendance?.status?.style) {
+        classes[
+          "attendance-calendar-date-has-participants-with-unknown-status"
+        ] = true;
       } else {
         classes[eventAttendance.status.style] = true;
       }
