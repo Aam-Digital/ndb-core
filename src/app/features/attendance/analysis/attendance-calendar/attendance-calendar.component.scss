@@ -22,7 +22,7 @@ mat-calendar {
     background: gradient-helpers.top-right-triangle(#5f5f5f);
   }
 
-  &.attendance-calendar-date-has-participants-with-unknown-status {
+  &.attendance-calendar-date-with-unknown-status {
     background: gradient-helpers.top-right-triangle(red);
   }
 }
