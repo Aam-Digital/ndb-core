@@ -180,6 +180,58 @@ describe("AttendanceCalendarComponent", () => {
     ).toBeFalsy();
   });
 
+  it("should mark day with no-data class when no participant has any status (NaN% attendance)", () => {
+    const testDate = new Date("2020-06-15");
+    const event = Object.assign(TestEventEntity.create(testDate), {
+      attendance: [
+        new AttendanceItem(NullAttendanceStatusType, "", "child1"),
+        new AttendanceItem(NullAttendanceStatusType, "", "child2"),
+      ],
+    });
+    component.records = [
+      new EventWithAttendance(
+        event,
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    ];
+
+    const classes = component.highlightDate(testDate);
+
+    expect(classes["attendance-calendar-date-no-data"]).toBe(true);
+  });
+
+  it("should apply w-XX class (not no-data) when at least one participant has a known status", () => {
+    const testDate = new Date("2020-06-15");
+    const presentStatus = defaultAttendanceStatusTypes.find(
+      (it) => it.id === "PRESENT",
+    );
+    const event = Object.assign(TestEventEntity.create(testDate), {
+      attendance: [
+        new AttendanceItem(presentStatus, "", "child1"),
+        new AttendanceItem(NullAttendanceStatusType, "", "child2"),
+      ],
+    });
+    component.records = [
+      new EventWithAttendance(
+        event,
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    ];
+
+    const classes = component.highlightDate(testDate);
+
+    expect(classes["attendance-calendar-date-no-data"]).toBeFalsy();
+    expect(classes["w-100"]).toBe(true);
+  });
+
   it("should add focused participant on the fly if not part of event already", () => {
     const testDate = new Date();
     const excludedChild = new TestEntity("excluded_child");
