@@ -86,7 +86,42 @@ Autocomplete
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    @if (truncateOptionLabels()) {
+    <ng-template #optionContent let-item let-truncate="truncate">
+      <div class="flex-row disable-autocomplete-active-color align-center">
+        @if (reorder) {
+          <div>
+            <fa-icon
+              icon="grip-vertical"
+              size="sm"
+              class="drag-handle"
+            ></fa-icon>
+          </div>
+        }
+        @if (multi) {
+          <mat-checkbox [checked]="item.selected"></mat-checkbox>
+        }
+        @if (!templateRef) {
+          <span
+            [class.text-truncate]="truncate"
+            [class.text-wrap]="!truncate"
+            [matTooltip]="item.asString"
+            matTooltipPosition="above"
+            [class.not-defined-label]="item.isEmpty"
+            [class.invalid-label]="item.isInvalid"
+          >
+            {{ item.asString }}
+          </span>
+        } @else {
+          <ng-template
+            class="item-option"
+            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutletContext]="{ $implicit: item.initial }"
+          ></ng-template>
+        }
+      </div>
+    </ng-template>
+
+    @if (!displayFullLengthOptionLabel()) {
       <cdk-virtual-scroll-viewport
         [style.height.px]="viewportHeight()"
         [itemSize]="48"
@@ -101,73 +136,19 @@ Autocomplete
             trackBy: trackByOptionValueFn
           "
         >
-          <div class="flex-row disable-autocomplete-active-color align-center">
-            @if (reorder) {
-              <div>
-                <fa-icon
-                  icon="grip-vertical"
-                  size="sm"
-                  class="drag-handle"
-                ></fa-icon>
-              </div>
-            }
-            @if (multi) {
-              <mat-checkbox [checked]="item.selected"></mat-checkbox>
-            }
-            @if (!templateRef) {
-              <span
-                [class.text-truncate]="truncateOptionLabels()"
-                [matTooltip]="item.asString"
-                matTooltipPosition="above"
-                [class.not-defined-label]="item.isEmpty"
-                [class.invalid-label]="item.isInvalid"
-              >
-                {{ item.asString }}
-              </span>
-            } @else {
-              <ng-template
-                class="item-option"
-                [ngTemplateOutlet]="templateRef"
-                [ngTemplateOutletContext]="{ $implicit: item.initial }"
-              ></ng-template>
-            }
-          </div>
+          <ng-container
+            [ngTemplateOutlet]="optionContent"
+            [ngTemplateOutletContext]="{ $implicit: item, truncate: true }"
+          ></ng-container>
         </mat-option>
       </cdk-virtual-scroll-viewport>
     } @else {
       @for (item of autocompleteOptions(); track item.asValue) {
         <mat-option [value]="item" class="option-with-wrap" cdkDrag>
-          <div class="flex-row disable-autocomplete-active-color align-center">
-            @if (reorder) {
-              <div>
-                <fa-icon
-                  icon="grip-vertical"
-                  size="sm"
-                  class="drag-handle"
-                ></fa-icon>
-              </div>
-            }
-            @if (multi) {
-              <mat-checkbox [checked]="item.selected"></mat-checkbox>
-            }
-            @if (!templateRef) {
-              <span
-                class="text-wrap"
-                [matTooltip]="item.asString"
-                matTooltipPosition="above"
-                [class.not-defined-label]="item.isEmpty"
-                [class.invalid-label]="item.isInvalid"
-              >
-                {{ item.asString }}
-              </span>
-            } @else {
-              <ng-template
-                class="item-option"
-                [ngTemplateOutlet]="templateRef"
-                [ngTemplateOutletContext]="{ $implicit: item.initial }"
-              ></ng-template>
-            }
-          </div>
+          <ng-container
+            [ngTemplateOutlet]="optionContent"
+            [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"
+          ></ng-container>
         </mat-option>
       }
     }

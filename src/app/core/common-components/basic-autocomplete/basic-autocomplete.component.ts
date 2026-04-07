@@ -162,10 +162,10 @@ export class BasicAutocompleteComponent<O, V = O>
   hasMoreOptions = false;
 
   /**
-   * Whether option labels should be truncated with ellipsis in the dropdown list.
-   * Set to false to allow full labels to wrap to multiple lines.
+   * Whether dropdown option labels should be shown in full length.
+   * Set to false to truncate labels with ellipsis.
    */
-  truncateOptionLabels = input(true);
+  displayFullLengthOptionLabel = input(false);
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];

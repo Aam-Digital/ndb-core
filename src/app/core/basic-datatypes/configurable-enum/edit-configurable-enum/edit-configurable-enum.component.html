@@ -8,7 +8,9 @@
     [options]="options"
     [optionToString]="enumValueToString"
     [createOption]="createNewOption"
-    [truncateOptionLabels]="!formFieldConfig?.displayFullLengthOptionLabel"
+    [displayFullLengthOptionLabel]="
+      formFieldConfig?.displayFullLengthOptionLabel ?? false
+    "
     display="chips"
   >
     <ng-template let-option>
