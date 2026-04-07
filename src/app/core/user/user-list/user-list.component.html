@@ -9,7 +9,11 @@
     This page displays all user accounts registered for your system.
   </p>
 
-  <table mat-table [dataSource]="users()" class="mat-elevation-z2 full-width">
+  <table
+    mat-table
+    [dataSource]="pagedUsers()"
+    class="mat-elevation-z2 full-width"
+  >
     <ng-container matColumnDef="email">
       <th mat-header-cell *matHeaderCellDef i18n>Email</th>
       <td mat-cell *matCellDef="let user">{{ user.email || "-" }}</td>
@@ -61,4 +65,15 @@
       class="clickable-row"
     ></tr>
   </table>
+
+  <mat-paginator
+    [length]="users().length"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showFirstLastButtons]="true"
+    (page)="onPageChange($event)"
+    aria-label="User accounts pagination"
+    i18n-aria-label
+  ></mat-paginator>
 }

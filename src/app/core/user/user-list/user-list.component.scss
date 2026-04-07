@@ -10,3 +10,7 @@
 .disabled-row {
   opacity: 0.6;
 }
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
+  justify-content: flex-start;
+}
