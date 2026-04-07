@@ -86,41 +86,6 @@ Autocomplete
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    <ng-template #optionContent let-item let-truncate="truncate">
-      <div class="flex-row disable-autocomplete-active-color align-center">
-        @if (reorder) {
-          <div>
-            <fa-icon
-              icon="grip-vertical"
-              size="sm"
-              class="drag-handle"
-            ></fa-icon>
-          </div>
-        }
-        @if (multi) {
-          <mat-checkbox [checked]="item.selected"></mat-checkbox>
-        }
-        @if (!templateRef) {
-          <span
-            [class.text-truncate]="truncate"
-            [class.text-wrap]="!truncate"
-            [matTooltip]="item.asString"
-            matTooltipPosition="above"
-            [class.not-defined-label]="item.isEmpty"
-            [class.invalid-label]="item.isInvalid"
-          >
-            {{ item.asString }}
-          </span>
-        } @else {
-          <ng-template
-            class="item-option"
-            [ngTemplateOutlet]="templateRef"
-            [ngTemplateOutletContext]="{ $implicit: item.initial }"
-          ></ng-template>
-        }
-      </div>
-    </ng-template>
-
     @if (!displayFullLengthOptionLabel()) {
       <cdk-virtual-scroll-viewport
         [style.height.px]="viewportHeight()"
@@ -153,6 +118,37 @@ Autocomplete
       }
     }
   </div>
+
+  <ng-template #optionContent let-item let-truncate="truncate">
+    <div class="flex-row disable-autocomplete-active-color align-center">
+      @if (reorder) {
+        <div>
+          <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>
+        </div>
+      }
+      @if (multi) {
+        <mat-checkbox [checked]="item.selected"></mat-checkbox>
+      }
+      @if (!templateRef) {
+        <span
+          [class.text-truncate]="truncate"
+          [class.text-wrap]="!truncate"
+          [matTooltip]="item.asString"
+          matTooltipPosition="above"
+          [class.not-defined-label]="item.isEmpty"
+          [class.invalid-label]="item.isInvalid"
+        >
+          {{ item.asString }}
+        </span>
+      } @else {
+        <ng-template
+          class="item-option"
+          [ngTemplateOutlet]="templateRef"
+          [ngTemplateOutletContext]="{ $implicit: item.initial }"
+        ></ng-template>
+      }
+    </div>
+  </ng-template>
 
   <!-- Create new option -->
   @if (createOption && showAddOption && inputElement.value) {
