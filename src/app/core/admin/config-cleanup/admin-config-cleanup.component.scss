@@ -1,0 +1,42 @@
+.config-cleanup-container {
+  display: grid;
+  gap: 1rem;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-row h1 {
+  margin: 0;
+}
+
+.header-row p {
+  margin: 0.5rem 0 0;
+}
+
+.loading-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+}
+
+.summary-label {
+  display: block;
+  font-size: 0.875rem;
+  color: rgb(0 0 0 / 60%);
+}
+
+.error-card p {
+  margin: 0;
+}
