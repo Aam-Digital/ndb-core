@@ -1,3 +1,22 @@
+@use "variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+.table-container {
+  position: relative;
+  @include mat-elevation.elevation(2);
+  background-color: white;
+}
+
+.table-footer {
+  @include mat-elevation.elevation(1);
+  border-top: colors.$grey-darker solid 2px;
+  background-color: white;
+}
+
+.table {
+  box-shadow: none;
+}
+
 .clickable-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -5,10 +24,6 @@
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
-}
-
-.disabled-row {
-  opacity: 0.6;
 }
 
 :host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
