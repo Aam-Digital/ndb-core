@@ -11,11 +11,6 @@
   opacity: 0.6;
 }
 
-.user-list-container {
-  border-radius: 4px;
-  overflow: hidden;
-}
-
 :host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
   justify-content: flex-start;
 }
