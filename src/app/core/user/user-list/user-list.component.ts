@@ -75,7 +75,6 @@ export class UserListComponent implements OnInit {
       },
       error: (err) => {
         Logging.error("Failed to load users:", err);
-
         this.alertService.addWarning(
           $localize`Failed to load users. Please try again later or contact your server administrator.`,
         );
