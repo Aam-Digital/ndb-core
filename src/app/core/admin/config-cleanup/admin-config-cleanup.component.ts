@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  OnInit,
   signal,
 } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
@@ -29,7 +30,7 @@ import {
     MatProgressSpinnerModule,
   ],
 })
-export class AdminConfigCleanupComponent {
+export class AdminConfigCleanupComponent implements OnInit {
   private readonly configCleanupService = inject(ConfigCleanupService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly snackBar = inject(MatSnackBar);
@@ -51,7 +52,7 @@ export class AdminConfigCleanupComponent {
     () => this.analysis()?.unusedEnums ?? [],
   );
 
-  constructor() {
+  ngOnInit(): void {
     void this.reload();
   }
 

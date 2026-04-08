@@ -1,18 +1,26 @@
 <section class="config-cleanup-container">
-  <header class="header-row">
+  <header
+    class="flex-row justify-space-between align-start flex-wrap header-row"
+  >
     <div>
       <h1 i18n>Configuration Cleanup</h1>
       <p i18n>
         Analyze active runtime configuration and remove unused items safely.
       </p>
     </div>
-    <button mat-stroked-button (click)="reload()" [disabled]="isLoading()" i18n>
+    <button
+      mat-stroked-button
+      (click)="reload()"
+      [disabled]="isLoading()"
+      color="accent"
+      i18n
+    >
       Refresh Analysis
     </button>
   </header>
 
   @if (isLoading()) {
-    <div class="loading-row" aria-live="polite">
+    <div class="flex-row align-center loading-row" aria-live="polite">
       <mat-spinner [diameter]="36" />
       <span i18n>Analyzing configuration ...</span>
     </div>

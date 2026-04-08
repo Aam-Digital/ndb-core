@@ -4,11 +4,7 @@
 }
 
 .header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .header-row h1 {
@@ -20,8 +16,6 @@
 }
 
 .loading-row {
-  display: flex;
-  align-items: center;
   gap: 0.75rem;
 }
 

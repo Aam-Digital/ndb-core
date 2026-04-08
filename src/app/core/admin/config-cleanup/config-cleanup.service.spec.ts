@@ -6,8 +6,8 @@ import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
 
 class Child extends Entity {
-  static override ENTITY_TYPE = "Child";
-  static override schema = new Map([
+  static override readonly ENTITY_TYPE = "Child";
+  static override readonly schema = new Map([
     [
       "gender",
       {
@@ -19,8 +19,8 @@ class Child extends Entity {
 }
 
 class School extends Entity {
-  static override ENTITY_TYPE = "School";
-  static override schema = new Map([
+  static override readonly ENTITY_TYPE = "School";
+  static override readonly schema = new Map([
     [
       "level",
       {
