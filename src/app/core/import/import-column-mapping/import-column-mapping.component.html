@@ -12,6 +12,16 @@
   </app-help-button>
 </div>
 
+@if (showInheritanceImportWarning) {
+  <app-hint-box>
+    <span i18n>
+      Values from this import file will be imported as selected. Inherited
+      values are not updated automatically during import and need to be updated
+      manually.
+    </span>
+  </app-hint-box>
+}
+
 <div>
   @for (col of columnMapping; track col) {
     <div>

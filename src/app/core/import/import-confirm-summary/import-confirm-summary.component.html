@@ -8,6 +8,16 @@
   <!-- Summary -->
   <div i18n>{{ data.entitiesToImport?.length }} records will be imported.</div>
 
+  @if (showInheritanceImportWarning) {
+    <app-hint-box>
+      <span i18n>
+        Values from this import file will be imported as selected. Inherited
+        values are not updated automatically during import and need to be
+        updated manually.
+      </span>
+    </app-hint-box>
+  }
+
   <!-- Progress -->
   @if (importInProgress) {
     <div class="margin-top-large">

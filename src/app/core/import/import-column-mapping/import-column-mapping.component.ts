@@ -18,6 +18,8 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
 import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/edit-import-column-mapping.component";
 import { ImportAdditionalSettings } from "../import-additional-settings/import-additional-settings.component";
+import { DefaultValueConfigInheritedField } from "../../../features/inherited-field/inherited-field-config";
+import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -30,6 +32,7 @@ import { ImportAdditionalSettings } from "../import-additional-settings/import-a
   imports: [
     EditImportColumnMappingComponent,
     HelpButtonComponent,
+    HintBoxComponent,
     MatInputModule,
     FormsModule,
     MatButtonModule,
@@ -47,12 +50,16 @@ export class ImportColumnMappingComponent implements OnChanges {
 
   entityCtor: EntityConstructor;
   usedPropertyNames: Set<string> = new Set();
+  showInheritanceImportWarning = false;
+  private inheritedSourceReferenceFields = new Set<string>();
 
   @Input() set entityType(value: string) {
     if (!value) {
       return;
     }
     this.entityCtor = this.entities.get(value);
+    this.updateInheritedSourceReferenceFields();
+    this.updateShowInheritanceImportWarning();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -67,6 +74,8 @@ export class ImportColumnMappingComponent implements OnChanges {
         this.columnMappingChange.emit([...this.columnMapping]);
       }
     }
+
+    this.updateShowInheritanceImportWarning();
   }
 
   updateColumnMapping(
@@ -76,5 +85,26 @@ export class ImportColumnMappingComponent implements OnChanges {
     Object.assign(originalColumnMapping, newColumnMapping);
     this.columnMapping = [...this.columnMapping];
     this.columnMappingChange.emit(this.columnMapping);
+    this.updateShowInheritanceImportWarning();
+  }
+
+  private updateInheritedSourceReferenceFields(): void {
+    const inheritanceConfigs = [...(this.entityCtor?.schema?.values() ?? [])]
+      .filter((field) => field.defaultValue?.mode === "inherited-field")
+      .map(
+        (field) =>
+          (field.defaultValue?.config as DefaultValueConfigInheritedField)
+            ?.sourceReferenceField,
+      )
+      .filter((fieldId): fieldId is string => !!fieldId);
+
+    this.inheritedSourceReferenceFields = new Set(inheritanceConfigs);
+  }
+
+  private updateShowInheritanceImportWarning(): void {
+    this.showInheritanceImportWarning = this.columnMapping?.some(
+      ({ propertyName }) =>
+        !!propertyName && this.inheritedSourceReferenceFields.has(propertyName),
+    );
   }
 }
