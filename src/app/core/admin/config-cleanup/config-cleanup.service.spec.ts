@@ -80,7 +80,8 @@ describe("ConfigCleanupService", () => {
     expect(mockEntityMapper.remove).not.toHaveBeenCalled();
 
     const unusedEnum = new ConfigurableEnum("unused");
-    const deletedUnused = await service.deleteUnusedConfigurableEnum(unusedEnum);
+    const deletedUnused =
+      await service.deleteUnusedConfigurableEnum(unusedEnum);
     expect(deletedUnused).toBe(true);
     expect(mockEntityMapper.remove).toHaveBeenCalledOnce();
     expect(mockEntityMapper.remove).toHaveBeenCalledWith(unusedEnum);

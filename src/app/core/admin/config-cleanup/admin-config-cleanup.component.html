@@ -58,9 +58,14 @@
           <p i18n>No unused configurable enums found.</p>
         } @else {
           <mat-list>
-            @for (unusedEnum of unusedEnums(); track unusedEnum.enumEntity.getId()) {
+            @for (
+              unusedEnum of unusedEnums();
+              track unusedEnum.enumEntity.getId()
+            ) {
               <mat-list-item>
-                <div matListItemTitle>{{ unusedEnum.enumEntity.getId(true) }}</div>
+                <div matListItemTitle>
+                  {{ unusedEnum.enumEntity.getId(true) }}
+                </div>
                 <div matListItemMeta>
                   <button
                     mat-button

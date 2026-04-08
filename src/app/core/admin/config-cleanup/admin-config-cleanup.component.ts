@@ -22,7 +22,12 @@ import {
   templateUrl: "./admin-config-cleanup.component.html",
   styleUrl: "./admin-config-cleanup.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, MatButtonModule, MatListModule, MatProgressSpinnerModule],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatListModule,
+    MatProgressSpinnerModule,
+  ],
 })
 export class AdminConfigCleanupComponent {
   private readonly configCleanupService = inject(ConfigCleanupService);
@@ -39,7 +44,9 @@ export class AdminConfigCleanupComponent {
   protected readonly totalEnums = computed(
     () => this.analysis()?.totalEnums ?? 0,
   );
-  protected readonly usedEnums = computed(() => this.analysis()?.usedEnums ?? 0);
+  protected readonly usedEnums = computed(
+    () => this.analysis()?.usedEnums ?? 0,
+  );
   protected readonly unusedEnums = computed(
     () => this.analysis()?.unusedEnums ?? [],
   );
@@ -53,7 +60,8 @@ export class AdminConfigCleanupComponent {
     this.errorMessage.set(undefined);
 
     try {
-      const analysis = await this.configCleanupService.analyzeUnusedConfigurableEnums();
+      const analysis =
+        await this.configCleanupService.analyzeUnusedConfigurableEnums();
       this.analysis.set(analysis);
     } catch {
       this.errorMessage.set(
