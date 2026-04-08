@@ -1,5 +1,5 @@
 <mat-select [formControl]="formControl" [compareWith]="compareOptionFun">
-  @for (o of predefinedIntervals; track o) {
+  @for (o of predefinedIntervals; track o.label) {
     <mat-option [value]="o.interval">
       {{ o.label }}
     </mat-option>

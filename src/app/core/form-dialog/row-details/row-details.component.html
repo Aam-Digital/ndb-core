@@ -13,7 +13,7 @@
       </app-entity-form>
     }
 
-    @for (col of viewOnlyColumns; track col) {
+    @for (col of viewOnlyColumns; track col.id) {
       <div>
         <app-pill
           [matTooltip]="col.description"

@@ -13,7 +13,7 @@
   &nbsp;
   <mat-form-field class="field-select">
     <mat-select [(ngModel)]="selectedUnit">
-      @for (o of availableUnits; track o) {
+      @for (o of availableUnits; track o.label) {
         <mat-option [value]="o.unit">
           {{ o.label }}
         </mat-option>

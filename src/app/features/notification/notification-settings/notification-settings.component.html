@@ -41,7 +41,7 @@
       <mat-accordion>
         @for (
           notificationRule of notificationConfig()?.notificationRules;
-          track notificationRule;
+          track $index;
           let index = $index
         ) {
           <app-notification-rule
