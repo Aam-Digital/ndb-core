@@ -1,4 +1,10 @@
-import { Component, inject, computed, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  computed,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { AdminSectionStateService } from "./admin-section-state.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";

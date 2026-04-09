@@ -1,4 +1,11 @@
-import { Component, inject, Input, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,

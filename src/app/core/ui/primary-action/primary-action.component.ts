@@ -1,4 +1,10 @@
-import { Component, inject, ChangeDetectorRef, OnDestroy, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  ChangeDetectorRef,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";

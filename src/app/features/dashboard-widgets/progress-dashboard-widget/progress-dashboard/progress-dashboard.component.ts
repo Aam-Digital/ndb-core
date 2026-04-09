@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Logging } from "../../../../core/logging/logging.service";

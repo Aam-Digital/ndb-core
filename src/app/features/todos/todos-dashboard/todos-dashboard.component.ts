@@ -1,4 +1,9 @@
-import { Component, Input, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   CdkDragDrop,
   DragDropModule,

@@ -1,4 +1,9 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 

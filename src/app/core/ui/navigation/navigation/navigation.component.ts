@@ -1,4 +1,9 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";

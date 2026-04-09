@@ -1,4 +1,9 @@
-import { Component, inject, Signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  Signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 

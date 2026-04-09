@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";

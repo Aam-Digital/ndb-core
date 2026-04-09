@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";

@@ -1,10 +1,10 @@
-import {
-  CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TemplateExportApiService } from "#src/app/features/template-export/template-export-api/template-export-api.service";
-import { Component,
+import {
+  Component,
   inject,
   Input,
   OnInit,

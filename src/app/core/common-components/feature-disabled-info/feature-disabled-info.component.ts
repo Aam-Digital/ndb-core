@@ -1,6 +1,6 @@
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 import {
-  NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
-import { Component,
+  Component,
   inject,
   Input,
   ChangeDetectionStrategy,

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { readFile } from "../../../utils/utils";
 import { Papa } from "ngx-papaparse";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";

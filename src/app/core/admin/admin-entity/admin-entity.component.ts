@@ -1,5 +1,4 @@
-import {
-  Location } from "@angular/common";
+import { Location } from "@angular/common";
 import {
   Component,
   ContentChild,

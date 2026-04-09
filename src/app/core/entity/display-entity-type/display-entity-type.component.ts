@@ -1,4 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { EntityTypeLabelPipe } from "app/core/common-components/entity-type-label/entity-type-label.pipe";
 import { ViewDirective } from "../default-datatype/view.directive";
 import { asArray } from "app/utils/asArray";

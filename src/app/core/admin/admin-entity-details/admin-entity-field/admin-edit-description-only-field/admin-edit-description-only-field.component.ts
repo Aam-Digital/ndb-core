@@ -1,4 +1,10 @@
-import { Component, OnChanges, SimpleChanges, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  OnChanges,
+  SimpleChanges,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   FormBuilder,
   FormGroup,

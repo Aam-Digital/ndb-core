@@ -1,4 +1,9 @@
-import { Component, OnChanges, SimpleChanges, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";

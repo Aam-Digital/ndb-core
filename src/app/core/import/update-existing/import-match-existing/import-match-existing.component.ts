@@ -1,4 +1,9 @@
-import { Component, input, model, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  input,
+  model,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { EntityFieldSelectComponent } from "../../../entity/entity-field-select/entity-field-select.component";

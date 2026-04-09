@@ -1,4 +1,11 @@
-import { Component, computed, inject, input, Signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  Signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminEntityService } from "../../admin/admin-entity.service";

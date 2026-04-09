@@ -1,4 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Logging } from "../../../logging/logging.service";
 import { LOCATION_TOKEN } from "../../../../utils/di-tokens";
 import { MatButtonModule } from "@angular/material/button";

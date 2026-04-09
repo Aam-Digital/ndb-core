@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnChanges, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,

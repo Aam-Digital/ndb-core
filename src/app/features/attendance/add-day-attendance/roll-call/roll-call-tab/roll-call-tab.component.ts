@@ -1,4 +1,9 @@
-import { Component, HostBinding, Input, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  HostBinding,
+  Input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 /**
  * These position states are used internally as animation states for the tab body. Setting the

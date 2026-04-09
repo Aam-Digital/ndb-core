@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   EntityListConfig,

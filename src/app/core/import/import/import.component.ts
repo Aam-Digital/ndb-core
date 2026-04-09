@@ -1,4 +1,9 @@
-import { Component, ViewChild, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  ViewChild,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ParsedData } from "../../common-components/input-file/input-file.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";

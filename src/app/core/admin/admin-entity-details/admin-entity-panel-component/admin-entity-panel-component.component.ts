@@ -1,5 +1,4 @@
-import {
-  AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";

@@ -1,6 +1,6 @@
+import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 import {
-  EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
-import { Component,
+  Component,
   Input,
   OnInit,
   ChangeDetectionStrategy,

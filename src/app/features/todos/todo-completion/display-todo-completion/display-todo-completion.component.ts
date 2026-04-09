@@ -1,4 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
 import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-date.pipe";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";

@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { SqlReport } from "../../report-config";
 import { JsonPipe } from "@angular/common";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";

@@ -1,4 +1,9 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormControl } from "@angular/forms";
 import { ShortcutDashboardConfig } from "../shortcut-dashboard-config";

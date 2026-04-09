@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatTableModule } from "@angular/material/table";

@@ -1,4 +1,9 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ContextAwareAssistantComponent } from "../context-aware-assistant/context-aware-assistant.component";
 import { MatTab, MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
 import { SystemInitAssistantComponent } from "../system-init-assistant/system-init-assistant.component";

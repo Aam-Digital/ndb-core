@@ -1,4 +1,9 @@
-import { Component, Injector, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Injector,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";

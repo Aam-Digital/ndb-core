@@ -1,6 +1,6 @@
+import { Entity } from "#src/app/core/entity/model/entity";
 import {
-  Entity } from "#src/app/core/entity/model/entity";
-import { Component,
+  Component,
   Input,
   OnInit,
   signal,

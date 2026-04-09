@@ -1,4 +1,9 @@
-import { Component, Injector, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Injector,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MAT_DIALOG_DATA,

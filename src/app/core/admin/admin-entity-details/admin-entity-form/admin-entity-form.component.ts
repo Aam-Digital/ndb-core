@@ -1,11 +1,10 @@
-import {
-  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
   transferArrayItem,
-  } from "@angular/cdk/drag-drop";
+} from "@angular/cdk/drag-drop";
 import {
   Component,
   computed,

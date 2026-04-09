@@ -1,9 +1,5 @@
-import {
-  CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
-import { Component,
-  Input,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldControl } from "@angular/material/form-field";

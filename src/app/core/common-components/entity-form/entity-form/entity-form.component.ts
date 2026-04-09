@@ -1,7 +1,7 @@
 import {
   EntityForm,
   EntityFormSavedEvent,
-  } from "#src/app/core/common-components/entity-form/entity-form";
+} from "#src/app/core/common-components/entity-form/entity-form";
 import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 import {
   Component,

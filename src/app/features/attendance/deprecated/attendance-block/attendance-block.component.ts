@@ -1,4 +1,11 @@
-import { Component, inject, Input, LOCALE_ID, OnChanges, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  LOCALE_ID,
+  OnChanges,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { formatPercent, PercentPipe } from "@angular/common";

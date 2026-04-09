@@ -1,5 +1,4 @@
-import {
-  EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
+import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import {
   Component,
   EventEmitter,

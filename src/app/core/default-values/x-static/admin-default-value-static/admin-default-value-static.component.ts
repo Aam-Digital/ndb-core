@@ -1,5 +1,4 @@
-import {
-  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import {
   Component,

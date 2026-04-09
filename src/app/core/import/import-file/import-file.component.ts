@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Output, ViewChild, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Output,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   InputFileComponent,
   ParsedData,

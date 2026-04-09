@@ -1,4 +1,9 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Angulartics2Module } from "angulartics2";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";

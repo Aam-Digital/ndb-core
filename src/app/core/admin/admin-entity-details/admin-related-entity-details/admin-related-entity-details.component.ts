@@ -1,4 +1,9 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { FormConfig } from "../../../entity-details/form/form.component";

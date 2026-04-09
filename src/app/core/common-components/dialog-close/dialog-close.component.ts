@@ -1,4 +1,9 @@
-import { AfterViewChecked, Component, ViewChild, ChangeDetectionStrategy } from "@angular/core";
+import {
+  AfterViewChecked,
+  Component,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatButton, MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatDialogClose } from "@angular/material/dialog";

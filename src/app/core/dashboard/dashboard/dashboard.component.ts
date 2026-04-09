@@ -15,7 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input, inject, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";

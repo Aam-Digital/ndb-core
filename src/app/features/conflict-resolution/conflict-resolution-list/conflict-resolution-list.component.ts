@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ViewChild, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ViewChild,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { QueryDataSource } from "../../../core/database/query-data-source";
 import { Entity } from "../../../core/entity/model/entity";

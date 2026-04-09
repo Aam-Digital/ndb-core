@@ -1,5 +1,4 @@
-import {
-  EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
+import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
 import { AsyncPipe } from "@angular/common";
 import {
   ChangeDetectorRef,

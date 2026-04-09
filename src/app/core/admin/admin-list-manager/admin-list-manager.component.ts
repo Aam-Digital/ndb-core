@@ -1,5 +1,4 @@
-import {
-  EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
+import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityFieldLabelComponent } from "#src/app/core/entity/entity-field-label/entity-field-label.component";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import {
@@ -7,7 +6,7 @@ import {
   CdkDragDrop,
   CdkDropList,
   moveItemInArray,
-  } from "@angular/cdk/drag-drop";
+} from "@angular/cdk/drag-drop";
 
 import {
   Component,

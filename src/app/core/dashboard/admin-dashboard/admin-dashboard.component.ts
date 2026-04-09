@@ -2,9 +2,10 @@ import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
-  } from "@angular/cdk/drag-drop";
+} from "@angular/cdk/drag-drop";
 import { Location } from "@angular/common";
-import { Component,
+import {
+  Component,
   inject,
   Input,
   OnInit,

@@ -1,4 +1,10 @@
-import { Component, ViewChild, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  ViewChild,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,

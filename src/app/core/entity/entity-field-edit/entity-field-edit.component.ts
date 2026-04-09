@@ -1,5 +1,4 @@
-import {
-  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   Component,
   inject,

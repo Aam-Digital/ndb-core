@@ -1,4 +1,11 @@
-import { Component, computed, input, OnInit, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  computed,
+  input,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";

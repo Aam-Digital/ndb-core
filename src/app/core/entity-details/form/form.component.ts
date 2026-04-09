@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";

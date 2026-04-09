@@ -1,4 +1,9 @@
-import { Component, Input, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  Input,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { diff } from "deep-object-diff";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../../core/database/database";
