@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 
@@ -16,6 +16,7 @@ export interface LongTextFieldConfig {
 
 @DynamicComponent("DisplayLongText")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-long-text",
   template: `<div [innerHTML]="formattedValue"></div>`,
   standalone: true,

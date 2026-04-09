@@ -1,10 +1,12 @@
-import { EntityForm } from "../../../core/common-components/entity-form/entity-form";
+import {
+  EntityForm } from "../../../core/common-components/entity-form/entity-form";
 import {
   Component,
   inject,
   Input,
   OnChanges,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -23,6 +25,7 @@ import { debounceTime } from "rxjs/operators";
  * and allowing users to re-sync the inherited value manually.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-inherited-value-button",
   imports: [
     EntityFieldLabelComponent,

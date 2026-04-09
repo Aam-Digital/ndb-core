@@ -15,7 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, inject, signal, Signal, ViewChild } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Signal,
+  signal,
+  ViewChild,
+} from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -59,6 +67,7 @@ import { SessionSubject } from "../../session/auth/session-info";
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-ui",
   templateUrl: "./ui.component.html",
   styleUrls: ["./ui.component.scss"],
@@ -85,6 +94,7 @@ import { SessionSubject } from "../../session/auth/session-info";
   ],
 })
 export class UiComponent {
+  private cdr = inject(ChangeDetectorRef);
   private screenWidthObserver = inject(ScreenWidthObserver);
   private siteSettingsService = inject(SiteSettingsService);
   private sessionManager = inject(SessionManagerService);
@@ -95,13 +105,27 @@ export class UiComponent {
   private readonly sessionSubject = inject(SessionSubject);
 
   /** display mode for the menu to make it responsive and usable on smaller screens */
-  sideNavMode: MatDrawerMode;
+  get sideNavMode(): MatDrawerMode {
+    return this._sideNavMode;
+  }
+  set sideNavMode(value: MatDrawerMode) {
+    this._sideNavMode = value;
+    this.cdr.markForCheck();
+  }
+  private _sideNavMode: MatDrawerMode;
 
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
 
   /** latest version of the site settings*/
-  siteSettings = new SiteSettings();
+  get siteSettings(): SiteSettings {
+    return this._siteSettings;
+  }
+  set siteSettings(value: SiteSettings) {
+    this._siteSettings = value;
+    this.cdr.markForCheck();
+  }
+  private _siteSettings = new SiteSettings();
   isDesktop = false;
   isLoggedIn: Signal<boolean> = toSignal(
     this.loginState.pipe(
@@ -148,6 +172,7 @@ export class UiComponent {
 
     this.sideNavMode = configFullscreen || !this.isDesktop ? "over" : "side";
     this.showPrimaryAction.set(this.configReady$.value && !configFullscreen);
+    this.cdr.markForCheck();
   }
 
   /**

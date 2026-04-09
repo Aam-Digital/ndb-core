@@ -1,5 +1,10 @@
-import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
-import { Component, inject, Input } from "@angular/core";
+import {
+  NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
+import { Component,
+  inject,
+  Input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatProgressBar } from "@angular/material/progress-bar";
 
 /**
@@ -7,6 +12,7 @@ import { MatProgressBar } from "@angular/material/progress-bar";
  * Handles three states: loading (undefined), disabled (false), and enabled (true - shows nothing).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-feature-disabled-info",
   templateUrl: "./feature-disabled-info.component.html",
   styleUrl: "./feature-disabled-info.component.scss",

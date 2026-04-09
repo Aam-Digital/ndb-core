@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -13,6 +13,7 @@ import { MarkdownComponent } from "ngx-markdown";
  * used by the {@link ConfirmationDialogService}.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-confirmation-dialog",
   templateUrl: "./confirmation-dialog.component.html",
   imports: [

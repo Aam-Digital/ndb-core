@@ -1,4 +1,5 @@
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import {
+  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import {
   Component,
@@ -7,6 +8,7 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -23,6 +25,7 @@ import { DefaultValueConfigStatic } from "../default-value-config-static";
  * as this is the format how it should be saved in the config.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-default-value-static",
   imports: [ReactiveFormsModule, EntityFieldEditComponent],
   templateUrl: "./admin-default-value-static.component.html",

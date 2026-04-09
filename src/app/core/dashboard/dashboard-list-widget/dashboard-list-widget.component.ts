@@ -8,6 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -42,6 +43,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-dashboard-list-widget",
   templateUrl: "./dashboard-list-widget.component.html",
   styleUrls: ["./dashboard-list-widget.component.scss"],

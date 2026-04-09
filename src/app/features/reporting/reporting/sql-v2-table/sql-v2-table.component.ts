@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { SqlReport } from "../../report-config";
 import { JsonPipe } from "@angular/common";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
@@ -10,6 +10,7 @@ import {
 import { Logging } from "../../../../core/logging/logging.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-sql-v2-table",
   imports: [MatTableModule, MatSortModule],
   templateUrl: "./sql-v2-table.component.html",

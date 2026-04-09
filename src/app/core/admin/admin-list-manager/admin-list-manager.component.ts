@@ -1,4 +1,5 @@
-import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
+import {
+  EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityFieldLabelComponent } from "#src/app/core/entity/entity-field-label/entity-field-label.component";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import {
@@ -6,7 +7,7 @@ import {
   CdkDragDrop,
   CdkDropList,
   moveItemInArray,
-} from "@angular/cdk/drag-drop";
+  } from "@angular/cdk/drag-drop";
 
 import {
   Component,
@@ -16,6 +17,7 @@ import {
   Output,
   inject,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -28,6 +30,7 @@ import { Subscription } from "rxjs";
  * Component for Admin UI to edit table columns or fields in other contexts like filters.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-list-manager",
   imports: [
     CdkDropList,

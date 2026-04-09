@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { ImportService } from "../import.service";
 import {
   MAT_DIALOG_DATA,
@@ -34,6 +34,7 @@ export interface ImportDialogResult {
  * Summary screen and confirmation / execution dialog for running an import.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-confirm-summary",
   templateUrl: "./import-confirm-summary.component.html",
   styleUrls: ["./import-confirm-summary.component.scss"],

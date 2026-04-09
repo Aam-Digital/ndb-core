@@ -1,4 +1,4 @@
-import { Component, OnChanges, SimpleChanges, inject } from "@angular/core";
+import { Component, OnChanges, SimpleChanges, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -20,6 +20,7 @@ import { DialogCloseComponent } from "../../../../common-components/dialog-close
 import { FormFieldConfig } from "../../../../common-components/entity-form/FormConfig";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-edit-description-only-field",
   imports: [
     MatDialogModule,

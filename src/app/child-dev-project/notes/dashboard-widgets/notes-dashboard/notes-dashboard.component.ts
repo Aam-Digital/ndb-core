@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableModule } from "@angular/material/table";
@@ -26,6 +26,7 @@ interface NotesDashboardConfig {
  */
 @DynamicComponent("NotesDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-no-recent-notes-dashboard",
   templateUrl: "./notes-dashboard.component.html",
   styleUrls: ["./notes-dashboard.component.scss"],

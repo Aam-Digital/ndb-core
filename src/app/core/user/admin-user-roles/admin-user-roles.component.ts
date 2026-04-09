@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { JsonEditorService } from "../../admin/json-editor/json-editor.service";
@@ -10,6 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-user-roles",
   imports: [
     ViewTitleComponent,

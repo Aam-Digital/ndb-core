@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "app/core/entity/model/entity";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
@@ -43,6 +44,7 @@ import { PercentPipe } from "@angular/common";
 import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-bulk-link-external-profiles",
   imports: [
     ViewTitleComponent,

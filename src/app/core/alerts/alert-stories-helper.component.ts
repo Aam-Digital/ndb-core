@@ -1,7 +1,8 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { AlertService } from "./alert.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-alert-demo",
   template: `
     <button (click)="alertService.addWarning('warn')">warn</button>

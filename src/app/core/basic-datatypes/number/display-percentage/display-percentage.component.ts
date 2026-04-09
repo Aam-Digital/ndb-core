@@ -1,10 +1,11 @@
-import { Component, HostBinding, OnInit } from "@angular/core";
+import { Component, HostBinding, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { CommonModule } from "@angular/common";
 
 @DynamicComponent("DisplayPercentage")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-percentage",
   template:
     "{{ value !== undefined ? (value | number : numberFormat) + '%' : '-' }}",

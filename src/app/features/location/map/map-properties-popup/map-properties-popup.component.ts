@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -18,6 +18,7 @@ import { MatButtonModule } from "@angular/material/button";
 export type LocationProperties = { [key: string]: string[] };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-map-properties-popup",
   templateUrl: "./map-properties-popup.component.html",
   styles: [],

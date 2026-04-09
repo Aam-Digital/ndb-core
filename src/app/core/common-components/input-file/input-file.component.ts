@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from "@angular/core";
 import { readFile } from "../../../utils/utils";
 import { Papa } from "ngx-papaparse";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -13,6 +13,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
  * Currently only supports CSV.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-input-file",
   templateUrl: "./input-file.component.html",
   imports: [

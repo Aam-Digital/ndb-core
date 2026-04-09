@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
@@ -29,6 +29,7 @@ import { TemplateExport } from "../template-export.entity";
  * and manage the PDF/file generation process for a specific entity.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-file-template-selection-dialog-component",
   imports: [
     MatDialogContent,

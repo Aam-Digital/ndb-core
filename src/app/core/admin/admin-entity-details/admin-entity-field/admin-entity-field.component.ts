@@ -5,6 +5,7 @@ import {
   OnInit,
   signal,
   WritableSignal,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
@@ -82,6 +83,7 @@ export interface AdminEntityFieldData {
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-field",
   templateUrl: "./admin-entity-field.component.html",
   styleUrls: [

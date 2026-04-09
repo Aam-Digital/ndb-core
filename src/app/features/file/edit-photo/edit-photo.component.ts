@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -11,6 +11,7 @@ import { ImagePopupComponent } from "./image-popup/image-popup.component";
 
 @DynamicComponent("EditPhoto")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",
   styleUrls: ["./edit-photo.component.scss"],

@@ -1,10 +1,11 @@
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import {
+  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
   transferArrayItem,
-} from "@angular/cdk/drag-drop";
+  } from "@angular/cdk/drag-drop";
 import {
   Component,
   computed,
@@ -16,6 +17,7 @@ import {
   signal,
   WritableSignal,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -51,6 +53,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-form",
   templateUrl: "./admin-entity-form.component.html",
   styleUrls: [

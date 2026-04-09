@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule, FormControl } from "@angular/forms";
@@ -11,6 +11,7 @@ export interface AttendanceWeekDashboardSettingsConfig {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-week-dashboard-settings",
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, FormsModule],

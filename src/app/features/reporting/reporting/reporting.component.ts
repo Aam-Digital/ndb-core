@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { DataAggregationService } from "../data-aggregation.service";
 import {
   getGroupingInformationString,
@@ -39,6 +39,7 @@ import { Logging } from "#src/app/core/logging/logging.service";
 
 @RouteTarget("Reporting")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],

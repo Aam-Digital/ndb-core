@@ -1,4 +1,4 @@
-import { Component, inject, Input, LOCALE_ID, OnChanges } from "@angular/core";
+import { Component, inject, Input, LOCALE_ID, OnChanges, ChangeDetectionStrategy } from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { formatPercent, PercentPipe } from "@angular/common";
@@ -11,6 +11,7 @@ import { AttendanceCalendarComponent } from "../../analysis/attendance-calendar/
  * This shows calculated attendance of multiple events.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-block",
   templateUrl: "./attendance-block.component.html",
   styleUrls: ["./attendance-block.component.scss"],

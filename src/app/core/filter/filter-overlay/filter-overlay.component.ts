@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
@@ -19,6 +19,7 @@ export interface FilterOverlayData<T extends Entity> {
  * via a popover instead of the menu
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-filter-overlay",
   templateUrl: "./filter-overlay.component.html",
   styles: [":host { display: block }"],

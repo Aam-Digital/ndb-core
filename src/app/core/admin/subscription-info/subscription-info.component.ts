@@ -1,8 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-subscription-info",
   imports: [ViewTitleComponent, HintBoxComponent],
   templateUrl: "./subscription-info.component.html",

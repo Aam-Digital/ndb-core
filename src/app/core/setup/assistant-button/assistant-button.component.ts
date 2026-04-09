@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "app/core/config/config.service";
 import { SetupService } from "../setup.service";
@@ -10,6 +10,7 @@ import { AssistantService } from "../assistant.service";
  * for demo, setup and other user guidance.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-assistant-button",
   imports: [MatButtonModule, MatTooltip],
   templateUrl: "./assistant-button.component.html",

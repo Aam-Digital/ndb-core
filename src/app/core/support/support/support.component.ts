@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
@@ -23,6 +23,7 @@ import { AssistantService } from "#src/app/core/setup/assistant.service";
 import { Clipboard } from "@angular/cdk/clipboard";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-support",
   templateUrl: "./support.component.html",
   styleUrls: ["./support.component.scss"],

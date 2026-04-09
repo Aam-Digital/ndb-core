@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import {
   MenuItem,
   NavigationMenuConfig,
@@ -12,6 +12,7 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 
 /** Load and Store Menu Items for Administration */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-menu",
   standalone: true,
   imports: [ViewTitleComponent, MatButton, MenuItemListEditorComponent],

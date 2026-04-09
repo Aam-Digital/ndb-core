@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceService } from "../attendance.service";
 import { AttendanceItem } from "../model/attendance-item";
@@ -19,6 +19,7 @@ interface AttendanceWeekRow {
 
 @DynamicComponent("AttendanceWeekDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],

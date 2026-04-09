@@ -1,5 +1,10 @@
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -32,6 +37,7 @@ export interface DetailsComponentData {
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
   imports: [

@@ -1,6 +1,11 @@
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import {
+  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
-import { Component, inject, OnInit } from "@angular/core";
+import { Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   FormControl,
   FormsModule,
@@ -25,6 +30,7 @@ import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-se
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-bulk-edit",
   imports: [
     MatDialogModule,

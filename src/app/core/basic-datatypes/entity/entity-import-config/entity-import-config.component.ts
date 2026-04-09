@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -20,6 +20,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
  */
 @DynamicComponent("EntityImportConfig")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-import-config",
   templateUrl: "./entity-import-config.component.html",
   styleUrls: ["./entity-import-config.component.scss"],

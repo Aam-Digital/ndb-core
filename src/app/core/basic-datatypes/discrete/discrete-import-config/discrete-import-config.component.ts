@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -32,6 +32,7 @@ import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
  */
 @DynamicComponent("DiscreteImportConfig")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-discrete-import-config",
   templateUrl: "./discrete-import-config.component.html",
   styleUrls: ["./discrete-import-config.component.scss"],

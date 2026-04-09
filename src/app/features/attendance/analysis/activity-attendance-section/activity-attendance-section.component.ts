@@ -6,6 +6,7 @@ import {
   OnInit,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
@@ -33,6 +34,7 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
  */
 @DynamicComponent("ActivityAttendanceSection")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",
   imports: [

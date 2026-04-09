@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { MatIconButton } from "@angular/material/button";
@@ -59,6 +59,7 @@ interface GroupCountRow {
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-count-dashboard-widget",
   templateUrl: "./entity-count-dashboard.component.html",
   styleUrls: ["./entity-count-dashboard.component.scss"],

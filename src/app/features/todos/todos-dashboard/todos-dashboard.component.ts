@@ -1,4 +1,4 @@
-import { Component, Input, inject } from "@angular/core";
+import { Component, Input, inject, ChangeDetectionStrategy } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -13,6 +13,7 @@ import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashbo
 
 @DynamicComponent("TodosDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-todos-dashboard",
   templateUrl: "./todos-dashboard.component.html",
   styleUrls: ["./todos-dashboard.component.scss"],

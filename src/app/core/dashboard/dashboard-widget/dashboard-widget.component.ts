@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -13,6 +13,7 @@ export type DashboardTheme =
   | "school";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-dashboard-widget",
   templateUrl: "./dashboard-widget.component.html",
   styleUrls: ["./dashboard-widget.component.scss"],

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from "@angular/core";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -8,6 +8,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
  * Displays tooltips as descriptions also.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-anonymize-options",
   imports: [MatOptionModule, MatSelectModule, MatTooltipModule],
   templateUrl: "./anonymize-options.component.html",

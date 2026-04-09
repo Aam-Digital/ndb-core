@@ -1,7 +1,12 @@
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import {
+  EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { Component, inject, OnInit } from "@angular/core";
+import { Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -55,6 +60,7 @@ export interface AffectedEntity {
  * (also see AutomatedFieldUpdateConfigService)
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-automated-field-update",
   imports: [
     DialogCloseComponent,

@@ -1,5 +1,10 @@
-import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
+import { Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
@@ -7,6 +12,7 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 import { Entity } from "app/core/entity/model/entity";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-merge-fields",
   standalone: true,
   imports: [MatCheckboxModule, MatRadioModule, EntityFieldViewComponent],

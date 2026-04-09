@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
@@ -16,6 +16,7 @@ import { RouteTarget } from "../../../route-target";
  */
 @RouteTarget("ComingSoon")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-coming-soon",
   templateUrl: "./coming-soon.component.html",
   styleUrls: ["./coming-soon.component.scss"],

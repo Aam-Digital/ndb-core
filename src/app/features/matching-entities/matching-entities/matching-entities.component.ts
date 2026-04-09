@@ -1,4 +1,5 @@
-import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
+import {
+  EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
 import { AsyncPipe } from "@angular/common";
 import {
   ChangeDetectorRef,
@@ -8,6 +9,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
@@ -78,6 +80,7 @@ export interface MatchingSide extends MatchingSideConfig {
 @RouteTarget("MatchingEntities")
 @DynamicComponent("MatchingEntities")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-matching-entities",
   templateUrl: "./matching-entities.component.html",
   styleUrls: ["./matching-entities.component.scss"],

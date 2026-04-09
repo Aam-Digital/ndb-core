@@ -6,6 +6,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,6 +21,7 @@ import { EntityAction } from "./entity-action.interface";
 import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-actions-menu",
   templateUrl: "./entity-actions-menu.component.html",
   styleUrls: ["./entity-actions-menu.component.scss"],

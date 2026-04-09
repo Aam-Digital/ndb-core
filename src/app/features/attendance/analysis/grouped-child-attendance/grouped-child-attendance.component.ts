@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewEncapsulation,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceService } from "../../attendance.service";
@@ -20,6 +21,7 @@ import { MatSelectModule } from "@angular/material/select";
  */
 @DynamicComponent("GroupedChildAttendance")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-grouped-child-attendance",
   templateUrl: "./grouped-child-attendance.component.html",
   styleUrls: ["./grouped-child-attendance.component.scss"],

@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -71,6 +72,7 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
  */
 @RouteTarget("EntityList")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],

@@ -1,4 +1,4 @@
-import { Component, input, model } from "@angular/core";
+import { Component, input, model, ChangeDetectionStrategy } from "@angular/core";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { EntityFieldSelectComponent } from "../../../entity/entity-field-select/entity-field-select.component";
@@ -11,6 +11,7 @@ import { ImportExistingSettings } from "../../import-metadata";
  * Allow the user to configure entity fields that are used to match imported data to existing entities in the DB.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-match-existing",
   standalone: true,
   imports: [

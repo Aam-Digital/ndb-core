@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
@@ -10,6 +10,7 @@ import { EntityTypeSelectComponent } from "../../entity/entity-type-select/entit
  * Import sub-step: Let user select which entity type data should be imported as.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-entity-type",
   templateUrl: "./import-entity-type.component.html",
   styleUrls: ["./import-entity-type.component.scss"],

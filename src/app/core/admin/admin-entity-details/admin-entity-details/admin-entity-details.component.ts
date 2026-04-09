@@ -1,4 +1,4 @@
-import { Component, inject, Input, Output, EventEmitter } from "@angular/core";
+import { Component, inject, Input, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -29,6 +29,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 
 @DynamicComponent("AdminEntityDetails")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-details",
   templateUrl: "./admin-entity-details.component.html",
   styleUrls: ["./admin-entity-details.component.scss"],

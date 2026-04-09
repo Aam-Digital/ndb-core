@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -19,6 +19,7 @@ import { buildMatchingSideConfig } from "#src/app/features/matching-entities/mat
  * Configure the details of the MatchingEntitiesComponent.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-matching-entities",
   imports: [
     MatButtonModule,

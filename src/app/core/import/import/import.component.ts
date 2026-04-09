@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject } from "@angular/core";
+import { Component, ViewChild, inject, ChangeDetectionStrategy } from "@angular/core";
 import { ParsedData } from "../../common-components/input-file/input-file.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
@@ -28,6 +28,7 @@ import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common
  */
 @RouteTarget("Import")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import",
   templateUrl: "./import.component.html",
   styleUrls: ["./import.component.scss"],

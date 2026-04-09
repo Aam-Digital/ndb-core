@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -23,6 +23,7 @@ import { IconButtonComponent } from "../../common-components/icon-button/icon-bu
  * ShortcutDashboardSettingsComponent.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-menu-item-list-editor",
   standalone: true,
   imports: [AdminMenuItemComponent, DragDropModule, IconButtonComponent],

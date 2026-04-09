@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -45,6 +46,7 @@ import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-se
 import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-general-settings",
   templateUrl: "./admin-entity-general-settings.component.html",
   styleUrls: ["./admin-entity-general-settings.component.scss"],

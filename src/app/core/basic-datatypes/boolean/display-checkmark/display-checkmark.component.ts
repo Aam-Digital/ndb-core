@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
@@ -8,6 +8,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
  */
 @DynamicComponent("DisplayCheckmark")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-tick",
   template: `{{ value ? "✓" : "" }}`,
   standalone: true,

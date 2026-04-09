@@ -23,7 +23,7 @@
     />
     <mat-chip-grid #chipList>
       <ng-container>
-        @for (item of _selectedOptions; track item) {
+        @for (item of _selectedOptions(); track item) {
           <mat-chip-row
             [editable]="!_disabled"
             class="chip"
@@ -77,7 +77,7 @@ Autocomplete
   (optionSelected)="select($event.option.value)"
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="true"
-  [panelWidth]="panelWidth"
+  [panelWidth]="panelWidth()"
 >
   <!-- Select All and Clear Buttons on top of options via content projection-->
   <div>
@@ -139,7 +139,7 @@ Autocomplete
   </div>
 
   <!-- Create new option -->
-  @if (createOption && showAddOption && inputElement.value) {
+  @if (createOption && showAddOption() && inputElement.value) {
     <mat-option [value]="inputElement.value">
       <em
         i18n="
@@ -156,7 +156,7 @@ Autocomplete
       because the footer below will only be displayed with at least one mat-option -->
   </mat-option>
   <div class="autocomplete-footer">
-    @if (hasMoreOptions) {
+    @if (hasMoreOptions()) {
       <em
         class="more-options-hint"
         i18n="Hint shown when dropdown has more options than displayed"

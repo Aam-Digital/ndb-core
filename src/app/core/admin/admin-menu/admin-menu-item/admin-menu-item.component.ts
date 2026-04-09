@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from "@angular/core";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -23,6 +23,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
  * including recursively editing and drag&drop of subMenu items.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-menu-item",
   standalone: true,
   imports: [

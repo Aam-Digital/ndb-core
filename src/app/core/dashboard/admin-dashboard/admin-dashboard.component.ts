@@ -2,9 +2,14 @@ import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
-} from "@angular/cdk/drag-drop";
+  } from "@angular/cdk/drag-drop";
 import { Location } from "@angular/common";
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component,
+  inject,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -30,6 +35,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 import { IconButtonComponent } from "#src/app/core/common-components/icon-button/icon-button.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-dashboard",
   standalone: true,
   imports: [

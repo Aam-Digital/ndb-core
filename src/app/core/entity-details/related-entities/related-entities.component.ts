@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -32,6 +32,7 @@ import { RelatedEntitiesComponentConfig } from "../related-entity-config";
 @DynamicComponent("RelatedEntities")
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-related-entities",
   templateUrl: "./related-entities.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],

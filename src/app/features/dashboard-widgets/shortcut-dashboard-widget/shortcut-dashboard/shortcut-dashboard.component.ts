@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal } from "@angular/core";
+import { Component, Input, inject, signal, ChangeDetectionStrategy } from "@angular/core";
 import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -18,6 +18,7 @@ import { Clipboard } from "@angular/cdk/clipboard";
  */
 @DynamicComponent("ShortcutDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-shortcut-dashboard",
   templateUrl: "./shortcut-dashboard.component.html",
   styleUrls: ["./shortcut-dashboard.component.scss"],

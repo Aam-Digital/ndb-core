@@ -6,6 +6,7 @@ import {
   TemplateRef,
   ViewChild,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
@@ -20,6 +21,7 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
  * for both dialog and routed views.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-view-title",
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],

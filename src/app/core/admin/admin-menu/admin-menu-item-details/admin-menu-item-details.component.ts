@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject, OnInit } from "@angular/core";
+import { Component, ViewChild, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -23,6 +23,7 @@ import { isManualItemWithoutLink } from "../menu-item-for-admin-ui";
  * Dialog component to edit a single menu item's details.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-menu-item-details",
   standalone: true,
   imports: [

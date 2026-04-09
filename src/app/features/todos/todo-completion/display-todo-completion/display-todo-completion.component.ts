@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
 import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-date.pipe";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -9,6 +9,7 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
 
 @DynamicComponent("DisplayTodoCompletion")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-todo-completion",
   templateUrl: "./display-todo-completion.component.html",
   styleUrls: ["./display-todo-completion.component.scss"],

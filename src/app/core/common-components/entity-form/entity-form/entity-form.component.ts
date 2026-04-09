@@ -1,7 +1,7 @@
 import {
   EntityForm,
   EntityFormSavedEvent,
-} from "#src/app/core/common-components/entity-form/entity-form";
+  } from "#src/app/core/common-components/entity-form/entity-form";
 import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 import {
   Component,
@@ -10,6 +10,7 @@ import {
   OnChanges,
   SimpleChanges,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -34,6 +35,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",
   styleUrls: ["./entity-form.component.scss"],

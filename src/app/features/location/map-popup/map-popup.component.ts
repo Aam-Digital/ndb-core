@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -46,6 +46,7 @@ export interface MapPopupConfig {
  * A dialog to display an OpenStreetMap map with markers and optionally allow the user to select a location.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-map-popup",
   templateUrl: "./map-popup.component.html",
   styleUrls: ["./map-popup.component.scss"],

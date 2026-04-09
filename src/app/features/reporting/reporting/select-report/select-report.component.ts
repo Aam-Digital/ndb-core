@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -55,6 +56,7 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
 ];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-select-report",
   templateUrl: "./select-report.component.html",
   styleUrls: ["./select-report.component.scss"],

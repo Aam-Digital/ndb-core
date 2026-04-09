@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { DateWithAge } from "../dateWithAge";
@@ -18,6 +18,7 @@ import { DateWithAge } from "../dateWithAge";
  */
 @DynamicComponent("DisplayAge")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-age",
   template: "{{ date?.age }}",
   standalone: true,

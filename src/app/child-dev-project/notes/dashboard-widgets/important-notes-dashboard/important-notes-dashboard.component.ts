@@ -1,4 +1,4 @@
-import { Component, Input, inject } from "@angular/core";
+import { Component, Input, inject, ChangeDetectionStrategy } from "@angular/core";
 import { Note } from "../../model/note";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
@@ -10,6 +10,7 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
 
 @DynamicComponent("ImportantNotesDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-important-notes-dashboard",
   templateUrl: "./important-notes-dashboard.component.html",
   styleUrls: ["./important-notes-dashboard.component.scss"],

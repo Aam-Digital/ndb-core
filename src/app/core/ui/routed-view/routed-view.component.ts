@@ -1,4 +1,4 @@
-import { Component, Injector, inject } from "@angular/core";
+import { Component, Injector, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
@@ -15,6 +15,7 @@ import { AbstractViewComponent } from "../abstract-view/abstract-view.component"
  */
 @RouteTarget("RoutedView")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-routed-view",
   imports: [CommonModule, DynamicComponentPipe],
   templateUrl: "./routed-view.component.html",

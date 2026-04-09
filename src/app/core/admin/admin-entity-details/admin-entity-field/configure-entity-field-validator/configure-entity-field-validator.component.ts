@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
@@ -19,6 +20,7 @@ import { FormValidatorConfig } from "app/core/common-components/entity-form/dyna
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-configure-entity-field-validator",
   imports: [
     MatInputModule,

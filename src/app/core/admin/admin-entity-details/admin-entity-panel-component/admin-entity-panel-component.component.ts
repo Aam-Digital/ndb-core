@@ -1,4 +1,5 @@
-import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import {
+  AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
@@ -13,6 +14,7 @@ import {
   signal,
   Output,
   EventEmitter,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatOptionModule } from "@angular/material/core";
@@ -36,6 +38,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { IconButtonComponent } from "#src/app/core/common-components/icon-button/icon-button.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-panel-component",
   imports: [
     AdminListManagerComponent,

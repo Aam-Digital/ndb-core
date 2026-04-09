@@ -1,4 +1,4 @@
-import { Component, Injector, inject } from "@angular/core";
+import { Component, Injector, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MAT_DIALOG_DATA,
@@ -24,6 +24,7 @@ import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.int
  * (also see RoutedViewComponent)
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     DialogCloseComponent,

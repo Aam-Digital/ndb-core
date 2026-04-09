@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import {
   MatCell,
@@ -33,6 +33,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
  * TODO: This component is only a raw prototype! Needs further concept and implementation.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-types",
   imports: [
     ViewTitleComponent,

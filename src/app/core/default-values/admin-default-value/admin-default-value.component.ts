@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { DefaultValueConfig } from "../default-value-config";
 import {
   MatError,
@@ -37,6 +37,7 @@ import { AdminInheritedFieldComponent } from "../../../features/inherited-field/
  * to let users configure different defaultValue modes for an Entity field.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-default-value",
   imports: [
     MatFormField,

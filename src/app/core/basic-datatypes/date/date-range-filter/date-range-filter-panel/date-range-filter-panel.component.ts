@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   DateRange,
   MatDatepickerModule,
@@ -43,6 +43,7 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
 ];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-range-filter-panel",
   templateUrl: "./date-range-filter-panel.component.html",
   styleUrls: ["./date-range-filter-panel.component.scss"],

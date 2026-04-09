@@ -1,4 +1,5 @@
-import { Location } from "@angular/common";
+import {
+  Location } from "@angular/common";
 import {
   Component,
   ContentChild,
@@ -7,6 +8,7 @@ import {
   TemplateRef,
   ViewChild,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatListItem, MatNavList } from "@angular/material/list";
@@ -31,6 +33,7 @@ import { AdminEntityService } from "../admin-entity.service";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity",
   imports: [
     EntityTypeLabelPipe,

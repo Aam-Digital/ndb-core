@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from "@angular/core";
+import { Component, HostBinding, Input, ChangeDetectionStrategy } from "@angular/core";
 
 /**
  * These position states are used internally as animation states for the tab body. Setting the
@@ -13,6 +13,7 @@ import { Component, HostBinding, Input } from "@angular/core";
 type PositionState = "left" | "center" | "right";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-roll-call-tab",
   template: "<ng-content></ng-content>",
   styleUrls: ["./roll-call-tab.component.scss"],

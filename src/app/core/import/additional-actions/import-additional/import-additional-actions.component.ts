@@ -1,4 +1,5 @@
-import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
+import {
+  EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import {
   Component,
   EventEmitter,
@@ -7,6 +8,7 @@ import {
   Output,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   FormControl,
@@ -31,6 +33,7 @@ import { ImportAdditionalService } from "../import-additional.service";
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-additional-actions",
   templateUrl: "./import-additional-actions.component.html",
   styleUrls: ["./import-additional-actions.component.scss"],

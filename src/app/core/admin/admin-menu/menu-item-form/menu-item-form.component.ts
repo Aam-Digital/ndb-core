@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -23,6 +24,7 @@ import { IconComponent } from "#src/app/core/common-components/icon-input/icon-i
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-menu-item-form",
   standalone: true,
   imports: [

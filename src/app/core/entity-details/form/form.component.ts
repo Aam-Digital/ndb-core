@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";
@@ -22,6 +22,7 @@ import { PublicFormPermissionService } from "../../../features/public-form/publi
  */
 @DynamicComponent("Form")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-form",
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
