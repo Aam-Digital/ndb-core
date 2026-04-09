@@ -14,8 +14,8 @@ import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { DefaultValueConfigInheritedField } from "../../../features/inherited-field/inherited-field-config";
 import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
+import { hasMappedInheritedSourceField } from "../import-inheritance-warning.util";
 
 /**
  * Data passed into Import Confirmation Dialog.
@@ -60,7 +60,17 @@ export class ImportConfirmSummaryComponent {
   showInheritanceImportWarning = false;
 
   constructor() {
-    this.showInheritanceImportWarning = this.hasMappedInheritedSourceField();
+    const entityType = this.data?.importSettings?.entityType;
+    const entityCtor = entityType
+      ? this.entityRegistry.get(entityType)
+      : undefined;
+
+    this.showInheritanceImportWarning =
+      !!entityCtor &&
+      hasMappedInheritedSourceField(
+        entityCtor,
+        this.data?.importSettings?.columnMapping ?? [],
+      );
   }
 
   // TODO: detailed summary including warnings of unmapped columns, ignored values, etc. (#1943)
@@ -137,32 +147,6 @@ export class ImportConfirmSummaryComponent {
       $localize`Import failed`,
       $localize`Sorry, some error occurred during import. Please try again. If the problem persists, contact support. [${JSON.stringify(error)}]`,
       OkButton,
-    );
-  }
-
-  private hasMappedInheritedSourceField(): boolean {
-    const entityType = this.data?.importSettings?.entityType;
-    const mappedProperties = this.data?.importSettings?.columnMapping
-      ?.map(({ propertyName }) => propertyName)
-      .filter((propertyName): propertyName is string => !!propertyName);
-
-    if (!entityType || !mappedProperties?.length) {
-      return false;
-    }
-
-    const sourceReferenceFields = new Set(
-      [...this.entityRegistry.get(entityType).schema.values()]
-        .filter((field) => field.defaultValue?.mode === "inherited-field")
-        .map(
-          (field) =>
-            (field.defaultValue?.config as DefaultValueConfigInheritedField)
-              ?.sourceReferenceField,
-        )
-        .filter((fieldId): fieldId is string => !!fieldId),
-    );
-
-    return mappedProperties.some((propertyName) =>
-      sourceReferenceFields.has(propertyName),
     );
   }
 }

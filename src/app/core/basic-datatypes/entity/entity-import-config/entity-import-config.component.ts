@@ -14,6 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
 
 /**
  * Configuration UI for the EntityDatatype's import mapping function.
@@ -30,6 +31,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     MatDialogModule,
     MatButtonModule,
     HelpButtonComponent,
+    HintBoxComponent,
   ],
 })
 export class EntityImportConfigComponent {

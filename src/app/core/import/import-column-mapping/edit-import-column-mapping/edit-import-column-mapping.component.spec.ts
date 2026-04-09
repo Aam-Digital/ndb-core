@@ -79,12 +79,15 @@ describe("EditImportColumnMappingComponent", () => {
     expect(dialogSpy.open).toHaveBeenCalledWith(
       DiscreteImportConfigComponent,
       expect.objectContaining({
-        data: {
+        data: expect.objectContaining({
           col: genderColumn,
           values: ["male", "female"],
           entityType: TestEntity,
           additionalSettings: { multiValueSeparator: ";" },
-        },
+          showInheritanceImportHint: false,
+        }),
+        width: "80vw",
+        disableClose: true,
       }),
     );
   });
