@@ -116,8 +116,13 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.highlightForChild,
       );
 
-      const statusClass = eventAttendance?.status?.style;
-      classes[statusClass] = true;
+      if (!eventAttendance?.status?.style) {
+        classes[
+          "attendance-calendar-date-has-participants-with-unknown-status"
+        ] = true;
+      } else {
+        classes[eventAttendance.status.style] = true;
+      }
 
       classes["attendance-calendar-date-has-remarks"] =
         eventAttendance?.remarks && eventAttendance?.remarks !== "";
@@ -127,8 +132,12 @@ export class AttendanceCalendarComponent implements OnChanges {
       // coloring based on averages across all children
       const stats = event.getAttendanceStats();
 
-      const percentageSlab = Math.round(stats.average * 10) * 10;
-      classes["w-" + percentageSlab] = true;
+      if (isNaN(stats.average)) {
+        classes["attendance-calendar-date-no-data"] = true;
+      } else {
+        const percentageSlab = Math.round(stats.average * 10) * 10;
+        classes["w-" + percentageSlab] = true;
+      }
 
       classes["attendance-calendar-date-has-participants-with-unknown-status"] =
         stats.excludedUnknown > 0;
