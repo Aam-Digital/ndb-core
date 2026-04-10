@@ -441,8 +441,8 @@ and relies on inputs to receive data and updates.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="231"
-                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:231</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="240"
+                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:240</a></div>
                         </td>
                     </tr>
 
@@ -480,8 +480,8 @@ and relies on inputs to receive data and updates.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="213"
-                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:213</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:222</a></div>
                         </td>
                     </tr>
 
@@ -517,8 +517,8 @@ and relies on inputs to receive data and updates.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="177"
-                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:177</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="186"
+                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:186</a></div>
                         </td>
                     </tr>
 
@@ -584,8 +584,8 @@ and relies on inputs to receive data and updates.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="239"
-                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:239</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="248"
+                                    class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:248</a></div>
                         </td>
                     </tr>
 
@@ -930,7 +930,7 @@ and relies on inputs to receive data and updates.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="173" class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:173</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="182" class="link-to-prism">src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts:182</a></div>
                                 </td>
                             </tr>
 
@@ -1059,8 +1059,13 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.highlightForChild,
       );
 
-      const statusClass &#x3D; eventAttendance?.status?.style;
-      classes[statusClass] &#x3D; true;
+      if (!eventAttendance?.status?.style) {
+        classes[
+          &quot;attendance-calendar-date-has-participants-with-unknown-status&quot;
+        ] &#x3D; true;
+      } else {
+        classes[eventAttendance.status.style] &#x3D; true;
+      }
 
       classes[&quot;attendance-calendar-date-has-remarks&quot;] &#x3D;
         eventAttendance?.remarks &amp;&amp; eventAttendance?.remarks !&#x3D;&#x3D; &quot;&quot;;
@@ -1070,8 +1075,12 @@ export class AttendanceCalendarComponent implements OnChanges {
       // coloring based on averages across all children
       const stats &#x3D; event.getAttendanceStats();
 
-      const percentageSlab &#x3D; Math.round(stats.average * 10) * 10;
-      classes[&quot;w-&quot; + percentageSlab] &#x3D; true;
+      if (isNaN(stats.average)) {
+        classes[&quot;attendance-calendar-date-no-data&quot;] &#x3D; true;
+      } else {
+        const percentageSlab &#x3D; Math.round(stats.average * 10) * 10;
+        classes[&quot;w-&quot; + percentageSlab] &#x3D; true;
+      }
 
       classes[&quot;attendance-calendar-date-has-participants-with-unknown-status&quot;] &#x3D;
         stats.excludedUnknown &gt; 0;
@@ -1361,6 +1370,10 @@ mat-calendar {
 
   &amp;.attendance-calendar-date-has-remarks {
     background: gradient-helpers.top-right-triangle(#5f5f5f);
+  }
+
+  &amp;.attendance-calendar-date-no-data {
+    background: gradient-helpers.top-right-triangle(grey);
   }
 
   &amp;.attendance-calendar-date-has-participants-with-unknown-status {
