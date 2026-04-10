@@ -94,7 +94,6 @@ import { SessionSubject } from "../../session/auth/session-info";
   ],
 })
 export class UiComponent {
-  private cdr = inject(ChangeDetectorRef);
   private screenWidthObserver = inject(ScreenWidthObserver);
   private siteSettingsService = inject(SiteSettingsService);
   private sessionManager = inject(SessionManagerService);
@@ -103,6 +102,7 @@ export class UiComponent {
   private loginState = inject(LoginStateSubject);
   private configService = inject(ConfigService);
   private readonly sessionSubject = inject(SessionSubject);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   /** display mode for the menu to make it responsive and usable on smaller screens */
   get sideNavMode(): MatDrawerMode {
