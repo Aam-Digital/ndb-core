@@ -290,6 +290,38 @@ describe("MatchingEntitiesComponent", () => {
     expect(saveSpy).toHaveBeenCalledWith(expect.any(Note));
   });
 
+  it("should reset both selections after creating a match", async () => {
+    const testEntity = new TestEntity();
+    const matchedEntity = TestEntity.create("matched child");
+
+    Object.assign(component, testConfig);
+    component.entity = testEntity;
+    component.onMatch = {
+      newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+      newEntityMatchPropertyRight: "childId",
+      newEntityMatchPropertyLeft: "schoolId",
+    };
+    component.columns = [["_id", "name"]];
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
+
+    await stabilizeCurrentFixture();
+
+    component.sideDetails[0].selected = [testEntity];
+    component.sideDetails[0].highlightedSelected = testEntity;
+    component.sideDetails[1].selected = [matchedEntity];
+    component.sideDetails[1].highlightedSelected = matchedEntity;
+
+    await component.createMatch();
+    await fixture.whenStable();
+
+    expect(saveSpy).toHaveBeenCalledWith(expect.any(ChildSchoolRelation));
+    expect(component.sideDetails[0].selected).toEqual([]);
+    expect(component.sideDetails[1].selected).toEqual([]);
+    expect(component.sideDetails[0].highlightedSelected).toBeNull();
+    expect(component.sideDetails[1].highlightedSelected).toBeNull();
+    expect(component.lockedMatching).toBe(false);
+  });
+
   it("should create distance column and publish updates", async () => {
     TestEntity.schema.set("address", { dataType: "location" });
     component.entity = new TestEntity();
