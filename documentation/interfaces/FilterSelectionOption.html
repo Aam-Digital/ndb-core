@@ -436,7 +436,7 @@ export class SelectableFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
       valuesToMatchAsOptions
         .filter((k) &#x3D;&gt; !!k)
         .map((k) &#x3D;&gt; ({
-          key: k.toString().toLowerCase(),
+          key: k.toString(),
           label: k.toString(),
           filter: { [attributeName]: k } as DataFilter&lt;T&gt;,
         }))

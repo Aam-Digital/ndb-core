@@ -616,8 +616,8 @@ default <code>false</code>.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="165"
-                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:165</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:194</a></div>
                         </td>
                     </tr>
 
@@ -907,7 +907,7 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; implements On
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.filterConfig || changes.entityType || changes.entities) {
       this.filterSelections &#x3D; await this.filterGenerator.generate(
-        this.filterConfig,
+        this.getEffectiveFilterConfig(),
         this.entityType,
         this.entities,
         this.onlyShowRelevantFilterOptions,
@@ -961,17 +961,46 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; implements On
     this.filterObjChange.emit(this.filterObj);
   }
 
+  /**
+   * Returns the filter config extended with any URL params that refer to valid entity
+   * schema fields but are not already covered by the configured filterConfig.
+   * This ensures that navigation links (e.g. from EntityCountDashboard) pre-apply
+   * a filter even when the target list view has not explicitly configured that field
+   * as a filter UI element.
+   */
+  private getEffectiveFilterConfig(): FilterConfig[] {
+    if (!this.useUrlQueryParams || !this.entityType) {
+      return this.filterConfig ?? [];
+    }
+    const params &#x3D; this.tableStateUrl.getFilterParams();
+    const configuredIds &#x3D; new Set((this.filterConfig ?? []).map((f) &#x3D;&gt; f.id));
+    const extraConfigs: FilterConfig[] &#x3D; Object.keys(params)
+      .filter((k) &#x3D;&gt; !configuredIds.has(k) &amp;&amp; this.entityType.schema.has(k))
+      .map((k) &#x3D;&gt; ({ id: k }));
+    return [...(this.filterConfig ?? []), ...extraConfigs];
+  }
+
   private loadUrlParams() {
     if (!this.useUrlQueryParams) {
       return;
     }
     const params &#x3D; this.tableStateUrl.getFilterParams();
+    const hasUrlParams &#x3D; Object.keys(params).length &gt; 0;
+
+    if (hasUrlParams) {
+      // When navigating from a dashboard link, reset defaults so only the
+      // URL-specified filters are active and counts match the dashboard widget.
+      this.hasActiveFilters &#x3D; false;
+    }
+
     this.filterSelections.forEach((f) &#x3D;&gt; {
       if (params.hasOwnProperty(f.name)) {
         this.hasActiveFilters &#x3D; true;
         f.selectedOptionValues &#x3D; params[f.name]
           .split(&quot;,&quot;)
           .filter((value) &#x3D;&gt; value !&#x3D;&#x3D; &quot;&quot;);
+      } else if (hasUrlParams) {
+        f.selectedOptionValues &#x3D; [];
       }
     });
   }
