@@ -464,9 +464,11 @@
   Component,
   computed,
   ContentChild,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Input,
+  inject,
   OnChanges,
   OnInit,
   Output,
@@ -476,8 +478,12 @@
   ViewChild,
   WritableSignal,
 } from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 import { NgForOf, NgIf, NgTemplateOutlet } from &quot;@angular/common&quot;;
-import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
+import {
+  MAT_FORM_FIELD,
+  MatFormFieldControl,
+} from &quot;@angular/material/form-field&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatInput, MatInputModule } from &quot;@angular/material/input&quot;;
 import {
@@ -485,7 +491,7 @@ import {
   MatAutocompleteTrigger,
 } from &quot;@angular/material/autocomplete&quot;;
 import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
-import { filter, map, startWith } from &quot;rxjs/operators&quot;;
+import { auditTime, filter, map, startWith } from &quot;rxjs/operators&quot;;
 import { CustomFormControlDirective } from &quot;./custom-form-control.directive&quot;;
 import { coerceBooleanProperty } from &quot;@angular/cdk/coercion&quot;;
 import {
@@ -505,7 +511,9 @@ import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,
   CdkVirtualScrollViewport,
+  ViewportRuler,
 } from &quot;@angular/cdk/scrolling&quot;;
+import { EMPTY, fromEvent, merge } from &quot;rxjs&quot;;
 
 interface SelectableOption&lt;O, V&gt; {
   initial: O;
@@ -546,6 +554,11 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS &#x3D; [
   styleUrls: [&quot;./basic-autocomplete.component.scss&quot;],
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
+    {
+      provide: MAT_FORM_FIELD,
+      useFactory: () &#x3D;&gt;
+        inject(MAT_FORM_FIELD, { optional: true, skipSelf: true }),
+    },
   ],
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
 })
@@ -553,6 +566,9 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   extends CustomFormControlDirective&lt;V | V[]&gt;
   implements OnChanges, OnInit, AfterViewInit
 {
+  private readonly destroyRef &#x3D; inject(DestroyRef);
+  private readonly viewportRuler &#x3D; inject(ViewportRuler);
+
   @ContentChild(TemplateRef) templateRef: TemplateRef&lt;any&gt;;
   // &#x60;_elementRef&#x60; is protected in &#x60;MapInput&#x60;
   @ViewChild(MatInput, { static: true }) inputElement: MatInput &amp; {
@@ -737,11 +753,14 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   }
 
   ngAfterViewInit() {
-    window.addEventListener(&quot;focus&quot;, () &#x3D;&gt; {
-      if (this.autocomplete?.panelOpen) {
-        this.showAutocomplete();
-      }
-    });
+    merge(
+      fromEvent(window, &quot;focus&quot;),
+      fromEvent(window, &quot;resize&quot;),
+      this.viewportRuler.change(),
+      this.getVisualViewportChangeEvents(),
+    )
+      .pipe(auditTime(16), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() &#x3D;&gt; this.updateOpenPanelPosition());
   }
 
   /**
@@ -758,6 +777,44 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     ) as HTMLElement;
     const fieldWidth &#x3D; fieldEl ? fieldEl.getBoundingClientRect().width : 200;
     this.panelWidth &#x3D; &#x60;${fieldWidth}px&#x60;;
+  }
+
+  /**
+   * Returns viewport-change events that are not always covered by window resize
+   * (e.g. DevTools docking/undocking and some browser UI changes).
+   */
+  private getVisualViewportChangeEvents() {
+    const visualViewport &#x3D; window.visualViewport;
+    if (!visualViewport) {
+      return EMPTY;
+    }
+
+    return merge(
+      fromEvent(visualViewport, &quot;resize&quot;),
+      fromEvent(visualViewport, &quot;scroll&quot;),
+    );
+  }
+
+  /**
+   * Recomputes width and position of an open autocomplete panel.
+   * Runs twice (immediately and on next animation frame) to handle late layout updates.
+   */
+  private updateOpenPanelPosition(): void {
+    if (!this.autocomplete?.panelOpen) {
+      return;
+    }
+
+    this.updatePanelWidth();
+    this.autocomplete.updatePosition();
+
+    requestAnimationFrame(() &#x3D;&gt; {
+      if (!this.autocomplete?.panelOpen) {
+        return;
+      }
+
+      this.updatePanelWidth();
+      this.autocomplete.updatePosition();
+    });
   }
 
   drop(event: CdkDragDrop&lt;any[]&gt;) {
