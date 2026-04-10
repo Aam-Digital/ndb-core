@@ -133,6 +133,28 @@ describe("FilterComponent", () => {
     } as any);
   });
 
+  it("should clear default filters when other URL params are present", async () => {
+    component.entityType = Note;
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "date", default: "0" }, { id: "category" }];
+
+    activatedRouteMock.snapshot = {
+      queryParams: { category: "someCategory" },
+    };
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    const dateFilter = component.filterSelections.find(
+      (f) => f.name === "date",
+    );
+    expect(dateFilter.selectedOptionValues).toHaveLength(0);
+
+    const categoryFilter = component.filterSelections.find(
+      (f) => f.name === "category",
+    );
+    expect(categoryFilter.selectedOptionValues).toEqual(["someCategory"]);
+  });
+
   it("should compute available category options and build filterObj", async () => {
     component.entityType = Note;
     const t1 = defaultInteractionTypes[0];
