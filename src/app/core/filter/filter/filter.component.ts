@@ -152,12 +152,22 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
       return;
     }
     const params = this.tableStateUrl.getFilterParams();
+    const hasUrlParams = Object.keys(params).length > 0;
+
+    if (hasUrlParams) {
+      // When navigating from a dashboard link, reset defaults so only the
+      // URL-specified filters are active and counts match the dashboard widget.
+      this.hasActiveFilters = false;
+    }
+
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
         this.hasActiveFilters = true;
         f.selectedOptionValues = params[f.name]
           .split(",")
           .filter((value) => value !== "");
+      } else if (hasUrlParams) {
+        f.selectedOptionValues = [];
       }
     });
   }
