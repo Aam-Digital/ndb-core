@@ -1347,5 +1347,6 @@
   "8108904368154408038": "Delete user account?",
   "7335257022151274937": "Are you sure you want to permanently delete this user account? This cannot be undone.",
   "9053694930531862350": "User account has been deleted.",
-  "5485047925337695042": "Failed to delete user account"
+  "5485047925337695042": "Failed to delete user account",
+  "7628311919443151343": "User accounts pagination"
 }
