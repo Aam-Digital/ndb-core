@@ -79,6 +79,7 @@ describe("LoginComponent", () => {
 
   it("should route to redirect uri once state changes to 'logged-in'", async () => {
     vi.useFakeTimers();
+    vi.stubGlobal("location", { origin: "http://localhost" });
     try {
       const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigateByUrl");
       TestBed.inject(ActivatedRoute).snapshot.queryParams = {
@@ -92,6 +93,7 @@ describe("LoginComponent", () => {
       expect(navigateSpy).toHaveBeenCalledWith("/someUrl");
     } finally {
       vi.useRealTimers();
+      vi.unstubAllGlobals();
     }
   });
 
