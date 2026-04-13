@@ -401,8 +401,6 @@
   "3720831104832682481": " zu ihrer Anwendung {$START_EMPHASISED_TEXT}{$INTERPOLATION}{$CLOSE_EMPHASISED_TEXT}",
   "225036150263392581": "Sie müssen sich einloggen um Ihre Daten mit anderen Nutzer:innen zu synchronisieren. Wir überprüfen, ob Sie noch eingeloggt sind oder leiten Sie zum Anmelde-Fenster weiter. Sie können die Anwendung weiterhin ohne Login nutzen, falls Sie derzeit keine aktive Internetverbindung haben.",
   "4894792300638662469": "Online Login wird überprüft ...",
-  "4036593675663530097": " Die Verbindung mit dem Server ist fehlgeschlagen. Sie können die Anwendung ohne Login nutzen, falls Sie sich zuvor schon einmal auf diesem Gerät angemeldet hatten. ",
-  "2391792437858839211": " Online login erneut versuchen ",
   "8392580149316553700": "Sie können die komplette Anwendung ohne Internetverbindung nutzen. Dabei werden Ihre Daten aber nicht mit anderen Nutzer:innen synchronisiert. Wenn Sie eine Internetverbindung haben, sollten Sie sich immer Online einloggen.",
   "2433398181082824515": " Offline nutzen ",
   "1287498709132530358": "Einloggen als Nutzer:in ...",
@@ -1348,5 +1346,8 @@
   "7335257022151274937": "Are you sure you want to permanently delete this user account? This cannot be undone.",
   "9053694930531862350": "User account has been deleted.",
   "5485047925337695042": "Failed to delete user account",
-  "7628311919443151343": "User accounts pagination"
+  "7628311919443151343": "User accounts pagination",
+  "5983743945230036950": "When enabled, data is not synced and stored on this device. This is faster but you cannot use the app offline later.",
+  "6531852877544948288": "Online-only mode (no offline sync)",
+  "2715185765061607307": " Log in "
 }

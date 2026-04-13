@@ -401,8 +401,6 @@
   "3720831104832682481": " à votre système {$START_EMPHASISED_TEXT}{$INTERPOLATION}{$CLOSE_EMPHASISED_TEXT}",
   "225036150263392581": "Il est nécessaire de vous connecter au serveur afin que vos données puissent être synchronisées avec celles des autres membres de l'équipe. Nous vérifions si vous êtes toujours connecté ou vous invitons à fournir vos identifiants. Vous pouvez toujours utiliser l'application hors ligne, si vous n'avez actuellement pas de connexion Internet.",
   "4894792300638662469": "Vérification de la connexion en ligne...",
-  "4036593675663530097": " Nous n'avons pas pu nous connecter au serveur pour le moment. Vous pouvez toujours utiliser l'application hors ligne, si vous vous êtes déjà connecté sur cet appareil. ",
-  "2391792437858839211": " Réessayer la connexion en ligne ",
   "8392580149316553700": "Vous pouvez utiliser l'application complètement hors ligne. Cependant, vos modifications ne peuvent pas être synchronisées avec celles des autres membres de l'équipe dans ce mode. Si cette option est disponible, vous devez toujours utiliser la connexion en ligne.",
   "2433398181082824515": " Connexion hors ligne ",
   "1287498709132530358": "Connectez-vous en tant qu'utilisateur ...",
@@ -1348,5 +1346,8 @@
   "7335257022151274937": "Are you sure you want to permanently delete this user account? This cannot be undone.",
   "9053694930531862350": "User account has been deleted.",
   "5485047925337695042": "Failed to delete user account",
-  "7628311919443151343": "User accounts pagination"
+  "7628311919443151343": "User accounts pagination",
+  "5983743945230036950": "When enabled, data is not synced and stored on this device. This is faster but you cannot use the app offline later.",
+  "6531852877544948288": "Online-only mode (no offline sync)",
+  "2715185765061607307": " Log in "
 }
