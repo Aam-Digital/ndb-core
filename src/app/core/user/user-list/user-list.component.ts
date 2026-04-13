@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SessionSubject } from "../../session/auth/session-info";
@@ -15,6 +15,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { AlertService } from "../../alerts/alert.service";
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 
 @Component({
   selector: "app-user-list",
@@ -24,6 +25,7 @@ import { AlertService } from "../../alerts/alert.service";
     MatButtonModule,
     FaIconComponent,
     EntityBlockComponent,
+    MatPaginatorModule,
   ],
 
   templateUrl: "./user-list.component.html",
@@ -40,6 +42,15 @@ export class UserListComponent implements OnInit {
   );
 
   users = signal<UserAccount[]>([]);
+  pageIndex = signal(0);
+  pageSize = signal(10);
+  readonly pageSizeOptions = [10, 25, 50, 100];
+  pagedUsers = computed(() => {
+    const start = this.pageIndex() * this.pageSize();
+    const end = start + this.pageSize();
+    return this.users().slice(start, end);
+  });
+
   displayedColumns: string[] = [
     "email",
     "userEntityId",
@@ -64,6 +75,7 @@ export class UserListComponent implements OnInit {
     this.userAdminService.getAllUsers().subscribe({
       next: (users) => {
         this.users.set(users);
+        this.pageIndex.set(0);
       },
       error: (err) => {
         Logging.error("Failed to load users:", err);
@@ -72,6 +84,11 @@ export class UserListComponent implements OnInit {
         );
       },
     });
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 
   getRoleNames(userAccount: UserAccount): string {
