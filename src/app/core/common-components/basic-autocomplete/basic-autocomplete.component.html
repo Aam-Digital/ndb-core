@@ -1,69 +1,72 @@
-<!--Display-->
-@if (display === "text" || display === "none") {
+<div matAutocompleteOrigin #autocompleteOrigin="matAutocompleteOrigin">
+  <!--Display-->
+  @if (display === "text" || display === "none") {
+    <input
+      [id]="id"
+      [hidden]="isInSearchMode() || display === 'none'"
+      [disabled]="_disabled"
+      matInput
+      style="text-overflow: ellipsis; width: calc(100% - 50px)"
+      (focusin)="showAutocomplete()"
+      (focusout)="showAutocomplete()"
+      [value]="displayText"
+      [placeholder]="placeholder"
+    />
+  } @else {
+    <input
+      [hidden]="true"
+      [disabled]="_disabled"
+      matInput
+      (focusin)="showAutocomplete()"
+      (focusout)="showAutocomplete()"
+      [matChipInputFor]="chipList"
+    />
+    <mat-chip-grid #chipList>
+      <ng-container>
+        @for (item of _selectedOptions; track item) {
+          <mat-chip-row
+            [editable]="!_disabled"
+            class="chip"
+            [style.background-color]="item.asValue?.['color']"
+          >
+            @if (!templateRef) {
+              {{ item.asString }}
+            } @else {
+              <ng-template
+                [ngTemplateOutlet]="templateRef"
+                [ngTemplateOutletContext]="{ $implicit: item.initial }"
+              ></ng-template>
+            }
+            @if (!_disabled) {
+              <button matChipRemove (click)="unselect(item)">
+                <fa-icon
+                  i18n-matTooltip="
+                    tooltip for remove icon on chips of dropdown item
+                  "
+                  matTooltip="remove"
+                  icon="xmark"
+                ></fa-icon>
+              </button>
+            }
+          </mat-chip-row>
+        }
+      </ng-container>
+    </mat-chip-grid>
+  }
+
+  <!--Search-->
   <input
-    [id]="id"
-    [hidden]="isInSearchMode() || display === 'none'"
-    [disabled]="_disabled"
+    [hidden]="!isInSearchMode()"
+    #inputElement
+    [formControl]="autocompleteForm"
     matInput
-    style="text-overflow: ellipsis; width: calc(100% - 50px)"
-    (focusin)="showAutocomplete()"
-    (focusout)="showAutocomplete()"
-    [value]="displayText"
+    style="text-overflow: ellipsis"
+    [matAutocomplete]="autoSuggestions"
+    [matAutocompleteConnectedTo]="autocompleteOrigin"
+    (focusout)="onFocusOut($event)"
     [placeholder]="placeholder"
   />
-} @else {
-  <input
-    [hidden]="true"
-    [disabled]="_disabled"
-    matInput
-    (focusin)="showAutocomplete()"
-    (focusout)="showAutocomplete()"
-    [matChipInputFor]="chipList"
-  />
-  <mat-chip-grid #chipList>
-    <ng-container>
-      @for (item of _selectedOptions; track item) {
-        <mat-chip-row
-          [editable]="!_disabled"
-          class="chip"
-          [style.background-color]="item.asValue?.['color']"
-        >
-          @if (!templateRef) {
-            {{ item.asString }}
-          } @else {
-            <ng-template
-              [ngTemplateOutlet]="templateRef"
-              [ngTemplateOutletContext]="{ $implicit: item.initial }"
-            ></ng-template>
-          }
-          @if (!_disabled) {
-            <button matChipRemove (click)="unselect(item)">
-              <fa-icon
-                i18n-matTooltip="
-                  tooltip for remove icon on chips of dropdown item
-                "
-                matTooltip="remove"
-                icon="xmark"
-              ></fa-icon>
-            </button>
-          }
-        </mat-chip-row>
-      }
-    </ng-container>
-  </mat-chip-grid>
-}
-
-<!--Search-->
-<input
-  [hidden]="!isInSearchMode()"
-  #inputElement
-  [formControl]="autocompleteForm"
-  matInput
-  style="text-overflow: ellipsis"
-  [matAutocomplete]="autoSuggestions"
-  (focusout)="onFocusOut($event)"
-  [placeholder]="placeholder"
-/>
+</div>
 
 <!--
 Autocomplete

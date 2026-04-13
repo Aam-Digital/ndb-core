@@ -237,4 +237,32 @@ describe("BasicAutocompleteComponent", () => {
     expect(createOptionMock).toHaveBeenCalled();
     expect(component.value).toEqual(newOption);
   });
+
+  it("should realign the panel on resize while open", async () => {
+    vi.useFakeTimers();
+    try {
+      component.options = ["one", "two"];
+      component.showAutocomplete();
+      component.autocomplete.openPanel();
+      fixture.detectChanges();
+
+      const updatePanelWidthSpy = vi.spyOn(component, "updatePanelWidth");
+      const updatePositionSpy = vi.spyOn(
+        component.autocomplete,
+        "updatePosition",
+      );
+      updatePanelWidthSpy.mockClear();
+      updatePositionSpy.mockClear();
+
+      window.dispatchEvent(new Event("resize"));
+      vi.advanceTimersByTime(100);
+      await fixture.whenStable();
+
+      expect(component.autocomplete.panelOpen).toBe(true);
+      expect(updatePanelWidthSpy).toHaveBeenCalled();
+      expect(updatePositionSpy).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
