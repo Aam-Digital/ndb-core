@@ -73,6 +73,9 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("tab", { name: "Attendance" }).click();
   await page.getByRole("tab", { name: activity.title }).click();
 
+  // need to load older records to see the attendance record for 25.12.2024
+  await page.getByRole("button", { name: "Load all records" }).click();
+
   await page.getByRole("button", { name: "Choose month and year" }).click();
   await page.getByRole("button", { name: "2024" }).click();
   await page.getByRole("button", { name: "December" }).click();

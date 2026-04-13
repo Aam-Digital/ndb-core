@@ -48,15 +48,10 @@ export class GroupedChildAttendanceComponent implements OnInit {
 
   private async loadActivities() {
     this.loading = true;
-    const allActivities = [
-      ...new Map(
-        (
-          await this.attendanceService.getActivitiesForParticipant(
-            this.entity.getId(),
-          )
-        ).map((a) => [a.getId(), a]),
-      ).values(),
-    ];
+    const allActivities =
+      await this.attendanceService.getActivitiesForParticipant(
+        this.entity.getId(),
+      );
 
     this.activities = allActivities.filter((a) => a.isActive == true);
     this.archivedActivities = allActivities.filter((a) => a.isActive == false);
