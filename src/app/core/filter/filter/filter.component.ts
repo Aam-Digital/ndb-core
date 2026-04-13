@@ -93,7 +93,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.filterConfig || changes.entityType || changes.entities) {
       this.filterSelections = await this.filterGenerator.generate(
-        this.filterConfig,
+        this.getEffectiveFilterConfig(),
         this.entityType,
         this.entities,
         this.onlyShowRelevantFilterOptions,
@@ -147,17 +147,46 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     this.filterObjChange.emit(this.filterObj);
   }
 
+  /**
+   * Returns the filter config extended with any URL params that refer to valid entity
+   * schema fields but are not already covered by the configured filterConfig.
+   * This ensures that navigation links (e.g. from EntityCountDashboard) pre-apply
+   * a filter even when the target list view has not explicitly configured that field
+   * as a filter UI element.
+   */
+  private getEffectiveFilterConfig(): FilterConfig[] {
+    if (!this.useUrlQueryParams || !this.entityType) {
+      return this.filterConfig ?? [];
+    }
+    const params = this.tableStateUrl.getFilterParams();
+    const configuredIds = new Set((this.filterConfig ?? []).map((f) => f.id));
+    const extraConfigs: FilterConfig[] = Object.keys(params)
+      .filter((k) => !configuredIds.has(k) && this.entityType.schema.has(k))
+      .map((k) => ({ id: k }));
+    return [...(this.filterConfig ?? []), ...extraConfigs];
+  }
+
   private loadUrlParams() {
     if (!this.useUrlQueryParams) {
       return;
     }
     const params = this.tableStateUrl.getFilterParams();
+    const hasUrlParams = Object.keys(params).length > 0;
+
+    if (hasUrlParams) {
+      // When navigating from a dashboard link, reset defaults so only the
+      // URL-specified filters are active and counts match the dashboard widget.
+      this.hasActiveFilters = false;
+    }
+
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
         this.hasActiveFilters = true;
         f.selectedOptionValues = params[f.name]
           .split(",")
           .filter((value) => value !== "");
+      } else if (hasUrlParams) {
+        f.selectedOptionValues = [];
       }
     });
   }

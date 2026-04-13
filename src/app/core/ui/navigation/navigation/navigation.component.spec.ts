@@ -179,4 +179,14 @@ describe("NavigationComponent", () => {
     routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
     expect(component.activeLink()).toBe("/child");
   });
+
+  it("should highlight menu item with query params on NavigationEnd", () => {
+    const routerEvents = TestBed.inject(Router).events as Subject<Event>;
+    component.menuItems.set([
+      { label: "Users", icon: "", link: "/user?type=X" },
+    ]);
+
+    routerEvents.next(new NavigationEnd(42, "/user?type=X", "/user?type=X"));
+    expect(component.activeLink()).toBe("/user?type=X");
+  });
 });
