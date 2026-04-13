@@ -1113,11 +1113,11 @@ export class NotificationService {
         const db &#x3D; this.databaseResolver.getDatabase(
           NotificationEvent.DATABASE,
         );
-        (db as SyncedPouchDatabase)
-          .sync()
-          .catch((err) &#x3D;&gt;
+        if (db instanceof SyncedPouchDatabase) {
+          db.sync().catch((err) &#x3D;&gt;
             Logging.warn(&quot;Failed sync notifications db upon push message&quot;, err),
           );
+        }
 
         let notification &#x3D; new Notification(payload.notification.title, {
           body: payload.notification.body,

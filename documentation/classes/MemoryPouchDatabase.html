@@ -272,6 +272,10 @@ not persisting any data after the page is closed.</p>
                             </li>
                             <li>
                                     <span class="modifier">Protected</span>
+                                <a href="#shouldSkipIndexUpdate" >shouldSkipIndexUpdate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
                                     <span class="modifier">Async</span>
                                 <a href="#subscribeChanges" >subscribeChanges</a>
                             </li>
@@ -1230,7 +1234,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:480</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:500</a></code>
 </div>
                         </td>
                     </tr>
@@ -1854,6 +1858,85 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="shouldSkipIndexUpdate"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>shouldSkipIndexUpdate</b></span>
+                        <a href="#shouldSkipIndexUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>shouldSkipIndexUpdate(_existingDesignDoc: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/PouchDatabase.html" target="_self" >PouchDatabase</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:447</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether to skip updating a design doc that differs from the local version.
+Overridden in RemotePouchDatabase to prevent older clients from
+overwriting indexes created by a newer app version on a shared server.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>_existingDesignDoc</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                         </div>
                             <div class="io-description">

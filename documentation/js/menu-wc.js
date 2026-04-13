@@ -493,13 +493,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/FileModule.html" data-type="entity-link" >FileModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-FileModule-d136112ff5e54353d63c1eb749d63b5e18d306d99640bb1762afa1f2c2eb8ce761ad6993d6887eaf7ea83cdea33cb248cd2b34bc10457daf830bc2c7e75b38ca"' : 'data-bs-target="#xs-injectables-links-module-FileModule-d136112ff5e54353d63c1eb749d63b5e18d306d99640bb1762afa1f2c2eb8ce761ad6993d6887eaf7ea83cdea33cb248cd2b34bc10457daf830bc2c7e75b38ca"' }>
+                                        'data-bs-target="#injectables-links-module-FileModule-d6be37d3e027789167acb8d272e7f866971f77334d66113c22e481f4c90d3a6f57e9bd34b0bf270fc02599acc06edf8a1bae0623a3ccbb03affc9ecf5fb84fc4"' : 'data-bs-target="#xs-injectables-links-module-FileModule-d6be37d3e027789167acb8d272e7f866971f77334d66113c22e481f4c90d3a6f57e9bd34b0bf270fc02599acc06edf8a1bae0623a3ccbb03affc9ecf5fb84fc4"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-FileModule-d136112ff5e54353d63c1eb749d63b5e18d306d99640bb1762afa1f2c2eb8ce761ad6993d6887eaf7ea83cdea33cb248cd2b34bc10457daf830bc2c7e75b38ca"' :
-                                        'id="xs-injectables-links-module-FileModule-d136112ff5e54353d63c1eb749d63b5e18d306d99640bb1762afa1f2c2eb8ce761ad6993d6887eaf7ea83cdea33cb248cd2b34bc10457daf830bc2c7e75b38ca"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-FileModule-d6be37d3e027789167acb8d272e7f866971f77334d66113c22e481f4c90d3a6f57e9bd34b0bf270fc02599acc06edf8a1bae0623a3ccbb03affc9ecf5fb84fc4"' :
+                                        'id="xs-injectables-links-module-FileModule-d6be37d3e027789167acb8d272e7f866971f77334d66113c22e481f4c90d3a6f57e9bd34b0bf270fc02599acc06edf8a1bae0623a3ccbb03affc9ecf5fb84fc4"' }>
                                         <li class="link">
                                             <a href="injectables/CouchdbFileService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >CouchdbFileService</a>
                                         </li>

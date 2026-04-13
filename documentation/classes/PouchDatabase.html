@@ -273,6 +273,10 @@ should be implemented in the abstract <a href="../classes/Database.html">Databas
                             </li>
                             <li>
                                     <span class="modifier">Protected</span>
+                                <a href="#shouldSkipIndexUpdate" >shouldSkipIndexUpdate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
                                     <span class="modifier">Async</span>
                                 <a href="#subscribeChanges" >subscribeChanges</a>
                             </li>
@@ -1201,8 +1205,8 @@ Returns true if there are no documents in the database</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="480"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:480</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="500"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:500</a></div>
                         </td>
                     </tr>
 
@@ -1838,6 +1842,79 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="shouldSkipIndexUpdate"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>shouldSkipIndexUpdate</b></span>
+                        <a href="#shouldSkipIndexUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>shouldSkipIndexUpdate(_existingDesignDoc: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="447"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:447</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether to skip updating a design doc that differs from the local version.
+Overridden in RemotePouchDatabase to prevent older clients from
+overwriting indexes created by a newer app version on a shared server.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>_existingDesignDoc</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="subscribeChanges"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -2369,33 +2446,53 @@ export class PouchDatabase extends Database {
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
   saveDatabaseIndex(designDoc: any): Promise&lt;void&gt; {
-    const creationPromise &#x3D; this.createOrUpdateDesignDoc(designDoc);
+    const creationPromise &#x3D; this.createOrUpdateDesignDoc(designDoc).catch(
+      (err) &#x3D;&gt; {
+        Logging.debug(
+          &quot;Could not create/update database index (may be expected in online-only mode)&quot;,
+          err,
+        );
+      },
+    );
     this.indexPromises.push(creationPromise);
     return creationPromise;
   }
 
   private async createOrUpdateDesignDoc(designDoc): Promise&lt;void&gt; {
+    designDoc.aam_version &#x3D; environment.appVersion;
+
     const existingDesignDoc &#x3D; await this.get(designDoc._id, {}, true);
     if (!existingDesignDoc) {
       Logging.debug(&quot;creating new database index&quot;);
     } else if (
-      JSON.stringify(existingDesignDoc.views) !&#x3D;&#x3D;
+      JSON.stringify(existingDesignDoc.views) &#x3D;&#x3D;&#x3D;
       JSON.stringify(designDoc.views)
     ) {
-      Logging.debug(&quot;replacing existing database index&quot;);
-      designDoc._rev &#x3D; existingDesignDoc._rev;
-    } else {
       // already up to date, nothing more to do
       return;
+    } else if (this.shouldSkipIndexUpdate(existingDesignDoc)) {
+      return;
+    } else {
+      Logging.debug(&quot;replacing existing database index&quot;);
+      designDoc._rev &#x3D; existingDesignDoc._rev;
     }
 
-    await this.put(designDoc, true);
+    await this.put(designDoc);
 
     // for faster initial loading we disable prebuilding views in development
     // TODO: check if this should be completely removed, also for production systems
     if (environment.production) {
       await this.prebuildViewsOfDesignDoc(designDoc);
     }
+  }
+
+  /**
+   * Whether to skip updating a design doc that differs from the local version.
+   * Overridden in RemotePouchDatabase to prevent older clients from
+   * overwriting indexes created by a newer app version on a shared server.
+   */
+  protected shouldSkipIndexUpdate(_existingDesignDoc: any): boolean {
+    return false;
   }
 
   @PerformanceAnalysisLogging

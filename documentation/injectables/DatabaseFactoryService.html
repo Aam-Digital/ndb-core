@@ -272,8 +272,8 @@ depending on context and environment configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -372,6 +372,15 @@ export class DatabaseFactoryService {
         this.ngZone,
         this.alertService,
       );
+    } else if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
+      const db &#x3D; new RemotePouchDatabase(
+        dbName,
+        this.authService,
+        syncState,
+        this.ngZone,
+        this.alertService,
+      );
+      return db;
     } else if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
     } else {

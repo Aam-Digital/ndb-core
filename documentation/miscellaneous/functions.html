@@ -142,6 +142,9 @@
                             <a href="#addTooltip" title="src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts" ><b>addTooltip</b>&nbsp;&nbsp;&nbsp;(src/.../link-external-profile-dialog.component.ts)</a>
                         </li>
                         <li>
+                            <a href="#applyOnlineOnlyPreference" title="src/bootstrap-environment.ts" ><b>applyOnlineOnlyPreference</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</a>
+                        </li>
+                        <li>
                             <a href="#applyTextToCreatedEntity" title="src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts" ><b>applyTextToCreatedEntity</b>&nbsp;&nbsp;&nbsp;(src/.../edit-entity.component.ts)</a>
                         </li>
                         <li>
@@ -239,6 +242,9 @@
                         </li>
                         <li>
                             <a href="#extractHumanReadableLabel" title="src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts" ><b>extractHumanReadableLabel</b>&nbsp;&nbsp;&nbsp;(src/.../entity-count-dashboard.component.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#extractNumericParts" title="src/app/core/database/pouchdb/version-comparison.utils.ts" ><b>extractNumericParts</b>&nbsp;&nbsp;&nbsp;(src/.../version-comparison.utils.ts)</a>
                         </li>
                         <li>
                             <a href="#fetchTranslations" title="src/bootstrap-i18n.ts" ><b>fetchTranslations</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-i18n.ts)</a>
@@ -343,6 +349,9 @@
                             <a href="#hasOrdinalValue" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts" ><b>hasOrdinalValue</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum-ordering.ts)</a>
                         </li>
                         <li>
+                            <a href="#hasRemoteSession" title="src/app/core/session/session-type.ts" ><b>hasRemoteSession</b>&nbsp;&nbsp;&nbsp;(src/.../session-type.ts)</a>
+                        </li>
+                        <li>
                             <a href="#imposeTotalOrdering" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts" ><b>imposeTotalOrdering</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum-ordering.ts)</a>
                         </li>
                         <li>
@@ -377,6 +386,9 @@
                         </li>
                         <li>
                             <a href="#isValidDate" title="src/app/utils/utils.ts" ><b>isValidDate</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isVersionNewer" title="src/app/core/database/pouchdb/version-comparison.utils.ts" ><b>isVersionNewer</b>&nbsp;&nbsp;&nbsp;(src/.../version-comparison.utils.ts)</a>
                         </li>
                         <li>
                             <a href="#itemReferencesId" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" ><b>itemReferencesId</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</a>
@@ -1654,6 +1666,168 @@ The use case is, when multiple services extend the same class and one of these s
                             <div class="io-description">
                                 
                             </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/bootstrap-environment.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applyOnlineOnlyPreference"></a>
+                    <span class="name">
+                        <span ><b>applyOnlineOnlyPreference</b></span>
+                        <a href="#applyOnlineOnlyPreference"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>applyOnlineOnlyPreference()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>If the user previously opted into online-only mode, override session_type early
+so that database instances are created with the correct type from the start.</p>
+<p>This MUST run before Angular bootstraps, because DatabaseFactoryService reads
+environment.session_type the first time a database is lazily accessed (during
+Angular DI startup, before LoginComponent even exists). If we waited until
+LoginComponent ran, the wrong DB class would already have been instantiated.</p>
+<p>The flow is:</p>
+<ol>
+<li>User toggles checkbox on login page → LoginComponent writes localStorage</li>
+<li>Keycloak login triggers a full page reload (redirectUri: location.href)</li>
+<li>On reload, this function runs and applies the preference to environment</li>
+<li>Angular DI starts → correct DB class (RemotePouchDatabase) is created</li>
+</ol>
+<p>See also: LoginComponent.applyOnlineOnlyMode() and ONLINE_ONLY_KEY.</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initConfigJsonToEnvironment"></a>
+                    <span class="name">
+                        <span ><b>initConfigJsonToEnvironment</b></span>
+                        <a href="#initConfigJsonToEnvironment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initConfigJsonToEnvironment()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load basic config values from assets/keycloak.json into environment</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initEnvironmentConfig"></a>
+                    <span class="name">
+                        <span ><b>initEnvironmentConfig</b></span>
+                        <a href="#initEnvironmentConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initEnvironmentConfig()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Overwrite environment settings with the settings from the <code>config.json</code> if present.
+If no file is found, the environment settings are kept.</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initFirebaseConfigToEnvironment"></a>
+                    <span class="name">
+                        <span ><b>initFirebaseConfigToEnvironment</b></span>
+                        <a href="#initFirebaseConfigToEnvironment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initFirebaseConfigToEnvironment()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load Push Notifications config for Firebase.
+Please add assets/firebase-config.json with your own Firebase config</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initKeycloakConfigToEnvironment"></a>
+                    <span class="name">
+                        <span ><b>initKeycloakConfigToEnvironment</b></span>
+                        <a href="#initKeycloakConfigToEnvironment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initKeycloakConfigToEnvironment()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load Keycloak server URL from assets/keycloak.json into environment</p>
+</div>
+
                 </td>
             </tr>
         </tbody>
@@ -4436,6 +4610,146 @@ still supporting asymmetric matchers such as <code>expect.objectContaining(...)<
             </tr>
         </tbody>
     </table>
+</section>    <h3>src/app/core/database/pouchdb/version-comparison.utils.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="extractNumericParts"></a>
+                    <span class="name">
+                        <span ><b>extractNumericParts</b></span>
+                        <a href="#extractNumericParts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>extractNumericParts(version: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>version</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>number[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isVersionNewer"></a>
+                    <span class="name">
+                        <span ><b>isVersionNewer</b></span>
+                        <a href="#isVersionNewer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isVersionNewer(leftVersion: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, rightVersion: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Returns true when <code>leftVersion</code> is newer than <code>rightVersion</code>.</p>
+<p>The comparison is based on numeric segments to avoid lexicographic issues,
+e.g. 9.0.0 &lt; 10.0.0.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>leftVersion</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>rightVersion</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>    <h3>src/bootstrap-i18n.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -6675,22 +6989,22 @@ ordering of values is <em>not</em> the natural order of these values.</p>
             </tr>
         </tbody>
     </table>
-</section>    <h3>src/bootstrap-environment.ts</h3>
+</section>    <h3>src/app/core/session/session-type.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="initConfigJsonToEnvironment"></a>
+                    <a name="hasRemoteSession"></a>
                     <span class="name">
-                        <span ><b>initConfigJsonToEnvironment</b></span>
-                        <a href="#initConfigJsonToEnvironment"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>hasRemoteSession</b></span>
+                        <a href="#hasRemoteSession"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>initConfigJsonToEnvironment()</code>
+<code>hasRemoteSession(sessionType: <a href="../miscellaneous/enumerations.html#SessionType" target="_self">SessionType</a>)</code>
                 </td>
             </tr>
 
@@ -6699,98 +7013,44 @@ ordering of values is <em>not</em> the natural order of these values.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Load basic config values from assets/keycloak.json into environment</p>
+                        <div class="io-description"><p>Check whether the given session type has a remote server connection.
+This is true for both &quot;synced&quot; (local+remote) and &quot;online&quot; (remote-only) modes.</p>
 </div>
 
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="initEnvironmentConfig"></a>
-                    <span class="name">
-                        <span ><b>initEnvironmentConfig</b></span>
-                        <a href="#initEnvironmentConfig"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>initEnvironmentConfig()</code>
-                </td>
-            </tr>
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>sessionType</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#SessionType" target="_self" >SessionType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
 
 
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Overwrite environment settings with the settings from the <code>config.json</code> if present.
-If no file is found, the environment settings are kept.</p>
-</div>
-
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="initFirebaseConfigToEnvironment"></a>
-                    <span class="name">
-                        <span ><b>initFirebaseConfigToEnvironment</b></span>
-                        <a href="#initFirebaseConfigToEnvironment"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>initFirebaseConfigToEnvironment()</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Load Push Notifications config for Firebase.
-Please add assets/firebase-config.json with your own Firebase config</p>
-</div>
-
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="initKeycloakConfigToEnvironment"></a>
-                    <span class="name">
-                        <span ><b>initKeycloakConfigToEnvironment</b></span>
-                        <a href="#initKeycloakConfigToEnvironment"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>initKeycloakConfigToEnvironment()</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Load Keycloak server URL from assets/keycloak.json into environment</p>
-</div>
-
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>

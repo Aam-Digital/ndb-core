@@ -170,7 +170,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="488" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:488</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="508" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:508</a></div>
                             </td>
                         </tr>
 
@@ -632,33 +632,53 @@ export class PouchDatabase extends Database {
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
   saveDatabaseIndex(designDoc: any): Promise&lt;void&gt; {
-    const creationPromise &#x3D; this.createOrUpdateDesignDoc(designDoc);
+    const creationPromise &#x3D; this.createOrUpdateDesignDoc(designDoc).catch(
+      (err) &#x3D;&gt; {
+        Logging.debug(
+          &quot;Could not create/update database index (may be expected in online-only mode)&quot;,
+          err,
+        );
+      },
+    );
     this.indexPromises.push(creationPromise);
     return creationPromise;
   }
 
   private async createOrUpdateDesignDoc(designDoc): Promise&lt;void&gt; {
+    designDoc.aam_version &#x3D; environment.appVersion;
+
     const existingDesignDoc &#x3D; await this.get(designDoc._id, {}, true);
     if (!existingDesignDoc) {
       Logging.debug(&quot;creating new database index&quot;);
     } else if (
-      JSON.stringify(existingDesignDoc.views) !&#x3D;&#x3D;
+      JSON.stringify(existingDesignDoc.views) &#x3D;&#x3D;&#x3D;
       JSON.stringify(designDoc.views)
     ) {
-      Logging.debug(&quot;replacing existing database index&quot;);
-      designDoc._rev &#x3D; existingDesignDoc._rev;
-    } else {
       // already up to date, nothing more to do
       return;
+    } else if (this.shouldSkipIndexUpdate(existingDesignDoc)) {
+      return;
+    } else {
+      Logging.debug(&quot;replacing existing database index&quot;);
+      designDoc._rev &#x3D; existingDesignDoc._rev;
     }
 
-    await this.put(designDoc, true);
+    await this.put(designDoc);
 
     // for faster initial loading we disable prebuilding views in development
     // TODO: check if this should be completely removed, also for production systems
     if (environment.production) {
       await this.prebuildViewsOfDesignDoc(designDoc);
     }
+  }
+
+  /**
+   * Whether to skip updating a design doc that differs from the local version.
+   * Overridden in RemotePouchDatabase to prevent older clients from
+   * overwriting indexes created by a newer app version on a shared server.
+   */
+  protected shouldSkipIndexUpdate(_existingDesignDoc: any): boolean {
+    return false;
   }
 
   @PerformanceAnalysisLogging

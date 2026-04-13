@@ -167,7 +167,7 @@ for the main &quot;app&quot; database.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/session/session-type.ts:40</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/session/session-type.ts:55</a></div>
                             </td>
                         </tr>
 
@@ -196,6 +196,11 @@ export enum SessionType {
   synced &#x3D; &quot;synced&quot;,
 
   /**
+   * online-only mode - direct HTTP to remote CouchDB without local storage or sync
+   */
+  online &#x3D; &quot;online&quot;,
+
+  /**
    * local only demo mode - PouchDB database without a remote sync counterpart
    */
   local &#x3D; &quot;local&quot;,
@@ -204,6 +209,16 @@ export enum SessionType {
    * in-memory adapter of pouchdb database - data is lost after leaving the page
    */
   mock &#x3D; &quot;mock&quot;,
+}
+
+/**
+ * Check whether the given session type has a remote server connection.
+ * This is true for both &quot;synced&quot; (local+remote) and &quot;online&quot; (remote-only) modes.
+ */
+export function hasRemoteSession(sessionType: SessionType): boolean {
+  return (
+    sessionType &#x3D;&#x3D;&#x3D; SessionType.synced || sessionType &#x3D;&#x3D;&#x3D; SessionType.online
+  );
 }
 
 @Injectable()

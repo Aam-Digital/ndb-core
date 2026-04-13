@@ -261,7 +261,7 @@ import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot
 import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { Angulartics2Module } from &quot;angulartics2&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
-import { SessionType } from &quot;../../session/session-type&quot;;
+import { hasRemoteSession } from &quot;../../session/session-type&quot;;
 import { EditEntityComponent } from &quot;../../basic-datatypes/entity/edit-entity/edit-entity.component&quot;;
 import { lastValueFrom, of, firstValueFrom } from &quot;rxjs&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
@@ -359,7 +359,7 @@ export class UserDetailsComponent {
   passwordChangeDisabled &#x3D; computed(() &#x3D;&gt; {
     if (!this.isProfileMode()) return false;
 
-    if (environment.session_type !&#x3D;&#x3D; SessionType.synced) {
+    if (!hasRemoteSession(environment.session_type)) {
       return true; // Disabled in demo mode
     }
     if (typeof navigator !&#x3D;&#x3D; &quot;undefined&quot; &amp;&amp; !navigator.onLine) {

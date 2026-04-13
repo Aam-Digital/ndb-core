@@ -178,6 +178,10 @@ After a successful login, the database for the current user is initialised.</p>
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#checkRemoteSession" >checkRemoteSession</a>
+                            </li>
+                            <li>
                                 <a href="#clearRemoteSessionIfNecessary" >clearRemoteSessionIfNecessary</a>
                             </li>
                             <li>
@@ -219,6 +223,48 @@ After a successful login, the database for the current user is initialised.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="checkRemoteSession"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>checkRemoteSession</b></span>
+                        <a href="#checkRemoteSession"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>checkRemoteSession()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Silently check for an existing SSO session without redirecting.
+If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="clearRemoteSessionIfNecessary"></a>
                     <span class="name">
                         <span ><b>clearRemoteSessionIfNecessary</b></span>
@@ -235,8 +281,8 @@ After a successful login, the database for the current user is initialised.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="153"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:153</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:175</a></div>
                         </td>
                     </tr>
 
@@ -272,8 +318,8 @@ After a successful login, the database for the current user is initialised.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="124"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:124</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:146</a></div>
                         </td>
                     </tr>
 
@@ -313,8 +359,8 @@ After a successful login, the database for the current user is initialised.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="132"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:132</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="154"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:154</a></div>
                         </td>
                     </tr>
 
@@ -353,8 +399,8 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="85"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:85</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -424,15 +470,15 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:85</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Login for a remote session and start the sync.
+                        <div class="io-description"><p>Login for a remote session, redirecting to Keycloak if needed.
 After a user has logged in once online, this user can later also use the app offline.
 Should only be called if there is an internet connection</p>
 </div>
@@ -465,8 +511,8 @@ Should only be called if there is an internet connection</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -475,7 +521,7 @@ Should only be called if there is an internet connection</p>
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                 </td>
@@ -529,13 +575,13 @@ Should only be called if there is an internet connection</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 
 import { SessionInfo, SessionSubject } from &quot;../auth/session-info&quot;;
-import { LoginStateSubject, SessionType } from &quot;../session-type&quot;;
+import { LoginStateSubject, hasRemoteSession } from &quot;../session-type&quot;;
 import { LoginState } from &quot;../session-states/login-state.enum&quot;;
 import { Router } from &quot;@angular/router&quot;;
 import { KeycloakAuthService } from &quot;../auth/keycloak/keycloak-auth.service&quot;;
 import { LocalAuthService } from &quot;../auth/local/local-auth.service&quot;;
-import { environment } from &quot;../../../../environments/environment&quot;;
 import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { environment } from &quot;../../../../environments/environment&quot;;
 import { CurrentUserSubject } from &quot;../current-user-subject&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { filter, take } from &quot;rxjs/operators&quot;;
@@ -567,7 +613,29 @@ export class SessionManagerService {
   private updateSubscription: Subscription;
 
   /**
-   * Login for a remote session and start the sync.
+   * Silently check for an existing SSO session without redirecting.
+   * If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.
+   */
+  async checkRemoteSession() {
+    this.loginStateSubject.next(LoginState.IN_PROGRESS);
+    if (this.remoteLoginAvailable()) {
+      return this.remoteAuthService
+        .checkSession()
+        .then((user) &#x3D;&gt; {
+          if (user) {
+            return this.handleRemoteLogin(user);
+          }
+          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+        })
+        .catch(() &#x3D;&gt; {
+          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+        });
+    }
+    this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+  }
+
+  /**
+   * Login for a remote session, redirecting to Keycloak if needed.
    * After a user has logged in once online, this user can later also use the app offline.
    * Should only be called if there is an internet connection
    */
@@ -586,7 +654,7 @@ export class SessionManagerService {
   }
 
   remoteLoginAvailable() {
-    return navigator.onLine &amp;&amp; environment.session_type &#x3D;&#x3D;&#x3D; SessionType.synced;
+    return navigator.onLine &amp;&amp; hasRemoteSession(environment.session_type);
   }
 
   /**

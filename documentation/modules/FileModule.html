@@ -266,8 +266,8 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injector, NgModule, inject } from &quot;@angular/core&quot;;
 import { CouchdbFileService } from &quot;./couchdb-file.service&quot;;
+import { hasRemoteSession } from &quot;../../core/session/session-type&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
-import { SessionType } from &quot;../../core/session/session-type&quot;;
 import { FileService } from &quot;./file.service&quot;;
 import { MockFileService } from &quot;./mock-file.service&quot;;
 import { serviceProvider } from &quot;../../utils/utils&quot;;
@@ -282,7 +282,7 @@ import { PhotoDatatype } from &quot;./photo.datatype&quot;;
     CouchdbFileService,
     MockFileService,
     serviceProvider(FileService, (injector: Injector) &#x3D;&gt; {
-      return environment.session_type &#x3D;&#x3D;&#x3D; SessionType.synced
+      return hasRemoteSession(environment.session_type)
         ? injector.get(CouchdbFileService)
         : injector.get(MockFileService);
     }),

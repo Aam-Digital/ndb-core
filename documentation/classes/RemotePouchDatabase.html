@@ -220,6 +220,11 @@
                             <li>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier"></span>
+                                <a href="#shouldSkipIndexUpdate" >shouldSkipIndexUpdate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#subscribeChanges" >subscribeChanges</a>
                             </li>
@@ -308,7 +313,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:46</a></div>
                             </td>
                         </tr>
 
@@ -419,7 +424,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:27</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:29</a></div>
                         </td>
                     </tr>
 
@@ -717,8 +722,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="255"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:255</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="260"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:260</a></div>
                         </td>
                     </tr>
 
@@ -766,7 +771,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:62</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:64</a></code>
 </div>
                         </td>
                     </tr>
@@ -841,6 +846,82 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="shouldSkipIndexUpdate"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier"></span>
+                        <span ><b>shouldSkipIndexUpdate</b></span>
+                        <a href="#shouldSkipIndexUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>shouldSkipIndexUpdate(existingDesignDoc: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/PouchDatabase.html" target="_self" >PouchDatabase</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:266</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>existingDesignDoc</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="subscribeChanges"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -867,7 +948,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:271</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:289</a></code>
 </div>
                         </td>
                     </tr>
@@ -1408,7 +1489,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:480</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:500</a></code>
 </div>
                         </td>
                     </tr>
@@ -2142,10 +2223,12 @@ import { Logging } from &quot;../../logging/logging.service&quot;;
 import { HttpStatusCode } from &quot;@angular/common/http&quot;;
 import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
 import { SyncStateSubject } from &quot;app/core/session/session-type&quot;;
+import { SyncState } from &quot;app/core/session/session-states/sync-state.enum&quot;;
 import { NgZone } from &quot;@angular/core&quot;;
 import { timer } from &quot;rxjs&quot;;
 import { exhaustMap, takeUntil } from &quot;rxjs/operators&quot;;
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
+import { isVersionNewer } from &quot;./version-comparison.utils&quot;;
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -2223,6 +2306,9 @@ export class RemotePouchDatabase extends PouchDatabase {
       options,
     );
     this.databaseInitialized.complete();
+
+    // No local sync needed — immediately signal that data is available
+    this.globalSyncState?.next(SyncState.COMPLETED);
   }
 
   /**
@@ -2393,6 +2479,19 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected &#x3D; this.pendingLostPermissions;
     this.pendingLostPermissions &#x3D; [];
     return collected;
+  }
+
+  protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {
+    if (
+      existingDesignDoc.aam_version &amp;&amp;
+      isVersionNewer(existingDesignDoc.aam_version, environment.appVersion)
+    ) {
+      Logging.debug(
+        &#x60;skipping index update for ${existingDesignDoc._id}: server has version ${existingDesignDoc.aam_version}, we are ${environment.appVersion}&#x60;,
+      );
+      return true;
+    }
+    return false;
   }
 
   /**
