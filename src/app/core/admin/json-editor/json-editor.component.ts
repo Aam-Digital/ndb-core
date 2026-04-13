@@ -31,6 +31,15 @@ export class JsonEditorComponent
   extends CustomFormControlDirective<object>
   implements AfterViewInit, OnDestroy
 {
+  /**
+   * Text mode uses CodeMirror internally, which virtualises rendering by only keeping
+   * DOM "tiles" for the visible viewport. When a JSON value contains very long strings
+   * (e.g. a lengthy SQL query stored as a report definition), the full document can
+   * exceed what CodeMirror renders, causing a "No tile at position X" crash on any
+   * keyboard or mouse event that tries to measure an off-screen position.
+   * Switching to tree mode avoids the CodeMirror text-editor entirely for such content.
+   * See https://github.com/Aam-Digital/ndb-core/issues/3821
+   */
   private static readonly RISKY_TEXT_MODE_STRING_LENGTH = 1000;
 
   @ViewChild("json", { static: true }) json!: ElementRef<HTMLDivElement>;
