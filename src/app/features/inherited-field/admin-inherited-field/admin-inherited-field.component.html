@@ -6,7 +6,7 @@
     placeholder="Select inheritance option"
     i18n-placeholder
   >
-    @for (option of availableOptions; track option.label) {
+    @for (option of availableOptions; track option) {
       <mat-option [value]="option" [matTooltip]="option.tooltip">
         <div class="flex-row gap-small align-items-center">
           @if (option.type === "inherit") {

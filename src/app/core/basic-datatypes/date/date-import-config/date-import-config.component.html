@@ -32,7 +32,7 @@
   ></app-help-button>
 
   <mat-list>
-    @for (val of values; track val.value) {
+    @for (val of values; track val) {
       <mat-list-item [class.invalid]="!val.parsed">
         {{ val.value }} -> {{ val.parsed | customDate }}
       </mat-list-item>

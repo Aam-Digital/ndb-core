@@ -9,7 +9,7 @@
     [class.fieldsOnlyMode]="fieldsOnlyMode"
   >
     <!-- FIELD GROUPS -->
-    @for (group of config.fieldGroups; track $index; let i = $index) {
+    @for (group of config.fieldGroups; track group; let i = $index) {
       <div class="entity-form-cell admin-form-column section-container" cdkDrag>
         @if (!fieldsOnlyMode) {
           <div class="flex-row align-center">
@@ -38,7 +38,7 @@
           class="fields-group-list drop-list"
         >
           <!-- FIELD [start] -->
-          @for (field of group.fields; track $index) {
+          @for (field of group.fields; track field) {
             <div
               class="admin-form-field flex-row align-center"
               cdkDrag
@@ -153,7 +153,7 @@
           </mat-form-field>
         </div>
 
-        @for (field of filteredFields(); track $index) {
+        @for (field of filteredFields(); track field) {
           <div
             class="admin-form-field flex-row align-center"
             [class.admin-form-field-new]="
