@@ -67,6 +67,13 @@ export class KeycloakAdminService extends UserAdminService {
       concatMap((userAccount) => {
         return this.sendEmail(userAccount.id, "VERIFY_EMAIL").pipe(
           map(() => userAccount),
+          catchError((emailError) => {
+            Logging.warn(
+              "Failed to send verification email after account creation",
+              emailError,
+            );
+            return of(userAccount);
+          }),
         );
       }),
       catchError((originalError) =>
