@@ -21,7 +21,7 @@
     [dataSource]="columns"
     class="match-comparison-table mat-elevation-z1"
   >
-    @for (side of sideDetails; track side; let i = $index) {
+    @for (side of sideDetails; track $index; let i = $index) {
       <ng-container [matColumnDef]="'side-' + i">
         <th
           mat-header-cell
@@ -33,7 +33,7 @@
             >{{ (side.entityType | entityType)?.label }}:</em
           >
           &nbsp;
-          @for (s of side.selected; track s; let i = $index) {
+          @for (s of side.selected; track s.getId(); let i = $index) {
             <span
               [class.highlighted-name]="s === side.highlightedSelected"
               (click)="side.highlightedSelected = s"
@@ -107,7 +107,7 @@
 
 @if (!lockedMatching) {
   <div class="flex-row flex-wrap gap-large">
-    @for (side of sideDetails; track side) {
+    @for (side of sideDetails; track $index) {
       @if (side.availableEntities) {
         <div class="flex-grow">
           <h3

@@ -1,10 +1,10 @@
 <form [class.grid-layout]="gridLayout">
-  @for (group of fieldGroups; track group) {
+  @for (group of fieldGroups; track $index) {
     <div class="entity-form-cell">
       @if (group.header) {
         <h2>{{ group.header }}</h2>
       }
-      @for (field of group.fields; track field) {
+      @for (field of group.fields; track $index) {
         <div [class.full-width]="fullWidth">
           <app-entity-field-edit
             [field]="field"

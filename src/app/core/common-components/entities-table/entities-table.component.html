@@ -13,7 +13,7 @@
     [matSortDirection]="_sortBy?.direction"
     class="full-width table"
   >
-    @for (col of _columns; track col) {
+    @for (col of _columns; track col.id) {
       <ng-container [matColumnDef]="col.id">
         <th
           mat-header-cell

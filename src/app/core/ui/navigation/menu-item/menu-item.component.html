@@ -25,7 +25,7 @@
 <!-- Render submenus if they exist and are expanded -->
 @if (isExpanded) {
   <div class="submenu">
-    @for (subItem of item().subMenu; track subItem) {
+    @for (subItem of item().subMenu; track subItem.label) {
       <!-- Pass activeLink to each submenu item to highlight the active submenu -->
       <app-menu-item
         [item]="subItem"

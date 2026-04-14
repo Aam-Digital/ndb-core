@@ -74,7 +74,7 @@
           </mat-card-header>
           <mat-card-content>
             <mat-action-list>
-              @for (user of offlineUsers; track user) {
+              @for (user of offlineUsers; track user.id) {
                 <button
                   mat-list-item
                   (click)="sessionManager.offlineLogin(user)"

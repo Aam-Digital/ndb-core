@@ -84,6 +84,7 @@
             "testing": {
               "aot": false,
               "polyfills": [
+                "@angular/localize/init",
                 "src/polyfills.test.ts"
               ],
               "fileReplacements": [
@@ -168,6 +169,7 @@
             "testing": {
               "aot": false,
               "polyfills": [
+                "@angular/localize/init",
                 "src/polyfills.test.ts"
               ],
               "fileReplacements": [

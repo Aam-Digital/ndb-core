@@ -27,7 +27,7 @@
       <th i18n="Import mapping header" class="first-column">Imported values</th>
       <th i18n="Import mapping header">Assigned values</th>
     </tr>
-    @for (ctrl of form.controls | keyvalue; track ctrl) {
+    @for (ctrl of form.controls | keyvalue; track ctrl.key) {
       <tr>
         <td class="first-column">{{ ctrl.key }}:</td>
         <td>
