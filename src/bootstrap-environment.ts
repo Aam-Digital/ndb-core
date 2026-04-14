@@ -1,6 +1,7 @@
 import { environment } from "./environments/environment";
 import { Logging } from "./app/core/logging/logging.service";
 import { FirebaseConfiguration } from "./app/features/notification/notification-config.interface";
+import { SessionType } from "./app/core/session/session-type";
 
 /**
  * Overwrite environment settings with the settings from the `config.json` if present.
@@ -56,6 +57,36 @@ async function initConfigJsonToEnvironment() {
   }
 
   Object.assign(environment, config);
+
+  // Apply user's online-only preference from localStorage (before Angular DI creates databases)
+  applyOnlineOnlyPreference();
+}
+
+/**
+ * If the user previously opted into online-only mode, override session_type early
+ * so that database instances are created with the correct type from the start.
+ *
+ * This MUST run before Angular bootstraps, because DatabaseFactoryService reads
+ * environment.session_type the first time a database is lazily accessed (during
+ * Angular DI startup, before LoginComponent even exists). If we waited until
+ * LoginComponent ran, the wrong DB class would already have been instantiated.
+ *
+ * The flow is:
+ *   1. User toggles checkbox on login page → LoginComponent writes localStorage
+ *   2. Keycloak login triggers a full page reload (redirectUri: location.href)
+ *   3. On reload, this function runs and applies the preference to environment
+ *   4. Angular DI starts → correct DB class (RemotePouchDatabase) is created
+ *
+ * See also: LoginComponent.applyOnlineOnlyMode() and ONLINE_ONLY_KEY.
+ */
+function applyOnlineOnlyPreference() {
+  if (
+    environment.session_type === SessionType.synced &&
+    environment.session_type_choice !== false &&
+    localStorage.getItem("session_online_only") === "true"
+  ) {
+    environment.session_type = SessionType.online;
+  }
 }
 
 /**
