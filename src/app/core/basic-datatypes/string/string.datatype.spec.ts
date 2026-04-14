@@ -27,6 +27,11 @@ describe("Schema data type: string", () => {
       expect(result).toBe("");
     });
 
+    it("should return undefined for undefined value", async () => {
+      const result = await datatype.anonymize(undefined, {} as any, {} as any);
+      expect(result).toBeUndefined();
+    });
+
     it("should mask a longer string preserving length", async () => {
       const result = await datatype.anonymize(
         "Hello World",
