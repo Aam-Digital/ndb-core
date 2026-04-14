@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -7,7 +9,6 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -119,6 +120,7 @@ export class EntityListComponent<T extends Entity>
   });
   private readonly formDialog = inject(FormDialogService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
@@ -206,6 +208,7 @@ export class EntityListComponent<T extends Entity>
         }
 
         this.isDesktop = isDesktop;
+        this.cdr.markForCheck();
       });
   }
 
@@ -221,6 +224,7 @@ export class EntityListComponent<T extends Entity>
         config.entity.toLowerCase() ===
           this.entityConstructor?.ENTITY_TYPE?.toLowerCase(),
     );
+    this.cdr.markForCheck();
   }
 
   async copyPublicFormLinkForEntityType(config: PublicFormConfig) {
@@ -256,6 +260,7 @@ export class EntityListComponent<T extends Entity>
 
   protected async loadEntities() {
     this.allEntities = await this.getEntities();
+    this.cdr.markForCheck();
     this.listenToEntityUpdates();
   }
 
@@ -292,6 +297,7 @@ export class EntityListComponent<T extends Entity>
           if (!inProgress) {
             // reload the list once
             this.allEntities = await this.getEntities();
+            this.cdr.markForCheck();
             // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
             setTimeout(() => {
               requestAnimationFrame(() => {
@@ -310,6 +316,7 @@ export class EntityListComponent<T extends Entity>
           );
         }
         this.allEntities = applyUpdate(this.allEntities, updatedEntity);
+        this.cdr.markForCheck();
       });
   }
 
