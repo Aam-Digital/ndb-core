@@ -52,7 +52,7 @@
             [(selectedIndex)]="selectedColumnGroupIndex"
             appTabStateMemo
           >
-            @for (item of groups; track item) {
+            @for (item of groups; track item.name) {
               <mat-tab
                 [label]="item.name"
                 angulartics2On="click"

@@ -91,6 +91,21 @@ describe("KeycloakAuthService", () => {
     });
   });
 
+  it("checkSession should return session when token exists", () => {
+    return expect(service.checkSession()).resolves.toEqual({
+      name: "test",
+      id: "881ba191-0d27-4dff-9bc4-2c9e561ac900",
+      roles: ["user_app"],
+      entityId: "User:test",
+      email: undefined,
+    });
+  });
+
+  it("checkSession should return null when no token exists", () => {
+    mockKeycloak.getToken.mockResolvedValue(null);
+    return expect(service.checkSession()).resolves.toBeNull();
+  });
+
   it("should use `sub` if `username` is not available", () => {
     const tokenWithoutUsername =
       "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJycVB3eFM4U1hXZ2FGOFBDbDZrYWFkVUxOYWQyaEloX21vQjhmTDdUVnJJIn0.eyJleHAiOjE3MDcyMTk0MTgsImlhdCI6MTcwNzIxNTgxOCwiYXV0aF90aW1lIjoxNzA3MjE1MDQxLCJqdGkiOiI0OWZjMjEyZS0wNGMwLTRmOWItOTAwZi1mYmVlYWE5ZGZmZjUiLCJpc3MiOiJodHRwczovL2tleWNsb2FrLmFhbS1kaWdpdGFsLm5ldC9yZWFsbXMvZGV2Iiwic3ViIjoiODQ0MGFkZDAtOTdhOS00M2VkLWFmMGItMTE2YzBmYWI3ZTkwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXBwIiwibm9uY2UiOiI2N2I5N2U1NS1kMTY2LTQ3YjUtYTE4NC0zZDk1ZmIxMDQxM2UiLCJzZXNzaW9uX3N0YXRlIjoiZDZiYzQ2NTMtNmRmMC00M2NmLTliMWItNjgwODVmYTMyMTAzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwiLCJzaWQiOiJkNmJjNDY1My02ZGYwLTQzY2YtOWIxYi02ODA4NWZhMzIxMDMiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIl9jb3VjaGRiLnJvbGVzIjpbInVzZXJfYXBwIl19.AK5qz9keozPFwBMl4xtBVt2T42AfkAdSvX5s6kSdZBdjfqnWazi3RB4YmQ-Rfik7z_uUhXayx2i72S557d3fo1G9YttLkormB2vZ-zM0GJeYXlGmG1jLUc8w3cQARdLBTrBsgWSGo2ZnZJ-eExn8UhwG5d5BUCl-IU-KJHB1C5R3sSTgXOpkED4WRaoxPOZORr40W263tHJjjNcPECUOtmpQvY0sGUbKHGWpqgWZNXE_G75DMHd0lEBeE924sIeEZcw0Y6TpjBwJULe89EVeI6sr4qhFKjNfn_2miB1HyOOM3jxUfUngR0ju0dJpm5Jmmcyr0Pah0QiA8OWVPKEZgQ\n";

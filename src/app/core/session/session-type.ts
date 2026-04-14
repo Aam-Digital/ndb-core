@@ -13,6 +13,11 @@ export enum SessionType {
   synced = "synced",
 
   /**
+   * online-only mode - direct HTTP to remote CouchDB without local storage or sync
+   */
+  online = "online",
+
+  /**
    * local only demo mode - PouchDB database without a remote sync counterpart
    */
   local = "local",
@@ -21,6 +26,16 @@ export enum SessionType {
    * in-memory adapter of pouchdb database - data is lost after leaving the page
    */
   mock = "mock",
+}
+
+/**
+ * Check whether the given session type has a remote server connection.
+ * This is true for both "synced" (local+remote) and "online" (remote-only) modes.
+ */
+export function hasRemoteSession(sessionType: SessionType): boolean {
+  return (
+    sessionType === SessionType.synced || sessionType === SessionType.online
+  );
 }
 
 @Injectable()

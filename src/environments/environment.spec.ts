@@ -20,4 +20,5 @@ export const environment = {
   userSupportEnabled: false,
   use_indexeddb_adapter: false,
   translationsCdnUrl: "",
+  session_type_choice: true,
 };

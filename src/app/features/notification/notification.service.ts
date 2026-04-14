@@ -266,11 +266,11 @@ export class NotificationService {
         const db = this.databaseResolver.getDatabase(
           NotificationEvent.DATABASE,
         );
-        (db as SyncedPouchDatabase)
-          .sync()
-          .catch((err) =>
+        if (db instanceof SyncedPouchDatabase) {
+          db.sync().catch((err) =>
             Logging.warn("Failed sync notifications db upon push message", err),
           );
+        }
 
         let notification = new Notification(payload.notification.title, {
           body: payload.notification.body,

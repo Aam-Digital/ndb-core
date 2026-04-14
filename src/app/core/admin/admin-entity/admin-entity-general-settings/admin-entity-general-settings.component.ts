@@ -121,7 +121,12 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
       toBlockDetailsAttributes: this.fb.group({
         title: [this.generalSettings.toBlockDetailsAttributes?.title],
-        image: [this.generalSettings.toBlockDetailsAttributes?.image],
+        image: [
+          {
+            value: this.generalSettings.toBlockDetailsAttributes?.image,
+            disabled: !this.hasImageFields,
+          },
+        ],
         fields: [this.generalSettings.toBlockDetailsAttributes?.fields || []],
       }),
     });

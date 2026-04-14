@@ -14,7 +14,7 @@
 
   <div>
     <h3 i18n>Birthdays / Anniversaries to show</h3>
-    @for (pair of entityPropertyPairs; track pair; let i = $index) {
+    @for (pair of entityPropertyPairs; track $index; let i = $index) {
       <div class="margin-bottom-regular position-relative">
         <div class="flex-row align-center gap-regular">
           <mat-form-field

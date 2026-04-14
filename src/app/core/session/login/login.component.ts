@@ -26,7 +26,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
-import { LoginStateSubject } from "../session-type";
+import { LoginStateSubject, SessionType } from "../session-type";
 import { AsyncPipe } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -37,6 +37,9 @@ import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { race, timer } from "rxjs";
+import { environment } from "../../../../environments/environment";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { FormsModule } from "@angular/forms";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -55,6 +58,8 @@ import { race, timer } from "rxjs";
     MatTooltipModule,
     MatListModule,
     FontAwesomeModule,
+    MatCheckboxModule,
+    FormsModule,
   ],
 })
 export class LoginComponent implements OnInit {
@@ -68,14 +73,51 @@ export class LoginComponent implements OnInit {
   enableOfflineLogin: boolean;
   loginInProgress = false;
 
+  /** Whether the offline login section should be shown at all. */
+  showOfflineSection = false;
+
+  /** Whether the initial silent SSO check has completed (showing the login form). */
+  ssoCheckDone = false;
+
+  /**
+   * localStorage key under which the online-only preference is persisted.
+   * Read by bootstrap-environment.ts on every page load (before Angular DI starts)
+   * to set environment.session_type before any database instances are created.
+   */
+  private static readonly ONLINE_ONLY_KEY = "session_online_only";
+
+  /**
+   * Whether the deployment is configured as "synced" (local + remote).
+   * Only in that case is the online-only opt-out meaningful to show.
+   * Also true when bootstrap already switched to "online" based on a previous preference.
+   * Hidden when session_type_choice is false (operator enforces a fixed session type).
+   */
+  showOnlineOnlyOption =
+    environment.session_type_choice !== false &&
+    (environment.session_type === SessionType.synced ||
+      environment.session_type === SessionType.online);
+
+  /** User preference: use online-only mode instead of synced. */
+  onlineOnly: boolean;
+
   constructor() {
     const sessionManager = this.sessionManager;
 
-    this.enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
+    // restore previous online-only preference from localStorage
+    this.onlineOnly =
+      localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) === "true" ||
+      environment.session_type === SessionType.online;
+    this.applyOnlineOnlyMode(this.onlineOnly);
 
-    sessionManager
-      .remoteLogin()
-      .then(() => sessionManager.clearRemoteSessionIfNecessary());
+    this.enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
+    this.showOfflineSection = !navigator.onLine;
+
+    // Only do a silent SSO check — don't redirect to Keycloak yet.
+    // This allows the user to see and interact with the login page settings first.
+    sessionManager.checkRemoteSession().then(() => {
+      this.ssoCheckDone = true;
+      sessionManager.clearRemoteSessionIfNecessary();
+    });
   }
 
   ngOnInit() {
@@ -93,6 +135,40 @@ export class LoginComponent implements OnInit {
     ).subscribe(() => {
       this.enableOfflineLogin = true;
     });
+  }
+
+  onOnlineOnlyChanged(checked: boolean) {
+    this.onlineOnly = checked;
+    if (checked) {
+      localStorage.setItem(LoginComponent.ONLINE_ONLY_KEY, "true");
+    } else {
+      localStorage.removeItem(LoginComponent.ONLINE_ONLY_KEY);
+    }
+    this.applyOnlineOnlyMode(checked);
+  }
+
+  /**
+   * Mutate environment.session_type so that the correct database class is used
+   * when initDatabasesForSession() is called after login.
+   *
+   * NOTE: The actual database instances are created lazily on first access during
+   * Angular DI startup — long before LoginComponent exists. For that reason,
+   * bootstrap-environment.ts also reads the localStorage preference early and
+   * applies it before Angular starts. This in-component mutation covers the case
+   * where the user toggles the checkbox in the *same page load* (i.e. before
+   * the Keycloak redirect has happened), so the preference is applied consistently
+   * regardless of whether the DB was already created or not yet.
+   *
+   * The authoritative path is: user changes checkbox → localStorage updated here →
+   * Keycloak login triggers full page reload → bootstrap-environment.ts applies
+   * the preference → Angular DI creates the correct DB type from the start.
+   */
+  private applyOnlineOnlyMode(onlineOnly: boolean) {
+    if (onlineOnly) {
+      environment.session_type = SessionType.online;
+    } else if (environment.session_type === SessionType.online) {
+      environment.session_type = SessionType.synced;
+    }
   }
 
   private routeAfterLogin() {
@@ -121,6 +197,7 @@ export class LoginComponent implements OnInit {
   }
 
   tryLogin() {
+    this.showOfflineSection = true;
     return this.sessionManager.remoteLogin();
   }
 }

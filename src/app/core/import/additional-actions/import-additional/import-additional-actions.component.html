@@ -21,7 +21,7 @@
   <!-- Existing additional actions -->
   <div>
     <mat-list>
-      @for (action of importActions; track action) {
+      @for (action of importActions; track $index) {
         <mat-list-item>
           <fa-icon
             icon="xmark"

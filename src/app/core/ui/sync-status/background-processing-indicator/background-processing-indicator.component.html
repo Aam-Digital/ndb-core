@@ -23,7 +23,7 @@
       </div>
     }
 
-    @for (process of filteredProcesses | async; track process) {
+    @for (process of filteredProcesses | async; track process.title) {
       <div class="flex-row gap-small align-center mat-subtitle-2 details-line">
         <div>
           @if (process.pending) {

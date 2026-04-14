@@ -399,33 +399,53 @@ export class PouchDatabase extends Database {
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
   saveDatabaseIndex(designDoc: any): Promise<void> {
-    const creationPromise = this.createOrUpdateDesignDoc(designDoc);
+    const creationPromise = this.createOrUpdateDesignDoc(designDoc).catch(
+      (err) => {
+        Logging.debug(
+          "Could not create/update database index (may be expected in online-only mode)",
+          err,
+        );
+      },
+    );
     this.indexPromises.push(creationPromise);
     return creationPromise;
   }
 
   private async createOrUpdateDesignDoc(designDoc): Promise<void> {
+    designDoc.aam_version = environment.appVersion;
+
     const existingDesignDoc = await this.get(designDoc._id, {}, true);
     if (!existingDesignDoc) {
       Logging.debug("creating new database index");
     } else if (
-      JSON.stringify(existingDesignDoc.views) !==
+      JSON.stringify(existingDesignDoc.views) ===
       JSON.stringify(designDoc.views)
     ) {
-      Logging.debug("replacing existing database index");
-      designDoc._rev = existingDesignDoc._rev;
-    } else {
       // already up to date, nothing more to do
       return;
+    } else if (this.shouldSkipIndexUpdate(existingDesignDoc)) {
+      return;
+    } else {
+      Logging.debug("replacing existing database index");
+      designDoc._rev = existingDesignDoc._rev;
     }
 
-    await this.put(designDoc, true);
+    await this.put(designDoc);
 
     // for faster initial loading we disable prebuilding views in development
     // TODO: check if this should be completely removed, also for production systems
     if (environment.production) {
       await this.prebuildViewsOfDesignDoc(designDoc);
     }
+  }
+
+  /**
+   * Whether to skip updating a design doc that differs from the local version.
+   * Overridden in RemotePouchDatabase to prevent older clients from
+   * overwriting indexes created by a newer app version on a shared server.
+   */
+  protected shouldSkipIndexUpdate(_existingDesignDoc: any): boolean {
+    return false;
   }
 
   @PerformanceAnalysisLogging

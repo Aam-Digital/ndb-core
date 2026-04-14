@@ -23,7 +23,7 @@
     />
     <mat-chip-grid #chipList>
       <ng-container>
-        @for (item of _selectedOptions(); track item) {
+        @for (item of _selectedOptions(); track item.asString) {
           <mat-chip-row
             [editable]="!_disabled"
             class="chip"

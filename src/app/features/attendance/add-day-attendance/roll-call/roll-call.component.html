@@ -96,7 +96,7 @@
       <div class="tab-wrapper">
         @for (
           participant of participants();
-          track participant;
+          track participant.getId();
           let i = $index
         ) {
           <app-roll-call-tab
@@ -107,7 +107,7 @@
             [position]="i - currentIndex()"
           >
             <div>
-              @for (option of availableStatus(); track option) {
+              @for (option of availableStatus(); track option.id) {
                 <div
                   role="button"
                   class="group-select-option"
