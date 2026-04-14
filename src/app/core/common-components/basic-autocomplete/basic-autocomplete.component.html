@@ -138,7 +138,7 @@ Autocomplete
     </cdk-virtual-scroll-viewport>
   </div>
 
-  <!-- Create new option -->
+  <!-- Create new option (single type) -->
   @if (createOption && showAddOption && inputElement.value) {
     <mat-option [value]="inputElement.value">
       <em
@@ -149,6 +149,19 @@ Autocomplete
       >
       {{ createOptionDisplay(inputElement.value) }}
     </mat-option>
+  }
+  <!-- Create new option (one per entity type) -->
+  @if (showAddOption && inputElement.value) {
+    @for (option of createOptions; track option.label) {
+      <mat-option
+        [value]="toCreateOptionValue(option, inputElement.value)"
+        i18n-aria-label
+        aria-label="Add new {{ option.label }}"
+      >
+        <em i18n="Label for adding an option in a dropdown">Add new</em>
+        {{ option.label }}
+      </mat-option>
+    }
   }
 
   <mat-option style="display: none">

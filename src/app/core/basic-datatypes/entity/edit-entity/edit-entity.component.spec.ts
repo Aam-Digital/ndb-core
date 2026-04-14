@@ -304,6 +304,22 @@ describe("EditEntityComponent", () => {
     );
   });
 
+  it("should expose one create option per entity type when multiple types are configured", () => {
+    fixture.componentRef.setInput("entityType", [
+      TestEntity.ENTITY_TYPE,
+      Test2Entity.ENTITY_TYPE,
+    ]);
+    fixture.detectChanges();
+
+    const options = component.createNewEntityOptions();
+
+    expect(options).toHaveLength(2);
+    expect(options[0].label).toBe(TestEntity.label ?? TestEntity.ENTITY_TYPE);
+    expect(options[1].label).toBe(Test2Entity.label ?? Test2Entity.ENTITY_TYPE);
+    expect(options[0].create).toBeTypeOf("function");
+    expect(options[1].create).toBeTypeOf("function");
+  });
+
   it("should create a new entity when user selects 'add new' and apply input text", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.detectChanges();
