@@ -21,7 +21,7 @@
     [dataSource]="columns"
     class="match-comparison-table mat-elevation-z1"
   >
-    @for (side of sideDetails; track side.entityType; let i = $index) {
+    @for (side of sideDetails; track $index; let i = $index) {
       <ng-container [matColumnDef]="'side-' + i">
         <th
           mat-header-cell
@@ -107,7 +107,7 @@
 
 @if (!lockedMatching) {
   <div class="flex-row flex-wrap gap-large">
-    @for (side of sideDetails; track side.entityType) {
+    @for (side of sideDetails; track $index) {
       @if (side.availableEntities) {
         <div class="flex-grow">
           <h3
