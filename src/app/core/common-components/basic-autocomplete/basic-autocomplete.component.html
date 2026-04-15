@@ -120,7 +120,9 @@ Autocomplete
   </div>
 
   <ng-template #optionContent let-item let-truncate="truncate">
-    <div class="flex-row disable-autocomplete-active-color align-center">
+    <div
+      class="option-content flex-row disable-autocomplete-active-color align-center"
+    >
       @if (reorder) {
         <div>
           <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>
@@ -131,6 +133,7 @@ Autocomplete
       }
       @if (!templateRef) {
         <span
+          class="option-label"
           [class.text-truncate]="truncate"
           [class.text-wrap]="!truncate"
           [matTooltip]="item.asString"
