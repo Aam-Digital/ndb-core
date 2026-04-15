@@ -3,10 +3,12 @@ import {
   Component,
   computed,
   ContentChild,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   input,
   Input,
+  inject,
   OnChanges,
   OnInit,
   Output,
@@ -16,8 +18,12 @@ import {
   ViewChild,
   WritableSignal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
-import { MatFormFieldControl } from "@angular/material/form-field";
+import {
+  MAT_FORM_FIELD,
+  MatFormFieldControl,
+} from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInput, MatInputModule } from "@angular/material/input";
 import {
@@ -25,7 +31,7 @@ import {
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { filter, map, startWith } from "rxjs/operators";
+import { auditTime, filter, map, startWith } from "rxjs/operators";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import {
@@ -45,7 +51,9 @@ import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,
   CdkVirtualScrollViewport,
+  ViewportRuler,
 } from "@angular/cdk/scrolling";
+import { EMPTY, fromEvent, merge } from "rxjs";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -86,6 +94,11 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   styleUrls: ["./basic-autocomplete.component.scss"],
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
+    {
+      provide: MAT_FORM_FIELD,
+      useFactory: () =>
+        inject(MAT_FORM_FIELD, { optional: true, skipSelf: true }),
+    },
   ],
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
 })
@@ -93,6 +106,9 @@ export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
   implements OnChanges, OnInit, AfterViewInit
 {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly viewportRuler = inject(ViewportRuler);
+
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
   // `_elementRef` is protected in `MapInput`
   @ViewChild(MatInput, { static: true }) inputElement: MatInput & {
@@ -283,11 +299,14 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   ngAfterViewInit() {
-    window.addEventListener("focus", () => {
-      if (this.autocomplete?.panelOpen) {
-        this.showAutocomplete();
-      }
-    });
+    merge(
+      fromEvent(window, "focus"),
+      fromEvent(window, "resize"),
+      this.viewportRuler.change(),
+      this.getVisualViewportChangeEvents(),
+    )
+      .pipe(auditTime(16), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.updateOpenPanelPosition());
   }
 
   /**
@@ -304,6 +323,44 @@ export class BasicAutocompleteComponent<O, V = O>
     ) as HTMLElement;
     const fieldWidth = fieldEl ? fieldEl.getBoundingClientRect().width : 200;
     this.panelWidth = `${fieldWidth}px`;
+  }
+
+  /**
+   * Returns viewport-change events that are not always covered by window resize
+   * (e.g. DevTools docking/undocking and some browser UI changes).
+   */
+  private getVisualViewportChangeEvents() {
+    const visualViewport = window.visualViewport;
+    if (!visualViewport) {
+      return EMPTY;
+    }
+
+    return merge(
+      fromEvent(visualViewport, "resize"),
+      fromEvent(visualViewport, "scroll"),
+    );
+  }
+
+  /**
+   * Recomputes width and position of an open autocomplete panel.
+   * Runs twice (immediately and on next animation frame) to handle late layout updates.
+   */
+  private updateOpenPanelPosition(): void {
+    if (!this.autocomplete?.panelOpen) {
+      return;
+    }
+
+    this.updatePanelWidth();
+    this.autocomplete.updatePosition();
+
+    requestAnimationFrame(() => {
+      if (!this.autocomplete?.panelOpen) {
+        return;
+      }
+
+      this.updatePanelWidth();
+      this.autocomplete.updatePosition();
+    });
   }
 
   drop(event: CdkDragDrop<any[]>) {

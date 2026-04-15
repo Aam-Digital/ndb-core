@@ -6,7 +6,7 @@
     <div formArrayName="prefilledValue">
       @for (
         fieldGroup of prefilledValues.controls;
-        track fieldGroup;
+        track $index;
         let i = $index
       ) {
         <div

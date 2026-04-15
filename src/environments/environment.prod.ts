@@ -23,4 +23,5 @@ export const environment = {
   userSupportEnabled: false,
   use_indexeddb_adapter: false,
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
+  session_type_choice: true,
 };

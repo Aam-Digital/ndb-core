@@ -1,7 +1,7 @@
 <h3 i18n>Previous Imports</h3>
 
 <mat-accordion>
-  @for (item of previousImports; track item; let i = $index) {
+  @for (item of previousImports; track item.getId(); let i = $index) {
     <mat-expansion-panel [expanded]="i === 0">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -30,7 +30,7 @@
         <div class="margin-top-regular">
           <strong i18n>Additional Actions:</strong>
           <ul>
-            @for (action of item.config.additionalActions; track action) {
+            @for (action of item.config.additionalActions; track $index) {
               <li>
                 Link to {{ action.targetType | entityTypeLabel }}:
                 <app-entity-block

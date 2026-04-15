@@ -73,7 +73,7 @@
     }
 
     @default {
-      @for (res of results | async; track res) {
+      @for (res of results | async; track res.getId()) {
         <mat-option [value]="res">
           <app-entity-block [entity]="res"></app-entity-block>
         </mat-option>
