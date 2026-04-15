@@ -84,7 +84,6 @@ describe("EditImportColumnMappingComponent", () => {
           values: ["male", "female"],
           entityType: TestEntity,
           additionalSettings: { multiValueSeparator: ";" },
-          showInheritanceImportHint: false,
         }),
         width: "80vw",
         disableClose: true,

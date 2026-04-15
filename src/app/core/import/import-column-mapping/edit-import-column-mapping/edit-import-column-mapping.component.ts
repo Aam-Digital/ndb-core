@@ -23,7 +23,6 @@ import { MappingDialogData } from "../mapping-dialog-data";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { ImportAdditionalSettings } from "../../import-additional-settings/import-additional-settings.component";
-import { isInheritanceSourceReferenceField } from "../../import-inheritance-warning.util";
 
 /**
  * Component to edit a single imported column's mapping to an entity field
@@ -132,10 +131,6 @@ export class EditImportColumnMappingComponent implements OnChanges {
           values: [...uniqueValues],
           entityType: this.entityCtor,
           additionalSettings: this.additionalSettings,
-          showInheritanceImportHint: isInheritanceSourceReferenceField(
-            this.entityCtor,
-            this.columnMapping.propertyName,
-          ),
         },
         width: "80vw",
         disableClose: true,

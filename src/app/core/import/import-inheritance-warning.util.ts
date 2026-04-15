@@ -1,6 +1,8 @@
 import { ColumnMapping } from "./column-mapping";
 import { EntityConstructor } from "../entity/model/entity";
 import { DefaultValueConfigInheritedField } from "../../features/inherited-field/inherited-field-config";
+import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
+import { getConfigsForInheritedMode } from "../../features/inherited-field/inherited-value.service";
 
 /**
  * Shared helper for import warnings related to inherited fields.
@@ -17,13 +19,18 @@ function getInheritanceSourceReferenceFields(
     return new Set<string>();
   }
 
+  const fieldConfigs: FormFieldConfig[] = [...entityCtor.schema.entries()].map(
+    ([id, field]) => ({ id, ...field }),
+  );
+
+  const inheritedConfigs = getConfigsForInheritedMode(fieldConfigs);
+
   return new Set(
-    [...entityCtor.schema.values()]
-      .filter((field) => field.defaultValue?.mode === "inherited-field")
+    [...inheritedConfigs.values()]
+      .filter((config) => !config?.sourceReferenceEntity)
       .map(
-        (field) =>
-          (field.defaultValue?.config as DefaultValueConfigInheritedField)
-            ?.sourceReferenceField,
+        (config) =>
+          (config as DefaultValueConfigInheritedField)?.sourceReferenceField,
       )
       .filter((fieldId): fieldId is string => !!fieldId),
   );

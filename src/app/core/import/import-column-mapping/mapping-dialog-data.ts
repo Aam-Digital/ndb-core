@@ -7,5 +7,4 @@ export interface MappingDialogData {
   values: any[];
   entityType: EntityConstructor;
   additionalSettings?: ImportAdditionalSettings;
-  showInheritanceImportHint?: boolean;
 }

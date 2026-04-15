@@ -15,6 +15,7 @@ import { EntityConstructor } from "../../../entity/model/entity";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
+import { isInheritanceSourceReferenceField } from "../../../import/import-inheritance-warning.util";
 
 /**
  * Configuration UI for the EntityDatatype's import mapping function.
@@ -43,9 +44,16 @@ export class EntityImportConfigComponent {
   entity: EntityConstructor;
   propertyForm = new FormControl("");
   availableProperties: { property: string; label: string }[] = [];
+  showInheritanceImportHint = false;
 
   constructor() {
     const propertyName = this.data.col.propertyName;
+
+    this.showInheritanceImportHint = isInheritanceSourceReferenceField(
+      this.data.entityType,
+      propertyName,
+    );
+
     const entityName = this.data.entityType.schema.get(propertyName).additional;
     this.entity = this.entities.get(entityName);
     this.availableProperties = [...this.entity.schema.entries()]
