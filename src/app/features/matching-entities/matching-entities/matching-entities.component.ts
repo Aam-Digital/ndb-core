@@ -346,12 +346,29 @@ export class MatchingEntitiesComponent implements OnInit {
         .afterClosed()
         .subscribe((result) => {
           if (result instanceof newMatchEntity.getConstructor()) {
-            this.lockedMatching = true;
+            this.resetMatchingSelection();
           }
         });
     } else {
       await this.entityMapper.save(newMatchEntity);
-      this.lockedMatching = true;
+      this.resetMatchingSelection();
+    }
+  }
+
+  private resetMatchingSelection() {
+    this.lockedMatching = false;
+
+    for (const side of this.sideDetails) {
+      if (!side.availableEntities) {
+        continue;
+      }
+
+      side.selected?.forEach((selectedEntity) =>
+        this.highlightSelectedRow(selectedEntity, true),
+      );
+      side.selected = [];
+      side.highlightedSelected = null;
+      this.updateDistanceColumn(side);
     }
   }
 

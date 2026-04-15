@@ -18,7 +18,7 @@
 </div>
 
 <mat-dialog-content class="dialog-content">
-  @for (control of parts.controls; track control; let index = $index) {
+  @for (control of parts.controls; track $index; let index = $index) {
     <div class="entry-wrapper mat-elevation-z1" [formGroup]="$any(control)">
       <mat-form-field class="header-field">
         <input

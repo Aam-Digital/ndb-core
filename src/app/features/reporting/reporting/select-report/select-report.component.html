@@ -21,7 +21,7 @@
           [disabled]="loading"
           (ngModelChange)="reportChange()"
         >
-          @for (report of reports; track report) {
+          @for (report of reports; track report.getId()) {
             <mat-option [value]="report">
               {{ report.title }}
             </mat-option>

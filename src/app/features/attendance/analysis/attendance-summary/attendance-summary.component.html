@@ -7,7 +7,7 @@
     {{ attendance.periodTo | customDate: "shortDate" }}
   </p>
   <table class="summary-table">
-    @for (col of _columns; track col) {
+    @for (col of _columns; track col.id) {
       <tr class="summary-row">
         <td class="padding-small">{{ col.label }}:</td>
         <td class="summary-cell">

@@ -13,7 +13,7 @@
 </div>
 
 <div>
-  @for (col of columnMapping; track col) {
+  @for (col of columnMapping; track col.column) {
     <div>
       <app-edit-import-column-mapping
         [columnMapping]="col"

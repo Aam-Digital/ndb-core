@@ -62,7 +62,7 @@
         notification of selectedTab === 0
           ? visibleAllNotifications()
           : visibleUnreadNotifications();
-        track notification
+        track notification.getId()
       ) {
         <app-notification-item
           [notification]="notification"

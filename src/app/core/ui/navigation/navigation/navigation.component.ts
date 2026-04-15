@@ -44,7 +44,9 @@ export class NavigationComponent {
       this.menuItems.set(filtered);
 
       // re-select active menu item after menu has been fully initialized
-      this.activeLink.set(this.computeActiveLink(location.pathname));
+      this.activeLink.set(
+        this.computeActiveLink(location.pathname + location.search),
+      );
     });
 
     this.router.events
