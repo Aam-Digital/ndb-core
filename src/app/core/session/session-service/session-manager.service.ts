@@ -18,13 +18,13 @@
 import { Injectable, inject } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
-import { LoginStateSubject, SessionType } from "../session-type";
+import { LoginStateSubject, hasRemoteSession } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { environment } from "../../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { environment } from "../../../../environments/environment";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { filter, take } from "rxjs/operators";
@@ -56,7 +56,29 @@ export class SessionManagerService {
   private updateSubscription: Subscription;
 
   /**
-   * Login for a remote session and start the sync.
+   * Silently check for an existing SSO session without redirecting.
+   * If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.
+   */
+  async checkRemoteSession() {
+    this.loginStateSubject.next(LoginState.IN_PROGRESS);
+    if (this.remoteLoginAvailable()) {
+      return this.remoteAuthService
+        .checkSession()
+        .then((user) => {
+          if (user) {
+            return this.handleRemoteLogin(user);
+          }
+          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+        })
+        .catch(() => {
+          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+        });
+    }
+    this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+  }
+
+  /**
+   * Login for a remote session, redirecting to Keycloak if needed.
    * After a user has logged in once online, this user can later also use the app offline.
    * Should only be called if there is an internet connection
    */
@@ -75,7 +97,7 @@ export class SessionManagerService {
   }
 
   remoteLoginAvailable() {
-    return navigator.onLine && environment.session_type === SessionType.synced;
+    return navigator.onLine && hasRemoteSession(environment.session_type);
   }
 
   /**

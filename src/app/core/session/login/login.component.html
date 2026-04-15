@@ -11,6 +11,20 @@
 
   <mat-card-content>
     <div class="gap-regular flex-column">
+      <!-- ONLINE-ONLY OPTION -->
+      @if (showOnlineOnlyOption) {
+        <mat-checkbox
+          [ngModel]="onlineOnly"
+          (ngModelChange)="onOnlineOnlyChanged($event)"
+          matTooltip="When enabled, data is not synced and stored on this device. This is faster but you cannot use the app offline later."
+          i18n-matTooltip="online-only mode tooltip"
+        >
+          <span i18n="online-only checkbox label"
+            >Online-only mode (no offline sync)</span
+          >
+        </mat-checkbox>
+      }
+
       <!-- ONLINE -->
       <div
         matTooltip="It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection."
@@ -24,31 +38,24 @@
               class="login-check-progressbar"
             ></mat-progress-bar>
           </div>
-        } @else {
+        } @else if (ssoCheckDone) {
           <div>
-            <div
-              i18n="online login failed text"
-              class="online-error margin-bottom-small"
-            >
-              We couldn't connect to the server currently. You can still use the
-              application offline, if you have logged in on this device
-              previously.
-            </div>
             <button
-              mat-stroked-button
+              mat-flat-button
+              color="primary"
               type="button"
               (click)="tryLogin()"
               i18n="Login button"
               style="width: 100%"
             >
-              Retry online login
+              Log in
             </button>
           </div>
         }
       </div>
 
       <!-- OFFLINE -->
-      @if (offlineUsers.length > 0) {
+      @if (showOfflineSection && offlineUsers.length > 0) {
         <mat-card class="margin-top-large" appearance="outlined">
           <mat-card-header
             matTooltip="You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login."
@@ -67,7 +74,7 @@
           </mat-card-header>
           <mat-card-content>
             <mat-action-list>
-              @for (user of offlineUsers; track user) {
+              @for (user of offlineUsers; track user.id) {
                 <button
                   mat-list-item
                   (click)="sessionManager.offlineLogin(user)"

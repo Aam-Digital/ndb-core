@@ -2,20 +2,21 @@
   angulartics2On="click"
   angularticsCategory="Navigation"
   angularticsAction="app_navigation_link_click"
-  [angularticsLabel]="item.label"
-  [routerLink]="item.link ? [item.link] : undefined"
+  [angularticsLabel]="item().label"
+  [routerLink]="item().link ? linkPath() : undefined"
+  [queryParams]="linkQueryParams()"
   class="indent-item"
-  [class.matched-background]="item.link === activeLink"
+  [class.matched-background]="item().link === activeLink()"
   (click)="toggleSubMenu()"
 >
   <a class="flex-row gap-small">
     <app-fa-dynamic-icon
       class="nav-icon"
-      [icon]="item.icon"
+      [icon]="item().icon"
     ></app-fa-dynamic-icon>
-    <div class="menu-label" [title]="item.label">{{ item.label }}</div>
+    <div class="menu-label" [title]="item().label">{{ item().label }}</div>
 
-    @if (hasSubMenu(item)) {
+    @if (hasSubMenu(item())) {
       <fa-icon [icon]="isExpanded ? 'chevron-down' : 'chevron-right'"></fa-icon>
     }
   </a>
@@ -24,9 +25,12 @@
 <!-- Render submenus if they exist and are expanded -->
 @if (isExpanded) {
   <div class="submenu">
-    @for (subItem of item.subMenu; track subItem) {
+    @for (subItem of item().subMenu; track subItem.label) {
       <!-- Pass activeLink to each submenu item to highlight the active submenu -->
-      <app-menu-item [item]="subItem" [activeLink]="activeLink"></app-menu-item>
+      <app-menu-item
+        [item]="subItem"
+        [activeLink]="activeLink()"
+      ></app-menu-item>
     }
   </div>
 }

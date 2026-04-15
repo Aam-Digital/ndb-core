@@ -2,7 +2,7 @@
   <div class="conditions-list flex-column">
     @for (
       condition of conditionsArray();
-      track condition;
+      track $index;
       let conditionId = $index
     ) {
       <div class="condition-item flex-row flex-wrap gap-regular align-center">

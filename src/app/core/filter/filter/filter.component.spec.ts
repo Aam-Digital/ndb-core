@@ -5,6 +5,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -110,6 +111,48 @@ describe("FilterComponent", () => {
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
     expect(component.filterSelections[0].selectedOptionValues).toHaveLength(0);
+  });
+
+  it("should apply url param filter even when field is not in filterConfig", async () => {
+    const e1 = TestEntity.create({ other: "Alipore" });
+    const e2 = TestEntity.create({ other: "Delhi" });
+
+    component.entityType = TestEntity;
+    component.entities = [e1, e2];
+    component.useUrlQueryParams = true;
+    component.filterConfig = []; // "other" is NOT in filterConfig
+
+    activatedRouteMock.snapshot = {
+      queryParams: { other: "Alipore" },
+    };
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    expect(component.filterObj).toEqual({
+      $and: [{ $or: [{ other: "Alipore" }] }],
+    } as any);
+  });
+
+  it("should clear default filters when other URL params are present", async () => {
+    component.entityType = Note;
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "date", default: "0" }, { id: "category" }];
+
+    activatedRouteMock.snapshot = {
+      queryParams: { category: "someCategory" },
+    };
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    const dateFilter = component.filterSelections.find(
+      (f) => f.name === "date",
+    );
+    expect(dateFilter.selectedOptionValues).toHaveLength(0);
+
+    const categoryFilter = component.filterSelections.find(
+      (f) => f.name === "category",
+    );
+    expect(categoryFilter.selectedOptionValues).toEqual(["someCategory"]);
   });
 
   it("should compute available category options and build filterObj", async () => {

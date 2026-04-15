@@ -12,7 +12,7 @@
     {{ index + 1 }}
   </ng-template>
 
-  @for (step of steps; track step; let index = $index; let last = $last) {
+  @for (step of steps; track step.title; let index = $index; let last = $last) {
     <mat-step
       [label]="step.title"
       [completed]="completedSteps?.includes(index)"
