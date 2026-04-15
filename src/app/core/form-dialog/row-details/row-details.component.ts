@@ -1,9 +1,10 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   OnInit,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -57,6 +58,7 @@ export interface DetailsComponentData {
 export class RowDetailsComponent implements OnInit {
   data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
   private formService = inject(EntityFormService);
+  private cdr = inject(ChangeDetectorRef);
 
   form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
@@ -84,8 +86,10 @@ export class RowDetailsComponent implements OnInit {
       .subscribe((value) => {
         const dynamicConstructor: any = data.entity.getConstructor();
         this.tempEntity = Object.assign(new dynamicConstructor(), value);
+        this.cdr.markForCheck();
       });
     this.viewOnlyColumns = data.viewOnlyColumns;
+    this.cdr.markForCheck();
   }
 
   private enableSaveWithoutChangesIfNew(entity: Entity) {

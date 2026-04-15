@@ -1,9 +1,10 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
   inject,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -50,6 +51,7 @@ export class RelatedEntitiesComponent<E extends Entity>
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
   protected filterService = inject(FilterService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
@@ -117,7 +119,10 @@ export class RelatedEntitiesComponent<E extends Entity>
     this.screenWidthObserver
       .shared()
       .pipe(untilDestroyed(this))
-      .subscribe(() => this.updateColumnsToDisplayForScreenSize());
+      .subscribe(() => {
+        this.updateColumnsToDisplayForScreenSize();
+        this.cdr.markForCheck();
+      });
   }
 
   async ngOnInit() {
@@ -142,6 +147,8 @@ export class RelatedEntitiesComponent<E extends Entity>
         column.additional.relatedEntitiesParent = this.entity;
       }
     });
+
+    this.cdr.markForCheck();
   }
 
   protected getData(): Promise<E[]> {
@@ -273,6 +280,7 @@ export class RelatedEntitiesComponent<E extends Entity>
       .pipe(untilDestroyed(this))
       .subscribe((next) => {
         this.data = applyUpdate(this.data, next);
+        this.cdr.markForCheck();
       });
   }
 

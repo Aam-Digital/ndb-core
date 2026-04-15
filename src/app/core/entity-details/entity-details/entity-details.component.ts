@@ -78,6 +78,7 @@ export class EntityDetailsComponent
 
     if (changes.id || changes.entity || changes.panels) {
       this.initPanels();
+      this.cdr.markForCheck();
     }
   }
 
