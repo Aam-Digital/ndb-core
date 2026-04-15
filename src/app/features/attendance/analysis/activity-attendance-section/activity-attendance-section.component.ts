@@ -1,5 +1,6 @@
 import {
   Component,
+  ChangeDetectorRef,
   Input,
   LOCALE_ID,
   OnChanges,
@@ -53,6 +54,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   private entityMapper = inject(EntityMapperService);
   private locale = inject(LOCALE_ID);
   private dialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
   @Input() forChild?: string;
@@ -127,6 +129,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
 
   async init(loadAll: boolean = false) {
     this.loading = true;
+    this.cdr.markForCheck();
     if (loadAll) {
       this.allRecords = await this.attendanceService.getActivityAttendances(
         this.entity,
@@ -140,6 +143,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
     this.updateDisplayedRecords(false);
     this.createCombinedAttendance();
     this.loading = false;
+    this.cdr.markForCheck();
   }
 
   private createCombinedAttendance() {

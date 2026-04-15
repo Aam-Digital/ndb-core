@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -88,14 +89,17 @@ export class EntityCountDashboardComponent
   private router = inject(Router);
   private entities = inject(EntityRegistry);
   private configurableEnum = inject(ConfigurableEnumService);
+  private cdr = inject(ChangeDetectorRef);
 
   getPrev() {
     this.currentGroupIndex =
       (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
+    this.cdr.markForCheck();
   }
 
   getNext() {
     this.currentGroupIndex = (this.currentGroupIndex + 1) % this.groupBy.length;
+    this.cdr.markForCheck();
   }
 
   static override getRequiredEntities(config: EntityCountDashboardConfig) {
@@ -161,6 +165,7 @@ export class EntityCountDashboardComponent
         groupByField,
       );
     }
+    this.cdr.markForCheck();
   }
 
   private calculateGroupCounts(

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -38,6 +39,7 @@ export class BirthdayDashboardComponent
   implements BirthdayDashboardConfig, OnInit
 {
   private entityMapper = inject(EntityMapperService);
+  private cdr = inject(ChangeDetectorRef);
 
   static override getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : "Child";
@@ -99,6 +101,7 @@ export class BirthdayDashboardComponent
       (a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday),
     );
     this.entries = data;
+    this.cdr.markForCheck();
   }
 
   private getNextBirthday(dateOfBirth: Date): Date {

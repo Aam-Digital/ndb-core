@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -38,6 +39,7 @@ export class EntityActionsMenuComponent implements OnChanges {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
   private readonly dialogRef = inject(MatDialogRef, { optional: true });
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
 
@@ -68,6 +70,7 @@ export class EntityActionsMenuComponent implements OnChanges {
   private async filterAvailableActions() {
     if (!this.entity) {
       this.actions = [];
+      this.cdr.markForCheck();
       return;
     }
 
@@ -75,6 +78,7 @@ export class EntityActionsMenuComponent implements OnChanges {
       this.entity,
     );
     this.actions = allActions;
+    this.cdr.markForCheck();
   }
 
   async executeAction(action: EntityAction) {

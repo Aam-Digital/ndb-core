@@ -3,6 +3,7 @@ import {
   inject,
   Input,
   OnInit,
+  ChangeDetectorRef,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { DefaultValueConfig } from "../default-value-config";
@@ -78,6 +79,7 @@ export class AdminDefaultValueComponent
   private defaultValueStrategies = inject(
     DefaultValueStrategy,
   ) as unknown as DefaultValueStrategy[];
+  private cdr = inject(ChangeDetectorRef);
 
   modes: AdminDefaultValueContext[];
 
@@ -90,6 +92,7 @@ export class AdminDefaultValueComponent
     this.modes = await Promise.all(
       this.defaultValueStrategies.map((strategy) => strategy.getAdminUI()),
     );
+    this.cdr.markForCheck();
   }
 
   private initForm() {

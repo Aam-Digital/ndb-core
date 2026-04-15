@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -45,6 +46,7 @@ export class ProgressDashboardComponent
   private entityMapper = inject(EntityMapperService);
   private dialog = inject(MatDialog);
   private syncState = inject(SyncStateSubject);
+  private cdr = inject(ChangeDetectorRef);
 
   static override getRequiredEntities() {
     return ProgressDashboardConfig.ENTITY_TYPE;
@@ -81,6 +83,7 @@ export class ProgressDashboardComponent
   private updateConfig(updatedConfig: ProgressDashboardConfig) {
     this.data = updatedConfig;
     this.overallPercentage = this.getOverallProgressPercentage();
+    this.cdr.markForCheck();
   }
 
   private loadConfigFromDatabase() {
@@ -94,6 +97,7 @@ export class ProgressDashboardComponent
       `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`,
     );
     this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
+    this.cdr.markForCheck();
     this.save();
   }
 

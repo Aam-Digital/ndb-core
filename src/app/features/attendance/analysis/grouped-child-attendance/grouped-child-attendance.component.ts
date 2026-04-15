@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -36,6 +37,7 @@ import { MatSelectModule } from "@angular/material/select";
 })
 export class GroupedChildAttendanceComponent implements OnInit {
   private attendanceService = inject(AttendanceService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
 
@@ -50,6 +52,7 @@ export class GroupedChildAttendanceComponent implements OnInit {
 
   private async loadActivities() {
     this.loading = true;
+    this.cdr.markForCheck();
     const allActivities =
       await this.attendanceService.getActivitiesForParticipant(
         this.entity.getId(),
@@ -59,6 +62,7 @@ export class GroupedChildAttendanceComponent implements OnInit {
     this.archivedActivities = allActivities.filter((a) => a.isActive == false);
 
     this.loading = false;
+    this.cdr.markForCheck();
   }
 
   onActivityChange(selectedArchivedActivity: Entity) {

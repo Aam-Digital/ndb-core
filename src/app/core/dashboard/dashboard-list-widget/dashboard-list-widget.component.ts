@@ -8,6 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
   inject,
+  ChangeDetectorRef,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
@@ -57,6 +58,7 @@ export class DashboardListWidgetComponent<E>
   implements OnInit, OnChanges, AfterViewInit
 {
   private entityMapperService = inject(EntityMapperService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() subtitle: string;
   @Input() icon: IconName = "exclamation-triangle";
@@ -106,6 +108,7 @@ export class DashboardListWidgetComponent<E>
       .subscribe((newData) => {
         this.dataSource.data = newData;
         this.isLoading = !newData;
+        this.cdr.markForCheck();
       });
   }
 
@@ -135,5 +138,6 @@ export class DashboardListWidgetComponent<E>
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.matTable.dataSource = this.dataSource;
+    this.cdr.markForCheck();
   }
 }

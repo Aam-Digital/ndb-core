@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -49,6 +50,7 @@ export class NotesDashboardComponent
 {
   private childrenService = inject(ChildrenService);
   private entities = inject(EntityRegistry);
+  private cdr = inject(ChangeDetectorRef);
 
   static override getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
@@ -104,6 +106,7 @@ export class NotesDashboardComponent
         this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the records without recent reports:${this._entity.labelPlural} having no recent reports`;
         break;
     }
+    this.cdr.markForCheck();
   }
 
   private async loadConcernedEntities(
@@ -123,6 +126,7 @@ export class NotesDashboardComponent
       .filter(filter)
       .map((stat) => statsToEntityWithRecentNoteInfo(stat, queryRange))
       .sort((a, b) => order * (b.daysSinceLastNote - a.daysSinceLastNote));
+    this.cdr.markForCheck();
   }
 
   get tooltip(): string {

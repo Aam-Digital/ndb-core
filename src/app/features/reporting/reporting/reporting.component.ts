@@ -1,4 +1,9 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+} from "@angular/core";
 import { DataAggregationService } from "../data-aggregation.service";
 import {
   getGroupingInformationString,
@@ -69,6 +74,7 @@ export class ReportingComponent {
   private entityMapper = inject(EntityMapperService);
   private readonly jsonEditorService = inject(JsonEditorService);
   private configService = inject(ConfigService);
+  private cdr = inject(ChangeDetectorRef);
 
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
@@ -90,6 +96,7 @@ export class ReportingComponent {
     this.entityMapper.loadType(ReportEntity).then((res) => {
       this.reports = res.sort((a, b) => a.title?.localeCompare(b.title));
       this.loadDateRangeOptionsFromConfig();
+      this.cdr.markForCheck();
     });
   }
 
@@ -149,6 +156,7 @@ export class ReportingComponent {
     }
 
     this.isLoading = false;
+    this.cdr.markForCheck();
   }
 
   private getSqlExportableData() {
@@ -229,10 +237,12 @@ export class ReportingComponent {
   onReportCriteriaChange() {
     this.reportCalculation = null;
     this.data = [];
+    this.cdr.markForCheck();
   }
 
   selectedReportChanged(selectedReport: ReportEntity) {
     this.currentReport = selectedReport;
+    this.cdr.markForCheck();
   }
 
   editReportConfig(report: ReportEntity) {

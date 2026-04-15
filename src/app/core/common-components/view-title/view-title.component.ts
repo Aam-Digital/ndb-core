@@ -62,7 +62,7 @@ export class ViewTitleComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.viewContext && !this.displayInPlace) {
-      setTimeout(() => (this.viewContext.title = this));
+      setTimeout(() => this.viewContext.setTitle(this));
     }
   }
 

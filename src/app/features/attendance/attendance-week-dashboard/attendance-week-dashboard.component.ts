@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   inject,
   Input,
@@ -41,6 +42,7 @@ export class AttendanceWeekDashboardComponent
   implements OnInit
 {
   private attendanceService = inject(AttendanceService);
+  private cdr = inject(ChangeDetectorRef);
 
   /**
    * The offset from the default time period, which is the last complete week.
@@ -138,6 +140,7 @@ export class AttendanceWeekDashboardComponent
     this.entries = Array.from(groupsMap.entries())
       .filter(([participantId]) => lowAttendanceCases.has(participantId))
       .map(([_, attendance]) => attendance);
+    this.cdr.markForCheck();
   }
 
   private generateRowsFromEvents(

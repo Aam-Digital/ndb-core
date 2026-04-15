@@ -26,6 +26,7 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
 import { Angulartics2Module } from "angulartics2";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import type { Mock } from "vitest";
 
 type ReportingServiceMock = {
@@ -126,6 +127,13 @@ describe("ReportingComponent", () => {
           provide: JsonEditorService,
           useValue: {
             openJsonEditorDialog: vi.fn(),
+          },
+        },
+        {
+          provide: EntityAbility,
+          useValue: {
+            cannot: vi.fn().mockReturnValue(false),
+            on: vi.fn().mockReturnValue(() => undefined),
           },
         },
       ],

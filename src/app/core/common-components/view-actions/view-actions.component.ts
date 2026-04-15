@@ -26,7 +26,7 @@ export class ViewActionsComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.viewContext) {
-      setTimeout(() => (this.viewContext.actions = this));
+      setTimeout(() => this.viewContext.setActions(this));
     }
   }
 }
