@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   inject,
   Input,
@@ -64,6 +65,7 @@ export class AdminInheritedFieldComponent
   @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
 
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly entityRelationsService = inject(EntityRelationsService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly matDialog = inject(MatDialog);
@@ -78,12 +80,14 @@ export class AdminInheritedFieldComponent
         sourceValueField: "",
       };
     }
+    this.cdr.markForCheck();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entityType) {
       this.updateAvailableOptions();
       this.initSelectedOption();
+      this.cdr.markForCheck();
     }
   }
 
@@ -166,11 +170,13 @@ export class AdminInheritedFieldComponent
   onOptionSelected(option: InheritanceOption) {
     const previousOption = this.selectedOption;
     this.selectedOption = option;
+    this.cdr.markForCheck();
 
     this.openConfigDetailsDialog().then((confirmed) => {
       if (!confirmed) {
         // revert selection
         this.selectedOption = previousOption;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -201,6 +207,7 @@ export class AdminInheritedFieldComponent
     if (result?.sourceValueField) {
       // successfully confirmed the dialog
       this.value = result;
+      this.cdr.markForCheck();
       return true;
     } else {
       // dialog was cancelled
