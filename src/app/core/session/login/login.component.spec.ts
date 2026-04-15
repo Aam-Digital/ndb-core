@@ -28,8 +28,12 @@ import { SessionInfo } from "../auth/session-info";
 import { environment } from "../../../../environments/environment";
 import type { Mock } from "vitest";
 
-type KeycloakAuthServiceMock = Pick<KeycloakAuthService, "login"> & {
+type KeycloakAuthServiceMock = Pick<
+  KeycloakAuthService,
+  "login" | "checkSession"
+> & {
   login: Mock<KeycloakAuthService["login"]>;
+  checkSession: Mock<KeycloakAuthService["checkSession"]>;
 };
 
 describe("LoginComponent", () => {
@@ -42,12 +46,14 @@ describe("LoginComponent", () => {
   beforeEach(waitForAsync(() => {
     mockKeycloak = {
       login: vi.fn(),
+      checkSession: vi.fn().mockResolvedValue(null),
     };
     TestBed.configureTestingModule({
       imports: [LoginComponent, MockedTestingModule.withState()],
       providers: [{ provide: KeycloakAuthService, useValue: mockKeycloak }],
     }).compileComponents();
     sessionManager = TestBed.inject(SessionManagerService);
+    vi.spyOn(sessionManager, "checkRemoteSession").mockResolvedValue(undefined);
     vi.spyOn(sessionManager, "remoteLogin").mockResolvedValue(undefined);
     vi.spyOn(sessionManager, "remoteLoginAvailable").mockReturnValue(true);
     loginState = TestBed.inject(LoginStateSubject);
@@ -67,12 +73,13 @@ describe("LoginComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should try to login on startup", () => {
-    expect(sessionManager.remoteLogin).toHaveBeenCalled();
+  it("should try to check session on startup", () => {
+    expect(sessionManager.checkRemoteSession).toHaveBeenCalled();
   });
 
   it("should route to redirect uri once state changes to 'logged-in'", async () => {
     vi.useFakeTimers();
+    vi.stubGlobal("location", { origin: "http://localhost" });
     try {
       const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigateByUrl");
       TestBed.inject(ActivatedRoute).snapshot.queryParams = {
@@ -86,6 +93,7 @@ describe("LoginComponent", () => {
       expect(navigateSpy).toHaveBeenCalledWith("/someUrl");
     } finally {
       vi.useRealTimers();
+      vi.unstubAllGlobals();
     }
   });
 

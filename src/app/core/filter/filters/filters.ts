@@ -83,7 +83,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
       valuesToMatchAsOptions
         .filter((k) => !!k)
         .map((k) => ({
-          key: k.toString().toLowerCase(),
+          key: k.toString(),
           label: k.toString(),
           filter: { [attributeName]: k } as DataFilter<T>,
         }))
