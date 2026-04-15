@@ -46,7 +46,7 @@
 
 <!-- Content: tabbed components -->
 <mat-tab-group appTabStateMemo [preserveContent]="true">
-  @for (panelConfig of panels; track panelConfig) {
+  @for (panelConfig of panels; track panelConfig.title) {
     <mat-tab [disabled]="entity?.isNew || unsavedChanges.pending">
       <ng-template mat-tab-label>
         <span
@@ -67,7 +67,7 @@
         }
         @for (
           componentConfig of panelConfig.components;
-          track componentConfig;
+          track $index;
           let j = $index
         ) {
           <div class="padding-top-large">

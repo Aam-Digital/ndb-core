@@ -1,4 +1,4 @@
-@for (entity of entities; track entity; let i = $index) {
+@for (entity of entities; track entity.getId(); let i = $index) {
   @if (allowsMultiValue) {
     <mat-checkbox
       [checked]="existingSelected[i]"

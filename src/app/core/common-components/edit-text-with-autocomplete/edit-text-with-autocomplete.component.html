@@ -9,7 +9,7 @@
 />
 
 <mat-autocomplete #autoSuggestions="matAutocomplete">
-  @for (entity of autocompleteEntities | async; track entity) {
+  @for (entity of autocompleteEntities | async; track entity.getId()) {
     <mat-option
       [value]="entity[formFieldConfig.id]"
       (onSelectionChange)="$event.source.selected ? selectEntity(entity) : null"

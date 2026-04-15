@@ -11,6 +11,8 @@ import {
   DbConfig,
   IndexeddbMigrationService,
 } from "./indexeddb-migration.service";
+import { environment } from "../../../environments/environment";
+import { SessionType } from "../session/session-type";
 
 /**
  * Manages access to individual databases,
@@ -93,8 +95,18 @@ export class DatabaseResolverService {
    * (especially for local and remote database modes)
    */
   async initDatabasesForSession(session: SessionInfo) {
+    if (environment.session_type === SessionType.online) {
+      this.initializeOnlineDatabaseForCurrentUser();
+      return;
+    }
+
     this.dbConfig = await this.migrationService.resolveDbConfig(session);
     this.initializeAppDatabaseForCurrentUser(session);
+  }
+
+  private initializeOnlineDatabaseForCurrentUser() {
+    const db = this.getDatabase(Entity.DATABASE);
+    db.init();
   }
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
@@ -122,9 +134,12 @@ export class DatabaseResolverService {
     }
 
     if (db instanceof PouchDatabase && this.dbConfig) {
+      // only set adapter for local databases; RemotePouchDatabase (online mode) always uses HTTP
       db.adapter = this.dbConfig.adapter;
     }
 
+    // In online mode, dbConfig is undefined, so browserDbName is undefined and
+    // serverDbName is used directly — RemotePouchDatabase.init() with the server name is correct.
     const browserDbName = this.dbConfig?.dbNames?.notifications;
     const serverDbName = `${NotificationEvent.DATABASE}_${userId}`;
     if (db instanceof SyncedPouchDatabase) {
