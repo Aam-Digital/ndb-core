@@ -147,11 +147,12 @@ Autocomplete
           {{ item.asString }}
         </span>
       } @else {
-        <ng-template
-          class="item-option"
-          [ngTemplateOutlet]="templateRef"
-          [ngTemplateOutletContext]="{ $implicit: item.initial }"
-        ></ng-template>
+        <div class="option-label item-option">
+          <ng-template
+            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutletContext]="{ $implicit: item.initial }"
+          ></ng-template>
+        </div>
       }
     </div>
   </ng-template>

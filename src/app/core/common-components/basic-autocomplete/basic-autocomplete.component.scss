@@ -42,9 +42,11 @@ em {
 .option-content {
   width: 100%;
   min-width: 0;
+  justify-content: flex-start;
 }
 
 .option-label {
+  display: block;
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -63,6 +65,10 @@ em {
 // Fix for double scrollbars when field/option labels are long
 // ensure all options have consistent 48px height for virtual scroll calculations
 ::ng-deep .mat-mdc-autocomplete-panel .mat-mdc-option {
+  .mdc-list-item__primary-text {
+    text-align: left;
+  }
+
   app-display-configurable-enum {
     display: block;
     flex: 1 1 auto;
