@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   ContentChild,
@@ -107,6 +108,7 @@ export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
   implements OnChanges, OnInit, AfterViewInit
 {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewportRuler = inject(ViewportRuler);
 
@@ -574,5 +576,6 @@ export class BasicAutocompleteComponent<O, V = O>
   override writeValue(val: V[] | V, notifyFormControl = false): void {
     super.writeValue(val, notifyFormControl);
     this.setInitialInputValue();
+    this.cdr.markForCheck();
   }
 }

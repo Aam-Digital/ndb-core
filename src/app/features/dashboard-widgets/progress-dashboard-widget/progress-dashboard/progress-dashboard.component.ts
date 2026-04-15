@@ -115,6 +115,7 @@ export class ProgressDashboardComponent
         if (next) {
           Object.assign(this.data, next);
           await this.save();
+          this.cdr.markForCheck();
         }
       });
   }

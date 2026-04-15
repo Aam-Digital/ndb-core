@@ -267,6 +267,7 @@ export class ReportingComponent {
         }
 
         await this.entityMapper.save(Object.assign(report, result));
+        this.cdr.markForCheck();
       });
   }
 }

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   OnInit,
   inject,
@@ -25,6 +26,7 @@ export class DisplayTodoCompletionComponent
   implements OnInit
 {
   private entityMapper = inject(EntityMapperService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   completedBy: Entity;
 
@@ -34,7 +36,10 @@ export class DisplayTodoCompletionComponent
       const entityType = Entity.extractTypeFromId(entityId);
       this.entityMapper
         .load(entityType, entityId)
-        .then((res) => (this.completedBy = res));
+        .then((res) => {
+          this.completedBy = res;
+          this.cdr.markForCheck();
+        });
     }
   }
 }
