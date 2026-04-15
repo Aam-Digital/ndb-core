@@ -54,7 +54,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   private entityMapper = inject(EntityMapperService);
   private locale = inject(LOCALE_ID);
   private dialog = inject(MatDialog);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
   @Input() forChild?: string;

@@ -79,7 +79,7 @@ export class AdminDefaultValueComponent
   private defaultValueStrategies = inject(
     DefaultValueStrategy,
   ) as unknown as DefaultValueStrategy[];
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   modes: AdminDefaultValueContext[];
 

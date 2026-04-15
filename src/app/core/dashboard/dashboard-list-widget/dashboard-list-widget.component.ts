@@ -58,7 +58,7 @@ export class DashboardListWidgetComponent<E>
   implements OnInit, OnChanges, AfterViewInit
 {
   private entityMapperService = inject(EntityMapperService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() subtitle: string;
   @Input() icon: IconName = "exclamation-triangle";

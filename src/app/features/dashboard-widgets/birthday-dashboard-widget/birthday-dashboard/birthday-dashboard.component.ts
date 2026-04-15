@@ -39,7 +39,7 @@ export class BirthdayDashboardComponent
   implements BirthdayDashboardConfig, OnInit
 {
   private entityMapper = inject(EntityMapperService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   static override getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : "Child";

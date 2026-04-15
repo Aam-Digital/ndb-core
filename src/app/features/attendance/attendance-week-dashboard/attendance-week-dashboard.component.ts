@@ -42,7 +42,7 @@ export class AttendanceWeekDashboardComponent
   implements OnInit
 {
   private attendanceService = inject(AttendanceService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   /**
    * The offset from the default time period, which is the last complete week.

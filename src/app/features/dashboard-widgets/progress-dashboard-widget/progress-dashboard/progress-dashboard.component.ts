@@ -46,7 +46,7 @@ export class ProgressDashboardComponent
   private entityMapper = inject(EntityMapperService);
   private dialog = inject(MatDialog);
   private syncState = inject(SyncStateSubject);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   static override getRequiredEntities() {
     return ProgressDashboardConfig.ENTITY_TYPE;

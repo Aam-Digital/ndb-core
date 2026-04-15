@@ -37,7 +37,7 @@ import { MatSelectModule } from "@angular/material/select";
 })
 export class GroupedChildAttendanceComponent implements OnInit {
   private attendanceService = inject(AttendanceService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
 

@@ -27,7 +27,7 @@ import { Subscription } from "rxjs";
 export class EntityArchivedInfoComponent implements OnDestroy {
   protected entityActionsService = inject(EntityActionsService);
   private entityMapper = inject(EntityMapperService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
   private updatesSubscription?: Subscription;
 
   @Input() set entity(value: Entity) {

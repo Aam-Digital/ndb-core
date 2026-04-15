@@ -50,7 +50,7 @@ export class NotesDashboardComponent
 {
   private childrenService = inject(ChildrenService);
   private entities = inject(EntityRegistry);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   static override getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;

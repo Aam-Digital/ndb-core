@@ -39,7 +39,7 @@ export class EntityActionsMenuComponent implements OnChanges {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
   private readonly dialogRef = inject(MatDialogRef, { optional: true });
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
 

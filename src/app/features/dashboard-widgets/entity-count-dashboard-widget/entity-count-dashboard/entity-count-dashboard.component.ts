@@ -89,7 +89,7 @@ export class EntityCountDashboardComponent
   private router = inject(Router);
   private entities = inject(EntityRegistry);
   private configurableEnum = inject(ConfigurableEnumService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   getPrev() {
     this.currentGroupIndex =

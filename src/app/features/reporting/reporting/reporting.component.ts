@@ -74,7 +74,7 @@ export class ReportingComponent {
   private entityMapper = inject(EntityMapperService);
   private readonly jsonEditorService = inject(JsonEditorService);
   private configService = inject(ConfigService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
