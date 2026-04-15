@@ -7,7 +7,7 @@ describe("Schema data type: string", () => {
   describe("anonymize", () => {
     const datatype = new StringDatatype();
 
-    it("should keep only the first character and mask the rest", async () => {
+    it("should keep only the first character", async () => {
       const result = await datatype.anonymize("John", {} as any, {} as any);
       expect(result).toBe("J");
     });
@@ -32,7 +32,7 @@ describe("Schema data type: string", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should mask a longer string preserving length", async () => {
+    it("should keep only the first character for longer strings", async () => {
       const result = await datatype.anonymize(
         "Hello World",
         {} as any,
