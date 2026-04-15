@@ -6,6 +6,7 @@ import {
   Output,
   inject,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -43,6 +44,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 })
 export class MenuItemFormComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() item!: MenuItem;
   @Input() hideLabel = false;
@@ -100,6 +102,7 @@ export class MenuItemFormComponent implements OnInit {
 
   toggleCustomLinkMode() {
     this.customLinkMode = !this.customLinkMode;
+    this.cdr.markForCheck();
   }
 
   isNoLinkModeEnabled(): boolean {
@@ -116,6 +119,7 @@ export class MenuItemFormComponent implements OnInit {
 
       if (!confirmed) {
         event.source.checked = false;
+        this.cdr.markForCheck();
         return;
       }
 
@@ -124,5 +128,6 @@ export class MenuItemFormComponent implements OnInit {
     }
 
     this.noLinkMode = event.checked;
+    this.cdr.markForCheck();
   }
 }

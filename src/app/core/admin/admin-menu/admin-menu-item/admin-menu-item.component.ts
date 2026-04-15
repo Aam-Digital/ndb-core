@@ -5,6 +5,7 @@ import {
   Output,
   inject,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
@@ -50,14 +51,16 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   ],
 })
 export class AdminMenuItemComponent {
-  private dialog = inject(MatDialog);
-  private menuService = inject(MenuService);
+  private readonly dialog = inject(MatDialog);
+  private readonly menuService = inject(MenuService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() set item(value: MenuItemForAdminUi | MenuItemForAdminUiNew) {
     if (value instanceof MenuItemForAdminUiNew) {
       this._item = undefined;
       this.itemToDisplay = undefined;
       this.editMenuItem(value);
+      this.cdr.markForCheck();
       return;
     }
 
@@ -66,6 +69,7 @@ export class AdminMenuItemComponent {
     delete plainItem.link;
     delete plainItem.subMenu;
     this.itemToDisplay = plainItem;
+    this.cdr.markForCheck();
   }
 
   get item(): MenuItemForAdminUi {
@@ -137,6 +141,7 @@ export class AdminMenuItemComponent {
 
       this.item = mergedItem;
       this.itemChange.emit(this.item);
+      this.cdr.markForCheck();
     }
   }
 

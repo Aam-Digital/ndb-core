@@ -6,6 +6,7 @@ import {
   inject,
   OnInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import {
@@ -79,8 +80,9 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
   private dialogRef =
     inject<MatDialogRef<AutomatedFieldUpdateComponent>>(MatDialogRef);
-  private entityFormService = inject(EntityFormService);
+  private readonly entityFormService = inject(EntityFormService);
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   entityConstructor: EntityConstructor;
 
@@ -107,6 +109,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       );
       entity.form.formGroup.controls[fieldId].setValue(formattedValue);
     }
+    this.cdr.markForCheck();
   }
 
   onConfirm(): void {

@@ -11,11 +11,14 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 describe("DisplayTodoCompletionComponent", () => {
   let component: DisplayTodoCompletionComponent;
   let fixture: ComponentFixture<DisplayTodoCompletionComponent>;
   let entityMapper: MockEntityMapperService;
+  let iconLibrary: FaIconLibrary;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -28,6 +31,9 @@ describe("DisplayTodoCompletionComponent", () => {
         },
       ],
     }).compileComponents();
+
+    iconLibrary = TestBed.inject(FaIconLibrary);
+    iconLibrary.addIcons(faCheck);
 
     fixture = TestBed.createComponent(DisplayTodoCompletionComponent);
     component = fixture.componentInstance;

@@ -3,6 +3,7 @@ import {
   inject,
   OnInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import {
   MenuItem,
@@ -26,6 +27,7 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 })
 export class AdminMenuComponent implements OnInit {
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   menuItems: MenuItemForAdminUi[] = [];
   private originalMenuItems: MenuItemForAdminUi[] = [];
@@ -50,6 +52,7 @@ export class AdminMenuComponent implements OnInit {
     // Store original state for change detection
     this.originalMenuItems = JSON.parse(JSON.stringify(this.menuItems));
     this.hasChanges = false;
+    this.cdr.markForCheck();
   }
 
   async save() {
@@ -73,5 +76,6 @@ export class AdminMenuComponent implements OnInit {
     // Check if changes have been made
     this.hasChanges =
       JSON.stringify(this.menuItems) !== JSON.stringify(this.originalMenuItems);
+    this.cdr.markForCheck();
   }
 }

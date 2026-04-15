@@ -34,12 +34,10 @@ export class DisplayTodoCompletionComponent
     if (this.value?.completedBy) {
       const entityId = this.value.completedBy;
       const entityType = Entity.extractTypeFromId(entityId);
-      this.entityMapper
-        .load(entityType, entityId)
-        .then((res) => {
-          this.completedBy = res;
-          this.cdr.markForCheck();
-        });
+      this.entityMapper.load(entityType, entityId).then((res) => {
+        this.completedBy = res;
+        this.cdr.markForCheck();
+      });
     }
   }
 }

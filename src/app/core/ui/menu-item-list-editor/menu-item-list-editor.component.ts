@@ -5,6 +5,7 @@ import {
   Output,
   inject,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import {
   CdkDragDrop,
@@ -39,6 +40,7 @@ import { IconButtonComponent } from "../../common-components/icon-button/icon-bu
 })
 export class MenuItemListEditorComponent {
   private readonly dialog = inject(MatDialog);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() items: MenuItemForAdminUi[] = [];
   @Input() showAddButton: boolean = true;
@@ -236,5 +238,6 @@ export class MenuItemListEditorComponent {
 
   private emitItemsChange() {
     this.itemsChange.emit([...this.items]);
+    this.cdr.markForCheck();
   }
 }

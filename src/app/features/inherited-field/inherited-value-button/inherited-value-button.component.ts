@@ -6,6 +6,7 @@ import {
   OnChanges,
   SimpleChanges,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -37,6 +38,7 @@ import { debounceTime } from "rxjs/operators";
 })
 export class InheritedValueButtonComponent implements OnChanges {
   private readonly defaultValueService = inject(DefaultValueService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() form: EntityForm<any>;
   @Input() field: FormFieldConfig;
@@ -50,27 +52,27 @@ export class InheritedValueButtonComponent implements OnChanges {
       !this.field.defaultValue?.config?.sourceReferenceField
     ) {
       this.defaultValueHint = undefined;
+      this.cdr.markForCheck();
       return;
     }
     this.defaultValueHint = this.defaultValueService.getDefaultValueUiHint(
       this.form,
       this.field?.id,
     );
+    this.cdr.markForCheck();
 
     if (changes.form?.firstChange) {
-      this.form?.formGroup.valueChanges
-        .pipe(debounceTime(50))
-        .subscribe((value) =>
-          // ensure this is only called after the other changes handler
-          setTimeout(
-            () =>
-              (this.defaultValueHint =
-                this.defaultValueService.getDefaultValueUiHint(
-                  this.form,
-                  this.field?.id,
-                )),
-          ),
-        );
+      this.form?.formGroup.valueChanges.pipe(debounceTime(50)).subscribe(() =>
+        // ensure this is only called after the other changes handler
+        setTimeout(() => {
+          this.defaultValueHint =
+            this.defaultValueService.getDefaultValueUiHint(
+              this.form,
+              this.field?.id,
+            );
+          this.cdr.markForCheck();
+        }),
+      );
     }
   }
 }
