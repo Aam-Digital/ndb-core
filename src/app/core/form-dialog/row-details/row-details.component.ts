@@ -58,7 +58,7 @@ export interface DetailsComponentData {
 export class RowDetailsComponent implements OnInit {
   data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
   private formService = inject(EntityFormService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
