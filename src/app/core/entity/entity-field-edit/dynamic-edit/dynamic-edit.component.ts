@@ -2,7 +2,7 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { Component, Input } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { EditComponent } from "./edit-component.interface";
@@ -26,9 +26,8 @@ export class DynamicEditComponent
   @Input() entity: Entity;
 
   override get disabled(): boolean {
-    const control = this.ngControl?.control as FormControl<unknown> | null;
+    const control = this.ngControl?.control;
 
-    // Keep Todo "Complete Task" button interactive in readonly forms while unfinished.
     if (
       this.formFieldConfig?.editComponent ===
         DynamicEditComponent.TODO_COMPLETION_EDIT_COMPONENT &&
