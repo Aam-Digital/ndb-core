@@ -1,0 +1,116 @@
+<div class="flex-column gap-small">
+  <div class="flex-row justify-space-between align-start flex-wrap gap-small">
+    <button
+      mat-stroked-button
+      (click)="reload()"
+      [disabled]="isLoading()"
+      color="accent"
+      i18n
+    >
+      Refresh Analysis
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex-row align-center gap-small" aria-live="polite">
+      <mat-spinner [diameter]="36" />
+      <span i18n>Analyzing configuration ...</span>
+    </div>
+  } @else {
+    @if (errorMessage(); as error) {
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <p class="remove-margin-bottom">{{ error }}</p>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title i18n>Summary</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="summary-grid">
+        <div>
+          <span class="summary-label" i18n>Total ConfigurableEnums</span>
+          <strong>{{ totalEnums() }}</strong>
+        </div>
+        <div>
+          <span class="summary-label" i18n>Used by Schema</span>
+          <strong>{{ usedEnums() }}</strong>
+        </div>
+        <div>
+          <span class="summary-label" i18n>Unused</span>
+          <strong>{{ unusedEnums().length }}</strong>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title i18n>Used ConfigurableEnums</mat-card-title>
+        <mat-card-subtitle i18n>
+          Includes where each enum is referenced in the active runtime schema.
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (usedEnumDetails().length === 0) {
+          <p i18n>No used configurable enums found.</p>
+        } @else {
+          <mat-list>
+            @for (
+              enumSummary of usedEnumDetails();
+              track enumSummary.enumEntity.getId()
+            ) {
+              <mat-list-item>
+                <div matListItemTitle>
+                  {{ enumSummary.enumEntity.getId(true) }}
+                </div>
+                <div matListItemLine>{{ usageSummary(enumSummary) }}</div>
+              </mat-list-item>
+            }
+          </mat-list>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title i18n>Unused ConfigurableEnums</mat-card-title>
+        <mat-card-subtitle i18n>
+          Based on active runtime entity schemas.
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (unusedEnums().length === 0) {
+          <p i18n>No unused configurable enums found.</p>
+        } @else {
+          <mat-list>
+            @for (
+              unusedEnum of unusedEnums();
+              track unusedEnum.enumEntity.getId()
+            ) {
+              <mat-list-item>
+                <div matListItemTitle>
+                  {{ unusedEnum.enumEntity.getId(true) }}
+                </div>
+                <div matListItemMeta>
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="deleteEnum(unusedEnum)"
+                    [disabled]="isDeleting(unusedEnum.enumEntity.getId(true))"
+                    i18n
+                  >
+                    Delete
+                  </button>
+                </div>
+              </mat-list-item>
+            }
+          </mat-list>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

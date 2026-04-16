@@ -3,13 +3,16 @@ import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/config
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntitySchema } from "../../entity/schema/entity-schema";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 export interface ConfigurableEnumUsage {
   entityType: string;
   fieldId: string;
 }
 
-export interface UnusedConfigurableEnum {
+export interface ConfigurableEnumUsageSummary {
   enumEntity: ConfigurableEnum;
   usages: ConfigurableEnumUsage[];
 }
@@ -17,31 +20,40 @@ export interface UnusedConfigurableEnum {
 export interface ConfigCleanupAnalysis {
   totalEnums: number;
   usedEnums: number;
-  unusedEnums: UnusedConfigurableEnum[];
+  usedEnumDetails: ConfigurableEnumUsageSummary[];
+  unusedEnums: ConfigurableEnumUsageSummary[];
 }
 
 @Injectable({ providedIn: "root" })
 export class ConfigCleanupService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   async analyzeUnusedConfigurableEnums(): Promise<ConfigCleanupAnalysis> {
     const enumEntities = await this.entityMapper.loadType(ConfigurableEnum);
     const usageMap = this.getSchemaUsageByEnumId();
 
-    const unusedEnums = enumEntities
-      .filter((enumEntity) => !usageMap.has(enumEntity.getId(true)))
+    const enumSummaries = enumEntities
       .map((enumEntity) => ({
         enumEntity,
-        usages: [],
+        usages: usageMap.get(enumEntity.getId(true)) ?? [],
       }))
       .sort((a, b) =>
         a.enumEntity.getId(true).localeCompare(b.enumEntity.getId(true)),
       );
 
+    const usedEnumDetails = enumSummaries.filter(
+      (enumSummary) => enumSummary.usages.length > 0,
+    );
+    const unusedEnums = enumSummaries.filter(
+      (enumSummary) => enumSummary.usages.length === 0,
+    );
+
     return {
       totalEnums: enumEntities.length,
-      usedEnums: enumEntities.length - unusedEnums.length,
+      usedEnums: usedEnumDetails.length,
+      usedEnumDetails,
       unusedEnums,
     };
   }
@@ -62,23 +74,113 @@ export class ConfigCleanupService {
     const usageMap = new Map<string, ConfigurableEnumUsage[]>();
 
     for (const entity of this.entityRegistry.values()) {
-      for (const [fieldId, schemaField] of entity.schema.entries()) {
-        if (schemaField?.dataType !== "configurable-enum") {
-          continue;
-        }
+      this.collectEnumUsagesFromSchema(
+        entity.ENTITY_TYPE,
+        entity.schema,
+        "",
+        usageMap,
+      );
+    }
 
-        const enumId = this.normalizeEnumId(schemaField.additional);
-        if (!enumId) {
-          continue;
-        }
+    return usageMap;
+  }
 
+  private collectEnumUsagesFromSchema(
+    entityType: string,
+    schema: EntitySchema,
+    fieldPrefix: string,
+    usageMap: Map<string, ConfigurableEnumUsage[]>,
+  ) {
+    for (const [fieldId, schemaField] of schema.entries()) {
+      const fullFieldId = fieldPrefix ? `${fieldPrefix}.${fieldId}` : fieldId;
+      this.collectEnumUsageFromField(
+        entityType,
+        fullFieldId,
+        schemaField,
+        usageMap,
+      );
+    }
+  }
+
+  private collectEnumUsageFromField(
+    entityType: string,
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    usageMap: Map<string, ConfigurableEnumUsage[]>,
+  ) {
+    if (!schemaField) {
+      return;
+    }
+
+    if (schemaField.dataType === "configurable-enum") {
+      const enumId = this.normalizeEnumId(schemaField.additional);
+      if (enumId) {
         const currentUsages = usageMap.get(enumId) ?? [];
-        currentUsages.push({ entityType: entity.ENTITY_TYPE, fieldId });
+        currentUsages.push({ entityType, fieldId });
         usageMap.set(enumId, currentUsages);
       }
     }
 
-    return usageMap;
+    const embeddedSchema = this.getEmbeddedSchema(schemaField);
+    if (!embeddedSchema || embeddedSchema.size === 0) {
+      return;
+    }
+
+    this.collectEnumUsagesFromSchema(
+      entityType,
+      embeddedSchema,
+      fieldId,
+      usageMap,
+    );
+  }
+
+  private getEmbeddedSchema(
+    schemaField: EntitySchemaField,
+  ): EntitySchema | undefined {
+    if (!schemaField?.dataType) {
+      return;
+    }
+
+    const datatype = this.entitySchemaService.getDatatypeOrDefault(
+      schemaField.dataType,
+      true,
+    ) as { embeddedType?: { schema: EntitySchema } } | undefined;
+
+    const hasEmbeddedType = !!datatype?.embeddedType?.schema;
+    const isSchemaEmbed = schemaField.dataType === "schema-embed";
+
+    if (!hasEmbeddedType && !isSchemaEmbed) {
+      return;
+    }
+
+    const embeddedSchema = new Map<string, EntitySchemaField>();
+
+    for (const [key, value] of datatype?.embeddedType?.schema?.entries() ??
+      []) {
+      embeddedSchema.set(key, { ...value, id: key });
+    }
+
+    for (const [key, value] of Object.entries(
+      this.getAdditionalSchemaConfig(schemaField.additional),
+    )) {
+      embeddedSchema.set(key, { ...value, id: key });
+    }
+
+    return embeddedSchema;
+  }
+
+  private getAdditionalSchemaConfig(additional: unknown): {
+    [fieldId: string]: EntitySchemaField;
+  } {
+    if (
+      !additional ||
+      typeof additional !== "object" ||
+      Array.isArray(additional)
+    ) {
+      return {};
+    }
+
+    return additional as { [fieldId: string]: EntitySchemaField };
   }
 
   private normalizeEnumId(rawId: unknown): string | undefined {
