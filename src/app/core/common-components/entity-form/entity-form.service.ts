@@ -19,6 +19,11 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
+import {
+  extractErrorText,
+  getMultiTabCorruptionGuidanceMessage,
+  isKnownMultiTabDatabaseCorruption,
+} from "#src/app/core/database/pouchdb/pouchdb-known-errors.util";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -254,7 +259,15 @@ export class EntityFormService {
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
-      throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
+      if (isKnownMultiTabDatabaseCorruption(err)) {
+        throw new Error(
+          $localize`Could not save ${entity.getType()}\: ${getMultiTabCorruptionGuidanceMessage()}`,
+        );
+      }
+
+      throw new Error(
+        $localize`Could not save ${entity.getType()}\: ${extractErrorText(err)}`,
+      );
     }
 
     this.unsavedChanges.pending = false;

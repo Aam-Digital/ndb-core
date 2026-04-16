@@ -97,6 +97,27 @@ describe("EntityFormService", () => {
     expect(formGroup.disabled).toBe(true);
   });
 
+  it("should show actionable guidance for known multi-tab IndexedDB errors", async () => {
+    const entity = new Entity("initialId");
+    const formGroup = new UntypedFormGroup({
+      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
+    });
+    const entityForm = createMockEntityForm(entity, formGroup);
+    TestBed.inject(EntityAbility).update([
+      { subject: "Entity", action: "create" },
+    ]);
+
+    vi.spyOn(TestBed.inject(EntityMapperService), "save").mockRejectedValueOnce(
+      new Error(
+        "unknown_error: Database encountered an unknown error ConstraintError: Unable to add key to index 'seq'",
+      ),
+    );
+
+    await expect(service.saveChanges(entityForm, entity)).rejects.toThrow(
+      "Please close other tabs and reload this page",
+    );
+  });
+
   it("should throw an error when trying to create a entity with missing permissions", async () => {
     TestBed.inject(EntityAbility).update([
       { subject: "all", action: "manage" },

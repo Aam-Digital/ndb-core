@@ -19,6 +19,10 @@ import { EMPTY, from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
+import {
+  getMultiTabCorruptionGuidanceMessage,
+  isKnownMultiTabDatabaseCorruption,
+} from "./pouchdb-known-errors.util";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -36,6 +40,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
+  private knownMultiTabErrorAlertShown = false;
 
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
@@ -63,7 +68,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
     ngZone?: NgZone,
-    alertService?: AlertService,
+    private readonly alertService?: AlertService,
   ) {
     super(dbName, globalSyncState, ngZone);
 
@@ -72,7 +77,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       authService,
       undefined,
       ngZone,
-      alertService,
+      this.alertService,
     );
 
     this.logSyncContext();
@@ -215,6 +220,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
             `sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
             err,
           );
+        } else if (isKnownMultiTabDatabaseCorruption(err)) {
+          Logging.warn(
+            `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+            err,
+          );
+          this.showKnownMultiTabErrorAlert();
         } else {
           Logging.warn(`sync failed [${this.dbName}]`, err);
         }
@@ -235,6 +246,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
       message.includes("IDBObjectStore") ||
       message.includes("Failed to execute")
     );
+  }
+
+  private showKnownMultiTabErrorAlert() {
+    if (this.knownMultiTabErrorAlertShown) {
+      return;
+    }
+    this.knownMultiTabErrorAlertShown = true;
+    this.alertService?.addDanger(getMultiTabCorruptionGuidanceMessage());
   }
 
   /**

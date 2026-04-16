@@ -18,6 +18,7 @@ describe("SyncedPouchDatabase", () => {
   let mockNavigator;
   let mockSyncStateSubject: SyncStateSubject;
   let loginState: LoginStateSubject;
+  let mockAlertService: { addDanger: Mock };
 
   beforeEach(() => {
     mockAuthService = {
@@ -27,6 +28,9 @@ describe("SyncedPouchDatabase", () => {
     mockNavigator = { onLine: true };
     mockSyncStateSubject = new SyncStateSubject();
     loginState = new LoginStateSubject();
+    mockAlertService = {
+      addDanger: vi.fn(),
+    };
 
     service = new SyncedPouchDatabase(
       "unit-test-db",
@@ -34,6 +38,8 @@ describe("SyncedPouchDatabase", () => {
       mockSyncStateSubject,
       mockNavigator,
       loginState,
+      undefined,
+      mockAlertService as any,
     );
   });
 
@@ -165,6 +171,23 @@ describe("SyncedPouchDatabase", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should alert only once for known multi-tab IndexedDB sync errors", async () => {
+    const { mockLocalDb } = mockPouchDatabaseService();
+    mockLocalDb.sync.mockReturnValue(
+      mockSyncHandler(
+        new Error(
+          "Database has a global failure ConstraintError: Unable to add key to index 'seq': at least one key does not satisfy the uniqueness requirements.",
+        ),
+        true,
+      ),
+    );
+
+    await expect(service.sync()).rejects.toBeTruthy();
+    await expect(service.sync()).rejects.toBeTruthy();
+
+    expect(mockAlertService.addDanger).toHaveBeenCalledTimes(1);
   });
 
   it("should not start additional syncs while a previous sync is still running", async () => {
