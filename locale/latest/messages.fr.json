@@ -1351,5 +1351,8 @@
   "6531852877544948288": "Mode en ligne uniquement (pas de synchronisation hors ligne)",
   "2715185765061607307": " Se connecter ",
   "3887931314338713376": "Normally, long dropdown option labels are shortened with an ellipsis (...). Enable this to display full option labels across multiple lines in the dropdown list.",
-  "7608490558994755758": " Display full dropdown option labels (multi-line) "
+  "7608490558994755758": " Display full dropdown option labels (multi-line) ",
+  "1335348555132116359": "⚠️ Manual update required",
+  "7311780829644250691": " Selected values will be imported as is. Inherited values need to be updated manually. ",
+  "5576349097879733673": " Inherited values do not update automatically after import and must be updated manually. "
 }
