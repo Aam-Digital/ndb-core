@@ -487,8 +487,8 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="377"
-                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:377</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="378"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:378</a></div>
                         </td>
                     </tr>
 
@@ -526,8 +526,8 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="370"
-                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:370</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="371"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:371</a></div>
                         </td>
                     </tr>
 
@@ -563,8 +563,8 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="360"
-                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:360</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="361"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:361</a></div>
                         </td>
                     </tr>
 
@@ -632,8 +632,8 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="429"
-                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:429</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="430"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:430</a></div>
                         </td>
                     </tr>
 
@@ -669,8 +669,8 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="349"
-                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:349</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="350"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:350</a></div>
                         </td>
                     </tr>
 
@@ -738,8 +738,8 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="407"
-                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:407</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="408"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:408</a></div>
                         </td>
                     </tr>
 
@@ -775,8 +775,8 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="425"
-                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:425</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="426"
+                                    class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:426</a></div>
                         </td>
                     </tr>
 
@@ -1575,8 +1575,9 @@ export class RollCallComponent {
   }
 
   private async loadParticipants() {
-    if (!this.event()) return;
-    const attendanceItems: AttendanceItem[] &#x3D; this.event().attendanceItems;
+    const event &#x3D; this.event();
+    if (!event) return;
+    const attendanceItems: AttendanceItem[] &#x3D; event.attendanceItems;
 
     const active: Entity[] &#x3D; [];
     const inactive: Entity[] &#x3D; [];
@@ -1596,7 +1597,7 @@ export class RollCallComponent {
           &quot;Could not find participant &quot; +
             participantId +
             &quot; for event &quot; +
-            this.event().entity.getId(),
+            event.entity.getId(),
         );
         continue;
       }
@@ -1611,7 +1612,7 @@ export class RollCallComponent {
       }
     }
 
-    this.event().attendanceItems &#x3D; validAttendanceItems;
+    event.attendanceItems &#x3D; validAttendanceItems;
     this.participants.set(active);
     this.inactiveParticipants.set(inactive);
     this.attendanceByParticipant.set(attendanceMap);
