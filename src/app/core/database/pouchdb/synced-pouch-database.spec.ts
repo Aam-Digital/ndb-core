@@ -174,7 +174,7 @@ describe("SyncedPouchDatabase", () => {
     }
   });
 
-  it("should alert only once for known multi-tab IndexedDB sync errors", async () => {
+  it("should not show fallback popup for known multi-tab IndexedDB sync errors", async () => {
     const { mockLocalDb } = mockPouchDatabaseService();
     mockLocalDb.sync.mockReturnValue(
       mockSyncHandler(
@@ -188,7 +188,44 @@ describe("SyncedPouchDatabase", () => {
     await expect(service.sync()).rejects.toBeTruthy();
     await expect(service.sync()).rejects.toBeTruthy();
 
-    expect(mockAlertService.addDanger).toHaveBeenCalledTimes(1);
+    expect(mockAlertService.addDanger).not.toHaveBeenCalled();
+  });
+
+  it("should use configured recovery callback for known multi-tab sync errors", async () => {
+    const onKnownMultiTabCorruption = vi.fn();
+    const serviceWithCallback = new SyncedPouchDatabase(
+      "unit-test-db",
+      mockAuthService,
+      mockSyncStateSubject,
+      {
+        navigator: mockNavigator,
+        loginStateSubject: loginState,
+        alertService: mockAlertService as any,
+        onKnownMultiTabCorruption,
+      },
+    );
+
+    const mockLocalDb = {
+      sync: vi
+        .fn()
+        .mockReturnValue(
+          mockSyncHandler(
+            new Error(
+              "Database has a global failure ConstraintError: Unable to add key to index 'seq': at least one key does not satisfy the uniqueness requirements.",
+            ),
+            true,
+          ),
+        ),
+      info: vi.fn().mockResolvedValue({ doc_count: 5 }),
+    };
+    vi.spyOn(serviceWithCallback, "getPouchDB").mockReturnValue(
+      mockLocalDb as any,
+    );
+
+    await expect(serviceWithCallback.sync()).rejects.toBeTruthy();
+
+    expect(onKnownMultiTabCorruption).toHaveBeenCalledTimes(1);
+    expect(mockAlertService.addDanger).not.toHaveBeenCalled();
   });
 
   it("should not start additional syncs while a previous sync is still running", async () => {

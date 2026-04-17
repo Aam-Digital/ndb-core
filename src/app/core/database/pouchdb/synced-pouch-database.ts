@@ -19,16 +19,14 @@ import { EMPTY, from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
-import {
-  getMultiTabCorruptionGuidanceMessage,
-  isKnownMultiTabDatabaseCorruption,
-} from "./pouchdb-known-errors.util";
+import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-known-errors.util";
 
 export interface SyncedPouchDatabaseDependencies {
   navigator: Navigator;
   loginStateSubject: LoginStateSubject;
   ngZone?: NgZone;
   alertService?: AlertService;
+  onKnownMultiTabCorruption?: () => void | Promise<void>;
 }
 
 /**
@@ -52,6 +50,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
   private readonly navigator: Navigator;
   private readonly loginStateSubject: LoginStateSubject;
   private readonly alertService?: AlertService;
+  private readonly onKnownMultiTabCorruption?: () => void | Promise<void>;
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
 
@@ -77,11 +76,18 @@ export class SyncedPouchDatabase extends PouchDatabase {
     globalSyncState: SyncStateSubject,
     dependencies: SyncedPouchDatabaseDependencies,
   ) {
-    const { navigator, loginStateSubject, ngZone, alertService } = dependencies;
+    const {
+      navigator,
+      loginStateSubject,
+      ngZone,
+      alertService,
+      onKnownMultiTabCorruption,
+    } = dependencies;
     super(dbName, globalSyncState, ngZone);
     this.navigator = navigator;
     this.loginStateSubject = loginStateSubject;
     this.alertService = alertService;
+    this.onKnownMultiTabCorruption = onKnownMultiTabCorruption;
 
     this.remoteDatabase = new RemotePouchDatabase(
       dbName,
@@ -264,7 +270,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return;
     }
     this.knownMultiTabErrorAlertShown = true;
-    this.alertService?.addDanger(getMultiTabCorruptionGuidanceMessage());
+    void this.onKnownMultiTabCorruption?.();
   }
 
   /**

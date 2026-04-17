@@ -15,6 +15,10 @@ import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 import { PublicFormConfig } from "../../../features/public-form/public-form-config";
 import { PublicFormPermissionService } from "../../../features/public-form/public-form-permission.service";
+import {
+  KnownMultiTabCorruptionHandledError,
+  MultiTabOperationBlockedError,
+} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -78,7 +82,11 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
         ]);
       }
     } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
+      if (
+        !(err instanceof InvalidFormFieldError) &&
+        !(err instanceof KnownMultiTabCorruptionHandledError) &&
+        !(err instanceof MultiTabOperationBlockedError)
+      ) {
         this.alertService.addDanger(err.message);
       }
     }

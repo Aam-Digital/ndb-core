@@ -49,13 +49,6 @@ export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
   return hasGlobalConstraintFailure;
 }
 
-/**
- * Shared actionable guidance for affected users.
- */
-export function getMultiTabCorruptionGuidanceMessage(): string {
-  return $localize`A local database conflict was detected. This can happen when the app is open in multiple tabs. Please close other tabs and reload this page, then try again.`;
-}
-
 function collectErrorFragments(
   value: unknown,
   visited: Set<unknown>,

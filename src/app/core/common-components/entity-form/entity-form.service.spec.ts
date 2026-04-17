@@ -33,13 +33,40 @@ import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EventEmitter } from "@angular/core";
+import { PouchdbCorruptionRecoveryService } from "#src/app/core/database/pouchdb/pouchdb-corruption-recovery.service";
+import {
+  KnownMultiTabCorruptionHandledError,
+  MultiTabOperationBlockedError,
+} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+import { MultiTabDetectionService } from "#src/app/core/database/multi-tab-detection.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
+  let mockPouchdbCorruptionRecovery: {
+    promptMultiTabWarningDialog: ReturnType<typeof vi.fn>;
+    promptResetApplicationDialog: ReturnType<typeof vi.fn>;
+  };
+  let mockMultiTabDetection: { isMultipleTabsOpen: boolean };
 
   beforeEach(waitForAsync(() => {
+    mockPouchdbCorruptionRecovery = {
+      promptMultiTabWarningDialog: vi.fn().mockResolvedValue(undefined),
+      promptResetApplicationDialog: vi.fn().mockResolvedValue(undefined),
+    };
+    mockMultiTabDetection = { isMultipleTabsOpen: false };
+
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
+      providers: [
+        {
+          provide: PouchdbCorruptionRecoveryService,
+          useValue: mockPouchdbCorruptionRecovery,
+        },
+        {
+          provide: MultiTabDetectionService,
+          useValue: mockMultiTabDetection,
+        },
+      ],
     });
     service = TestBed.inject(EntityFormService);
   }));
@@ -97,6 +124,25 @@ describe("EntityFormService", () => {
     expect(formGroup.disabled).toBe(true);
   });
 
+  it("should block saving and show warning when multiple tabs are open", async () => {
+    const entity = new Entity("initialId");
+    const formGroup = new UntypedFormGroup({
+      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
+    });
+    const entityForm = createMockEntityForm(entity, formGroup);
+    TestBed.inject(EntityAbility).update([
+      { subject: "Entity", action: "create" },
+    ]);
+    mockMultiTabDetection.isMultipleTabsOpen = true;
+
+    await expect(
+      service.saveChanges(entityForm, entity),
+    ).rejects.toBeInstanceOf(MultiTabOperationBlockedError);
+    expect(
+      mockPouchdbCorruptionRecovery.promptMultiTabWarningDialog,
+    ).toHaveBeenCalledTimes(1);
+  });
+
   it("should show actionable guidance for known multi-tab IndexedDB errors", async () => {
     const entity = new Entity("initialId");
     const formGroup = new UntypedFormGroup({
@@ -113,9 +159,12 @@ describe("EntityFormService", () => {
       ),
     );
 
-    await expect(service.saveChanges(entityForm, entity)).rejects.toThrow(
-      "Please close other tabs and reload this page",
-    );
+    await expect(
+      service.saveChanges(entityForm, entity),
+    ).rejects.toBeInstanceOf(KnownMultiTabCorruptionHandledError);
+    expect(
+      mockPouchdbCorruptionRecovery.promptResetApplicationDialog,
+    ).toHaveBeenCalledTimes(1);
   });
 
   it("should throw an error when trying to create a entity with missing permissions", async () => {

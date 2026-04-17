@@ -20,6 +20,10 @@ import { Todo } from "../../model/todo";
 import { TodoCompletion } from "../../model/todo-completion";
 import { TodoService } from "../../todo.service";
 import { DisplayTodoCompletionComponent } from "../display-todo-completion/display-todo-completion.component";
+import {
+  KnownMultiTabCorruptionHandledError,
+  MultiTabOperationBlockedError,
+} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
 
 @DynamicComponent("EditTodoCompletion")
 @Component({
@@ -59,10 +63,20 @@ export class EditTodoCompletionComponent
   async completeTodo() {
     if (this.formControl.parent?.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
-      await this.entityFormService.saveChanges(
-        { formGroup: this.formControl.parent } as any,
-        this.todo,
-      );
+      try {
+        await this.entityFormService.saveChanges(
+          { formGroup: this.formControl.parent } as any,
+          this.todo,
+        );
+      } catch (err) {
+        if (
+          err instanceof KnownMultiTabCorruptionHandledError ||
+          err instanceof MultiTabOperationBlockedError
+        ) {
+          return;
+        }
+        throw err;
+      }
     }
     await this.todoService.completeTodo(this.todo);
 

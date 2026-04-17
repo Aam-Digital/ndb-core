@@ -30,6 +30,10 @@ import {
   PublicFormLinkingService,
 } from "./public-form-linking.service";
 import { UpdateMetadata } from "../../core/entity/model/update-metadata";
+import {
+  KnownMultiTabCorruptionHandledError,
+  MultiTabOperationBlockedError,
+} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
 
 @UntilDestroy()
 @Component({
@@ -106,6 +110,12 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         // Collect invalid field names for summary message
         this.validationError = true;
         this.invalidFieldNames = this.collectInvalidFieldNames();
+        return;
+      }
+      if (
+        e instanceof KnownMultiTabCorruptionHandledError ||
+        e instanceof MultiTabOperationBlockedError
+      ) {
         return;
       }
       throw e;
