@@ -36,10 +36,11 @@ describe("SyncedPouchDatabase", () => {
       "unit-test-db",
       mockAuthService,
       mockSyncStateSubject,
-      mockNavigator,
-      loginState,
-      undefined,
-      mockAlertService as any,
+      {
+        navigator: mockNavigator,
+        loginStateSubject: loginState,
+        alertService: mockAlertService as any,
+      },
     );
   });
 

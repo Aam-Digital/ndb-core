@@ -12,7 +12,7 @@ type TabChannelMessage = { type: "TAB_OPENED" | "TAB_ALIVE" };
 export class MultiTabDetectionService implements OnDestroy {
   static readonly CHANNEL_NAME = "aam-digital-tab-sync";
 
-  private channel?: BroadcastChannel;
+  private readonly channel?: BroadcastChannel;
   private _isMultipleTabsOpen = false;
   readonly isMultipleTabsOpen$ = new BehaviorSubject<boolean>(false);
 
@@ -21,14 +21,17 @@ export class MultiTabDetectionService implements OnDestroy {
   }
 
   constructor() {
-    if (!("BroadcastChannel" in globalThis)) {
-      return;
+    if ("BroadcastChannel" in globalThis) {
+      try {
+        this.channel = new BroadcastChannel(
+          MultiTabDetectionService.CHANNEL_NAME,
+        );
+      } catch {
+        // Graceful fallback: multi-tab detection disabled on this platform.
+      }
     }
 
-    try {
-      this.channel = new BroadcastChannel(
-        MultiTabDetectionService.CHANNEL_NAME,
-      );
+    if (this.channel) {
       this.channel.onmessage = (event: MessageEvent<TabChannelMessage>) =>
         this.onMessage(event.data);
 
@@ -36,9 +39,6 @@ export class MultiTabDetectionService implements OnDestroy {
       this.channel.postMessage({
         type: "TAB_OPENED",
       } satisfies TabChannelMessage);
-    } catch {
-      // Graceful fallback: multi-tab detection disabled on this platform.
-      this.channel = undefined;
     }
   }
 

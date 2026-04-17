@@ -1,7 +1,10 @@
 import { MultiTabDetectionService } from "./multi-tab-detection.service";
 
 class MockBroadcastChannel {
-  static channels = new Map<string, Set<MockBroadcastChannel>>();
+  public static readonly channels = new Map<
+    string,
+    Set<MockBroadcastChannel>
+  >();
 
   onmessage: ((event: MessageEvent<any>) => void) | null = null;
 

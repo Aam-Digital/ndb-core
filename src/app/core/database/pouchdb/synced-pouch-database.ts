@@ -24,6 +24,13 @@ import {
   isKnownMultiTabDatabaseCorruption,
 } from "./pouchdb-known-errors.util";
 
+export interface SyncedPouchDatabaseDependencies {
+  navigator: Navigator;
+  loginStateSubject: LoginStateSubject;
+  ngZone?: NgZone;
+  alertService?: AlertService;
+}
+
 /**
  * An alternative implementation of PouchDatabase that additionally
  * provides functionality to sync with a remote CouchDB.
@@ -42,6 +49,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
   SYNC_INTERVAL = 30000;
   private knownMultiTabErrorAlertShown = false;
 
+  private readonly navigator: Navigator;
+  private readonly loginStateSubject: LoginStateSubject;
+  private readonly alertService?: AlertService;
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
 
@@ -65,12 +75,13 @@ export class SyncedPouchDatabase extends PouchDatabase {
     dbName: string,
     authService: KeycloakAuthService,
     globalSyncState: SyncStateSubject,
-    private navigator: Navigator,
-    private loginStateSubject: LoginStateSubject,
-    ngZone?: NgZone,
-    private readonly alertService?: AlertService,
+    dependencies: SyncedPouchDatabaseDependencies,
   ) {
+    const { navigator, loginStateSubject, ngZone, alertService } = dependencies;
     super(dbName, globalSyncState, ngZone);
+    this.navigator = navigator;
+    this.loginStateSubject = loginStateSubject;
+    this.alertService = alertService;
 
     this.remoteDatabase = new RemotePouchDatabase(
       dbName,

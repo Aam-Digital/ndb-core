@@ -36,15 +36,12 @@ export class DatabaseFactoryService {
       dbName === Entity.DATABASE ? this.syncState : new SyncStateSubject();
 
     if (environment.session_type === SessionType.synced) {
-      return new SyncedPouchDatabase(
-        dbName,
-        this.authService,
-        syncState,
-        this.navigator,
-        this.loginStateSubject,
-        this.ngZone,
-        this.alertService,
-      );
+      return new SyncedPouchDatabase(dbName, this.authService, syncState, {
+        navigator: this.navigator,
+        loginStateSubject: this.loginStateSubject,
+        ngZone: this.ngZone,
+        alertService: this.alertService,
+      });
     } else if (environment.session_type === SessionType.online) {
       const db = new RemotePouchDatabase(
         dbName,
