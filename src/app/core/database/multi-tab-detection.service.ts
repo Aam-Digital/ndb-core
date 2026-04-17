@@ -26,12 +26,16 @@ export class MultiTabDetectionService implements OnDestroy {
     }
 
     try {
-      this.channel = new BroadcastChannel(MultiTabDetectionService.CHANNEL_NAME);
+      this.channel = new BroadcastChannel(
+        MultiTabDetectionService.CHANNEL_NAME,
+      );
       this.channel.onmessage = (event: MessageEvent<TabChannelMessage>) =>
         this.onMessage(event.data);
 
       // Announce this tab so already-open tabs can reply.
-      this.channel.postMessage({ type: "TAB_OPENED" } satisfies TabChannelMessage);
+      this.channel.postMessage({
+        type: "TAB_OPENED",
+      } satisfies TabChannelMessage);
     } catch {
       // Graceful fallback: multi-tab detection disabled on this platform.
       this.channel = undefined;
@@ -44,7 +48,9 @@ export class MultiTabDetectionService implements OnDestroy {
     }
 
     if (message.type === "TAB_OPENED") {
-      this.channel?.postMessage({ type: "TAB_ALIVE" } satisfies TabChannelMessage);
+      this.channel?.postMessage({
+        type: "TAB_ALIVE",
+      } satisfies TabChannelMessage);
       this.markMultipleTabsOpen();
       return;
     }
