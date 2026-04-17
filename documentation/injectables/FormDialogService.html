@@ -218,8 +218,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="122"
-                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:122</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="134"
+                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:134</a></div>
                         </td>
                     </tr>
 
@@ -285,8 +285,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="76"
-                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:76</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="88"
+                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -395,8 +395,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:37</a></div>
                         </td>
                     </tr>
 
@@ -502,7 +502,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:29</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/form-dialog/form-dialog.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -536,12 +536,15 @@ import {
 } from &quot;../ui/dialog-view/dialog-view.component&quot;;
 import { EntityConfigService } from &quot;../entity/entity-config.service&quot;;
 import { Note } from &quot;#src/app/child-dev-project/notes/model/note&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { PREFIX_VIEW_CONFIG } from &quot;../config/dynamic-routing/view-config.interface&quot;;
 
 @Injectable({ providedIn: &quot;root&quot; })
 export class FormDialogService {
   private readonly dialog &#x3D; inject(MatDialog);
   private readonly schemaService &#x3D; inject(EntitySchemaService);
   private readonly entityConfigService &#x3D; inject(EntityConfigService);
+  private readonly router &#x3D; inject(Router);
 
   static dialogSettings: MatDialogConfig &#x3D; {
     width: &quot;90%&quot;,
@@ -554,6 +557,15 @@ export class FormDialogService {
       hasDetailsViewConfig &#x3D; !!this.entityConfigService.getDetailsViewConfig(
         entity.getConstructor(),
       );
+      if (!hasDetailsViewConfig) {
+        // check router config for code-defined view configs (not stored in DB config for e.g. Public forms)
+        const detailsRoute &#x3D; EntityConfigService.getDetailsViewId(
+          entity.getConstructor(),
+        ).substring(PREFIX_VIEW_CONFIG.length);
+        hasDetailsViewConfig &#x3D; this.router.config.some(
+          (route) &#x3D;&gt; route.path &#x3D;&#x3D;&#x3D; detailsRoute,
+        );
+      }
     } catch {
       // If the config has not been loaded yet (e.g. during early app initialization),
       // fall back to the form popup to avoid a runtime crash.
