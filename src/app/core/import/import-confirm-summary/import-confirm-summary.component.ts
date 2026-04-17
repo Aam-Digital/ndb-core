@@ -13,6 +13,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
+import { hasMappedInheritedSourceField } from "../import-inheritance-warning.util";
 
 /**
  * Data passed into Import Confirmation Dialog.
@@ -37,7 +40,12 @@ export interface ImportDialogResult {
   selector: "app-import-confirm-summary",
   templateUrl: "./import-confirm-summary.component.html",
   styleUrls: ["./import-confirm-summary.component.scss"],
-  imports: [MatDialogModule, MatProgressBarModule, MatButtonModule],
+  imports: [
+    MatDialogModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    HintBoxComponent,
+  ],
 })
 export class ImportConfirmSummaryComponent {
   private readonly dialogRef =
@@ -46,8 +54,24 @@ export class ImportConfirmSummaryComponent {
   private readonly snackBar = inject(MatSnackBar);
   private readonly confirmationService = inject(ConfirmationDialogService);
   private readonly importService = inject(ImportService);
+  private readonly entityRegistry = inject(EntityRegistry);
 
   importInProgress: boolean;
+  showInheritanceImportWarning = false;
+
+  constructor() {
+    const entityType = this.data?.importSettings?.entityType;
+    const entityCtor = entityType
+      ? this.entityRegistry.get(entityType)
+      : undefined;
+
+    this.showInheritanceImportWarning =
+      !!entityCtor &&
+      hasMappedInheritedSourceField(
+        entityCtor,
+        this.data?.importSettings?.columnMapping ?? [],
+      );
+  }
 
   // TODO: detailed summary including warnings of unmapped columns, ignored values, etc. (#1943)
 
