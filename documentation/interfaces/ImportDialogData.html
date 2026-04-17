@@ -274,6 +274,9 @@ import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { OkButton } from &quot;../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
+import { HintBoxComponent } from &quot;../../common-components/hint-box/hint-box.component&quot;;
+import { hasMappedInheritedSourceField } from &quot;../import-inheritance-warning.util&quot;;
 
 /**
  * Data passed into Import Confirmation Dialog.
@@ -298,7 +301,12 @@ export interface ImportDialogResult {
   selector: &quot;app-import-confirm-summary&quot;,
   templateUrl: &quot;./import-confirm-summary.component.html&quot;,
   styleUrls: [&quot;./import-confirm-summary.component.scss&quot;],
-  imports: [MatDialogModule, MatProgressBarModule, MatButtonModule],
+  imports: [
+    MatDialogModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    HintBoxComponent,
+  ],
 })
 export class ImportConfirmSummaryComponent {
   private readonly dialogRef &#x3D;
@@ -307,8 +315,24 @@ export class ImportConfirmSummaryComponent {
   private readonly snackBar &#x3D; inject(MatSnackBar);
   private readonly confirmationService &#x3D; inject(ConfirmationDialogService);
   private readonly importService &#x3D; inject(ImportService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
 
   importInProgress: boolean;
+  showInheritanceImportWarning &#x3D; false;
+
+  constructor() {
+    const entityType &#x3D; this.data?.importSettings?.entityType;
+    const entityCtor &#x3D; entityType
+      ? this.entityRegistry.get(entityType)
+      : undefined;
+
+    this.showInheritanceImportWarning &#x3D;
+      !!entityCtor &amp;&amp;
+      hasMappedInheritedSourceField(
+        entityCtor,
+        this.data?.importSettings?.columnMapping ?? [],
+      );
+  }
 
   // TODO: detailed summary including warnings of unmapped columns, ignored values, etc. (#1943)
 

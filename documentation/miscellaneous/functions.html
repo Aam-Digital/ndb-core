@@ -313,6 +313,9 @@
                             <a href="#getGroupingInformationString" title="src/app/features/reporting/report-row.ts" ><b>getGroupingInformationString</b>&nbsp;&nbsp;&nbsp;(src/.../report-row.ts)</a>
                         </li>
                         <li>
+                            <a href="#getInheritanceSourceReferenceFields" title="src/app/core/import/import-inheritance-warning.util.ts" ><b>getInheritanceSourceReferenceFields</b>&nbsp;&nbsp;&nbsp;(src/.../import-inheritance-warning.util.ts)</a>
+                        </li>
+                        <li>
                             <a href="#getInnerEntityReferenceFields" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" ><b>getInnerEntityReferenceFields</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</a>
                         </li>
                         <li>
@@ -341,6 +344,9 @@
                         </li>
                         <li>
                             <a href="#groupBy" title="src/app/utils/utils.ts" ><b>groupBy</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#hasMappedInheritedSourceField" title="src/app/core/import/import-inheritance-warning.util.ts" ><b>hasMappedInheritedSourceField</b>&nbsp;&nbsp;&nbsp;(src/.../import-inheritance-warning.util.ts)</a>
                         </li>
                         <li>
                             <a href="#hasNoLinkAndNoSubItems" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" ><b>hasNoLinkAndNoSubItems</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</a>
@@ -380,6 +386,9 @@
                         </li>
                         <li>
                             <a href="#isGeoLocation" title="src/app/core/common-components/entities-table/value-accessor/value-accessor.ts" ><b>isGeoLocation</b>&nbsp;&nbsp;&nbsp;(src/.../value-accessor.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isInheritanceSourceReferenceField" title="src/app/core/import/import-inheritance-warning.util.ts" ><b>isInheritanceSourceReferenceField</b>&nbsp;&nbsp;&nbsp;(src/.../import-inheritance-warning.util.ts)</a>
                         </li>
                         <li>
                             <a href="#isManualItemWithoutLink" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" ><b>isManualItemWithoutLink</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</a>
@@ -6414,6 +6423,219 @@ This generates a camelCase string and replacing special characters with undersco
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/import/import-inheritance-warning.util.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getInheritanceSourceReferenceFields"></a>
+                    <span class="name">
+                        <span ><b>getInheritanceSourceReferenceFields</b></span>
+                        <a href="#getInheritanceSourceReferenceFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getInheritanceSourceReferenceFields(entityCtor?: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Shared helper for import warnings related to inherited fields.</p>
+<p>It centralizes detection of source-reference fields used by inherited-field
+defaults so mapping dialogs and import summary can show consistent hints
+without duplicating schema-scanning logic.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityCtor</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Set&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasMappedInheritedSourceField"></a>
+                    <span class="name">
+                        <span ><b>hasMappedInheritedSourceField</b></span>
+                        <a href="#hasMappedInheritedSourceField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hasMappedInheritedSourceField(entityCtor: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, columnMappings)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityCtor</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>columnMappings</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isInheritanceSourceReferenceField"></a>
+                    <span class="name">
+                        <span ><b>isInheritanceSourceReferenceField</b></span>
+                        <a href="#isInheritanceSourceReferenceField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isInheritanceSourceReferenceField(entityCtor: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, propertyName?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityCtor</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>propertyName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                         </div>
                             <div class="io-description">
