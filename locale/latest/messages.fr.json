@@ -1349,5 +1349,7 @@
   "7628311919443151343": "Pagination des comptes utilisateurs",
   "5983743945230036950": "Lorsque cette option est activée, les données ne sont ni synchronisées ni stockées sur cet appareil. Le fonctionnement est plus rapide, mais vous ne pourrez pas utiliser l'application hors ligne par la suite.",
   "6531852877544948288": "Mode en ligne uniquement (pas de synchronisation hors ligne)",
-  "2715185765061607307": " Se connecter "
+  "2715185765061607307": " Se connecter ",
+  "3887931314338713376": "Normally, long dropdown option labels are shortened with an ellipsis (...). Enable this to display full option labels across multiple lines in the dropdown list.",
+  "7608490558994755758": " Display full dropdown option labels (multi-line) "
 }

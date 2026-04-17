@@ -1349,5 +1349,7 @@
   "7628311919443151343": "Benutzerkonten-Paginierung",
   "5983743945230036950": "Wenn diese Option aktiviert ist, werden Daten nicht auf diesem Gerät synchronisiert und gespeichert. Dies ist zwar schneller, aber die App kann später nicht offline verwendet werden.",
   "6531852877544948288": "\"Nur-Online\"-Modus (keine Offline-Synchronisierung)",
-  "2715185765061607307": "Anmelden "
+  "2715185765061607307": "Anmelden ",
+  "3887931314338713376": "Normally, long dropdown option labels are shortened with an ellipsis (...). Enable this to display full option labels across multiple lines in the dropdown list.",
+  "7608490558994755758": " Display full dropdown option labels (multi-line) "
 }
