@@ -211,6 +211,13 @@
                                 </li>
                                 <li>
                                             <span class="modifier">Optional</span>
+                                        <a href="#displayFullLengthOptionLabel" 
+>
+                                            displayFullLengthOptionLabel
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
                                         <a href="#editComponent" 
 >
                                             editComponent
@@ -570,6 +577,51 @@ The form will be disabled, until all default value configs are applied</p>
                             <tr>
                                 <td class="col-md-4">
                                     <div class="io-description"><p>If set to <code>true</code>, the full length label should be displayed (even if it spans multiple lines).</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="displayFullLengthOptionLabel"></a>
+                                        <span class="name "><b>displayFullLengthOptionLabel</b>
+                                            <a href="#displayFullLengthOptionLabel">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>displayFullLengthOptionLabel:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>If set to <code>true</code>, dropdown options should show full labels in the expanded list
+(wrapping to multiple lines instead of truncating with ellipsis).</p>
 </div>
                                 </td>
                             </tr>
@@ -1219,6 +1271,12 @@ export interface EntitySchemaField {
    * If set to &#x60;true&#x60;, the full length label should be displayed (even if it spans multiple lines).
    */
   displayFullLengthLabel?: boolean;
+
+  /**
+   * If set to &#x60;true&#x60;, dropdown options should show full labels in the expanded list
+   * (wrapping to multiple lines instead of truncating with ellipsis).
+   */
+  displayFullLengthOptionLabel?: boolean;
 
   /**
    * A further description of the property which can be displayed in tooltips.

@@ -533,6 +533,9 @@ export class AdminEntityFieldComponent implements OnInit {
       displayFullLengthLabel: [
         this.data.entitySchemaField.displayFullLengthLabel ?? false,
       ],
+      displayFullLengthOptionLabel: [
+        this.data.entitySchemaField.displayFullLengthOptionLabel ?? false,
+      ],
       description: [this.data.entitySchemaField.description],
 
       dataType: [this.data.entitySchemaField.dataType, Validators.required],
