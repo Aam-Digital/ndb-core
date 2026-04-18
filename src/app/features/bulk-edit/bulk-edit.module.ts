@@ -6,13 +6,10 @@ import { EntityEditService } from "./entity-edit.service";
 import { asArray } from "#src/app/utils/asArray";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
-import { isKnownMultiTabDatabaseCorruption } from "#src/app/core/database/pouchdb/pouchdb-known-errors.util";
-import { PouchdbCorruptionRecoveryService } from "#src/app/core/database/pouchdb/pouchdb-corruption-recovery.service";
 import {
   KnownMultiTabCorruptionHandledError,
   MultiTabOperationBlockedError,
 } from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
-import { MultiTabDetectionService } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * Feature module for bulk editing multiple entities at once.
@@ -25,8 +22,6 @@ export class BulkEditModule {
     const entityActionsMenuService = inject(EntityActionsMenuService);
     const injector = inject(Injector);
     const alertService = inject(AlertService);
-    const pouchdbCorruptionRecovery = inject(PouchdbCorruptionRecoveryService);
-    const multiTabDetection = inject(MultiTabDetectionService);
 
     entityActionsMenuService.registerActions([
       {
@@ -43,11 +38,6 @@ export class BulkEditModule {
           const entityType = entities[0].getConstructor();
           if (!entityType) return false;
 
-          if (multiTabDetection.isMultipleTabsOpen) {
-            await pouchdbCorruptionRecovery.promptMultiTabWarningDialog();
-            return false;
-          }
-
           return entityEditService
             .edit(entities, entityType)
             .catch(async (error) => {
@@ -56,11 +46,7 @@ export class BulkEditModule {
                 error instanceof MultiTabOperationBlockedError ||
                 error instanceof KnownMultiTabCorruptionHandledError
               ) {
-                return false;
-              }
-
-              if (isKnownMultiTabDatabaseCorruption(error)) {
-                await pouchdbCorruptionRecovery.promptResetApplicationDialog();
+                // Guard/recovery dialog is already handled by EntityMapperService.
                 return false;
               }
 

@@ -49,16 +49,46 @@ describe("MultiTabDetectionService", () => {
   });
 
   it("should detect when another tab is opened", () => {
-    const tab1 = new MultiTabDetectionService();
-    expect(tab1.isMultipleTabsOpen).toBe(false);
+    const firstTab = new MultiTabDetectionService();
+    expect(firstTab.isMultipleTabsOpen).toBe(false);
 
-    const tab2 = new MultiTabDetectionService();
+    const secondTab = new MultiTabDetectionService();
 
-    expect(tab1.isMultipleTabsOpen).toBe(true);
-    expect(tab2.isMultipleTabsOpen).toBe(true);
+    expect(firstTab.isMultipleTabsOpen).toBe(true);
+    expect(secondTab.isMultipleTabsOpen).toBe(true);
 
-    tab1.ngOnDestroy();
-    tab2.ngOnDestroy();
+    firstTab.ngOnDestroy();
+    secondTab.ngOnDestroy();
+  });
+
+  it("should reset to single-tab state after other tab is closed", () => {
+    const firstTab = new MultiTabDetectionService();
+    const secondTab = new MultiTabDetectionService();
+    expect(firstTab.isMultipleTabsOpen).toBe(true);
+
+    secondTab.ngOnDestroy();
+
+    expect(firstTab.isMultipleTabsOpen).toBe(false);
+    firstTab.ngOnDestroy();
+  });
+
+  it("should recover from stale tab entries when a tab disappears", () => {
+    vi.useFakeTimers();
+    try {
+      const firstTab = new MultiTabDetectionService();
+      const secondTab = new MultiTabDetectionService();
+      expect(firstTab.isMultipleTabsOpen).toBe(true);
+
+      // Simulate abrupt tab disappearance without a goodbye signal.
+      MockBroadcastChannel.reset();
+      vi.advanceTimersByTime(8000);
+
+      expect(firstTab.isMultipleTabsOpen).toBe(false);
+      firstTab.ngOnDestroy();
+      secondTab.ngOnDestroy();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("should gracefully do nothing when BroadcastChannel is unavailable", () => {

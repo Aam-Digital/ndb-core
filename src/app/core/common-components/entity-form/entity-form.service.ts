@@ -19,16 +19,11 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
-import {
-  extractErrorText,
-  isKnownMultiTabDatabaseCorruption,
-} from "#src/app/core/database/pouchdb/pouchdb-known-errors.util";
-import { PouchdbCorruptionRecoveryService } from "#src/app/core/database/pouchdb/pouchdb-corruption-recovery.service";
+import { extractErrorText } from "#src/app/core/database/pouchdb/pouchdb-known-errors.util";
 import {
   KnownMultiTabCorruptionHandledError,
   MultiTabOperationBlockedError,
 } from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
-import { MultiTabDetectionService } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -43,12 +38,6 @@ export class EntityFormService {
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
-  private pouchdbCorruptionRecovery = inject(PouchdbCorruptionRecoveryService, {
-    optional: true,
-  });
-  private multiTabDetection = inject(MultiTabDetectionService, {
-    optional: true,
-  });
 
   private subscriptions: Subscription[] = [];
 
@@ -267,17 +256,15 @@ export class EntityFormService {
     updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
-    if (this.multiTabDetection?.isMultipleTabsOpen) {
-      await this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
-      throw new MultiTabOperationBlockedError();
-    }
-
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
-      if (isKnownMultiTabDatabaseCorruption(err)) {
-        await this.pouchdbCorruptionRecovery?.promptResetApplicationDialog();
-        throw new KnownMultiTabCorruptionHandledError();
+      if (
+        err instanceof MultiTabOperationBlockedError ||
+        err instanceof KnownMultiTabCorruptionHandledError
+      ) {
+        // Recovery/UI dialog was already handled centrally in EntityMapperService.
+        throw err;
       }
 
       throw new Error(
