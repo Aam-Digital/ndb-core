@@ -24,8 +24,10 @@ export class MultiTabDetectionService implements OnDestroy {
   private readonly otherTabsLastSeenAt = new Map<string, number>();
   private _isMultipleTabsOpen = false;
   private heartbeatTimerId?: ReturnType<typeof setInterval>;
+  /** Emits whenever the multi-tab state changes. */
   readonly isMultipleTabsOpen$ = new BehaviorSubject<boolean>(false);
 
+  /** True if at least one other tab with this app is currently active. */
   get isMultipleTabsOpen(): boolean {
     return this._isMultipleTabsOpen;
   }
@@ -173,4 +175,59 @@ export class MultiTabDetectionService implements OnDestroy {
     this.channel?.close();
     this.isMultipleTabsOpen$.complete();
   }
+}
+
+/**
+ * Error thrown after known multi-tab IndexedDB corruption was already handled
+ * via dedicated recovery UX (dialog).
+ *
+ * Callers can use this marker to avoid showing duplicate toast warnings.
+ */
+export class KnownMultiTabCorruptionHandledError extends Error {
+  constructor() {
+    super("Known multi-tab database corruption handled");
+    this.name = "KnownMultiTabCorruptionHandledError";
+  }
+}
+
+/**
+ * Error thrown after a multi-tab usage warning was already shown to the user
+ * and the write operation was intentionally blocked.
+ */
+export class MultiTabOperationBlockedError extends Error {
+  constructor() {
+    super("Operation blocked because multiple tabs are open");
+    this.name = "MultiTabOperationBlockedError";
+  }
+}
+
+/** Returns true if the error was already handled by multi-tab recovery UX. */
+export function isHandledMultiTabError(err: unknown): boolean {
+  return (
+    err instanceof MultiTabOperationBlockedError ||
+    err instanceof KnownMultiTabCorruptionHandledError
+  );
+}
+
+/**
+ * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
+ * is used in multiple tabs with concurrent writes.
+ *
+ * `unknown_error` is the generic PouchDB surface for IndexedDB failures;
+ * we intentionally treat all occurrences as potential multi-tab corruption
+ * since that is the only known trigger in this app's environment.
+ */
+export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
+  const text = errorToText(error).toLowerCase();
+  return (
+    text.includes("unknown_error") ||
+    text.includes("database has a global failure") ||
+    (text.includes("constrainterror") && text.includes("seq"))
+  );
+}
+
+function errorToText(error: unknown): string {
+  if (error instanceof Error) return `${error.name} ${error.message}`;
+  if (typeof error === "string") return error;
+  return JSON.stringify(error ?? "");
 }

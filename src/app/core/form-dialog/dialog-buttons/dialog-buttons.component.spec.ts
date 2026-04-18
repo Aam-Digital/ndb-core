@@ -16,7 +16,7 @@ import { EventEmitter } from "@angular/core";
 import {
   KnownMultiTabCorruptionHandledError,
   MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+} from "#src/app/core/database/multi-tab-detection.service";
 
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent<Entity>;

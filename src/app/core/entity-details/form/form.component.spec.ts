@@ -10,7 +10,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import {
   KnownMultiTabCorruptionHandledError,
   MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+} from "#src/app/core/database/multi-tab-detection.service";
 
 describe("FormComponent", () => {
   let component: FormComponent<TestEntity>;

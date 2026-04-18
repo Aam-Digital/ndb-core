@@ -20,10 +20,7 @@ import { Todo } from "../../model/todo";
 import { TodoCompletion } from "../../model/todo-completion";
 import { TodoService } from "../../todo.service";
 import { DisplayTodoCompletionComponent } from "../display-todo-completion/display-todo-completion.component";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 @DynamicComponent("EditTodoCompletion")
 @Component({
@@ -69,10 +66,7 @@ export class EditTodoCompletionComponent
           this.todo,
         );
       } catch (err) {
-        if (
-          err instanceof KnownMultiTabCorruptionHandledError ||
-          err instanceof MultiTabOperationBlockedError
-        ) {
+        if (isHandledMultiTabError(err)) {
           return;
         }
         throw err;

@@ -19,7 +19,7 @@ import { EMPTY, from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
-import { isKnownMultiTabDatabaseCorruption } from "./pouchdb-known-errors.util";
+import { isKnownMultiTabDatabaseCorruption } from "../multi-tab-detection.service";
 
 export interface SyncedPouchDatabaseDependencies {
   navigator: Navigator;

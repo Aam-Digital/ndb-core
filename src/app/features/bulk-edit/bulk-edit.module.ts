@@ -6,10 +6,7 @@ import { EntityEditService } from "./entity-edit.service";
 import { asArray } from "#src/app/utils/asArray";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * Feature module for bulk editing multiple entities at once.
@@ -42,11 +39,7 @@ export class BulkEditModule {
             .edit(entities, entityType)
             .catch(async (error) => {
               Logging.warn("Bulk edit failed", error);
-              if (
-                error instanceof MultiTabOperationBlockedError ||
-                error instanceof KnownMultiTabCorruptionHandledError
-              ) {
-                // Guard/recovery dialog is already handled by EntityMapperService.
+              if (isHandledMultiTabError(error)) {
                 return false;
               }
 

@@ -22,7 +22,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
 import {
   KnownMultiTabCorruptionHandledError,
   MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+} from "#src/app/core/database/multi-tab-detection.service";
 
 describe("EntityInlineEditActionsComponent", () => {
   let component: EntityInlineEditActionsComponent<InlineEditEntity>;

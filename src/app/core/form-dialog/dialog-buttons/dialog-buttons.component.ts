@@ -21,10 +21,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -107,8 +104,7 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
       .catch((err) => {
         if (
           !(err instanceof InvalidFormFieldError) &&
-          !(err instanceof KnownMultiTabCorruptionHandledError) &&
-          !(err instanceof MultiTabOperationBlockedError)
+          !isHandledMultiTabError(err)
         ) {
           this.alertService.addDanger(err.message);
         }

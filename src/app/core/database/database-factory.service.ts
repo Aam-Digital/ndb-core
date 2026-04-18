@@ -43,6 +43,8 @@ export class DatabaseFactoryService {
         loginStateSubject: this.loginStateSubject,
         ngZone: this.ngZone,
         alertService: this.alertService,
+        // Lazily resolved via Injector to avoid a circular dependency between
+        // DatabaseFactoryService and PouchdbCorruptionRecoveryService.
         onKnownMultiTabCorruption: () => {
           void this.injector
             .get(PouchdbCorruptionRecoveryService)
@@ -50,14 +52,13 @@ export class DatabaseFactoryService {
         },
       });
     } else if (environment.session_type === SessionType.online) {
-      const db = new RemotePouchDatabase(
+      return new RemotePouchDatabase(
         dbName,
         this.authService,
         syncState,
         this.ngZone,
         this.alertService,
       );
-      return db;
     } else if (environment.session_type === SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
     } else {

@@ -11,10 +11,7 @@ import { EntityForm } from "#src/app/core/common-components/entity-form/entity-f
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * Buttons to edit an (entities-table) row inline, handling the necessary logic and UI buttons.
@@ -65,8 +62,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
     } catch (err) {
       if (
         !(err instanceof InvalidFormFieldError) &&
-        !(err instanceof KnownMultiTabCorruptionHandledError) &&
-        !(err instanceof MultiTabOperationBlockedError)
+        !isHandledMultiTabError(err)
       ) {
         this.alertService.addDanger(err.message);
       }

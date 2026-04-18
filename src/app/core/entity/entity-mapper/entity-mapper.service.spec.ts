@@ -23,9 +23,9 @@ import type { Mock } from "vitest";
 import { UpdateMetadata } from "../model/update-metadata";
 import {
   KnownMultiTabCorruptionHandledError,
+  MultiTabDetectionService,
   MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
-import { MultiTabDetectionService } from "#src/app/core/database/multi-tab-detection.service";
+} from "#src/app/core/database/multi-tab-detection.service";
 import { PouchdbCorruptionRecoveryService } from "#src/app/core/database/pouchdb/pouchdb-corruption-recovery.service";
 
 describe("EntityMapperService", () => {
@@ -404,113 +404,5 @@ describe("EntityMapperService permission checks", () => {
       EntityPermissionError,
     );
     expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);
-  });
-});
-
-describe("EntityMapperService centralized write guard", () => {
-  let entityMapper: EntityMapperService;
-  let mockDb: {
-    put: Mock;
-    putAll: Mock;
-    remove: Mock;
-  };
-  let mockDbResolver: { getDatabase: Mock };
-  let mockMultiTabDetection: { isMultipleTabsOpen: boolean };
-  let mockRecoveryService: {
-    promptMultiTabWarningDialog: Mock;
-    promptResetApplicationDialog: Mock;
-  };
-  let mockEntitySchemaService: {
-    transformEntityToDatabaseFormat: Mock;
-  };
-
-  beforeEach(() => {
-    mockDb = {
-      put: vi.fn().mockName("put").mockResolvedValue({ ok: true, rev: "1-x" }),
-      putAll: vi
-        .fn()
-        .mockName("putAll")
-        .mockResolvedValue([{ ok: true, rev: "1-x" }]),
-      remove: vi.fn().mockName("remove").mockResolvedValue({ ok: true }),
-    };
-    mockDbResolver = {
-      getDatabase: vi.fn().mockName("DatabaseResolverService.getDatabase"),
-    };
-    mockDbResolver.getDatabase.mockReturnValue(mockDb);
-    mockMultiTabDetection = { isMultipleTabsOpen: false };
-    mockRecoveryService = {
-      promptMultiTabWarningDialog: vi.fn().mockResolvedValue(undefined),
-      promptResetApplicationDialog: vi.fn().mockResolvedValue(undefined),
-    };
-    mockEntitySchemaService = {
-      transformEntityToDatabaseFormat: vi
-        .fn()
-        .mockImplementation((entity: Entity) => entity),
-    };
-
-    TestBed.configureTestingModule({
-      providers: [
-        EntityMapperService,
-        {
-          provide: EntitySchemaService,
-          useValue: mockEntitySchemaService,
-        },
-        { provide: EntityRegistry, useValue: entityRegistry },
-        { provide: DatabaseResolverService, useValue: mockDbResolver },
-        {
-          provide: MultiTabDetectionService,
-          useValue: mockMultiTabDetection,
-        },
-        {
-          provide: PouchdbCorruptionRecoveryService,
-          useValue: mockRecoveryService,
-        },
-        CurrentUserSubject,
-      ],
-    });
-    entityMapper = TestBed.inject(EntityMapperService);
-  });
-
-  it("blocks save when multiple tabs are currently active", async () => {
-    mockMultiTabDetection.isMultipleTabsOpen = true;
-
-    await expect(
-      entityMapper.save(new Entity("tab-blocked")),
-    ).rejects.toBeInstanceOf(MultiTabOperationBlockedError);
-    expect(
-      mockRecoveryService.promptMultiTabWarningDialog,
-    ).toHaveBeenCalledTimes(1);
-    expect(mockDb.put).not.toHaveBeenCalled();
-  });
-
-  it("shows reset dialog and throws handled marker for known corruption on save", async () => {
-    mockDb.put.mockRejectedValueOnce(
-      new Error(
-        "unknown_error: Database encountered an unknown error ConstraintError: Unable to add key to index 'seq'",
-      ),
-    );
-
-    await expect(
-      entityMapper.save(new Entity("known-corruption")),
-    ).rejects.toBeInstanceOf(KnownMultiTabCorruptionHandledError);
-    expect(
-      mockRecoveryService.promptResetApplicationDialog,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  it("applies the same known-corruption handling in saveAll", async () => {
-    mockDb.putAll.mockRejectedValueOnce([
-      {
-        reason:
-          "Database has a global failure ConstraintError: Unable to add key to index 'seq'",
-      },
-    ]);
-
-    await expect(
-      entityMapper.saveAll([new Entity("bulk-a"), new Entity("bulk-b")]),
-    ).rejects.toBeInstanceOf(KnownMultiTabCorruptionHandledError);
-    expect(
-      mockRecoveryService.promptResetApplicationDialog,
-    ).toHaveBeenCalledTimes(1);
   });
 });

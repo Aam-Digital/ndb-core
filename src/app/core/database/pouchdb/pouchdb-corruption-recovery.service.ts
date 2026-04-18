@@ -4,9 +4,12 @@ import {
   CustomYesNoButtons,
   OkButton,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { BackupService } from "#src/app/core/admin/backup/backup.service";
 import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
 
+/**
+ * Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
+ * Shows targeted dialogs and optionally resets the local database to a clean state.
+ */
 @Injectable({ providedIn: "root" })
 export class PouchdbCorruptionRecoveryService {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
@@ -64,7 +67,7 @@ Please copy any unsaved text and click **Reset Application** to continue.`,
 
   private resetApplication() {
     localStorage.clear();
-    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
+    sessionStorage.setItem("__RESET_PENDING", "1");
     this.location.pathname = "";
   }
 }

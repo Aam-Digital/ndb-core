@@ -30,13 +30,13 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
 import { EntityActionPermission } from "../../permissions/permission-types";
-import { MultiTabDetectionService } from "../../database/multi-tab-detection.service";
-import { PouchdbCorruptionRecoveryService } from "../../database/pouchdb/pouchdb-corruption-recovery.service";
 import {
+  isKnownMultiTabDatabaseCorruption,
   KnownMultiTabCorruptionHandledError,
+  MultiTabDetectionService,
   MultiTabOperationBlockedError,
-} from "../../database/pouchdb/known-multi-tab-corruption-handled.error";
-import { isKnownMultiTabDatabaseCorruption } from "../../database/pouchdb/pouchdb-known-errors.util";
+} from "../../database/multi-tab-detection.service";
+import { PouchdbCorruptionRecoveryService } from "../../database/pouchdb/pouchdb-corruption-recovery.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -201,7 +201,6 @@ export class EntityMapperService {
     await this.assertMultiTabWriteSafety();
     entities.forEach((e) => this.setEntityMetadata(e));
 
-    // group entities by their DATABASE
     const entitiesByDatabase = new Map<string, Entity[]>();
     entities.forEach((e) => {
       const databaseName = e.getConstructor().DATABASE;
@@ -211,20 +210,19 @@ export class EntityMapperService {
       entitiesByDatabase.get(databaseName).push(e);
     });
 
-    const savePromises = Array.from(entitiesByDatabase.entries()).map(
-      ([databaseName, entitiesInDatabase]) => {
-        const rawData = entitiesInDatabase.map((e) =>
-          this.entitySchemaService.transformEntityToDatabaseFormat(e),
-        );
-        return this.dbResolver
-          .getDatabase(databaseName)
-          .putAll(rawData, forceUpdate);
-      },
-    );
-
-    const results = await this.withKnownCorruptionHandling(async () =>
-      (await Promise.all(savePromises)).flat(),
-    );
+    const results = await this.withKnownCorruptionHandling(async () => {
+      const savePromises = Array.from(entitiesByDatabase.entries()).map(
+        ([databaseName, entitiesInDatabase]) => {
+          const rawData = entitiesInDatabase.map((e) =>
+            this.entitySchemaService.transformEntityToDatabaseFormat(e),
+          );
+          return this.dbResolver
+            .getDatabase(databaseName)
+            .putAll(rawData, forceUpdate);
+        },
+      );
+      return (await Promise.all(savePromises)).flat();
+    });
     results.forEach((res, idx) => {
       if (res.ok) {
         const entity = entities[idx];
@@ -283,11 +281,11 @@ export class EntityMapperService {
    * of IndexedDB/PouchDB corruption from concurrent tab writes.
    */
   private async assertMultiTabWriteSafety() {
-    // if (!this.multiTabDetection?.isMultipleTabsOpen) {
-    //   return;
-    // }
-    // await this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
-    // throw new MultiTabOperationBlockedError();
+    if (!this.multiTabDetection?.isMultipleTabsOpen) {
+      return;
+    }
+    await this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
+    throw new MultiTabOperationBlockedError();
   }
 
   /**

@@ -19,11 +19,7 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
-import { extractErrorText } from "#src/app/core/database/pouchdb/pouchdb-known-errors.util";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/pouchdb/known-multi-tab-corruption-handled.error";
+import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -259,16 +255,12 @@ export class EntityFormService {
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
-      if (
-        err instanceof MultiTabOperationBlockedError ||
-        err instanceof KnownMultiTabCorruptionHandledError
-      ) {
-        // Recovery/UI dialog was already handled centrally in EntityMapperService.
+      if (isHandledMultiTabError(err)) {
         throw err;
       }
 
       throw new Error(
-        $localize`Could not save ${entity.getType()}\: ${extractErrorText(err)}`,
+        $localize`Could not save ${entity.getType()}\: ${err?.message || String(err)}`,
       );
     }
 
