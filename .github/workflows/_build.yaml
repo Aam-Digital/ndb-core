@@ -11,6 +11,11 @@ on:
         type: string
         required: true
         description: Docker tags configuration for docker/metadata-action (multiline string)
+      skip-image:
+        type: boolean
+        required: false
+        default: false
+        description: If true, skip Docker build and push (e.g. for fork PRs)
 
 permissions:
   contents: read
@@ -67,6 +72,7 @@ jobs:
 
   build-image:
     runs-on: ubuntu-latest
+    if: ${{ !inputs.skip-image }}
     needs:
       - build-webapp
     steps:

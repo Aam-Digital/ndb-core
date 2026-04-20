@@ -13,6 +13,11 @@ on:
         required: false
         default: false
         description: If true, skip e2e tests
+      is-fork:
+        type: boolean
+        required: false
+        default: false
+        description: If true, skip steps that require credentials (for fork PRs)
 
 permissions:
   contents: read
@@ -67,6 +72,7 @@ jobs:
       - run: npm run test-ci
 
       - uses: qltysh/qlty-action/coverage@v1
+        if: ${{ !inputs.is-fork }}
         with:
           oidc: true
           files: coverage/**/lcov.info
