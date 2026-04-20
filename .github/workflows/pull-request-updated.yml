@@ -26,12 +26,12 @@ jobs:
       is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
   build:
-    if: github.event.pull_request.head.repo.full_name == github.repository
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
     with:
       build_name: pr-${{ github.event.number }}
       docker_tags: type=ref,event=pr
+      skip-image: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
   deploy:
     runs-on: ubuntu-latest
