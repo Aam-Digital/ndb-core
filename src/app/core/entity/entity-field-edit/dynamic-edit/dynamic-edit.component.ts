@@ -20,6 +20,27 @@ export class DynamicEditComponent
   extends CustomFormControlDirective<any>
   implements EditComponent
 {
+  private static readonly TODO_COMPLETION_EDIT_COMPONENT = "EditTodoCompletion";
+
   @Input() formFieldConfig: FormFieldConfig;
   @Input() entity: Entity;
+
+  override get disabled(): boolean {
+    const control = this.ngControl?.control;
+
+    if (
+      this.formFieldConfig?.editComponent ===
+        DynamicEditComponent.TODO_COMPLETION_EDIT_COMPONENT &&
+      control?.disabled &&
+      !control.value
+    ) {
+      return false;
+    }
+
+    return super.disabled;
+  }
+
+  override set disabled(value: boolean) {
+    super.disabled = value;
+  }
 }
