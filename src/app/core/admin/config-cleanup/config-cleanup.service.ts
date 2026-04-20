@@ -38,11 +38,16 @@ export class ConfigCleanupService {
     );
 
     const usedEnumDetails = sortedEnumEntities
-      .filter((enumEntity) => (usageMap.get(enumEntity.getId(true))?.length ?? 0) > 0)
+      .filter(
+        (enumEntity) => (usageMap.get(enumEntity.getId(true))?.length ?? 0) > 0,
+      )
       .map((enumEntity) => ({ enumEntity }));
 
     const unusedEnums = sortedEnumEntities
-      .filter((enumEntity) => (usageMap.get(enumEntity.getId(true))?.length ?? 0) === 0)
+      .filter(
+        (enumEntity) =>
+          (usageMap.get(enumEntity.getId(true))?.length ?? 0) === 0,
+      )
       .map((enumEntity) => ({ enumEntity }));
 
     return {
