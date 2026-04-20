@@ -7,6 +7,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ImportMetadata } from "../import-metadata";
 import { of } from "rxjs";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 describe("ImportConfirmSummaryComponent", () => {
   let component: ImportConfirmSummaryComponent;
@@ -47,6 +48,10 @@ describe("ImportConfirmSummaryComponent", () => {
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationService,
+        },
+        {
+          provide: EntityRegistry,
+          useValue: { get: vi.fn() },
         },
       ],
     }).compileComponents();

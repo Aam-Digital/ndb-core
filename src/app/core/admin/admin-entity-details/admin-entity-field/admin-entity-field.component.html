@@ -138,6 +138,17 @@
               </mat-checkbox>
             }
 
+            @if (formDataType.value === "configurable-enum") {
+              <mat-checkbox
+                formControlName="displayFullLengthOptionLabel"
+                matTooltip="Normally, long dropdown option labels are shortened with an ellipsis (...). Enable this to display full option labels across multiple lines in the dropdown list."
+                i18n-matTooltip
+                i18n
+              >
+                Display full dropdown option labels (multi-line)
+              </mat-checkbox>
+            }
+
             <!-- "additional" for enum datatype -->
             @if (formDataType.value === "configurable-enum") {
               <mat-form-field>
