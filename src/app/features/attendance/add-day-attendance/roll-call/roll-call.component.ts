@@ -281,8 +281,9 @@ export class RollCallComponent {
   }
 
   private async loadParticipants() {
-    if (!this.event()) return;
-    const attendanceItems: AttendanceItem[] = this.event().attendanceItems;
+    const event = this.event();
+    if (!event) return;
+    const attendanceItems: AttendanceItem[] = event.attendanceItems;
 
     const active: Entity[] = [];
     const inactive: Entity[] = [];
@@ -302,7 +303,7 @@ export class RollCallComponent {
           "Could not find participant " +
             participantId +
             " for event " +
-            this.event().entity.getId(),
+            event.entity.getId(),
         );
         continue;
       }
@@ -317,7 +318,7 @@ export class RollCallComponent {
       }
     }
 
-    this.event().attendanceItems = validAttendanceItems;
+    event.attendanceItems = validAttendanceItems;
     this.participants.set(active);
     this.inactiveParticipants.set(inactive);
     this.attendanceByParticipant.set(attendanceMap);

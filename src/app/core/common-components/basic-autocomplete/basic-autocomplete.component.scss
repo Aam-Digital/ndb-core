@@ -33,9 +33,29 @@ em {
 }
 
 .text-truncate {
+  display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.option-content {
+  width: 100%;
+  min-width: 0;
+  justify-content: flex-start;
+}
+
+.option-label {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.text-wrap {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.3;
 }
 
 .chip {
@@ -45,11 +65,50 @@ em {
 // Fix for double scrollbars when field/option labels are long
 // ensure all options have consistent 48px height for virtual scroll calculations
 ::ng-deep .mat-mdc-autocomplete-panel .mat-mdc-option {
+  .mdc-list-item__primary-text {
+    text-align: left;
+  }
+
+  app-display-configurable-enum {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  app-display-configurable-enum .bubble-list {
+    width: 100%;
+    min-width: 0;
+  }
+
+  app-display-configurable-enum .colored-bubble {
+    display: block;
+    max-width: 100%;
+  }
+
+  &.option-with-wrap app-display-configurable-enum .colored-bubble {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+  }
+}
+
+::ng-deep .mat-mdc-autocomplete-panel .mat-mdc-option:not(.option-with-wrap) {
   max-height: 48px;
 
-  span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .mdc-list-item__primary-text {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+}
+
+::ng-deep .mat-mdc-autocomplete-panel .mat-mdc-option.option-with-wrap {
+  height: auto;
+  min-height: 48px;
+  max-height: none;
+
+  .mdc-list-item__primary-text {
+    white-space: normal;
   }
 }
