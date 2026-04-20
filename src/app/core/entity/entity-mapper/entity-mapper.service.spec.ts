@@ -21,12 +21,6 @@ import { EntityPermissionError } from "./entity-permission-error";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import type { Mock } from "vitest";
 import { UpdateMetadata } from "../model/update-metadata";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabDetectionService,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/multi-tab-detection.service";
-import { PouchdbCorruptionRecoveryService } from "#src/app/core/database/pouchdb/pouchdb-corruption-recovery.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
