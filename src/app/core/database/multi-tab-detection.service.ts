@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 
 type TabChannelMessage = {
-  type: "TAB_HELLO" | "TAB_HEARTBEAT" | "TAB_GOODBYE";
+  type: "hello" | "ping" | "goodbye";
   tabId: string;
 };
 
@@ -15,7 +15,7 @@ type TabChannelMessage = {
 export class MultiTabDetectionService implements OnDestroy {
   static readonly CHANNEL_NAME = "aam-digital-tab-sync";
   /** How often this tab announces liveness to peers. */
-  private static readonly HEARTBEAT_INTERVAL_MS = 2000;
+  private static readonly PING_INTERVAL_MS = 2000;
   /** Tab entries older than this are treated as stale and removed. */
   private static readonly STALE_TAB_TIMEOUT_MS = 7000;
 
@@ -23,7 +23,7 @@ export class MultiTabDetectionService implements OnDestroy {
   private readonly tabId = this.generateTabId();
   private readonly otherTabsLastSeenAt = new Map<string, number>();
   private _isMultipleTabsOpen = false;
-  private heartbeatTimerId?: ReturnType<typeof setInterval>;
+  private pingIntervalId?: ReturnType<typeof setInterval>;
   /** Emits whenever the multi-tab state changes. */
   readonly isMultipleTabsOpen$ = new BehaviorSubject<boolean>(false);
 
@@ -46,15 +46,15 @@ export class MultiTabDetectionService implements OnDestroy {
     if (this.channel) {
       this.channel.onmessage = (event: MessageEvent<TabChannelMessage>) =>
         this.onMessage(event.data);
-      this.startHeartbeat();
-      this.postMessage("TAB_HELLO");
+      this.startPinging();
+      this.postMessage("hello");
       globalThis.addEventListener?.("beforeunload", this.handleBeforeUnload);
       this.refreshMultipleTabState();
     }
   }
 
   private readonly handleBeforeUnload = () => {
-    this.postMessage("TAB_GOODBYE");
+    this.postMessage("goodbye");
   };
 
   /**
@@ -69,34 +69,34 @@ export class MultiTabDetectionService implements OnDestroy {
       return;
     }
 
-    if (tabMessage.type === "TAB_HELLO") {
+    if (tabMessage.type === "hello") {
       this.markTabAlive(tabMessage.tabId);
-      this.postMessage("TAB_HEARTBEAT");
+      this.postMessage("ping");
       return;
     }
 
-    if (tabMessage.type === "TAB_HEARTBEAT") {
+    if (tabMessage.type === "ping") {
       this.markTabAlive(tabMessage.tabId);
       return;
     }
 
-    if (tabMessage.type === "TAB_GOODBYE") {
+    if (tabMessage.type === "goodbye") {
       this.otherTabsLastSeenAt.delete(tabMessage.tabId);
       this.refreshMultipleTabState();
     }
   }
 
   /**
-   * Starts periodic heartbeats outside Angular's proxy zone to avoid blocking
+   * Starts periodic pings outside Angular's proxy zone to avoid blocking
    * test stabilization and unnecessary change detection churn.
    */
-  private startHeartbeat() {
-    const startHeartbeatInterval = () => {
-      this.heartbeatTimerId = setInterval(() => {
-        this.postMessage("TAB_HEARTBEAT");
+  private startPinging() {
+    const runInterval = () => {
+      this.pingIntervalId = setInterval(() => {
+        this.postMessage("ping");
         this.removeStaleTabs();
         this.refreshMultipleTabState();
-      }, MultiTabDetectionService.HEARTBEAT_INTERVAL_MS);
+      }, MultiTabDetectionService.PING_INTERVAL_MS);
     };
 
     const zoneRoot = (
@@ -105,11 +105,11 @@ export class MultiTabDetectionService implements OnDestroy {
       }
     ).Zone?.root;
     if (zoneRoot?.run) {
-      zoneRoot.run(startHeartbeatInterval);
+      zoneRoot.run(runInterval);
       return;
     }
 
-    startHeartbeatInterval();
+    runInterval();
   }
 
   /**
@@ -122,7 +122,7 @@ export class MultiTabDetectionService implements OnDestroy {
   }
 
   /**
-   * Removes peers that have not sent heartbeat messages recently.
+   * Removes peers that have not sent a ping recently.
    */
   private removeStaleTabs() {
     const staleThreshold =
@@ -167,9 +167,9 @@ export class MultiTabDetectionService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.postMessage("TAB_GOODBYE");
-    if (this.heartbeatTimerId) {
-      clearInterval(this.heartbeatTimerId);
+    this.postMessage("goodbye");
+    if (this.pingIntervalId) {
+      clearInterval(this.pingIntervalId);
     }
     globalThis.removeEventListener?.("beforeunload", this.handleBeforeUnload);
     this.channel?.close();
