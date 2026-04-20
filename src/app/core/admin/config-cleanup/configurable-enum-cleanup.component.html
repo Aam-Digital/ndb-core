@@ -64,9 +64,8 @@
             ) {
               <mat-list-item>
                 <div matListItemTitle>
-                  {{ enumSummary.enumEntity.getId(true) }}
+                  {{ enumLabel(enumSummary) }}
                 </div>
-                <div matListItemLine>{{ usageSummary(enumSummary) }}</div>
               </mat-list-item>
             }
           </mat-list>
@@ -93,17 +92,20 @@
             ) {
               <mat-list-item>
                 <div matListItemTitle>
-                  {{ unusedEnum.enumEntity.getId(true) }}
+                  {{ enumLabel(unusedEnum) }}
                 </div>
                 <div matListItemMeta>
                   <button
-                    mat-button
-                    color="warn"
+                    mat-icon-button
+                    color="accent"
                     (click)="deleteEnum(unusedEnum)"
                     [disabled]="isDeleting(unusedEnum.enumEntity.getId(true))"
-                    i18n
+                    i18n-aria-label
+                    aria-label="Delete enum"
+                    i18n-matTooltip
+                    matTooltip="Delete"
                   >
-                    Delete
+                    <fa-icon icon="trash"></fa-icon>
                   </button>
                 </div>
               </mat-list-item>

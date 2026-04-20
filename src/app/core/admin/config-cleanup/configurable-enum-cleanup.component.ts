@@ -11,6 +11,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import {
   ConfigCleanupAnalysis,
@@ -28,6 +30,8 @@ import {
     MatButtonModule,
     MatListModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
+    FontAwesomeModule,
   ],
 })
 export class ConfigurableEnumCleanupComponent implements OnInit {
@@ -80,17 +84,24 @@ export class ConfigurableEnumCleanupComponent implements OnInit {
     return this.deletingIds().includes(enumId);
   }
 
-  protected usageSummary(enumSummary: ConfigurableEnumUsageSummary): string {
-    return enumSummary.usages
-      .map((usage) => `${usage.entityType}.${usage.fieldId}`)
-      .join(", ");
+  protected enumLabel(enumSummary: ConfigurableEnumUsageSummary): string {
+    return this.formatEnumIdAsLabel(enumSummary.enumEntity.getId(true));
+  }
+
+  private formatEnumIdAsLabel(enumId: string): string {
+    return enumId
+      .split(/[-_]+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
   }
 
   protected async deleteEnum(unusedEnum: ConfigurableEnumUsageSummary) {
     const enumId = unusedEnum.enumEntity.getId(true);
+    const enumLabel = this.enumLabel(unusedEnum);
     const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Delete unused enum?`,
-      $localize`Are you sure you want to delete the unused enum "${enumId}"?`,
+      $localize`Are you sure you want to delete the unused enum "${enumLabel}"?`,
     );
 
     if (!confirmed) {
@@ -107,7 +118,7 @@ export class ConfigurableEnumCleanupComponent implements OnInit {
 
       if (deleted) {
         this.snackBar.open(
-          $localize`Enum "${enumId}" deleted successfully.`,
+          $localize`Enum "${enumLabel}" deleted successfully.`,
           undefined,
           {
             duration: 3000,
