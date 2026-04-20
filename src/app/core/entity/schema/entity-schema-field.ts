@@ -121,6 +121,12 @@ export interface EntitySchemaField {
   displayFullLengthLabel?: boolean;
 
   /**
+   * If set to `true`, dropdown options should show full labels in the expanded list
+   * (wrapping to multiple lines instead of truncating with ellipsis).
+   */
+  displayFullLengthOptionLabel?: boolean;
+
+  /**
    * A further description of the property which can be displayed in tooltips.
    */
   description?: string;
