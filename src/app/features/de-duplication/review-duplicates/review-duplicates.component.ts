@@ -1,0 +1,139 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTableModule } from "@angular/material/table";
+import { ActivatedRoute } from "@angular/router";
+import { AlertService } from "#src/app/core/alerts/alert.service";
+import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-select/entity-type-select.component";
+import { RouteTarget } from "../../../route-target";
+import {
+  DuplicateDetectionService,
+  DuplicatePair,
+} from "../duplicate-detection.service";
+import { BulkMergeService } from "../bulk-merge-service";
+
+@RouteTarget("ReviewDuplicates")
+@Component({
+  selector: "app-review-duplicates",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: "./review-duplicates.component.html",
+  styleUrls: ["./review-duplicates.component.scss"],
+  imports: [
+    ViewTitleComponent,
+    EntityTypeSelectComponent,
+    EntityFieldSelectComponent,
+    EntityBlockComponent,
+    FormsModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+  ],
+})
+export class ReviewDuplicatesComponent implements OnInit {
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly duplicateDetectionService = inject(
+    DuplicateDetectionService,
+  );
+  private readonly bulkMergeService = inject(BulkMergeService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly alertService = inject(AlertService);
+
+  ngOnInit() {
+    const entityType = this.route.snapshot.queryParamMap.get("entityType");
+    if (entityType) {
+      this.selectedEntityType.set(entityType);
+    }
+  }
+
+  selectedEntityType = signal<string>("");
+  selectedFields = signal<string[]>([]);
+  isLoading = signal(false);
+  searched = signal(false);
+  pairs = signal<DuplicatePair[]>([]);
+
+  pageSize = signal(5);
+  pageIndex = signal(0);
+
+  readonly displayedColumns = ["record", "possibleDuplicate", "actions"];
+
+  paginatedPairs = computed(() => {
+    const start = this.pageIndex() * this.pageSize();
+    return this.pairs().slice(start, start + this.pageSize());
+  });
+
+  onEntityTypeChange(type: string) {
+    this.selectedEntityType.set(type);
+    this.selectedFields.set([]);
+    this.pairs.set([]);
+    this.searched.set(false);
+    this.pageIndex.set(0);
+  }
+
+  clear() {
+    this.pairs.set([]);
+    this.selectedFields.set([]);
+    this.searched.set(false);
+    this.pageIndex.set(0);
+  }
+
+  async search() {
+    const type = this.selectedEntityType();
+    const fields = this.selectedFields();
+    if (!type || !fields.length) return;
+
+    this.isLoading.set(true);
+    this.pageIndex.set(0);
+    try {
+      const ctor = this.entityRegistry.get(type);
+      const result = await this.duplicateDetectionService.findDuplicates(
+        ctor,
+        fields,
+      );
+      this.pairs.set(result);
+      this.searched.set(true);
+    } catch (e) {
+      this.alertService.addDanger(
+        $localize`Could not search for duplicates: ${e instanceof Error ? e.message : e}`,
+      );
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  async mergeRecords(pair: DuplicatePair) {
+    const merged = await this.bulkMergeService.executeAction([
+      pair.record,
+      pair.possibleDuplicate,
+    ]);
+    if (merged) {
+      this.pairs.update((list) =>
+        list.filter(
+          (p) =>
+            p.record !== pair.record ||
+            p.possibleDuplicate !== pair.possibleDuplicate,
+        ),
+      );
+    }
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageSize.set(event.pageSize);
+    this.pageIndex.set(event.pageIndex);
+  }
+}
