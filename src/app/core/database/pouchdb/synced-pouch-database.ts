@@ -270,7 +270,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return;
     }
     this.knownMultiTabErrorAlertShown = true;
-    void this.onKnownMultiTabCorruption?.();
+    return this.onKnownMultiTabCorruption?.();
   }
 
   /**

@@ -35,19 +35,15 @@ export class BulkEditModule {
           const entityType = entities[0].getConstructor();
           if (!entityType) return false;
 
-          return entityEditService
-            .edit(entities, entityType)
-            .catch(async (error) => {
-              Logging.warn("Bulk edit failed", error);
-              if (isHandledMultiTabError(error)) {
-                return false;
-              }
-
+          return entityEditService.edit(entities, entityType).catch((error) => {
+            Logging.warn("Bulk edit failed", error);
+            if (!isHandledMultiTabError(error)) {
               alertService.addDanger(
                 $localize`:Bulk edit error message:Bulk edit failed. Please try again.`,
               );
-              return false;
-            });
+            }
+            return false;
+          });
         },
       },
     ]);
