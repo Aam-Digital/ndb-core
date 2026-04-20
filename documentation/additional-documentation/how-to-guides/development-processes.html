@@ -120,15 +120,67 @@
 
 
 
-<h1>How to contribute code to the project</h1>
+<h1>Welcome!</h1>
+<p><em>Aam Digital</em> is open source because we believe in building things together
+and letting people benefit from and adapt things rather than everybody reinventing their own wheel.</p>
+<p>In order to build great software for small social impact organisations
+we welcome anybody willing to contribute.
+We are a small core team of full-time developers as well as a few regular volunteer contributors.
+So whether you want to extend our code for your own use case or just help out -
+we welcome any contributions to make this project better!</p>
+<hr>
+<h2>Get started</h2>
+<p>To get started, please have a look at our <a href="https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html">Developer Documentation</a>.</p>
+<ol>
+<li>See the main <a href="./README.md">README</a> for instructions to run the app locally.</li>
+<li>Work through the <a href="https://aam-digital.github.io/ndb-core/documentation/additional-documentation/tutorial.html">Tutorial</a>.<ul>
+<li>This walks you through the setup and basic understanding of the project and also gives an overview of the technologies and frameworks involved.</li>
+<li>Feel free to skip over steps that seem trivial to you, we tried to make this very beginner friendly.</li>
+</ul>
+</li>
+<li>See the workflow described below.</li>
+<li>Don&#39;t hesitate to ask questions!</li>
+</ol>
+<h2>Get in touch</h2>
+<p>Do get in touch with us by commenting on or creating issues here on GitHub.
+For more general discussions or questions, use the <a href="https://github.com/orgs/Aam-Digital/discussions">Discussions section</a>.</p>
+<p>Our main communication channels in the team are</p>
+<ul>
+<li><strong>GitHub issues</strong> and <strong>pull requests</strong>.
+Feel free to open one yourself also to ask a question.</li>
+<li><strong>Slack</strong>. Write us an e-mail to get an invitation to our workspace.</li>
+</ul>
+<h2>Where can I help?</h2>
+<p>Have a look at our issues on GitHub.
+Some of them are explicitly label as suitable issues for a new contributor to work on: <a href="https://github.com/orgs/Aam-Digital/projects/2/views/4?filterQuery=label%3A%22Status%3A+Community+Help+Wanted+%28good+first+issue%29%22+">Community Help Wanted</a>.
+If you are not sure whether you should work on a certain issue, just post a short comment in the issue to clarify.</p>
+<p>Before you start working on an issue, please always comment on it first to help us coordinate.
+We will then assign you on the GitHub issue and change the &quot;status&quot; within the project to &quot;In Progress&quot;
+(as an outside contributor you may initially not have required permissions on GitHub to assign yourself).</p>
+<p>We organize our work using GitHub Projects&#39; kanban boards and issue labels:</p>
+<ul>
+<li><a href="https://github.com/orgs/Aam-Digital/projects/2">Project Board</a><ul>
+<li>Get an overview of all issues (across all repositories) and their status here, we use a kanban-style board where issues are moved through the columns based on their status.</li>
+<li>The issues in the board are sorted by priority (most important on top).</li>
+<li>Please do not work on issues in the &quot;Triage / Analysis&quot; status, these topics still required a clearer definition and approval from the core team.</li>
+</ul>
+</li>
+<li><a href="https://github.com/Aam-Digital/ndb-core/labels">Labels</a><ul>
+<li>Our labels are scoped into a few logical groups (e.g. &quot;Status&quot; or &quot;Type&quot; related labels), do check the descriptions shown beside the label name in the list of GitHub labels.</li>
+<li>The same labels are maintained across all our repositories.</li>
+</ul>
+</li>
+</ul>
 <h2>Workflow</h2>
 <p>We are following the &quot;GitHub Flow&quot;, using feature branches for development.
 Please read through the following short guide before you get started:
 <a href="https://guides.github.com/introduction/flow/">Understanding the GitHub Flow</a>.</p>
-<p>In summary, this means each feature will be implemented on it&#39;s own branch, which will then merged back onto the <code>master</code> branch. If you participate in the development, either by fixing a bug or implementing a new feature, follow these steps:</p>
+<p>In summary, this means each feature will be implemented on it&#39;s own branch, which will then merged back onto the <code>master</code> branch.
+If you participate in the development, either by fixing a bug or implementing a new feature, follow these steps:</p>
 <ol>
 <li>Analyze the bug or feature in a <a href="https://github.com/Aam-Digital/ndb-core/issues">GitHub issue</a>.
-Discuss possible approaches to solve it in the issue.</li>
+Discuss possible approaches to solve it in the issue.
+Please always comment on an issue before starting work, so that we can coordinate.</li>
 <li>Create a <strong>new branch</strong> (from the current <code>master</code>!) for each issue/feature you are working on. Use a descriptive branch name.</li>
 <li>Make commits on this branch. Use descriptive commit messages. If things are complex make multiple, logical commits.
 Do <em>not</em> use the same branch for implementing multiple features or bug fixes
@@ -152,23 +204,16 @@ Any reviews, feedback and discussions about your code will take place in this PR
 <h3>Remarks</h3>
 <ul>
 <li>Reference an issue on GitHub in your commits or comments by writing the issue number (e.g. <code>#15</code> to reference issue #15)</li>
-<li>Add <code>[WIP]</code> to the beginning of the PR title if this is still &quot;work in progress&quot; and should not be merged yet.</li>
+<li>Use the &quot;Draft&quot; state of GitHub PRs if this is still &quot;work in progress&quot; and should not be reviewed yet.
+Also consider adding <code>[WIP]</code> to the beginning of the PR title</li>
 <li>If you have a lot of trivial commits in your working feature branch (such as fixed typos, fixed codestyle warnings, ...) you may squash some commits for better readability of the git history.
 This can be done with a git rebase on your feature branch (please <strong>never</strong> rebase the master branch).
 Further information can be found in the <a href="https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History">Git Book</a>.</li>
-<li>The <a href="https://github.com/johnpapa/angular-styleguide">Angular Style Guide</a> provides helpful principles for Angular development.</li>
 </ul>
-<h2>Releases</h2>
-<p>Official &quot;releases&quot; of the project are done by a core team member regularly
-(the GitHub Action to create a release is triggered manually on GitHub).
-The CI then runs &quot;semantic-release&quot;, which automatically creates a new version of the project and generates a changelog for release notes.
-Releases are published on GitHub and as docker images to the GitHub Container Registry.</p>
-<h3>i18n - Translations</h3>
-<p>We manage translations using the <a href="https://poeditor.com/join/project/CGn4IA7Ilz">POEditor</a> platform.
-The latest translation keys to be translated are automatically sent to POEditor by the CI whenever the <code>master</code> branch is updated.
-After translations are done, we have to manually trigger another GitHub Action (<a href="https://github.com/Aam-Digital/ndb-core/actions/workflows/i18n-pull-translations-poeditor.yml">here</a>)
-to create a Pull Request updating the translation files in the repository.
-Translations are part of the codebase and built into the final release image (not loaded at runtime).</p>
+<hr>
+<h2>Copyright</h2>
+<p>Our project is licensed under GPL 3.0.
+Please note that by contributing, you also make your work available to the public for further use under the terms of that license (see <a href="./LICENSE.md">LICENSE.md</a>).</p>
 
                    </div><div class="search-results">
     <div class="has-results">
