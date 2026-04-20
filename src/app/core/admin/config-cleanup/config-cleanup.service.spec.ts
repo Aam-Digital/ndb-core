@@ -126,12 +126,6 @@ describe("ConfigCleanupService", () => {
     expect(
       analysis.usedEnumDetails.map((x) => x.enumEntity.getId(true)),
     ).toEqual(["attendance-status"]);
-    expect(analysis.usedEnumDetails[0].usages).toEqual([
-      {
-        entityType: "Event",
-        fieldId: "attendance.status",
-      },
-    ]);
     expect(analysis.unusedEnums.map((x) => x.enumEntity.getId(true))).toEqual([
       "unused",
     ]);

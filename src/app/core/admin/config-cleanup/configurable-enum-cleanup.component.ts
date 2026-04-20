@@ -14,6 +14,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 import {
   ConfigCleanupAnalysis,
   ConfigCleanupService,
@@ -71,7 +72,8 @@ export class ConfigurableEnumCleanupComponent implements OnInit {
       const analysis =
         await this.configCleanupService.analyzeUnusedConfigurableEnums();
       this.analysis.set(analysis);
-    } catch {
+    } catch (error) {
+      Logging.error("Failed to analyze configurable enum cleanup data", error);
       this.errorMessage.set(
         $localize`Could not analyze configuration cleanup data. Please try again.`,
       );
@@ -135,6 +137,15 @@ export class ConfigurableEnumCleanupComponent implements OnInit {
           },
         );
       }
+    } catch (error) {
+      Logging.error("Failed to delete configurable enum", error);
+      this.snackBar.open(
+        $localize`Could not delete enum. Please try again.`,
+        undefined,
+        {
+          duration: 5000,
+        },
+      );
     } finally {
       this.deletingIds.update((ids) => ids.filter((id) => id !== enumId));
     }

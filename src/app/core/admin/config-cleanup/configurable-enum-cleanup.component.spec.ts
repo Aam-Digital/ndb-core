@@ -8,6 +8,7 @@ import {
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ConfigurableEnumCleanupComponent", () => {
   let fixture: ComponentFixture<ConfigurableEnumCleanupComponent>;
@@ -18,12 +19,10 @@ describe("ConfigurableEnumCleanupComponent", () => {
 
   const unusedEnumSummary: ConfigurableEnumUsageSummary = {
     enumEntity: unusedEnumEntity,
-    usages: [],
   };
 
   const usedEnumSummary: ConfigurableEnumUsageSummary = {
     enumEntity: usedEnumEntity,
-    usages: [{ entityType: "Event", fieldId: "attendance.status" }],
   };
 
   const analysis: ConfigCleanupAnalysis = {
@@ -56,7 +55,7 @@ describe("ConfigurableEnumCleanupComponent", () => {
     confirmationDialogMock.getConfirmation.mockResolvedValue(true);
 
     await TestBed.configureTestingModule({
-      imports: [ConfigurableEnumCleanupComponent],
+      imports: [ConfigurableEnumCleanupComponent, FontAwesomeTestingModule],
       providers: [
         { provide: ConfigCleanupService, useValue: configCleanupServiceMock },
         {

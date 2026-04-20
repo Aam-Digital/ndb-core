@@ -7,14 +7,13 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchema } from "../../entity/schema/entity-schema";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
-export interface ConfigurableEnumUsage {
+interface ConfigurableEnumUsage {
   entityType: string;
   fieldId: string;
 }
 
 export interface ConfigurableEnumUsageSummary {
   enumEntity: ConfigurableEnum;
-  usages: ConfigurableEnumUsage[];
 }
 
 export interface ConfigCleanupAnalysis {
@@ -34,21 +33,17 @@ export class ConfigCleanupService {
     const enumEntities = await this.entityMapper.loadType(ConfigurableEnum);
     const usageMap = this.getSchemaUsageByEnumId();
 
-    const enumSummaries = enumEntities
-      .map((enumEntity) => ({
-        enumEntity,
-        usages: usageMap.get(enumEntity.getId(true)) ?? [],
-      }))
-      .sort((a, b) =>
-        a.enumEntity.getId(true).localeCompare(b.enumEntity.getId(true)),
-      );
+    const sortedEnumEntities = [...enumEntities].sort((a, b) =>
+      a.getId(true).localeCompare(b.getId(true)),
+    );
 
-    const usedEnumDetails = enumSummaries.filter(
-      (enumSummary) => enumSummary.usages.length > 0,
-    );
-    const unusedEnums = enumSummaries.filter(
-      (enumSummary) => enumSummary.usages.length === 0,
-    );
+    const usedEnumDetails = sortedEnumEntities
+      .filter((enumEntity) => (usageMap.get(enumEntity.getId(true))?.length ?? 0) > 0)
+      .map((enumEntity) => ({ enumEntity }));
+
+    const unusedEnums = sortedEnumEntities
+      .filter((enumEntity) => (usageMap.get(enumEntity.getId(true))?.length ?? 0) === 0)
+      .map((enumEntity) => ({ enumEntity }));
 
     return {
       totalEnums: enumEntities.length,
