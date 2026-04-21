@@ -77,7 +77,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
       delete activity["participants"];
       const participantIds = participants.map((c) => c.getId());
       const activityAttendanceField = AttendanceDatatype.detectFieldInEntity(
-        typeSettings.activityType!,
+        typeSettings.activityType,
       );
       const shouldWriteAttendanceItems =
         activityAttendanceField === typeSettings.participantsField ||
