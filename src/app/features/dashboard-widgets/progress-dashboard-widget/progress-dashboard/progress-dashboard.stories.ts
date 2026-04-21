@@ -26,9 +26,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ProgressDashboardComponent> = (
-  args: ProgressDashboardComponent,
-) => ({
+const Template: StoryFn<ProgressDashboardComponent> = (args) => ({
   component: ProgressDashboardComponent,
   props: args,
 });

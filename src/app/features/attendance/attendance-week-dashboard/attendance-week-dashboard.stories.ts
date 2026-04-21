@@ -81,9 +81,7 @@ export default {
   },
 } as Meta;
 
-const Template: StoryFn<AttendanceWeekDashboardComponent> = (
-  args: AttendanceWeekDashboardComponent,
-) => ({
+const Template: StoryFn<AttendanceWeekDashboardComponent> = (args) => ({
   component: AttendanceWeekDashboardComponent,
   props: args,
 });
