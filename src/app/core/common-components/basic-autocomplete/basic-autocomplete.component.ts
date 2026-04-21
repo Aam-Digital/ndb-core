@@ -137,6 +137,7 @@ export class BasicAutocompleteComponent<O, V = O>
     option?.["_id"] ?? (option as unknown as V);
   @Input() optionToString = (option: O) =>
     option?.["_label"] ?? option?.toString();
+  /** @deprecated Prefer `createOptions` to support one unified create flow. */
   @Input() createOption: (input: string) => Promise<O>;
   @Input() createOptions: CreateOptionConfig<O>[] = [];
   @Input() hideOption: (option: O) => boolean = () => false;
@@ -154,6 +155,34 @@ export class BasicAutocompleteComponent<O, V = O>
     } catch {
       return input;
     }
+  }
+
+  protected get availableCreateOptions(): CreateOptionConfig<O>[] {
+    if (this.createOptions.length > 0) {
+      return this.createOptions;
+    }
+    if (!this.createOption) {
+      return [];
+    }
+
+    return [{ label: "", create: this.createOption }];
+  }
+
+  protected createOptionLabel(
+    option: CreateOptionConfig<O>,
+    input: string,
+  ): string {
+    return option.label || this.createOptionDisplay(input);
+  }
+
+  protected createOptionAriaLabel(
+    option: CreateOptionConfig<O>,
+    input: string,
+  ): string {
+    return $localize`:ARIA label for adding an option in a dropdown:Add new ${this.createOptionLabel(
+      option,
+      input,
+    )}`;
   }
 
   /**
@@ -506,7 +535,12 @@ export class BasicAutocompleteComponent<O, V = O>
     }
 
     if (typeof selected === "string") {
-      this.createNewOption(selected);
+      const defaultCreateOption = this.availableCreateOptions[0];
+      if (defaultCreateOption) {
+        this.createFromConfig(
+          this.toCreateOptionValue(defaultCreateOption, selected),
+        );
+      }
       return;
     }
 
@@ -530,19 +564,6 @@ export class BasicAutocompleteComponent<O, V = O>
       this.value = undefined;
     }
     this.onChange(this.value);
-  }
-
-  async createNewOption(option: string) {
-    const createdOption = await this.createOption(option);
-    if (createdOption) {
-      const newOption = this.toSelectableOption(createdOption);
-      this._options.push(newOption);
-      this.select(newOption);
-    } else {
-      // continue editing
-      this.showAutocomplete();
-      this.autocompleteForm.setValue(option);
-    }
   }
 
   /** @internal used in template to build a marker value for typed create options */
