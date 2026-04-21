@@ -19,6 +19,7 @@ import { GroupParticipantResolverService } from "./deprecated/group-participant-
 import { BehaviorSubject } from "rxjs";
 import type { Mock } from "vitest";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { AttendanceItem } from "./model/attendance-item";
 
 @DatabaseEntity("RecurringActivity")
 class MockRecurringActivity extends Entity {
@@ -251,6 +252,39 @@ describe("AttendanceService", () => {
     expect(event.attendanceItems.map((a) => a.participant)).toContain(
       directChild2.getId(),
     );
+  });
+
+  it("should support participantsField pointing to attendance data", async () => {
+    service.eventTypeSettings[0].participantsField = "attendance";
+
+    const activity = new MockRecurringActivity();
+    const directChild1 = new TestEntity();
+    const directChild2 = new TestEntity();
+    activity["attendance"] = [
+      new AttendanceItem(undefined, "", directChild1.getId()),
+      new AttendanceItem(undefined, "", directChild2.getId()),
+    ];
+
+    const event = await service.createEventForActivity(activity, new Date());
+
+    expect(event.attendanceItems).toHaveLength(2);
+    expect(event.attendanceItems.map((a) => a.participant)).toEqual(
+      expect.arrayContaining([directChild1.getId(), directChild2.getId()]),
+    );
+  });
+
+  it("builds participant index map supporting attendance entries", async () => {
+    service.eventTypeSettings[0].participantsField = "attendance";
+
+    await (service as any).createRecurringActivitiesIndex();
+
+    const latestCreateIndexCall = mockDbIndexing.createIndex.mock.calls.at(-1);
+    const designDoc = latestCreateIndexCall?.[0];
+    const mapFn = designDoc?.views?.by_participant?.map as string;
+
+    expect(mapFn).toContain('typeof p === "string"');
+    expect(mapFn).toContain('typeof p.participant === "string"');
+    expect(mapFn).toContain("emit(p.participant)");
   });
 
   it("should load the events for a date with date-picker format", async () => {
