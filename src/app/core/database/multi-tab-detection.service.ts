@@ -1,5 +1,6 @@
-import { Injectable, OnDestroy } from "@angular/core";
+import { inject, Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
 
 type TabChannelMessage = {
   type: "hello" | "ping" | "goodbye";
@@ -22,7 +23,12 @@ export class MultiTabDetectionService implements OnDestroy {
   private readonly channel?: BroadcastChannel;
   private readonly tabId = this.generateTabId();
   private readonly otherTabsLastSeenAt = new Map<string, number>();
+  private readonly pouchdbCorruptionRecovery = inject(
+    PouchdbCorruptionRecoveryService,
+    { optional: true },
+  );
   private _isMultipleTabsOpen = false;
+  private warningShownForCurrentMultiTabSession = false;
   private pingIntervalId?: ReturnType<typeof setInterval>;
   /** Emits whenever the multi-tab state changes. */
   readonly isMultipleTabsOpen$ = new BehaviorSubject<boolean>(false);
@@ -145,6 +151,19 @@ export class MultiTabDetectionService implements OnDestroy {
 
     this._isMultipleTabsOpen = hasOtherOpenTabs;
     this.isMultipleTabsOpen$.next(hasOtherOpenTabs);
+    if (hasOtherOpenTabs) {
+      this.showMultiTabWarningOnce();
+    } else {
+      this.warningShownForCurrentMultiTabSession = false;
+    }
+  }
+
+  private showMultiTabWarningOnce() {
+    if (this.warningShownForCurrentMultiTabSession) {
+      return;
+    }
+    this.warningShownForCurrentMultiTabSession = true;
+    void this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
   }
 
   /**
@@ -175,38 +194,6 @@ export class MultiTabDetectionService implements OnDestroy {
     this.channel?.close();
     this.isMultipleTabsOpen$.complete();
   }
-}
-
-/**
- * Error thrown after known multi-tab IndexedDB corruption was already handled
- * via dedicated recovery UX (dialog).
- *
- * Callers can use this marker to avoid showing duplicate toast warnings.
- */
-export class KnownMultiTabCorruptionHandledError extends Error {
-  constructor() {
-    super("Known multi-tab database corruption handled");
-    this.name = "KnownMultiTabCorruptionHandledError";
-  }
-}
-
-/**
- * Error thrown after a multi-tab usage warning was already shown to the user
- * and the write operation was intentionally blocked.
- */
-export class MultiTabOperationBlockedError extends Error {
-  constructor() {
-    super("Operation blocked because multiple tabs are open");
-    this.name = "MultiTabOperationBlockedError";
-  }
-}
-
-/** Returns true if the error was already handled by multi-tab recovery UX. */
-export function isHandledMultiTabError(err: unknown): boolean {
-  return (
-    err instanceof MultiTabOperationBlockedError ||
-    err instanceof KnownMultiTabCorruptionHandledError
-  );
 }
 
 /**

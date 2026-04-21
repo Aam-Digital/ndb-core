@@ -11,7 +11,6 @@ import { EntityForm } from "#src/app/core/common-components/entity-form/entity-f
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
-import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * Buttons to edit an (entities-table) row inline, handling the necessary logic and UI buttons.
@@ -60,10 +59,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
       );
       delete this.row.formGroup;
     } catch (err) {
-      if (
-        !(err instanceof InvalidFormFieldError) &&
-        !isHandledMultiTabError(err)
-      ) {
+      if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
       }
     }

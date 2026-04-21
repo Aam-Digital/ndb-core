@@ -33,10 +33,6 @@ import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EventEmitter } from "@angular/core";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/multi-tab-detection.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -99,43 +95,6 @@ describe("EntityFormService", () => {
     expect(formGroup.pristine).toBe(true);
     // form status change is needed for EditFileComponent to start file upload, for example
     expect(formGroup.disabled).toBe(true);
-  });
-
-  it("should pass through centralized multi-tab block errors", async () => {
-    const entity = new Entity("initialId");
-    const formGroup = new UntypedFormGroup({
-      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
-    });
-    const entityForm = createMockEntityForm(entity, formGroup);
-    TestBed.inject(EntityAbility).update([
-      { subject: "Entity", action: "create" },
-    ]);
-    vi.spyOn(TestBed.inject(EntityMapperService), "save").mockRejectedValueOnce(
-      new MultiTabOperationBlockedError(),
-    );
-
-    await expect(
-      service.saveChanges(entityForm, entity),
-    ).rejects.toBeInstanceOf(MultiTabOperationBlockedError);
-  });
-
-  it("should pass through centralized known corruption handling errors", async () => {
-    const entity = new Entity("initialId");
-    const formGroup = new UntypedFormGroup({
-      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
-    });
-    const entityForm = createMockEntityForm(entity, formGroup);
-    TestBed.inject(EntityAbility).update([
-      { subject: "Entity", action: "create" },
-    ]);
-
-    vi.spyOn(TestBed.inject(EntityMapperService), "save").mockRejectedValueOnce(
-      new KnownMultiTabCorruptionHandledError(),
-    );
-
-    await expect(
-      service.saveChanges(entityForm, entity),
-    ).rejects.toBeInstanceOf(KnownMultiTabCorruptionHandledError);
   });
 
   it("should throw an error when trying to create a entity with missing permissions", async () => {

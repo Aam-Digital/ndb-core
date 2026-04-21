@@ -1,7 +1,9 @@
+import { TestBed } from "@angular/core/testing";
 import {
   isKnownMultiTabDatabaseCorruption,
   MultiTabDetectionService,
 } from "./multi-tab-detection.service";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
 
 class MockBroadcastChannel {
   public static readonly channels = new Map<
@@ -39,11 +41,29 @@ class MockBroadcastChannel {
 
 describe("MultiTabDetectionService", () => {
   let originalBroadcastChannel: typeof globalThis.BroadcastChannel;
+  let mockRecoveryService: {
+    promptMultiTabWarningDialog: ReturnType<typeof vi.fn>;
+  };
+
+  function createService() {
+    return TestBed.runInInjectionContext(() => new MultiTabDetectionService());
+  }
 
   beforeEach(() => {
     originalBroadcastChannel = globalThis.BroadcastChannel;
     globalThis.BroadcastChannel = MockBroadcastChannel as any;
     MockBroadcastChannel.reset();
+    mockRecoveryService = {
+      promptMultiTabWarningDialog: vi.fn().mockResolvedValue(undefined),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: PouchdbCorruptionRecoveryService,
+          useValue: mockRecoveryService,
+        },
+      ],
+    });
   });
 
   afterEach(() => {
@@ -52,21 +72,24 @@ describe("MultiTabDetectionService", () => {
   });
 
   it("should detect when another tab is opened", () => {
-    const firstTab = new MultiTabDetectionService();
+    const firstTab = createService();
     expect(firstTab.isMultipleTabsOpen).toBe(false);
 
-    const secondTab = new MultiTabDetectionService();
+    const secondTab = createService();
 
     expect(firstTab.isMultipleTabsOpen).toBe(true);
     expect(secondTab.isMultipleTabsOpen).toBe(true);
+    expect(
+      mockRecoveryService.promptMultiTabWarningDialog,
+    ).toHaveBeenCalledTimes(2);
 
     firstTab.ngOnDestroy();
     secondTab.ngOnDestroy();
   });
 
   it("should reset to single-tab state after other tab is closed", () => {
-    const firstTab = new MultiTabDetectionService();
-    const secondTab = new MultiTabDetectionService();
+    const firstTab = createService();
+    const secondTab = createService();
     expect(firstTab.isMultipleTabsOpen).toBe(true);
 
     secondTab.ngOnDestroy();
@@ -78,8 +101,8 @@ describe("MultiTabDetectionService", () => {
   it("should recover from stale tab entries when a tab disappears", () => {
     vi.useFakeTimers();
     try {
-      const firstTab = new MultiTabDetectionService();
-      const secondTab = new MultiTabDetectionService();
+      const firstTab = createService();
+      const secondTab = createService();
       expect(firstTab.isMultipleTabsOpen).toBe(true);
 
       // Simulate abrupt tab disappearance without a goodbye signal.
@@ -97,11 +120,31 @@ describe("MultiTabDetectionService", () => {
   it("should gracefully do nothing when BroadcastChannel is unavailable", () => {
     globalThis.BroadcastChannel = undefined;
 
-    const service = new MultiTabDetectionService();
+    const service = createService();
 
     expect(service.isMultipleTabsOpen).toBe(false);
     service.ngOnDestroy();
   });
+
+  it("should not repeatedly show warning while multi-tab state remains true", () => {
+    vi.useFakeTimers();
+    try {
+      const firstTab = createService();
+      const secondTab = createService();
+      expect(firstTab.isMultipleTabsOpen).toBe(true);
+
+      vi.advanceTimersByTime(10000);
+
+      expect(
+        mockRecoveryService.promptMultiTabWarningDialog,
+      ).toHaveBeenCalledTimes(2);
+      firstTab.ngOnDestroy();
+      secondTab.ngOnDestroy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should detect seq index constraint errors", () => {
     const error = new Error(
       "Database has a global failure ConstraintError: Unable to add key to index 'seq': at least one key does not satisfy the uniqueness requirements.",

@@ -19,10 +19,6 @@ import { DatabaseField } from "../../../entity/database-field.decorator";
 
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/multi-tab-detection.service";
 
 describe("EntityInlineEditActionsComponent", () => {
   let component: EntityInlineEditActionsComponent<InlineEditEntity>;
@@ -120,34 +116,6 @@ describe("EntityInlineEditActionsComponent", () => {
     await component.save();
 
     expect(alertService.addDanger).toHaveBeenCalledWith("Form invalid");
-  });
-
-  it("should not show a error message when known corruption is already handled", async () => {
-    const entityFormService = TestBed.inject(EntityFormService);
-    vi.spyOn(entityFormService, "saveChanges").mockRejectedValue(
-      new KnownMultiTabCorruptionHandledError(),
-    );
-    const alertService = TestBed.inject(AlertService);
-    vi.spyOn(alertService, "addDanger");
-
-    component.row = { formGroup: null, record: new InlineEditEntity() };
-    await component.save();
-
-    expect(alertService.addDanger).not.toHaveBeenCalled();
-  });
-
-  it("should not show a error message when save is blocked due to multiple tabs", async () => {
-    const entityFormService = TestBed.inject(EntityFormService);
-    vi.spyOn(entityFormService, "saveChanges").mockRejectedValue(
-      new MultiTabOperationBlockedError(),
-    );
-    const alertService = TestBed.inject(AlertService);
-    vi.spyOn(alertService, "addDanger");
-
-    component.row = { formGroup: null, record: new InlineEditEntity() };
-    await component.save();
-
-    expect(alertService.addDanger).not.toHaveBeenCalled();
   });
 
   it("should clear the form group when resetting", () => {

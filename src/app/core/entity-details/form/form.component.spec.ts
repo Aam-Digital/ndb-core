@@ -7,10 +7,6 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 import { AlertService } from "../../alerts/alert.service";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/multi-tab-detection.service";
 
 describe("FormComponent", () => {
   let component: FormComponent<TestEntity>;
@@ -78,32 +74,6 @@ describe("FormComponent", () => {
     await component.saveClicked();
 
     expect(alertService.addDanger).toHaveBeenCalledWith("error message");
-  });
-
-  it("should not show alert when known corruption is already handled by dialog", async () => {
-    const alertService = TestBed.inject(AlertService);
-    vi.spyOn(alertService, "addDanger");
-    const entityFormService = TestBed.inject(EntityFormService);
-    vi.spyOn(entityFormService, "saveChanges").mockRejectedValue(
-      new KnownMultiTabCorruptionHandledError(),
-    );
-
-    await component.saveClicked();
-
-    expect(alertService.addDanger).not.toHaveBeenCalled();
-  });
-
-  it("should not show alert when save is blocked due to multiple tabs", async () => {
-    const alertService = TestBed.inject(AlertService);
-    vi.spyOn(alertService, "addDanger");
-    const entityFormService = TestBed.inject(EntityFormService);
-    vi.spyOn(entityFormService, "saveChanges").mockRejectedValue(
-      new MultiTabOperationBlockedError(),
-    );
-
-    await component.saveClicked();
-
-    expect(alertService.addDanger).not.toHaveBeenCalled();
   });
 
   it("should align form with entity if canceled", () => {

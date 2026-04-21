@@ -30,7 +30,6 @@ import {
   PublicFormLinkingService,
 } from "./public-form-linking.service";
 import { UpdateMetadata } from "../../core/entity/model/update-metadata";
-import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 @UntilDestroy()
 @Component({
@@ -107,9 +106,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         // Collect invalid field names for summary message
         this.validationError = true;
         this.invalidFieldNames = this.collectInvalidFieldNames();
-        return;
-      }
-      if (isHandledMultiTabError(e)) {
         return;
       }
       throw e;

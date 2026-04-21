@@ -19,7 +19,6 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
-import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -255,10 +254,6 @@ export class EntityFormService {
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
-      if (isHandledMultiTabError(err)) {
-        throw err;
-      }
-
       throw new Error(
         $localize`Could not save ${entity.getType()}\: ${err?.message || String(err)}`,
       );

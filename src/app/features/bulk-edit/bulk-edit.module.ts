@@ -6,7 +6,6 @@ import { EntityEditService } from "./entity-edit.service";
 import { asArray } from "#src/app/utils/asArray";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
-import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 /**
  * Feature module for bulk editing multiple entities at once.
@@ -37,11 +36,9 @@ export class BulkEditModule {
 
           return entityEditService.edit(entities, entityType).catch((error) => {
             Logging.warn("Bulk edit failed", error);
-            if (!isHandledMultiTabError(error)) {
-              alertService.addDanger(
-                $localize`:Bulk edit error message:Bulk edit failed. Please try again.`,
-              );
-            }
+            alertService.addDanger(
+              $localize`:Bulk edit error message:Bulk edit failed. Please try again.`,
+            );
             return false;
           });
         },

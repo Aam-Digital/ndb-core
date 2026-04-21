@@ -20,7 +20,6 @@ import { Todo } from "../../model/todo";
 import { TodoCompletion } from "../../model/todo-completion";
 import { TodoService } from "../../todo.service";
 import { DisplayTodoCompletionComponent } from "../display-todo-completion/display-todo-completion.component";
-import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 @DynamicComponent("EditTodoCompletion")
 @Component({
@@ -60,17 +59,10 @@ export class EditTodoCompletionComponent
   async completeTodo() {
     if (this.formControl.parent?.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
-      try {
-        await this.entityFormService.saveChanges(
-          { formGroup: this.formControl.parent } as any,
-          this.todo,
-        );
-      } catch (err) {
-        if (isHandledMultiTabError(err)) {
-          return;
-        }
-        throw err;
-      }
+      await this.entityFormService.saveChanges(
+        { formGroup: this.formControl.parent } as any,
+        this.todo,
+      );
     }
     await this.todoService.completeTodo(this.todo);
 

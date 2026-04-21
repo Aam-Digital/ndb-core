@@ -13,10 +13,6 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EventEmitter } from "@angular/core";
-import {
-  KnownMultiTabCorruptionHandledError,
-  MultiTabOperationBlockedError,
-} from "#src/app/core/database/multi-tab-detection.service";
 
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent<Entity>;
@@ -96,44 +92,6 @@ describe("DialogButtonsComponent", () => {
 
       expect(alertSpy).toHaveBeenCalledWith(message);
       expect(closeSpy).not.toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should not show an alert when known corruption is already handled", async () => {
-    vi.useFakeTimers();
-    try {
-      const formService = TestBed.inject(EntityFormService);
-      vi.spyOn(formService, "saveChanges").mockRejectedValue(
-        new KnownMultiTabCorruptionHandledError(),
-      );
-      const alertSpy = vi.fn();
-      TestBed.inject(AlertService).addDanger = alertSpy;
-
-      component.save();
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(alertSpy).not.toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should not show an alert when save is blocked due to multiple tabs", async () => {
-    vi.useFakeTimers();
-    try {
-      const formService = TestBed.inject(EntityFormService);
-      vi.spyOn(formService, "saveChanges").mockRejectedValue(
-        new MultiTabOperationBlockedError(),
-      );
-      const alertSpy = vi.fn();
-      TestBed.inject(AlertService).addDanger = alertSpy;
-
-      component.save();
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(alertSpy).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }

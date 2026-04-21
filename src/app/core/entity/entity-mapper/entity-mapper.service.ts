@@ -30,13 +30,6 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
 import { EntityActionPermission } from "../../permissions/permission-types";
-import {
-  isKnownMultiTabDatabaseCorruption,
-  KnownMultiTabCorruptionHandledError,
-  MultiTabDetectionService,
-  MultiTabOperationBlockedError,
-} from "../../database/multi-tab-detection.service";
-import { PouchdbCorruptionRecoveryService } from "../../database/pouchdb/pouchdb-corruption-recovery.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -55,15 +48,6 @@ export class EntityMapperService {
   private currentUser = inject(CurrentUserSubject);
   private registry = inject(EntityRegistry);
   private readonly ability = inject(EntityAbility, { optional: true });
-  private readonly multiTabDetection = inject(MultiTabDetectionService, {
-    optional: true,
-  });
-  private readonly pouchdbCorruptionRecovery = inject(
-    PouchdbCorruptionRecoveryService,
-    {
-      optional: true,
-    },
-  );
 
   /**
    * Load an Entity from the database with the given id or the registered name of that class.
@@ -165,15 +149,12 @@ export class EntityMapperService {
     forceUpdate: boolean = false,
   ): Promise<any> {
     this.assertPermission(entity);
-    await this.assertMultiTabWriteSafety();
     this.setEntityMetadata(entity);
     const rawData =
       this.entitySchemaService.transformEntityToDatabaseFormat(entity);
-    const result = await this.withKnownCorruptionHandling(() =>
-      this.dbResolver
-        .getDatabase(entity.getConstructor().DATABASE)
-        .put(rawData, forceUpdate),
-    );
+    const result = await this.dbResolver
+      .getDatabase(entity.getConstructor().DATABASE)
+      .put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;
     }
@@ -198,7 +179,6 @@ export class EntityMapperService {
     }
 
     entities.forEach((e) => this.assertPermission(e));
-    await this.assertMultiTabWriteSafety();
     entities.forEach((e) => this.setEntityMetadata(e));
 
     const entitiesByDatabase = new Map<string, Entity[]>();
@@ -210,19 +190,18 @@ export class EntityMapperService {
       entitiesByDatabase.get(databaseName).push(e);
     });
 
-    const results = await this.withKnownCorruptionHandling(async () => {
-      const savePromises = Array.from(entitiesByDatabase.entries()).map(
-        ([databaseName, entitiesInDatabase]) => {
-          const rawData = entitiesInDatabase.map((e) =>
-            this.entitySchemaService.transformEntityToDatabaseFormat(e),
-          );
-          return this.dbResolver
-            .getDatabase(databaseName)
-            .putAll(rawData, forceUpdate);
-        },
-      );
-      return (await Promise.all(savePromises)).flat();
-    });
+    const savePromises = Array.from(entitiesByDatabase.entries()).map(
+      ([databaseName, entitiesInDatabase]) => {
+        const rawData = entitiesInDatabase.map((e) =>
+          this.entitySchemaService.transformEntityToDatabaseFormat(e),
+        );
+        return this.dbResolver
+          .getDatabase(databaseName)
+          .putAll(rawData, forceUpdate);
+      },
+    );
+
+    const results = (await Promise.all(savePromises)).flat();
     results.forEach((res, idx) => {
       if (res.ok) {
         const entity = entities[idx];
@@ -238,12 +217,9 @@ export class EntityMapperService {
    */
   public async remove<T extends Entity>(entity: T): Promise<any> {
     this.assertPermission(entity, "delete");
-    await this.assertMultiTabWriteSafety();
-    return this.withKnownCorruptionHandling(() =>
-      this.dbResolver
-        .getDatabase(entity.getConstructor().DATABASE)
-        .remove(entity),
-    );
+    return this.dbResolver
+      .getDatabase(entity.getConstructor().DATABASE)
+      .remove(entity);
   }
 
   protected resolveConstructor<T extends Entity>(
@@ -273,36 +249,6 @@ export class EntityMapperService {
         entity.getId(),
         entity.getType(),
       );
-    }
-  }
-
-  /**
-   * Blocks local writes while multiple tabs are active to reduce the chance
-   * of IndexedDB/PouchDB corruption from concurrent tab writes.
-   */
-  private async assertMultiTabWriteSafety() {
-    if (!this.multiTabDetection?.isMultipleTabsOpen) {
-      return;
-    }
-    await this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
-    throw new MultiTabOperationBlockedError();
-  }
-
-  /**
-   * Wraps write operations and routes known multi-tab corruption signatures
-   * through the dedicated recovery flow.
-   */
-  private async withKnownCorruptionHandling<T>(
-    operation: () => Promise<T>,
-  ): Promise<T> {
-    try {
-      return await operation();
-    } catch (error) {
-      if (isKnownMultiTabDatabaseCorruption(error)) {
-        await this.pouchdbCorruptionRecovery?.promptResetApplicationDialog();
-        throw new KnownMultiTabCorruptionHandledError();
-      }
-      throw error;
     }
   }
 

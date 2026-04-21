@@ -21,7 +21,6 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import { isHandledMultiTabError } from "#src/app/core/database/multi-tab-detection.service";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -102,10 +101,7 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
         this.close(res);
       })
       .catch((err) => {
-        if (
-          !(err instanceof InvalidFormFieldError) &&
-          !isHandledMultiTabError(err)
-        ) {
+        if (!(err instanceof InvalidFormFieldError)) {
           this.alertService.addDanger(err.message);
         }
       });
