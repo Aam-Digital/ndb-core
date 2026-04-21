@@ -39,7 +39,7 @@ describe("PouchdbCorruptionRecoveryService", () => {
 
     await service.promptResetApplicationDialog();
 
-    expect(localStorage.getItem("foo")).toBeNull();
+    expect(localStorage.getItem("foo")).toBe("bar");
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBe("1");
     expect(location.pathname).toBe("");
   });
