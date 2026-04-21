@@ -51,6 +51,16 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
     ]);
   }
 
+  /** Detect all `date` or `date-only` fields in the entity schema. */
+  static override detectAllFieldsInEntity(
+    entityOrType: Entity | EntityConstructor,
+  ): { fieldId: string; schemaField: EntitySchemaField }[] {
+    return DefaultDatatype.detectAllFieldsInEntity(entityOrType, [
+      DateDatatype.dataType,
+      "date-only",
+    ]);
+  }
+
   override viewComponent = "DisplayDate";
   override editComponent = "EditDate";
 
