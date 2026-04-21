@@ -27,7 +27,6 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
 import { SessionSubject } from "../../session/auth/session-info";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconButton } from "@angular/material/button";
@@ -96,9 +95,9 @@ export class DashboardComponent implements DashboardConfig {
   }
 
   private async hasEntityPermission(widget: DynamicComponentConfig) {
-    const comp = (await this.components.get(
-      widget.component,
-    )()) as unknown as typeof DashboardWidget;
+    const comp = (await this.components.get(widget.component)()) as unknown as {
+      getRequiredEntities?: (config: any) => string | string[];
+    };
     let entity: string | string[];
     if (typeof comp.getRequiredEntities === "function") {
       entity = comp.getRequiredEntities(widget.config);

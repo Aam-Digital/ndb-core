@@ -1,15 +1,14 @@
 import {
-  AfterViewInit,
-  Component,
-  ContentChild,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
-  inject,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  contentChild,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+  viewChild,
 } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -18,13 +17,10 @@ import {
 } from "../dashboard-widget/dashboard-widget.component";
 import { MatTable, MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { BehaviorSubject } from "rxjs";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
 import { WidgetContentComponent } from "../dashboard-widget/widget-content/widget-content.component";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Base dashboard widget to build widgets that display a number of entries as a table.
@@ -42,7 +38,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
  * To highlight a row with a colored bar at the front, apply `class="row-indicator"` to your first <td>
  *   and set the css variable to the desired color, e.g. `[ngStyle]="{'--row-indicator-color': row.getColor?.()}"`
  */
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-dashboard-list-widget",
@@ -54,20 +49,17 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
     MatPaginatorModule,
   ],
 })
-export class DashboardListWidgetComponent<E>
-  implements OnInit, OnChanges, AfterViewInit
-{
+export class DashboardListWidgetComponent<E> {
   private entityMapperService = inject(EntityMapperService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() subtitle: string;
-  @Input() icon: IconName = "exclamation-triangle";
-  @Input() theme: DashboardTheme;
-  @Input() title: string | number;
+  subtitle = input<string>();
+  icon = input<IconName>("exclamation-triangle");
+  theme = input<DashboardTheme>();
+  title = input<string | number>();
   /** optional tooltip to explain detailed meaning of this widget / statistic */
-  @Input() explanation: string;
-  @Input() headline: string;
-  @Input() paginationPageSize: number = 5; // Default to 5 entries per page
+  explanation = input<string>();
+  headline = input<string>();
+  paginationPageSize = input(5); // Default to 5 entries per page
 
   /**
    * array of items to be displayed in paginated widget table.
@@ -76,7 +68,7 @@ export class DashboardListWidgetComponent<E>
    *
    * Alternatively define an entityType and dataPipe to let the component load data itself.
    */
-  @Input() entries: E[];
+  entries = input<E[]>();
 
   /**
    * entity type to be loaded for displaying entries
@@ -84,60 +76,78 @@ export class DashboardListWidgetComponent<E>
    *
    * If you define an entityType, the "entries" input is ignored in favor of directly loading data here
    */
-  @Input() entityType: string;
+  entityType = input<string>();
 
   /**
    * Pipe to map, filter or sort the loaded data
    */
-  @Input() dataMapper: (data: E[]) => E[];
+  dataMapper = input<(data: E[]) => E[]>();
 
-  isLoading: boolean = true;
-  data = new BehaviorSubject<E[]>(undefined);
+  private rawData = signal<E[] | undefined>(undefined);
+  private data = computed(() => {
+    const sourceData = this.entityType() ? this.rawData() : this.entries();
+    if (!sourceData) {
+      return [] as E[];
+    }
+
+    const mapper = this.dataMapper();
+    return mapper ? mapper(sourceData) : sourceData;
+  });
+  isLoading = computed(() => {
+    const sourceData = this.entityType() ? this.rawData() : this.entries();
+    return sourceData === undefined;
+  });
   dataSource = new MatTableDataSource<E>();
 
-  @ContentChild(MatTable) matTable: MatTable<E>;
-  @ViewChild("paginator") private paginator: MatPaginator;
+  matTable = contentChild(MatTable);
+  private paginator = viewChild(MatPaginator);
 
-  ngOnInit() {
-    this.data
-      .pipe(
-        filter((d) => !!d),
-        map((d) => (this.dataMapper ? this.dataMapper(d) : d)),
-        untilDestroyed(this),
-      )
-      .subscribe((newData) => {
-        this.dataSource.data = newData;
-        this.isLoading = !newData;
-        this.cdr.markForCheck();
+  constructor() {
+    effect(() => {
+      this.dataSource.data = this.data();
+    });
+
+    effect(() => {
+      const matTable = this.matTable();
+      if (matTable) {
+        matTable.dataSource = this.dataSource;
+      }
+    });
+
+    effect(() => {
+      const paginator = this.paginator();
+      if (paginator) {
+        this.dataSource.paginator = paginator;
+      }
+    });
+
+    effect((onCleanup) => {
+      const entityType = this.entityType();
+      if (!entityType) {
+        return;
+      }
+
+      let isCurrent = true;
+      this.rawData.set(undefined);
+
+      untracked(async () => {
+        const entities = await this.entityMapperService.loadType(entityType);
+        if (isCurrent) {
+          this.rawData.set(entities as E[]);
+        }
       });
-  }
 
-  private async loadDataForType() {
-    // load data
-    const entities = await this.entityMapperService.loadType(this.entityType);
-    this.data.next(entities as E[]);
+      const subscription = this.entityMapperService
+        .receiveUpdates(entityType)
+        .subscribe((update) => {
+          const currentData = (this.rawData() ?? []) as Entity[];
+          this.rawData.set(applyUpdate(currentData, update) as E[]);
+        });
 
-    // subscribe to relevant updates of data
-    this.entityMapperService
-      .receiveUpdates(this.entityType)
-      .pipe(untilDestroyed(this))
-      .subscribe((update) =>
-        this.data.next(applyUpdate(this.data.value as Entity[], update) as E[]),
-      );
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entries && !this.entityType) {
-      this.data.next(this.entries);
-    }
-    if (changes.entityType && !!this.entityType) {
-      this.loadDataForType();
-    }
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.matTable.dataSource = this.dataSource;
-    this.cdr.markForCheck();
+      onCleanup(() => {
+        isCurrent = false;
+        subscription.unsubscribe();
+      });
+    });
   }
 }

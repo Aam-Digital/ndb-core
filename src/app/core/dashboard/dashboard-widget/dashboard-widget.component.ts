@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -20,16 +20,16 @@ export type DashboardTheme =
   imports: [MatProgressSpinnerModule, FaDynamicIconComponent, MatTooltipModule],
 })
 export class DashboardWidgetComponent {
-  @Input() subtitle: string;
-  @Input() icon: IconName;
-  @Input() theme: DashboardTheme;
+  subtitle = input<string>();
+  icon = input<IconName>();
+  theme = input<DashboardTheme>();
 
-  @Input() title: string | number;
+  title = input<string | number>();
 
   /** optional tooltip to explain detailed meaning of this widget / statistic */
-  @Input() explanation: string;
-  @Input() headline: string;
+  explanation = input<string>();
+  headline = input<string>();
 
   /** Show a loading indicator until data is ready to be shown */
-  @Input() loading = false;
+  loading = input(false);
 }

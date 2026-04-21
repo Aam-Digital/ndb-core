@@ -5,9 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import {
-  NavigationMenuConfig
-} from "app/core/ui/navigation/menu-item";
+import { NavigationMenuConfig } from "app/core/ui/navigation/menu-item";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Config } from "app/core/config/config";
 import { MatButton } from "@angular/material/button";

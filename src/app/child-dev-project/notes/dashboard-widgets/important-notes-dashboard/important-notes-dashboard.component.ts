@@ -1,8 +1,8 @@
 import {
-  Component,
-  Input,
-  inject,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    input,
 } from "@angular/core";
 import { Note } from "../../model/note";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -11,7 +11,6 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
 import { MatTableModule } from "@angular/material/table";
 import { NgStyle } from "@angular/common";
 import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-date.pipe";
-import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 
 @DynamicComponent("ImportantNotesDashboard")
 @Component({
@@ -26,26 +25,28 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
     NgStyle,
   ],
 })
-export class ImportantNotesDashboardComponent extends DashboardWidget {
+export class ImportantNotesDashboardComponent {
   private formDialog = inject(FormDialogService);
 
-  static override getRequiredEntities() {
+  static getRequiredEntities() {
     return Note.ENTITY_TYPE;
   }
 
-  @Input() warningLevels: string[] = [];
+  warningLevels = input<string[]>([]);
   dataMapper: (data: Note[]) => Note[] = (data) =>
     data
       .filter((note) => note.warningLevel && this.noteIsRelevant(note))
       .sort((a, b) => b.warningLevel._ordinal - a.warningLevel._ordinal);
 
-  @Input() subtitle: string =
-    $localize`:dashboard widget subtitle:Notes needing follow-up`;
-  @Input() explanation: string =
-    $localize`:dashboard widget explanation:Notes require immediate attention or follow-up actions`;
+  subtitle = input<string>(
+    $localize`:dashboard widget subtitle:Notes needing follow-up`,
+  );
+  explanation = input<string>(
+    $localize`:dashboard widget explanation:Notes require immediate attention or follow-up actions`,
+  );
 
   private noteIsRelevant(note: Note): boolean {
-    return this.warningLevels.includes(note.warningLevel.id);
+    return this.warningLevels().includes(note.warningLevel.id);
   }
 
   openNote(note: Note) {

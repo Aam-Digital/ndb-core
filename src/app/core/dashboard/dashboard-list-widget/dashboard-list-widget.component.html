@@ -1,11 +1,11 @@
 <app-dashboard-widget
-  [title]="title ?? dataSource.data.length"
-  [subtitle]="subtitle"
-  [theme]="theme"
-  [icon]="icon"
-  [headline]="headline"
-  [explanation]="explanation"
-  [loading]="isLoading"
+  [title]="title() ?? dataSource.data.length"
+  [subtitle]="subtitle()"
+  [theme]="theme()"
+  [icon]="icon()"
+  [headline]="headline()"
+  [explanation]="explanation()"
+  [loading]="isLoading()"
 >
   <app-widget-content>
     @if (dataSource.data.length > 0) {
@@ -25,11 +25,11 @@
     <mat-paginator
       #paginator
       [style.display]="
-        dataSource.data.length <= paginationPageSize ? 'none' : ''
+        dataSource.data.length <= paginationPageSize() ? 'none' : ''
       "
-      [pageSizeOptions]="[paginationPageSize]"
+      [pageSizeOptions]="[paginationPageSize()]"
       [hidePageSize]="true"
-      [pageSize]="paginationPageSize"
+      [pageSize]="paginationPageSize()"
     >
     </mat-paginator>
   </app-widget-content>

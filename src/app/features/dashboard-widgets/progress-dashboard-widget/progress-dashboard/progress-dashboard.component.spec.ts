@@ -72,8 +72,8 @@ describe("ProgressDashboardComponent", () => {
     vi.useFakeTimers();
     try {
       const configID = "config-id";
-      component.dashboardConfigId = configID;
-      component.ngOnInit();
+      fixture.componentRef.setInput("dashboardConfigId", configID);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockEntityMapper.load).toHaveBeenCalledWith(
@@ -89,15 +89,15 @@ describe("ProgressDashboardComponent", () => {
     vi.useFakeTimers();
     try {
       loadSpy.mockRejectedValue(new Error());
-      component.dashboardConfigId = "someId";
-      component.ngOnInit();
+      fixture.componentRef.setInput("dashboardConfigId", "someId");
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       const config = new ProgressDashboardConfig("someId");
       loadSpy.mockResolvedValue(config);
       mockSync.next(SyncState.COMPLETED);
 
-      expect(component.data).toEqual(config);
+      expect(component.data()).toEqual(config);
     } finally {
       vi.useRealTimers();
     }
@@ -109,11 +109,11 @@ describe("ProgressDashboardComponent", () => {
       loadSpy.mockRejectedValue(new Error());
       mockSync.next(SyncState.COMPLETED);
 
-      component.dashboardConfigId = "config-id";
-      component.ngOnInit();
+      fixture.componentRef.setInput("dashboardConfigId", "config-id");
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(mockEntityMapper.save).toHaveBeenCalledWith(component.data);
+      expect(mockEntityMapper.save).toHaveBeenCalledWith(component.data());
     } finally {
       vi.useRealTimers();
     }
@@ -126,6 +126,8 @@ describe("ProgressDashboardComponent", () => {
     } satisfies DialogRefMock);
     component.showEditComponent();
     closeNotifier.next({});
+    closeNotifier.complete();
+    await fixture.whenStable();
     expect(mockEntityMapper.save).toHaveBeenCalled();
   });
 });

@@ -81,10 +81,12 @@ describe("AttendanceWeekDashboardComponent", () => {
       e2.entity,
     ]);
 
-    await component.ngOnInit();
+    fixture.componentRef.setInput("daysOffset", 1);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    expect(component.entries).toHaveLength(1);
-    expect(component.entries[0][0].participantId).toBe(absentChild.getId());
+    expect(component.entries()).toHaveLength(1);
+    expect(component.entries()[0][0].participantId).toBe(absentChild.getId());
   });
 
   it("should not display children with sufficient attendance", async () => {
@@ -100,9 +102,11 @@ describe("AttendanceWeekDashboardComponent", () => {
 
     mockAttendanceService.getEventsOnDate.mockResolvedValue([e1.entity]);
 
-    await component.ngOnInit();
+    fixture.componentRef.setInput("daysOffset", 1);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    expect(component.entries).toHaveLength(0);
+    expect(component.entries()).toHaveLength(0);
   });
 
   it("should treat events without an activity as one group", async () => {
@@ -124,30 +128,38 @@ describe("AttendanceWeekDashboardComponent", () => {
       e2.entity,
     ]);
 
-    await component.ngOnInit();
+    fixture.componentRef.setInput("daysOffset", 1);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     // Both events are grouped together (both under undefined key), so absentChild
     // accumulates 2 absences and crosses the threshold → 1 entry group
-    expect(component.entries).toHaveLength(1);
-    expect(component.entries[0][0].participantId).toBe(absentChild.getId());
-    expect(component.entries[0][0].attendanceDays.filter(Boolean)).toHaveLength(
-      2,
-    );
+    expect(component.entries()).toHaveLength(1);
+    expect(component.entries()[0][0].participantId).toBe(absentChild.getId());
+    expect(
+      component.entries()[0][0].attendanceDays.filter(Boolean),
+    ).toHaveLength(2);
   });
 
-  it("should correctly use the offset", () => {
-    // default case: last week monday till saturday
+  it("should correctly use the offset", async () => {
     MockDate.set(moment("2023-11-20").toDate());
-    component.ngOnInit();
+
+    fixture.destroy();
+    fixture = TestBed.createComponent(AttendanceWeekDashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
     expect(mockAttendanceService.getEventsOnDate).toHaveBeenCalledWith(
       moment("2023-11-13").toDate(),
       moment("2023-11-18").toDate(),
     );
 
-    // with offset: this week monday till saturday
-    component.daysOffset = 7;
-    component.ngOnInit();
-    expect(mockAttendanceService.getEventsOnDate).toHaveBeenCalledWith(
+    fixture.componentRef.setInput("daysOffset", 7);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(mockAttendanceService.getEventsOnDate).toHaveBeenLastCalledWith(
       moment("2023-11-20").toDate(),
       moment("2023-11-25").toDate(),
     );

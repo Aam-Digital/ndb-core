@@ -1,7 +1,7 @@
 import {
   Component,
   Input,
-  OnInit,
+  OnChanges,
   ViewChild,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -16,17 +16,19 @@ import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
   styleUrls: ["./object-table.component.scss"],
   imports: [MatTableModule, MatSortModule, MatPaginatorModule],
 })
-export class ObjectTableComponent implements OnInit {
+export class ObjectTableComponent implements OnChanges {
   @Input() objects: any[];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   dataSource = new MatTableDataSource();
   columns: string[];
 
-  ngOnInit() {
+  ngOnChanges() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.columns = Object.keys(this.objects[0]);
-    this.dataSource.data = this.objects;
+    if (this.objects?.length > 0) {
+      this.columns = Object.keys(this.objects[0]);
+      this.dataSource.data = this.objects;
+    }
   }
 }

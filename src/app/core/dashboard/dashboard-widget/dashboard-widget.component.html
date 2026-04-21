@@ -1,26 +1,29 @@
 <!-- Header -->
-<div class="widget-header theme-background-{{ theme }}">
-  @if (headline) {
-    <div class="widget-headline">{{ headline }}</div>
+<div class="widget-header theme-background-{{ theme() }}">
+  @if (headline()) {
+    <div class="widget-headline">{{ headline() }}</div>
   } @else {
     <div class="widget-title">
-      @if (loading) {
+      @if (loading()) {
         <mat-spinner diameter="40"></mat-spinner>
       } @else {
-        {{ title }}
+        {{ title() }}
       }
     </div>
-    <div class="widget-subheadline" [matTooltip]="explanation">
-      {{ subtitle }}
+    <div class="widget-subheadline" [matTooltip]="explanation()">
+      {{ subtitle() }}
     </div>
   }
 
-  <app-fa-dynamic-icon class="widget-icon" [icon]="icon"></app-fa-dynamic-icon>
+  <app-fa-dynamic-icon
+    class="widget-icon"
+    [icon]="icon()"
+  ></app-fa-dynamic-icon>
 </div>
 
 <!-- Content -->
 <div class="widget-content">
-  @if (loading) {
+  @if (loading()) {
     <h2 class="headline" i18n>Loading...</h2>
   } @else {
     <ng-content select="app-widget-content"></ng-content>

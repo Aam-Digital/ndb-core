@@ -5,6 +5,5 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
   selector: "app-widget-content",
   template: `<ng-content></ng-content>`,
   styleUrls: ["widget-content.component.scss"],
-  standalone: true,
 })
 export class WidgetContentComponent {}

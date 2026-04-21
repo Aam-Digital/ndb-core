@@ -1,12 +1,12 @@
 import {
-    Component,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    inject,
-    signal,
-    ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -18,8 +18,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconButton } from "@angular/material/button";
 import {
-    MatSlideToggleChange,
-    MatSlideToggleModule,
+  MatSlideToggleChange,
+  MatSlideToggleModule,
 } from "@angular/material/slide-toggle";
 import { IconComponent } from "#src/app/core/common-components/icon-input/icon-input.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";

@@ -112,7 +112,6 @@
 @if (
   data()?.length > 0 &&
   (mode() === "exporting" ||
-   
     (mode() === "sql" && currentReport()?.version !== 2))
 ) {
   <app-object-table [objects]="data()"></app-object-table>
