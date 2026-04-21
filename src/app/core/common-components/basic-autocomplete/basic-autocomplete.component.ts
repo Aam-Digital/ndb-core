@@ -187,6 +187,12 @@ export class BasicAutocompleteComponent<O, V = O>
    */
   displayFullLengthOptionLabel = input(false);
 
+  /**
+   * Whether dropdown option labels should be shown in full length.
+   * Set to false to truncate labels with ellipsis.
+   */
+  displayFullLengthOptionLabel = input(false);
+
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
 
