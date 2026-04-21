@@ -1,12 +1,12 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    input,
-    signal,
-    untracked,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
 } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import moment, { Moment } from "moment";

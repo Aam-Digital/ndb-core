@@ -1,8 +1,8 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    input,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
 } from "@angular/core";
 import { Note } from "../../model/note";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";

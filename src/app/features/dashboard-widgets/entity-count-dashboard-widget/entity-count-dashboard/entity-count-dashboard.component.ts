@@ -1,12 +1,12 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    input,
-    signal,
-    untracked,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatIconButton } from "@angular/material/button";
@@ -22,8 +22,8 @@ import { EntityRegistry } from "../../../../core/entity/database-entity.decorato
 import { EntityFieldLabelComponent } from "../../../../core/entity/entity-field-label/entity-field-label.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
-    Entity,
-    EntityConstructor,
+  Entity,
+  EntityConstructor,
 } from "../../../../core/entity/model/entity";
 import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { groupBy } from "../../../../utils/utils";
