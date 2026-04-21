@@ -223,7 +223,14 @@
                             </li>
                             <li>
                                     <span class="modifier">Static</span>
+                                <a href="#detectAllFieldsInEntity" >detectAllFieldsInEntity</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
                                 <a href="#detectFieldInEntity" >detectFieldInEntity</a>
+                            </li>
+                            <li>
+                                <a href="#getExportColumns" >getExportColumns</a>
                             </li>
                             <li>
                                 <a href="#importIncompleteAdditionalConfigBadge" >importIncompleteAdditionalConfigBadge</a>
@@ -455,7 +462,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:190</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:259</a></code>
 </div>
                         </td>
                     </tr>
@@ -541,6 +548,105 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="detectAllFieldsInEntity"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>detectAllFieldsInEntity</b></span>
+                        <a href="#detectAllFieldsInEntity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>detectAllFieldsInEntity(entityOrType: <a href="../classes/Entity.html" target="_self">Entity | EntityConstructor</a>, dataTypes: string | string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:99</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Detect all fields of the given datatype(s) in an entity&#39;s schema.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityOrType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>An entity instance or entity constructor to inspect.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>dataTypes</td>
+                                            <td>
+                                                        <code>string | string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>One or more datatype identifiers to match against.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>literal type[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Array of matching fields with their id and schema definition.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="detectFieldInEntity"></a>
                     <span class="name">
                             <span class="modifier">Static</span>
@@ -565,7 +671,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:57</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:84</a></code>
 </div>
                         </td>
                     </tr>
@@ -644,6 +750,87 @@ forwarding their own relevant datatype identifiers.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getExportColumns"></a>
+                    <span class="name">
+                        <span ><b>getExportColumns</b></span>
+                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:240</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Export columns for a field using this datatype.</p>
+<p>Each returned column contributes a CSV header and its own value resolver.
+The returned <code>keySuffix</code> is appended to the field id to form the exported column key.</p>
+<p>The default implementation returns a single column with the raw field value.
+Readable formatting can be applied by callers during CSV transformation.
+Override this to provide custom or additional columns (e.g. entity references
+can add a human-readable name column alongside the ID column).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="importIncompleteAdditionalConfigBadge"></a>
                     <span class="name">
                         <span ><b>importIncompleteAdditionalConfigBadge</b></span>
@@ -666,7 +853,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:166</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:209</a></code>
 </div>
                         </td>
                     </tr>
@@ -745,7 +932,7 @@ returns &quot;undefined&quot; if no user action is required.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:145</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:188</a></code>
 </div>
                         </td>
                     </tr>
@@ -875,7 +1062,7 @@ to share information across processing of multiple columns and rows.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:182</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
 </div>
                         </td>
                     </tr>
@@ -1089,7 +1276,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:101</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:144</a></code>
 </div>
                         </td>
                     </tr>
@@ -1128,7 +1315,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:80</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:123</a></code>
 </div>
                         </td>
                     </tr>
@@ -1169,7 +1356,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:158</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:201</a></code>
 </div>
                         </td>
                     </tr>
@@ -1215,7 +1402,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:89</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:132</a></code>
 </div>
                         </td>
                     </tr>
@@ -1259,7 +1446,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:100</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:143</a></code>
 </div>
                         </td>
                     </tr>

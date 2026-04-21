@@ -273,7 +273,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injector, NgModule, inject } from &quot;@angular/core&quot;;
 import { ComponentRegistry } from &quot;#src/app/dynamic-components&quot;;
 import { attendanceComponents } from &quot;./attendance-components&quot;;
 import { attendanceRoutes } from &quot;./attendance.routing&quot;;
@@ -284,6 +284,10 @@ import { DashboardWidgetRegistryService } from &quot;#src/app/core/dashboard/das
 import { AttendancePermissionGuard } from &quot;./attendance-permission.guard&quot;;
 import { AbstractPermissionGuard } from &quot;#src/app/core/permissions/permission-guard/abstract-permission.guard&quot;;
 import { AttendanceInitService } from &quot;./attendance-init.service&quot;;
+import { EntityActionsMenuService } from &quot;#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service&quot;;
+import { EntityAction } from &quot;#src/app/core/entity-details/entity-actions-menu/entity-action.interface&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { AttendanceExportService } from &quot;./attendance-export.service&quot;;
 
 @NgModule({
   providers: [
@@ -311,6 +315,12 @@ export class AttendanceModule {
   static routes &#x3D; attendanceRoutes;
 
   private readonly widgetRegistry &#x3D; inject(DashboardWidgetRegistryService);
+  /**
+   * Keep attendance export dependencies lazy.
+   * Eagerly creating AttendanceExportService here pulls export/query services at app bootstrap
+   * and can initialize attendance config/permissions before config loading has settled.
+   */
+  private readonly injector &#x3D; inject(Injector);
 
   constructor() {
     this.widgetRegistry.register({
@@ -324,6 +334,37 @@ export class AttendanceModule {
     components.addAll(attendanceComponents);
 
     inject(AttendanceInitService).registerDefaultAttendanceStatusEnum();
+
+    const entityActionsMenu &#x3D; inject(EntityActionsMenuService);
+    entityActionsMenu.registerActionsFactories([
+      (entity) &#x3D;&gt; this.getAttendanceExportActions(entity),
+    ]);
+  }
+
+  private getAttendanceExportActions(entity?: Entity): EntityAction[] {
+    if (!entity) {
+      return [];
+    }
+    // resolve lazily at click-time to avoid bootstrap-time side effects.
+    const attendanceExportService &#x3D; this.injector.get(AttendanceExportService);
+
+    const fields &#x3D; attendanceExportService.getAttendanceFields(entity);
+    return fields.map((field) &#x3D;&gt; ({
+      action: &#x60;download-attendance-${field.fieldId}&#x60;,
+      label: $localize&#x60;Download ${field.label} list&#x60;,
+      icon: &quot;download&quot;,
+      permission: &quot;read&quot; as const,
+      availableFor: &quot;individual-only&quot; as const,
+      execute: async (e: Entity) &#x3D;&gt; {
+        const singleEntity &#x3D; Array.isArray(e) ? e[0] : e;
+        await attendanceExportService.exportAttendanceList(
+          singleEntity,
+          field.fieldId,
+          field.label,
+        );
+        return true;
+      },
+    }));
   }
 }
 </code></pre>

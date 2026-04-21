@@ -194,7 +194,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="168" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:168</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="214" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:214</a></div>
                             </td>
                         </tr>
 
@@ -271,7 +271,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="184" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:184</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="230" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:230</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -293,7 +293,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="188" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:188</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="234" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:234</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -349,7 +349,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="196" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:196</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="242" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:242</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -372,7 +372,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="204" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:204</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="250" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:250</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -425,6 +425,8 @@ import { EntityActionsService } from &quot;../../entity/entity-actions/entity-ac
 import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { ExportColumnMapping } from &quot;../../entity/default-datatype/default.datatype&quot;;
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -446,6 +448,28 @@ export class EntityDatatype extends StringDatatype {
   override viewComponent &#x3D; &quot;DisplayEntity&quot;;
   override importConfigComponent &#x3D; &quot;EntityImportConfig&quot;;
   override importAllowsMultiMapping &#x3D; true;
+
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    if (!schemaField.label) {
+      return [];
+    }
+
+    return [
+      {
+        keySuffix: &quot;&quot;,
+        label: schemaField.label,
+        resolveValue: (value) &#x3D;&gt; value,
+      },
+      {
+        keySuffix: &quot;_readable&quot;,
+        label: schemaField.label + &quot; (readable)&quot;,
+        resolveValue: async (value: string | string[]) &#x3D;&gt;
+          this.loadRelatedEntitiesToString(value, schemaField),
+      },
+    ];
+  }
 
   /**
    * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
@@ -546,6 +570,28 @@ export class EntityDatatype extends StringDatatype {
 
     await this.removeService.anonymize(referencedEntity);
     return value;
+  }
+
+  private async loadRelatedEntitiesToString(
+    value: string | string[],
+    schemaField: EntitySchemaField,
+  ): Promise&lt;string[]&gt; {
+    if (!value) return [];
+
+    const relatedEntitiesToStrings: string[] &#x3D; [];
+
+    const relatedEntitiesIds: string[] &#x3D; Array.isArray(value) ? value : [value];
+    for (const relatedEntityId of relatedEntitiesIds) {
+      const entityType &#x3D;
+        Entity.extractTypeFromId(relatedEntityId) || schemaField.additional;
+      const relatedEntity &#x3D; await this.entityMapper
+        .load(entityType, relatedEntityId)
+        .catch(() &#x3D;&gt; undefined);
+
+      relatedEntitiesToStrings.push(relatedEntity?.toString() ?? &quot;&lt;not_found&gt;&quot;);
+    }
+
+    return relatedEntitiesToStrings;
   }
 }
 

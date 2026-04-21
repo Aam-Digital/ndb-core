@@ -208,7 +208,14 @@ This type is automatically used whenever no fitting Datatype can be found for th
                             </li>
                             <li>
                                     <span class="modifier">Static</span>
+                                <a href="#detectAllFieldsInEntity" >detectAllFieldsInEntity</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
                                 <a href="#detectFieldInEntity" >detectFieldInEntity</a>
+                            </li>
+                            <li>
+                                <a href="#getExportColumns" >getExportColumns</a>
                             </li>
                             <li>
                                 <a href="#importIncompleteAdditionalConfigBadge" >importIncompleteAdditionalConfigBadge</a>
@@ -286,7 +293,7 @@ This type is automatically used whenever no fitting Datatype can be found for th
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:42</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -327,7 +334,7 @@ that EntitySchemaDatatype without the need to explicitly state the dataType conf
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:101</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:144</a></div>
                         </td>
                     </tr>
 
@@ -359,7 +366,7 @@ that EntitySchemaDatatype without the need to explicitly state the dataType conf
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:80</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -393,7 +400,7 @@ during import.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="158" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:158</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="201" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:201</a></div>
                         </td>
                     </tr>
 
@@ -432,7 +439,7 @@ during import.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:89</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="132" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:132</a></div>
                         </td>
                     </tr>
 
@@ -469,7 +476,7 @@ during import.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:100</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="143" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:143</a></div>
                         </td>
                     </tr>
 
@@ -513,8 +520,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="190"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:190</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="259"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:259</a></div>
                         </td>
                     </tr>
 
@@ -599,6 +606,99 @@ decorator</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="detectAllFieldsInEntity"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>detectAllFieldsInEntity</b></span>
+                        <a href="#detectAllFieldsInEntity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>detectAllFieldsInEntity(entityOrType: <a href="../classes/Entity.html" target="_self">Entity | EntityConstructor</a>, dataTypes: string | string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:99</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Detect all fields of the given datatype(s) in an entity&#39;s schema.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityOrType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>An entity instance or entity constructor to inspect.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>dataTypes</td>
+                                            <td>
+                                                        <code>string | string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>One or more datatype identifiers to match against.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>literal type[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Array of matching fields with their id and schema definition.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="detectFieldInEntity"></a>
                     <span class="name">
                             <span class="modifier">Static</span>
@@ -617,8 +717,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="57"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:57</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -696,6 +796,81 @@ forwarding their own relevant datatype identifiers.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getExportColumns"></a>
+                    <span class="name">
+                        <span ><b>getExportColumns</b></span>
+                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="240"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:240</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Export columns for a field using this datatype.</p>
+<p>Each returned column contributes a CSV header and its own value resolver.
+The returned <code>keySuffix</code> is appended to the field id to form the exported column key.</p>
+<p>The default implementation returns a single column with the raw field value.
+Readable formatting can be applied by callers during CSV transformation.
+Override this to provide custom or additional columns (e.g. entity references
+can add a human-readable name column alongside the ID column).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="importIncompleteAdditionalConfigBadge"></a>
                     <span class="name">
                         <span ><b>importIncompleteAdditionalConfigBadge</b></span>
@@ -712,8 +887,8 @@ forwarding their own relevant datatype identifiers.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="166"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:166</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="209"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:209</a></div>
                         </td>
                     </tr>
 
@@ -785,8 +960,8 @@ returns &quot;undefined&quot; if no user action is required.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="145"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:145</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="188"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:188</a></div>
                         </td>
                     </tr>
 
@@ -909,8 +1084,8 @@ to share information across processing of multiple columns and rows.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="182"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:182</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="225"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:225</a></div>
                         </td>
                     </tr>
 
@@ -988,8 +1163,8 @@ allowing the datatype to normalize or fill in required settings.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="155"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:155</a></div>
                         </td>
                     </tr>
 
@@ -1096,8 +1271,8 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="129"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:129</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="172"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:172</a></div>
                         </td>
                     </tr>
 
@@ -1210,7 +1385,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:82</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:125</a></div>
                                 </td>
                             </tr>
 
@@ -1232,7 +1407,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:90</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:133</a></div>
                                 </td>
                             </tr>
 
@@ -1248,6 +1423,33 @@ import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
 import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
 import { ColumnMapping } from &quot;../../import/column-mapping&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
+
+/**
+ * Definition of an export column contributed by a datatype.
+ *
+ * Each datatype&#x27;s &#x60;getExportColumns&#x60; returns an array of these,
+ * fully controlling which CSV columns a field produces.
+ */
+export interface ExportColumnMapping&lt;EntityType &#x3D; any&gt; {
+  /**
+   * Suffix appended to the source field id to build the final export column key.
+   * Use an empty string for the primary/default column.
+   */
+  keySuffix: string;
+
+  /**
+   * Human-readable header shown in the exported CSV.
+   */
+  label: string;
+
+  /**
+   * Resolve the value for this export column.
+   */
+  resolveValue: (
+    value: EntityType,
+    schemaField: EntitySchemaField,
+  ) &#x3D;&gt; Promise&lt;any&gt; | any;
+}
 
 /**
  * Extend this class to define new data types (i.e. for properties of entities)
@@ -1286,6 +1488,21 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
     entityOrType: Entity | EntityConstructor,
     dataTypes: string | string[],
   ): string | undefined {
+    const fields &#x3D; this.detectAllFieldsInEntity(entityOrType, dataTypes);
+    return fields.length &gt; 0 ? fields[0].fieldId : undefined;
+  }
+
+  /**
+   * Detect all fields of the given datatype(s) in an entity&#x27;s schema.
+   *
+   * @param entityOrType An entity instance or entity constructor to inspect.
+   * @param dataTypes One or more datatype identifiers to match against.
+   * @returns Array of matching fields with their id and schema definition.
+   */
+  static detectAllFieldsInEntity(
+    entityOrType: Entity | EntityConstructor,
+    dataTypes: string | string[],
+  ): { fieldId: string; schemaField: EntitySchemaField }[] {
     dataTypes &#x3D; asArray(dataTypes);
 
     const schema &#x3D;
@@ -1293,12 +1510,13 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
         ? (entityOrType as EntityConstructor).schema
         : entityOrType.getConstructor().schema;
 
+    const result: { fieldId: string; schemaField: EntitySchemaField }[] &#x3D; [];
     for (const [fieldId, field] of schema.entries()) {
       if (dataTypes.includes(field.dataType)) {
-        return fieldId;
+        result.push({ fieldId, schemaField: field });
       }
     }
-    return undefined;
+    return result;
   }
 
   /**
@@ -1409,6 +1627,32 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
    */
   normalizeSchemaField(schemaField: EntitySchemaField): EntitySchemaField {
     return schemaField;
+  }
+
+  /**
+   * Export columns for a field using this datatype.
+   *
+   * Each returned column contributes a CSV header and its own value resolver.
+   * The returned &#x60;keySuffix&#x60; is appended to the field id to form the exported column key.
+   *
+   * The default implementation returns a single column with the raw field value.
+   * Readable formatting can be applied by callers during CSV transformation.
+   * Override this to provide custom or additional columns (e.g. entity references
+   * can add a human-readable name column alongside the ID column).
+   */
+  getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping&lt;EntityType&gt;[] {
+    if (!schemaField.label) {
+      return [];
+    }
+    return [
+      {
+        keySuffix: &quot;&quot;,
+        label: schemaField.label,
+        resolveValue: (value) &#x3D;&gt; value,
+      },
+    ];
   }
 
   /**

@@ -1,0 +1,715 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AttendanceExportService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/attendance/attendance-export.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Exports attendance lists as CSV for entities with attendance-typed fields.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#exportAttendanceList" >exportAttendanceList</a>
+                            </li>
+                            <li>
+                                <a href="#getAttendanceFields" >getAttendanceFields</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="exportAttendanceList"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>exportAttendanceList</b></span>
+                        <a href="#exportAttendanceList"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>exportAttendanceList(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, fieldLabel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/app/features/attendance/attendance-export.service.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Export an attendance field as CSV with one row per participant.
+Columns: attendance item fields (participant ID, participant name, status, remarks, ...)
+         + all labeled entity fields (duplicated per row).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldLabel</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAttendanceFields"></a>
+                    <span class="name">
+                        <span ><b>getAttendanceFields</b></span>
+                        <a href="#getAttendanceFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAttendanceFields(entity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="28"
+                                    class="link-to-prism">src/app/features/attendance/attendance-export.service.ts:28</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Detect all attendance fields on the given entity.
+Returns field id and label for each attendance or legacy event-attendance-map field.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>literal type[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
+import { EntitySchema } from &quot;#src/app/core/entity/schema/entity-schema&quot;;
+import {
+  ExportColumnResolver,
+  buildExportColumnResolvers,
+  DownloadService,
+} from &quot;#src/app/core/export/download-service/download.service&quot;;
+import { AttendanceDatatype } from &quot;./model/attendance.datatype&quot;;
+import { AttendanceItem } from &quot;./model/attendance-item&quot;;
+import { getReadableValue } from &quot;#src/app/core/common-components/entities-table/value-accessor/value-accessor&quot;;
+import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+import moment from &quot;moment&quot;;
+
+/**
+ * Exports attendance lists as CSV for entities with attendance-typed fields.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class AttendanceExportService {
+  private readonly downloadService &#x3D; inject(DownloadService);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+
+  /**
+   * Detect all attendance fields on the given entity.
+   * Returns field id and label for each attendance or legacy event-attendance-map field.
+   */
+  getAttendanceFields(
+    entity: Entity,
+  ): { fieldId: string; label: string; schemaField: EntitySchemaField }[] {
+    return AttendanceDatatype.detectAllFieldsInEntity(entity).map((f) &#x3D;&gt; ({
+      ...f,
+      label: f.schemaField.label || f.fieldId,
+    }));
+  }
+
+  /**
+   * Export an attendance field as CSV with one row per participant.
+   * Columns: attendance item fields (participant ID, participant name, status, remarks, ...)
+   *          + all labeled entity fields (duplicated per row).
+   */
+  async exportAttendanceList(
+    entity: Entity,
+    fieldId: string,
+    fieldLabel: string,
+  ): Promise&lt;void&gt; {
+    const items: AttendanceItem[] &#x3D; entity[fieldId] ?? [];
+    const entityColumns &#x3D; this.buildEntityColumns(entity, fieldId);
+    const attendanceSchema &#x3D; this.getEffectiveAttendanceSchema(
+      entity.getConstructor().schema.get(fieldId),
+    );
+    const attendanceColumnResolvers &#x3D; buildExportColumnResolvers(
+      attendanceSchema,
+      this.entitySchemaService,
+      true,
+    );
+    const entityColumnResolvers &#x3D; buildExportColumnResolvers(
+      entityColumns,
+      this.entitySchemaService,
+    );
+
+    const columnLabels &#x3D; new Map&lt;string, string&gt;();
+    const usedLabels &#x3D; new Set&lt;string&gt;();
+    const entityRow &#x3D; await this.buildEntityRow(
+      entity,
+      entityColumns,
+      entityColumnResolvers,
+      (resolver) &#x3D;&gt; this.getEntityInternalKey(resolver),
+      (internalKey, resolver) &#x3D;&gt;
+        this.registerColumnLabel(
+          columnLabels,
+          usedLabels,
+          internalKey,
+          resolver.column.label,
+          &quot;entity&quot;,
+        ),
+    );
+
+    // Pre-register attendance columns so CSV headers are present even when there are no participants.
+    for (const resolver of attendanceColumnResolvers) {
+      this.registerColumnLabel(
+        columnLabels,
+        usedLabels,
+        this.getAttendanceInternalKey(fieldId, resolver),
+        resolver.column.label,
+        fieldLabel,
+      );
+    }
+
+    const internalRows: Record&lt;string, any&gt;[] &#x3D; [];
+    for (const item of items) {
+      const row: Record&lt;string, any&gt; &#x3D; { ...entityRow };
+      await this.resolveExportColumns(
+        row,
+        item as Record&lt;string, any&gt;,
+        attendanceColumnResolvers,
+        (resolver) &#x3D;&gt; this.getAttendanceInternalKey(fieldId, resolver),
+        (internalKey, resolver) &#x3D;&gt;
+          this.registerColumnLabel(
+            columnLabels,
+            usedLabels,
+            internalKey,
+            resolver.column.label,
+            fieldLabel,
+          ),
+      );
+      internalRows.push(row);
+    }
+
+    const rowsToMap &#x3D; internalRows.length &gt; 0 ? internalRows : [entityRow];
+    const rows &#x3D; rowsToMap.map((row) &#x3D;&gt;
+      this.mapInternalRowToDisplayRow(row, columnLabels),
+    );
+
+    const filename &#x3D; this.buildFilename(entity, fieldLabel);
+    await this.downloadService.triggerDownload(rows, &quot;csv&quot;, filename);
+  }
+
+  /**
+   * Build the effective schema for the attendance embedded type,
+   * merging AttendanceItem&#x27;s annotations with any &#x60;additional&#x60; overrides from the field config.
+   */
+  private getEffectiveAttendanceSchema(
+    schemaField?: EntitySchemaField,
+  ): EntitySchema {
+    const base: EntitySchema &#x3D; new Map(AttendanceItem.schema);
+    const additional &#x3D; schemaField?.additional ?? {};
+    for (const [key, value] of Object.entries(additional)) {
+      base.set(key, { ...(value as EntitySchemaField), id: key });
+    }
+    return base;
+  }
+
+  private buildEntityColumns(
+    entity: Entity,
+    excludeFieldId: string,
+  ): Map&lt;string, EntitySchemaField&gt; {
+    const columns &#x3D; new Map&lt;string, EntitySchemaField&gt;();
+    const schema &#x3D; entity.getConstructor().schema;
+
+    for (const [id, field] of schema.entries()) {
+      if (!field.label || field.isInternalField) continue;
+      if (id &#x3D;&#x3D;&#x3D; excludeFieldId) continue;
+      columns.set(id, field);
+    }
+
+    return columns;
+  }
+
+  private async buildEntityRow(
+    entity: Entity,
+    columns: Map&lt;string, EntitySchemaField&gt;,
+    columnResolvers: ExportColumnResolver[],
+    getInternalKey: (resolver: ExportColumnResolver) &#x3D;&gt; string,
+    registerLabel: (
+      internalKey: string,
+      resolver: ExportColumnResolver,
+    ) &#x3D;&gt; void,
+  ): Promise&lt;Record&lt;string, any&gt;&gt; {
+    const raw: Record&lt;string, any&gt; &#x3D; {};
+    for (const [id, field] of columns.entries()) {
+      raw[id] &#x3D; entity[id];
+    }
+
+    const row: Record&lt;string, any&gt; &#x3D; {};
+    await this.resolveExportColumns(
+      row,
+      raw,
+      columnResolvers,
+      getInternalKey,
+      registerLabel,
+    );
+
+    return row;
+  }
+
+  private async resolveExportColumns(
+    row: Record&lt;string, any&gt;,
+    source: Record&lt;string, any&gt;,
+    columnResolvers: ExportColumnResolver[],
+    getInternalKey: (resolver: ExportColumnResolver) &#x3D;&gt; string,
+    registerLabel: (
+      internalKey: string,
+      resolver: ExportColumnResolver,
+    ) &#x3D;&gt; void,
+  ): Promise&lt;void&gt; {
+    for (const resolver of columnResolvers) {
+      const internalKey &#x3D; getInternalKey(resolver);
+      registerLabel(internalKey, resolver);
+
+      const resolvedValue &#x3D; await resolver.column.resolveValue(
+        source[resolver.sourceFieldId],
+        resolver.schemaField,
+      );
+
+      row[internalKey] &#x3D; this.toCsvValue(resolvedValue);
+    }
+  }
+
+  private getAttendanceInternalKey(
+    attendanceFieldId: string,
+    resolver: ExportColumnResolver,
+  ): string {
+    return &#x60;att.${attendanceFieldId}.${resolver.sourceFieldId}${resolver.column.keySuffix}&#x60;;
+  }
+
+  private getEntityInternalKey(resolver: ExportColumnResolver): string {
+    return &#x60;entity.${resolver.sourceFieldId}${resolver.column.keySuffix}&#x60;;
+  }
+
+  private registerColumnLabel(
+    columnLabels: Map&lt;string, string&gt;,
+    usedLabels: Set&lt;string&gt;,
+    internalKey: string,
+    preferredLabel: string,
+    fallbackContext: string,
+  ): void {
+    if (columnLabels.has(internalKey)) {
+      return;
+    }
+
+    let label &#x3D; preferredLabel;
+    if (usedLabels.has(label)) {
+      label &#x3D; &#x60;${preferredLabel} (${fallbackContext})&#x60;;
+      let suffix &#x3D; 2;
+      while (usedLabels.has(label)) {
+        label &#x3D; &#x60;${preferredLabel} (${fallbackContext} ${suffix})&#x60;;
+        suffix +&#x3D; 1;
+      }
+    }
+
+    columnLabels.set(internalKey, label);
+    usedLabels.add(label);
+  }
+
+  private mapInternalRowToDisplayRow(
+    row: Record&lt;string, any&gt;,
+    columnLabels: Map&lt;string, string&gt;,
+  ): Record&lt;string, any&gt; {
+    const displayRow: Record&lt;string, any&gt; &#x3D; {};
+
+    for (const [internalKey, label] of columnLabels.entries()) {
+      displayRow[label] &#x3D; row[internalKey];
+    }
+
+    return displayRow;
+  }
+
+  private toCsvValue(value: any): any {
+    const readableValue &#x3D; getReadableValue(value);
+
+    if (readableValue instanceof Date) {
+      return moment(readableValue).format(&quot;YYYY-MM-DD&quot;);
+    }
+
+    return Array.isArray(readableValue)
+      ? readableValue.join(&quot;, &quot;)
+      : readableValue;
+  }
+
+  private buildFilename(entity: Entity, fieldLabel: string): string {
+    const type &#x3D; entity.getType();
+    const id &#x3D; entity.getId(true);
+    const safeLabel &#x3D; fieldLabel.replace(/[^a-zA-Z0-9]+/g, &quot;-&quot;);
+    return &#x60;${type}_${id}_${safeLabel}&#x60;;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AttendanceExportService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

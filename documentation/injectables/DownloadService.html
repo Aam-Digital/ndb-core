@@ -234,8 +234,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="103"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:103</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="149"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:149</a></div>
                         </td>
                     </tr>
 
@@ -311,8 +311,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="127"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:127</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="182"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -392,8 +392,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -526,7 +526,7 @@ Depending on the browser and the setting this might open a popup or directly dow
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/export/download-service/download.service.ts:26</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/export/download-service/download.service.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -565,7 +565,7 @@ Depending on the browser and the setting this might open a popup or directly dow
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/export/download-service/download.service.ts:24</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/export/download-service/download.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -590,9 +590,53 @@ import { Logging } from &quot;../../logging/logging.service&quot;;
 import { DataTransformationService } from &quot;../data-transformation-service/data-transformation.service&quot;;
 import { transformToReadableFormat } from &quot;../../common-components/entities-table/value-accessor/value-accessor&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
-import { Entity, EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
-import { EntityDatatype } from &quot;app/core/basic-datatypes/entity/entity.datatype&quot;;
-import { EntityMapperService } from &quot;app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
+import { ExportColumnMapping } from &quot;app/core/entity/default-datatype/default.datatype&quot;;
+import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
+import { EntitySchemaService } from &quot;app/core/entity/schema/entity-schema.service&quot;;
+
+export interface ExportColumnResolver {
+  sourceFieldId: string;
+  schemaField: EntitySchemaField;
+  column: ExportColumnMapping;
+}
+
+/**
+ * Build export column resolvers for all fields in a schema.
+ *
+ * Iterates the schema, looks up each field&#x27;s datatype, and collects
+ * the columns the datatype contributes via &#x60;getExportColumns&#x60;.
+ *
+ * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
+ *   use the field id as label (useful for embedded schemas like attendance items).
+ */
+export function buildExportColumnResolvers(
+  schema: Map&lt;string, EntitySchemaField&gt;,
+  entitySchemaService: EntitySchemaService,
+  useFieldIdAsFallbackLabel &#x3D; false,
+): ExportColumnResolver[] {
+  const resolvers: ExportColumnResolver[] &#x3D; [];
+
+  for (const [fieldId, field] of schema.entries()) {
+    if (field.isInternalField) continue;
+
+    const schemaField: EntitySchemaField &#x3D; {
+      ...field,
+      id: field.id ?? fieldId,
+      label: field.label || (useFieldIdAsFallbackLabel ? fieldId : undefined),
+    };
+
+    const datatype &#x3D;
+      entitySchemaService.getDatatypeOrDefault(schemaField.dataType, true) ??
+      entitySchemaService.getDatatypeOrDefault(undefined);
+
+    for (const column of datatype.getExportColumns(schemaField)) {
+      resolvers.push({ sourceFieldId: fieldId, schemaField, column });
+    }
+  }
+
+  return resolvers;
+}
 
 export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot;;
 
@@ -602,9 +646,11 @@ export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class DownloadService {
-  private dataTransformationService &#x3D; inject(DataTransformationService);
-  private papa &#x3D; inject(Papa);
-  private entityMapperService &#x3D; inject(EntityMapperService);
+  private readonly dataTransformationService &#x3D; inject(
+    DataTransformationService,
+  );
+  private readonly papa &#x3D; inject(Papa);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
 
   /** CSV row separator */
   static readonly SEPARATOR_ROW &#x3D; &quot;\n&quot;;
@@ -698,6 +744,15 @@ export class DownloadService {
     data &#x3D; data.map(transformToReadableFormat);
 
     if (!entityConstructor) {
+      data &#x3D; data.map((row) &#x3D;&gt;
+        Object.fromEntries(
+          Object.entries(row).map(([key, value]) &#x3D;&gt; [
+            key,
+            this.ensureCsvFriendlyValue(value),
+          ]),
+        ),
+      );
+
       return this.papa.unparse(data, {
         quotes: true,
         header: true,
@@ -713,22 +768,19 @@ export class DownloadService {
   async exportFile(data: any[], entityConstructor: EntityConstructor) {
     const entitySchema &#x3D; entityConstructor.schema;
     const columnLabels &#x3D; new Map&lt;string, string&gt;();
+    const columnResolvers &#x3D; new Map&lt;string, ExportColumnResolver&gt;();
 
-    for (const [id, field] of entitySchema.entries()) {
-      if (!field.label || field.isInternalField) {
-        // skip &quot;technical&quot; fields without an explicit label or internal fields
-        continue;
-      }
-
-      columnLabels.set(id, field.label);
-
-      if (field.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType) {
-        columnLabels.set(id + &quot;_readable&quot;, field.label + &quot; (readable)&quot;);
-      }
+    for (const resolver of buildExportColumnResolvers(
+      entitySchema,
+      this.entitySchemaService,
+    )) {
+      const columnId &#x3D; resolver.sourceFieldId + resolver.column.keySuffix;
+      columnLabels.set(columnId, resolver.column.label);
+      columnResolvers.set(columnId, resolver);
     }
 
     const exportEntities &#x3D; await Promise.all(
-      data.map((item) &#x3D;&gt; this.mapEntityToExportRow(item, columnLabels)),
+      data.map((item) &#x3D;&gt; this.mapEntityToExportRow(item, columnResolvers)),
     );
 
     const columnKeys: string[] &#x3D; Array.from(columnLabels.keys());
@@ -750,43 +802,41 @@ export class DownloadService {
   }
 
   private async mapEntityToExportRow(
-    item: Entity,
-    columnLabels: Map&lt;string, string&gt;,
+    item: any,
+    columnResolvers: Map&lt;string, ExportColumnResolver&gt;,
   ): Promise&lt;Object&gt; {
     const newItem &#x3D; {};
-    for (const key in item) {
-      if (columnLabels.has(key)) {
-        newItem[key] &#x3D; item[key];
-      }
 
-      if (columnLabels.has(key + &quot;_readable&quot;)) {
-        newItem[key + &quot;_readable&quot;] &#x3D; await this.loadRelatedEntitiesToString(
-          item[key],
-        );
-      }
+    for (const [columnId, resolver] of columnResolvers.entries()) {
+      const formattedValue &#x3D; await resolver.column.resolveValue(
+        item[resolver.sourceFieldId],
+        resolver.schemaField,
+      );
+      newItem[columnId] &#x3D; this.ensureCsvFriendlyValue(formattedValue);
     }
+
     return newItem;
   }
 
-  private async loadRelatedEntitiesToString(
-    value: string | string[],
-  ): Promise&lt;string[]&gt; {
-    if (!value) return [];
-
-    const relatedEntitiesToStrings: string[] &#x3D; [];
-
-    const relatedEntitiesIds: string[] &#x3D; Array.isArray(value) ? value : [value];
-    for (const relatedEntityId of relatedEntitiesIds) {
-      relatedEntitiesToStrings.push(
-        (
-          await this.entityMapperService
-            .load(Entity.extractTypeFromId(relatedEntityId), relatedEntityId)
-            .catch((e) &#x3D;&gt; &quot;&lt;not_found&gt;&quot;)
-        ).toString(),
-      );
+  /**
+   * Avoid broken CSV output such as &quot;[object Object]&quot; by serializing only when needed.
+   */
+  private ensureCsvFriendlyValue(value: any): any {
+    if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
+      return value;
     }
 
-    return relatedEntitiesToStrings;
+    if (Array.isArray(value)) {
+      return value.some((entry) &#x3D;&gt; String(entry) &#x3D;&#x3D;&#x3D; &quot;[object Object]&quot;)
+        ? JSON.stringify(value)
+        : value;
+    }
+
+    if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; String(value) &#x3D;&#x3D;&#x3D; &quot;[object Object]&quot;) {
+      return JSON.stringify(value);
+    }
+
+    return value;
   }
 }
 </code></pre>

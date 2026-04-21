@@ -157,6 +157,9 @@
                             <a href="#bootstrap" title="src/main.ts" ><b>bootstrap</b>&nbsp;&nbsp;&nbsp;(src/.../main.ts)</a>
                         </li>
                         <li>
+                            <a href="#buildExportColumnResolvers" title="src/app/core/export/download-service/download.service.ts" ><b>buildExportColumnResolvers</b>&nbsp;&nbsp;&nbsp;(src/.../download.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#buildMatchingSideConfig" title="src/app/features/matching-entities/matching-entities/matching-entities.component.ts" ><b>buildMatchingSideConfig</b>&nbsp;&nbsp;&nbsp;(src/.../matching-entities.component.ts)</a>
                         </li>
                         <li>
@@ -2111,6 +2114,115 @@ may be undefined or null. In this event, the entities-array is returned as is.</
 
 
 
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/export/download-service/download.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildExportColumnResolvers"></a>
+                    <span class="name">
+                        <span ><b>buildExportColumnResolvers</b></span>
+                        <a href="#buildExportColumnResolvers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>buildExportColumnResolvers(schema: Map, entitySchemaService: <a href="../injectables/EntitySchemaService.html" target="_self">EntitySchemaService</a>, useFieldIdAsFallbackLabel: unknown)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Build export column resolvers for all fields in a schema.</p>
+<p>Iterates the schema, looks up each field&#39;s datatype, and collects
+the columns the datatype contributes via <code>getExportColumns</code>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schema</td>
+                                            <td>
+                                                        <code>Map</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entitySchemaService</td>
+                                            <td>
+                                                            <code><a href="../injectables/EntitySchemaService.html" target="_self" >EntitySchemaService</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>useFieldIdAsFallbackLabel</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>When true, fields without an explicit label
+use the field id as label (useful for embedded schemas like attendance items).</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ExportColumnResolver.html" target="_self" >ExportColumnResolver[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
         </tbody>
     </table>
 </section>    <h3>src/app/features/matching-entities/matching-entities/matching-entities.component.ts</h3>

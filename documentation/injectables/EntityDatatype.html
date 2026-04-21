@@ -213,6 +213,10 @@ Stored as a simple ID string.</p>
                             </li>
                             <li>
                                     <span class="modifier"></span>
+                                <a href="#getExportColumns" >getExportColumns</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#importMapFunction" >importMapFunction</a>
                             </li>
@@ -223,6 +227,10 @@ Stored as a simple ID string.</p>
                             <li>
                                     <span class="modifier"></span>
                                 <a href="#transformToObjectFormat" >transformToObjectFormat</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#detectAllFieldsInEntity" >detectAllFieldsInEntity</a>
                             </li>
                             <li>
                                     <span class="modifier">Static</span>
@@ -281,7 +289,7 @@ Stored as a simple ID string.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:130</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:154</a></code>
 </div>
                         </td>
                     </tr>
@@ -358,6 +366,81 @@ Stored as a simple ID string.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getExportColumns"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getExportColumns</b></span>
+                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="importMapFunction"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -383,7 +466,7 @@ Stored as a simple ID string.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:58</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:82</a></code>
 </div>
                         </td>
                     </tr>
@@ -641,6 +724,105 @@ Handles type conversion between numbers and strings to improve matching.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="detectAllFieldsInEntity"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>detectAllFieldsInEntity</b></span>
+                        <a href="#detectAllFieldsInEntity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>detectAllFieldsInEntity(entityOrType: <a href="../classes/Entity.html" target="_self">Entity | EntityConstructor</a>, dataTypes: string | string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:99</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Detect all fields of the given datatype(s) in an entity&#39;s schema.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityOrType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>An entity instance or entity constructor to inspect.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>dataTypes</td>
+                                            <td>
+                                                        <code>string | string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>One or more datatype identifiers to match against.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>literal type[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Array of matching fields with their id and schema definition.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="detectFieldInEntity"></a>
                     <span class="name">
                             <span class="modifier">Static</span>
@@ -665,7 +847,7 @@ Handles type conversion between numbers and strings to improve matching.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:57</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:84</a></code>
 </div>
                         </td>
                     </tr>
@@ -766,7 +948,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:166</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:209</a></code>
 </div>
                         </td>
                     </tr>
@@ -843,7 +1025,7 @@ returns &quot;undefined&quot; if no user action is required.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:182</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
 </div>
                         </td>
                     </tr>
@@ -940,7 +1122,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:41</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:43</a></code>
 </div>
                         </td>
                     </tr>
@@ -979,7 +1161,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:43</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:45</a></code>
 </div>
                         </td>
                     </tr>
@@ -1018,7 +1200,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:46</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:48</a></code>
 </div>
                         </td>
                     </tr>
@@ -1057,7 +1239,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:45</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:47</a></code>
 </div>
                         </td>
                     </tr>
@@ -1097,7 +1279,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:42</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:44</a></code>
 </div>
                         </td>
                     </tr>
@@ -1136,7 +1318,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:44</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:46</a></code>
 </div>
                         </td>
                     </tr>
@@ -1158,6 +1340,8 @@ import { EntityActionsService } from &quot;../../entity/entity-actions/entity-ac
 import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { ExportColumnMapping } from &quot;../../entity/default-datatype/default.datatype&quot;;
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -1179,6 +1363,28 @@ export class EntityDatatype extends StringDatatype {
   override viewComponent &#x3D; &quot;DisplayEntity&quot;;
   override importConfigComponent &#x3D; &quot;EntityImportConfig&quot;;
   override importAllowsMultiMapping &#x3D; true;
+
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    if (!schemaField.label) {
+      return [];
+    }
+
+    return [
+      {
+        keySuffix: &quot;&quot;,
+        label: schemaField.label,
+        resolveValue: (value) &#x3D;&gt; value,
+      },
+      {
+        keySuffix: &quot;_readable&quot;,
+        label: schemaField.label + &quot; (readable)&quot;,
+        resolveValue: async (value: string | string[]) &#x3D;&gt;
+          this.loadRelatedEntitiesToString(value, schemaField),
+      },
+    ];
+  }
 
   /**
    * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
@@ -1279,6 +1485,28 @@ export class EntityDatatype extends StringDatatype {
 
     await this.removeService.anonymize(referencedEntity);
     return value;
+  }
+
+  private async loadRelatedEntitiesToString(
+    value: string | string[],
+    schemaField: EntitySchemaField,
+  ): Promise&lt;string[]&gt; {
+    if (!value) return [];
+
+    const relatedEntitiesToStrings: string[] &#x3D; [];
+
+    const relatedEntitiesIds: string[] &#x3D; Array.isArray(value) ? value : [value];
+    for (const relatedEntityId of relatedEntitiesIds) {
+      const entityType &#x3D;
+        Entity.extractTypeFromId(relatedEntityId) || schemaField.additional;
+      const relatedEntity &#x3D; await this.entityMapper
+        .load(entityType, relatedEntityId)
+        .catch(() &#x3D;&gt; undefined);
+
+      relatedEntitiesToStrings.push(relatedEntity?.toString() ?? &quot;&lt;not_found&gt;&quot;);
+    }
+
+    return relatedEntitiesToStrings;
   }
 }
 

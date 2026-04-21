@@ -284,13 +284,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/AttendanceModule.html" data-type="entity-link" >AttendanceModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-AttendanceModule-65767c13a56a0bb3c1406e8fd4b732f5c18e8d9f9b465482475163890eb49a40d379ad0e8013cdcfd3358e5c683719dc3825fad966337400c933613ca40a6991"' : 'data-bs-target="#xs-injectables-links-module-AttendanceModule-65767c13a56a0bb3c1406e8fd4b732f5c18e8d9f9b465482475163890eb49a40d379ad0e8013cdcfd3358e5c683719dc3825fad966337400c933613ca40a6991"' }>
+                                        'data-bs-target="#injectables-links-module-AttendanceModule-dc525f49188dd5439029549d1e3d8606dba47edc97c91ccb69c33efa608442bf0302b1b91f9ffa8ead6d636616dfab1ad0b5fcfee043dea093e8a86195c0ed61"' : 'data-bs-target="#xs-injectables-links-module-AttendanceModule-dc525f49188dd5439029549d1e3d8606dba47edc97c91ccb69c33efa608442bf0302b1b91f9ffa8ead6d636616dfab1ad0b5fcfee043dea093e8a86195c0ed61"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AttendanceModule-65767c13a56a0bb3c1406e8fd4b732f5c18e8d9f9b465482475163890eb49a40d379ad0e8013cdcfd3358e5c683719dc3825fad966337400c933613ca40a6991"' :
-                                        'id="xs-injectables-links-module-AttendanceModule-65767c13a56a0bb3c1406e8fd4b732f5c18e8d9f9b465482475163890eb49a40d379ad0e8013cdcfd3358e5c683719dc3825fad966337400c933613ca40a6991"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-AttendanceModule-dc525f49188dd5439029549d1e3d8606dba47edc97c91ccb69c33efa608442bf0302b1b91f9ffa8ead6d636616dfab1ad0b5fcfee043dea093e8a86195c0ed61"' :
+                                        'id="xs-injectables-links-module-AttendanceModule-dc525f49188dd5439029549d1e3d8606dba47edc97c91ccb69c33efa608442bf0302b1b91f9ffa8ead6d636616dfab1ad0b5fcfee043dea093e8a86195c0ed61"' }>
                                         <li class="link">
                                             <a href="injectables/AttendanceDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >AttendanceDatatype</a>
                                         </li>
@@ -1856,6 +1856,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/AssistantService.html" data-type="entity-link" >AssistantService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/AttendanceExportService.html" data-type="entity-link" >AttendanceExportService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/AttendanceService.html" data-type="entity-link" >AttendanceService</a>
                                 </li>
                                 <li class="link">
@@ -2418,6 +2421,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ExportColumnConfig.html" data-type="entity-link" >ExportColumnConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ExportColumnMapping.html" data-type="entity-link" >ExportColumnMapping</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ExportColumnResolver.html" data-type="entity-link" >ExportColumnResolver</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ExportingReport.html" data-type="entity-link" >ExportingReport</a>
