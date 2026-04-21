@@ -151,7 +151,7 @@ export class MultiTabDetectionService implements OnDestroy {
     this._isMultipleTabsOpen = hasOtherOpenTabs;
     this.isMultipleTabsOpen$.next(hasOtherOpenTabs);
     if (hasOtherOpenTabs) {
-      void this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
+      this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
     }
   }
 
