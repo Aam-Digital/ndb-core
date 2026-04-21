@@ -140,6 +140,8 @@ export class ConfigurableEnumCleanupService {
   private getEmbeddedSchema(
     schemaField: EntitySchemaField,
   ): EntitySchema | undefined {
+    // TODO: Extract shared embedded-schema expansion with SchemaEmbedDatatype.getEffectiveSchema()
+    // once a second caller appears outside config cleanup.
     if (!schemaField?.dataType) {
       return;
     }
