@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { ConfigurableEnumCleanupComponent } from "#src/app/core/admin/config-cleanup/configurable-enum-cleanup.component";
+import { ConfigurableEnumCleanupComponent } from "./configurable-enum-cleanup/configurable-enum-cleanup.component";
 
 @Component({
   selector: "app-admin-config-cleanup",

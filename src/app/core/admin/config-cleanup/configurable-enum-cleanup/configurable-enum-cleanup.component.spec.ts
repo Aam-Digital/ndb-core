@@ -2,12 +2,12 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ConfigurableEnumCleanupComponent } from "./configurable-enum-cleanup.component";
 import {
   ConfigCleanupAnalysis,
-  ConfigCleanupService,
+  ConfigurableEnumCleanupService,
   ConfigurableEnumUsageSummary,
-} from "./config-cleanup.service";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+} from "./configurable-enum-cleanup.service";
+import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
+import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ConfigurableEnumCleanupComponent", () => {
@@ -57,7 +57,10 @@ describe("ConfigurableEnumCleanupComponent", () => {
     await TestBed.configureTestingModule({
       imports: [ConfigurableEnumCleanupComponent, FontAwesomeTestingModule],
       providers: [
-        { provide: ConfigCleanupService, useValue: configCleanupServiceMock },
+        {
+          provide: ConfigurableEnumCleanupService,
+          useValue: configCleanupServiceMock,
+        },
         {
           provide: ConfirmationDialogService,
           useValue: confirmationDialogMock,
@@ -90,5 +93,19 @@ describe("ConfigurableEnumCleanupComponent", () => {
       configCleanupServiceMock.deleteUnusedConfigurableEnum,
     ).toHaveBeenCalledWith(unusedEnumEntity);
     expect(snackBarMock.open).toHaveBeenCalled();
+  });
+
+  it("should show error feedback when enum deletion fails", async () => {
+    configCleanupServiceMock.deleteUnusedConfigurableEnum.mockRejectedValueOnce(
+      new Error("DB failure"),
+    );
+
+    await component["deleteEnum"](unusedEnumSummary);
+
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      "Could not delete enum. Please try again.",
+      undefined,
+      { duration: 5000 },
+    );
   });
 });

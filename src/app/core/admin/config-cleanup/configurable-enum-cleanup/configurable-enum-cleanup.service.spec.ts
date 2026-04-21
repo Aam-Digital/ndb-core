@@ -1,11 +1,11 @@
 import { TestBed } from "@angular/core/testing";
-import { ConfigCleanupService } from "./config-cleanup.service";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { Entity } from "../../entity/model/entity";
-import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntitySchema } from "../../entity/schema/entity-schema";
+import { ConfigurableEnumCleanupService } from "./configurable-enum-cleanup.service";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { Entity } from "../../../entity/model/entity";
+import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { EntitySchema } from "../../../entity/schema/entity-schema";
 
 class AttendanceItemMock {
   static readonly schema: EntitySchema = new Map([
@@ -44,8 +44,8 @@ class Event extends Entity {
   ]);
 }
 
-describe("ConfigCleanupService", () => {
-  let service: ConfigCleanupService;
+describe("ConfigurableEnumCleanupService", () => {
+  let service: ConfigurableEnumCleanupService;
   let mockEntityMapper: {
     loadType: ReturnType<typeof vi.fn>;
     remove: ReturnType<typeof vi.fn>;
@@ -81,7 +81,7 @@ describe("ConfigCleanupService", () => {
       ],
     }).compileComponents();
 
-    service = TestBed.inject(ConfigCleanupService);
+    service = TestBed.inject(ConfigurableEnumCleanupService);
   });
 
   it("should detect unused configurable enums from runtime schema", async () => {

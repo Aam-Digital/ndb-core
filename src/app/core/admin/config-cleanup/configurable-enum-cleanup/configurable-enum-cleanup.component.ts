@@ -13,13 +13,13 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import {
   ConfigCleanupAnalysis,
-  ConfigCleanupService,
+  ConfigurableEnumCleanupService,
   ConfigurableEnumUsageSummary,
-} from "./config-cleanup.service";
+} from "./configurable-enum-cleanup.service";
 
 @Component({
   selector: "app-configurable-enum-cleanup",
@@ -36,7 +36,9 @@ import {
   ],
 })
 export class ConfigurableEnumCleanupComponent implements OnInit {
-  private readonly configCleanupService = inject(ConfigCleanupService);
+  private readonly configCleanupService = inject(
+    ConfigurableEnumCleanupService,
+  );
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly snackBar = inject(MatSnackBar);
 

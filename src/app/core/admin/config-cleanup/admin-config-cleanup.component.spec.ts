@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { AdminConfigCleanupComponent } from "./admin-config-cleanup.component";
-import { ConfigurableEnumCleanupComponent } from "./configurable-enum-cleanup.component";
+import { ConfigurableEnumCleanupComponent } from "./configurable-enum-cleanup/configurable-enum-cleanup.component";
 
 @Component({
   selector: "app-configurable-enum-cleanup",

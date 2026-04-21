@@ -1,11 +1,11 @@
 import { Injectable, inject } from "@angular/core";
-import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
-import { Entity } from "../../entity/model/entity";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntitySchema } from "../../entity/schema/entity-schema";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
+import { Entity } from "../../../entity/model/entity";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { EntitySchema } from "../../../entity/schema/entity-schema";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
 interface ConfigurableEnumUsage {
   entityType: string;
@@ -23,8 +23,11 @@ export interface ConfigCleanupAnalysis {
   unusedEnums: ConfigurableEnumUsageSummary[];
 }
 
+/**
+ * Analyzes configurable enums in the active runtime schema and removes enums that are unused.
+ */
 @Injectable({ providedIn: "root" })
-export class ConfigCleanupService {
+export class ConfigurableEnumCleanupService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entitySchemaService = inject(EntitySchemaService);
