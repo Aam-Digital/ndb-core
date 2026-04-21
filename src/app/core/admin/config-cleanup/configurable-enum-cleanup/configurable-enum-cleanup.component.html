@@ -67,6 +67,19 @@
                 <div matListItemTitle>
                   {{ enumLabel(enumSummary) }}
                 </div>
+                <div matListItemMeta>
+                  <button
+                    mat-icon-button
+                    color="accent"
+                    (click)="openEnumOptions(enumSummary.enumEntity, $event)"
+                    i18n-aria-label
+                    aria-label="Configure enum options"
+                    i18n-matTooltip
+                    matTooltip="Configure options"
+                  >
+                    <fa-icon icon="wrench"></fa-icon>
+                  </button>
+                </div>
               </mat-list-item>
             }
           </mat-list>

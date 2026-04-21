@@ -12,9 +12,12 @@ import { MatListModule } from "@angular/material/list";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
+import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import {
   ConfigCleanupAnalysis,
   ConfigurableEnumCleanupService,
@@ -41,6 +44,7 @@ export class ConfigurableEnumCleanupComponent implements OnInit {
   );
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | undefined>(undefined);
@@ -90,6 +94,11 @@ export class ConfigurableEnumCleanupComponent implements OnInit {
 
   protected enumLabel(enumSummary: ConfigurableEnumUsageSummary): string {
     return this.formatEnumIdAsLabel(enumSummary.enumEntity.getId(true));
+  }
+
+  protected openEnumOptions(enumEntity: ConfigurableEnum, event: Event) {
+    event.stopPropagation();
+    this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity });
   }
 
   private formatEnumIdAsLabel(enumId: string): string {
