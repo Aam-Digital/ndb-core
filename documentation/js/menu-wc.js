@@ -746,6 +746,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/AdminAiAgentComponent.html" data-type="entity-link" >AdminAiAgentComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/AdminConfigCleanupComponent.html" data-type="entity-link" >AdminConfigCleanupComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/AdminDashboardComponent.html" data-type="entity-link" >AdminDashboardComponent</a>
                             </li>
                             <li class="link">
@@ -930,6 +933,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/ConditionsEditorComponent.html" data-type="entity-link" >ConditionsEditorComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/ConfigurableEnumCleanupComponent.html" data-type="entity-link" >ConfigurableEnumCleanupComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/ConfigureEntityFieldValidatorComponent.html" data-type="entity-link" >ConfigureEntityFieldValidatorComponent</a>
@@ -1877,6 +1883,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/ComingSoonDialogService.html" data-type="entity-link" >ComingSoonDialogService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/ConfigurableEnumCleanupService.html" data-type="entity-link" >ConfigurableEnumCleanupService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/ConfirmationDialogService.html" data-type="entity-link" >ConfirmationDialogService</a>
                                 </li>
                                 <li class="link">
@@ -2261,7 +2270,16 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ColumnMapping.html" data-type="entity-link" >ColumnMapping</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/ConfigCleanupAnalysis.html" data-type="entity-link" >ConfigCleanupAnalysis</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/ConfigurableEnumFilterConfig.html" data-type="entity-link" >ConfigurableEnumFilterConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ConfigurableEnumUsage.html" data-type="entity-link" >ConfigurableEnumUsage</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ConfigurableEnumUsageSummary.html" data-type="entity-link" >ConfigurableEnumUsageSummary</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ConfigurableEnumValue.html" data-type="entity-link" >ConfigurableEnumValue</a>

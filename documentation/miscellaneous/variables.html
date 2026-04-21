@@ -1406,6 +1406,14 @@ to avoid breaking note details with a default config from AdminModule</p>
       permittedUserRoles: [&quot;admin_app&quot;],
     },
   },
+  {
+    path: &quot;config-cleanup&quot;,
+    component: AdminConfigCleanupComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: [&quot;admin_app&quot;],
+    },
+  },
 ]</code>
                     </td>
                 </tr>
