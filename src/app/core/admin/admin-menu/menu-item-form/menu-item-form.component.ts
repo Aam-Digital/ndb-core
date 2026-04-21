@@ -1,12 +1,12 @@
 import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    inject,
+    signal,
+    ChangeDetectionStrategy,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -18,8 +18,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconButton } from "@angular/material/button";
 import {
-  MatSlideToggleChange,
-  MatSlideToggleModule,
+    MatSlideToggleChange,
+    MatSlideToggleModule,
 } from "@angular/material/slide-toggle";
 import { IconComponent } from "#src/app/core/common-components/icon-input/icon-input.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -44,7 +44,6 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 })
 export class MenuItemFormComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() item!: MenuItem;
   @Input() hideLabel = false;
@@ -61,12 +60,12 @@ export class MenuItemFormComponent implements OnInit {
   /**
    * If true: show free-text input. If false: show dropdown with linkOptions.
    */
-  customLinkMode = false;
+  customLinkMode = signal(false);
 
   /**
    * Whether this item is intentionally configured as a parent section without a link.
    */
-  noLinkMode = false;
+  noLinkMode = signal(false);
 
   linkErrorStateMatcher: ErrorStateMatcher = {
     isErrorState: (_control: FormControl | null): boolean => {
@@ -77,18 +76,18 @@ export class MenuItemFormComponent implements OnInit {
   ngOnInit() {
     // For existing manual items with no link, default the toggle to ON.
     if (!this.isNew && !this.item?.link?.trim()) {
-      this.noLinkMode = true;
+      this.noLinkMode.set(true);
     }
 
     // If no options are available, always start in custom link mode
     if (!this.linkOptions || this.linkOptions.length === 0) {
-      this.customLinkMode = true;
+      this.customLinkMode.set(true);
       return;
     }
 
     // If there's a link value but it's not in the available options, switch to custom mode
     if (this.item?.link && !this.isLinkInOptions(this.item.link)) {
-      this.customLinkMode = true;
+      this.customLinkMode.set(true);
     }
   }
 
@@ -101,12 +100,11 @@ export class MenuItemFormComponent implements OnInit {
   }
 
   toggleCustomLinkMode() {
-    this.customLinkMode = !this.customLinkMode;
-    this.cdr.markForCheck();
+    this.customLinkMode.update((v) => !v);
   }
 
   isNoLinkModeEnabled(): boolean {
-    return this.noLinkMode;
+    return this.noLinkMode();
   }
 
   async toggleNoLinkMode(event: MatSlideToggleChange) {
@@ -119,7 +117,6 @@ export class MenuItemFormComponent implements OnInit {
 
       if (!confirmed) {
         event.source.checked = false;
-        this.cdr.markForCheck();
         return;
       }
 
@@ -127,7 +124,6 @@ export class MenuItemFormComponent implements OnInit {
       this.onChange();
     }
 
-    this.noLinkMode = event.checked;
-    this.cdr.markForCheck();
+    this.noLinkMode.set(event.checked);
   }
 }

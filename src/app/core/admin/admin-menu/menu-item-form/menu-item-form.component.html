@@ -8,19 +8,19 @@
 
   @if (!hideLink) {
     <mat-slide-toggle
-      [checked]="noLinkMode"
+      [checked]="noLinkMode()"
       (change)="toggleNoLinkMode($event)"
       i18n
       >Add as parent section without link</mat-slide-toggle
     >
   }
 
-  @if (!hideLink && !noLinkMode) {
+  @if (!hideLink && !noLinkMode()) {
     <div class="flex-row align-center gap-small">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label i18n>Link</mat-label>
 
-        @if (linkOptions?.length && !customLinkMode) {
+        @if (linkOptions?.length && !customLinkMode()) {
           <mat-select
             [(ngModel)]="item.link"
             (ngModelChange)="onChange()"
@@ -43,7 +43,7 @@
 
         <mat-error i18n>This field is required</mat-error>
 
-        @if (customLinkMode) {
+        @if (customLinkMode()) {
           <mat-hint align="start" i18n>
             You can define a link manually. To create a new link, open Aam
             Digital in a new tab, go to the desired record type, copy everything
@@ -53,7 +53,7 @@
         }
       </mat-form-field>
 
-      @if (customLinkMode) {
+      @if (customLinkMode()) {
         <button
           mat-icon-button
           (click)="toggleCustomLinkMode()"

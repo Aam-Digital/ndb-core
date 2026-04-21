@@ -1,11 +1,11 @@
 import {
   Component,
-  EventEmitter,
   Input,
-  Output,
+  computed,
   inject,
+  model,
+  output,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
 } from "@angular/core";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
@@ -20,7 +20,6 @@ import { AdminMenuItemDetailsComponent } from "../admin-menu-item-details/admin-
 import {
   hasNoLinkAndNoSubItems,
   MenuItemForAdminUi,
-  MenuItemForAdminUiNew,
 } from "../menu-item-for-admin-ui";
 import { MatNavList } from "@angular/material/list";
 import { MatIconButton } from "@angular/material/button";
@@ -53,41 +52,28 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 export class AdminMenuItemComponent {
   private readonly dialog = inject(MatDialog);
   private readonly menuService = inject(MenuService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() set item(value: MenuItemForAdminUi | MenuItemForAdminUiNew) {
-    if (value instanceof MenuItemForAdminUiNew) {
-      this._item = undefined;
-      this.itemToDisplay = undefined;
-      this.editMenuItem(value);
-      this.cdr.markForCheck();
-      return;
+  item = model.required<MenuItemForAdminUi>();
+
+  itemToDisplay = computed<MenuItem>(() => {
+    const item = this.item();
+    if (!item) {
+      return undefined;
     }
-
-    this._item = value;
-    const plainItem = this.menuService.generateMenuItemForEntityType(this.item);
+    const plainItem = this.menuService.generateMenuItemForEntityType(item);
     delete plainItem.link;
     delete plainItem.subMenu;
-    this.itemToDisplay = plainItem;
-    this.cdr.markForCheck();
-  }
-
-  get item(): MenuItemForAdminUi {
-    return this._item;
-  }
+    return plainItem;
+  });
 
   /**
    * True when the item has no link and no sub-items,
    * meaning clicking it will have no visible effect.
    */
-  get hasNoLinkWarning(): boolean {
-    return this._item ? hasNoLinkAndNoSubItems(this._item) : false;
-  }
-
-  private _item: MenuItemForAdminUi;
-  itemToDisplay: MenuItem;
-
-  @Output() itemChange = new EventEmitter<MenuItemForAdminUi>();
+  hasNoLinkWarning = computed(() => {
+    const item = this.item();
+    return item ? hasNoLinkAndNoSubItems(item) : false;
+  });
 
   @Input() connectedTo: string[];
 
@@ -97,25 +83,23 @@ export class AdminMenuItemComponent {
   /** Whether sub-menus are allowed for this item type */
   @Input() allowSubMenu: boolean = true;
 
-  @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
-  @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
+  itemDrop = output<CdkDragDrop<MenuItemForAdminUi[]>>();
+  deleteItem = output<MenuItemForAdminUi>();
 
-  removeSubItem(item: MenuItemForAdminUi): void {
-    this.item = {
-      ...this.item,
-      subMenu: [...this.item.subMenu.filter((i) => i !== item)],
-    };
-    this.itemChange.emit(this.item);
+  removeSubItem(subItem: MenuItemForAdminUi): void {
+    this.item.set({
+      ...this.item(),
+      subMenu: [...this.item().subMenu.filter((i) => i !== subItem)],
+    });
   }
 
   onSubItemChange(updatedSubItem: MenuItemForAdminUi) {
-    this.item = {
-      ...this.item,
-      subMenu: this.item.subMenu.map((sub) =>
+    this.item.set({
+      ...this.item(),
+      subMenu: this.item().subMenu.map((sub) =>
         sub.uniqueId === updatedSubItem.uniqueId ? updatedSubItem : sub,
       ),
-    };
-    this.itemChange.emit(this.item);
+    });
   }
 
   onDelete(item: MenuItemForAdminUi): void {
@@ -126,7 +110,7 @@ export class AdminMenuItemComponent {
     this.itemDrop.emit(event);
   }
 
-  async editMenuItem(item: MenuItemForAdminUi | MenuItemForAdminUiNew) {
+  async editMenuItem(item: MenuItemForAdminUi) {
     const updatedItem = await this.openEditDialog(item);
     if (updatedItem) {
       const mergedItem = { ...item, ...updatedItem };
@@ -139,20 +123,17 @@ export class AdminMenuItemComponent {
         delete mergedItem.link;
       }
 
-      this.item = mergedItem;
-      this.itemChange.emit(this.item);
-      this.cdr.markForCheck();
+      this.item.set(mergedItem);
     }
   }
 
   private async openEditDialog(
-    item: MenuItemForAdminUi | MenuItemForAdminUiNew,
+    item: MenuItemForAdminUi,
   ): Promise<MenuItemForAdminUi | undefined> {
     const dialogRef = this.dialog.open(AdminMenuItemDetailsComponent, {
       width: "600px",
       data: {
         item: item ? { ...item } : {},
-        isNew: (item as MenuItemForAdminUiNew).isNew,
         allowEntityLinks: this.allowEntityLinks,
       },
     });

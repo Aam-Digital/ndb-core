@@ -1,11 +1,9 @@
 import {
   Component,
-  EventEmitter,
   Input,
-  Output,
   inject,
+  model,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
 } from "@angular/core";
 import {
   CdkDragDrop,
@@ -40,9 +38,8 @@ import { IconButtonComponent } from "../../common-components/icon-button/icon-bu
 })
 export class MenuItemListEditorComponent {
   private readonly dialog = inject(MatDialog);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() items: MenuItemForAdminUi[] = [];
+  items = model<MenuItemForAdminUi[]>([]);
   @Input() showAddButton: boolean = true;
 
   /** Unique identifier for the drag-drop container */
@@ -53,14 +50,12 @@ export class MenuItemListEditorComponent {
 
   @Input() allowSubMenu: boolean = true;
 
-  @Output() itemsChange = new EventEmitter<MenuItemForAdminUi[]>();
-
   public get connectedDropLists(): string[] {
     if (!this.allowSubMenu) {
       // For shortcuts, only allow drops in the main container
       return [this.containerId];
     }
-    return [this.containerId, ...this.getIdsRecursive(this.items)].reverse();
+    return [this.containerId, ...this.getIdsRecursive(this.items())].reverse();
   }
 
   private getIdsRecursive(items: MenuItemForAdminUi[]): string[] {
@@ -103,12 +98,10 @@ export class MenuItemListEditorComponent {
         if (movedItem && !movedItem.subMenu) {
           movedItem.subMenu = [];
         }
-
-        if (event.container.id === this.containerId) {
-          this.items = [...this.items];
-        }
       }
-      this.emitItemsChange();
+      // Deep clone to ensure new references for all items (including nested subMenus),
+      // so child model() signals detect the mutation done by transferArrayItem/moveItemInArray.
+      this.items.set(structuredClone(this.items()));
     } catch (error) {
       Logging.debug("Drag drop error:", error);
     }
@@ -135,24 +128,21 @@ export class MenuItemListEditorComponent {
               ? MenuItemListEditorComponent.addUniqueIds(result.subMenu)
               : [],
         };
-        this.items = [normalizedItem, ...this.items];
-        this.emitItemsChange();
+        this.items.update((curr) => [normalizedItem, ...curr]);
       }
     });
   }
 
   removeItem(item: MenuItemForAdminUi): void {
-    this.items = this.items.filter((i) => i !== item);
-    this.emitItemsChange();
+    this.items.update((curr) => curr.filter((i) => i !== item));
   }
 
   onItemChange(newItem: MenuItemForAdminUi, index: number) {
-    this.items = [
-      ...this.items.slice(0, index),
+    this.items.update((curr) => [
+      ...curr.slice(0, index),
       newItem,
-      ...this.items.slice(index + 1),
-    ];
-    this.emitItemsChange();
+      ...curr.slice(index + 1),
+    ]);
   }
 
   /**
@@ -234,10 +224,5 @@ export class MenuItemListEditorComponent {
     return items
       .map((item) => MenuItemListEditorComponent.toPlainMenuItem(item, opts))
       .filter((item): item is MenuItem => item !== null);
-  }
-
-  private emitItemsChange() {
-    this.itemsChange.emit([...this.items]);
-    this.cdr.markForCheck();
   }
 }
