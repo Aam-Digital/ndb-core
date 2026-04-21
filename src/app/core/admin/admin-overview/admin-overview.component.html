@@ -179,6 +179,14 @@
     </mat-expansion-panel-header>
     <mat-nav-list class="section-nav-list">
       <mat-list-item
+        [routerLink]="['/admin/config-cleanup']"
+        matTooltip="Analyze and clean up active configuration issues, like unused dropdown options."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
+        <span matListItemTitle i18n>Configuration Cleanup</span>
+      </mat-list-item>
+      <mat-list-item
         (click)="editConfig()"
         button
         matTooltip="Open the raw configuration file to make advanced technical adjustments."
