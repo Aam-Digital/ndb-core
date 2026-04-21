@@ -19,12 +19,15 @@ import {
 } from "../ui/dialog-view/dialog-view.component";
 import { EntityConfigService } from "../entity/entity-config.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { Router } from "@angular/router";
+import { PREFIX_VIEW_CONFIG } from "../config/dynamic-routing/view-config.interface";
 
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
   private readonly dialog = inject(MatDialog);
   private readonly schemaService = inject(EntitySchemaService);
   private readonly entityConfigService = inject(EntityConfigService);
+  private readonly router = inject(Router);
 
   static dialogSettings: MatDialogConfig = {
     width: "90%",
@@ -37,6 +40,15 @@ export class FormDialogService {
       hasDetailsViewConfig = !!this.entityConfigService.getDetailsViewConfig(
         entity.getConstructor(),
       );
+      if (!hasDetailsViewConfig) {
+        // check router config for code-defined view configs (not stored in DB config for e.g. Public forms)
+        const detailsRoute = EntityConfigService.getDetailsViewId(
+          entity.getConstructor(),
+        ).substring(PREFIX_VIEW_CONFIG.length);
+        hasDetailsViewConfig = this.router.config.some(
+          (route) => route.path === detailsRoute,
+        );
+      }
     } catch {
       // If the config has not been loaded yet (e.g. during early app initialization),
       // fall back to the form popup to avoid a runtime crash.

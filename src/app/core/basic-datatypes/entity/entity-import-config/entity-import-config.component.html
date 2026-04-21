@@ -1,11 +1,21 @@
 <mat-dialog-content>
+  @if (showInheritanceImportHint) {
+    <app-hint-box type="warning" class="margin-bottom-regular">
+      <strong i18n>⚠️ Manual update required</strong>
+      <div i18n>
+        Selected values will be imported as is. Inherited values need to be
+        updated manually.
+      </div>
+    </app-hint-box>
+  }
+
   <h3 i18n="Label for property selection">
     Select matching {{ entity.label }} property
   </h3>
 
   <mat-form-field>
     <mat-select [formControl]="propertyForm">
-      @for (property of availableProperties; track property) {
+      @for (property of availableProperties; track property.property) {
         <mat-option [value]="property.property"
           >{{ property.label }}
         </mat-option>

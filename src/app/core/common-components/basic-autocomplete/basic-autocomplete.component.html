@@ -23,7 +23,7 @@
     />
     <mat-chip-grid #chipList>
       <ng-container>
-        @for (item of _selectedOptions; track item) {
+        @for (item of _selectedOptions; track item.asString) {
           <mat-chip-row
             [editable]="!_disabled"
             class="chip"
@@ -89,55 +89,75 @@ Autocomplete
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    <cdk-virtual-scroll-viewport
-      [style.height.px]="viewportHeight()"
-      [itemSize]="48"
-      minBufferPx="200"
-      maxBufferPx="500"
-    >
-      <mat-option
-        [value]="item"
-        cdkDrag
-        *cdkVirtualFor="
-          let item of autocompleteOptions();
-          trackBy: trackByOptionValueFn
-        "
+    @if (!displayFullLengthOptionLabel()) {
+      <cdk-virtual-scroll-viewport
+        [style.height.px]="viewportHeight()"
+        [itemSize]="48"
+        minBufferPx="200"
+        maxBufferPx="500"
       >
-        <div class="flex-row disable-autocomplete-active-color align-center">
-          @if (reorder) {
-            <div>
-              <fa-icon
-                icon="grip-vertical"
-                size="sm"
-                class="drag-handle"
-              ></fa-icon>
-            </div>
-          }
-          @if (multi) {
-            <mat-checkbox [checked]="item.selected"></mat-checkbox>
-          }
-          @if (!templateRef) {
-            <span
-              class="text-truncate"
-              [matTooltip]="item.asString"
-              matTooltipPosition="above"
-              [class.not-defined-label]="item.isEmpty"
-              [class.invalid-label]="item.isInvalid"
-            >
-              {{ item.asString }}
-            </span>
-          } @else {
-            <ng-template
-              class="item-option"
-              [ngTemplateOutlet]="templateRef"
-              [ngTemplateOutletContext]="{ $implicit: item.initial }"
-            ></ng-template>
-          }
-        </div>
-      </mat-option>
-    </cdk-virtual-scroll-viewport>
+        <mat-option
+          [value]="item"
+          cdkDrag
+          *cdkVirtualFor="
+            let item of autocompleteOptions();
+            trackBy: trackByOptionValueFn
+          "
+        >
+          <ng-container
+            [ngTemplateOutlet]="optionContent"
+            [ngTemplateOutletContext]="{ $implicit: item, truncate: true }"
+          ></ng-container>
+        </mat-option>
+      </cdk-virtual-scroll-viewport>
+    } @else {
+      @for (item of autocompleteOptions(); track item.asValue) {
+        <mat-option [value]="item" class="option-with-wrap" cdkDrag>
+          <ng-container
+            [ngTemplateOutlet]="optionContent"
+            [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"
+          ></ng-container>
+        </mat-option>
+      }
+    }
   </div>
 
+  <ng-template #optionContent let-item let-truncate="truncate">
+    <div
+      class="option-content flex-row disable-autocomplete-active-color align-center"
+    >
+      @if (reorder) {
+        <div>
+          <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>
+        </div>
+      }
+      @if (multi) {
+        <mat-checkbox [checked]="item.selected"></mat-checkbox>
+      }
+      @if (!templateRef) {
+        <span
+          class="option-label"
+          [class.text-truncate]="truncate"
+          [class.text-wrap]="!truncate"
+          [matTooltip]="item.asString"
+          matTooltipPosition="above"
+          [class.not-defined-label]="item.isEmpty"
+          [class.invalid-label]="item.isInvalid"
+        >
+          {{ item.asString }}
+        </span>
+      } @else {
+        <div class="option-label item-option">
+          <ng-template
+            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutletContext]="{ $implicit: item.initial }"
+          ></ng-template>
+        </div>
+      }
+    </div>
+  </ng-template>
+
+  <!-- Create new option -->
   @if (showAddOption && inputElement.value) {
     @for (option of availableCreateOptions; track $index) {
       <mat-option

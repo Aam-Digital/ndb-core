@@ -6,7 +6,7 @@
 </h1>
 <app-dialog-close matDialogClose></app-dialog-close>
 <mat-dialog-content>
-  @for (row of entityProperties; track row) {
+  @for (row of entityProperties; track row.entity.ENTITY_TYPE) {
     <mat-form-field style="width: 100%">
       <mat-label>{{ row.entity.label }}</mat-label>
       <mat-select
@@ -14,7 +14,7 @@
         [disabled]="row.properties.length < 2"
         multiple
       >
-        @for (prop of row.properties; track prop) {
+        @for (prop of row.properties; track prop.name) {
           <mat-option [value]="prop.name">{{ prop.label }}</mat-option>
         }
       </mat-select>

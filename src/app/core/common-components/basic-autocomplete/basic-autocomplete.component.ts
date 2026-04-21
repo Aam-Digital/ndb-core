@@ -6,6 +6,7 @@ import {
   DestroyRef,
   ElementRef,
   EventEmitter,
+  input,
   Input,
   inject,
   OnChanges,
@@ -222,6 +223,12 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() maxOptionsToDisplay: number = 100;
   hasMoreOptions = false;
 
+  /**
+   * Whether dropdown option labels should be shown in full length.
+   * Set to false to truncate labels with ellipsis.
+   */
+  displayFullLengthOptionLabel = input(false);
+
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
 
@@ -302,7 +309,7 @@ export class BasicAutocompleteComponent<O, V = O>
     this.autocompleteSuggestedOptions.subscribe((options) => {
       this.autocompleteOptions.set(options);
       setTimeout(() => {
-        this.virtualScrollViewport.checkViewportSize();
+        this.virtualScrollViewport?.checkViewportSize();
       });
     });
     // Subscribe to the valueChanges observable to print the input value
@@ -455,7 +462,7 @@ export class BasicAutocompleteComponent<O, V = O>
     this.isInSearchMode.set(true);
 
     // update virtual scroll as the container remains empty until the user scrolls initially
-    setTimeout(() => this.virtualScrollViewport.checkViewportSize());
+    setTimeout(() => this.virtualScrollViewport?.checkViewportSize());
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {

@@ -23,6 +23,7 @@ jobs:
     secrets: inherit
     with:
       skip-e2e: ${{ github.event.pull_request.draft }}
+      is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
   build:
     uses: ./.github/workflows/_build.yaml
@@ -30,9 +31,11 @@ jobs:
     with:
       build_name: pr-${{ github.event.number }}
       docker_tags: type=ref,event=pr
+      skip-image: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
   deploy:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
     needs:
       - build
     steps:

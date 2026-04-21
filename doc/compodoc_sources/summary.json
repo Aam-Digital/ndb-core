@@ -87,7 +87,7 @@
     "children": [
       {
         "title": "Development Processes",
-        "file": "how-to-guides/contribute-code.md",
+        "file": "../../CONTRIBUTING.md",
         "children": [
           {
             "title": "Write Automated Unit Tests",
