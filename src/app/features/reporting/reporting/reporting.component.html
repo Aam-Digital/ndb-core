@@ -16,15 +16,15 @@
   </div>
 
   <mat-menu #contextMenu>
-    @if (currentReport) {
+    @if (currentReport()) {
       <button
         mat-menu-item
-        (click)="editReportConfig(currentReport)"
+        (click)="editReportConfig(currentReport())"
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="editConfig"
         *appDisabledEntityOperation="{
-          entity: currentReport,
+          entity: currentReport(),
           operation: 'create',
         }"
         matTooltip="Warning! This is still an experimental feature. Use with care."
@@ -68,22 +68,20 @@
 </app-view-actions>
 
 <app-select-report
-  [reports]="reports"
-  [loading]="isLoading"
-  [exportableData]="exportableData"
-  [dateRangeOptions]="dateRangeOptions"
+  [reports]="reports()"
+  [loading]="isLoading()"
+  [exportableData]="exportableData()"
+  [dateRangeOptions]="dateRangeOptions()"
   (calculateClick)="calculateResults($event.report, $event.from, $event.to)"
   (reportFiltersChange)="onReportCriteriaChange()"
-  (selectedReportChange)="
-    selectedReportChanged($event); onReportCriteriaChange()
-  "
+  (selectedReportChange)="currentReport.set($event); onReportCriteriaChange()"
   class="view-section"
 ></app-select-report>
 
-@if (reportCalculation) {
+@if (reportCalculation()) {
   <div style="color: gray; padding: 10px">
     <span i18n>This report was calculated at:</span>
-    {{ localTime | customDate: "short" }} <br />
+    {{ localTime() | customDate: "short" }} <br />
     <span i18n
       >Click again on "Calculate" to re-calculate the report including any
       changes of records since then.</span
@@ -91,7 +89,7 @@
   </div>
 }
 
-@if (isError) {
+@if (isError()) {
   <div class="error-message">
     <h3 class="header" i18n>Something went wrong calculating the report</h3>
     <div class="content">
@@ -101,23 +99,25 @@
       </p>
       <p>Error details:</p>
       <code>
-        {{ errorDetails | json }}
+        {{ errorDetails() | json }}
       </code>
     </div>
   </div>
 }
 
-@if (data?.length > 0 && mode === "reporting") {
-  <app-report-row [rows]="data"></app-report-row>
+@if (data()?.length > 0 && mode() === "reporting") {
+  <app-report-row [rows]="data()"></app-report-row>
 }
 
 @if (
-  data?.length > 0 &&
-  (mode === "exporting" || (mode === "sql" && currentReport?.version !== 2))
+  data()?.length > 0 &&
+  (mode() === "exporting" ||
+   
+    (mode() === "sql" && currentReport()?.version !== 2))
 ) {
-  <app-object-table [objects]="data"></app-object-table>
+  <app-object-table [objects]="data()"></app-object-table>
 }
 
-@if (data?.length > 0 && mode === "sql" && currentReport?.version === 2) {
-  <app-sql-v2-table [reportData]="data"></app-sql-v2-table>
+@if (data()?.length > 0 && mode() === "sql" && currentReport()?.version === 2) {
+  <app-sql-v2-table [reportData]="data()"></app-sql-v2-table>
 }

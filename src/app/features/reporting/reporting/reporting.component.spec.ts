@@ -153,13 +153,13 @@ describe("ReportingComponent", () => {
   it("should call the reporting service with the aggregation config", async () => {
     vi.useFakeTimers();
     try {
-      expect(component.isLoading).toBeFalsy();
+      expect(component.isLoading()).toBeFalsy();
 
       component.calculateResults(testReport, new Date(), new Date());
 
-      expect(component.isLoading).toBe(true);
+      expect(component.isLoading()).toBe(true);
       await vi.advanceTimersByTimeAsync(0);
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
 
       expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
         testReport.aggregationDefinitions as Aggregation[],
@@ -185,7 +185,7 @@ describe("ReportingComponent", () => {
       component.calculateResults(testReport, new Date(), new Date());
 
       await vi.advanceTimersByTimeAsync(0);
-      expect(component.data).toEqual(results);
+      expect(component.data()).toEqual(results);
     } finally {
       vi.useRealTimers();
     }
@@ -269,7 +269,7 @@ describe("ReportingComponent", () => {
       component.calculateResults(testReport, new Date(), new Date());
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.exportableData).toEqual([
+      expect(component.exportableData()).toEqual([
         { label: "Total # of events", result: 3 },
         { label: `Total # of events (${coachingClass.label})`, result: 1 },
         { label: `Total # of events (${schoolClass.label})`, result: 2 },
@@ -300,8 +300,8 @@ describe("ReportingComponent", () => {
     expect(
       mockDataTransformationService.queryAndTransformData,
     ).toHaveBeenCalledWith([], expect.any(Date), expect.any(Date));
-    expect(component.data).toEqual(data);
-    expect(component.mode).toBe("exporting");
+    expect(component.data()).toEqual(data);
+    expect(component.mode()).toBe("exporting");
   });
 
   it("should use the sql report service when report has mode 'sql'", async () => {
@@ -338,7 +338,7 @@ describe("ReportingComponent", () => {
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
 
-    component.reportCalculation = validReportCalculation;
+    component.reportCalculation.set(validReportCalculation);
 
     mockSqlReportService.query.mockReturnValue(
       Promise.resolve(validReportDataResponse),
@@ -379,9 +379,9 @@ describe("ReportingComponent", () => {
     );
 
     // Then
-    expect(component.isError).toBe(true);
-    expect(component.errorDetails).not.toBeNull();
-    expect(component.data).toEqual([]);
+    expect(component.isError()).toBe(true);
+    expect(component.errorDetails()).not.toBeNull();
+    expect(component.data()).toEqual([]);
   });
 
   it("should return raw data for version 1 SQL reports", () => {
@@ -390,12 +390,10 @@ describe("ReportingComponent", () => {
       { child_gender: "X", child_name: "child2" },
     ];
 
-    component.data = mockData;
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
-    component.currentReport = report;
 
-    const result = component["getSqlExportableData"]();
+    const result = component["getSqlExportableData"](mockData, report);
 
     expect(result).toEqual(mockData);
   });
