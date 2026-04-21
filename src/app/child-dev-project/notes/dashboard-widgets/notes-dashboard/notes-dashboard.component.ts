@@ -18,7 +18,6 @@ import { DecimalPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { Note } from "../../model/note";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 
 interface NotesDashboardConfig {
   entity?: string;
@@ -49,7 +48,6 @@ interface NotesDashboardConfig {
 export class NotesDashboardComponent {
   private childrenService = inject(ChildrenService);
   private entities = inject(EntityRegistry);
-  private entityMapper = inject(EntityMapperService);
 
   static getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
@@ -99,15 +97,8 @@ export class NotesDashboardComponent {
         void this.loadConcernedEntities(() => isCurrent);
       });
 
-      const subscription = this.entityMapper
-        .receiveUpdates(Note.ENTITY_TYPE)
-        .subscribe(() => {
-          void this.loadConcernedEntities(() => isCurrent);
-        });
-
       onCleanup(() => {
         isCurrent = false;
-        subscription.unsubscribe();
       });
     });
   }

@@ -10,11 +10,9 @@ import {
 } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import moment, { Moment } from "moment";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { AttendanceService } from "../attendance.service";
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
 import { AttendanceItem } from "../model/attendance-item";
@@ -42,7 +40,6 @@ interface AttendanceWeekRow {
 })
 export class AttendanceWeekDashboardComponent {
   private readonly attendanceService = inject(AttendanceService);
-  private readonly entityMapper = inject(EntityMapperService);
 
   /**
    * The offset from the default time period, which is the last complete week.
@@ -106,15 +103,8 @@ export class AttendanceWeekDashboardComponent {
         void this.loadAttendanceOfAbsentees(() => isCurrent);
       });
 
-      const subscription = this.entityMapper
-        .receiveUpdates(Note.ENTITY_TYPE)
-        .subscribe(() => {
-          void this.loadAttendanceOfAbsentees(() => isCurrent);
-        });
-
       onCleanup(() => {
         isCurrent = false;
-        subscription.unsubscribe();
       });
     });
   }
