@@ -1380,5 +1380,7 @@
   "2375212385868963913": "Are you sure you want to delete the unused enum \"{$PH}\"?",
   "5739101854121137421": "Enum \"{$PH}\" deleted successfully.",
   "5109668206135094036": "Enum is now used in schema and cannot be deleted.",
-  "3868778677107272306": "Could not delete enum. Please try again."
+  "3868778677107272306": "Could not delete enum. Please try again.",
+  "7933316575756020369": "Download {$PH} list",
+  "8218299390349021252": " {$INTERPOLATION} attendance "
 }
