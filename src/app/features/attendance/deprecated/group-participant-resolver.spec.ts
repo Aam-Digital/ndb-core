@@ -71,13 +71,14 @@ describe("GroupParticipantResolverService (deprecated)", () => {
       { timeout: 10_000 },
     );
 
-    // Keep exercising deprecated linkedGroups participant resolution in this test suite.
+    // The production check at attendance.service.ts:122 references the removed "EventNote" type,
+    // so groupBasedParticipants is never set from config. Force it here to exercise the deprecated path.
     service["groupBasedParticipants"] = true;
   });
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
-  it("gets events and loads additional participants from linked schools", async () => {
+  it("retrieves saved events with linked-school data via getEventsOnDate", async () => {
     const linkedSchoolId = "test_school";
     await createChildrenInSchool(linkedSchoolId, ["2", "3"]);
     const date = new Date();
@@ -95,6 +96,11 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     const actualEvents = await service.getEventsOnDate(date, date);
     expect(actualEvents).toHaveLength(1);
     expect(actualEvents[0].getId()).toBe(testNoteWithSchool.getId());
+
+    const note = actualEvents[0] as Note;
+    expect(note.childrenAttendance).toHaveLength(2);
+    expect(note.children).toEqual(expect.arrayContaining(["1", "2"]));
+    expect(note.schools).toEqual([linkedSchoolId]);
   });
 
   it("filterExcludedParticipants filters excluded participants from a list", () => {
