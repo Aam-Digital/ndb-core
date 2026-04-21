@@ -18,7 +18,7 @@
   [cdkDropListConnectedTo]="connectedDropLists"
   (cdkDropListDropped)="onDragDrop($event)"
 >
-  @for (item of items; track item; let i = $index) {
+  @for (item of items; track item.uniqueId; let i = $index) {
     <app-admin-menu-item
       [item]="item"
       [connectedTo]="connectedDropLists"

@@ -65,4 +65,11 @@ export const environment = {
 
   /** CDN URL for loading translation files at runtime. Empty string disables CDN loading. */
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
+
+  /**
+   * Whether users are allowed to choose between synced and online-only mode on the login page.
+   * When false, the toggle is hidden and the session_type configured here is enforced.
+   * Defaults to true (users can choose).
+   */
+  session_type_choice: true,
 };

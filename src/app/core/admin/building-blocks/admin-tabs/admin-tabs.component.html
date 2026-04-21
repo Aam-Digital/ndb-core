@@ -1,5 +1,5 @@
 <mat-tab-group [preserveContent]="true" #matTabGroup>
-  @for (tab of tabs; track tab; let tabIndex = $index) {
+  @for (tab of tabs; track $index; let tabIndex = $index) {
     <mat-tab>
       <ng-template mat-tab-label>
         <div

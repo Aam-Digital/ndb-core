@@ -9,7 +9,7 @@
 </div>
 
 <div mat-dialog-actions>
-  @for (button of data.buttons; track button) {
+  @for (button of data.buttons; track button.text) {
     <button
       mat-stroked-button
       (click)="button.click()"

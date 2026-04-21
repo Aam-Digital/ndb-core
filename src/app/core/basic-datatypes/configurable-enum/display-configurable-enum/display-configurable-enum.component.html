@@ -1,5 +1,5 @@
 <span class="bubble-list">
-  @for (val of iterableValue.slice(0, 3); track val) {
+  @for (val of iterableValue.slice(0, 3); track val.id) {
     <span
       class="colored-bubble"
       [style.background-color]="val.color"
