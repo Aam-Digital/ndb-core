@@ -21,7 +21,7 @@ import {
   WritableSignal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
+import { NgTemplateOutlet } from "@angular/common";
 import {
   MAT_FORM_FIELD,
   MatFormFieldControl,
@@ -71,9 +71,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   ReactiveFormsModule,
   MatInputModule,
   MatAutocompleteModule,
-  NgForOf,
   MatCheckboxModule,
-  NgIf,
   NgTemplateOutlet,
   MatChipInput,
   MatChipGrid,
@@ -180,12 +178,6 @@ export class BasicAutocompleteComponent<O, V = O>
    */
   @Input() maxOptionsToDisplay: number = 100;
   hasMoreOptions = signal(false);
-
-  /**
-   * Whether dropdown option labels should be shown in full length.
-   * Set to false to truncate labels with ellipsis.
-   */
-  displayFullLengthOptionLabel = input(false);
 
   /**
    * Whether dropdown option labels should be shown in full length.
