@@ -4,7 +4,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-attendance-day-block]",
+  selector: "app-attendance-day-block",
   templateUrl: "./attendance-day-block.component.html",
   styleUrls: ["./attendance-day-block.component.scss"],
   imports: [MatTooltipModule],
