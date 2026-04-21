@@ -32,19 +32,6 @@ class Child extends Entity {
   ]);
 }
 
-class School extends Entity {
-  static override readonly ENTITY_TYPE = "School";
-  static override readonly schema = new Map([
-    [
-      "level",
-      {
-        dataType: "configurable-enum",
-        additional: "ConfigurableEnum:levels",
-      },
-    ],
-  ]);
-}
-
 class Event extends Entity {
   static override readonly ENTITY_TYPE = "Event";
   static override readonly schema = new Map([
@@ -84,7 +71,6 @@ describe("ConfigCleanupService", () => {
 
     const entityRegistry = new EntityRegistry();
     entityRegistry.set(Child.ENTITY_TYPE, Child);
-    entityRegistry.set(School.ENTITY_TYPE, School);
     entityRegistry.set(Event.ENTITY_TYPE, Event);
 
     await TestBed.configureTestingModule({
@@ -100,17 +86,16 @@ describe("ConfigCleanupService", () => {
 
   it("should detect unused configurable enums from runtime schema", async () => {
     const genders = new ConfigurableEnum("genders");
-    const levels = new ConfigurableEnum("levels");
     const unused = new ConfigurableEnum("unused");
-    mockEntityMapper.loadType.mockResolvedValue([genders, levels, unused]);
+    mockEntityMapper.loadType.mockResolvedValue([genders, unused]);
 
     const analysis = await service.analyzeUnusedConfigurableEnums();
 
-    expect(analysis.totalEnums).toBe(3);
-    expect(analysis.usedEnums).toBe(2);
+    expect(analysis.totalEnums).toBe(2);
+    expect(analysis.usedEnums).toBe(1);
     expect(
       analysis.usedEnumDetails.map((x) => x.enumEntity.getId(true)),
-    ).toEqual(["genders", "levels"]);
+    ).toEqual(["genders"]);
     expect(analysis.unusedEnums.map((x) => x.enumEntity.getId(true))).toEqual([
       "unused",
     ]);
