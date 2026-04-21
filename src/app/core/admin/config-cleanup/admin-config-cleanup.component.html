@@ -1,0 +1,22 @@
+<section class="flex-column gap-small">
+  <app-view-title i18n>Configuration Cleanup</app-view-title>
+
+  <header class="margin-bottom-regular">
+    <p class="remove-margin-bottom" i18n>
+      Analyze your current system configuration and remove unused items safely.
+    </p>
+  </header>
+
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n>Dropdown Options</mat-panel-title>
+        <mat-panel-description i18n>
+          Check configs for dropdown option values and clean up unused settings.
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <app-configurable-enum-cleanup />
+    </mat-expansion-panel>
+  </mat-accordion>
+</section>
