@@ -5,6 +5,7 @@ import {
   OkButton,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
+import { BackupService } from "../../admin/backup/backup.service";
 
 /**
  * Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
@@ -27,7 +28,9 @@ export class PouchdbCorruptionRecoveryService {
         $localize`:multi-tab warning dialog title:Multiple Tabs Open`,
         $localize`:multi-tab warning dialog text:This action is blocked because the app is open in multiple tabs.
 
-Please close the other tabs and try again to avoid local database corruption.`,
+Please close the other tabs and try again to avoid local database corruption.
+
+We are working on improvements to allow this in the future.`,
         OkButton,
         false,
       );
@@ -48,8 +51,7 @@ Please close the other tabs and try again to avoid local database corruption.`,
         $localize`:local db corruption dialog text:The local database appears corrupted and saving is no longer reliable.
 
 This can happen after using multiple tabs in parallel.
-
-Please copy any unsaved text and click **Reset Application** to continue.`,
+We are working on improvements to allow this in the future.`,
         CustomYesNoButtons(
           $localize`:local db corruption dialog button reset:Reset Application`,
           $localize`:Confirmation dialog Cancel:Cancel`,
@@ -67,7 +69,7 @@ Please copy any unsaved text and click **Reset Application** to continue.`,
 
   private resetApplication() {
     localStorage.clear();
-    sessionStorage.setItem("__RESET_PENDING", "1");
+    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
     this.location.pathname = "";
   }
 }

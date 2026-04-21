@@ -2,8 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
-
-const RESET_PENDING_KEY = "__RESET_PENDING";
+import { BackupService } from "../../admin/backup/backup.service";
 
 describe("PouchdbCorruptionRecoveryService", () => {
   let service: PouchdbCorruptionRecoveryService;
@@ -26,12 +25,12 @@ describe("PouchdbCorruptionRecoveryService", () => {
 
     service = TestBed.inject(PouchdbCorruptionRecoveryService);
     localStorage.clear();
-    sessionStorage.removeItem(RESET_PENDING_KEY);
+    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
   });
 
   afterEach(() => {
     localStorage.clear();
-    sessionStorage.removeItem(RESET_PENDING_KEY);
+    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
   });
 
   it("should reset application state when user confirms", async () => {
@@ -41,7 +40,7 @@ describe("PouchdbCorruptionRecoveryService", () => {
     await service.promptResetApplicationDialog();
 
     expect(localStorage.getItem("foo")).toBeNull();
-    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBe("1");
+    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBe("1");
     expect(location.pathname).toBe("");
   });
 
@@ -53,7 +52,7 @@ describe("PouchdbCorruptionRecoveryService", () => {
 
     expect(confirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
     expect(localStorage.getItem("foo")).toBe("bar");
-    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBeNull();
+    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
   });
 
@@ -64,7 +63,7 @@ describe("PouchdbCorruptionRecoveryService", () => {
     await service.promptResetApplicationDialog();
 
     expect(localStorage.getItem("foo")).toBe("bar");
-    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBeNull();
+    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
   });
 });
