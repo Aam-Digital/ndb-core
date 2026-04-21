@@ -6,6 +6,8 @@
   margin: 4px;
   font-weight: 500;
   white-space: nowrap;
+  /* ensure same width for all percentages */
+    min-width: 5ch;
 }
 
 .attendance-tooltip {

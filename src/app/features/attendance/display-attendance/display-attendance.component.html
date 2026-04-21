@@ -1,9 +1,9 @@
 @if (items().length && percentage() !== undefined) {
   <span [appTemplateTooltip]="tooltip">
-    {{ items().length }} <span i18n>participants</span>
     <span class="mat-elevation-z1 attendance-block {{ warningClass() }}">
-      ({{ percentage() | percent: "1.0-0" }})
+      {{ percentage() | percent: "1.0-0" }}
     </span>
+    ({{ items().length }} <span i18n>participants</span>)
   </span>
 
   <ng-template #tooltip>
