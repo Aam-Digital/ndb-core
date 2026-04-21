@@ -17,7 +17,6 @@
 
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   inject,
   Signal,
@@ -102,30 +101,15 @@ export class UiComponent {
   private loginState = inject(LoginStateSubject);
   private configService = inject(ConfigService);
   private readonly sessionSubject = inject(SessionSubject);
-  private readonly cdr = inject(ChangeDetectorRef);
 
   /** display mode for the menu to make it responsive and usable on smaller screens */
-  get sideNavMode(): MatDrawerMode {
-    return this._sideNavMode;
-  }
-  set sideNavMode(value: MatDrawerMode) {
-    this._sideNavMode = value;
-    this.cdr.markForCheck();
-  }
-  private _sideNavMode: MatDrawerMode;
+  sideNavMode = signal<MatDrawerMode>("side");
 
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
 
   /** latest version of the site settings*/
-  get siteSettings(): SiteSettings {
-    return this._siteSettings;
-  }
-  set siteSettings(value: SiteSettings) {
-    this._siteSettings = value;
-    this.cdr.markForCheck();
-  }
-  private _siteSettings = new SiteSettings();
+  siteSettings = signal<SiteSettings>(new SiteSettings());
   isDesktop = false;
   isLoggedIn: Signal<boolean> = toSignal(
     this.loginState.pipe(
@@ -150,8 +134,8 @@ export class UiComponent {
       .subscribe(() => this.updateDisplayMode());
     this.configReady$.subscribe((ready) => this.updateDisplayMode());
 
-    this.siteSettingsService.siteSettings.subscribe(
-      (s) => (this.siteSettings = s),
+    this.siteSettingsService.siteSettings.subscribe((s) =>
+      this.siteSettings.set(s),
     );
 
     if (this.configService.hasConfig()) {
@@ -170,9 +154,8 @@ export class UiComponent {
       currentUrl.startsWith("/admin/dashboard") ||
       currentUrl.startsWith("/admin/matching");
 
-    this.sideNavMode = configFullscreen || !this.isDesktop ? "over" : "side";
+    this.sideNavMode.set(configFullscreen || !this.isDesktop ? "over" : "side");
     this.showPrimaryAction.set(this.configReady$.value && !configFullscreen);
-    this.cdr.markForCheck();
   }
 
   /**
@@ -188,7 +171,7 @@ export class UiComponent {
   }
 
   closeSidenavOnMobile() {
-    if (this.sideNavMode === "over") {
+    if (this.sideNavMode() === "over") {
       this.sideNav.close();
     }
   }
