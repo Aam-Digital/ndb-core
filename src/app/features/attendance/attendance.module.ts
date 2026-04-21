@@ -1,4 +1,4 @@
-import { NgModule, inject } from "@angular/core";
+import { Injector, NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "#src/app/dynamic-components";
 import { attendanceComponents } from "./attendance-components";
 import { attendanceRoutes } from "./attendance.routing";
@@ -9,6 +9,10 @@ import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboar
 import { AttendancePermissionGuard } from "./attendance-permission.guard";
 import { AbstractPermissionGuard } from "#src/app/core/permissions/permission-guard/abstract-permission.guard";
 import { AttendanceInitService } from "./attendance-init.service";
+import { EntityActionsMenuService } from "#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { EntityAction } from "#src/app/core/entity-details/entity-actions-menu/entity-action.interface";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { AttendanceExportService } from "./attendance-export.service";
 
 @NgModule({
   providers: [
@@ -36,6 +40,12 @@ export class AttendanceModule {
   static routes = attendanceRoutes;
 
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
+  /**
+   * Keep attendance export dependencies lazy.
+   * Eagerly creating AttendanceExportService here pulls export/query services at app bootstrap
+   * and can initialize attendance config/permissions before config loading has settled.
+   */
+  private readonly injector = inject(Injector);
 
   constructor() {
     this.widgetRegistry.register({
@@ -49,5 +59,36 @@ export class AttendanceModule {
     components.addAll(attendanceComponents);
 
     inject(AttendanceInitService).registerDefaultAttendanceStatusEnum();
+
+    const entityActionsMenu = inject(EntityActionsMenuService);
+    entityActionsMenu.registerActionsFactories([
+      (entity) => this.getAttendanceExportActions(entity),
+    ]);
+  }
+
+  private getAttendanceExportActions(entity?: Entity): EntityAction[] {
+    if (!entity) {
+      return [];
+    }
+    // resolve lazily at click-time to avoid bootstrap-time side effects.
+    const attendanceExportService = this.injector.get(AttendanceExportService);
+
+    const fields = attendanceExportService.getAttendanceFields(entity);
+    return fields.map((field) => ({
+      action: `download-attendance-${field.fieldId}`,
+      label: $localize`Download ${field.label} list`,
+      icon: "download",
+      permission: "read" as const,
+      availableFor: "individual-only" as const,
+      execute: async (e: Entity) => {
+        const singleEntity = Array.isArray(e) ? e[0] : e;
+        await attendanceExportService.exportAttendanceList(
+          singleEntity,
+          field.fieldId,
+          field.label,
+        );
+        return true;
+      },
+    }));
   }
 }
