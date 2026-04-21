@@ -1,4 +1,4 @@
-import { NgModule, inject } from "@angular/core";
+import { Injector, NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "#src/app/dynamic-components";
 import { attendanceComponents } from "./attendance-components";
 import { attendanceRoutes } from "./attendance.routing";
@@ -40,7 +40,12 @@ export class AttendanceModule {
   static routes = attendanceRoutes;
 
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
-  private readonly attendanceExportService = inject(AttendanceExportService);
+  /**
+   * Keep attendance export dependencies lazy.
+   * Eagerly creating AttendanceExportService here pulls export/query services at app bootstrap
+   * and can initialize attendance config/permissions before config loading has settled.
+   */
+  private readonly injector = inject(Injector);
 
   constructor() {
     this.widgetRegistry.register({
@@ -65,8 +70,10 @@ export class AttendanceModule {
     if (!entity) {
       return [];
     }
+    // resolve lazily at click-time to avoid bootstrap-time side effects.
+    const attendanceExportService = this.injector.get(AttendanceExportService);
 
-    const fields = this.attendanceExportService.getAttendanceFields(entity);
+    const fields = attendanceExportService.getAttendanceFields(entity);
     return fields.map((field) => ({
       action: `download-attendance-${field.fieldId}`,
       label: $localize`Download ${field.label} list`,
@@ -75,7 +82,7 @@ export class AttendanceModule {
       availableFor: "individual-only" as const,
       execute: async (e: Entity) => {
         const singleEntity = Array.isArray(e) ? e[0] : e;
-        await this.attendanceExportService.exportAttendanceList(
+        await attendanceExportService.exportAttendanceList(
           singleEntity,
           field.fieldId,
           field.label,
