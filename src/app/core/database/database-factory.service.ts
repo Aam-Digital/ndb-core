@@ -38,18 +38,21 @@ export class DatabaseFactoryService {
       dbName === Entity.DATABASE ? this.syncState : new SyncStateSubject();
 
     if (environment.session_type === SessionType.synced) {
-      return new SyncedPouchDatabase(dbName, this.authService, syncState, {
-        navigator: this.navigator,
-        loginStateSubject: this.loginStateSubject,
-        ngZone: this.ngZone,
-        alertService: this.alertService,
+      return new SyncedPouchDatabase(
+        dbName,
+        this.authService,
+        syncState,
+        this.navigator,
+        this.loginStateSubject,
+        this.ngZone,
+        this.alertService,
         // Lazily resolved via Injector to avoid a circular dependency between
         // DatabaseFactoryService and PouchdbCorruptionRecoveryService.
-        onKnownMultiTabCorruption: () =>
+        () =>
           this.injector
             .get(PouchdbCorruptionRecoveryService)
             .promptResetApplicationDialog(),
-      });
+      );
     } else if (environment.session_type === SessionType.online) {
       return new RemotePouchDatabase(
         dbName,

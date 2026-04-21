@@ -13,26 +13,15 @@ import { BackupService } from "../../admin/backup/backup.service";
  */
 @Injectable({ providedIn: "root" })
 export class PouchdbCorruptionRecoveryService {
-  static readonly MULTI_TAB_WARNING_ACK_KEY = "__MULTI_TAB_WARNING_ACK";
-
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly location = inject<Location>(LOCATION_TOKEN);
   private dialogOpen = false;
 
   async promptMultiTabWarningDialog(): Promise<void> {
-    if (
-      this.dialogOpen ||
-      localStorage.getItem(
-        PouchdbCorruptionRecoveryService.MULTI_TAB_WARNING_ACK_KEY,
-      ) === "1"
-    ) {
+    if (this.dialogOpen) {
       return;
     }
     this.dialogOpen = true;
-    localStorage.setItem(
-      PouchdbCorruptionRecoveryService.MULTI_TAB_WARNING_ACK_KEY,
-      "1",
-    );
 
     try {
       await this.confirmationDialog.getConfirmation(
@@ -79,7 +68,6 @@ We are working on improvements to allow this in the future.`,
   }
 
   private resetApplication() {
-    localStorage.clear();
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
     this.location.pathname = "";
   }

@@ -52,28 +52,16 @@ describe("PouchdbCorruptionRecoveryService", () => {
 
     expect(confirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
     expect(localStorage.getItem("foo")).toBe("bar");
-    expect(
-      localStorage.getItem(
-        PouchdbCorruptionRecoveryService.MULTI_TAB_WARNING_ACK_KEY,
-      ),
-    ).toBe("1");
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
   });
 
-  it("should show multi-tab warning only once after user acknowledged it", async () => {
+  it("should show multi-tab warning again when prompted again", async () => {
     confirmationDialog.getConfirmation.mockResolvedValue(true);
 
     await service.promptMultiTabWarningDialog();
     await service.promptMultiTabWarningDialog();
-
-    // Simulate a second tab/service instance in the same browser storage.
-    const secondService = TestBed.runInInjectionContext(
-      () => new PouchdbCorruptionRecoveryService(),
-    );
-    await secondService.promptMultiTabWarningDialog();
-
-    expect(confirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
+    expect(confirmationDialog.getConfirmation).toHaveBeenCalledTimes(2);
   });
 
   it("should keep application state when user cancels", async () => {

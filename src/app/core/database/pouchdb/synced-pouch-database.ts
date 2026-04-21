@@ -20,14 +20,7 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
 import { isKnownMultiTabDatabaseCorruption } from "../multi-tab-detection.service";
-
-export interface SyncedPouchDatabaseDependencies {
-  navigator: Navigator;
-  loginStateSubject: LoginStateSubject;
-  ngZone?: NgZone;
-  alertService?: AlertService;
-  onKnownMultiTabCorruption?: () => void | Promise<void>;
-}
+import { QueryOptions } from "../database";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -45,7 +38,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
-  private knownMultiTabErrorAlertShown = false;
 
   private readonly navigator: Navigator;
   private readonly loginStateSubject: LoginStateSubject;
@@ -74,15 +66,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
     dbName: string,
     authService: KeycloakAuthService,
     globalSyncState: SyncStateSubject,
-    dependencies: SyncedPouchDatabaseDependencies,
+    navigator: Navigator,
+    loginStateSubject: LoginStateSubject,
+    ngZone?: NgZone,
+    alertService?: AlertService,
+    onKnownMultiTabCorruption?: () => void | Promise<void>,
   ) {
-    const {
-      navigator,
-      loginStateSubject,
-      ngZone,
-      alertService,
-      onKnownMultiTabCorruption,
-    } = dependencies;
     super(dbName, globalSyncState, ngZone);
     this.navigator = navigator;
     this.loginStateSubject = loginStateSubject;
@@ -238,11 +227,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
             err,
           );
         } else if (isKnownMultiTabDatabaseCorruption(err)) {
-          Logging.warn(
-            `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+          this.handleKnownMultiTabCorruption(
             err,
+            `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
           );
-          this.showKnownMultiTabErrorAlert();
         } else {
           Logging.warn(`sync failed [${this.dbName}]`, err);
         }
@@ -256,6 +244,31 @@ export class SyncedPouchDatabase extends PouchDatabase {
       });
   }
 
+  override async put(object: any, forceOverwrite = false): Promise<any> {
+    try {
+      return await super.put(object, forceOverwrite);
+    } catch (err) {
+      this.handleKnownMultiTabCorruption(
+        err,
+        `put failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+      );
+      throw err;
+    }
+  }
+
+  override query(
+    fun: string | ((doc: any, emit: any) => void),
+    options: QueryOptions,
+  ): Promise<any> {
+    return super.query(fun, options).catch((err) => {
+      this.handleKnownMultiTabCorruption(
+        err,
+        `query failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+      );
+      throw err;
+    });
+  }
+
   private isDocumentWriteError(err: any): boolean {
     const message = err?.message || err?.reason || String(err);
     return (
@@ -265,12 +278,15 @@ export class SyncedPouchDatabase extends PouchDatabase {
     );
   }
 
-  private showKnownMultiTabErrorAlert() {
-    if (this.knownMultiTabErrorAlertShown) {
+  private handleKnownMultiTabCorruption(
+    err: unknown,
+    logMessage: string,
+  ): void {
+    if (!isKnownMultiTabDatabaseCorruption(err)) {
       return;
     }
-    this.knownMultiTabErrorAlertShown = true;
-    return this.onKnownMultiTabCorruption?.();
+    Logging.warn(logMessage, err);
+    void this.onKnownMultiTabCorruption?.();
   }
 
   /**

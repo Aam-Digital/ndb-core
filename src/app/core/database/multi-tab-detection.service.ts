@@ -28,7 +28,6 @@ export class MultiTabDetectionService implements OnDestroy {
     { optional: true },
   );
   private _isMultipleTabsOpen = false;
-  private warningShownForCurrentMultiTabSession = false;
   private pingIntervalId?: ReturnType<typeof setInterval>;
   /** Emits whenever the multi-tab state changes. */
   readonly isMultipleTabsOpen$ = new BehaviorSubject<boolean>(false);
@@ -152,18 +151,8 @@ export class MultiTabDetectionService implements OnDestroy {
     this._isMultipleTabsOpen = hasOtherOpenTabs;
     this.isMultipleTabsOpen$.next(hasOtherOpenTabs);
     if (hasOtherOpenTabs) {
-      this.showMultiTabWarningOnce();
-    } else {
-      this.warningShownForCurrentMultiTabSession = false;
+      void this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
     }
-  }
-
-  private showMultiTabWarningOnce() {
-    if (this.warningShownForCurrentMultiTabSession) {
-      return;
-    }
-    this.warningShownForCurrentMultiTabSession = true;
-    void this.pouchdbCorruptionRecovery?.promptMultiTabWarningDialog();
   }
 
   /**

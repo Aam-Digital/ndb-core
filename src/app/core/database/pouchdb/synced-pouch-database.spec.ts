@@ -36,11 +36,10 @@ describe("SyncedPouchDatabase", () => {
       "unit-test-db",
       mockAuthService,
       mockSyncStateSubject,
-      {
-        navigator: mockNavigator,
-        loginStateSubject: loginState,
-        alertService: mockAlertService as any,
-      },
+      mockNavigator,
+      loginState,
+      undefined,
+      mockAlertService as any,
     );
   });
 
@@ -197,12 +196,11 @@ describe("SyncedPouchDatabase", () => {
       "unit-test-db",
       mockAuthService,
       mockSyncStateSubject,
-      {
-        navigator: mockNavigator,
-        loginStateSubject: loginState,
-        alertService: mockAlertService as any,
-        onKnownMultiTabCorruption,
-      },
+      mockNavigator,
+      loginState,
+      undefined,
+      mockAlertService as any,
+      onKnownMultiTabCorruption,
     );
 
     const mockLocalDb = {
@@ -226,6 +224,70 @@ describe("SyncedPouchDatabase", () => {
 
     expect(onKnownMultiTabCorruption).toHaveBeenCalledTimes(1);
     expect(mockAlertService.addDanger).not.toHaveBeenCalled();
+  });
+
+  it("should use configured recovery callback for known multi-tab put errors", async () => {
+    const onKnownMultiTabCorruption = vi.fn();
+    const serviceWithCallback = new SyncedPouchDatabase(
+      "unit-test-db",
+      mockAuthService,
+      mockSyncStateSubject,
+      mockNavigator,
+      loginState,
+      undefined,
+      mockAlertService as any,
+      onKnownMultiTabCorruption,
+    );
+
+    vi.spyOn(
+      serviceWithCallback as any,
+      "getPouchDBOnceReady",
+    ).mockResolvedValue({
+      put: vi
+        .fn()
+        .mockRejectedValue(
+          new Error(
+            "Database has a global failure ConstraintError: Unable to add key to index 'seq': at least one key does not satisfy the uniqueness requirements.",
+          ),
+        ),
+    } as any);
+
+    await expect(
+      serviceWithCallback.put({ _id: "Child:1" }),
+    ).rejects.toBeTruthy();
+    expect(onKnownMultiTabCorruption).toHaveBeenCalledTimes(1);
+  });
+
+  it("should use configured recovery callback for known multi-tab query errors", async () => {
+    const onKnownMultiTabCorruption = vi.fn();
+    const serviceWithCallback = new SyncedPouchDatabase(
+      "unit-test-db",
+      mockAuthService,
+      mockSyncStateSubject,
+      mockNavigator,
+      loginState,
+      undefined,
+      mockAlertService as any,
+      onKnownMultiTabCorruption,
+    );
+
+    vi.spyOn(
+      serviceWithCallback as any,
+      "getPouchDBOnceReady",
+    ).mockResolvedValue({
+      query: vi
+        .fn()
+        .mockRejectedValue(
+          new Error(
+            "Database has a global failure ConstraintError: Unable to add key to index 'seq': at least one key does not satisfy the uniqueness requirements.",
+          ),
+        ),
+    } as any);
+
+    await expect(
+      serviceWithCallback.query("index/byField", {}),
+    ).rejects.toBeTruthy();
+    expect(onKnownMultiTabCorruption).toHaveBeenCalledTimes(1);
   });
 
   it("should not start additional syncs while a previous sync is still running", async () => {
