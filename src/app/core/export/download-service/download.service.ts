@@ -131,6 +131,10 @@ export class DownloadService {
         }
         return new Blob([result], { type: "text/csv" });
       case "xlsx":
+        if (!Array.isArray(data)) {
+          Logging.warn("XLSX export requires an array of records.");
+          return new Blob([""]);
+        }
         return this.createXlsx(data);
       case "pdf":
         return new Blob([data], { type: "application/pdf" });
