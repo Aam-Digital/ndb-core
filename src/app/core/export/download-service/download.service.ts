@@ -8,6 +8,7 @@ import { ExportColumnMapping } from "app/core/entity/default-datatype/default.da
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { Workbook } from "exceljs";
+import moment from "moment";
 
 export interface ExportColumnResolver {
   sourceFieldId: string;
@@ -256,20 +257,29 @@ export class DownloadService {
   }
 
   /**
-   * Avoid broken CSV output such as "[object Object]" by serializing only when needed.
+   * Convert a value to a CSV/XLSX-friendly primitive, applying the same readable
+   * transformations as the UI (dates as YYYY-MM-DD, enum labels, location strings).
    */
   private ensureCsvFriendlyValue(value: any): any {
     if (value === null || value === undefined) {
       return value;
     }
 
-    if (Array.isArray(value)) {
-      return value.some((entry) => String(entry) === "[object Object]")
-        ? JSON.stringify(value)
-        : value;
+    if (value instanceof Date) {
+      return moment(value).format("YYYY-MM-DD");
     }
 
-    if (typeof value === "object" && String(value) === "[object Object]") {
+    if (Array.isArray(value)) {
+      return value.map((entry) => this.ensureCsvFriendlyValue(entry)).join(",");
+    }
+
+    if (typeof value === "object") {
+      if ("label" in value) {
+        return value.label;
+      }
+      if ("locationString" in value) {
+        return value.locationString;
+      }
       return JSON.stringify(value);
     }
 
