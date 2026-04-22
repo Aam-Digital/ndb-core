@@ -238,6 +238,28 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toEqual(newOption);
   });
 
+  it("should create new option from createOptions config", async () => {
+    const createOptionMock = vi.fn();
+    const newOption = "new option";
+
+    component.createOptions = [{ label: "Gender", create: createOptionMock }];
+    component.options = genders;
+    component.valueMapper = (o) => o.id;
+
+    component.showAutocomplete();
+    component.autocompleteForm.setValue(newOption);
+
+    createOptionMock.mockResolvedValue({ id: newOption, label: newOption });
+    component.select({
+      __createOptionConfig: component.createOptions[0],
+      __input: newOption,
+    } as any);
+
+    await fixture.whenStable();
+    expect(createOptionMock).toHaveBeenCalledWith(newOption);
+    expect(component.value).toEqual(newOption);
+  });
+
   it("should realign the panel on resize while open", async () => {
     vi.useFakeTimers();
     try {
