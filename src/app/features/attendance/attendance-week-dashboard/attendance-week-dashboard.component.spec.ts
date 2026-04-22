@@ -19,6 +19,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     mockAttendanceService = {
       getEventsOnDate: vi.fn(),
       wrapEventEntity: vi.fn(),
+      eventTypes: vi.fn().mockReturnValue([]),
     };
     mockAttendanceService.getEventsOnDate.mockResolvedValue([]);
     mockAttendanceService.wrapEventEntity.mockImplementation(

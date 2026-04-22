@@ -44,6 +44,7 @@ describe("RollCallSetupComponent", () => {
       getAvailableEventsForRollCall: vi
         .fn()
         .mockName("AttendanceService.getAvailableEventsForRollCall"),
+      eventTypes: vi.fn().mockReturnValue([]),
       eventTypeSettings: [],
       filterConfig: signal([]),
     };
