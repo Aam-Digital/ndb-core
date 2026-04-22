@@ -282,8 +282,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="312"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:312</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="319"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:319</a></div>
                         </td>
                     </tr>
 
@@ -469,8 +469,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="325"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:325</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="332"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:332</a></div>
                         </td>
                     </tr>
 
@@ -565,7 +565,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:83</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:90</a></code>
 </div>
                         </td>
                     </tr>
@@ -638,7 +638,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:244</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:251</a></code>
 </div>
                         </td>
                     </tr>
@@ -681,7 +681,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:253</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:260</a></code>
 </div>
                         </td>
                     </tr>
@@ -720,8 +720,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="299"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:299</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="306"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:306</a></div>
                         </td>
                     </tr>
 
@@ -795,7 +795,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:158</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:165</a></code>
 </div>
                         </td>
                     </tr>
@@ -862,8 +862,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="190"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:190</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="197"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:197</a></div>
                         </td>
                     </tr>
 
@@ -937,7 +937,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:105</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:112</a></code>
 </div>
                         </td>
                     </tr>
@@ -1123,6 +1123,13 @@ export class KeycloakAdminService extends UserAdminService {
       concatMap((userAccount) &#x3D;&gt; {
         return this.sendEmail(userAccount.id, &quot;VERIFY_EMAIL&quot;).pipe(
           map(() &#x3D;&gt; userAccount),
+          catchError((emailError) &#x3D;&gt; {
+            Logging.warn(
+              &quot;Failed to send verification email after account creation&quot;,
+              emailError,
+            );
+            return of(userAccount);
+          }),
         );
       }),
       catchError((originalError) &#x3D;&gt;

@@ -265,6 +265,7 @@ import { hasRemoteSession } from &quot;../../session/session-type&quot;;
 import { EditEntityComponent } from &quot;../../basic-datatypes/entity/edit-entity/edit-entity.component&quot;;
 import { lastValueFrom, of, firstValueFrom } from &quot;rxjs&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 import { catchError, map } from &quot;rxjs/operators&quot;;
 import { UserAccountActionGuardService } from &quot;../user-admin-service/user-account-action-guard.service&quot;;
@@ -327,10 +328,18 @@ export class UserDetailsComponent {
   protected currentUser &#x3D; inject(CurrentUserSubject, { optional: true });
   private readonly accountActionGuard &#x3D; inject(UserAccountActionGuardService);
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
 
   userAccount &#x3D; model&lt;UserAccount | null&gt;(this._dialogData?.userAccount);
   isInDialog &#x3D; input&lt;boolean&gt;(!!this._dialogData || false);
   isProfileMode &#x3D; input&lt;boolean&gt;(false);
+
+  userAccountEntityTypes &#x3D; computed(() &#x3D;&gt;
+    this.entityRegistry
+      .getEntityTypes()
+      .filter(({ value }) &#x3D;&gt; value.enableUserAccounts)
+      .map(({ key }) &#x3D;&gt; key),
+  );
 
   /**
    * Signal tracking whether the form is disabled (view mode) or enabled (edit mode).
@@ -350,8 +359,10 @@ export class UserDetailsComponent {
     } else {
       this.form.enable();
 
-      // profile entity is currently always readonly. Updates not supported yet
-      this.form.get(&quot;userEntityId&quot;).disable();
+      // profile entity is readonly when editing an existing account
+      if (!this.creatingNewAccount()) {
+        this.form.get(&quot;userEntityId&quot;).disable();
+      }
     }
   });
 
@@ -492,6 +503,16 @@ export class UserDetailsComponent {
     }
 
     if (!formData.email || !formData.roles) {
+      return;
+    }
+
+    const existingAccount &#x3D; await firstValueFrom(
+      this.userAdminService.getUser(userEntityId),
+    ).catch(() &#x3D;&gt; null);
+    if (existingAccount) {
+      this.alertService.addDanger(
+        $localize&#x60;:Error message:A user account already exists for this profile. Each profile can only be linked to one account.&#x60;,
+      );
       return;
     }
 

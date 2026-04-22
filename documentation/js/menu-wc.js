@@ -2300,6 +2300,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/Coordinates.html" data-type="entity-link" >Coordinates</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/CreateOptionConfig.html" data-type="entity-link" >CreateOptionConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/CreateOptionMarker.html" data-type="entity-link" >CreateOptionMarker</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/DashboardConfig.html" data-type="entity-link" >DashboardConfig</a>
                             </li>
                             <li class="link">

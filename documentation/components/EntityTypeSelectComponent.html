@@ -344,11 +344,19 @@
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
-                                <a href="#createNewOption" >createNewOption</a>
+                                <a href="#createFromConfig" >createFromConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#createOptionAriaLabel" >createOptionAriaLabel</a>
                             </li>
                             <li>
                                     <span class="modifier">Protected</span>
                                 <a href="#createOptionDisplay" >createOptionDisplay</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#createOptionLabel" >createOptionLabel</a>
                             </li>
                             <li>
                                 <a href="#drop" >drop</a>
@@ -365,6 +373,10 @@
                             </li>
                             <li>
                                 <a href="#showAutocomplete" >showAutocomplete</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#toCreateOptionValue" >toCreateOptionValue</a>
                             </li>
                             <li>
                                 <a href="#unselect" >unselect</a>
@@ -417,7 +429,10 @@
                                 <a href="#showInternalTypes" >showInternalTypes</a>
                             </li>
                             <li>
-                                <a href="#createOption" >createOption</a>
+                                <a href="#createOption" class="deprecated-name">createOption</a>
+                            </li>
+                            <li>
+                                <a href="#createOptions" >createOptions</a>
                             </li>
                             <li>
                                 <a href="#display" >display</a>
@@ -610,7 +625,40 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:125</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:142</a></code>
+</div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="createOptions"></a>
+                        <b>createOptions</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/CreateOptionConfig.html" target="_self" >CreateOptionConfig&lt;O&gt;[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4" colspan="2">
+                                    <div class="io-line">Inherited from         <code><a href="../components/BasicAutocompleteComponent.html" target="_self" >BasicAutocompleteComponent</a></code>
+</div>
+                                </td>
+                            </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:143</a></code>
 </div>
                             </td>
                         </tr>
@@ -643,7 +691,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:234</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:280</a></code>
 </div>
                             </td>
                         </tr>
@@ -682,7 +730,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:126</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:144</a></code>
 </div>
                             </td>
                         </tr>
@@ -715,7 +763,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:177</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:223</a></code>
 </div>
                             </td>
                         </tr>
@@ -751,7 +799,7 @@ Set to 0 for no limit. Defaults to 100.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:218</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:264</a></code>
 </div>
                             </td>
                         </tr>
@@ -794,7 +842,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:123</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:139</a></code>
 </div>
                             </td>
                         </tr>
@@ -822,7 +870,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:151</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:197</a></code>
 </div>
                             </td>
                         </tr>
@@ -862,7 +910,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:121</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:137</a></code>
 </div>
                             </td>
                         </tr>
@@ -889,7 +937,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:184</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:230</a></code>
 </div>
                             </td>
                         </tr>
@@ -1072,7 +1120,7 @@ Set to false to truncate labels with ellipsis.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:161</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:207</a></code>
 </div>
                             </td>
                         </tr>
@@ -1140,7 +1188,7 @@ Set to false to truncate labels with ellipsis.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:464</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:510</a></code>
 </div>
                         </td>
                     </tr>
@@ -1205,18 +1253,18 @@ Set to false to truncate labels with ellipsis.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="createNewOption"></a>
+                    <a name="createFromConfig"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
-                        <span ><b>createNewOption</b></span>
-                        <a href="#createNewOption"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>createFromConfig</b></span>
+                        <a href="#createFromConfig"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createNewOption(option: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>createFromConfig(marker: <a href="../interfaces/CreateOptionMarker.html" target="_self">CreateOptionMarker&lt;O&gt;</a>)</code>
                 </td>
             </tr>
 
@@ -1229,7 +1277,82 @@ Set to false to truncate labels with ellipsis.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:516</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:584</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>marker</td>
+                                            <td>
+                                                            <code><a href="../interfaces/CreateOptionMarker.html" target="_self" >CreateOptionMarker&lt;O&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createOptionAriaLabel"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>createOptionAriaLabel</b></span>
+                        <a href="#createOptionAriaLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createOptionAriaLabel(option: <a href="../interfaces/CreateOptionConfig.html" target="_self">CreateOptionConfig&lt;O&gt;</a>, input: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../components/BasicAutocompleteComponent.html" target="_self" >BasicAutocompleteComponent</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:179</a></code>
 </div>
                         </td>
                     </tr>
@@ -1253,6 +1376,18 @@ Set to false to truncate labels with ellipsis.</p>
                                         <tr>
                                                 <td>option</td>
                                             <td>
+                                                            <code><a href="../interfaces/CreateOptionConfig.html" target="_self" >CreateOptionConfig&lt;O&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
 
@@ -1266,7 +1401,7 @@ Set to false to truncate labels with ellipsis.</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">
@@ -1304,7 +1439,7 @@ Set to false to truncate labels with ellipsis.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:135</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:153</a></code>
 </div>
                         </td>
                     </tr>
@@ -1361,6 +1496,93 @@ Falls back to the raw input when optionToString throws or returns null/undefined
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="createOptionLabel"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>createOptionLabel</b></span>
+                        <a href="#createOptionLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createOptionLabel(option: <a href="../interfaces/CreateOptionConfig.html" target="_self">CreateOptionConfig&lt;O&gt;</a>, input: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../components/BasicAutocompleteComponent.html" target="_self" >BasicAutocompleteComponent</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:172</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>option</td>
+                                            <td>
+                                                            <code><a href="../interfaces/CreateOptionConfig.html" target="_self" >CreateOptionConfig&lt;O&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="drop"></a>
                     <span class="name">
                         <span ><b>drop</b></span>
@@ -1383,7 +1605,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:366</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:412</a></code>
 </div>
                         </td>
                     </tr>
@@ -1458,7 +1680,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:566</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:635</a></code>
 </div>
                         </td>
                     </tr>
@@ -1531,7 +1753,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:555</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:624</a></code>
 </div>
                         </td>
                     </tr>
@@ -1591,7 +1813,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>select(selected: <a href="../interfaces/SelectableOption.html" target="_self">string | SelectableOption&lt;O | V&gt;</a>)</code>
+<code>select(selected: string | SelectableOption<O | V> | CreateOptionMarker<O>)</code>
                 </td>
             </tr>
 
@@ -1604,7 +1826,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:488</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:534</a></code>
 </div>
                         </td>
                     </tr>
@@ -1628,7 +1850,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                                         <tr>
                                                 <td>selected</td>
                                             <td>
-                                                            <code><a href="../interfaces/SelectableOption.html" target="_self" >string | SelectableOption&lt;O | V&gt;</a></code>
+                                                        <code>string | SelectableOption&lt;O | V&gt; | CreateOptionMarker&lt;O&gt;</code>
                                             </td>
 
                                             <td>
@@ -1677,7 +1899,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:385</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:431</a></code>
 </div>
                         </td>
                     </tr>
@@ -1728,6 +1950,93 @@ Falls back to the raw input when optionToString throws or returns null/undefined
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="toCreateOptionValue"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>toCreateOptionValue</b></span>
+                        <a href="#toCreateOptionValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toCreateOptionValue(option: <a href="../interfaces/CreateOptionConfig.html" target="_self">CreateOptionConfig&lt;O&gt;</a>, input: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../components/BasicAutocompleteComponent.html" target="_self" >BasicAutocompleteComponent</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:577</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>option</td>
+                                            <td>
+                                                            <code><a href="../interfaces/CreateOptionConfig.html" target="_self" >CreateOptionConfig&lt;O&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/CreateOptionMarker.html" target="_self" >CreateOptionMarker&lt;O&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="unselect"></a>
                     <span class="name">
                         <span ><b>unselect</b></span>
@@ -1750,7 +2059,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:504</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:564</a></code>
 </div>
                         </td>
                     </tr>
@@ -1825,7 +2134,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:319</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:365</a></code>
 </div>
                         </td>
                     </tr>
@@ -1875,7 +2184,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:577</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:646</a></code>
 </div>
                         </td>
                     </tr>
@@ -2418,7 +2727,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:224</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:270</a></code>
 </div>
                         </td>
                     </tr>
@@ -2461,7 +2770,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:117</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:133</a></code>
 </div>
                         </td>
                     </tr>
@@ -2494,7 +2803,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:160</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:206</a></code>
 </div>
                         </td>
                     </tr>
@@ -2532,7 +2841,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:154</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:200</a></code>
 </div>
                         </td>
                     </tr>
@@ -2570,7 +2879,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:153</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:199</a></code>
 </div>
                         </td>
                     </tr>
@@ -2612,7 +2921,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:155</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:201</a></code>
 </div>
                         </td>
                     </tr>
@@ -2650,7 +2959,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:178</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:224</a></code>
 </div>
                         </td>
                     </tr>
@@ -2693,7 +3002,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:114</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:130</a></code>
 </div>
                         </td>
                     </tr>
@@ -2731,7 +3040,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:240</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:286</a></code>
 </div>
                         </td>
                     </tr>
@@ -2771,7 +3080,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:170</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:216</a></code>
 </div>
                         </td>
                     </tr>
@@ -2811,7 +3120,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:229</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:275</a></code>
 </div>
                         </td>
                     </tr>
@@ -2855,7 +3164,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:164</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:210</a></code>
 </div>
                         </td>
                     </tr>
@@ -2904,7 +3213,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:112</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:128</a></code>
 </div>
                         </td>
                     </tr>
@@ -2942,7 +3251,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:241</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:287</a></code>
 </div>
                         </td>
                     </tr>
@@ -2986,7 +3295,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:254</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:300</a></code>
 </div>
                         </td>
                     </tr>
@@ -3029,7 +3338,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:119</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:135</a></code>
 </div>
                         </td>
                     </tr>
@@ -3830,16 +4139,21 @@ Autocomplete
   &lt;/ng-template&gt;
 
   &lt;!-- Create new option --&gt;
-  @if (createOption &amp;&amp; showAddOption &amp;&amp; inputElement.value) {
-    &lt;mat-option [value]&#x3D;&quot;inputElement.value&quot;&gt;
-      &lt;em
-        i18n&#x3D;&quot;
-          Label for adding an option in a dropdown|e.g. Add new My new Option
-        &quot;
-        &gt;Add new&lt;/em
+  @if (showAddOption &amp;&amp; inputElement.value) {
+    @for (option of availableCreateOptions; track $index) {
+      &lt;mat-option
+        [value]&#x3D;&quot;toCreateOptionValue(option, inputElement.value)&quot;
+        [attr.aria-label]&#x3D;&quot;createOptionAriaLabel(option, inputElement.value)&quot;
       &gt;
-      {{ createOptionDisplay(inputElement.value) }}
-    &lt;/mat-option&gt;
+        &lt;em
+          i18n&#x3D;&quot;
+            Label for adding an option in a dropdown|e.g. Add new My new Option
+          &quot;
+          &gt;Add new&lt;/em
+        &gt;
+        {{ createOptionLabel(option, inputElement.value) }}
+      &lt;/mat-option&gt;
+    }
   }
 
   &lt;mat-option style&#x3D;&quot;display: none&quot;&gt;
@@ -3886,7 +4200,7 @@ Autocomplete
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div matAutocompleteOrigin #autocompleteOrigin="matAutocompleteOrigin">  <!--Display-->  @if (display === "text" || display === "none") {    <input      [id]="id"      [hidden]="isInSearchMode() || display === \'none\'"      [disabled]="_disabled"      matInput      style="text-overflow: ellipsis; width: calc(100% - 50px)"      (focusin)="showAutocomplete()"      (focusout)="showAutocomplete()"      [value]="displayText"      [placeholder]="placeholder"    />  } @else {    <input      [hidden]="true"      [disabled]="_disabled"      matInput      (focusin)="showAutocomplete()"      (focusout)="showAutocomplete()"      [matChipInputFor]="chipList"    />    <mat-chip-grid #chipList>      <ng-container>        @for (item of _selectedOptions; track item.asString) {          <mat-chip-row            [editable]="!_disabled"            class="chip"            [style.background-color]="item.asValue?.[\'color\']"          >            @if (!templateRef) {              {{ item.asString }}            } @else {              <ng-template                [ngTemplateOutlet]="templateRef"                [ngTemplateOutletContext]="{ $implicit: item.initial }"              ></ng-template>            }            @if (!_disabled) {              <button matChipRemove (click)="unselect(item)">                <fa-icon                  i18n-matTooltip="                    tooltip for remove icon on chips of dropdown item                  "                  matTooltip="remove"                  icon="xmark"                ></fa-icon>              </button>            }          </mat-chip-row>        }      </ng-container>    </mat-chip-grid>  }  <!--Search-->  <input    [hidden]="!isInSearchMode()"    #inputElement    [formControl]="autocompleteForm"    matInput    style="text-overflow: ellipsis"    [matAutocomplete]="autoSuggestions"    [matAutocompleteConnectedTo]="autocompleteOrigin"    (focusout)="onFocusOut($event)"    [placeholder]="placeholder"  /></div><!--Autocomplete--><mat-autocomplete  [disableRipple]="true"  #autoSuggestions="matAutocomplete"  (optionSelected)="select($event.option.value)"  autoActiveFirstOption  [hideSingleSelectionIndicator]="true"  [panelWidth]="panelWidth">  <!-- Select All and Clear Buttons on top of options via content projection-->  <div>    <ng-content select="[autocompleteHeader]"></ng-content>  </div>  <div    cdkDropList    (cdkDropListDropped)="drop($event)"    cdkDropListGroup    [cdkDropListDisabled]="!reorder"  >    @if (!displayFullLengthOptionLabel()) {      <cdk-virtual-scroll-viewport        [style.height.px]="viewportHeight()"        [itemSize]="48"        minBufferPx="200"        maxBufferPx="500"      >        <mat-option          [value]="item"          cdkDrag          *cdkVirtualFor="            let item of autocompleteOptions();            trackBy: trackByOptionValueFn          "        >          <ng-container            [ngTemplateOutlet]="optionContent"            [ngTemplateOutletContext]="{ $implicit: item, truncate: true }"          ></ng-container>        </mat-option>      </cdk-virtual-scroll-viewport>    } @else {      @for (item of autocompleteOptions(); track item.asValue) {        <mat-option [value]="item" class="option-with-wrap" cdkDrag>          <ng-container            [ngTemplateOutlet]="optionContent"            [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"          ></ng-container>        </mat-option>      }    }  </div>  <ng-template #optionContent let-item let-truncate="truncate">    <div      class="option-content flex-row disable-autocomplete-active-color align-center"    >      @if (reorder) {        <div>          <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>        </div>      }      @if (multi) {        <mat-checkbox [checked]="item.selected"></mat-checkbox>      }      @if (!templateRef) {        <span          class="option-label"          [class.text-truncate]="truncate"          [class.text-wrap]="!truncate"          [matTooltip]="item.asString"          matTooltipPosition="above"          [class.not-defined-label]="item.isEmpty"          [class.invalid-label]="item.isInvalid"        >          {{ item.asString }}        </span>      } @else {        <div class="option-label item-option">          <ng-template            [ngTemplateOutlet]="templateRef"            [ngTemplateOutletContext]="{ $implicit: item.initial }"          ></ng-template>        </div>      }    </div>  </ng-template>  <!-- Create new option -->  @if (createOption && showAddOption && inputElement.value) {    <mat-option [value]="inputElement.value">      <em        i18n="          Label for adding an option in a dropdown|e.g. Add new My new Option        "        >Add new</em      >      {{ createOptionDisplay(inputElement.value) }}    </mat-option>  }  <mat-option style="display: none">    <!-- This mat-option is never displayed ("display: none") but has to be there,      because the footer below will only be displayed with at least one mat-option -->  </mat-option>  <div class="autocomplete-footer">    @if (hasMoreOptions) {      <em        class="more-options-hint"        i18n="Hint shown when dropdown has more options than displayed"        >Type to filter more results ...</em      >    }    <ng-content select="[autocompleteFooter]"></ng-content>  </div></mat-autocomplete></div>'
+        var COMPONENT_TEMPLATE = '<div><div matAutocompleteOrigin #autocompleteOrigin="matAutocompleteOrigin">  <!--Display-->  @if (display === "text" || display === "none") {    <input      [id]="id"      [hidden]="isInSearchMode() || display === \'none\'"      [disabled]="_disabled"      matInput      style="text-overflow: ellipsis; width: calc(100% - 50px)"      (focusin)="showAutocomplete()"      (focusout)="showAutocomplete()"      [value]="displayText"      [placeholder]="placeholder"    />  } @else {    <input      [hidden]="true"      [disabled]="_disabled"      matInput      (focusin)="showAutocomplete()"      (focusout)="showAutocomplete()"      [matChipInputFor]="chipList"    />    <mat-chip-grid #chipList>      <ng-container>        @for (item of _selectedOptions; track item.asString) {          <mat-chip-row            [editable]="!_disabled"            class="chip"            [style.background-color]="item.asValue?.[\'color\']"          >            @if (!templateRef) {              {{ item.asString }}            } @else {              <ng-template                [ngTemplateOutlet]="templateRef"                [ngTemplateOutletContext]="{ $implicit: item.initial }"              ></ng-template>            }            @if (!_disabled) {              <button matChipRemove (click)="unselect(item)">                <fa-icon                  i18n-matTooltip="                    tooltip for remove icon on chips of dropdown item                  "                  matTooltip="remove"                  icon="xmark"                ></fa-icon>              </button>            }          </mat-chip-row>        }      </ng-container>    </mat-chip-grid>  }  <!--Search-->  <input    [hidden]="!isInSearchMode()"    #inputElement    [formControl]="autocompleteForm"    matInput    style="text-overflow: ellipsis"    [matAutocomplete]="autoSuggestions"    [matAutocompleteConnectedTo]="autocompleteOrigin"    (focusout)="onFocusOut($event)"    [placeholder]="placeholder"  /></div><!--Autocomplete--><mat-autocomplete  [disableRipple]="true"  #autoSuggestions="matAutocomplete"  (optionSelected)="select($event.option.value)"  autoActiveFirstOption  [hideSingleSelectionIndicator]="true"  [panelWidth]="panelWidth">  <!-- Select All and Clear Buttons on top of options via content projection-->  <div>    <ng-content select="[autocompleteHeader]"></ng-content>  </div>  <div    cdkDropList    (cdkDropListDropped)="drop($event)"    cdkDropListGroup    [cdkDropListDisabled]="!reorder"  >    @if (!displayFullLengthOptionLabel()) {      <cdk-virtual-scroll-viewport        [style.height.px]="viewportHeight()"        [itemSize]="48"        minBufferPx="200"        maxBufferPx="500"      >        <mat-option          [value]="item"          cdkDrag          *cdkVirtualFor="            let item of autocompleteOptions();            trackBy: trackByOptionValueFn          "        >          <ng-container            [ngTemplateOutlet]="optionContent"            [ngTemplateOutletContext]="{ $implicit: item, truncate: true }"          ></ng-container>        </mat-option>      </cdk-virtual-scroll-viewport>    } @else {      @for (item of autocompleteOptions(); track item.asValue) {        <mat-option [value]="item" class="option-with-wrap" cdkDrag>          <ng-container            [ngTemplateOutlet]="optionContent"            [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"          ></ng-container>        </mat-option>      }    }  </div>  <ng-template #optionContent let-item let-truncate="truncate">    <div      class="option-content flex-row disable-autocomplete-active-color align-center"    >      @if (reorder) {        <div>          <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>        </div>      }      @if (multi) {        <mat-checkbox [checked]="item.selected"></mat-checkbox>      }      @if (!templateRef) {        <span          class="option-label"          [class.text-truncate]="truncate"          [class.text-wrap]="!truncate"          [matTooltip]="item.asString"          matTooltipPosition="above"          [class.not-defined-label]="item.isEmpty"          [class.invalid-label]="item.isInvalid"        >          {{ item.asString }}        </span>      } @else {        <div class="option-label item-option">          <ng-template            [ngTemplateOutlet]="templateRef"            [ngTemplateOutletContext]="{ $implicit: item.initial }"          ></ng-template>        </div>      }    </div>  </ng-template>  <!-- Create new option -->  @if (showAddOption && inputElement.value) {    @for (option of availableCreateOptions; track $index) {      <mat-option        [value]="toCreateOptionValue(option, inputElement.value)"        [attr.aria-label]="createOptionAriaLabel(option, inputElement.value)"      >        <em          i18n="            Label for adding an option in a dropdown|e.g. Add new My new Option          "          >Add new</em        >        {{ createOptionLabel(option, inputElement.value) }}      </mat-option>    }  }  <mat-option style="display: none">    <!-- This mat-option is never displayed ("display: none") but has to be there,      because the footer below will only be displayed with at least one mat-option -->  </mat-option>  <div class="autocomplete-footer">    @if (hasMoreOptions) {      <em        class="more-options-hint"        i18n="Hint shown when dropdown has more options than displayed"        >Type to filter more results ...</em      >    }    <ng-content select="[autocompleteFooter]"></ng-content>  </div></mat-autocomplete></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
     var ACTUAL_COMPONENT = {'name': 'EntityTypeSelectComponent'};

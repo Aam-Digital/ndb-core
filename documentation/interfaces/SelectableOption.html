@@ -516,6 +516,22 @@ import {
 } from &quot;@angular/cdk/scrolling&quot;;
 import { EMPTY, fromEvent, merge } from &quot;rxjs&quot;;
 
+/**
+ * Configuration for a single &quot;Add new [label]&quot; entry in the autocomplete dropdown.
+ * Pass an array of these via &#x60;[createOptions]&#x60; to show one create option per entity type.
+ */
+export interface CreateOptionConfig&lt;O&gt; {
+  /** Label shown in the dropdown, e.g. the entity type&#x27;s human-readable name */
+  label: string;
+  /** Called when the user selects this option; should open a creation form and return the new entity */
+  create: (input: string) &#x3D;&gt; Promise&lt;O&gt;;
+}
+
+interface CreateOptionMarker&lt;O&gt; {
+  __createOptionConfig: CreateOptionConfig&lt;O&gt;;
+  __input: string;
+}
+
 interface SelectableOption&lt;O, V&gt; {
   initial: O;
   asString: string;
@@ -583,7 +599,9 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     option?.[&quot;_id&quot;] ?? (option as unknown as V);
   @Input() optionToString &#x3D; (option: O) &#x3D;&gt;
     option?.[&quot;_label&quot;] ?? option?.toString();
+  /** @deprecated Prefer &#x60;createOptions&#x60; to support one unified create flow. */
   @Input() createOption: (input: string) &#x3D;&gt; Promise&lt;O&gt;;
+  @Input() createOptions: CreateOptionConfig&lt;O&gt;[] &#x3D; [];
   @Input() hideOption: (option: O) &#x3D;&gt; boolean &#x3D; () &#x3D;&gt; false;
 
   /**
@@ -599,6 +617,34 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     } catch {
       return input;
     }
+  }
+
+  protected get availableCreateOptions(): CreateOptionConfig&lt;O&gt;[] {
+    if (this.createOptions.length &gt; 0) {
+      return this.createOptions;
+    }
+    if (!this.createOption) {
+      return [];
+    }
+
+    return [{ label: &quot;&quot;, create: this.createOption }];
+  }
+
+  protected createOptionLabel(
+    option: CreateOptionConfig&lt;O&gt;,
+    input: string,
+  ): string {
+    return option.label || this.createOptionDisplay(input);
+  }
+
+  protected createOptionAriaLabel(
+    option: CreateOptionConfig&lt;O&gt;,
+    input: string,
+  ): string {
+    return $localize&#x60;:ARIA label for adding an option in a dropdown:Add new ${this.createOptionLabel(
+      option,
+      input,
+    )}&#x60;;
   }
 
   /**
@@ -946,14 +992,28 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     );
   }
 
-  select(selected: string | SelectableOption&lt;O, V&gt;) {
+  select(selected: string | SelectableOption&lt;O, V&gt; | CreateOptionMarker&lt;O&gt;) {
+    if (
+      selected !&#x3D; null &amp;&amp;
+      typeof selected &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+      &quot;__createOptionConfig&quot; in selected
+    ) {
+      this.createFromConfig(selected as CreateOptionMarker&lt;O&gt;);
+      return;
+    }
+
     if (typeof selected &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
-      this.createNewOption(selected);
+      const defaultCreateOption &#x3D; this.availableCreateOptions[0];
+      if (defaultCreateOption) {
+        this.createFromConfig(
+          this.toCreateOptionValue(defaultCreateOption, selected),
+        );
+      }
       return;
     }
 
     if (selected) {
-      this.selectOption(selected);
+      this.selectOption(selected as SelectableOption&lt;O, V&gt;);
     } else {
       this.autocompleteForm.setValue(&quot;&quot;);
       this._selectedOptions &#x3D; [];
@@ -974,16 +1034,25 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     this.onChange(this.value);
   }
 
-  async createNewOption(option: string) {
-    const createdOption &#x3D; await this.createOption(option);
+  /** @internal used in template to build a marker value for typed create options */
+  protected toCreateOptionValue(
+    option: CreateOptionConfig&lt;O&gt;,
+    input: string,
+  ): CreateOptionMarker&lt;O&gt; {
+    return { __createOptionConfig: option, __input: input };
+  }
+
+  async createFromConfig(marker: CreateOptionMarker&lt;O&gt;) {
+    const createdOption &#x3D; await marker.__createOptionConfig.create(
+      marker.__input,
+    );
     if (createdOption) {
       const newOption &#x3D; this.toSelectableOption(createdOption);
       this._options.push(newOption);
       this.select(newOption);
     } else {
-      // continue editing
       this.showAutocomplete();
-      this.autocompleteForm.setValue(option);
+      this.autocompleteForm.setValue(marker.__input);
     }
   }
 
