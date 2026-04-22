@@ -1,13 +1,17 @@
 @if (items().length && percentage() !== undefined) {
-  <span
-    class="mat-elevation-z1 attendance-block {{ warningClass() }}"
-    [appTemplateTooltip]="tooltip"
-  >
-    {{ percentage() | percent: "1.0-0" }}
+  <span [appTemplateTooltip]="tooltip">
+    <span class="mat-elevation-z1 attendance-block {{ warningClass() }}">
+      {{ percentage() | percent: "1.0-0" }}
+    </span>
+    ({{ items().length }} <span i18n>participants</span>)
   </span>
 
   <ng-template #tooltip>
     <div class="attendance-tooltip">
+      <div class="margin-bottom-regular" i18n>
+        {{ percentage() | percent: "1.0-0" }} attendance
+      </div>
+
       <div class="attendance-stats">
         @for (item of items(); track item.participant) {
           <div class="flex-row gap-regular">

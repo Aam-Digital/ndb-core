@@ -14,6 +14,7 @@ describe("GroupedChildAttendanceComponent", () => {
   beforeEach(waitForAsync(() => {
     mockAttendanceService = {
       getActivitiesForParticipant: vi.fn(),
+      eventTypes: vi.fn().mockReturnValue([]),
     };
     mockAttendanceService.getActivitiesForParticipant.mockResolvedValue([]);
 
