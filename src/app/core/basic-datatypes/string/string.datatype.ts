@@ -17,6 +17,7 @@
 
 import { Injectable } from "@angular/core";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 /**
  * Datatype for the EntitySchemaService transforming values to "string".
@@ -47,5 +48,16 @@ export class StringDatatype extends DefaultDatatype<string, string> {
       return value;
     }
     return String(value);
+  }
+
+  override async anonymize(
+    value: string,
+    schemaField: EntitySchemaField,
+    parent: any,
+  ): Promise<string> {
+    if (value === null || value === undefined) {
+      return value;
+    }
+    return value.charAt(0);
   }
 }
