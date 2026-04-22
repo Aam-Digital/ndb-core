@@ -54,6 +54,8 @@ export class DuplicateDetectionService {
   private normalizeValue(value: unknown): string {
     if (value == null) return "";
     if (value instanceof Date) return value.toISOString().toLowerCase();
+    // Arrays are intentionally excluded in this first exact-match implementation.
+    // Selecting an array field will therefore not yield duplicate matches.
     if (Array.isArray(value)) return "";
 
     if (typeof value === "object") {

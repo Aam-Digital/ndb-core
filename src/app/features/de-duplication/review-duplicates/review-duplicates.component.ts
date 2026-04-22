@@ -83,13 +83,8 @@ export class ReviewDuplicatesComponent implements OnInit {
   });
 
   onEntityTypeChange(type: string) {
-    this.searchRequestId++;
     this.selectedEntityType.set(type);
-    this.selectedFields.set([]);
-    this.pairs.set([]);
-    this.searched.set(false);
-    this.isLoading.set(false);
-    this.pageIndex.set(0);
+    this.clear();
   }
 
   clear() {
