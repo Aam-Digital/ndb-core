@@ -27,36 +27,20 @@ import { DemoChildSchoolRelationGenerator } from "../../child-dev-project/childr
 import { DemoActivityGeneratorService } from "#src/app/features/attendance/demo-data/demo-activity-generator.service";
 import { DemoActivityEventsGeneratorService } from "#src/app/features/attendance/demo-data/demo-activity-events-generator.service";
 import { DemoNoteGeneratorService } from "../../child-dev-project/notes/demo-data/demo-note-generator.service";
-import { DemoAserGeneratorService } from "../../child-dev-project/children/demo-data-generators/aser/demo-aser-generator.service";
-import { DemoEducationalMaterialGeneratorService } from "../../child-dev-project/children/demo-data-generators/educational-material/demo-educational-material-generator.service";
-import { DemoHealthCheckGeneratorService } from "../../child-dev-project/children/demo-data-generators/health-check/demo-health-check-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
-import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
-import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoUserGeneratorService.provider(),
-  ...DemoChildGenerator.provider({ count: 120 }),
-  ...DemoSchoolGenerator.provider({ count: 8 }),
+  ...DemoChildGenerator.provider({ count: 10000 }),
+  ...DemoSchoolGenerator.provider({ count: 1000 }),
   ...DemoChildSchoolRelationGenerator.provider(),
   ...DemoActivityGeneratorService.provider(),
   ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
   ...DemoNoteGeneratorService.provider({
-    minNotesPerChild: 2,
-    maxNotesPerChild: 6,
-    groupNotes: 3,
+    minNotesPerChild: 100,
+    maxNotesPerChild: 200,
+    groupNotes: 50,
   }),
-  ...DemoAserGeneratorService.provider(),
-  ...DemoEducationalMaterialGeneratorService.provider({
-    minCount: 3,
-    maxCount: 8,
-  }),
-  ...DemoHealthCheckGeneratorService.provider(),
-  ...DemoHistoricalDataGenerator.provider({
-    minCountAttributes: 2,
-    maxCountAttributes: 5,
-  }),
-  ...DemoTodoGeneratorService.provider(),
 ];
 
 /**
