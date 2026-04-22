@@ -198,7 +198,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/features/attendance/demo-data/demo-activity-events-generator.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/features/attendance/demo-data/demo-activity-events-generator.service.ts:15</a></div>
                         </td>
                     </tr>
 
@@ -228,6 +228,7 @@ import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 import { AttendanceItem } from &quot;../model/attendance-item&quot;;
 import { AttendanceService } from &quot;../attendance.service&quot;;
 import { EventTypeSettings } from &quot;../model/attendance-feature-config&quot;;
+import { extractParticipantIds } from &quot;../model/participant-id-extractor&quot;;
 
 export class DemoEventsConfig {
   forNLastYears: number;
@@ -319,8 +320,9 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator&lt;Ent
     event[typeSettings.relatesToField] &#x3D; activity.getId();
 
     // Resolve participant IDs from the configured field
-    const participantIds: string[] &#x3D;
-      (activity[typeSettings.participantsField] as string[]) ?? [];
+    const participantIds &#x3D; extractParticipantIds(
+      activity[typeSettings.participantsField],
+    );
 
     // Set attendance items
     event[typeSettings.attendanceField] &#x3D; participantIds.map(

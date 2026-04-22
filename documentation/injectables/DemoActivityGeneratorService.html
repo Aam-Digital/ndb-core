@@ -245,7 +245,7 @@ Builds upon the generated demo Child entities.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/DemoDataGenerator.html#source" target="_self" >DemoDataGenerator:39</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/DemoDataGenerator.html#source" target="_self" >DemoDataGenerator:41</a></code>
 </div>
                         </td>
                     </tr>
@@ -284,8 +284,8 @@ Builds upon the generated demo Child entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="27"
-                                    class="link-to-prism">src/app/features/attendance/demo-data/demo-activity-generator.service.ts:27</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="29"
+                                    class="link-to-prism">src/app/features/attendance/demo-data/demo-activity-generator.service.ts:29</a></div>
                         </td>
                     </tr>
 
@@ -498,6 +498,8 @@ import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 import { createEntityOfType } from &quot;#src/app/core/demo-data/create-entity-of-type&quot;;
 import { AttendanceService } from &quot;../attendance.service&quot;;
 import { EventTypeSettings } from &quot;../model/attendance-feature-config&quot;;
+import { AttendanceItem } from &quot;../model/attendance-item&quot;;
+import { AttendanceDatatype } from &quot;../model/attendance.datatype&quot;;
 
 /**
  * Generate activity entities based on the attendance config&#x27;s eventTypes.
@@ -562,9 +564,16 @@ export class DemoActivityGeneratorService extends DemoDataGenerator&lt;Entity&gt
     // Override participants field if it differs from the default
     if (typeSettings.participantsField !&#x3D;&#x3D; &quot;participants&quot;) {
       delete activity[&quot;participants&quot;];
-      activity[typeSettings.participantsField] &#x3D; participants.map((c) &#x3D;&gt;
-        c.getId(),
+      const participantIds &#x3D; participants.map((c) &#x3D;&gt; c.getId());
+      const activityAttendanceField &#x3D; AttendanceDatatype.detectFieldInEntity(
+        typeSettings.activityType,
       );
+      const shouldWriteAttendanceItems &#x3D;
+        activityAttendanceField &#x3D;&#x3D;&#x3D; typeSettings.participantsField ||
+        typeSettings.participantsField &#x3D;&#x3D;&#x3D; typeSettings.attendanceField;
+      activity[typeSettings.participantsField] &#x3D; shouldWriteAttendanceItems
+        ? participantIds.map((id) &#x3D;&gt; new AttendanceItem(undefined, &quot;&quot;, id))
+        : participantIds;
     }
 
     // Set assigned user via the configured field
