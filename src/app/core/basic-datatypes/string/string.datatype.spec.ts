@@ -3,7 +3,6 @@ import { StringDatatype } from "./string.datatype";
 
 describe("Schema data type: string", () => {
   testDatatype(new StringDatatype(), "test", "test");
-  
   const datatype = new StringDatatype();
 
   it("should keep only the first character", async () => {
