@@ -88,4 +88,20 @@ describe("Schema data type: date", () => {
 
     expect(DateDatatype.detectFieldInEntity(TestEntity)).toBeUndefined();
   });
+
+  it("should detect all date and date-only fields", () => {
+    class TestEntity extends Entity {}
+    (TestEntity as any).schema = new Map([
+      ["name", { dataType: "string" }],
+      ["eventDate", { dataType: DateDatatype.dataType }],
+      ["birthDate", { dataType: "date-only" }],
+    ]);
+
+    const fields = DateDatatype.detectAllFieldsInEntity(TestEntity);
+
+    expect(fields.map((field) => field.fieldId)).toEqual([
+      "eventDate",
+      "birthDate",
+    ]);
+  });
 });

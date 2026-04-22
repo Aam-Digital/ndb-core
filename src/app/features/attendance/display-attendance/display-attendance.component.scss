@@ -2,9 +2,12 @@
   display: inline-block;
   text-align: center;
   border-radius: 4px;
-  padding: 4px 8px;
+  padding: 4px;
+  margin: 4px;
   font-weight: 500;
   white-space: nowrap;
+  /* ensure same width for all percentages */
+    min-width: 5ch;
 }
 
 .attendance-tooltip {

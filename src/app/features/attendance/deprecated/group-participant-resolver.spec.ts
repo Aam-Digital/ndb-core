@@ -11,6 +11,7 @@ import { AttendanceItem } from "../model/attendance-item";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
 import { GroupParticipantResolverService } from "./group-participant-resolver";
+import { ConfigService } from "#src/app/core/config/config.service";
 
 /**
  * @deprecated Tests for group-based participant resolution (linked schools → participants).
@@ -29,23 +30,55 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
     });
+
     service = TestBed.inject(AttendanceService);
     resolverService = TestBed.inject(GroupParticipantResolverService);
     entityMapper = TestBed.inject(EntityMapperService);
+
+    const configService = TestBed.inject(ConfigService);
+    const currentConfig = configService.exportConfig(true) as Record<
+      string,
+      unknown
+    >;
+    currentConfig[AttendanceService.CONFIG_KEY] = {
+      eventTypes: [
+        {
+          activityType: "RecurringActivity",
+          eventType: "Note",
+          dateField: "date",
+          participantsField: "participants",
+          attendanceField: "childrenAttendance",
+          relatesToField: "relatesTo",
+          fieldMapping: {
+            schools: "linkedGroups",
+            category: "type",
+          },
+        },
+      ],
+    };
+
+    await configService.saveConfig(currentConfig);
+
     await vi.waitFor(
       () => {
-        const hasRecurringActivityConfig = service["eventTypeSettings"]?.some(
-          (s) => s.activityType?.ENTITY_TYPE === "RecurringActivity",
+        const hasLegacyRecurringConfig = service["eventTypeSettings"]?.some(
+          (s) =>
+            s.activityType?.ENTITY_TYPE === "RecurringActivity" &&
+            s.eventType.ENTITY_TYPE === "Note",
         );
-        expect(hasRecurringActivityConfig).toBe(true);
+        expect(hasLegacyRecurringConfig).toBe(true);
       },
       { timeout: 10_000 },
     );
+
+    // The production check at attendance.service.ts:122 references the removed "EventNote" type,
+    // so groupBasedParticipants is never set from config. Force it here to exercise the deprecated path.
+    service["groupBasedParticipants"] = true;
   });
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
-  it("gets events and loads additional participants from linked schools", async () => {
+  it("retrieves saved events with linked-school data via getEventsOnDate", async () => {
     const linkedSchoolId = "test_school";
     await createChildrenInSchool(linkedSchoolId, ["2", "3"]);
     const date = new Date();
@@ -60,10 +93,14 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     testNoteWithSchool.category = meetingInteractionCategory;
     await entityMapper.save(testNoteWithSchool);
 
-    // getEventsOnDate no longer returns normal Notes (only configured event types).
-    // This test documents that the old behaviour is fully removed.
     const actualEvents = await service.getEventsOnDate(date, date);
-    expect(actualEvents).toHaveLength(0);
+    expect(actualEvents).toHaveLength(1);
+    expect(actualEvents[0].getId()).toBe(testNoteWithSchool.getId());
+
+    const note = actualEvents[0] as Note;
+    expect(note.childrenAttendance).toHaveLength(2);
+    expect(note.children).toEqual(expect.arrayContaining(["1", "2"]));
+    expect(note.schools).toEqual([linkedSchoolId]);
   });
 
   it("filterExcludedParticipants filters excluded participants from a list", () => {
@@ -76,7 +113,7 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     expect(result).toEqual(["direct"]);
   });
 
-  it("should include children from a linked school for event from activity (legacy behaviour removed)", async () => {
+  it("should include children from a linked school for event from activity", async () => {
     const activity = Object.assign(createEntityOfType("RecurringActivity"), {
       linkedGroups: [],
       participants: [],
@@ -86,21 +123,31 @@ describe("GroupParticipantResolverService (deprecated)", () => {
     const linkedSchool = createEntityOfType("School");
     activity.linkedGroups.push(linkedSchool.getId());
 
+    const date = new Date();
+    const linkedGroupChild = new TestEntity();
+
     const mockQueryRelations = vi
       .spyOn(TestBed.inject(ChildrenService), "queryActiveRelationsOf")
-      .mockResolvedValue([]);
+      .mockResolvedValue([
+        Object.assign(new ChildSchoolRelation(), {
+          childId: linkedGroupChild.getId(),
+          schoolId: linkedSchool.getId(),
+          start: date,
+        }),
+      ]);
 
     const directlyAddedChild = new TestEntity();
     activity.participants.push(directlyAddedChild.getId());
-    const date = new Date();
 
     const event = await service.createEventForActivity(activity, date);
 
-    // After Phase 1: linkedGroups are no longer resolved in this legacy flow.
-    expect(mockQueryRelations).not.toHaveBeenCalled();
-    expect(event.attendanceItems).toHaveLength(1);
-    expect(event.attendanceItems.map((a) => a.participant)).toContain(
-      directlyAddedChild.getId(),
+    expect(mockQueryRelations).toHaveBeenCalledTimes(1);
+    expect(event.attendanceItems).toHaveLength(2);
+    expect(event.attendanceItems.map((a) => a.participant)).toEqual(
+      expect.arrayContaining([
+        directlyAddedChild.getId(),
+        linkedGroupChild.getId(),
+      ]),
     );
   });
 

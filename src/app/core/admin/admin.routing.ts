@@ -13,6 +13,7 @@ import { DataPrivacyComponent } from "./data-privacy/data-privacy.component";
 import { UserListComponent } from "../user/user-list/user-list.component";
 import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primary-action.component";
 import { AdminAiAgentComponent } from "./admin-ai-agent/admin-ai-agent.component";
+import { AdminConfigCleanupComponent } from "./config-cleanup/admin-config-cleanup.component";
 
 export const adminRoutes: Routes = [
   {
@@ -165,6 +166,14 @@ export const adminRoutes: Routes = [
   {
     path: "ai-agent",
     component: AdminAiAgentComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
+  },
+  {
+    path: "config-cleanup",
+    component: AdminConfigCleanupComponent,
     canActivate: [UserRoleGuard],
     data: {
       permittedUserRoles: ["admin_app"],
