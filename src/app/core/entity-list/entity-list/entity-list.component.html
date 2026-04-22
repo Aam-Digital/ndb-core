@@ -263,6 +263,20 @@
     </button>
   }
 
+  @if (!entityConstructor.isInternalEntity) {
+    <button
+      mat-menu-item
+      [routerLink]="['/review-duplicates']"
+      [queryParams]="{ entityType: entityConstructor.ENTITY_TYPE }"
+    >
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="copy"
+      ></fa-icon>
+      <span i18n>Review Possible Duplicates</span>
+    </button>
+  }
+
   <ng-content select="[mat-menu-item]"></ng-content>
 </mat-menu>
 
