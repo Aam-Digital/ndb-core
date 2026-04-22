@@ -1392,5 +1392,16 @@
   "3180343084294514381": "Add new {$PH}",
   "2821246488949216212": "Create User Account",
   "4769224602425497617": "A user account already exists for this profile. Each profile can only be linked to one account.",
-  "2944477510667148082": "Add New Account"
+  "2944477510667148082": "Add New Account",
+  "5921418773809043212": "Review Possible Duplicates",
+  "2686254290566004898": " There may be duplicate registrations in the system. Please review the records with a high similarity below.\n",
+  "6744054927640755596": "Select record type",
+  "2380972800975347289": "Select fields for unique identifiers",
+  "3827189086143963729": " Search Duplicates ",
+  "4707030961521134136": " No duplicate records found for the selected fields. ",
+  "7616484006414775423": "List of possible duplicate records",
+  "947643849004342950": "Possible Duplicate",
+  "3193976279273491157": "Actions",
+  "5784762323121649665": " Compare & Merge ",
+  "6986075166933303369": "Could not search for duplicates: {$PH}"
 }
