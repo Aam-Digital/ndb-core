@@ -63,10 +63,8 @@
         mat-stroked-button
         color="accent"
         class="primary-button"
-        [appExportData]="exportableData"
         [disabled]="!exportableData"
-        format="csv"
-        [filename]="exportFileName"
+        (click)="openExportDialog()"
         style="float: right"
         angulartics2On="click"
         angularticsCategory="Reporting"

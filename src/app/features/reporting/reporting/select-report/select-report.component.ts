@@ -1,18 +1,20 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
 } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { Angulartics2Module } from "angulartics2";
-import { ExportDataDirective } from "../../../../core/export/export-data-directive/export-data.directive";
+import { ExportDialogComponent } from "../../../../core/export/export-dialog/export-dialog.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -65,7 +67,6 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
     FormsModule,
     MatDatepickerModule,
     Angulartics2Module,
-    ExportDataDirective,
     FontAwesomeModule,
     MatProgressBarModule,
     MatTooltipModule,
@@ -73,6 +74,8 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
   ],
 })
 export class SelectReportComponent implements OnChanges {
+  private readonly dialog = inject(MatDialog);
+
   @Input() reports: ReportEntity[];
   @Input() loading: boolean;
   @Input() exportableData: any;
@@ -166,10 +169,19 @@ export class SelectReportComponent implements OnChanges {
     }
   }
 
-  get exportFileName(): string {
+  openExportDialog() {
+    this.dialog.open(ExportDialogComponent, {
+      data: {
+        allEntities: this.exportableData,
+        filename: this.baseExportFileName,
+      },
+    });
+  }
+
+  get baseExportFileName(): string {
     const reportName = this.getReportName();
     const datePart = this.getDatePart();
-    return datePart ? `${reportName} ${datePart}.csv` : `${reportName}.csv`;
+    return datePart ? `${reportName} ${datePart}` : reportName;
   }
 
   private getReportName(): string {
