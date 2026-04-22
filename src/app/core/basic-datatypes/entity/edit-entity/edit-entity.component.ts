@@ -26,7 +26,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { asArray } from "app/utils/asArray";
 import { lastValueFrom, map, startWith, switchMap } from "rxjs";
-import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
+import {
+  BasicAutocompleteComponent,
+  CreateOptionConfig,
+} from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -200,15 +203,20 @@ export class EditEntityComponent<
     return !this.ability.can("create", entityType);
   });
 
-  createNewEntityOption: Signal<(input: string) => Promise<E>> = computed(
-    () => {
-      if (this.isCreateDisabled()) {
-        return null;
-      }
+  /**
+   * One create option per configured entity type, shown as separate
+   * "Add new [TypeLabel]" entries in the autocomplete dropdown.
+   */
+  createNewEntityOptions: Signal<CreateOptionConfig<E>[]> = computed(() => {
+    if (this.isCreateDisabled()) {
+      return [];
+    }
 
-      return (input) => this.createNewEntity(input);
-    },
-  );
+    return this.entityType().map((type) => ({
+      label: this.entityRegistry.get(type)?.label ?? type,
+      create: (input: string) => this.createNewEntity(input, type),
+    }));
+  });
 
   loading: Signal<boolean> = computed(() => this.allEntities.isLoading());
 
@@ -309,18 +317,14 @@ export class EditEntityComponent<
     }
   }
 
-  async createNewEntity(input: string): Promise<E> {
+  async createNewEntity(input: string, type?: string): Promise<E> {
     const entityTypes = this.entityType();
-    if (entityTypes.length < 1) {
+    const targetType = type ?? entityTypes[0];
+    if (!targetType) {
       return;
     }
-    if (entityTypes.length > 1) {
-      Logging.warn(
-        "EntitySelect with multiple types is always creating a new entity of the first listed type only.",
-      );
-    }
 
-    const newEntity = new (this.entityRegistry.get(entityTypes[0]))();
+    const newEntity = new (this.entityRegistry.get(targetType))();
     applyTextToCreatedEntity(newEntity, input);
 
     const dialogRef = this.formDialog.openFormPopup(newEntity);

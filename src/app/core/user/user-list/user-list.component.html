@@ -1,4 +1,19 @@
-<app-view-title i18n>User Management</app-view-title>
+<div class="flex-row flex-wrap">
+  <div class="flex-grow">
+    <app-view-title i18n>User Management</app-view-title>
+  </div>
+  @if (hasUserManagementRole) {
+    <button
+      mat-stroked-button
+      color="accent"
+      class="standard-add-button"
+      (click)="addNewAccount()"
+    >
+      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Add New Account</span>
+    </button>
+  }
+</div>
 
 @if (!hasUserManagementRole) {
   <div i18n>

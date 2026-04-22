@@ -1,6 +1,10 @@
 @if (isInDialog()) {
   <div>
-    <h2 mat-dialog-title i18n>Edit User Account</h2>
+    @if (creatingNewAccount()) {
+      <h2 mat-dialog-title i18n>Create User Account</h2>
+    } @else {
+      <h2 mat-dialog-title i18n>Edit User Account</h2>
+    }
     <app-dialog-close></app-dialog-close>
   </div>
 }
@@ -10,10 +14,12 @@
     <!-- Creating a new account -->
     @if (creatingNewAccount()) {
       <div class="align-self-start padding-bottom-small">
-        <p i18n class="field-hint field-warning">
-          There is no user account set up for this user yet. Enable this user to
-          log into the app by filling the details below.
-        </p>
+        @if (userAccount()?.userEntityId) {
+          <p i18n class="field-hint field-warning">
+            There is no user account set up for this user yet. Enable this user
+            to log into the app by filling the details below.
+          </p>
+        }
         @if (!formDisabled()) {
           <button
             mat-raised-button
@@ -178,13 +184,18 @@
         </div>
       }
 
-      <mat-form-field class="full-width">
+      <mat-form-field class="full-width" floatLabel="always">
         <mat-label i18n>Profile</mat-label>
-        <app-edit-entity formControlName="userEntityId"></app-edit-entity>
-        <mat-hint i18n>
-          Editing linked profile record is not possible here. Please contact
-          user support.
-        </mat-hint>
+        <app-edit-entity
+          formControlName="userEntityId"
+          [entityType]="userAccountEntityTypes()"
+        ></app-edit-entity>
+        @if (!creatingNewAccount()) {
+          <mat-hint i18n>
+            Editing linked profile record is not possible here. Please contact
+            user support.
+          </mat-hint>
+        }
       </mat-form-field>
 
       @if (getGlobalError()) {
