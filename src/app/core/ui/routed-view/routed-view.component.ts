@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
+import { combineLatest } from "rxjs";
 import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../route-target";
 import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
@@ -40,27 +41,22 @@ export class RoutedViewComponent<T = any> extends AbstractViewComponent {
 
     super(injector, false);
 
-    route.data
+    combineLatest([route.data, route.paramMap])
       .pipe(takeUntilDestroyed(destroyRef))
-      .subscribe((data: { component: string } & ViewConfig<T>) => {
-        this.component = data.component;
-        // pass all other config properties to the component as config
-        this.config = Object.assign({}, data.config);
+      .subscribe(([data, params]) => {
+        const { component, config } = data as {
+          component: string;
+        } & ViewConfig<T>;
+        this.component = component;
+        // pass all other config properties to the component as config,
+        // then merge in route params so initial params are always applied
+        const merged: any = Object.assign({}, config);
+        for (const key of params.keys) {
+          merged[key] = params.get(key);
+        }
+        this.config = merged;
         cdr.markForCheck();
       });
-
-    // merge updated config properties from route params
-    route.paramMap.pipe(takeUntilDestroyed(destroyRef)).subscribe((params) => {
-      if (!this.config) {
-        return;
-      }
-      const config = this.config;
-      for (const key of params.keys) {
-        config[key] = params.get(key);
-      }
-      this.config = { ...config };
-      cdr.markForCheck();
-    });
 
     this.viewContext.changes$
       .pipe(takeUntilDestroyed(destroyRef))
