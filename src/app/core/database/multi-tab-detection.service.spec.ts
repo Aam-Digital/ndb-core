@@ -156,11 +156,11 @@ describe("MultiTabDetectionService", () => {
     const error = {
       message: "unknown_error: Database encountered an unknown error",
     };
-    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(true);
+    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(false);
   });
 
-  it("should detect unknown_error when error is a plain string", () => {
-    expect(isKnownMultiTabDatabaseCorruption("unknown_error")).toBe(true);
+  it("should not detect unknown_error when error is a plain string", () => {
+    expect(isKnownMultiTabDatabaseCorruption("unknown_error")).toBe(false);
   });
 
   it("should not classify unrelated validation errors", () => {

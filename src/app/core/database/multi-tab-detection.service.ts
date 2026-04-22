@@ -189,21 +189,28 @@ export class MultiTabDetectionService implements OnDestroy {
  * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
  * is used in multiple tabs with concurrent writes.
  *
- * `unknown_error` is the generic PouchDB surface for IndexedDB failures;
- * we intentionally treat all occurrences as potential multi-tab corruption
- * since that is the only known trigger in this app's environment.
+ * We intentionally match on `transaction was aborted` because this is the
+ * reliable signal present on the actual error object propagated to app code
+ * after IndexedDB global-failure cases. The `unknown_error` label is too
+ * generic and may appear for unrelated failures.
  */
 export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
   const text = errorToText(error).toLowerCase();
-  return (
-    text.includes("unknown_error") ||
-    text.includes("database has a global failure") ||
-    (text.includes("constrainterror") && text.includes("seq"))
-  );
+  const transactionAbortedMatch = text.includes("transaction was aborted");
+  const globalFailureMatch = text.includes("database has a global failure");
+  const constraintSeqMatch =
+    text.includes("constrainterror") && text.includes("seq");
+  const isKnownCorruption =
+    transactionAbortedMatch || globalFailureMatch || constraintSeqMatch;
+
+  return isKnownCorruption;
 }
 
 function errorToText(error: unknown): string {
-  if (error instanceof Error) return `${error.name} ${error.message}`;
+  if (error instanceof Error) {
+    const errorWithExtras = error as Error & Record<string, unknown>;
+    return `${error.name} ${error.message} ${JSON.stringify(errorWithExtras)}`;
+  }
   if (typeof error === "string") return error;
   return JSON.stringify(error ?? "");
 }

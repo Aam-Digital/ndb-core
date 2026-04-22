@@ -289,7 +289,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
     const callbackResult = this.onKnownMultiTabCorruption?.();
     if (callbackResult) {
       callbackResult.catch((callbackError) =>
-        Logging.warn("onKnownMultiTabCorruption callback failed", callbackError),
+        Logging.warn(
+          "onKnownMultiTabCorruption callback failed",
+          callbackError,
+        ),
       );
     }
   }
