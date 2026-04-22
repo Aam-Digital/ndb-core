@@ -1,15 +1,15 @@
 <app-dashboard-list-widget
   icon="file-alt"
   theme="note"
-  [subtitle]="subtitle"
-  [explanation]="tooltip"
-  [entries]="entries"
+  [subtitle]="subtitle()"
+  [explanation]="tooltip()"
+  [entries]="entries()"
 >
   <div class="table-wrapper">
-    <table mat-table [attr.aria-label]="subtitle">
+    <table mat-table [attr.aria-label]="subtitle()">
       <!-- Table header only for assistive technologies like screen readers -->
       <tr hidden="true">
-        <th scope="col">{{ _entity.label }}</th>
+        <th scope="col">{{ entityDefinition().label }}</th>
         <th scope="col">Days since last note</th>
       </tr>
       <ng-container matColumnDef="entity">
@@ -37,9 +37,9 @@
       ></tr>
     </table>
 
-    @if (entries?.length === 0) {
+    @if (entries().length === 0) {
       <div>
-        @if (mode === "without-recent-notes") {
+        @if (mode() === "without-recent-notes") {
           <ng-container
             i18n="
               There are no participants that don't have a recent report to be
@@ -49,7 +49,7 @@
             no records without recent report
           </ng-container>
         }
-        @if (mode === "with-recent-notes") {
+        @if (mode() === "with-recent-notes") {
           <ng-container
             i18n="
               There are no participants that have a recent report to be shown

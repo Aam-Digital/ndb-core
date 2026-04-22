@@ -1,9 +1,9 @@
 <app-dashboard-list-widget
   icon="external-link-alt"
   theme="general"
-  [subtitle]="subtitle"
-  [explanation]="explanation"
-  [entries]="_shortcuts()"
+  [subtitle]="subtitle()"
+  [explanation]="explanation()"
+  [entries]="filteredShortcuts()"
 >
   <div class="table-container">
     <table mat-table aria-label="Quick actions">

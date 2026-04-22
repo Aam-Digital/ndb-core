@@ -29,9 +29,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<EntityCountDashboardComponent> = (
-  args: EntityCountDashboardComponent,
-) => ({
+const Template: StoryFn<EntityCountDashboardComponent> = (args) => ({
   component: EntityCountDashboardComponent,
   props: args,
 });

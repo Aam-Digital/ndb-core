@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { NgZone } from "@angular/core";
 
 import { ProgressDashboardComponent } from "./progress-dashboard.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -31,6 +32,7 @@ describe("ProgressDashboardComponent", () => {
     open: vi.fn().mockName("matDialog.open"),
   };
   let mockSync: SyncStateSubject;
+  let ngZone: NgZone;
 
   beforeEach(waitForAsync(() => {
     mockSync = new SyncStateSubject();
@@ -54,13 +56,17 @@ describe("ProgressDashboardComponent", () => {
 
   beforeEach(() => {
     mockEntityMapper = TestBed.inject(EntityMapperService);
-    loadSpy = vi.spyOn(mockEntityMapper, "load").mockResolvedValue({
+    const mockConfig = {
       title: "test",
       parts: [],
-    } as ProgressDashboardConfig);
+      getId: vi.fn().mockReturnValue("test-id"),
+    } as any as ProgressDashboardConfig;
+
+    loadSpy = vi.spyOn(mockEntityMapper, "load").mockResolvedValue(mockConfig);
     vi.spyOn(mockEntityMapper, "save").mockResolvedValue(undefined);
     fixture = TestBed.createComponent(ProgressDashboardComponent);
     component = fixture.componentInstance;
+    ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
 
@@ -72,8 +78,8 @@ describe("ProgressDashboardComponent", () => {
     vi.useFakeTimers();
     try {
       const configID = "config-id";
-      component.dashboardConfigId = configID;
-      component.ngOnInit();
+      fixture.componentRef.setInput("dashboardConfigId", configID);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockEntityMapper.load).toHaveBeenCalledWith(
@@ -89,15 +95,15 @@ describe("ProgressDashboardComponent", () => {
     vi.useFakeTimers();
     try {
       loadSpy.mockRejectedValue(new Error());
-      component.dashboardConfigId = "someId";
-      component.ngOnInit();
+      fixture.componentRef.setInput("dashboardConfigId", "someId");
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       const config = new ProgressDashboardConfig("someId");
       loadSpy.mockResolvedValue(config);
       mockSync.next(SyncState.COMPLETED);
 
-      expect(component.data).toEqual(config);
+      expect(component.data()).toEqual(config);
     } finally {
       vi.useRealTimers();
     }
@@ -109,23 +115,36 @@ describe("ProgressDashboardComponent", () => {
       loadSpy.mockRejectedValue(new Error());
       mockSync.next(SyncState.COMPLETED);
 
-      component.dashboardConfigId = "config-id";
-      component.ngOnInit();
+      fixture.componentRef.setInput("dashboardConfigId", "config-id");
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(mockEntityMapper.save).toHaveBeenCalledWith(component.data);
+      expect(mockEntityMapper.save).toHaveBeenCalledWith(component.data());
     } finally {
       vi.useRealTimers();
     }
   });
 
   it("saves data after the dialog was closed", async () => {
-    const closeNotifier = new Subject<unknown>();
+    const closeNotifier = new Subject<Partial<ProgressDashboardConfig>>();
     mockDialog.open.mockReturnValue({
       afterClosed: () => closeNotifier.pipe(take(1)),
     } satisfies DialogRefMock);
+
     component.showEditComponent();
-    closeNotifier.next({});
+
+    // Emit a valid config update
+    const configUpdate: Partial<ProgressDashboardConfig> = {
+      title: "Updated Title",
+    };
+    ngZone.run(() => {
+      closeNotifier.next(configUpdate);
+      closeNotifier.complete();
+    });
+
+    // Wait for all async operations
+    await fixture.whenStable();
+
     expect(mockEntityMapper.save).toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -27,6 +27,7 @@ export interface AdminWidgetDialogData {
  * that also displays a custom component for the specific widget type.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-widget-dialog",
   standalone: true,
   imports: [

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { AdminEntityFormComponent } from "../../../core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
@@ -13,6 +20,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
  * Allows users to configure the three form sections with full field editing capabilities.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-note-details",
   imports: [AdminEntityFormComponent, HintBoxComponent],
   templateUrl: "./admin-note-details.component.html",

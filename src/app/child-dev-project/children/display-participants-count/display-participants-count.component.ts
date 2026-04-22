@@ -4,6 +4,7 @@ import {
   signal,
   WritableSignal,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
@@ -13,6 +14,7 @@ import { Logging } from "../../../core/logging/logging.service";
 
 @DynamicComponent("DisplayParticipantsCount")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-participants-count",
   templateUrl: "./display-participants-count.component.html",
 })

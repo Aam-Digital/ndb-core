@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 import { DisplayPercentageComponent } from "../display-percentage/display-percentage.component";
@@ -10,6 +10,7 @@ import { NgStyle } from "@angular/common";
 @DynamicComponent("DisplayDynamicPercentage")
 @DynamicComponent("DisplayCalculatedValue")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-calculated-value",
   templateUrl: "./display-calculated-value.component.html",
   styleUrls: ["./display-calculated-value.component.scss"],

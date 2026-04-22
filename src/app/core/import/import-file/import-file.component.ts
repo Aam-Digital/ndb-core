@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Output, ViewChild } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Output,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   InputFileComponent,
   ParsedData,
@@ -8,6 +14,7 @@ import {
  * Import sub-step: Let user load a file and return parsed data.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-file",
   templateUrl: "./import-file.component.html",
   styleUrls: ["./import-file.component.scss"],

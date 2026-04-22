@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { map, mergeMap } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
@@ -30,6 +30,7 @@ import { MultiTabDetectionService } from "./core/database/multi-tab-detection.se
  * Actual logic and UI structure is defined in other modules.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-root",
   template: `
     @if (configReady$ | async) {

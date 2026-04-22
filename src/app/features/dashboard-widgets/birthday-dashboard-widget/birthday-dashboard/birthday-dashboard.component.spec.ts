@@ -46,7 +46,9 @@ describe("BirthdayDashboardComponent", () => {
     fixture = TestBed.createComponent(BirthdayDashboardComponent);
     component = fixture.componentInstance;
 
-    component.entities = { [TestEntity.ENTITY_TYPE]: "dateOfBirth" };
+    fixture.componentRef.setInput("entities", {
+      [TestEntity.ENTITY_TYPE]: "dateOfBirth",
+    });
 
     fixture.detectChanges();
   });
@@ -74,11 +76,11 @@ describe("BirthdayDashboardComponent", () => {
       child2.dateOfBirth = new DateWithAge(birthdayFarAway.toDate());
       entityMapper.saveAll([child1, child2]);
 
-      component.ngOnInit();
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       const expectedNextBirthday = birthdaySoon.add(10, "years");
-      expect(component.entries).toEqual([
+      expect(component.entries()).toEqual([
         { entity: child1, birthday: expectedNextBirthday.toDate(), newAge: 10 },
       ]);
     } finally {
@@ -103,12 +105,12 @@ describe("BirthdayDashboardComponent", () => {
       child2.dateOfBirth = new DateWithAge(secondBirthday.toDate());
       entityMapper.saveAll([child1, child2]);
 
-      component.ngOnInit();
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       const expectedFirstBirthday = firstBirthday.add(12, "years");
       const expectedSecondBirthday = secondBirthday.add(15, "years");
-      expect(component.entries).toEqual([
+      expect(component.entries()).toEqual([
         {
           entity: child1,
           birthday: expectedFirstBirthday.toDate(),
@@ -158,14 +160,14 @@ describe("BirthdayDashboardComponent", () => {
       e3.dateOfBirth = new DateWithAge(birthdayIn3Days.toDate());
       entityMapper.saveAll([e1, e2, e3]);
 
-      component.entities = {
+      fixture.componentRef.setInput("entities", {
         BirthdayEntity: "birthday",
         [TestEntity.ENTITY_TYPE]: "dateOfBirth",
-      };
-      component.ngOnInit();
+      });
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.entries).toEqual([
+      expect(component.entries()).toEqual([
         {
           entity: e1,
           birthday: birthdayIn1Day.clone().add(4, "year").toDate(),

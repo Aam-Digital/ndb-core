@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { BackgroundProcessState } from "../background-process-state.interface";
@@ -26,6 +27,7 @@ import { DatabaseResolverService } from "../../../database/database-resolver.ser
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-background-processing-indicator",
   templateUrl: "./background-processing-indicator.component.html",
   styleUrls: ["./background-processing-indicator.component.scss"],

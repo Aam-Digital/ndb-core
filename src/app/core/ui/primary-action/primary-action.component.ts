@@ -1,4 +1,10 @@
-import { Component, inject, ChangeDetectorRef, OnDestroy } from "@angular/core";
+import {
+  Component,
+  inject,
+  ChangeDetectorRef,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -17,6 +23,7 @@ import { PrimaryActionService } from "../../admin/admin-primary-action/primary-a
  * see {@link https://material.io/components/buttons-floating-action-button/}
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-primary-action",
   templateUrl: "./primary-action.component.html",
   styleUrls: ["./primary-action.component.scss"],

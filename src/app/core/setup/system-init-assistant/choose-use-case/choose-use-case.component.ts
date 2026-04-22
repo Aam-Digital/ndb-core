@@ -7,6 +7,7 @@ import {
   InputSignal,
   output,
   Signal,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { BaseConfig } from "../../base-config";
 import { MatSelectModule } from "@angular/material/select";
@@ -15,6 +16,7 @@ import { FormsModule } from "@angular/forms";
 import { LanguageService } from "app/core/language/language.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-choose-use-case",
   templateUrl: "./choose-use-case.component.html",
   imports: [MatSelectModule, MarkdownComponent, FormsModule],

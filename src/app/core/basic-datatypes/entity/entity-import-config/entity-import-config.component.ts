@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -22,6 +22,7 @@ import { isInheritanceSourceReferenceField } from "../../../import/import-inheri
  */
 @DynamicComponent("EntityImportConfig")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-import-config",
   templateUrl: "./entity-import-config.component.html",
   styleUrls: ["./entity-import-config.component.scss"],

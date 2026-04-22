@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   viewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult } from "../geo.service";
@@ -18,6 +19,7 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-address-edit",
   imports: [
     AddressSearchComponent,

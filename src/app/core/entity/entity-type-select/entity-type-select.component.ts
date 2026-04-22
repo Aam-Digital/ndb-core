@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnChanges, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
@@ -8,6 +15,7 @@ import { EntityRegistry } from "../database-entity.decorator";
 import { MatFormFieldControl } from "@angular/material/form-field";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-type-select",
   templateUrl:
     "../../common-components/basic-autocomplete/basic-autocomplete.component.html",

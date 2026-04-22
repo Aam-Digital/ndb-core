@@ -1,12 +1,12 @@
 <mat-nav-list class="drop-list flex-column gap-regular limit-width">
-  @if (item) {
+  @if (item()) {
     <div
       class="flex-row menu-item-container drop-item"
       cdkDrag
-      [cdkDragData]="item"
+      [cdkDragData]="item()"
       cdkDropList
-      [id]="item.uniqueId"
-      [cdkDropListData]="item.subMenu"
+      [id]="item().uniqueId"
+      [cdkDropListData]="item().subMenu"
       [cdkDropListConnectedTo]="connectedTo"
       (cdkDropListDropped)="onDragDrop($event)"
     >
@@ -14,13 +14,13 @@
         <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
         <app-menu-item
-          [item]="itemToDisplay"
+          [item]="itemToDisplay()"
           class="menu-item-preview"
-          (click)="editMenuItem(item)"
+          (click)="editMenuItem(item())"
         ></app-menu-item>
 
         <div class="menu-actions flex-row gap-small align-center">
-          @if (hasNoLinkWarning) {
+          @if (hasNoLinkWarning()) {
             <fa-icon
               icon="triangle-exclamation"
               class="color-error"
@@ -32,7 +32,7 @@
           <button
             mat-icon-button
             color="accent"
-            (click)="editMenuItem(item)"
+            (click)="editMenuItem(item())"
             aria-label="Edit menu item"
           >
             <fa-icon aria-label="edit" icon="pen"></fa-icon>
@@ -40,7 +40,7 @@
 
           <button
             mat-icon-button
-            (click)="onDelete(item)"
+            (click)="onDelete(item())"
             aria-label="Remove menu item"
           >
             <fa-icon aria-label="delete" icon="times"></fa-icon>
@@ -48,9 +48,9 @@
         </div>
       </div>
 
-      @if (allowSubMenu && item.subMenu && item.subMenu.length > 0) {
+      @if (allowSubMenu && item().subMenu && item().subMenu.length > 0) {
         <div class="submenu">
-          @for (subItem of item.subMenu; track subItem.uniqueId) {
+          @for (subItem of item().subMenu; track subItem.uniqueId) {
             <app-admin-menu-item
               [item]="subItem"
               [connectedTo]="connectedTo"

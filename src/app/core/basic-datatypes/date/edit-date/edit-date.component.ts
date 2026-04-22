@@ -1,5 +1,5 @@
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -11,6 +11,7 @@ import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/ed
 
 @DynamicComponent("EditDate")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-edit-date",
   templateUrl: "./edit-date.component.html",
   styleUrls: [

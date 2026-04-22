@@ -1,11 +1,13 @@
 import {
   Component,
+  ChangeDetectorRef,
   Input,
   LOCALE_ID,
   OnChanges,
   OnInit,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
@@ -33,6 +35,7 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
  */
 @DynamicComponent("ActivityAttendanceSection")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",
   imports: [
@@ -51,6 +54,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   private entityMapper = inject(EntityMapperService);
   private locale = inject(LOCALE_ID);
   private dialog = inject(MatDialog);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
   @Input() forChild?: string;
@@ -125,6 +129,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
 
   async init(loadAll: boolean = false) {
     this.loading = true;
+    this.cdr.markForCheck();
     if (loadAll) {
       this.allRecords = await this.attendanceService.getActivityAttendances(
         this.entity,
@@ -138,6 +143,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
     this.updateDisplayedRecords(false);
     this.createCombinedAttendance();
     this.loading = false;
+    this.cdr.markForCheck();
   }
 
   private createCombinedAttendance() {

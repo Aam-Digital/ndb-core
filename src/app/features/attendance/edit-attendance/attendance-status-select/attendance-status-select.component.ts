@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
@@ -11,6 +17,7 @@ import { FormsModule } from "@angular/forms";
 import { ConfigurableEnumDirective } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-status-select",
   templateUrl: "./attendance-status-select.component.html",
   styleUrls: ["./attendance-status-select.component.scss"],

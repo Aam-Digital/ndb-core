@@ -140,7 +140,7 @@ test("Recurring activities list", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Recurring Activities" }),
   ).toBeVisible();
-  await expect(page.getByRole("row")).toHaveCount(7 + 1);
+  await expect(page.locator("tr.mat-mdc-row")).toHaveCount(7);
   await argosScreenshot(page, "recurring-activities-list");
 });
 

@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Output, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Output,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { GpsService } from "../gps.service";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -10,6 +16,7 @@ import { GeoResult, GeoService } from "../geo.service";
 import { firstValueFrom } from "rxjs";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-address-gps-location",
   imports: [
     MatTooltip,

@@ -33,8 +33,8 @@ describe("EntityCountDashboardComponent", () => {
     fixture = TestBed.createComponent(EntityCountDashboardComponent);
     component = fixture.componentInstance;
 
-    component.entityType = TestEntity.ENTITY_TYPE;
-    component.groupBy = ["category", "other", "ref"];
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("groupBy", ["category", "other", "ref"]);
 
     fixture.detectChanges();
 
@@ -52,9 +52,9 @@ describe("EntityCountDashboardComponent", () => {
     entityMapper.add(createChild({ id: "b", label: "CenterB" }));
     entityMapper.add(createChild({ id: "a", label: "CenterA" }));
 
-    await component.ngOnInit();
+    await fixture.whenStable();
 
-    expect(component.totalEntities).toBe(3);
+    expect(component.totalEntities()).toBe(3);
   });
 
   it("should groupBy enum values and display label", async () => {
@@ -69,7 +69,7 @@ describe("EntityCountDashboardComponent", () => {
       dataType: "configurable-enum",
       additional: "testEnum",
     });
-    component.groupBy = [testGroupBy];
+    fixture.componentRef.setInput("groupBy", [testGroupBy]);
 
     const children = [new TestEntity(), new TestEntity(), new TestEntity()];
     children[0][testGroupBy] = c1;
@@ -77,11 +77,12 @@ describe("EntityCountDashboardComponent", () => {
     children[2][testGroupBy] = c1;
     entityMapper.addAll(children);
 
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const groupCounts =
-      component.entityGroupCounts[
-        component.groupBy[component.currentGroupIndex]
+      component.entityGroupCounts()[
+        component.groupBy()[component.currentGroupIndex()]
       ];
 
     expect(groupCounts).toEqual([
@@ -103,16 +104,17 @@ describe("EntityCountDashboardComponent", () => {
 
     configurableEnum.values.reverse();
     await entityMapper.save(configurableEnum);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const groupCountsReversed =
-      component.entityGroupCounts[
-        component.groupBy[component.currentGroupIndex]
+      component.entityGroupCounts()[
+        component.groupBy()[component.currentGroupIndex()]
       ];
 
     expect(groupCountsReversed.map((count) => count.label)).toEqual([
-      c2.label,
       c1.label,
+      c2.label,
     ]);
 
     TestEntity.schema.delete(testGroupBy);
@@ -128,17 +130,18 @@ describe("EntityCountDashboardComponent", () => {
       dataType: "configurable-enum",
       additional: "testEnum",
     });
-    component.groupBy = [testGroupBy];
+    fixture.componentRef.setInput("groupBy", [testGroupBy]);
 
     const children = [new TestEntity(), new TestEntity(), new TestEntity()];
     children[2][testGroupBy] = c1;
     entityMapper.addAll(children);
 
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const groupCounts =
-      component.entityGroupCounts[
-        component.groupBy[component.currentGroupIndex]
+      component.entityGroupCounts()[
+        component.groupBy()[component.currentGroupIndex()]
       ];
 
     expect(groupCounts).toEqual([
@@ -162,8 +165,8 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy entity references and display an entity-block", async () => {
     const testGroupBy = "ref";
-    component.groupBy = [testGroupBy];
-    component.entityType = TestEntity.ENTITY_TYPE;
+    fixture.componentRef.setInput("groupBy", [testGroupBy]);
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
 
     const c1 = new Entity("ref-1");
     const x0 = new TestEntity();
@@ -172,11 +175,12 @@ describe("EntityCountDashboardComponent", () => {
     x1[testGroupBy] = c1.getId();
     entityMapper.addAll([x0, x1, c1]);
 
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const currentlyShownGroupCounts =
-      component.entityGroupCounts[
-        component.groupBy[component.currentGroupIndex]
+      component.entityGroupCounts()[
+        component.groupBy()[component.currentGroupIndex()]
       ];
 
     expect(currentlyShownGroupCounts).toHaveLength(2);
@@ -201,8 +205,8 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy arrays, split and summarized for individual array elements", async () => {
     const testGroupBy = "children";
-    component.groupBy = [testGroupBy];
-    component.entityType = Note.ENTITY_TYPE;
+    fixture.componentRef.setInput("groupBy", [testGroupBy]);
+    fixture.componentRef.setInput("entityType", Note.ENTITY_TYPE);
 
     const x0 = new Note();
     const x1 = new Note();
@@ -212,11 +216,12 @@ describe("EntityCountDashboardComponent", () => {
 
     entityMapper.addAll([x0, x1, x2]);
 
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const currentlyShownGroupCounts =
-      component.entityGroupCounts[
-        component.groupBy[component.currentGroupIndex]
+      component.entityGroupCounts()[
+        component.groupBy()[component.currentGroupIndex()]
       ];
 
     expect(currentlyShownGroupCounts).toHaveLength(3);

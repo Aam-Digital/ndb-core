@@ -1,4 +1,9 @@
-import { Component, Input, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { diff } from "deep-object-diff";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../../core/database/database";
@@ -16,6 +21,7 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
  * Visualize one specific conflicting document revision and offer resolution options.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-compare-rev",
   templateUrl: "./compare-rev.component.html",
   styleUrls: ["./compare-rev.component.scss"],

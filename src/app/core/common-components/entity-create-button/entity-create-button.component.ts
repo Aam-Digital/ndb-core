@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
@@ -8,6 +14,7 @@ import { Angulartics2OnModule } from "angulartics2";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-create-button",
   imports: [
     DisableEntityOperationDirective,

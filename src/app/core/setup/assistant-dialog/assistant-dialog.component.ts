@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ContextAwareAssistantComponent } from "../context-aware-assistant/context-aware-assistant.component";
 import { MatTab, MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
 import { SystemInitAssistantComponent } from "../system-init-assistant/system-init-assistant.component";
@@ -28,6 +33,7 @@ import { MatTooltip } from "@angular/material/tooltip";
  * depending on the current system state.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-assistant-dialog",
   imports: [
     ContextAwareAssistantComponent,

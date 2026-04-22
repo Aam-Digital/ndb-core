@@ -13,10 +13,10 @@ import { MenuItem } from "../menu-item";
 import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-menu-item",
   templateUrl: "./menu-item.component.html",
   styleUrls: ["./menu-item.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
     FaIconComponent,

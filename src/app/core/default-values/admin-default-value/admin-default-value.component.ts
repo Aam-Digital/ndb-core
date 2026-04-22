@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { DefaultValueConfig } from "../default-value-config";
 import {
   MatError,
@@ -37,6 +44,7 @@ import { AdminInheritedFieldComponent } from "../../../features/inherited-field/
  * to let users configure different defaultValue modes for an Entity field.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-default-value",
   imports: [
     MatFormField,
@@ -71,6 +79,7 @@ export class AdminDefaultValueComponent
   private defaultValueStrategies = inject(
     DefaultValueStrategy,
   ) as unknown as DefaultValueStrategy[];
+  private readonly cdr = inject(ChangeDetectorRef);
 
   modes: AdminDefaultValueContext[];
 
@@ -83,6 +92,7 @@ export class AdminDefaultValueComponent
     this.modes = await Promise.all(
       this.defaultValueStrategies.map((strategy) => strategy.getAdminUI()),
     );
+    this.cdr.markForCheck();
   }
 
   private initForm() {

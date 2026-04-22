@@ -47,9 +47,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<BirthdayDashboardComponent> = (
-  args: BirthdayDashboardComponent,
-) => ({
+const Template: StoryFn<BirthdayDashboardComponent> = (args) => ({
   component: BirthdayDashboardComponent,
   props: args,
 });

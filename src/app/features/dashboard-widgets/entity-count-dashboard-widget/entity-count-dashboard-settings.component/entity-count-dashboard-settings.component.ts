@@ -1,4 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormsModule, FormControl } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityTypeSelectComponent } from "../../../../core/entity/entity-type-select/entity-type-select.component";
@@ -18,6 +23,7 @@ export interface EntityCountDashboardConfig {
 
 @DynamicComponent("EntityCountDashboardSettings")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-count-dashboard-settings",
   standalone: true,
   imports: [

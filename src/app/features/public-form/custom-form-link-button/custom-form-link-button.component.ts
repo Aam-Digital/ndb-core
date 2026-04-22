@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -8,6 +14,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { PublicFormsService } from "../public-forms.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-custom-form-link-button",
   templateUrl: "./custom-form-link-button.component.html",
   standalone: true,

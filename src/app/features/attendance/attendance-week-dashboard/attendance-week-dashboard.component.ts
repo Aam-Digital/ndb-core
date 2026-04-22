@@ -1,15 +1,23 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
-import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { AttendanceService } from "../attendance.service";
-import { AttendanceItem } from "../model/attendance-item";
-import moment, { Moment } from "moment";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
+import moment, { Moment } from "moment";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
-import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
-import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
-import { DashboardWidget } from "#src/app/core/dashboard/dashboard-widget/dashboard-widget";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { AttendanceService } from "../attendance.service";
+import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
+import { AttendanceItem } from "../model/attendance-item";
 import { EventWithAttendance } from "../model/event-with-attendance";
+import { AttendanceLogicalStatus } from "../model/attendance-status";
 
 interface AttendanceWeekRow {
   participantId: string;
@@ -19,6 +27,7 @@ interface AttendanceWeekRow {
 
 @DynamicComponent("AttendanceWeekDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
@@ -29,11 +38,8 @@ interface AttendanceWeekRow {
     DashboardListWidgetComponent,
   ],
 })
-export class AttendanceWeekDashboardComponent
-  extends DashboardWidget
-  implements OnInit
-{
-  private attendanceService = inject(AttendanceService);
+export class AttendanceWeekDashboardComponent {
+  private readonly attendanceService = inject(AttendanceService);
 
   /**
    * The offset from the default time period, which is the last complete week.
@@ -43,15 +49,15 @@ export class AttendanceWeekDashboardComponent
    * If you set the offset to 7 and today is Thursday, the widget displays attendance from the Monday 3 days ago
    * (i.e. the current running week).
    */
-  @Input() daysOffset = 0;
+  daysOffset = input(0);
 
   /**
    * description displayed to users for what this widget is analysing
    * e.g. "Absences this week"
    */
-  @Input() label: string;
+  label = input<string>();
 
-  @Input() periodLabel: string;
+  periodLabel = input<string>();
 
   /**
    * Only participants who were absent more than this threshold are counted and shown in the dashboard.
@@ -60,29 +66,54 @@ export class AttendanceWeekDashboardComponent
    * That means if someone was absent two or more days within a specific activity in the given week
    * the person will be counted and displayed as a critical case in this dashboard widget.
    */
-  @Input() absentWarningThreshold: number = 1;
+  absentWarningThreshold = input(1);
 
   /**
    * The special attendance status type for which this widget should filter.
    *
    * (Optional) If this is not set, all status types that are counted as logically "ABSENT" are considered.
    */
-  @Input() attendanceStatusType: string;
+  attendanceStatusType = input<string>();
 
-  entries: AttendanceWeekRow[][];
-
-  ngOnInit() {
-    if (this.periodLabel && !this.label) {
-      this.label = $localize`:Dashboard attendance component subtitle:Absences ${this.periodLabel}`;
+  subtitle = computed(() => {
+    const label = this.label();
+    if (label) {
+      return label;
     }
-    return this.loadAttendanceOfAbsentees();
+
+    const periodLabel = this.periodLabel();
+    if (periodLabel) {
+      return $localize`:Dashboard attendance component subtitle:Absences ${periodLabel}`;
+    }
+
+    return undefined;
+  });
+
+  entries = signal<AttendanceWeekRow[][]>([]);
+
+  constructor() {
+    effect((onCleanup) => {
+      // Track relevant inputs so this re-loads when widget config changes.
+      this.daysOffset();
+      this.absentWarningThreshold();
+      this.attendanceStatusType();
+
+      let isCurrent = true;
+      untracked(() => {
+        void this.loadAttendanceOfAbsentees(() => isCurrent);
+      });
+
+      onCleanup(() => {
+        isCurrent = false;
+      });
+    });
   }
 
-  private async loadAttendanceOfAbsentees() {
+  private async loadAttendanceOfAbsentees(isCurrent: () => boolean) {
     const previousMonday = moment()
       .startOf("isoWeek")
       .subtract(1, "week")
-      .add(this.daysOffset, "days");
+      .add(this.daysOffset(), "days");
     const previousSaturday = moment(previousMonday).add(5, "days");
 
     const rawEvents = await this.attendanceService.getEventsOnDate(
@@ -97,12 +128,12 @@ export class AttendanceWeekDashboardComponent
       string | undefined,
       EventWithAttendance[]
     >();
-    for (const e of rawEvents) {
-      const ewa = this.attendanceService.wrapEventEntity(e);
-      const key = ewa.activityId;
-      const arr = groupedByActivity.get(key) ?? [];
-      arr.push(ewa);
-      groupedByActivity.set(key, arr);
+    for (const event of rawEvents) {
+      const wrappedEvent = this.attendanceService.wrapEventEntity(event);
+      const key = wrappedEvent.activityId;
+      const eventsForKey = groupedByActivity.get(key) ?? [];
+      eventsForKey.push(wrappedEvent);
+      groupedByActivity.set(key, eventsForKey);
     }
 
     const lowAttendanceCases = new Set<string>();
@@ -116,21 +147,26 @@ export class AttendanceWeekDashboardComponent
       );
       records.push(...rows);
       rows
-        .filter((r) => this.filterLowAttendance(r))
-        .forEach((r) => {
-          lowAttendanceCases.add(r.participantId);
+        .filter((row) => this.filterLowAttendance(row))
+        .forEach((row) => {
+          lowAttendanceCases.add(row.participantId);
         });
     }
 
     const groupsMap = new Map<string, AttendanceWeekRow[]>();
-    for (const r of records) {
-      const arr = groupsMap.get(r.participantId) ?? [];
-      arr.push(r);
-      groupsMap.set(r.participantId, arr);
+    for (const record of records) {
+      const recordsForParticipant = groupsMap.get(record.participantId) ?? [];
+      recordsForParticipant.push(record);
+      groupsMap.set(record.participantId, recordsForParticipant);
     }
-    this.entries = Array.from(groupsMap.entries())
+
+    const entries = Array.from(groupsMap.entries())
       .filter(([participantId]) => lowAttendanceCases.has(participantId))
       .map(([_, attendance]) => attendance);
+
+    if (isCurrent()) {
+      this.entries.set(entries);
+    }
   }
 
   private generateRowsFromEvents(
@@ -141,10 +177,10 @@ export class AttendanceWeekDashboardComponent
   ): AttendanceWeekRow[] {
     const participants = [
       ...new Set(
-        events.flatMap((e) =>
-          e.attendanceItems
+        events.flatMap((event) =>
+          event.attendanceItems
             .map((item) => item.participant)
-            .filter((p): p is string => !!p),
+            .filter((participant): participant is string => !!participant),
         ),
       ),
     ];
@@ -155,16 +191,19 @@ export class AttendanceWeekDashboardComponent
 
       let day = moment(from);
       while (day.isSameOrBefore(to, "day")) {
-        const eventsOnDay = events.filter((e) => day.isSame(e.date, "day"));
-        // When multiple events overlap on the same day (e.g. standalone events grouped together),
+        const eventsOnDay = events.filter((event) =>
+          day.isSame(event.date, "day"),
+        );
+        // When multiple events overlap on the same day (for example, grouped standalone events),
         // prefer the first event where the participant is marked absent.
         const event =
           eventsOnDay.find(
-            (e) =>
-              e.getAttendanceForParticipant(participant)?.status?.countAs ===
-              AttendanceLogicalStatus.ABSENT,
+            (candidate) =>
+              candidate.getAttendanceForParticipant(participant)?.status
+                ?.countAs === AttendanceLogicalStatus.ABSENT,
           ) ?? eventsOnDay[0];
-        // put a "placeholder" into the array if no event occurred on this day
+
+        // Put a placeholder into the array if no event occurred on this day.
         attendanceDays.push(
           event ? event.getAttendanceForParticipant(participant) : undefined,
         );
@@ -179,16 +218,16 @@ export class AttendanceWeekDashboardComponent
 
   private filterLowAttendance(row: AttendanceWeekRow): boolean {
     let countAbsences = 0;
-    if (!this.attendanceStatusType) {
+    if (!this.attendanceStatusType()) {
       countAbsences = row.attendanceDays.filter(
-        (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT,
+        (entry) => entry?.status?.countAs === AttendanceLogicalStatus.ABSENT,
       ).length;
     } else {
       countAbsences = row.attendanceDays.filter(
-        (e) => e?.status?.id === this.attendanceStatusType,
+        (entry) => entry?.status?.id === this.attendanceStatusType(),
       ).length;
     }
 
-    return countAbsences > this.absentWarningThreshold;
+    return countAbsences > this.absentWarningThreshold();
   }
 }

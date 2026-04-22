@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { DatePipe } from "@angular/common";
@@ -11,6 +11,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
  */
 @DynamicComponent("DisplayDate")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-date",
   templateUrl: "./display-date.component.html",
   imports: [CustomDatePipe, DatePipe, FontAwesomeModule, MatTooltipModule],

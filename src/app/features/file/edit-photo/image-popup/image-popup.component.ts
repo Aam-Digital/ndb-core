@@ -1,8 +1,9 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-image-popup",
   imports: [DialogCloseComponent, MatDialogModule],
   templateUrl: "./image-popup.component.html",

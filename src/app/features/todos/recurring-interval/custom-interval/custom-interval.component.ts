@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { timeUnitsPrimary } from "../time-interval";
 import { FormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -8,6 +8,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-custom-interval",
   templateUrl: "./custom-interval.component.html",
   styleUrls: ["./custom-interval.component.scss"],
