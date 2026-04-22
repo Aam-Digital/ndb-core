@@ -17,6 +17,10 @@ export class DuplicateDetectionService {
     entityConstructor: EntityConstructor,
     fields: string[],
   ): Promise<DuplicatePair[]> {
+    if (fields.length === 0) {
+      return [];
+    }
+
     const entities = await this.entityMapper.loadType(entityConstructor);
     const pairs: DuplicatePair[] = [];
     const usedIds = new Set<string>();
@@ -48,10 +52,30 @@ export class DuplicateDetectionService {
   }
 
   private normalizeValue(value: unknown): string {
-    if (value === null || value === undefined) return "";
+    if (value == null) return "";
+    if (value instanceof Date) return value.toISOString().toLowerCase();
+    if (Array.isArray(value)) return "";
+
+    if (typeof value === "object") {
+      const idValue = (value as Record<string, unknown>)["id"];
+      return typeof idValue === "string" ||
+        typeof idValue === "number" ||
+        typeof idValue === "boolean"
+        ? String(idValue).normalize("NFKC").trim().toLowerCase()
+        : "";
+    }
+
+    if (
+      typeof value !== "string" &&
+      typeof value !== "number" &&
+      typeof value !== "boolean"
+    ) {
+      return "";
+    }
+
     return String(value)
       .normalize("NFKC")
-      .replace(/\s+/g, " ")
+      .replaceAll(/\s+/g, " ")
       .trim()
       .toLowerCase();
   }

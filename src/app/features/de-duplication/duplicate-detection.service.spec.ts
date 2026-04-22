@@ -106,4 +106,46 @@ describe("DuplicateDetectionService", () => {
 
     expect(result).toHaveLength(0);
   });
+
+  it("should return empty array when no fields are selected", async () => {
+    const a = TestEntity.create({ name: "Alice" });
+    const b = TestEntity.create({ name: "Alice" });
+    entityMapper.addAll([a, b]);
+
+    const result = await service.findDuplicates(TestEntity, []);
+
+    expect(result).toHaveLength(0);
+  });
+
+  it("should not treat object-valued fields as duplicates", async () => {
+    const a = TestEntity.create({ name: "Alice" });
+    const b = TestEntity.create({ name: "Alice" });
+    (a as unknown as Record<string, unknown>)["metadata"] = { key: "A" };
+    (b as unknown as Record<string, unknown>)["metadata"] = { key: "B" };
+    entityMapper.addAll([a, b]);
+
+    const result = await service.findDuplicates(TestEntity, ["metadata"]);
+
+    expect(result).toHaveLength(0);
+  });
+
+  it("should match configurable-enum-like objects by id", async () => {
+    const a = TestEntity.create({ name: "Alice" });
+    const b = TestEntity.create({ name: "Bob" });
+    (a as unknown as Record<string, unknown>)["center"] = {
+      id: "barabazar",
+      label: "Barabazar",
+    };
+    (b as unknown as Record<string, unknown>)["center"] = {
+      id: "barabazar",
+      label: "Bara Bazar",
+    };
+    entityMapper.addAll([a, b]);
+
+    const result = await service.findDuplicates(TestEntity, ["center"]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].record).toBe(a);
+    expect(result[0].possibleDuplicate).toBe(b);
+  });
 });

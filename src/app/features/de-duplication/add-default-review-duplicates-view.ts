@@ -4,12 +4,18 @@ export const addDefaultReviewDuplicatesViewConfig: ConfigMigration = (
   key,
   configPart,
 ) => {
-  if (configPart?.["_id"] !== "Config:CONFIG_ENTITY" || !configPart?.["data"]) {
+  const data = configPart?.["data"];
+  if (
+    configPart?.["_id"] !== "Config:CONFIG_ENTITY" ||
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data)
+  ) {
     return configPart;
   }
 
-  if (!configPart["data"]["view:review-duplicates"]) {
-    configPart["data"]["view:review-duplicates"] = {
+  if (!data["view:review-duplicates"]) {
+    data["view:review-duplicates"] = {
       component: "ReviewDuplicates",
       _id: "view:review-duplicates",
     };
