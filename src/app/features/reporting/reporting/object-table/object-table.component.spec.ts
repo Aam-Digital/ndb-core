@@ -23,13 +23,12 @@ describe("ObjectTableComponent", () => {
   });
 
   it("should setup a table with columns for each property of the input data", () => {
-    component.objects = [
+    fixture.componentRef.setInput("objects", [
       { first: 1, second: 3 },
       { first: 2, second: 1 },
-    ];
-
+    ]);
     fixture.detectChanges();
 
-    expect(component.columns).toEqual(["first", "second"]);
+    expect(component.columns()).toEqual(["first", "second"]);
   });
 });

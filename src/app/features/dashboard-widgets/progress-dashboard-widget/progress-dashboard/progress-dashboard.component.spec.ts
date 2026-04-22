@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { NgZone } from "@angular/core";
 
 import { ProgressDashboardComponent } from "./progress-dashboard.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -31,6 +32,7 @@ describe("ProgressDashboardComponent", () => {
     open: vi.fn().mockName("matDialog.open"),
   };
   let mockSync: SyncStateSubject;
+  let ngZone: NgZone;
 
   beforeEach(waitForAsync(() => {
     mockSync = new SyncStateSubject();
@@ -54,13 +56,17 @@ describe("ProgressDashboardComponent", () => {
 
   beforeEach(() => {
     mockEntityMapper = TestBed.inject(EntityMapperService);
-    loadSpy = vi.spyOn(mockEntityMapper, "load").mockResolvedValue({
+    const mockConfig = {
       title: "test",
       parts: [],
-    } as ProgressDashboardConfig);
+      getId: vi.fn().mockReturnValue("test-id"),
+    } as any as ProgressDashboardConfig;
+
+    loadSpy = vi.spyOn(mockEntityMapper, "load").mockResolvedValue(mockConfig);
     vi.spyOn(mockEntityMapper, "save").mockResolvedValue(undefined);
     fixture = TestBed.createComponent(ProgressDashboardComponent);
     component = fixture.componentInstance;
+    ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
 
@@ -120,14 +126,25 @@ describe("ProgressDashboardComponent", () => {
   });
 
   it("saves data after the dialog was closed", async () => {
-    const closeNotifier = new Subject<unknown>();
+    const closeNotifier = new Subject<Partial<ProgressDashboardConfig>>();
     mockDialog.open.mockReturnValue({
       afterClosed: () => closeNotifier.pipe(take(1)),
     } satisfies DialogRefMock);
+
     component.showEditComponent();
-    closeNotifier.next({});
-    closeNotifier.complete();
+
+    // Emit a valid config update
+    const configUpdate: Partial<ProgressDashboardConfig> = {
+      title: "Updated Title",
+    };
+    ngZone.run(() => {
+      closeNotifier.next(configUpdate);
+      closeNotifier.complete();
+    });
+
+    // Wait for all async operations
     await fixture.whenStable();
+
     expect(mockEntityMapper.save).toHaveBeenCalled();
   });
 });

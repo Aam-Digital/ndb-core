@@ -47,10 +47,10 @@ describe("AttendanceWeekDashboardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceWeekDashboardComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should create", () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
@@ -82,7 +82,6 @@ describe("AttendanceWeekDashboardComponent", () => {
       e2.entity,
     ]);
 
-    fixture.componentRef.setInput("daysOffset", 1);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -103,7 +102,6 @@ describe("AttendanceWeekDashboardComponent", () => {
 
     mockAttendanceService.getEventsOnDate.mockResolvedValue([e1.entity]);
 
-    fixture.componentRef.setInput("daysOffset", 1);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -129,7 +127,6 @@ describe("AttendanceWeekDashboardComponent", () => {
       e2.entity,
     ]);
 
-    fixture.componentRef.setInput("daysOffset", 1);
     fixture.detectChanges();
     await fixture.whenStable();
 
