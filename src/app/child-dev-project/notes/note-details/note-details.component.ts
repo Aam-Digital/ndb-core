@@ -14,13 +14,13 @@ import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
-import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
+import { ExportDialogComponent } from "../../../core/export/export-dialog/export-dialog.component";
 import { Angulartics2Module } from "angulartics2";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
@@ -46,7 +46,6 @@ import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
     MatDialogModule,
     CustomDatePipe,
     FontAwesomeModule,
-    ExportDataDirective,
     Angulartics2Module,
     EntityFormComponent,
     DialogButtonsComponent,
@@ -64,6 +63,7 @@ export class NoteDetailsComponent
 {
   private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
+  private readonly dialog = inject(MatDialog);
 
   @Input() declare entity: Note;
   override entityConstructor = Note;
@@ -91,6 +91,20 @@ export class NoteDetailsComponent
     await super.ngOnChanges(changes);
 
     await this.initForm();
+  }
+
+  openExportDialog() {
+    const dateStr = this.entity.date
+      ? this.entity.date.toISOString().split("T")[0]
+      : "";
+    const filename = `event_${this.entity.toString()?.replaceAll(" ", "-")}_${dateStr}`;
+    this.dialog.open(ExportDialogComponent, {
+      data: {
+        allEntities: [this.entity],
+        exportConfig: this.exportConfig,
+        filename,
+      },
+    });
   }
 
   private async initForm() {

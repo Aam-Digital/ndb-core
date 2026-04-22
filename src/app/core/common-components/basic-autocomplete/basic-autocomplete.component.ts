@@ -57,6 +57,22 @@ import {
 } from "@angular/cdk/scrolling";
 import { EMPTY, fromEvent, merge } from "rxjs";
 
+/**
+ * Configuration for a single "Add new [label]" entry in the autocomplete dropdown.
+ * Pass an array of these via `[createOptions]` to show one create option per entity type.
+ */
+export interface CreateOptionConfig<O> {
+  /** Label shown in the dropdown, e.g. the entity type's human-readable name */
+  label: string;
+  /** Called when the user selects this option; should open a creation form and return the new entity */
+  create: (input: string) => Promise<O>;
+}
+
+interface CreateOptionMarker<O> {
+  __createOptionConfig: CreateOptionConfig<O>;
+  __input: string;
+}
+
 interface SelectableOption<O, V> {
   initial: O;
   asString: string;
@@ -124,7 +140,9 @@ export class BasicAutocompleteComponent<O, V = O>
     option?.["_id"] ?? (option as unknown as V);
   @Input() optionToString = (option: O) =>
     option?.["_label"] ?? option?.toString();
+  /** @deprecated Prefer `createOptions` to support one unified create flow. */
   @Input() createOption: (input: string) => Promise<O>;
+  @Input() createOptions: CreateOptionConfig<O>[] = [];
   @Input() hideOption: (option: O) => boolean = () => false;
 
   /**
@@ -140,6 +158,34 @@ export class BasicAutocompleteComponent<O, V = O>
     } catch {
       return input;
     }
+  }
+
+  protected get availableCreateOptions(): CreateOptionConfig<O>[] {
+    if (this.createOptions.length > 0) {
+      return this.createOptions;
+    }
+    if (!this.createOption) {
+      return [];
+    }
+
+    return [{ label: "", create: this.createOption }];
+  }
+
+  protected createOptionLabel(
+    option: CreateOptionConfig<O>,
+    input: string,
+  ): string {
+    return option.label || this.createOptionDisplay(input);
+  }
+
+  protected createOptionAriaLabel(
+    option: CreateOptionConfig<O>,
+    input: string,
+  ): string {
+    return $localize`:ARIA label for adding an option in a dropdown:Add new ${this.createOptionLabel(
+      option,
+      input,
+    )}`;
   }
 
   /**
@@ -489,14 +535,28 @@ export class BasicAutocompleteComponent<O, V = O>
     );
   }
 
-  select(selected: string | SelectableOption<O, V>) {
+  select(selected: string | SelectableOption<O, V> | CreateOptionMarker<O>) {
+    if (
+      selected != null &&
+      typeof selected === "object" &&
+      "__createOptionConfig" in selected
+    ) {
+      this.createFromConfig(selected as CreateOptionMarker<O>);
+      return;
+    }
+
     if (typeof selected === "string") {
-      this.createNewOption(selected);
+      const defaultCreateOption = this.availableCreateOptions[0];
+      if (defaultCreateOption) {
+        this.createFromConfig(
+          this.toCreateOptionValue(defaultCreateOption, selected),
+        );
+      }
       return;
     }
 
     if (selected) {
-      this.selectOption(selected);
+      this.selectOption(selected as SelectableOption<O, V>);
     } else {
       this.autocompleteForm.setValue("");
       this._selectedOptions.set([]);
@@ -517,16 +577,25 @@ export class BasicAutocompleteComponent<O, V = O>
     this.onChange(this.value);
   }
 
-  async createNewOption(option: string) {
-    const createdOption = await this.createOption(option);
+  /** @internal used in template to build a marker value for typed create options */
+  protected toCreateOptionValue(
+    option: CreateOptionConfig<O>,
+    input: string,
+  ): CreateOptionMarker<O> {
+    return { __createOptionConfig: option, __input: input };
+  }
+
+  async createFromConfig(marker: CreateOptionMarker<O>) {
+    const createdOption = await marker.__createOptionConfig.create(
+      marker.__input,
+    );
     if (createdOption) {
       const newOption = this.toSelectableOption(createdOption);
       this._options.push(newOption);
       this.select(newOption);
     } else {
-      // continue editing
       this.showAutocomplete();
-      this.autocompleteForm.setValue(option);
+      this.autocompleteForm.setValue(marker.__input);
     }
   }
 

@@ -18,6 +18,8 @@ import {
 } from "../user-details/user-details.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { MatTableModule } from "@angular/material/table";
+import { MatButtonModule } from "@angular/material/button";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { AlertService } from "../../alerts/alert.service";
 import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
@@ -28,6 +30,8 @@ import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
   imports: [
     ViewTitleComponent,
     MatTableModule,
+    MatButtonModule,
+    FaIconComponent,
     EntityBlockComponent,
     MatPaginatorModule,
   ],
@@ -99,7 +103,11 @@ export class UserListComponent implements OnInit {
     return userAccount.roles?.map((r) => r.name).join(", ") || "-";
   }
 
-  openUserDetails(user: UserAccount) {
+  addNewAccount() {
+    this.openUserDetails(null);
+  }
+
+  openUserDetails(user: UserAccount | null) {
     const dialogData: UserDetailsDialogData = {
       userAccount: user,
     };

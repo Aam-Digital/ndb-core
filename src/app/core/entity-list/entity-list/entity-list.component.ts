@@ -37,7 +37,7 @@ import { FormsModule } from "@angular/forms";
 import { FilterComponent } from "../../filter/filter/filter.component";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
+import { ExportDialogComponent } from "../../export/export-dialog/export-dialog.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -93,7 +93,6 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
     FilterComponent,
     TabStateModule,
     ViewTitleComponent,
-    ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
     MatTooltipModule,
@@ -402,5 +401,16 @@ export class EntityListComponent<T extends Entity>
 
   onRowClick(row: T) {
     this.elementClick.emit(row);
+  }
+
+  openExportDialog() {
+    this.dialog.open(ExportDialogComponent, {
+      data: {
+        allEntities: this.allEntities,
+        filteredData: this.filteredData,
+        exportConfig: this.exportConfig,
+        filename: this.title.replaceAll(" ", ""),
+      },
+    });
   }
 }

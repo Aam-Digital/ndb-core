@@ -9,6 +9,8 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { AttendanceService } from "../attendance.service";
 import { EventTypeSettings } from "../model/attendance-feature-config";
+import { AttendanceItem } from "../model/attendance-item";
+import { AttendanceDatatype } from "../model/attendance.datatype";
 
 /**
  * Generate activity entities based on the attendance config's eventTypes.
@@ -73,9 +75,16 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
     // Override participants field if it differs from the default
     if (typeSettings.participantsField !== "participants") {
       delete activity["participants"];
-      activity[typeSettings.participantsField] = participants.map((c) =>
-        c.getId(),
+      const participantIds = participants.map((c) => c.getId());
+      const activityAttendanceField = AttendanceDatatype.detectFieldInEntity(
+        typeSettings.activityType,
       );
+      const shouldWriteAttendanceItems =
+        activityAttendanceField === typeSettings.participantsField ||
+        typeSettings.participantsField === typeSettings.attendanceField;
+      activity[typeSettings.participantsField] = shouldWriteAttendanceItems
+        ? participantIds.map((id) => new AttendanceItem(undefined, "", id))
+        : participantIds;
     }
 
     // Set assigned user via the configured field
