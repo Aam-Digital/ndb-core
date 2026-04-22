@@ -137,7 +137,6 @@
   "4814285799071780083": "Retirer",
   "59296737012024335": "Conservez la valeur d'origine sans aucune anonymisation.",
   "3130036487682331958": "Retenir",
-  "4091722369843135074": "Anonymisez la valeur, mais conservez certaines informations générales. Pour les dates, cela supprime le jour et ne conserve que l'année pour les rapports statistiques. Si un type de données (comme le champ de texte simple) ne prend pas en charge l'anonymisation partielle, la valeur sera supprimée complètement.",
   "6364984864400820849": "Partiellement anonymiser",
   "6770679633670931081": "Valeur minimale",
   "7823539411343889280": "Valeur maximale",
@@ -1382,5 +1381,6 @@
   "5109668206135094036": "Enum is now used in schema and cannot be deleted.",
   "3868778677107272306": "Could not delete enum. Please try again.",
   "7933316575756020369": "Download {$PH} list",
-  "8218299390349021252": " {$INTERPOLATION} attendance "
+  "8218299390349021252": " {$INTERPOLATION} attendance ",
+  "2781675311266594834": "Anonymize the value, but retain some generalized information. For dates, this removes the day and only keeps the year for statistical reporting. For text fields, this keeps only the first character (e.g. as an initial) and masks the rest. If a datatype does not support partial anonymization, the value will instead be removed completely."
 }
