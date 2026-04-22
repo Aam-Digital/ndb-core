@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -23,6 +24,7 @@ import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-dialog-buttons",
   imports: [
     MatButtonModule,

@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { MenuService } from "../../ui/navigation/menu.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -19,6 +19,7 @@ import { ViewActionsComponent } from "../../common-components/view-actions/view-
 import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-primary-action",
   standalone: true,
   imports: [

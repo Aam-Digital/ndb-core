@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
@@ -8,6 +8,7 @@ import { DynamicComponentDirective } from "#src/app/core/config/dynamic-componen
  * Short overall attendance statistics of all events within a given activity, beyond a fixed monthly period.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-summary",
   templateUrl: "./attendance-summary.component.html",
   styleUrls: ["./attendance-summary.component.scss"],

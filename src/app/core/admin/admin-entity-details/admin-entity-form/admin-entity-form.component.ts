@@ -16,6 +16,7 @@ import {
   signal,
   WritableSignal,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -51,6 +52,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-form",
   templateUrl: "./admin-entity-form.component.html",
   styleUrls: [

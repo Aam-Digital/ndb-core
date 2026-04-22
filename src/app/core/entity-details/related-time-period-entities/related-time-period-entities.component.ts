@@ -1,4 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import moment from "moment";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
@@ -23,6 +28,7 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
  */
 @DynamicComponent("RelatedTimePeriodEntities")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-related-time-period-entities",
   templateUrl: "./related-time-period-entities.component.html",
   styleUrls: ["./related-time-period-entities.component.scss"],

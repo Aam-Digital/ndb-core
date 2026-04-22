@@ -1,4 +1,9 @@
-import { Component, inject, Input } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Angulartics2OnModule } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -16,6 +21,7 @@ import { UnsavedChangesService } from "../../../entity-details/form/unsaved-chan
  * Buttons to edit an (entities-table) row inline, handling the necessary logic and UI buttons.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-inline-edit-actions",
   imports: [
     Angulartics2OnModule,

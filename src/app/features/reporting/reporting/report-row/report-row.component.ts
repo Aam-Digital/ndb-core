@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { getGroupingInformationString, ReportRow } from "../../report-row";
 import { FlatTreeControl } from "@angular/cdk/tree";
 import {
@@ -15,6 +15,7 @@ interface FlattenedReportRow extends ReportRow {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-report-row",
   templateUrl: "./report-row.component.html",
   styleUrls: ["./report-row.component.scss"],

@@ -1,9 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatTooltip } from "@angular/material/tooltip";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-advanced-features",
   imports: [ViewTitleComponent, HintBoxComponent, MatTooltip],
   templateUrl: "./advanced-features.component.html",

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Directive,
   inject,
   Input,
@@ -29,6 +30,7 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
   protected readonly ability = inject(EntityAbility);
   protected readonly router = inject(Router);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
+  protected readonly cdr = inject(ChangeDetectorRef);
 
   isLoading: boolean;
   private changesSubscription: Subscription;
@@ -60,7 +62,10 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
         filter(({ type }) => type !== "remove"),
         untilDestroyed(this),
       )
-      .subscribe(({ entity }) => (this.entity = entity));
+      .subscribe(({ entity }) => {
+        this.entity = entity;
+        this.cdr.markForCheck();
+      });
   }
 
   protected async loadEntity() {
@@ -92,5 +97,6 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
       await this.router.navigate(["/404"]);
     }
     this.isLoading = false;
+    this.cdr.markForCheck();
   }
 }

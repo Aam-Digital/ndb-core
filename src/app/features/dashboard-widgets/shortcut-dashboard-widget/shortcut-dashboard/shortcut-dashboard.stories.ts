@@ -14,9 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ShortcutDashboardComponent> = (
-  args: ShortcutDashboardComponent,
-) => ({
+const Template: StoryFn<ShortcutDashboardComponent> = (args) => ({
   component: ShortcutDashboardComponent,
   props: args,
 });

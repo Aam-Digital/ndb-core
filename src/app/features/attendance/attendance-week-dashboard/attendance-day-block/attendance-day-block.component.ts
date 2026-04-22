@@ -1,9 +1,10 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
-  selector: "app-attendance-day-block]",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: "app-attendance-day-block",
   templateUrl: "./attendance-day-block.component.html",
   styleUrls: ["./attendance-day-block.component.scss"],
   imports: [MatTooltipModule],

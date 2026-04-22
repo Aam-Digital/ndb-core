@@ -1,4 +1,9 @@
-import { Component, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../../config/config";
@@ -17,6 +22,7 @@ import { IconButtonComponent } from "#src/app/core/common-components/icon-button
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-setup-wizard-button",
   imports: [IconButtonComponent],
   templateUrl: "./setup-wizard-button.component.html",

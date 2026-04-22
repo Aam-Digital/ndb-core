@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";
@@ -22,6 +29,7 @@ import { PublicFormPermissionService } from "../../../features/public-form/publi
  */
 @DynamicComponent("Form")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-form",
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
@@ -38,6 +46,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private alertService = inject(AlertService);
   private viewContext = inject(ViewComponentContext, { optional: true });
   private readonly permissionService = inject(PublicFormPermissionService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() entity: E;
   @Input() creatingNew = false;
@@ -56,6 +65,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
         if (!this.creatingNew) {
           this.form.formGroup.disable();
         }
+        this.cdr.markForCheck();
       });
   }
 

@@ -7,6 +7,7 @@ import {
   Output,
   ViewChild,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import * as L from "leaflet";
 import "leaflet.markercluster";
@@ -29,6 +30,7 @@ import {
 import { GeoResult } from "../geo.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-map",
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatCard } from "@angular/material/card";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -7,6 +7,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
  * Simple banner to mark a feature as "beta" and inform users of possibly limited functionality.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-beta-feature",
   imports: [MatTooltip, MatCard, FaIconComponent],
   templateUrl: "./beta-feature.component.html",

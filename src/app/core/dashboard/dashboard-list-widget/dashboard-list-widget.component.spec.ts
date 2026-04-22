@@ -13,6 +13,7 @@ import { MatTableModule } from "@angular/material/table";
   template: ` <app-dashboard-list-widget
     [entries]="entries"
     [entityType]="entityType"
+    [dataMapper]="dataMapper"
   >
     <table mat-table>
       <ng-container matColumnDef="name">
@@ -29,6 +30,7 @@ import { MatTableModule } from "@angular/material/table";
 export class DashboardWidgetTestComponent {
   entries: any[];
   entityType: string;
+  dataMapper: (data: any[]) => any[];
 }
 
 describe("DashboardListWidgetComponent", () => {
@@ -69,13 +71,13 @@ describe("DashboardListWidgetComponent", () => {
     vi.useFakeTimers();
     try {
       const testEntries = [{ name: "x" }];
-      expect(component.isLoading).toBe(true);
+      expect(component.isLoading()).toBe(true);
 
       parentComponent.entries = testEntries;
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
     } finally {
       vi.useRealTimers();
     }
@@ -96,7 +98,7 @@ describe("DashboardListWidgetComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.dataSource.data).toEqual(testEntries);
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
     } finally {
       vi.useRealTimers();
     }
@@ -108,7 +110,6 @@ describe("DashboardListWidgetComponent", () => {
       const initialEntry = Note.create(new Date("2022-01-01"));
       mockEntityMapper.loadType.mockResolvedValue([initialEntry]);
       parentComponent.entityType = "Note";
-      component.ngOnInit();
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
@@ -133,7 +134,7 @@ describe("DashboardListWidgetComponent", () => {
         Note.create(new Date("2022-05-27")), // expected filtered out
       ];
       mockEntityMapper.loadType.mockResolvedValue(testEntries);
-      component.dataMapper = (data) =>
+      parentComponent.dataMapper = (data) =>
         data
           .filter((x) => x.date.getFullYear() < 2022)
           .sort((a, b) => a.date.getTime() - b.date.getTime());

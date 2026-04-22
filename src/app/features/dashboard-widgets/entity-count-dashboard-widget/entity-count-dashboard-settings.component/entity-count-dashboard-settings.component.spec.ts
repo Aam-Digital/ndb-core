@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityCountDashboardSettingsComponent } from "./entity-count-dashboard-settings.component";
 import { FormControl } from "@angular/forms";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("EntityCountDashboardSettingsComponent", () => {
   let component: EntityCountDashboardSettingsComponent;
@@ -19,7 +20,7 @@ describe("EntityCountDashboardSettingsComponent", () => {
     component = fixture.componentInstance;
 
     component.formControl = new FormControl({
-      entityType: "Child",
+      entityType: TestEntity.ENTITY_TYPE,
       groupBy: ["center", "gender"],
     });
 

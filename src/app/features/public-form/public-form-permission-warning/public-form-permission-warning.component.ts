@@ -6,6 +6,7 @@ import {
   OnChanges,
   SimpleChanges,
   signal,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { AlertService } from "app/core/alerts/alert.service";
 import { Entity } from "app/core/entity/model/entity";
@@ -16,6 +17,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { Logging } from "#src/app/core/logging/logging.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-public-form-permission-warning",
   templateUrl: "./public-form-permission-warning.component.html",
   imports: [HintBoxComponent, MatButtonModule],

@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -20,6 +20,7 @@ import { DateDatatype } from "../date.datatype";
  */
 @DynamicComponent("DateImportConfig")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-import-config",
   templateUrl: "./date-import-config.component.html",
   styleUrls: ["./date-import-config.component.scss"],

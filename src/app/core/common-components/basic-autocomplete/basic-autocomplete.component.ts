@@ -1,5 +1,7 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   ContentChild,
@@ -19,7 +21,7 @@ import {
   WritableSignal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
+import { NgTemplateOutlet } from "@angular/common";
 import {
   MAT_FORM_FIELD,
   MatFormFieldControl,
@@ -85,9 +87,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   ReactiveFormsModule,
   MatInputModule,
   MatAutocompleteModule,
-  NgForOf,
   MatCheckboxModule,
-  NgIf,
   NgTemplateOutlet,
   MatChipInput,
   MatChipGrid,
@@ -108,6 +108,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
   styleUrls: ["./basic-autocomplete.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
     {
@@ -122,6 +123,7 @@ export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
   implements OnChanges, OnInit, AfterViewInit
 {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewportRuler = inject(ViewportRuler);
 
@@ -207,13 +209,13 @@ export class BasicAutocompleteComponent<O, V = O>
   @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
 
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
-  showAddOption = false;
+  showAddOption = signal(false);
 
   /**
    * Dynamic width of the autocomplete dropdown panel.
    * Set to match the full width of the Material form field container (including icons/padding).
    */
-  panelWidth: string;
+  panelWidth = signal("200px");
 
   /**
    * Maximum number of options to display in the dropdown.
@@ -221,7 +223,7 @@ export class BasicAutocompleteComponent<O, V = O>
    * Set to 0 for no limit. Defaults to 100.
    */
   @Input() maxOptionsToDisplay: number = 100;
-  hasMoreOptions = false;
+  hasMoreOptions = signal(false);
 
   /**
    * Whether dropdown option labels should be shown in full length.
@@ -267,7 +269,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private _options: SelectableOption<O, V>[] = [];
 
-  _selectedOptions: SelectableOption<O, V>[] = [];
+  _selectedOptions = signal<SelectableOption<O, V>[]>([]);
 
   /**
    * Keep the search value to help users quickly multi-select multiple related options without having to type filter text again
@@ -368,7 +370,7 @@ export class BasicAutocompleteComponent<O, V = O>
       ".mat-mdc-form-field, .mat-form-field",
     ) as HTMLElement;
     const fieldWidth = fieldEl ? fieldEl.getBoundingClientRect().width : 200;
-    this.panelWidth = `${fieldWidth}px`;
+    this.panelWidth.set(`${fieldWidth}px`);
   }
 
   /**
@@ -415,11 +417,11 @@ export class BasicAutocompleteComponent<O, V = O>
       moveItemInArray(reordered, event.previousIndex, event.currentIndex);
       this.autocompleteOptions.set(reordered);
     }
-    this._selectedOptions = this.autocompleteOptions().filter(
-      (o) => o.selected,
+    this._selectedOptions.set(
+      this.autocompleteOptions().filter((o) => o.selected),
     );
     if (this.multi) {
-      this.value = this._selectedOptions.map((o) => o.asValue);
+      this.value = this._selectedOptions().map((o) => o.asValue);
     } else {
       this.value = undefined;
     }
@@ -486,8 +488,10 @@ export class BasicAutocompleteComponent<O, V = O>
       );
 
       // do not allow users to create a new entry "identical" to an existing one:
-      this.showAddOption = !this._options.some(
-        (o) => o?.asString?.toLowerCase() === filterText?.toLowerCase(),
+      this.showAddOption.set(
+        !this._options.some(
+          (o) => o?.asString?.toLowerCase() === filterText?.toLowerCase(),
+        ),
       );
     }
 
@@ -495,10 +499,10 @@ export class BasicAutocompleteComponent<O, V = O>
       this.maxOptionsToDisplay > 0 &&
       filteredOptions.length > this.maxOptionsToDisplay
     ) {
-      this.hasMoreOptions = true;
+      this.hasMoreOptions.set(true);
       filteredOptions = filteredOptions.slice(0, this.maxOptionsToDisplay);
     } else {
-      this.hasMoreOptions = false;
+      this.hasMoreOptions.set(false);
     }
 
     return filteredOptions;
@@ -526,8 +530,8 @@ export class BasicAutocompleteComponent<O, V = O>
           ? this.value?.some((v) => this.compareEnumValues(v, o.asValue))
           : this.compareEnumValues(this.value, o.asValue)),
     );
-    this._selectedOptions = this._options.filter(
-      (o) => o.selected && !o.isHidden,
+    this._selectedOptions.set(
+      this._options.filter((o) => o.selected && !o.isHidden),
     );
   }
 
@@ -555,7 +559,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this.selectOption(selected as SelectableOption<O, V>);
     } else {
       this.autocompleteForm.setValue("");
-      this._selectedOptions = [];
+      this._selectedOptions.set([]);
       this.value = undefined;
     }
     this.onChange(this.value);
@@ -563,10 +567,10 @@ export class BasicAutocompleteComponent<O, V = O>
 
   unselect(option: SelectableOption<O, V>) {
     option.selected = false;
-    this._selectedOptions = this._options.filter((o) => o.selected);
+    this._selectedOptions.set(this._options.filter((o) => o.selected));
 
     if (this.multi) {
-      this.value = this._selectedOptions.map((o) => o.asValue);
+      this.value = this._selectedOptions().map((o) => o.asValue);
     } else {
       this.value = undefined;
     }
@@ -598,12 +602,12 @@ export class BasicAutocompleteComponent<O, V = O>
   private selectOption(option: SelectableOption<O, V>) {
     if (this.multi) {
       option.selected = !option.selected;
-      this._selectedOptions = this._options.filter((o) => o.selected);
-      this.value = this._selectedOptions.map((o) => o.asValue);
+      this._selectedOptions.set(this._options.filter((o) => o.selected));
+      this.value = this._selectedOptions().map((o) => o.asValue);
       // re-open autocomplete to select next option
       setTimeout(() => this.showAutocomplete());
     } else {
-      this._selectedOptions = [option];
+      this._selectedOptions.set([option]);
       this.value = option.asValue;
       this.isInSearchMode.set(false);
     }
@@ -646,5 +650,6 @@ export class BasicAutocompleteComponent<O, V = O>
   override writeValue(val: V[] | V, notifyFormControl = false): void {
     super.writeValue(val, notifyFormControl);
     this.setInitialInputValue();
+    this.cdr.markForCheck();
   }
 }

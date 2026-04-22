@@ -1,17 +1,23 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from "@angular/core";
 import { Router } from "@angular/router";
-
 import { MatIconButton } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { Angulartics2Module } from "angulartics2";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
-import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityFieldLabelComponent } from "../../../../core/entity/entity-field-label/entity-field-label.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -19,6 +25,7 @@ import {
   Entity,
   EntityConstructor,
 } from "../../../../core/entity/model/entity";
+import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { groupBy } from "../../../../utils/utils";
 import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 
@@ -59,6 +66,7 @@ interface GroupCountRow {
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-count-dashboard-widget",
   templateUrl: "./entity-count-dashboard.component.html",
   styleUrls: ["./entity-count-dashboard.component.scss"],
@@ -73,96 +81,121 @@ interface GroupCountRow {
     EntityFieldViewComponent,
   ],
 })
-export class EntityCountDashboardComponent
-  extends DashboardWidget
-  implements EntityCountDashboardConfig, OnInit
-{
-  private entityMapper = inject(EntityMapperService);
-  private router = inject(Router);
-  private entities = inject(EntityRegistry);
-  private configurableEnum = inject(ConfigurableEnumService);
+export class EntityCountDashboardComponent {
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly router = inject(Router);
+  private readonly entities = inject(EntityRegistry);
+  private readonly configurableEnum = inject(ConfigurableEnumService);
+
+  private rawEntities = signal<Entity[]>([]);
+  currentGroupIndex = signal(0);
+
+  entityType = input("Child");
+  groupBy = input<string[]>(["center", "gender"]);
+  subtitle = input<string>();
+  explanation = input<string>(
+    $localize`:dashboard widget explanation:Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.`,
+  );
+
+  entityDefinition = computed(() => this.entities.get(this.entityType()));
+  totalEntities = computed(
+    () => this.rawEntities().filter((entity) => entity.isActive).length,
+  );
+
+  entityGroupCounts = computed<Record<string, GroupCountRow[]>>(() => {
+    const result: Record<string, GroupCountRow[]> = {};
+    const entityDefinition = this.entityDefinition();
+    const activeEntities = this.rawEntities().filter(
+      (entity) => entity.isActive,
+    );
+
+    for (const groupByField of this.groupBy()) {
+      result[groupByField] = this.calculateGroupCounts(
+        activeEntities,
+        groupByField,
+        entityDefinition,
+      );
+    }
+
+    return result;
+  });
+
+  currentGroupField = computed(() => {
+    const groupBy = this.groupBy();
+    if (groupBy.length === 0) {
+      return undefined;
+    }
+
+    return groupBy[this.currentGroupIndex() % groupBy.length];
+  });
+
+  constructor() {
+    effect((onCleanup) => {
+      const entityType = this.entityType();
+      const entityDefinition = this.entityDefinition();
+      let isCurrent = true;
+
+      this.rawEntities.set([]);
+      this.currentGroupIndex.set(0);
+
+      untracked(async () => {
+        const entities = await this.entityMapper.loadType(entityDefinition);
+        if (isCurrent) {
+          this.rawEntities.set(entities);
+        }
+      });
+
+      const subscription = this.entityMapper
+        .receiveUpdates(entityType)
+        .subscribe((update) => {
+          this.rawEntities.update(
+            (current) => applyUpdate(current, update) as Entity[],
+          );
+        });
+
+      onCleanup(() => {
+        isCurrent = false;
+        subscription.unsubscribe();
+      });
+    });
+  }
 
   getPrev() {
-    this.currentGroupIndex =
-      (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
+    const groupBy = this.groupBy();
+    if (groupBy.length === 0) {
+      return;
+    }
+
+    this.currentGroupIndex.update(
+      (index) => (index - 1 + groupBy.length) % groupBy.length,
+    );
   }
 
   getNext() {
-    this.currentGroupIndex = (this.currentGroupIndex + 1) % this.groupBy.length;
+    const groupBy = this.groupBy();
+    if (groupBy.length === 0) {
+      return;
+    }
+
+    this.currentGroupIndex.update((index) => (index + 1) % groupBy.length);
   }
 
-  static override getRequiredEntities(config: EntityCountDashboardConfig) {
+  static getRequiredEntities(config: EntityCountDashboardConfig) {
     return config?.entityType || "Child";
-  }
-
-  /**
-   * Entity name which should be grouped
-   * @param value
-   */
-  @Input() set entityType(value: string) {
-    this._entity = this.entities.get(value);
-  }
-
-  protected _entity: EntityConstructor;
-
-  /**
-   * The property of the entities to group counts by.
-   *
-   * Default is "center".
-   */
-  @Input() groupBy: string[] = ["center", "gender"];
-
-  /**
-   * The counts of entities for each of the groupBy fields.
-   */
-  entityGroupCounts: { [groupBy: string]: GroupCountRow[] } = {};
-
-  /**
-   * Index of the currently displayed groupBy field / entityGroupCounts entry.
-   */
-  currentGroupIndex = 0;
-
-  totalEntities: number;
-
-  /**
-   * The label of the entity type (displayed as an overall dashboard widget subtitle)
-   */
-  label: string;
-  entityIcon: IconName;
-
-  @Input() subtitle: string;
-  @Input() explanation: string =
-    $localize`:dashboard widget explanation:Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.`;
-
-  async ngOnInit() {
-    if (!this._entity) {
-      this.entityType = "Child";
-    }
-    this.label = this._entity.labelPlural;
-    this.entityIcon = this._entity.icon;
-
-    // Load all entities of the specified type
-    const entities = await this.entityMapper.loadType(this._entity);
-
-    // Filter entities to only include active ones for the total count
-    const activeEntities = entities.filter((e) => e.isActive);
-
-    this.totalEntities = activeEntities.length;
-    for (const groupByField of this.groupBy) {
-      this.entityGroupCounts[groupByField] = this.calculateGroupCounts(
-        activeEntities,
-        groupByField,
-      );
-    }
   }
 
   private calculateGroupCounts(
     entities: Entity[],
     fieldName: string,
+    entityDefinition: EntityConstructor,
   ): GroupCountRow[] {
-    const field = this._entity.schema.get(fieldName);
+    const field = entityDefinition.schema.get(fieldName);
 
-    let groupCounts = this.getGroupCounts(entities, fieldName);
+    let groupCounts = this.getGroupCounts(
+      entities,
+      fieldName,
+      entityDefinition,
+    );
     groupCounts = this.mergeNotDefinedGroups(groupCounts);
 
     if (field.dataType === "configurable-enum") {
@@ -176,22 +209,23 @@ export class EntityCountDashboardComponent
   private getGroupCounts(
     entities: Entity[],
     fieldName: string,
+    entityDefinition: EntityConstructor,
   ): GroupCountRow[] {
     const groups = groupBy(entities, fieldName as keyof Entity);
-    return groups.map(([group, entities]) => {
+    return groups.map(([group, groupedEntities]) => {
       const row: GroupCountRow = {
         label: extractHumanReadableLabel(group),
-        value: entities.length,
+        value: groupedEntities.length,
         id: extractGroupId(group),
         fieldName,
       };
 
-      // Create a dummy entity with the field value set for display component rendering
       if (group !== undefined && group !== null && group !== "") {
-        const entity = new this._entity();
+        const entity = new entityDefinition();
         entity[fieldName] = group;
         row.entity = entity;
       }
+
       return row;
     });
   }
@@ -199,19 +233,22 @@ export class EntityCountDashboardComponent
   /** Merges "" and undefined groups into a single group with label: undefined */
   private mergeNotDefinedGroups(groupCounts: GroupCountRow[]): GroupCountRow[] {
     const notDefinedGroups = groupCounts.filter(
-      (g) => g.id === "" || g.id === undefined,
+      (group) => group.id === "" || group.id === undefined,
     );
     if (notDefinedGroups.length > 1) {
       const merged = {
         label: undefined,
-        value: notDefinedGroups.reduce((sum, g) => sum + g.value, 0),
+        value: notDefinedGroups.reduce((sum, group) => sum + group.value, 0),
         id: "",
       };
       return [
         merged,
-        ...groupCounts.filter((g) => g.id !== "" && g.id !== undefined),
+        ...groupCounts.filter(
+          (group) => group.id !== "" && group.id !== undefined,
+        ),
       ];
     }
+
     return groupCounts;
   }
 
@@ -221,20 +258,19 @@ export class EntityCountDashboardComponent
     field: any,
   ): GroupCountRow[] {
     const enumValues = this.configurableEnum.getEnumValues(field.additional);
-    const validIds = new Set(enumValues.map((ev) => ev.id));
+    const validIds = new Set(enumValues.map((enumValue) => enumValue.id));
     const groupCountsMap = new Map(
       groupCounts.map((aggregate) => [aggregate.id, aggregate]),
     );
 
-    // Combine all invalid options into a single row
     const invalidGroups = groupCounts.filter(
-      (g) => g.id && !validIds.has(g.id),
+      (group) => group.id && !validIds.has(group.id),
     );
-    let invalidOptionRow: GroupCountRow | undefined = undefined;
+    let invalidOptionRow: GroupCountRow | undefined;
     if (invalidGroups.length > 0) {
       invalidOptionRow = {
         label: undefined,
-        value: invalidGroups.reduce((sum, g) => sum + g.value, 0),
+        value: invalidGroups.reduce((sum, group) => sum + group.value, 0),
         id: "__invalid__",
         isInvalidOption: true,
       };
@@ -252,13 +288,11 @@ export class EntityCountDashboardComponent
       })
       .filter(Boolean);
 
-    // Add merged undefined group if present
     if (groupCountsMap.has("")) {
       const mergedGroup = groupCountsMap.get("");
       groupCountSorted.unshift(mergedGroup);
     }
 
-    // Add the single invalid option row at the top if it exists
     if (invalidOptionRow) {
       groupCountSorted = [invalidOptionRow, ...groupCountSorted];
     }
@@ -267,10 +301,17 @@ export class EntityCountDashboardComponent
   }
 
   goToEntityList(filterId: string) {
-    const params = {};
-    params[this.groupBy[this.currentGroupIndex]] = filterId;
+    const field = this.currentGroupField();
+    if (!field) {
+      return;
+    }
 
-    this.router.navigate([this._entity.route], { queryParams: params });
+    const params = {};
+    params[field] = filterId;
+
+    this.router.navigate([this.entityDefinition().route], {
+      queryParams: params,
+    });
   }
 }
 

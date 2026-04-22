@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   EntityListConfig,
@@ -13,6 +19,7 @@ import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manage
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-list",
   imports: [
     MatTableModule,

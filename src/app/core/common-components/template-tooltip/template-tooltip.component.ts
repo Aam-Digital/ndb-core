@@ -8,6 +8,7 @@ import {
   Output,
   TemplateRef,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   animate,
@@ -29,6 +30,7 @@ import { NgTemplateOutlet } from "@angular/common";
  * refer to the {@link ./template-tooltip.directive.ts Template Tooltip Directive}
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: TemplateTooltipComponent.SELECTOR,
   template: '<ng-container *ngTemplateOutlet="contentTemplate"></ng-container>',
   styleUrls: ["./template-tooltip.component.scss"],

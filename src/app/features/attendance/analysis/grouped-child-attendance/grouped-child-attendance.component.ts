@@ -1,9 +1,11 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
   ViewEncapsulation,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceService } from "../../attendance.service";
@@ -20,6 +22,7 @@ import { MatSelectModule } from "@angular/material/select";
  */
 @DynamicComponent("GroupedChildAttendance")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-grouped-child-attendance",
   templateUrl: "./grouped-child-attendance.component.html",
   styleUrls: ["./grouped-child-attendance.component.scss"],
@@ -34,6 +37,7 @@ import { MatSelectModule } from "@angular/material/select";
 })
 export class GroupedChildAttendanceComponent implements OnInit {
   private attendanceService = inject(AttendanceService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
 
@@ -48,6 +52,7 @@ export class GroupedChildAttendanceComponent implements OnInit {
 
   private async loadActivities() {
     this.loading = true;
+    this.cdr.markForCheck();
     const allActivities =
       await this.attendanceService.getActivitiesForParticipant(
         this.entity.getId(),
@@ -57,6 +62,7 @@ export class GroupedChildAttendanceComponent implements OnInit {
     this.archivedActivities = allActivities.filter((a) => a.isActive == false);
 
     this.loading = false;
+    this.cdr.markForCheck();
   }
 
   onActivityChange(selectedArchivedActivity: Entity) {

@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ViewChild, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ViewChild,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { QueryDataSource } from "../../../core/database/query-data-source";
 import { Entity } from "../../../core/entity/model/entity";
@@ -17,6 +23,7 @@ import { ViewTitleComponent } from "../../../core/common-components/view-title/v
  */
 @RouteTarget("ConflictResolution")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-conflict-resolution-list",
   templateUrl: "./conflict-resolution-list.component.html",
   imports: [

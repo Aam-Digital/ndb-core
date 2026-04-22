@@ -5,6 +5,7 @@ import {
   output,
   resource,
   effect,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
@@ -22,6 +23,7 @@ import { MatButtonModule } from "@angular/material/button";
  * Also executes the action.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-bulk-actions",
   templateUrl: "./entity-bulk-actions.component.html",
   styleUrls: ["./entity-bulk-actions.component.scss"],

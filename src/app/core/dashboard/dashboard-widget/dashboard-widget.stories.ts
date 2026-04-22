@@ -13,9 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DashboardWidgetComponent> = (
-  args: DashboardWidgetComponent,
-) => ({
+const Template: StoryFn<DashboardWidgetComponent> = (args) => ({
   component: DashboardWidgetComponent,
   props: args,
 });

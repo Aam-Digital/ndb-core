@@ -62,10 +62,11 @@ describe("ShortcutDashboardComponent", () => {
         link: "/school",
       };
 
-      component.shortcuts = [childItem, schoolItem];
+      fixture.componentRef.setInput("shortcuts", [childItem, schoolItem]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.shortcuts).toEqual([childItem]);
+      expect(component.filteredShortcuts()).toEqual([childItem]);
     } finally {
       vi.useRealTimers();
     }

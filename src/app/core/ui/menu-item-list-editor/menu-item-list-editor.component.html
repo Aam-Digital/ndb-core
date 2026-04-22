@@ -14,11 +14,11 @@
 <div
   cdkDropList
   [id]="containerId"
-  [cdkDropListData]="items"
+  [cdkDropListData]="items()"
   [cdkDropListConnectedTo]="connectedDropLists"
   (cdkDropListDropped)="onDragDrop($event)"
 >
-  @for (item of items; track item.uniqueId; let i = $index) {
+  @for (item of items(); track item.uniqueId; let i = $index) {
     <app-admin-menu-item
       [item]="item"
       [connectedTo]="connectedDropLists"

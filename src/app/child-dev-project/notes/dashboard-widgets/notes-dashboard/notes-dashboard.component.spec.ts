@@ -49,7 +49,7 @@ describe("NotesDashboardComponent", () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(NotesDashboardComponent);
       component = fixture.componentInstance;
-      component.mode = "with-recent-notes";
+      fixture.componentRef.setInput("mode", "with-recent-notes");
       fixture.detectChanges();
     });
 
@@ -70,12 +70,12 @@ describe("NotesDashboardComponent", () => {
           ]),
         );
 
-        component.sinceDays = 30;
-        component.fromBeginningOfWeek = false;
-        component.ngOnInit();
+        fixture.componentRef.setInput("sinceDays", 30);
+        fixture.componentRef.setInput("fromBeginningOfWeek", false);
+        fixture.detectChanges();
         await vi.advanceTimersByTimeAsync(0);
 
-        expect(component.entries).toHaveLength(3);
+        expect(component.entries()).toHaveLength(3);
       } finally {
         vi.useRealTimers();
       }
@@ -86,7 +86,7 @@ describe("NotesDashboardComponent", () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(NotesDashboardComponent);
       component = fixture.componentInstance;
-      component.mode = "without-recent-notes";
+      fixture.componentRef.setInput("mode", "without-recent-notes");
       fixture.detectChanges();
     });
 
@@ -107,15 +107,15 @@ describe("NotesDashboardComponent", () => {
           ]),
         );
 
-        component.sinceDays = 30;
-        component.fromBeginningOfWeek = false;
-        component.ngOnInit();
+        fixture.componentRef.setInput("sinceDays", 30);
+        fixture.componentRef.setInput("fromBeginningOfWeek", false);
+        fixture.detectChanges();
 
         await vi.advanceTimersByTimeAsync(0);
 
-        expect(component.entries).toHaveLength(3);
+        expect(component.entries()).toHaveLength(3);
 
-        expect(component.entries[0]).toEqual({
+        expect(component.entries()[0]).toEqual({
           entityId: "5",
           daysSinceLastNote: 50,
           moreThanDaysSince: false,
@@ -133,14 +133,14 @@ describe("NotesDashboardComponent", () => {
           new Map([[childId1, Number.POSITIVE_INFINITY]]),
         );
 
-        component.sinceDays = 10;
-        component.fromBeginningOfWeek = false;
-        component.ngOnInit();
+        fixture.componentRef.setInput("sinceDays", 10);
+        fixture.componentRef.setInput("fromBeginningOfWeek", false);
+        fixture.detectChanges();
         await vi.advanceTimersByTimeAsync(0);
 
-        expect(component.entries).toHaveLength(1);
+        expect(component.entries()).toHaveLength(1);
 
-        expect(component.entries[0]).toEqual(
+        expect(component.entries()[0]).toEqual(
           expect.objectContaining({
             entityId: childId1,
             moreThanDaysSince: true,
@@ -157,9 +157,9 @@ describe("NotesDashboardComponent", () => {
       );
       const entity = TestEntity.ENTITY_TYPE;
 
-      component.entity = entity;
-      component.mode = "with-recent-notes";
-      component.ngOnInit();
+      fixture.componentRef.setInput("entity", entity);
+      fixture.componentRef.setInput("mode", "with-recent-notes");
+      fixture.detectChanges();
 
       expect(
         mockChildrenService.getDaysSinceLastNoteOfEachEntity,

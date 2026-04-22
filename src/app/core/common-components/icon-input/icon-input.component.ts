@@ -7,6 +7,7 @@ import {
   Output,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   AbstractControl,
@@ -29,6 +30,7 @@ import { resolveIconDefinition } from "../fa-dynamic-icon/fa-icon-utils";
  * (showing some additional explanation in the UI).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-icon-input",
   standalone: true,
   imports: [

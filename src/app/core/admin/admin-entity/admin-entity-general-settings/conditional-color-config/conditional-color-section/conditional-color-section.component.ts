@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -10,6 +16,7 @@ import { ConditionsEditorComponent } from "app/core/common-components/conditions
  * Component for managing a single conditional color section
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-conditional-color-section",
   templateUrl: "./conditional-color-section.component.html",
   styleUrls: ["./conditional-color-section.component.scss"],

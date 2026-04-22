@@ -7,6 +7,7 @@ import {
   TemplateRef,
   ViewChild,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgTemplateOutlet } from "@angular/common";
@@ -17,6 +18,7 @@ import { NgTemplateOutlet } from "@angular/common";
  * div.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-disabled-wrapper",
   template: ` <div
     [matTooltip]="text"

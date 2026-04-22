@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { GeoLocation } from "../geo-location";
@@ -6,6 +6,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @DynamicComponent("ViewLocation")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-view-location",
   templateUrl: "./view-location.component.html",
   imports: [FaIconComponent],

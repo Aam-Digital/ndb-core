@@ -1,4 +1,11 @@
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SessionSubject } from "../../session/auth/session-info";
@@ -18,6 +25,7 @@ import { AlertService } from "../../alerts/alert.service";
 import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-user-list",
   imports: [
     ViewTitleComponent,

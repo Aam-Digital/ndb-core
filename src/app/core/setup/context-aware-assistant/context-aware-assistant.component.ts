@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
@@ -9,6 +9,7 @@ import { BackupService } from "../../admin/backup/backup.service";
  * used within the AssistantDialog.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-context-aware-assistant",
   imports: [MatButtonModule],
   templateUrl: "./context-aware-assistant.component.html",

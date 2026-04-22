@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
@@ -17,6 +17,7 @@ import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-def
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-todos-related-to-entity",
   templateUrl: "./todos-related-to-entity.component.html",
   styleUrls: ["./todos-related-to-entity.component.scss"],

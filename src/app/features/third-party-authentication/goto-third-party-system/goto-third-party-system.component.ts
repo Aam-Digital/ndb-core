@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Angulartics2Module } from "angulartics2";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
@@ -12,6 +17,7 @@ import { Logging } from "../../../core/logging/logging.service";
  * (usually displayed in the main navigation menu)
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-goto-third-party-system",
   imports: [Angulartics2Module, FaIconComponent, MatButton],
   templateUrl: "./goto-third-party-system.component.html",

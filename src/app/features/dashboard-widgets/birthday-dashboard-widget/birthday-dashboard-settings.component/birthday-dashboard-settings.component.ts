@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormControl, FormsModule } from "@angular/forms";
 
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -34,6 +40,7 @@ interface EntityPropertyPair {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-birthday-dashboard-settings",
   standalone: true,
   imports: [

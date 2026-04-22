@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
@@ -10,6 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
  */
 @DynamicComponent("ViewFile")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-view-file",
   templateUrl: "./view-file.component.html",
   styleUrls: ["../edit-file/edit-file.component.scss"],

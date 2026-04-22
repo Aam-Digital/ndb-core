@@ -5,6 +5,7 @@ import {
   inject,
   input,
   Input,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
@@ -21,6 +22,7 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
  * (for admin and action screens).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-field-select",
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   templateUrl:
