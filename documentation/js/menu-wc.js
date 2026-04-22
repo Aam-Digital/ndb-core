@@ -1436,6 +1436,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ReportRowComponent.html" data-type="entity-link" >ReportRowComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/ReviewDuplicatesComponent.html" data-type="entity-link" >ReviewDuplicatesComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/RollCallComponent.html" data-type="entity-link" >RollCallComponent</a>
                             </li>
                             <li class="link">
@@ -1952,6 +1955,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/DownloadService.html" data-type="entity-link" >DownloadService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/DuplicateDetectionService.html" data-type="entity-link" >DuplicateDetectionService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/DuplicateRecordService.html" data-type="entity-link" >DuplicateRecordService</a>
                                 </li>
                                 <li class="link">
@@ -2346,6 +2352,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/DiscreteColumnMappingAdditional.html" data-type="entity-link" >DiscreteColumnMappingAdditional</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/DuplicatePair.html" data-type="entity-link" >DuplicatePair</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/DynamicComponentConfig.html" data-type="entity-link" >DynamicComponentConfig</a>
