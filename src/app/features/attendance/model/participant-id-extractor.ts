@@ -2,8 +2,8 @@
  * Normalize participant sources into plain participant IDs.
  *
  * Supports both configured participants field shapes used in attendance:
- * - `string[]` with direct entity IDs
- * - attendance-like entries containing a `participant` ID
+ * - `string[]` with direct entity IDs (datatype `entity`)
+ * - attendance-like entries containing a `participant` ID (datatype `attendance`)
  */
 export function extractParticipantIds(value: unknown): string[] {
   if (!Array.isArray(value)) {

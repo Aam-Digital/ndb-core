@@ -40,6 +40,18 @@ class MockRecurringActivity extends Entity {
   @DatabaseField({ dataType: "entity", additional: "TestEntity" })
   participants: string[] = [];
 
+  @DatabaseField({
+    dataType: "attendance",
+    isArray: true,
+    additional: {
+      participant: {
+        dataType: "entity",
+        additional: ["TestEntity"],
+      },
+    },
+  })
+  participantsAsAttendance: AttendanceItem[] = [];
+
   @DatabaseField()
   linkedGroups: string[] = [];
 
@@ -255,12 +267,12 @@ describe("AttendanceService", () => {
   });
 
   it("should support participantsField pointing to attendance data", async () => {
-    service.eventTypeSettings[0].participantsField = "attendance";
+    service.eventTypeSettings[0].participantsField = "participantsAsAttendance";
 
     const activity = new MockRecurringActivity();
     const directChild1 = new TestEntity();
     const directChild2 = new TestEntity();
-    activity["attendance"] = [
+    activity.participantsAsAttendance = [
       new AttendanceItem(undefined, "", directChild1.getId()),
       new AttendanceItem(undefined, "", directChild2.getId()),
     ];
