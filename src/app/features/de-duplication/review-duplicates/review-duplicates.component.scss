@@ -1,0 +1,17 @@
+.description-text {
+  max-width: 700px;
+}
+
+.search-controls {
+  margin-bottom: 16px;
+
+  mat-form-field {
+    min-width: 220px;
+  }
+}
+
+.no-results-message {
+  color: rgba(0, 0, 0, 0.54);
+  text-align: center;
+  padding: 24px 0;
+}
