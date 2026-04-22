@@ -409,7 +409,7 @@ describe("DownloadService", () => {
     expect(rows[1]).toContain(42);
   });
 
-  it("should add readable columns for referenced entities in xlsx rows", async () => {
+  it("should add readable columns for referenced entities in export rows", async () => {
     class XlsxEntityRefTestEntity extends Entity {
       @DatabaseField({ dataType: EntityDatatype.dataType, label: "School" })
       relatedEntity: string;
@@ -426,7 +426,7 @@ describe("DownloadService", () => {
     expect(rows[1]).toContain(testSchool.toString());
   });
 
-  it("should return empty rows array for empty data in xlsx", async () => {
+  it("should return empty rows array for empty data in export", async () => {
     const rows = await service.prepareExportData([]);
 
     expect(rows).toHaveLength(1); // one empty header row
