@@ -295,12 +295,13 @@
 import { ExportColumnConfig } from &quot;../data-transformation-service/export-column-config&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { DataTransformationService } from &quot;../data-transformation-service/data-transformation.service&quot;;
-import { transformToReadableFormat } from &quot;../../common-components/entities-table/value-accessor/value-accessor&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
 import { EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
 import { ExportColumnMapping } from &quot;app/core/entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
 import { EntitySchemaService } from &quot;app/core/entity/schema/entity-schema.service&quot;;
+import { Workbook } from &quot;exceljs&quot;;
+import moment from &quot;moment&quot;;
 
 export interface ExportColumnResolver {
   sourceFieldId: string;
@@ -345,7 +346,7 @@ export function buildExportColumnResolvers(
   return resolvers;
 }
 
-export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot;;
+export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot; | &quot;xlsx&quot;;
 
 /**
  * This service allows to start a download process from the browser.
@@ -385,8 +386,16 @@ export class DownloadService {
     const filenameWithExtension &#x3D; filename.endsWith(&quot;.&quot; + format)
       ? filename
       : filename + &quot;.&quot; + format;
-    const link &#x3D; this.createDownloadLink(blobData, filenameWithExtension);
+    const objectUrl &#x3D; globalThis.URL.createObjectURL(blobData);
+    const link &#x3D; document.createElement(&quot;a&quot;);
+    link.setAttribute(&quot;style&quot;, &quot;display:none;&quot;);
+    link.href &#x3D; objectUrl;
+    link.download &#x3D; filenameWithExtension;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    // defer revocation so the browser has time to initiate the download
+    setTimeout(() &#x3D;&gt; globalThis.URL.revokeObjectURL(objectUrl), 1000);
   }
 
   private async getFormattedBlobData(
@@ -415,6 +424,12 @@ export class DownloadService {
           result &#x3D; data;
         }
         return new Blob([result], { type: &quot;text/csv&quot; });
+      case &quot;xlsx&quot;:
+        if (!Array.isArray(data)) {
+          Logging.warn(&quot;XLSX export requires an array of records.&quot;);
+          return new Blob([&quot;&quot;]);
+        }
+        return this.createXlsx(data);
       case &quot;pdf&quot;:
         return new Blob([data], { type: &quot;application/pdf&quot; });
       default:
@@ -423,35 +438,61 @@ export class DownloadService {
     }
   }
 
-  private createDownloadLink(blobData, filename: string): HTMLAnchorElement {
-    const link &#x3D; document.createElement(&quot;a&quot;);
-    link.setAttribute(&quot;style&quot;, &quot;display:none;&quot;);
-    document.body.appendChild(link);
-    link.href &#x3D; window.URL.createObjectURL(blobData);
-    link.download &#x3D; filename;
-    link.addEventListener(&quot;click&quot;, () &#x3D;&gt; window.URL.revokeObjectURL(blobData));
-    return link;
-  }
-
   /**
-   * Creates a CSV string of the input data
+   * Creates a CSV string of the input data using the shared export data preparation.
    *
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
   async createCsv(data: any[]): Promise&lt;string&gt; {
-    let entityConstructor: any;
+    const [headers, ...rows] &#x3D; await this.prepareExportData(data);
+    return this.papa.unparse(
+      { fields: headers, data: rows },
+      {
+        quotes: true,
+        newline: DownloadService.SEPARATOR_ROW,
+      },
+    );
+  }
 
+  /**
+   * Creates an XLSX Blob from the input data using the shared export data preparation.
+   */
+  async createXlsx(data: any[]): Promise&lt;Blob&gt; {
+    const rows &#x3D; await this.prepareExportData(data);
+    const wb &#x3D; new Workbook();
+    const ws &#x3D; wb.addWorksheet(&quot;Export&quot;);
+    for (const row of rows) {
+      ws.addRow(row);
+    }
+    const headerRow &#x3D; ws.getRow(1);
+    headerRow.font &#x3D; { bold: true };
+    headerRow.fill &#x3D; {
+      type: &quot;pattern&quot;,
+      pattern: &quot;solid&quot;,
+      fgColor: { argb: &quot;FFD3D3D3&quot; },
+    };
+    headerRow.commit();
+    const buffer &#x3D; await wb.xlsx.writeBuffer();
+    return new Blob([buffer], {
+      type: &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;,
+    });
+  }
+
+  /**
+   * Prepares export data as row arrays (header row + data rows) for use with any export format.
+   *
+   * For entity data: uses schema column resolvers to produce human-readable headers and values.
+   * For plain objects: the first row contains the object keys as headers.
+   */
+  async prepareExportData(data: any[]): Promise&lt;any[][]&gt; {
+    let entityConstructor: EntityConstructor | undefined;
     if (data.length &gt; 0 &amp;&amp; typeof data[0]?.getConstructor &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
       entityConstructor &#x3D; data[0].getConstructor();
     }
-    const keys &#x3D; new Set&lt;string&gt;();
-    data.forEach((row) &#x3D;&gt; Object.keys(row).forEach((key) &#x3D;&gt; keys.add(key)));
-
-    data &#x3D; data.map(transformToReadableFormat);
 
     if (!entityConstructor) {
-      data &#x3D; data.map((row) &#x3D;&gt;
+      const mapped &#x3D; data.map((row) &#x3D;&gt;
         Object.fromEntries(
           Object.entries(row).map(([key, value]) &#x3D;&gt; [
             key,
@@ -459,20 +500,13 @@ export class DownloadService {
           ]),
         ),
       );
-
-      return this.papa.unparse(data, {
-        quotes: true,
-        header: true,
-        newline: DownloadService.SEPARATOR_ROW,
-        columns: [...keys],
-      });
+      const keys &#x3D;
+        mapped.length &gt; 0
+          ? Array.from(new Set(mapped.flatMap((r) &#x3D;&gt; Object.keys(r))))
+          : [];
+      return [keys, ...mapped.map((r) &#x3D;&gt; keys.map((k) &#x3D;&gt; r[k]))];
     }
 
-    const result &#x3D; await this.exportFile(data, entityConstructor);
-    return result;
-  }
-
-  async exportFile(data: any[], entityConstructor: EntityConstructor) {
     const entitySchema &#x3D; entityConstructor.schema;
     const columnLabels &#x3D; new Map&lt;string, string&gt;();
     const columnResolvers &#x3D; new Map&lt;string, ExportColumnResolver&gt;();
@@ -490,22 +524,12 @@ export class DownloadService {
       data.map((item) &#x3D;&gt; this.mapEntityToExportRow(item, columnResolvers)),
     );
 
-    const columnKeys: string[] &#x3D; Array.from(columnLabels.keys());
-    const labels: any[] &#x3D; Array.from(columnLabels.values());
-    const orderedData: any[] &#x3D; exportEntities.map((item) &#x3D;&gt;
-      columnKeys.map((key) &#x3D;&gt; item[key]),
-    );
-
-    return this.papa.unparse(
-      {
-        fields: labels,
-        data: orderedData,
-      },
-      {
-        quotes: true,
-        newline: DownloadService.SEPARATOR_ROW,
-      },
-    );
+    const columnKeys &#x3D; Array.from(columnLabels.keys());
+    const headers &#x3D; Array.from(columnLabels.values());
+    return [
+      headers,
+      ...exportEntities.map((item) &#x3D;&gt; columnKeys.map((key) &#x3D;&gt; item[key])),
+    ];
   }
 
   private async mapEntityToExportRow(
@@ -526,20 +550,29 @@ export class DownloadService {
   }
 
   /**
-   * Avoid broken CSV output such as &quot;[object Object]&quot; by serializing only when needed.
+   * Convert a value to a CSV/XLSX-friendly primitive, applying the same readable
+   * transformations as the UI (dates as YYYY-MM-DD, enum labels, location strings).
    */
   private ensureCsvFriendlyValue(value: any): any {
     if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
       return value;
     }
 
-    if (Array.isArray(value)) {
-      return value.some((entry) &#x3D;&gt; String(entry) &#x3D;&#x3D;&#x3D; &quot;[object Object]&quot;)
-        ? JSON.stringify(value)
-        : value;
+    if (value instanceof Date) {
+      return moment(value).format(&quot;YYYY-MM-DD&quot;);
     }
 
-    if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; String(value) &#x3D;&#x3D;&#x3D; &quot;[object Object]&quot;) {
+    if (Array.isArray(value)) {
+      return value.map((entry) &#x3D;&gt; this.ensureCsvFriendlyValue(entry)).join(&quot;,&quot;);
+    }
+
+    if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+      if (&quot;label&quot; in value) {
+        return value.label;
+      }
+      if (&quot;locationString&quot; in value) {
+        return value.locationString;
+      }
       return JSON.stringify(value);
     }
 

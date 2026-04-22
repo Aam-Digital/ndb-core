@@ -294,18 +294,20 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
 } from &quot;@angular/core&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
 import { MatSelectModule } from &quot;@angular/material/select&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
 import { MatDatepickerModule } from &quot;@angular/material/datepicker&quot;;
 import { Angulartics2Module } from &quot;angulartics2&quot;;
-import { ExportDataDirective } from &quot;../../../../core/export/export-data-directive/export-data.directive&quot;;
+import { ExportDialogComponent } from &quot;../../../../core/export/export-dialog/export-dialog.component&quot;;
 import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
@@ -358,7 +360,6 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] &#x3D; [
     FormsModule,
     MatDatepickerModule,
     Angulartics2Module,
-    ExportDataDirective,
     FontAwesomeModule,
     MatProgressBarModule,
     MatTooltipModule,
@@ -366,6 +367,8 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] &#x3D; [
   ],
 })
 export class SelectReportComponent implements OnChanges {
+  private readonly dialog &#x3D; inject(MatDialog);
+
   @Input() reports: ReportEntity[];
   @Input() loading: boolean;
   @Input() exportableData: any;
@@ -459,10 +462,19 @@ export class SelectReportComponent implements OnChanges {
     }
   }
 
-  get exportFileName(): string {
+  openExportDialog() {
+    this.dialog.open(ExportDialogComponent, {
+      data: {
+        allEntities: this.exportableData,
+        filename: this.baseExportFileName,
+      },
+    });
+  }
+
+  get baseExportFileName(): string {
     const reportName &#x3D; this.getReportName();
     const datePart &#x3D; this.getDatePart();
-    return datePart ? &#x60;${reportName} ${datePart}.csv&#x60; : &#x60;${reportName}.csv&#x60;;
+    return datePart ? &#x60;${reportName} ${datePart}&#x60; : reportName;
   }
 
   private getReportName(): string {

@@ -1220,6 +1220,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ErrorHintComponent.html" data-type="entity-link" >ErrorHintComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/ExportDialogComponent.html" data-type="entity-link" >ExportDialogComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/FaDynamicIconComponent.html" data-type="entity-link" >FaDynamicIconComponent</a>
                             </li>
                             <li class="link">
@@ -1564,9 +1567,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="directives/DynamicComponentDirective.html" data-type="entity-link" >DynamicComponentDirective</a>
-                                </li>
-                                <li class="link">
-                                    <a href="directives/ExportDataDirective.html" data-type="entity-link" >ExportDataDirective</a>
                                 </li>
                                 <li class="link">
                                     <a href="directives/TemplateTooltipDirective.html" data-type="entity-link" >TemplateTooltipDirective</a>
@@ -2427,6 +2427,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ExportColumnResolver.html" data-type="entity-link" >ExportColumnResolver</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ExportDialogData.html" data-type="entity-link" >ExportDialogData</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ExportingReport.html" data-type="entity-link" >ExportingReport</a>
