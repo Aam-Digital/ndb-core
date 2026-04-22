@@ -1388,5 +1388,9 @@
   "2264547091123092402": "Records to export",
   "7271453382189620574": "Export scope",
   "6801853905597012037": " Current (filtered) ",
-  "6152960181201544630": " All records (including archived) "
+  "6152960181201544630": " All records (including archived) ",
+  "3180343084294514381": "Add new {$PH}",
+  "2821246488949216212": "Create User Account",
+  "4769224602425497617": "A user account already exists for this profile. Each profile can only be linked to one account.",
+  "2944477510667148082": "Add New Account"
 }
