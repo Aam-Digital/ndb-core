@@ -9,6 +9,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "../model/attendance-item";
 import { AttendanceService } from "../attendance.service";
 import { EventTypeSettings } from "../model/attendance-feature-config";
+import { extractParticipantIds } from "../model/participant-id-extractor";
 
 export class DemoEventsConfig {
   forNLastYears: number;
@@ -100,8 +101,9 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
     event[typeSettings.relatesToField] = activity.getId();
 
     // Resolve participant IDs from the configured field
-    const participantIds: string[] =
-      (activity[typeSettings.participantsField] as string[]) ?? [];
+    const participantIds = extractParticipantIds(
+      activity[typeSettings.participantsField],
+    );
 
     // Set attendance items
     event[typeSettings.attendanceField] = participantIds.map(
