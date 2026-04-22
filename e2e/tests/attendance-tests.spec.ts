@@ -111,6 +111,9 @@ test("View and download attendance report", async ({ page }) => {
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "download csv Download" }).click();
+  // export dialog: select CSV format and confirm
+  await page.getByRole("radio", { name: "CSV" }).click();
+  await page.getByRole("button", { name: "Download", exact: true }).click();
   const filename = (await downloadPromise).suggestedFilename();
   expect(filename).toBe("Attendance Report 2025-01-12_2025-01-18.csv");
 });
