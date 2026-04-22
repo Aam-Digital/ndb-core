@@ -1,10 +1,10 @@
 import {
-    Component,
-    ViewChild,
-    ChangeDetectionStrategy,
-    input,
-    signal,
-    effect,
+  Component,
+  ViewChild,
+  ChangeDetectionStrategy,
+  input,
+  signal,
+  effect,
 } from "@angular/core";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSort, MatSortModule } from "@angular/material/sort";
