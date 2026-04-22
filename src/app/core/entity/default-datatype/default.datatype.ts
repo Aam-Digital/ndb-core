@@ -22,6 +22,33 @@ import { ColumnMapping } from "../../import/column-mapping";
 import { asArray } from "../../../utils/asArray";
 
 /**
+ * Definition of an export column contributed by a datatype.
+ *
+ * Each datatype's `getExportColumns` returns an array of these,
+ * fully controlling which CSV columns a field produces.
+ */
+export interface ExportColumnMapping<EntityType = any> {
+  /**
+   * Suffix appended to the source field id to build the final export column key.
+   * Use an empty string for the primary/default column.
+   */
+  keySuffix: string;
+
+  /**
+   * Human-readable header shown in the exported CSV.
+   */
+  label: string;
+
+  /**
+   * Resolve the value for this export column.
+   */
+  resolveValue: (
+    value: EntityType,
+    schemaField: EntitySchemaField,
+  ) => Promise<any> | any;
+}
+
+/**
  * Extend this class to define new data types (i.e. for properties of entities)
  * and provide your implementation using Angular DI:
  * `{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true },`
@@ -58,6 +85,21 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
     entityOrType: Entity | EntityConstructor,
     dataTypes: string | string[],
   ): string | undefined {
+    const fields = this.detectAllFieldsInEntity(entityOrType, dataTypes);
+    return fields.length > 0 ? fields[0].fieldId : undefined;
+  }
+
+  /**
+   * Detect all fields of the given datatype(s) in an entity's schema.
+   *
+   * @param entityOrType An entity instance or entity constructor to inspect.
+   * @param dataTypes One or more datatype identifiers to match against.
+   * @returns Array of matching fields with their id and schema definition.
+   */
+  static detectAllFieldsInEntity(
+    entityOrType: Entity | EntityConstructor,
+    dataTypes: string | string[],
+  ): { fieldId: string; schemaField: EntitySchemaField }[] {
     dataTypes = asArray(dataTypes);
 
     const schema =
@@ -65,12 +107,13 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
         ? (entityOrType as EntityConstructor).schema
         : entityOrType.getConstructor().schema;
 
+    const result: { fieldId: string; schemaField: EntitySchemaField }[] = [];
     for (const [fieldId, field] of schema.entries()) {
       if (dataTypes.includes(field.dataType)) {
-        return fieldId;
+        result.push({ fieldId, schemaField: field });
       }
     }
-    return undefined;
+    return result;
   }
 
   /**
@@ -181,6 +224,32 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    */
   normalizeSchemaField(schemaField: EntitySchemaField): EntitySchemaField {
     return schemaField;
+  }
+
+  /**
+   * Export columns for a field using this datatype.
+   *
+   * Each returned column contributes a CSV header and its own value resolver.
+   * The returned `keySuffix` is appended to the field id to form the exported column key.
+   *
+   * The default implementation returns a single column with the raw field value.
+   * Readable formatting can be applied by callers during CSV transformation.
+   * Override this to provide custom or additional columns (e.g. entity references
+   * can add a human-readable name column alongside the ID column).
+   */
+  getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping<EntityType>[] {
+    if (!schemaField.label) {
+      return [];
+    }
+    return [
+      {
+        keySuffix: "",
+        label: schemaField.label,
+        resolveValue: (value) => value,
+      },
+    ];
   }
 
   /**
