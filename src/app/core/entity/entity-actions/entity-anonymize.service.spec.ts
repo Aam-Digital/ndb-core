@@ -66,6 +66,12 @@ describe("EntityAnonymizeService", () => {
     @DatabaseField()
     defaultField: string;
 
+    @DatabaseField({
+      anonymize: "retain-anonymized",
+      dataType: "string",
+    })
+    retainAnonymizedText: string;
+
     @DatabaseField({ anonymize: "retain" })
     retainedField: string;
 
@@ -191,6 +197,20 @@ describe("EntityAnonymizeService", () => {
           moment("2023-07-01").toDate(),
           moment("2023-07-01").toDate(),
         ],
+      }),
+    );
+  });
+
+  it("should partially anonymize string fields by keeping only the first character", async () => {
+    const entity = new AnonymizableEntity();
+    entity.retainAnonymizedText = "John";
+
+    await service.anonymizeEntity(entity);
+
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
+      AnonymizableEntity.create({
+        retainAnonymizedText: "J",
       }),
     );
   });
