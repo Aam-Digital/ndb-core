@@ -286,7 +286,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return;
     }
     Logging.warn(logMessage, err);
-    void this.onKnownMultiTabCorruption?.();
+    const callbackResult = this.onKnownMultiTabCorruption?.();
+    if (callbackResult) {
+      callbackResult.catch((callbackError) =>
+        Logging.warn("onKnownMultiTabCorruption callback failed", callbackError),
+      );
+    }
   }
 
   /**
