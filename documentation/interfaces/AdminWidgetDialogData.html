@@ -291,7 +291,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -320,6 +320,7 @@ export interface AdminWidgetDialogData {
  * that also displays a custom component for the specific widget type.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-admin-widget-dialog&quot;,
   standalone: true,
   imports: [

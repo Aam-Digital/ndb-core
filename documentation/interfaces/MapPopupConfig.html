@@ -599,7 +599,7 @@ Hides the address input, search, and save/cancel buttons.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -647,6 +647,7 @@ export interface MapPopupConfig {
  * A dialog to display an OpenStreetMap map with markers and optionally allow the user to select a location.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-map-popup&quot;,
   templateUrl: &quot;./map-popup.component.html&quot;,
   styleUrls: [&quot;./map-popup.component.scss&quot;],

@@ -254,7 +254,12 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityForm } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
 import { EntityFieldEditComponent } from &quot;#src/app/core/entity/entity-field-edit/entity-field-edit.component&quot;;
-import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import {
   FormControl,
   FormsModule,
@@ -279,6 +284,7 @@ import { EntityFieldSelectComponent } from &quot;#src/app/core/entity/entity-fie
 import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-entity-bulk-edit&quot;,
   imports: [
     MatDialogModule,

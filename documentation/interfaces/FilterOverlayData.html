@@ -369,7 +369,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import { MAT_DIALOG_DATA, MatDialogModule } from &quot;@angular/material/dialog&quot;;
 import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { FilterConfig } from &quot;../../entity-list/EntityListConfig&quot;;
@@ -390,6 +390,7 @@ export interface FilterOverlayData&lt;T extends Entity&gt; {
  * via a popover instead of the menu
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-filter-overlay&quot;,
   templateUrl: &quot;./filter-overlay.component.html&quot;,
   styles: [&quot;:host { display: block }&quot;],

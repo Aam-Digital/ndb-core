@@ -322,7 +322,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, EventEmitter, Input, Output, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { readFile } from &quot;../../../utils/utils&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
@@ -337,6 +344,7 @@ import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
  * Currently only supports CSV.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-input-file&quot;,
   templateUrl: &quot;./input-file.component.html&quot;,
   imports: [

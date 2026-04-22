@@ -309,7 +309,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Injector, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  DestroyRef,
+  Injector,
+  ChangeDetectorRef,
+  inject,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { CommonModule } from &quot;@angular/common&quot;;
 import {
   MAT_DIALOG_DATA,
@@ -325,6 +332,7 @@ import { DynamicComponentPipe } from &quot;../../config/dynamic-components/dynam
 import { AbstractViewComponent } from &quot;../abstract-view/abstract-view.component&quot;;
 import { Router } from &quot;@angular/router&quot;;
 import { PREFIX_VIEW_CONFIG } from &quot;../../config/dynamic-routing/view-config.interface&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 
 /**
  * Wrapper component for a modal/dialog view
@@ -335,6 +343,7 @@ import { PREFIX_VIEW_CONFIG } from &quot;../../config/dynamic-routing/view-confi
  * (also see RoutedViewComponent)
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     DialogCloseComponent,
@@ -355,6 +364,8 @@ export class DialogViewComponent&lt;T &#x3D; any&gt; extends AbstractViewCompone
     const dialogData &#x3D; inject&lt;DialogViewData&lt;T&gt;&gt;(MAT_DIALOG_DATA);
     const injector &#x3D; inject(Injector);
     const router &#x3D; inject(Router);
+    const cdr &#x3D; inject(ChangeDetectorRef);
+    const destroyRef &#x3D; inject(DestroyRef);
 
     super(injector, true);
 
@@ -375,6 +386,10 @@ export class DialogViewComponent&lt;T &#x3D; any&gt; extends AbstractViewCompone
       ...dialogData.config,
       ...(dialogData.entity ? { entity: dialogData.entity } : {}),
     };
+
+    this.viewContext.changes$
+      .pipe(takeUntilDestroyed(destroyRef))
+      .subscribe(() &#x3D;&gt; cdr.markForCheck());
   }
 
   declare componentInjector: Injector | undefined;

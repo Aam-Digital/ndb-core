@@ -258,7 +258,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import { getGroupingInformationString, ReportRow } from &quot;../../report-row&quot;;
 import { FlatTreeControl } from &quot;@angular/cdk/tree&quot;;
 import {
@@ -275,6 +275,7 @@ interface FlattenedReportRow extends ReportRow {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-report-row&quot;,
   templateUrl: &quot;./report-row.component.html&quot;,
   styleUrls: [&quot;./report-row.component.scss&quot;],

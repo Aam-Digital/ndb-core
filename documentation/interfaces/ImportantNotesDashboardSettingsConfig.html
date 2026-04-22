@@ -219,7 +219,13 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
 import { ConfigurableEnumService } from &quot;../../../../core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
@@ -235,6 +241,7 @@ export interface ImportantNotesDashboardSettingsConfig {
 
 @DynamicComponent(&quot;ImportantNotesDashboardSettings&quot;)
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-important-notes-dashboard-settings&quot;,
   standalone: true,
   imports: [

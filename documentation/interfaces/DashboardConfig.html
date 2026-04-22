@@ -213,13 +213,18 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, inject, signal } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Input,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { DynamicComponentConfig } from &quot;../../config/dynamic-components/dynamic-component-config.interface&quot;;
 import { DynamicComponentDirective } from &quot;../../config/dynamic-components/dynamic-component.directive&quot;;
 import { RouteTarget } from &quot;../../../route-target&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { ComponentRegistry } from &quot;../../../dynamic-components&quot;;
-import { DashboardWidget } from &quot;../dashboard-widget/dashboard-widget&quot;;
 import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 import { MatMenuModule } from &quot;@angular/material/menu&quot;;
 import { MatIconButton } from &quot;@angular/material/button&quot;;
@@ -231,6 +236,7 @@ import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 
 @RouteTarget(&quot;Dashboard&quot;)
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-dashboard&quot;,
   templateUrl: &quot;./dashboard.component.html&quot;,
   styleUrls: [&quot;./dashboard.component.scss&quot;],
@@ -287,9 +293,9 @@ export class DashboardComponent implements DashboardConfig {
   }
 
   private async hasEntityPermission(widget: DynamicComponentConfig) {
-    const comp &#x3D; (await this.components.get(
-      widget.component,
-    )()) as unknown as typeof DashboardWidget;
+    const comp &#x3D; (await this.components.get(widget.component)()) as unknown as {
+      getRequiredEntities?: (config: any) &#x3D;&gt; string | string[];
+    };
     let entity: string | string[];
     if (typeof comp.getRequiredEntities &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
       entity &#x3D; comp.getRequiredEntities(widget.config);

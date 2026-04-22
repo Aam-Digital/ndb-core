@@ -323,7 +323,13 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityForm } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
-import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from &quot;@angular/core&quot;;
 import { MAT_DIALOG_DATA, MatDialogModule } from &quot;@angular/material/dialog&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
@@ -356,6 +362,7 @@ export interface DetailsComponentData {
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-row-details&quot;,
   templateUrl: &quot;./row-details.component.html&quot;,
   imports: [
@@ -375,6 +382,7 @@ export interface DetailsComponentData {
 export class RowDetailsComponent implements OnInit {
   data &#x3D; inject&lt;DetailsComponentData&gt;(MAT_DIALOG_DATA);
   private formService &#x3D; inject(EntityFormService);
+  private readonly cdr &#x3D; inject(ChangeDetectorRef);
 
   form: EntityForm&lt;Entity&gt;;
   fieldGroups: FieldGroup[];
@@ -402,8 +410,10 @@ export class RowDetailsComponent implements OnInit {
       .subscribe((value) &#x3D;&gt; {
         const dynamicConstructor: any &#x3D; data.entity.getConstructor();
         this.tempEntity &#x3D; Object.assign(new dynamicConstructor(), value);
+        this.cdr.markForCheck();
       });
     this.viewOnlyColumns &#x3D; data.viewOnlyColumns;
+    this.cdr.markForCheck();
   }
 
   private enableSaveWithoutChangesIfNew(entity: Entity) {

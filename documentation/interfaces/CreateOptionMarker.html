@@ -254,6 +254,8 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   ContentChild,
@@ -273,7 +275,7 @@
   WritableSignal,
 } from &quot;@angular/core&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
-import { NgForOf, NgIf, NgTemplateOutlet } from &quot;@angular/common&quot;;
+import { NgTemplateOutlet } from &quot;@angular/common&quot;;
 import {
   MAT_FORM_FIELD,
   MatFormFieldControl,
@@ -339,9 +341,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS &#x3D; [
   ReactiveFormsModule,
   MatInputModule,
   MatAutocompleteModule,
-  NgForOf,
   MatCheckboxModule,
-  NgIf,
   NgTemplateOutlet,
   MatChipInput,
   MatChipGrid,
@@ -362,6 +362,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS &#x3D; [
   selector: &quot;app-basic-autocomplete&quot;,
   templateUrl: &quot;basic-autocomplete.component.html&quot;,
   styleUrls: [&quot;./basic-autocomplete.component.scss&quot;],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
     {
@@ -376,6 +377,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   extends CustomFormControlDirective&lt;V | V[]&gt;
   implements OnChanges, OnInit, AfterViewInit
 {
+  private readonly cdr &#x3D; inject(ChangeDetectorRef);
   private readonly destroyRef &#x3D; inject(DestroyRef);
   private readonly viewportRuler &#x3D; inject(ViewportRuler);
 
@@ -461,13 +463,13 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   @Output() autocompleteFilterChange &#x3D; new EventEmitter&lt;(o: O) &#x3D;&gt; boolean&gt;();
 
   /** whether the &quot;add new&quot; option is logically allowed in the current context (e.g. not creating a duplicate) */
-  showAddOption &#x3D; false;
+  showAddOption &#x3D; signal(false);
 
   /**
    * Dynamic width of the autocomplete dropdown panel.
    * Set to match the full width of the Material form field container (including icons/padding).
    */
-  panelWidth: string;
+  panelWidth &#x3D; signal(&quot;200px&quot;);
 
   /**
    * Maximum number of options to display in the dropdown.
@@ -475,7 +477,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
    * Set to 0 for no limit. Defaults to 100.
    */
   @Input() maxOptionsToDisplay: number &#x3D; 100;
-  hasMoreOptions &#x3D; false;
+  hasMoreOptions &#x3D; signal(false);
 
   /**
    * Whether dropdown option labels should be shown in full length.
@@ -521,7 +523,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
 
   private _options: SelectableOption&lt;O, V&gt;[] &#x3D; [];
 
-  _selectedOptions: SelectableOption&lt;O, V&gt;[] &#x3D; [];
+  _selectedOptions &#x3D; signal&lt;SelectableOption&lt;O, V&gt;[]&gt;([]);
 
   /**
    * Keep the search value to help users quickly multi-select multiple related options without having to type filter text again
@@ -622,7 +624,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
       &quot;.mat-mdc-form-field, .mat-form-field&quot;,
     ) as HTMLElement;
     const fieldWidth &#x3D; fieldEl ? fieldEl.getBoundingClientRect().width : 200;
-    this.panelWidth &#x3D; &#x60;${fieldWidth}px&#x60;;
+    this.panelWidth.set(&#x60;${fieldWidth}px&#x60;);
   }
 
   /**
@@ -669,11 +671,11 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
       moveItemInArray(reordered, event.previousIndex, event.currentIndex);
       this.autocompleteOptions.set(reordered);
     }
-    this._selectedOptions &#x3D; this.autocompleteOptions().filter(
-      (o) &#x3D;&gt; o.selected,
+    this._selectedOptions.set(
+      this.autocompleteOptions().filter((o) &#x3D;&gt; o.selected),
     );
     if (this.multi) {
-      this.value &#x3D; this._selectedOptions.map((o) &#x3D;&gt; o.asValue);
+      this.value &#x3D; this._selectedOptions().map((o) &#x3D;&gt; o.asValue);
     } else {
       this.value &#x3D; undefined;
     }
@@ -740,8 +742,10 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
       );
 
       // do not allow users to create a new entry &quot;identical&quot; to an existing one:
-      this.showAddOption &#x3D; !this._options.some(
-        (o) &#x3D;&gt; o?.asString?.toLowerCase() &#x3D;&#x3D;&#x3D; filterText?.toLowerCase(),
+      this.showAddOption.set(
+        !this._options.some(
+          (o) &#x3D;&gt; o?.asString?.toLowerCase() &#x3D;&#x3D;&#x3D; filterText?.toLowerCase(),
+        ),
       );
     }
 
@@ -749,10 +753,10 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
       this.maxOptionsToDisplay &gt; 0 &amp;&amp;
       filteredOptions.length &gt; this.maxOptionsToDisplay
     ) {
-      this.hasMoreOptions &#x3D; true;
+      this.hasMoreOptions.set(true);
       filteredOptions &#x3D; filteredOptions.slice(0, this.maxOptionsToDisplay);
     } else {
-      this.hasMoreOptions &#x3D; false;
+      this.hasMoreOptions.set(false);
     }
 
     return filteredOptions;
@@ -780,8 +784,8 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
           ? this.value?.some((v) &#x3D;&gt; this.compareEnumValues(v, o.asValue))
           : this.compareEnumValues(this.value, o.asValue)),
     );
-    this._selectedOptions &#x3D; this._options.filter(
-      (o) &#x3D;&gt; o.selected &amp;&amp; !o.isHidden,
+    this._selectedOptions.set(
+      this._options.filter((o) &#x3D;&gt; o.selected &amp;&amp; !o.isHidden),
     );
   }
 
@@ -809,7 +813,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
       this.selectOption(selected as SelectableOption&lt;O, V&gt;);
     } else {
       this.autocompleteForm.setValue(&quot;&quot;);
-      this._selectedOptions &#x3D; [];
+      this._selectedOptions.set([]);
       this.value &#x3D; undefined;
     }
     this.onChange(this.value);
@@ -817,10 +821,10 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
 
   unselect(option: SelectableOption&lt;O, V&gt;) {
     option.selected &#x3D; false;
-    this._selectedOptions &#x3D; this._options.filter((o) &#x3D;&gt; o.selected);
+    this._selectedOptions.set(this._options.filter((o) &#x3D;&gt; o.selected));
 
     if (this.multi) {
-      this.value &#x3D; this._selectedOptions.map((o) &#x3D;&gt; o.asValue);
+      this.value &#x3D; this._selectedOptions().map((o) &#x3D;&gt; o.asValue);
     } else {
       this.value &#x3D; undefined;
     }
@@ -852,12 +856,12 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   private selectOption(option: SelectableOption&lt;O, V&gt;) {
     if (this.multi) {
       option.selected &#x3D; !option.selected;
-      this._selectedOptions &#x3D; this._options.filter((o) &#x3D;&gt; o.selected);
-      this.value &#x3D; this._selectedOptions.map((o) &#x3D;&gt; o.asValue);
+      this._selectedOptions.set(this._options.filter((o) &#x3D;&gt; o.selected));
+      this.value &#x3D; this._selectedOptions().map((o) &#x3D;&gt; o.asValue);
       // re-open autocomplete to select next option
       setTimeout(() &#x3D;&gt; this.showAutocomplete());
     } else {
-      this._selectedOptions &#x3D; [option];
+      this._selectedOptions.set([option]);
       this.value &#x3D; option.asValue;
       this.isInSearchMode.set(false);
     }
@@ -900,6 +904,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   override writeValue(val: V[] | V, notifyFormControl &#x3D; false): void {
     super.writeValue(val, notifyFormControl);
     this.setInitialInputValue();
+    this.cdr.markForCheck();
   }
 }
 </code></pre>

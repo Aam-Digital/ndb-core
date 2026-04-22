@@ -326,6 +326,7 @@ Use to prevent changes to config that are required to be consistent across all u
   OnInit,
   signal,
   WritableSignal,
+  ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { Entity, EntityConstructor } from &quot;../../../entity/model/entity&quot;;
 import {
@@ -403,6 +404,7 @@ export interface AdminEntityFieldData {
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-admin-entity-field&quot;,
   templateUrl: &quot;./admin-entity-field.component.html&quot;,
   styleUrls: [

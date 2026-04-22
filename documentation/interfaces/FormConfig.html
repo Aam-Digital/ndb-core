@@ -220,7 +220,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, Input, OnInit } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from &quot;@angular/core&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { getParentUrl } from &quot;../../../utils/utils&quot;;
 import { Router } from &quot;@angular/router&quot;;
@@ -244,6 +251,7 @@ import { PublicFormPermissionService } from &quot;../../../features/public-form/
  */
 @DynamicComponent(&quot;Form&quot;)
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-form&quot;,
   templateUrl: &quot;./form.component.html&quot;,
   styleUrls: [&quot;./form.component.scss&quot;],
@@ -260,6 +268,7 @@ export class FormComponent&lt;E extends Entity&gt; implements FormConfig, OnInit
   private alertService &#x3D; inject(AlertService);
   private viewContext &#x3D; inject(ViewComponentContext, { optional: true });
   private readonly permissionService &#x3D; inject(PublicFormPermissionService);
+  private readonly cdr &#x3D; inject(ChangeDetectorRef);
 
   @Input() entity: E;
   @Input() creatingNew &#x3D; false;
@@ -278,6 +287,7 @@ export class FormComponent&lt;E extends Entity&gt; implements FormConfig, OnInit
         if (!this.creatingNew) {
           this.form.formGroup.disable();
         }
+        this.cdr.markForCheck();
       });
   }
 

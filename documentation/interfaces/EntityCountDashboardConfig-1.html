@@ -264,7 +264,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { FormsModule, FormControl } from &quot;@angular/forms&quot;;
 import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
 import { EntityTypeSelectComponent } from &quot;../../../../core/entity/entity-type-select/entity-type-select.component&quot;;
@@ -284,6 +289,7 @@ export interface EntityCountDashboardConfig {
 
 @DynamicComponent(&quot;EntityCountDashboardSettings&quot;)
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-entity-count-dashboard-settings&quot;,
   standalone: true,
   imports: [

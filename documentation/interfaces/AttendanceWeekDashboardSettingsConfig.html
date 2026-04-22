@@ -354,7 +354,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
 import { MatInputModule } from &quot;@angular/material/input&quot;;
 import { FormsModule, FormControl } from &quot;@angular/forms&quot;;
@@ -367,6 +372,7 @@ export interface AttendanceWeekDashboardSettingsConfig {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-attendance-week-dashboard-settings&quot;,
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, FormsModule],

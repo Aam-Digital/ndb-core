@@ -308,7 +308,12 @@ by providing any string value describing the reason (displayed as tooltip).</p>
 import { DialogCloseComponent } from &quot;#src/app/core/common-components/dialog-close/dialog-close.component&quot;;
 import { PanelComponent } from &quot;#src/app/core/entity-details/EntityDetailsConfig&quot;;
 import { EntityRelationsService } from &quot;#src/app/core/entity/entity-mapper/entity-relations.service&quot;;
-import { Component, OnInit, inject } from &quot;@angular/core&quot;;
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -324,6 +329,7 @@ import { DashboardWidgetRegistryService } from &quot;#src/app/core/dashboard/das
  * Admin component to select components to be added to view configs or dashboard.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-widget-component-select&quot;,
   imports: [
     MatDialogModule,

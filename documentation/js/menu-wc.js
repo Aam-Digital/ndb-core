@@ -1624,9 +1624,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/CustomFaker.html" data-type="entity-link" >CustomFaker</a>
                             </li>
                             <li class="link">
-                                <a href="classes/DashboardWidget.html" data-type="entity-link" >DashboardWidget</a>
-                            </li>
-                            <li class="link">
                                 <a href="classes/Database.html" data-type="entity-link" >Database</a>
                             </li>
                             <li class="link">

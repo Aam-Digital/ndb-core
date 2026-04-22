@@ -347,6 +347,7 @@ import {
   Signal,
   signal,
   WritableSignal,
+  ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { FormControl, FormGroup } from &quot;@angular/forms&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
@@ -375,6 +376,7 @@ import { ConfigurableEnumDatatype } from &quot;#src/app/core/basic-datatypes/con
  * default value strategy, working in combination with the admin components.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-automated-field-mapping&quot;,
   imports: [
     MatOptionModule,

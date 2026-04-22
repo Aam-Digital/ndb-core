@@ -299,6 +299,7 @@
   OnChanges,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
@@ -350,6 +351,7 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] &#x3D; [
 ];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-select-report&quot;,
   templateUrl: &quot;./select-report.component.html&quot;,
   styleUrls: [&quot;./select-report.component.scss&quot;],

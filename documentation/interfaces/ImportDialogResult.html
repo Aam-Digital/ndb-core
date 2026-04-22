@@ -271,7 +271,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import { ImportService } from &quot;../import.service&quot;;
 import {
   MAT_DIALOG_DATA,
@@ -310,6 +310,7 @@ export interface ImportDialogResult {
  * Summary screen and confirmation / execution dialog for running an import.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-import-confirm-summary&quot;,
   templateUrl: &quot;./import-confirm-summary.component.html&quot;,
   styleUrls: [&quot;./import-confirm-summary.component.scss&quot;],

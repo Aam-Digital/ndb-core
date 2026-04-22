@@ -279,7 +279,13 @@ e.g. <code>{ &quot;Child&quot;: &quot;dateOfBirth&quot;, &quot;School&quot;: [&q
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { FormControl, FormsModule } from &quot;@angular/forms&quot;;
 
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
@@ -315,6 +321,7 @@ interface EntityPropertyPair {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-birthday-dashboard-settings&quot;,
   standalone: true,
   imports: [

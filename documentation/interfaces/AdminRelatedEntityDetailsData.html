@@ -259,7 +259,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { EntityConstructor } from &quot;../../../entity/model/entity&quot;;
 import { AdminEntityFormComponent } from &quot;../admin-entity-form/admin-entity-form.component&quot;;
 import { FormConfig } from &quot;../../../entity-details/form/form.component&quot;;
@@ -289,6 +294,7 @@ export interface AdminRelatedEntityDetailsResult {
  * Dialog component for editing the related entity&#x27;s column selection and order.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-admin-related-entity-details&quot;,
   imports: [
     AdminEntityFormComponent,

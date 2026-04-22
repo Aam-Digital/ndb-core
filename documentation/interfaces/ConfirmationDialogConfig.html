@@ -368,7 +368,7 @@ This button is on the top-right of the dialog and closes it with no result</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -383,6 +383,7 @@ import { MarkdownComponent } from &quot;ngx-markdown&quot;;
  * used by the {@link ConfirmationDialogService}.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-confirmation-dialog&quot;,
   templateUrl: &quot;./confirmation-dialog.component.html&quot;,
   imports: [

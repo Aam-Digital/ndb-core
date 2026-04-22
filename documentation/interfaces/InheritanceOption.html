@@ -466,12 +466,14 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectorRef,
   Component,
   inject,
   Input,
   OnChanges,
   OnInit,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { FormsModule, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatButton } from &quot;@angular/material/button&quot;;
@@ -504,6 +506,7 @@ interface InheritanceOption {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-admin-inherited-field&quot;,
   imports: [
     MatSelect,
@@ -529,6 +532,7 @@ export class AdminInheritedFieldComponent
   @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
 
+  private readonly cdr &#x3D; inject(ChangeDetectorRef);
   private readonly entityRelationsService &#x3D; inject(EntityRelationsService);
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly matDialog &#x3D; inject(MatDialog);
@@ -543,12 +547,14 @@ export class AdminInheritedFieldComponent
         sourceValueField: &quot;&quot;,
       };
     }
+    this.cdr.markForCheck();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entityType) {
       this.updateAvailableOptions();
       this.initSelectedOption();
+      this.cdr.markForCheck();
     }
   }
 
@@ -631,11 +637,13 @@ export class AdminInheritedFieldComponent
   onOptionSelected(option: InheritanceOption) {
     const previousOption &#x3D; this.selectedOption;
     this.selectedOption &#x3D; option;
+    this.cdr.markForCheck();
 
     this.openConfigDetailsDialog().then((confirmed) &#x3D;&gt; {
       if (!confirmed) {
         // revert selection
         this.selectedOption &#x3D; previousOption;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -666,6 +674,7 @@ export class AdminInheritedFieldComponent
     if (result?.sourceValueField) {
       // successfully confirmed the dialog
       this.value &#x3D; result;
+      this.cdr.markForCheck();
       return true;
     } else {
       // dialog was cancelled

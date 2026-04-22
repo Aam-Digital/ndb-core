@@ -544,6 +544,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { MatButtonModule, MatIconButton } from &quot;@angular/material/button&quot;;
 import { MatMenuModule } from &quot;@angular/material/menu&quot;;
@@ -614,6 +615,7 @@ export interface MatchingSide extends MatchingSideConfig {
 @RouteTarget(&quot;MatchingEntities&quot;)
 @DynamicComponent(&quot;MatchingEntities&quot;)
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-matching-entities&quot;,
   templateUrl: &quot;./matching-entities.component.html&quot;,
   styleUrls: [&quot;./matching-entities.component.scss&quot;],

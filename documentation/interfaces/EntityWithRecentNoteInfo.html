@@ -304,7 +304,16 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from &quot;@angular/core&quot;;
 import { ChildrenService } from &quot;../../../children/children.service&quot;;
 import moment from &quot;moment&quot;;
 import { MatTableModule } from &quot;@angular/material/table&quot;;
@@ -313,7 +322,6 @@ import { EntityRegistry } from &quot;../../../../core/entity/database-entity.dec
 import { EntityConstructor } from &quot;../../../../core/entity/model/entity&quot;;
 import { DecimalPipe } from &quot;@angular/common&quot;;
 import { EntityBlockComponent } from &quot;../../../../core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
-import { DashboardWidget } from &quot;../../../../core/dashboard/dashboard-widget/dashboard-widget&quot;;
 import { Note } from &quot;../../model/note&quot;;
 import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
 
@@ -332,6 +340,7 @@ interface NotesDashboardConfig {
  */
 @DynamicComponent(&quot;NotesDashboard&quot;)
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-no-recent-notes-dashboard&quot;,
   templateUrl: &quot;./notes-dashboard.component.html&quot;,
   styleUrls: [&quot;./notes-dashboard.component.scss&quot;],
@@ -342,114 +351,130 @@ interface NotesDashboardConfig {
     DashboardListWidgetComponent,
   ],
 })
-export class NotesDashboardComponent
-  extends DashboardWidget
-  implements OnInit, NotesDashboardConfig
-{
+export class NotesDashboardComponent {
   private childrenService &#x3D; inject(ChildrenService);
   private entities &#x3D; inject(EntityRegistry);
 
-  static override getRequiredEntities(config: NotesDashboardConfig) {
+  static getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
   }
 
-  /**
-   * Entity for which the recent notes should be counted.
-   */
-  @Input() set entity(value: string) {
-    this._entity &#x3D; this.entities.get(value);
-  }
-
-  _entity: EntityConstructor;
+  /** Entity for which the recent notes should be counted. */
+  entity &#x3D; input(&quot;Child&quot;);
+  readonly entityDefinition &#x3D; computed&lt;EntityConstructor&gt;(() &#x3D;&gt;
+    this.entities.get(this.entity()),
+  );
   /**
    * number of days since last note that entities should be considered having a &quot;recent&quot; note.
    */
-  @Input() sinceDays &#x3D; 0;
+  sinceDays &#x3D; input(0);
 
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
-  @Input() fromBeginningOfWeek &#x3D; true;
+  fromBeginningOfWeek &#x3D; input(true);
 
-  @Input() mode: &quot;with-recent-notes&quot; | &quot;without-recent-notes&quot;;
+  mode &#x3D; input&lt;&quot;with-recent-notes&quot; | &quot;without-recent-notes&quot;&gt;();
 
   /**
    * Entities displayed in the template with additional &quot;daysSinceLastNote&quot; field
    */
-  entries: EntityWithRecentNoteInfo[];
+  entries &#x3D; signal&lt;EntityWithRecentNoteInfo[]&gt;([]);
 
-  subtitle: string;
-
-  ngOnInit() {
-    if (!this._entity) {
-      this.entity &#x3D; &quot;Child&quot;;
-    }
-
-    let dayRangeBoundary &#x3D; this.sinceDays;
-    if (this.fromBeginningOfWeek) {
-      dayRangeBoundary +&#x3D; moment().diff(moment().startOf(&quot;week&quot;), &quot;days&quot;);
-    }
-    switch (this.mode) {
+  subtitle &#x3D; computed(() &#x3D;&gt; {
+    const entity &#x3D; this.entityDefinition();
+    switch (this.mode()) {
       case &quot;with-recent-notes&quot;:
-        this.loadConcernedEntities(
-          (stat) &#x3D;&gt; stat[1] &lt;&#x3D; dayRangeBoundary,
-          dayRangeBoundary,
-        );
-        this.subtitle &#x3D; $localize&#x60;:Subtitle|Subtitle informing the user that these are the records with recent reports:${this._entity.labelPlural} with recent report&#x60;;
-        break;
+        return $localize&#x60;:Subtitle|Subtitle informing the user that these are the records with recent reports:${entity.labelPlural} with recent report&#x60;;
       case &quot;without-recent-notes&quot;:
-        this.loadConcernedEntities(
-          (stat) &#x3D;&gt; stat[1] &gt;&#x3D; dayRangeBoundary,
-          dayRangeBoundary,
-        );
-        this.subtitle &#x3D; $localize&#x60;:Subtitle|Subtitle informing the user that these are the records without recent reports:${this._entity.labelPlural} having no recent reports&#x60;;
-        break;
+        return $localize&#x60;:Subtitle|Subtitle informing the user that these are the records without recent reports:${entity.labelPlural} having no recent reports&#x60;;
+      default:
+        return &quot;&quot;;
     }
+  });
+
+  constructor() {
+    effect((onCleanup) &#x3D;&gt; {
+      this.entityDefinition();
+      this.sinceDays();
+      this.fromBeginningOfWeek();
+      this.mode();
+
+      let isCurrent &#x3D; true;
+      untracked(() &#x3D;&gt; {
+        void this.loadConcernedEntities(() &#x3D;&gt; isCurrent);
+      });
+
+      onCleanup(() &#x3D;&gt; {
+        isCurrent &#x3D; false;
+      });
+    });
   }
 
-  private async loadConcernedEntities(
-    filter: (stat: [string, number]) &#x3D;&gt; boolean,
-    dayRangeBoundary: number,
-  ) {
+  private async loadConcernedEntities(isCurrent: () &#x3D;&gt; boolean) {
+    const mode &#x3D; this.mode();
+    if (!mode) {
+      this.entries.set([]);
+      return;
+    }
+
+    let dayRangeBoundary &#x3D; this.sinceDays();
+    if (this.fromBeginningOfWeek()) {
+      dayRangeBoundary +&#x3D; moment().diff(moment().startOf(&quot;week&quot;), &quot;days&quot;);
+    }
+
     const queryRange &#x3D; Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
     // recent notes are sorted ascending, without recent notes descending
-    const order &#x3D; this.mode &#x3D;&#x3D;&#x3D; &quot;with-recent-notes&quot; ? -1 : 1;
+    const order &#x3D; mode &#x3D;&#x3D;&#x3D; &quot;with-recent-notes&quot; ? -1 : 1;
+    const filterFn &#x3D;
+      mode &#x3D;&#x3D;&#x3D; &quot;with-recent-notes&quot;
+        ? (stat: [string, number]) &#x3D;&gt; stat[1] &lt;&#x3D; dayRangeBoundary
+        : (stat: [string, number]) &#x3D;&gt; stat[1] &gt;&#x3D; dayRangeBoundary;
+
     const recentNotesMap &#x3D;
       await this.childrenService.getDaysSinceLastNoteOfEachEntity(
-        this._entity.ENTITY_TYPE,
+        this.entityDefinition().ENTITY_TYPE,
         queryRange,
       );
-    this.entries &#x3D; Array.from(recentNotesMap)
-      .filter(filter)
+    const entries &#x3D; Array.from(recentNotesMap)
+      .filter(filterFn)
       .map((stat) &#x3D;&gt; statsToEntityWithRecentNoteInfo(stat, queryRange))
       .sort((a, b) &#x3D;&gt; order * (b.daysSinceLastNote - a.daysSinceLastNote));
-  }
 
-  get tooltip(): string {
-    switch (this.mode) {
-      case &quot;with-recent-notes&quot;:
-        return $localize&#x60;:Tooltip|Spaces in front of the variables are added automatically:includes cases with a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:&#x60;;
-      case &quot;without-recent-notes&quot;:
-        return $localize&#x60;:Tooltip|Spaces in front of the variables are added automatically:includes cases without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:&#x60;;
+    if (isCurrent()) {
+      this.entries.set(entries);
     }
   }
 
-  get sinceBeginningOfTheWeek(): string {
-    if (this.fromBeginningOfWeek) {
+  tooltip &#x3D; computed((): string &#x3D;&gt; {
+    switch (this.mode()) {
+      case &quot;with-recent-notes&quot;:
+        return $localize&#x60;:Tooltip|Spaces in front of the variables are added automatically:includes cases with a note${this.sinceBeginningOfTheWeek()}:sinceBeginningOfWeek:${this.withinTheLastNDays()}:withinTheLastDays:&#x60;;
+      case &quot;without-recent-notes&quot;:
+        return $localize&#x60;:Tooltip|Spaces in front of the variables are added automatically:includes cases without a note${this.sinceBeginningOfTheWeek()}:sinceBeginningOfWeek:${this.withinTheLastNDays()}:withinTheLastDays:&#x60;;
+      default:
+        return &quot;&quot;;
+    }
+  });
+
+  private sinceBeginningOfTheWeek &#x3D; computed(() &#x3D;&gt; {
+    if (this.fromBeginningOfWeek()) {
       return (
         &quot; &quot; +
         $localize&#x60;:Tooltip-part|&#x27;includes cases without a note since the beginning of the week&#x27;:since the beginning of the week&#x60;
       );
     }
-  }
+    return &quot;&quot;;
+  });
 
-  get withinTheLastNDays(): string {
-    if (this.sinceDays &gt; 0) {
+  private withinTheLastNDays &#x3D; computed(() &#x3D;&gt; {
+    if (this.sinceDays() &gt; 0) {
       return (
         &quot; &quot; +
-        $localize&#x60;:Tooltip-part|&#x27;includes cases without a note within the last x days&#x27;:without a note within the last ${this.sinceDays} days&#x60;
+        $localize&#x60;:Tooltip-part|&#x27;includes cases without a note within the last x days&#x27;:without a note within the last ${this.sinceDays()} days&#x60;
       );
     }
-  }
+    return &quot;&quot;;
+  });
 }
 
 /**

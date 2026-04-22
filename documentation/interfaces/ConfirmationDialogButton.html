@@ -220,8 +220,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -317,7 +317,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -332,6 +332,7 @@ import { MarkdownComponent } from &quot;ngx-markdown&quot;;
  * used by the {@link ConfirmationDialogService}.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-confirmation-dialog&quot;,
   templateUrl: &quot;./confirmation-dialog.component.html&quot;,
   imports: [

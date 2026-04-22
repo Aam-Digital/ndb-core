@@ -252,7 +252,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import { MAT_DIALOG_DATA, MatDialogModule } from &quot;@angular/material/dialog&quot;;
 import {
   ProgressDashboardConfig,
@@ -282,6 +287,7 @@ export interface EditProgressDashboardComponentData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-edit-progress-dashboard&quot;,
   templateUrl: &quot;./edit-progress-dashboard.component.html&quot;,
   styleUrls: [&quot;./edit-progress-dashboard.component.scss&quot;],

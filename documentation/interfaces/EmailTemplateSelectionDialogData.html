@@ -303,7 +303,12 @@ with the relevant context.</p>
 import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 import { DisableEntityOperationDirective } from &quot;#src/app/core/permissions/permission-directive/disable-entity-operation.directive&quot;;
-import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import {
   FormControl,
   FormGroup,
@@ -352,6 +357,7 @@ export interface EmailTemplateSelectionResult {
 
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-email-template-selection-dialog&quot;,
   imports: [
     MatDialogContent,

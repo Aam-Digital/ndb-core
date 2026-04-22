@@ -323,7 +323,12 @@ and skip the initial automatic search request.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from &quot;@angular/core&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -372,6 +377,7 @@ export interface LinkExternalProfileDialogData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-link-external-profile-dialog&quot;,
   imports: [
     MatDialogContent,

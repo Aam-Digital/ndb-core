@@ -604,7 +604,13 @@ AutomatedFieldUpdateComponent for processing.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityForm } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
 import { EntityFieldEditComponent } from &quot;#src/app/core/entity/entity-field-edit/entity-field-edit.component&quot;;
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
-import { Component, inject, OnInit } from &quot;@angular/core&quot;;
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from &quot;@angular/core&quot;;
 import { MatButton } from &quot;@angular/material/button&quot;;
 import {
   MAT_DIALOG_DATA,
@@ -658,6 +664,7 @@ export interface AffectedEntity {
  * (also see AutomatedFieldUpdateConfigService)
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-automated-field-update&quot;,
   imports: [
     DialogCloseComponent,
@@ -676,8 +683,9 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   }&gt;(MAT_DIALOG_DATA);
   private dialogRef &#x3D;
     inject&lt;MatDialogRef&lt;AutomatedFieldUpdateComponent&gt;&gt;(MatDialogRef);
-  private entityFormService &#x3D; inject(EntityFormService);
+  private readonly entityFormService &#x3D; inject(EntityFormService);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+  private readonly cdr &#x3D; inject(ChangeDetectorRef);
 
   entityConstructor: EntityConstructor;
 
@@ -704,6 +712,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       );
       entity.form.formGroup.controls[fieldId].setValue(formattedValue);
     }
+    this.cdr.markForCheck();
   }
 
   onConfirm(): void {
