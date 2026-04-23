@@ -81,7 +81,7 @@ describe("ImportHistoryComponent", () => {
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.previousImports).toEqual([testImport2, testImport1]);
+      expect(component.previousImports()).toEqual([testImport2, testImport1]);
     } finally {
       vi.useRealTimers();
     }

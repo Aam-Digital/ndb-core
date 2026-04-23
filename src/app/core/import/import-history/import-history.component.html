@@ -1,7 +1,7 @@
 <h3 i18n>Previous Imports</h3>
 
 <mat-accordion>
-  @for (item of previousImports; track item.getId(); let i = $index) {
+  @for (item of previousImports(); track item.getId(); let i = $index) {
     <mat-expansion-panel [expanded]="i === 0">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -67,6 +67,6 @@
   }
 </mat-accordion>
 
-@if (!(previousImports?.length > 0)) {
+@if (!(previousImports().length > 0)) {
   <div class="no-results" i18n="Placeholder text">no existing imports</div>
 }
