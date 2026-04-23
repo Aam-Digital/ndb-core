@@ -3,6 +3,7 @@ import {
   inject,
   Input,
   OnChanges,
+  signal,
   SimpleChanges,
   ViewEncapsulation,
   ChangeDetectionStrategy,
@@ -81,7 +82,7 @@ export class NoteDetailsComponent
   bottomFieldGroups: FieldGroup[];
 
   form: EntityForm<Note>;
-  tmpEntity: Note;
+  tmpEntity = signal<Note | undefined>(undefined);
 
   override async ngOnChanges(changes: SimpleChanges) {
     this.exportConfig = this.configService.getConfig<{
@@ -120,11 +121,11 @@ export class NoteDetailsComponent
     );
 
     // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
-    this.tmpEntity = this.entity.copy();
+    this.tmpEntity.set(this.entity.copy());
     this.form.formGroup.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
-        this.tmpEntity = Object.assign(this.tmpEntity, value);
+        this.tmpEntity.set(Object.assign(this.entity.copy(), value));
       });
   }
 }
