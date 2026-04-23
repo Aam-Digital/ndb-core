@@ -55,7 +55,7 @@ export class SearchComponent {
   private router = inject(Router);
   private userRoleGuard = inject(UserRoleGuard);
   private searchService = inject(SearchService);
-  private entityConfigService = inject(EntityConfigService);
+  private readonly entityConfigService = inject(EntityConfigService);
   private readonly resultsSubject = new BehaviorSubject<Entity[]>([]);
 
   static INPUT_DEBOUNCE_TIME_MS = 400;

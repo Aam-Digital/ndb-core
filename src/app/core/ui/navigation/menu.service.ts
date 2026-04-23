@@ -16,7 +16,7 @@ import { EntityConfigService } from "../../entity/entity-config.service";
 export class MenuService {
   private configService = inject(ConfigService);
   private entities = inject(EntityRegistry);
-  private entityConfigService = inject(EntityConfigService);
+  private readonly entityConfigService = inject(EntityConfigService);
 
   /**
    * name of config array in the config json file

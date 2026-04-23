@@ -46,7 +46,7 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
   private router = inject(Router);
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
-  private entityConfigService = inject(EntityConfigService);
+  private readonly entityConfigService = inject(EntityConfigService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
 
   @Input() entity: E;

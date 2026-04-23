@@ -84,7 +84,7 @@ export class EntitiesTableComponent<
   private entityFormService = inject(EntityFormService);
   private formDialog = inject(FormDialogService);
   private router = inject(Router);
-  private entityConfigService = inject(EntityConfigService);
+  private readonly entityConfigService = inject(EntityConfigService);
   private filterService = inject(FilterService);
   private schemaService = inject(EntitySchemaService);
   private readonly tableStateUrl = inject(TableStateUrlService);

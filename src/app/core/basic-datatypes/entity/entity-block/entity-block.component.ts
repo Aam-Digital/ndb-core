@@ -38,7 +38,7 @@ import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
 export class EntityBlockComponent {
   private entityMapper = inject(EntityMapperService);
   private router = inject(Router);
-  private entityConfigService = inject(EntityConfigService);
+  private readonly entityConfigService = inject(EntityConfigService);
 
   /** The entity to display directly. Takes precedence over entityId. */
   entity = input<Entity>();
