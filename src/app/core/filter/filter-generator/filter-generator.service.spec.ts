@@ -315,7 +315,14 @@ describe("FilterGeneratorService", () => {
     expect(emptyOption).toBeTruthy();
 
     const filtered = filterService.getFilterPredicate(emptyOption.filter);
-    expect(data.filter(filtered)).toEqual([e1, e2, e3, e4, e5, e6]);
+    expect(data.filter((item) => filtered(item))).toEqual([
+      e1,
+      e2,
+      e3,
+      e4,
+      e5,
+      e6,
+    ]);
   });
 
   it("should add empty option for generic selectable filters", async () => {
@@ -339,7 +346,7 @@ describe("FilterGeneratorService", () => {
     expect(emptyOption).toBeTruthy();
 
     const filtered = filterService.getFilterPredicate(emptyOption.filter);
-    expect(data.filter(filtered)).toEqual([e2, e3, e4]);
+    expect(data.filter((item) => filtered(item))).toEqual([e2, e3, e4]);
   });
 
   it("should add empty option for entity reference filters", async () => {
@@ -369,7 +376,7 @@ describe("FilterGeneratorService", () => {
     expect(emptyOption).toBeTruthy();
 
     const filtered = filterService.getFilterPredicate(emptyOption.filter);
-    expect(data.filter(filtered)).toEqual([
+    expect(data.filter((item) => filtered(item))).toEqual([
       relationWithNull,
       relationWithUndefined,
     ]);
