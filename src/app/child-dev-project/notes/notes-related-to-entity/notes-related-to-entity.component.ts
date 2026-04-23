@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Note } from "../model/note";
 import { ChildrenService } from "../../children/children.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -18,6 +23,7 @@ import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-def
  */
 @DynamicComponent("NotesRelatedToEntity")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],

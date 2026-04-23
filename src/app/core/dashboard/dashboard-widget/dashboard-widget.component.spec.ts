@@ -21,7 +21,7 @@ describe("DashboardWidgetComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardWidgetComponent);
     component = fixture.componentInstance;
-    component.icon = "child";
+    fixture.componentRef.setInput("icon", "child");
     fixture.detectChanges();
   });
 

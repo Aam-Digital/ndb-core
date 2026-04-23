@@ -8,6 +8,7 @@ import {
   Output,
   QueryList,
   ViewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   MatCheckboxChange,
@@ -58,6 +59,7 @@ import { TableStateUrlService } from "./table-state-url.service";
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entities-table",
   imports: [
     EntityFieldEditComponent,

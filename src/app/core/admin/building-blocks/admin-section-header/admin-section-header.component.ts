@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -17,6 +24,7 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
  * LIMITATION: multiple hierarchies each using this have to define seperate container classes, otherwise styles will leak
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-section-header",
   imports: [
     FaIconComponent,

@@ -1,5 +1,11 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -32,6 +38,7 @@ export interface DetailsComponentData {
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
   imports: [
@@ -51,6 +58,7 @@ export interface DetailsComponentData {
 export class RowDetailsComponent implements OnInit {
   data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
   private formService = inject(EntityFormService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
@@ -78,8 +86,10 @@ export class RowDetailsComponent implements OnInit {
       .subscribe((value) => {
         const dynamicConstructor: any = data.entity.getConstructor();
         this.tempEntity = Object.assign(new dynamicConstructor(), value);
+        this.cdr.markForCheck();
       });
     this.viewOnlyColumns = data.viewOnlyColumns;
+    this.cdr.markForCheck();
   }
 
   private enableSaveWithoutChangesIfNew(entity: Entity) {

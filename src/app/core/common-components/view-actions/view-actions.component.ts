@@ -4,6 +4,7 @@ import {
   TemplateRef,
   ViewChild,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
@@ -13,6 +14,7 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
  * for both dialog and routed views.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-view-actions",
   templateUrl: "./view-actions.component.html",
   imports: [NgTemplateOutlet],
@@ -24,7 +26,7 @@ export class ViewActionsComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.viewContext) {
-      setTimeout(() => (this.viewContext.actions = this));
+      setTimeout(() => this.viewContext.setActions(this));
     }
   }
 }

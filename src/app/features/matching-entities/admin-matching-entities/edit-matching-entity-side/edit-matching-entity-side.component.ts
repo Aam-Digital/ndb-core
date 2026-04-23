@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -19,6 +20,7 @@ import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-sele
 import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-edit-matching-entity-side",
   standalone: true,
   imports: [

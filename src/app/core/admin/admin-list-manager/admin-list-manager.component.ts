@@ -16,6 +16,7 @@ import {
   Output,
   inject,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -28,6 +29,7 @@ import { Subscription } from "rxjs";
  * Component for Admin UI to edit table columns or fields in other contexts like filters.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-list-manager",
   imports: [
     CdkDropList,

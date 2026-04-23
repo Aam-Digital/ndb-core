@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   OnDestroy,
@@ -18,6 +19,7 @@ import { Logging } from "../../logging/logging.service";
  * Component for editing JSON data.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-json-editor",
   standalone: true,
   imports: [],

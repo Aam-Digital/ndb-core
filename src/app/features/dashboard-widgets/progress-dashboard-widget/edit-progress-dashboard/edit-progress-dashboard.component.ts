@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import {
   ProgressDashboardConfig,
@@ -28,6 +33,7 @@ export interface EditProgressDashboardComponentData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-edit-progress-dashboard",
   templateUrl: "./edit-progress-dashboard.component.html",
   styleUrls: ["./edit-progress-dashboard.component.scss"],

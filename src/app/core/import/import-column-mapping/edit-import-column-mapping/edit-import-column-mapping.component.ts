@@ -6,6 +6,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { ColumnMapping } from "../../column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
@@ -29,6 +30,7 @@ import { ImportAdditionalSettings } from "../../import-additional-settings/impor
  * (including special transformations, if applicable).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-edit-import-column-mapping",
   templateUrl: "./edit-import-column-mapping.component.html",
   styleUrls: ["./edit-import-column-mapping.component.scss"],

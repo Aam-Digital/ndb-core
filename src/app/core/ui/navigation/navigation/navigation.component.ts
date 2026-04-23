@@ -1,4 +1,9 @@
-import { Component, inject, signal } from "@angular/core";
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
@@ -15,6 +20,7 @@ import { MenuService } from "../menu.service";
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-navigation",
   templateUrl: "./navigation.component.html",
   styleUrls: ["./navigation.component.scss"],

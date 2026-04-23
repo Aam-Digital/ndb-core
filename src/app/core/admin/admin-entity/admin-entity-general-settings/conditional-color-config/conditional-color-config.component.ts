@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   MatFormFieldModule,
   MatFormFieldControl,
@@ -15,6 +21,7 @@ import { ConditionalColorSectionComponent } from "./conditional-color-section/co
  * A form control for configuring conditional colors based on entity fields.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-conditional-color-config",
   templateUrl: "./conditional-color-config.component.html",
   styleUrls: ["./conditional-color-config.component.scss"],

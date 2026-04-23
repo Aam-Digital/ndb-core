@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { Entity } from "../../../core/entity/model/entity";
 import { Coordinates } from "../coordinates";
@@ -29,6 +35,7 @@ export interface ViewDistanceConfig {
 @UntilDestroy()
 @DynamicComponent("DisplayDistance")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-view-distance",
   template: `
     <app-readonly-function

@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
@@ -14,6 +20,7 @@ export interface ImportantNotesDashboardSettingsConfig {
 
 @DynamicComponent("ImportantNotesDashboardSettings")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-important-notes-dashboard-settings",
   standalone: true,
   imports: [

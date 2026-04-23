@@ -1,10 +1,14 @@
 <app-dashboard-list-widget
-  [icon]="entityIcon"
+  [icon]="entityDefinition().icon"
   theme="child"
-  [title]="totalEntities"
-  [subtitle]="subtitle ?? label"
-  [explanation]="explanation"
-  [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
+  [title]="totalEntities()"
+  [subtitle]="subtitle() ?? entityDefinition().labelPlural"
+  [explanation]="explanation()"
+  [entries]="
+    currentGroupField()
+      ? (entityGroupCounts()[currentGroupField() ?? ''] ?? [])
+      : []
+  "
   [paginationPageSize]="4"
 >
   <div class="flex-row navigation-controls">
@@ -15,7 +19,7 @@
       caption="Previous"
       aria-label="Previous grouping"
       (click)="getPrev()"
-      [style.visibility]="groupBy?.length > 1 ? 'visible' : 'hidden'"
+      [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
       [style.transform]="'scale(0.75)'"
     >
       <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
@@ -27,8 +31,8 @@
     >
       by
       <app-entity-field-label
-        [entityType]="_entity"
-        [field]="groupBy[currentGroupIndex]"
+        [entityType]="entityDefinition()"
+        [field]="currentGroupField()"
       >
       </app-entity-field-label>
       :
@@ -41,7 +45,7 @@
       caption="Next"
       aria-label="Next grouping"
       (click)="getNext()"
-      [style.visibility]="groupBy?.length > 1 ? 'visible' : 'hidden'"
+      [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
       [style.transform]="'scale(0.75)'"
     >
       <fa-icon icon="circle-chevron-right"></fa-icon>

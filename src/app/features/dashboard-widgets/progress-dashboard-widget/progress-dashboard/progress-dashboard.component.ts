@@ -1,23 +1,32 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
-import { ProgressDashboardConfig } from "./progress-dashboard-config";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from "@angular/core";
+import { PercentPipe } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { MatDialog } from "@angular/material/dialog";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTableModule } from "@angular/material/table";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { filter, firstValueFrom } from "rxjs";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Logging } from "../../../../core/logging/logging.service";
-import { MatDialog } from "@angular/material/dialog";
-import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { waitForChangeTo } from "../../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../../core/session/session-states/sync-state.enum";
-import { filter, firstValueFrom } from "rxjs";
-import { PercentPipe } from "@angular/common";
-import { MatTableModule } from "@angular/material/table";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatButtonModule } from "@angular/material/button";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { SyncStateSubject } from "../../../../core/session/session-type";
-import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
-import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
+import { ProgressDashboardConfig } from "./progress-dashboard-config";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-progress-dashboard",
   templateUrl: "./progress-dashboard.component.html",
   styleUrls: ["./progress-dashboard.component.scss"],
@@ -31,93 +40,141 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
   ],
 })
 @DynamicComponent("ProgressDashboard")
-export class ProgressDashboardComponent
-  extends DashboardWidget
-  implements OnInit
-{
+export class ProgressDashboardComponent {
   private entityMapper = inject(EntityMapperService);
   private dialog = inject(MatDialog);
   private syncState = inject(SyncStateSubject);
 
-  static override getRequiredEntities() {
+  static getRequiredEntities() {
     return ProgressDashboardConfig.ENTITY_TYPE;
   }
 
-  @Input() dashboardConfigId = "";
-  data: ProgressDashboardConfig;
+  dashboardConfigId = input("");
+  data = signal<ProgressDashboardConfig>(new ProgressDashboardConfig(""));
 
-  @Input() subtitle: string =
-    $localize`:dashboard widget subtitle: Progress Overview`;
-  @Input() explanation: string =
-    $localize`:dashboard widget explanation: Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`;
+  subtitle = input<string>(
+    $localize`:dashboard widget subtitle: Progress Overview`,
+  );
+  explanation = input<string>(
+    $localize`:dashboard widget explanation: Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`,
+  );
 
-  overallPercentage: number;
+  overallPercentage = computed(() => this.getOverallProgressPercentage());
 
-  async ngOnInit() {
-    this.data = new ProgressDashboardConfig(this.dashboardConfigId);
-    this.loadConfigFromDatabase().catch(() =>
-      firstValueFrom(this.syncState.pipe(waitForChangeTo(SyncState.COMPLETED)))
-        .then(() => this.loadConfigFromDatabase())
-        .catch(() => this.createDefaultConfig()),
-    );
+  constructor() {
+    effect((onCleanup) => {
+      const dashboardConfigId = this.dashboardConfigId();
+      let isCurrent = true;
 
-    this.entityMapper
-      .receiveUpdates(ProgressDashboardConfig)
-      .pipe(
-        filter(
-          (entity) => entity.entity.getId(true) === this.dashboardConfigId,
-        ),
-      )
-      .subscribe((update) => this.updateConfig(update.entity));
+      this.data.set(new ProgressDashboardConfig(dashboardConfigId));
+      untracked(() => {
+        void this.loadConfig(dashboardConfigId, () => isCurrent);
+      });
+
+      const subscription = this.entityMapper
+        .receiveUpdates(ProgressDashboardConfig)
+        .pipe(
+          filter((entity) => entity.entity.getId(true) === dashboardConfigId),
+        )
+        .subscribe((update) => this.updateConfig(update.entity));
+
+      onCleanup(() => {
+        isCurrent = false;
+        subscription.unsubscribe();
+      });
+    });
+  }
+
+  private async loadConfig(
+    dashboardConfigId: string,
+    isCurrent: () => boolean,
+  ): Promise<void> {
+    try {
+      const config = await this.entityMapper.load(
+        ProgressDashboardConfig,
+        dashboardConfigId,
+      );
+      if (isCurrent()) {
+        this.updateConfig(config);
+      }
+      return;
+    } catch {
+      // Retry after the next successful sync in case the config isn't available yet.
+    }
+
+    try {
+      await firstValueFrom(
+        this.syncState.pipe(waitForChangeTo(SyncState.COMPLETED)),
+      );
+      const config = await this.entityMapper.load(
+        ProgressDashboardConfig,
+        dashboardConfigId,
+      );
+      if (isCurrent()) {
+        this.updateConfig(config);
+      }
+    } catch {
+      if (isCurrent()) {
+        this.createDefaultConfig();
+      }
+    }
   }
 
   private updateConfig(updatedConfig: ProgressDashboardConfig) {
-    this.data = updatedConfig;
-    this.overallPercentage = this.getOverallProgressPercentage();
-  }
-
-  private loadConfigFromDatabase() {
-    return this.entityMapper
-      .load(ProgressDashboardConfig, this.dashboardConfigId)
-      .then((config) => this.updateConfig(config));
+    this.data.set(updatedConfig);
   }
 
   private createDefaultConfig() {
+    const current = this.data();
+    const next = this.cloneConfig(current);
+
     Logging.debug(
-      `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`,
+      `ProgressDashboardConfig (${this.dashboardConfigId()}) not found. Creating ...`,
     );
-    this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
-    this.save();
+    next.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
+    this.data.set(next);
+    void this.save();
+  }
+
+  private cloneConfig(
+    config: ProgressDashboardConfig,
+  ): ProgressDashboardConfig {
+    const clone = new ProgressDashboardConfig(config.getId(true));
+    Object.assign(clone, config);
+    return clone;
   }
 
   async save() {
-    await this.entityMapper.save(this.data);
+    await this.entityMapper.save(this.data());
   }
 
   showEditComponent() {
     this.dialog
       .open(EditProgressDashboardComponent, {
-        data: this.data,
+        data: this.data(),
       })
       .afterClosed()
       .subscribe(async (next) => {
         if (next) {
-          Object.assign(this.data, next);
+          const updatedConfig = this.cloneConfig(this.data());
+          Object.assign(updatedConfig, next);
+          this.data.set(updatedConfig);
           await this.save();
         }
       });
   }
 
-  // Method to calculate the overall progress percentage
+  // Calculates the weighted overall progress based on total current and target values.
   getOverallProgressPercentage(): number {
-    if (!this.data?.parts || this.data.parts.length === 0) {
+    const data = this.data();
+    if (!data?.parts || data.parts.length === 0) {
       return 0;
     }
 
     let totalCurrent = 0;
     let totalTarget = 0;
 
-    this.data.parts.forEach((entry) => {
+    data.parts.forEach((entry) => {
       totalCurrent += entry.currentValue;
       totalTarget += entry.targetValue;
     });

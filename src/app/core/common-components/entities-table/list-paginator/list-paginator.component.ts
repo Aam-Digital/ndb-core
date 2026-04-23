@@ -5,6 +5,7 @@ import {
   OnInit,
   SimpleChanges,
   ViewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -14,6 +15,7 @@ import {
 import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-list-paginator",
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],

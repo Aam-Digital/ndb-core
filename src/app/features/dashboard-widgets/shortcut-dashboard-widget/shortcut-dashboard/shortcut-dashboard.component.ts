@@ -1,4 +1,11 @@
-import { Component, Input, inject, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  signal,
+} from "@angular/core";
 import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -18,6 +25,7 @@ import { Clipboard } from "@angular/cdk/clipboard";
  */
 @DynamicComponent("ShortcutDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-shortcut-dashboard",
   templateUrl: "./shortcut-dashboard.component.html",
   styleUrls: ["./shortcut-dashboard.component.scss"],
@@ -38,20 +46,30 @@ export class ShortcutDashboardComponent {
   private alertService = inject(AlertService);
 
   /** displayed entries, each representing one line displayed as a shortcut */
-  @Input() set shortcuts(items: MenuItem[]) {
-    this.routePermissionsService
-      .filterPermittedRoutes(items)
-      .then((res) => this._shortcuts.set(res));
-  }
-  get shortcuts(): MenuItem[] {
-    return this._shortcuts();
-  }
-  _shortcuts = signal<MenuItem[]>([]);
+  shortcuts = input<MenuItem[]>([]);
+  filteredShortcuts = signal<MenuItem[]>([]);
 
-  @Input() subtitle: string =
-    $localize`:dashboard widget subtitle:Quick Actions`;
-  @Input() explanation: string =
-    $localize`:dashboard widget explanation:Shortcuts to quickly navigate to common actions`;
+  subtitle = input<string>($localize`:dashboard widget subtitle:Quick Actions`);
+  explanation = input<string>(
+    $localize`:dashboard widget explanation:Shortcuts to quickly navigate to common actions`,
+  );
+
+  constructor() {
+    effect((onCleanup) => {
+      const items = this.shortcuts();
+      let isCurrent = true;
+
+      this.routePermissionsService.filterPermittedRoutes(items).then((res) => {
+        if (isCurrent) {
+          this.filteredShortcuts.set(res);
+        }
+      });
+
+      onCleanup(() => {
+        isCurrent = false;
+      });
+    });
+  }
 
   async copyAbsoluteLink2Clipboard(link: string) {
     const externalLink =

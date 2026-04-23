@@ -39,7 +39,7 @@ describe("ImportantNotesDashboardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ImportantNotesDashboardComponent);
     component = fixture.componentInstance;
-    component.warningLevels = ["WARNING", "URGENT"];
+    fixture.componentRef.setInput("warningLevels", ["WARNING", "URGENT"]);
     fixture.detectChanges();
     return fixture.whenStable();
   });

@@ -1,4 +1,10 @@
-import { Component, OnInit, inject } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
 import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-date.pipe";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -9,6 +15,7 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
 
 @DynamicComponent("DisplayTodoCompletion")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-todo-completion",
   templateUrl: "./display-todo-completion.component.html",
   styleUrls: ["./display-todo-completion.component.scss"],
@@ -19,6 +26,7 @@ export class DisplayTodoCompletionComponent
   implements OnInit
 {
   private entityMapper = inject(EntityMapperService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   completedBy: Entity;
 
@@ -26,9 +34,10 @@ export class DisplayTodoCompletionComponent
     if (this.value?.completedBy) {
       const entityId = this.value.completedBy;
       const entityType = Entity.extractTypeFromId(entityId);
-      this.entityMapper
-        .load(entityType, entityId)
-        .then((res) => (this.completedBy = res));
+      this.entityMapper.load(entityType, entityId).then((res) => {
+        this.completedBy = res;
+        this.cdr.markForCheck();
+      });
     }
   }
 }

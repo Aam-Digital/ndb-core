@@ -62,21 +62,25 @@ describe("UiComponent", () => {
   });
 
   it("should render site name in toolbar based on hide flag", () => {
-    component.sideNavMode = "side";
-    component.siteSettings = SiteSettings.create({
-      siteName: "Aam Digital",
-      hideSiteNameInToolbar: false,
-    });
+    component.sideNavMode.set("side");
+    component.siteSettings.set(
+      SiteSettings.create({
+        siteName: "Aam Digital",
+        hideSiteNameInToolbar: false,
+      }),
+    );
 
     fixture.detectChanges();
 
     let title = fixture.nativeElement.querySelector(".header-title");
     expect(title?.textContent).toContain("Aam Digital");
 
-    component.siteSettings = SiteSettings.create({
-      siteName: "Aam Digital",
-      hideSiteNameInToolbar: true,
-    });
+    component.siteSettings.set(
+      SiteSettings.create({
+        siteName: "Aam Digital",
+        hideSiteNameInToolbar: true,
+      }),
+    );
 
     fixture.detectChanges();
 

@@ -54,18 +54,20 @@ describe("MenuItemListEditorComponent", () => {
       afterClosed: () => of(mockResult),
     };
     mockDialog.open.mockReturnValue(mockDialogRef as DialogRefMock);
-    vi.spyOn(component.itemsChange, "emit");
+    const emittedValues: MenuItemForAdminUi[][] = [];
+    component.items.subscribe((val) => emittedValues.push(val));
 
     // Act
-    component.items = [];
+    component.items.set([]);
     component.addNewMenuItem();
 
     // Assert
-    expect(component.items.length).toBe(1);
-    expect(component.items[0].label).toBe("Test Item");
-    expect(component.items[0].uniqueId).toBeDefined();
-    expect(component.items[0].subMenu).toEqual([]);
-    expect(component.itemsChange.emit).toHaveBeenCalledWith(expect.any(Array));
+    const items = component.items();
+    expect(items.length).toBe(1);
+    expect(items[0].label).toBe("Test Item");
+    expect(items[0].uniqueId).toBeDefined();
+    expect(items[0].subMenu).toEqual([]);
+    expect(emittedValues.length).toBeGreaterThan(0);
   });
 
   it("should not add item when dialog is cancelled", () => {
@@ -74,15 +76,17 @@ describe("MenuItemListEditorComponent", () => {
       afterClosed: () => of(null),
     };
     mockDialog.open.mockReturnValue(mockDialogRef as DialogRefMock);
-    vi.spyOn(component.itemsChange, "emit");
+    const emittedValues: MenuItemForAdminUi[][] = [];
+    component.items.subscribe((val) => emittedValues.push(val));
 
     // Act
-    component.items = [];
+    component.items.set([]);
+    emittedValues.length = 0; // reset after set()
     component.addNewMenuItem();
 
     // Assert
-    expect(component.items.length).toBe(0);
-    expect(component.itemsChange.emit).not.toHaveBeenCalled();
+    expect(component.items().length).toBe(0);
+    expect(emittedValues.length).toBe(0);
   });
 
   it("should remove an item and emit changes", () => {
@@ -101,16 +105,18 @@ describe("MenuItemListEditorComponent", () => {
       uniqueId: "second-id",
       subMenu: [],
     };
-    component.items = [item, secondItem];
-    vi.spyOn(component.itemsChange, "emit");
+    component.items.set([item, secondItem]);
+    const emittedValues: MenuItemForAdminUi[][] = [];
+    component.items.subscribe((val) => emittedValues.push(val));
 
     // Act
     component.removeItem(item);
 
     // Assert
-    expect(component.items.length).toBe(1);
-    expect(component.items[0]).toBe(secondItem);
-    expect(component.itemsChange.emit).toHaveBeenCalledWith([secondItem]);
+    const items = component.items();
+    expect(items.length).toBe(1);
+    expect(items[0]).toBe(secondItem);
+    expect(emittedValues).toEqual([[secondItem]]);
   });
 
   it("should convert entity menu item to plain format with toPlainMenuItem", () => {

@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 
 /**
  * Loading box during demo data generation.
@@ -23,6 +23,7 @@ import { Component } from "@angular/core";
  * see {@link DemoDataModule}
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-dialog-content>
       <p i18n>Generating sample data for this demo ...</p>

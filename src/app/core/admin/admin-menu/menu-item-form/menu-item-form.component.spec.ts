@@ -45,10 +45,10 @@ describe("MenuItemFormComponent", () => {
 
     component.ngOnInit();
 
-    expect(component.customLinkMode).toBe(true);
+    expect(component.customLinkMode()).toBe(true);
 
     // Test with public form ID type link
-    component.customLinkMode = false; // reset
+    component.customLinkMode.set(false); // reset
     component.item = {
       label: "Registration Form",
       icon: "form",
@@ -57,7 +57,7 @@ describe("MenuItemFormComponent", () => {
 
     component.ngOnInit();
 
-    expect(component.customLinkMode).toBe(true);
+    expect(component.customLinkMode()).toBe(true);
   });
 
   it("should stay in dropdown mode when link value exists in options", () => {
@@ -70,6 +70,6 @@ describe("MenuItemFormComponent", () => {
 
     component.ngOnInit();
 
-    expect(component.customLinkMode).toBe(false);
+    expect(component.customLinkMode()).toBe(false);
   });
 });

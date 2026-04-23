@@ -4,6 +4,7 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
@@ -37,6 +38,7 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 @RouteTarget("EntityDetails")
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
   styleUrls: ["./entity-details.component.scss"],
@@ -76,6 +78,7 @@ export class EntityDetailsComponent
 
     if (changes.id || changes.entity || changes.panels) {
       this.initPanels();
+      this.cdr.markForCheck();
     }
   }
 

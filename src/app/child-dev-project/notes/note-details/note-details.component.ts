@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
@@ -37,6 +38,7 @@ import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
 @UntilDestroy()
 @DynamicComponent("NoteDetails")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],

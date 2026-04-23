@@ -1,4 +1,11 @@
-import { Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  resource,
+  signal,
+} from "@angular/core";
 import { DataAggregationService } from "../data-aggregation.service";
 import {
   getGroupingInformationString,
@@ -39,6 +46,7 @@ import { Logging } from "#src/app/core/logging/logging.service";
 
 @RouteTarget("Reporting")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
@@ -69,30 +77,52 @@ export class ReportingComponent {
   private readonly jsonEditorService = inject(JsonEditorService);
   private configService = inject(ConfigService);
 
-  reports: ReportEntity[];
-  mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
+  private reportsResource = resource({
+    loader: () =>
+      this.entityMapper
+        .loadType(ReportEntity)
+        .then((res) => res.sort((a, b) => a.title?.localeCompare(b.title))),
+  });
+  reports = this.reportsResource.value;
 
-  currentReport: ReportEntity;
+  currentReport = signal<ReportEntity | undefined>(undefined);
+  mode = computed<ReportEntity["mode"]>(
+    () => this.currentReport()?.mode ?? "reporting",
+  );
 
-  isLoading: boolean;
-  isError: boolean = false;
-  errorDetails: string | null = null;
-  localTime: Date;
+  isLoading = signal(false);
+  isError = signal(false);
+  errorDetails = signal<string | null>(null);
 
-  reportCalculation: ReportCalculation | null = null;
+  reportCalculation = signal<ReportCalculation | null>(null);
+  localTime = computed<Date | undefined>(() => {
+    const endDate = this.reportCalculation()?.endDate;
+    if (!endDate) return undefined;
+    // Convert the UTC to local timezone (as the date string doesn't include timezone information (e.g. ending with "Z") we have to handle this explicitly
+    return moment.utc(endDate).local().toDate();
+  });
 
-  data: any[];
-  exportableData: any;
-  dateRangeOptions: DateRangeFilterConfigOption[] = [];
+  data = signal<any[]>([]);
+  exportableData = computed<any>(() => {
+    const data = this.data();
+    if (data.length === 0) return undefined;
+    const mode = this.mode();
+    const report = this.currentReport();
+    switch (mode) {
+      case "reporting":
+        return this.flattenReportRows(data);
+      case "sql":
+        return this.getSqlExportableData(data, report);
+      default:
+        return data;
+    }
+  });
 
-  constructor() {
-    this.entityMapper.loadType(ReportEntity).then((res) => {
-      this.reports = res.sort((a, b) => a.title?.localeCompare(b.title));
-      this.loadDateRangeOptionsFromConfig();
-    });
-  }
+  dateRangeOptions = signal<DateRangeFilterConfigOption[]>(
+    this.loadDateRangeOptionsFromConfig(),
+  );
 
-  private loadDateRangeOptionsFromConfig() {
+  private loadDateRangeOptionsFromConfig(): DateRangeFilterConfigOption[] {
     const reportViewConfig = this.configService.getConfig<{
       config?: { filters?: DateRangeFilterConfig[] };
     }>("view:report")?.config;
@@ -101,9 +131,10 @@ export class ReportingComponent {
         (f: DateRangeFilterConfig) => f.id === "reportPeriod",
       );
       if (periodFilter && Array.isArray(periodFilter.options)) {
-        this.dateRangeOptions = periodFilter.options;
+        return periodFilter.options;
       }
     }
+    return [];
   }
 
   async calculateResults(
@@ -111,50 +142,41 @@ export class ReportingComponent {
     fromDate: Date,
     toDate: Date,
   ): Promise<void> {
-    this.isError = false;
-    this.errorDetails = null;
-    this.isLoading = true;
-    this.data = [];
+    this.isError.set(false);
+    this.errorDetails.set(null);
+    this.isLoading.set(true);
+    this.data.set([]);
 
-    this.data = await this.getReportResults(
+    const result = await this.getReportResults(
       selectedReport,
       fromDate,
       toDate,
     ).catch((reason: ReportCalculationError | Error) => {
-      this.isLoading = false;
-      this.isError = true;
-      this.errorDetails =
+      this.isError.set(true);
+      this.errorDetails.set(
         (reason.message ?? reason) +
-        " " +
-        ((reason as ReportCalculationError)?.reportCalculation?.errorDetails ??
-          "");
+          " " +
+          ((reason as ReportCalculationError)?.reportCalculation
+            ?.errorDetails ?? ""),
+      );
       Logging.warn(reason.message ?? "Report Calculation Error", reason);
-      return [];
+      return { data: [] as any[], calculation: undefined };
     });
 
-    this.currentReport = selectedReport;
-
-    this.mode = selectedReport.mode ?? "reporting";
-
-    switch (this.mode) {
-      case "reporting":
-        this.exportableData = this.flattenReportRows();
-        break;
-      case "sql":
-        this.exportableData = this.getSqlExportableData();
-        break;
-      default:
-        this.exportableData = this.data;
-    }
-
-    this.isLoading = false;
+    this.currentReport.set(selectedReport);
+    this.data.set(result.data);
+    this.reportCalculation.set(result.calculation ?? null);
+    this.isLoading.set(false);
   }
 
-  private getSqlExportableData() {
-    return this.currentReport.version == 1
-      ? this.data
+  private getSqlExportableData(
+    data: any[],
+    report: ReportEntity | undefined,
+  ): any {
+    return report?.version == 1
+      ? data
       : this.sqlReportService.getCsvforV2(
-          this.sqlReportService.flattenData(this.data),
+          this.sqlReportService.flattenData(data),
         );
   }
 
@@ -162,48 +184,43 @@ export class ReportingComponent {
     report: ReportEntity,
     from: Date,
     to: Date,
-  ): Promise<any[]> {
+  ): Promise<{ data: any[]; calculation?: ReportCalculation }> {
     switch (report.mode) {
       case "exporting":
         // Add one day because to date is exclusive
         const dayAfterToDate = moment(to).add(1, "day").toDate();
-        return this.dataTransformationService.queryAndTransformData(
-          report.aggregationDefinitions,
-          from,
-          dayAfterToDate,
-        );
+        return {
+          data: await this.dataTransformationService.queryAndTransformData(
+            report.aggregationDefinitions,
+            from,
+            dayAfterToDate,
+          ),
+        };
       case "sql":
-        let reportData = await this.sqlReportService.query(
+        const reportData = await this.sqlReportService.query(
           report,
           from,
           to,
-          this.reportCalculation !== null,
+          this.reportCalculation() !== null,
         );
-        this.reportCalculation = await firstValueFrom(
+        const calculation = await firstValueFrom(
           this.sqlReportService.fetchReportCalculation(
             reportData.calculation.id,
           ),
         );
-        if (this.reportCalculation?.endDate) {
-          // Convert the UTC to local timezone (as the date string doesn't include timezone information (e.g. ending with "Z") we have to handle this explicitly
-          this.localTime = moment
-            .utc(this.reportCalculation.endDate)
-            .local()
-            .toDate();
-        }
-        return reportData.data;
+        return { data: reportData.data, calculation };
       default:
-        return this.dataAggregationService.calculateReport(
-          report.aggregationDefinitions,
-          from,
-          to,
-        );
+        return {
+          data: await this.dataAggregationService.calculateReport(
+            report.aggregationDefinitions,
+            from,
+            to,
+          ),
+        };
     }
   }
 
-  private flattenReportRows(
-    rows = this.data,
-  ): { label: string; result: any }[] {
+  private flattenReportRows(rows: any[]): { label: string; result: any }[] {
     const tableRows: { label: string; result: any }[] = [];
     rows.forEach((result) => {
       tableRows.push(this.createExportableRow(result.header));
@@ -226,12 +243,8 @@ export class ReportingComponent {
   }
 
   onReportCriteriaChange() {
-    this.reportCalculation = null;
-    this.data = [];
-  }
-
-  selectedReportChanged(selectedReport: ReportEntity) {
-    this.currentReport = selectedReport;
+    this.reportCalculation.set(null);
+    this.data.set([]);
   }
 
   editReportConfig(report: ReportEntity) {

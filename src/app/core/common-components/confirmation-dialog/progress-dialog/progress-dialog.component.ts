@@ -1,4 +1,9 @@
-import { Component, inject, Signal } from "@angular/core";
+import {
+  Component,
+  inject,
+  Signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 
@@ -7,6 +12,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
  * used via the {@link ConfirmationDialogService}.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./progress-dialog.component.html",
   imports: [MatProgressBarModule, MatDialogModule],
 })

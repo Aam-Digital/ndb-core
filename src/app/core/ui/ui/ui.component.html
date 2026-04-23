@@ -19,7 +19,7 @@
 <mat-toolbar color="primary" class="ui-toolbar">
   <!-- Left items -->
   <div class="flex-row align-center">
-    @if ((configReady$ | async) && sideNavMode === "over") {
+    @if ((configReady$ | async) && sideNavMode() === "over") {
       <span>
         <button mat-icon-button (click)="sideNav.toggle()">
           <fa-icon class="header-icon" icon="bars"></fa-icon>
@@ -27,7 +27,7 @@
       </span>
     }
 
-    @if (sideNavMode !== "over" && !siteSettings.hideSiteNameInToolbar) {
+    @if (sideNavMode() !== "over" && !siteSettings().hideSiteNameInToolbar) {
       <a
         [routerLink]="['']"
         class="header-title"
@@ -35,7 +35,7 @@
         angularticsCategory="Navigation"
         angularticsAction="navbar_site_title_link"
       >
-        {{ siteSettings.siteName }}
+        {{ siteSettings().siteName }}
       </a>
     }
   </div>
@@ -65,9 +65,9 @@
     <mat-sidenav
       #sideNav
       [autoFocus]="false"
-      [mode]="sideNavMode"
+      [mode]="sideNavMode()"
       [fixedInViewport]="true"
-      [opened]="sideNavMode === 'side'"
+      [opened]="sideNavMode() === 'side'"
       class="sidenav-menu"
       disableClose
     >
@@ -75,9 +75,9 @@
         class="flex-column justify-space-between full-height overflow-y-hidden"
       >
         <div class="toolbar-spacer"></div>
-        @if (siteSettings.logo) {
+        @if (siteSettings().logo) {
           <app-display-img
-            [entity]="siteSettings"
+            [entity]="siteSettings()"
             imgProperty="logo"
             class="site-logo"
           ></app-display-img>

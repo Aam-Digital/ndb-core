@@ -8,7 +8,7 @@
       mat-raised-button
       color="accent"
       (click)="save()"
-      [disabled]="!hasChanges"
+      [disabled]="!hasChanges()"
       i18n
     >
       Save
@@ -19,7 +19,7 @@
 
 <app-menu-item-list-editor
   class="margin-top-large"
-  [items]="menuItems"
+  [items]="menuItems()"
   containerId="navigation-container"
   (itemsChange)="onMenuItemsChange($event)"
 ></app-menu-item-list-editor>

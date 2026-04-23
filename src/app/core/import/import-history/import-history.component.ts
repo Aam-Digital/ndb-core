@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ImportMetadata } from "../import-metadata";
@@ -22,6 +23,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-history",
   templateUrl: "./import-history.component.html",
   styleUrls: ["./import-history.component.scss"],

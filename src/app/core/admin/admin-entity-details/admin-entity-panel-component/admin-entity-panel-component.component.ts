@@ -13,6 +13,7 @@ import {
   signal,
   Output,
   EventEmitter,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatOptionModule } from "@angular/material/core";
@@ -36,6 +37,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { IconButtonComponent } from "#src/app/core/common-components/icon-button/icon-button.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-panel-component",
   imports: [
     AdminListManagerComponent,

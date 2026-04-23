@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { FormConfig } from "../../../entity-details/form/form.component";
@@ -28,6 +33,7 @@ export interface AdminRelatedEntityDetailsResult {
  * Dialog component for editing the related entity's column selection and order.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-related-entity-details",
   imports: [
     AdminEntityFormComponent,

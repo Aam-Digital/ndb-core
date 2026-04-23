@@ -7,6 +7,7 @@ import {
   ViewChild,
   OnInit,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   MatAutocomplete,
@@ -43,6 +44,7 @@ import { OkButton } from "app/core/common-components/confirmation-dialog/confirm
  * offering matching locations as an autocomplete-style dropdown.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-address-search",
   imports: [
     MatOption,

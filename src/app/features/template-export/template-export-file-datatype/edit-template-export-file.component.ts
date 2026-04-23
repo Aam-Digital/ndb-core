@@ -3,7 +3,13 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TemplateExportApiService } from "#src/app/features/template-export/template-export-api/template-export-api.service";
-import { Component, inject, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
@@ -17,6 +23,7 @@ import { TemplateExportService } from "../template-export-service/template-expor
  */
 @DynamicComponent("EditTemplateExportFile")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-template-export-file",
   templateUrl: "./edit-template-export-file.component.html",
   styleUrls: [
