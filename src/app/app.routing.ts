@@ -26,6 +26,8 @@ import { AdminModule } from "./core/admin/admin.module";
 import { AttendanceModule } from "./features/attendance/attendance.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { UnsavedChangesService } from "./core/entity-details/form/unsaved-changes.service";
+import { EntityPermissionGuard } from "./core/permissions/permission-guard/entity-permission.guard";
+import { RoutedViewComponent } from "./core/ui/routed-view/routed-view.component";
 
 /**
  * All routes configured for the main app routing.
@@ -62,6 +64,24 @@ export const allRoutes: Routes = [
     path: "attendance",
     canActivate: [AuthGuard],
     children: AttendanceModule.routes,
+  },
+  {
+    path: "import",
+    component: RoutedViewComponent,
+    canActivate: [AuthGuard, EntityPermissionGuard],
+    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
+    data: {
+      component: "Import",
+    },
+  },
+  {
+    path: "review-duplicates",
+    component: RoutedViewComponent,
+    canActivate: [AuthGuard, EntityPermissionGuard],
+    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
+    data: {
+      component: "ReviewDuplicates",
+    },
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

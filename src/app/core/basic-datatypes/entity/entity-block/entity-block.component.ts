@@ -13,6 +13,7 @@ import { TemplateTooltipDirective } from "../../../common-components/template-to
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityFieldViewComponent } from "../../../entity/entity-field-view/entity-field-view.component";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { EntityConfigService } from "../../../entity/entity-config.service";
 import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
 import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
@@ -37,6 +38,7 @@ import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
 export class EntityBlockComponent {
   private entityMapper = inject(EntityMapperService);
   private router = inject(Router);
+  private entityConfigService = inject(EntityConfigService);
 
   /** The entity to display directly. Takes precedence over entityId. */
   entity = input<Entity>();
@@ -94,6 +96,9 @@ export class EntityBlockComponent {
       return;
     }
 
-    this.router.navigate([entity.getConstructor().route, entity.getId(true)]);
+    this.router.navigate([
+      this.entityConfigService.getRuntimeRoute(entity.getConstructor()),
+      entity.getId(true),
+    ]);
   }
 }

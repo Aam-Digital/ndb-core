@@ -22,6 +22,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
+import { EntityConfigService } from "../../entity/entity-config.service";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,6 +46,7 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
   private router = inject(Router);
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
+  private entityConfigService = inject(EntityConfigService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
 
   @Input() entity: E;
@@ -84,10 +86,13 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
   }
 
   private initializeDetailsRouteIfAvailable() {
-    let route = this.entity.getConstructor().route;
+    const route = this.entityConfigService.getRuntimeRoute(
+      this.entity.getConstructor(),
+    );
+    const detailsPath = `${route.replace(/^\//, "")}/:id`;
     if (
       route &&
-      this.router.config.some((r) => "/" + r.path === route + "/:id")
+      this.router.config.some((r) => r.path === detailsPath)
     ) {
       this.detailsRoute = route + "/" + this.entity.getId(true);
     }

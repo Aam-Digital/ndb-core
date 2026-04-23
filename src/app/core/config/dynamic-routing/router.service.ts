@@ -9,6 +9,12 @@ import { AuthGuard } from "../../session/auth.guard";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
+import {
+  getRuntimePathFromViewConfig,
+  isReservedFixedRoutePath,
+  normalizeRoutePath,
+  RuntimeViewPath,
+} from "./route-paths";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -29,7 +35,11 @@ export class RouterService {
   initRouting() {
     const viewConfigs =
       this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
-    this.reloadRouting(viewConfigs, this.router.config);
+    this.reloadRouting(viewConfigs, this.router.config, {
+      prefixEntityRoutes: true,
+      addLegacyEntityRedirects: true,
+      blockReservedRouteOverrides: true,
+    });
   }
 
   /**
@@ -46,19 +56,50 @@ export class RouterService {
    * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
    */
-  reloadRouting(viewConfigs: ViewConfig[], additionalRoutes: Route[] = []) {
+  reloadRouting(
+    viewConfigs: ViewConfig[],
+    additionalRoutes: Route[] = [],
+    options: ReloadRoutingOptions = {},
+  ) {
     const routes: Route[] = [];
+    const redirects: Route[] = [];
 
     for (const view of viewConfigs) {
       try {
-        const newRoute = this.createRoute(view, additionalRoutes);
+        const runtimePath = getRuntimePathFromViewConfig(view, {
+          prefixEntityRoutes: options.prefixEntityRoutes,
+        });
+        if (
+          options.blockReservedRouteOverrides &&
+          isReservedFixedRoutePath(runtimePath.path)
+        ) {
+          Logging.warn(
+            `Skipped config route ${view._id} because it conflicts with a reserved fixed route.`,
+          );
+          continue;
+        }
+
+        const newRoute = this.createRoute(view, runtimePath.path, additionalRoutes);
         routes.push(newRoute);
+
+        const legacyRedirect = this.generateLegacyRedirect(
+          runtimePath,
+          options,
+          routes,
+          redirects,
+          additionalRoutes,
+        );
+        if (legacyRedirect) {
+          redirects.push(legacyRedirect);
+        }
       } catch (e) {
         Logging.warn(
-          `Failed to create route for view ${view._id}: ${e.message}`,
+          `Failed to create route for view ${view._id}: ${e instanceof Error ? e.message : e}`,
         );
       }
     }
+
+    routes.push(...redirects);
 
     // add routes from other sources (e.g. pre-existing  hard-coded routes)
     const noDuplicates = additionalRoutes.filter(
@@ -76,12 +117,7 @@ export class RouterService {
     this.router.resetConfig(routes);
   }
 
-  private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
-    const path = view._id
-      .substring(PREFIX_VIEW_CONFIG.length)
-      // remove leading slash if present
-      .replace(/^\//, "");
-
+  private createRoute(view: ViewConfig, path: string, additionalRoutes: Route[]) {
     const existingRoute = additionalRoutes.find((r) => r.path === path);
 
     if (existingRoute) {
@@ -93,6 +129,41 @@ export class RouterService {
         data: { component: view.component },
       });
     }
+  }
+
+  private generateLegacyRedirect(
+    runtimePath: RuntimeViewPath,
+    options: ReloadRoutingOptions,
+    routes: Route[],
+    redirects: Route[],
+    additionalRoutes: Route[],
+  ): Route | undefined {
+    if (!options.addLegacyEntityRedirects || !runtimePath.legacyPath) {
+      return undefined;
+    }
+
+    const legacyPath = normalizeRoutePath(runtimePath.legacyPath);
+    if (
+      !legacyPath ||
+      legacyPath === runtimePath.path ||
+      isReservedFixedRoutePath(legacyPath)
+    ) {
+      return undefined;
+    }
+
+    if (
+      routes.some((route) => route.path === legacyPath) ||
+      redirects.some((route) => route.path === legacyPath) ||
+      additionalRoutes.some((route) => route.path === legacyPath)
+    ) {
+      return undefined;
+    }
+
+    return {
+      path: legacyPath,
+      pathMatch: "full",
+      redirectTo: `/${runtimePath.path}`,
+    };
   }
 
   private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
@@ -118,4 +189,10 @@ export class RouterService {
 
     return route;
   }
+}
+
+interface ReloadRoutingOptions {
+  prefixEntityRoutes?: boolean;
+  addLegacyEntityRedirects?: boolean;
+  blockReservedRouteOverrides?: boolean;
 }

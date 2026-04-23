@@ -7,6 +7,8 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from "../../config/dynamic-routing/view-config.interface";
+import { getRuntimePathFromViewConfig } from "../../config/dynamic-routing/route-paths";
+import { EntityConfigService } from "../../entity/entity-config.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,6 +16,7 @@ import {
 export class MenuService {
   private configService = inject(ConfigService);
   private entities = inject(EntityRegistry);
+  private entityConfigService = inject(EntityConfigService);
 
   /**
    * name of config array in the config json file
@@ -55,9 +58,13 @@ export class MenuService {
     return allConfigs
       .filter((view) => !view._id.includes("/:id")) // skip details views (with "/:id" placeholder)
       .map((view) => {
-        const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
-        const label = view.config?.entityType?.trim() || view.component || id;
-        return { value: id, label };
+        const runtimePath = getRuntimePathFromViewConfig(view, {
+          prefixEntityRoutes: true,
+        }).path;
+        const link = runtimePath ? `/${runtimePath}` : "/";
+        const label =
+          view.config?.entityType?.trim() || view.component || runtimePath;
+        return { value: link, label };
       });
   }
 
@@ -72,7 +79,7 @@ export class MenuService {
       delete newItem["entityType"];
       newItem.label = item.label ?? entityType.labelPlural;
       newItem.icon = item.icon ?? entityType.icon;
-      newItem.link = entityType.route;
+      newItem.link = this.entityConfigService.getRuntimeRoute(entityType);
     }
 
     if (item.subMenu) {

@@ -342,10 +342,6 @@
       },
       "_id": "view:note/:id"
     },
-    "view:import": {
-      "component": "Import",
-      "_id": "view:import"
-    },
     "view:child": {
       "component": "EntityList",
       "config": {

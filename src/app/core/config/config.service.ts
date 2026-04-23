@@ -5,8 +5,6 @@ import { shareReplay } from "rxjs/operators";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 import { migrateInheritedFieldConfig } from "../../features/inherited-field/inherited-field-config-migration";
-import { addDefaultImportViewConfig } from "../import/add-default-import-view";
-import { addDefaultReviewDuplicatesViewConfig } from "../../features/de-duplication/add-default-review-duplicates-view";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
@@ -154,14 +152,13 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEditDescriptionOnly,
       migrateEditAttendanceComponent,
       migrateNotesManagerComponent,
+      removeConfigRoutesMigratedToFixedFeatures,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
     const defaultConfigs: ConfigMigration[] = [
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
-      addDefaultImportViewConfig,
-      addDefaultReviewDuplicatesViewConfig,
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
@@ -529,6 +526,24 @@ const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
     return undefined; // remove this config
   }
 
+  return configPart;
+};
+
+const removeConfigRoutesMigratedToFixedFeatures: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data)
+  ) {
+    return configPart;
+  }
+
+  delete configPart.data["view:import"];
+  delete configPart.data["view:review-duplicates"];
   return configPart;
 };
 

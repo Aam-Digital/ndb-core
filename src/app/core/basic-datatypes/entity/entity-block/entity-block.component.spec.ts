@@ -6,6 +6,7 @@ import { Router } from "@angular/router";
 import { Logging } from "../../../logging/logging.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DatabaseException } from "../../../database/pouchdb/pouch-database";
+import { EntityConfigService } from "../../../entity/entity-config.service";
 
 describe("EntityBlockComponent", () => {
   let component: EntityBlockComponent;
@@ -31,6 +32,12 @@ describe("EntityBlockComponent", () => {
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: Router, useValue: mockRouter },
+        {
+          provide: EntityConfigService,
+          useValue: {
+            getRuntimeRoute: (entityType: typeof TestEntity) => entityType.route,
+          },
+        },
       ],
     }).compileComponents();
   });

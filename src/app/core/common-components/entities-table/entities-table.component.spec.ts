@@ -18,6 +18,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { Router, ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntityConfigService } from "../../entity/entity-config.service";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -67,6 +68,12 @@ describe("EntitiesTableComponent", () => {
               queryParams: {},
               queryParamMap: { get: () => null },
             },
+          },
+        },
+        {
+          provide: EntityConfigService,
+          useValue: {
+            getRuntimeRoute: (entityType: typeof TestEntity) => entityType.route,
           },
         },
       ],

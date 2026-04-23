@@ -9,6 +9,7 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from "../config/dynamic-routing/view-config.interface";
+import { getRuntimePathFromViewConfig } from "../config/dynamic-routing/route-paths";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { EntitySchema } from "./schema/entity-schema";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
@@ -202,5 +203,36 @@ export class EntityConfigService {
     return this.configService.getConfig<ViewConfig<EntityListConfig>>(
       EntityConfigService.getListViewId(entityType),
     );
+  }
+
+  /**
+   * Resolve the route to be used in runtime navigation.
+   * Entity routes configured in dynamic config are namespaced under `/c/...`.
+   */
+  getRuntimeRoute(entityType: EntityConstructor): string {
+    const fallbackRoute = entityType.route;
+    try {
+      const listViewId = EntityConfigService.getListViewId(entityType);
+      const listViewConfig =
+        this.configService.getConfig<ViewConfig<EntityListConfig>>(listViewId);
+      if (!listViewConfig) {
+        return fallbackRoute;
+      }
+
+      const runtimePath = getRuntimePathFromViewConfig(
+        {
+          ...listViewConfig,
+          _id: listViewConfig._id ?? listViewId,
+        },
+        { prefixEntityRoutes: true },
+      ).path;
+      return runtimePath ? `/${runtimePath}` : fallbackRoute;
+    } catch {
+      return fallbackRoute;
+    }
+  }
+
+  getRuntimeDetailsRoutePath(entityType: EntityConstructor): string {
+    return `${this.getRuntimeRoute(entityType).replace(/^\//, "")}/:id`;
   }
 }

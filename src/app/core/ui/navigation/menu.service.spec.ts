@@ -4,16 +4,16 @@ import { ConfigService } from "app/core/config/config.service";
 import { Config } from "@playwright/test";
 import { BehaviorSubject } from "rxjs";
 import { EntityMenuItem, NavigationMenuConfig } from "./menu-item";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "app/core/entity/database-entity.decorator";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interface";
+import { EntityConfigService } from "../../entity/entity-config.service";
 
 describe("MenuService", () => {
   let service: MenuService;
 
   let mockConfigService: any;
+  let mockEntityConfigService: any;
+  let mockEntityRegistry: any;
   let mockConfigUpdated: BehaviorSubject<Config>;
 
   beforeEach(() => {
@@ -23,11 +23,22 @@ describe("MenuService", () => {
       getAllConfigs: vi.fn(),
       configUpdates: mockConfigUpdated,
     };
+    mockEntityConfigService = {
+      getRuntimeRoute: vi.fn((entityType) => entityType.route),
+    };
+    mockEntityRegistry = {
+      get: vi.fn().mockImplementation((entityType: string) => ({
+        labelPlural: entityType === "TestEntity" ? "Test Entities" : entityType,
+        icon: "child",
+        route: "/test-entity",
+      })),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: EntityConfigService, useValue: mockEntityConfigService },
+        { provide: EntityRegistry, useValue: mockEntityRegistry },
       ],
     });
     service = TestBed.inject(MenuService);
@@ -102,8 +113,8 @@ describe("MenuService", () => {
     const routes = service.loadAvailableRoutes();
 
     expect(routes).toEqual([
-      { value: "/child", label: "Child" },
-      { value: "/school", label: "School" },
+      { value: "/c/child", label: "Child" },
+      { value: "/c/school", label: "School" },
       { value: "/", label: "Dashboard" },
     ]);
   });
