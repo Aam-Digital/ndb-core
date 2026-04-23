@@ -232,6 +232,10 @@ export class EntityConfigService {
     }
   }
 
+  /**
+   * Resolve the route pattern used to detect details-view routes in router config.
+   * Returns a path string without leading slash, matching Angular `Route.path`.
+   */
   getRuntimeDetailsRoutePath(entityType: EntityConstructor): string {
     return `${this.getRuntimeRoute(entityType).replace(/^\//, "")}/:id`;
   }

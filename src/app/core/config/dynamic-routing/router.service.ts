@@ -55,6 +55,7 @@ export class RouterService {
    *
    * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
+   * @param options Controls entity route prefixing, legacy redirects, and fixed-route override protection
    */
   reloadRouting(
     viewConfigs: ViewConfig[],
@@ -131,6 +132,10 @@ export class RouterService {
     }
   }
 
+  /**
+   * Create a redirect from an old unprefixed entity path to the canonical runtime path.
+   * Redirects are skipped if they would collide with reserved or already existing routes.
+   */
   private generateLegacyRedirect(
     runtimePath: RuntimeViewPath,
     options: ReloadRoutingOptions,
@@ -191,8 +196,20 @@ export class RouterService {
   }
 }
 
+/**
+ * Optional behavior switches for route reloads.
+ */
 interface ReloadRoutingOptions {
+  /**
+   * Prefix config-defined entity routes under `CONFIG_ENTITY_ROUTE_PREFIX`.
+   */
   prefixEntityRoutes?: boolean;
+  /**
+   * Register legacy redirects from old entity paths to prefixed runtime paths.
+   */
   addLegacyEntityRedirects?: boolean;
+  /**
+   * Prevent dynamic config from overriding fixed feature routes.
+   */
   blockReservedRouteOverrides?: boolean;
 }
