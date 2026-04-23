@@ -90,10 +90,7 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
       this.entity.getConstructor(),
     );
     const detailsPath = `${route.replace(/^\//, "")}/:id`;
-    if (
-      route &&
-      this.router.config.some((r) => r.path === detailsPath)
-    ) {
+    if (route && this.router.config.some((r) => r.path === detailsPath)) {
       this.detailsRoute = route + "/" + this.entity.getId(true);
     }
   }

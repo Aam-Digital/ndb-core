@@ -35,7 +35,8 @@ describe("EntityBlockComponent", () => {
         {
           provide: EntityConfigService,
           useValue: {
-            getRuntimeRoute: (entityType: typeof TestEntity) => entityType.route,
+            getRuntimeRoute: (entityType: typeof TestEntity) =>
+              entityType.route,
           },
         },
       ],

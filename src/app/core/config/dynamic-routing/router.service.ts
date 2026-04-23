@@ -80,7 +80,11 @@ export class RouterService {
           continue;
         }
 
-        const newRoute = this.createRoute(view, runtimePath.path, additionalRoutes);
+        const newRoute = this.createRoute(
+          view,
+          runtimePath.path,
+          additionalRoutes,
+        );
         routes.push(newRoute);
 
         const legacyRedirect = this.generateLegacyRedirect(
@@ -118,7 +122,11 @@ export class RouterService {
     this.router.resetConfig(routes);
   }
 
-  private createRoute(view: ViewConfig, path: string, additionalRoutes: Route[]) {
+  private createRoute(
+    view: ViewConfig,
+    path: string,
+    additionalRoutes: Route[],
+  ) {
     const existingRoute = additionalRoutes.find((r) => r.path === path);
 
     if (existingRoute) {

@@ -41,9 +41,10 @@ export class FormDialogService {
       );
       if (!hasDetailsViewConfig) {
         // check router config for code-defined view configs (not stored in DB config for e.g. Public forms)
-        const detailsRoute = this.entityConfigService.getRuntimeDetailsRoutePath(
-          entity.getConstructor(),
-        );
+        const detailsRoute =
+          this.entityConfigService.getRuntimeDetailsRoutePath(
+            entity.getConstructor(),
+          );
         hasDetailsViewConfig = this.router.config.some(
           (route) => route.path === detailsRoute,
         );

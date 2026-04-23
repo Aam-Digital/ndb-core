@@ -262,11 +262,9 @@ describe("RouterService", () => {
     getAllConfigSpy.mockReturnValue(conflictingViewConfig);
     const fixedImportRoute = { path: "import", component: TestComponent };
 
-    service.reloadRouting(
-      conflictingViewConfig,
-      [fixedImportRoute],
-      { blockReservedRouteOverrides: true },
-    );
+    service.reloadRouting(conflictingViewConfig, [fixedImportRoute], {
+      blockReservedRouteOverrides: true,
+    });
 
     const router = TestBed.inject<Router>(Router);
     expect(router.config.find((r) => r.path === "import")).toEqual(

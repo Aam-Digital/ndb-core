@@ -144,10 +144,7 @@ export class SearchComponent {
     const route = this.entityConfigService.getRuntimeRoute(
       optionElement.value.getConstructor(),
     );
-    await this.router.navigate([
-      route,
-      optionElement.value.getId(true),
-    ]);
+    await this.router.navigate([route, optionElement.value.getId(true)]);
     this.formControl.setValue("");
     this.state = this.NOTHING_ENTERED;
     if (this.mobile) {

@@ -73,7 +73,8 @@ describe("EntitiesTableComponent", () => {
         {
           provide: EntityConfigService,
           useValue: {
-            getRuntimeRoute: (entityType: typeof TestEntity) => entityType.route,
+            getRuntimeRoute: (entityType: typeof TestEntity) =>
+              entityType.route,
           },
         },
       ],
