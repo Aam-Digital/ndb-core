@@ -64,14 +64,14 @@ describe("SearchComponent", () => {
       await vi.advanceTimersByTimeAsync(
         SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
       );
-      expect(component.state).toBe(component.TOO_FEW_CHARACTERS);
+      expect(component.state()).toBe(component.TOO_FEW_CHARACTERS);
       expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
 
       component.formControl.setValue("AB");
       await vi.advanceTimersByTimeAsync(
         SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
       );
-      expect(component.state).toBe(component.NO_RESULTS);
+      expect(component.state()).toBe(component.NO_RESULTS);
       expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
 
       subscr.unsubscribe();
@@ -90,7 +90,7 @@ describe("SearchComponent", () => {
         SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
       );
 
-      expect(component.state).toBe(component.NO_RESULTS);
+      expect(component.state()).toBe(component.NO_RESULTS);
       expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
 
       subscr.unsubscribe();
@@ -109,7 +109,7 @@ describe("SearchComponent", () => {
         SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2,
       );
 
-      expect(component.state).toBe(component.NO_RESULTS);
+      expect(component.state()).toBe(component.NO_RESULTS);
       expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
 
       subscr.unsubscribe();
