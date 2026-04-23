@@ -182,11 +182,15 @@ describe("RouterService", () => {
     service.initRouting();
 
     const router = TestBed.inject<Router>(Router);
-    expect(router.config.find((r) => r.path === "c/child").data).toEqual({
+    const childRoute = router.config.find((r) => r.path === "c/child");
+    expect(childRoute).toBeDefined();
+    expect(childRoute!.data).toEqual({
       component: "EntityList",
       config: { entityType: "Child", foo: 1 },
     });
-    expect(router.config.find((r) => r.path === "c/child2").data).toEqual({
+    const child2Route = router.config.find((r) => r.path === "c/child2");
+    expect(child2Route).toBeDefined();
+    expect(child2Route!.data).toEqual({
       component: "EntityList",
       config: { entityType: "Child", foo: 2 },
     });
