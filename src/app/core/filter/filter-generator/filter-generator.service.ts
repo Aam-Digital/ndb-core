@@ -1,8 +1,11 @@
 import { Injectable, inject } from "@angular/core";
 import {
+  createEmptyValueFilter,
   DataFilter,
+  EMPTY_FILTER_OPTION_KEY,
   Filter,
   FilterSelectionOption,
+  getNotDefinedFilterLabel,
   SelectableFilter,
 } from "../filters/filters";
 import {
@@ -37,6 +40,46 @@ export class FilterGeneratorService {
   private schemaService = inject(EntitySchemaService);
   private placeholderService = inject(DynamicPlaceholderValueService);
 
+  private isEmptyValue(value: unknown): boolean {
+    return value === undefined || value === null || value === "";
+  }
+
+  private hasEmptyValue<T extends Entity>(
+    data: T[],
+    fieldName: string,
+    includeNestedId = false,
+  ): boolean {
+    return (data ?? []).some((entity) => {
+      const value = entity?.[fieldName];
+      if (this.isEmptyValue(value)) {
+        return true;
+      }
+
+      if (
+        includeNestedId &&
+        value &&
+        typeof value === "object" &&
+        "id" in value
+      ) {
+        return this.isEmptyValue((value as { id?: unknown }).id);
+      }
+
+      return false;
+    });
+  }
+
+  private createEmptyOption<T extends Entity>(
+    fieldName: string,
+    includeNestedId = false,
+  ): FilterSelectionOption<T> {
+    return {
+      key: EMPTY_FILTER_OPTION_KEY,
+      label: getNotDefinedFilterLabel(),
+      isEmpty: true,
+      filter: createEmptyValueFilter(fieldName, includeNestedId),
+    };
+  }
+
   /**
    *
    * @param filterConfigs
@@ -68,18 +111,12 @@ export class FilterGeneratorService {
             ? value.id
             : value;
 
-        let hasEmptyArray = false;
         const dataValues = [
           ...new Set(
             (data ?? []).flatMap((e) => {
               const v = e?.[filterConfig.id];
               // Handle array values (multi-select fields)
               if (Array.isArray(v)) {
-                // Empty arrays should be treated as "not defined"
-                if (v.length === 0) {
-                  hasEmptyArray = true;
-                  return [];
-                }
                 return v.map(extractId);
               }
               // Handle single object value
@@ -101,36 +138,19 @@ export class FilterGeneratorService {
             filter: { [filterConfig.id + ".id"]: invalidId } as DataFilter<T>,
           }));
 
-        // Add "empty" option if there are empty/undefined values or empty arrays
-        const hasEmpty =
-          hasEmptyArray ||
-          dataValues.some((v) => v === undefined || v === null || v === "");
-        const emptyOption = hasEmpty
-          ? [
-              {
-                key: null,
-                label: $localize`:filter option:not defined`,
-                isEmpty: true,
-                filter: {
-                  $or: [
-                    { [filterConfig.id]: undefined },
-                    { [filterConfig.id]: null },
-                    { [filterConfig.id + ".id"]: undefined },
-                    { [filterConfig.id + ".id"]: null },
-                    { [filterConfig.id + ".id"]: "" },
-                  ],
-                } as DataFilter<T>,
-              },
-            ]
-          : [];
-
-        filter = new ConfigurableEnumFilter(
+        const enumFilter = new ConfigurableEnumFilter(
           filterConfig.id,
           label,
           enumValues,
           filterConfig.singleSelectOnly,
-          [...invalidOptions, ...emptyOption],
+          invalidOptions,
         );
+        filter = enumFilter;
+        if (this.hasEmptyValue(data, filterConfig.id, true)) {
+          enumFilter.options.unshift(
+            this.createEmptyOption(filterConfig.id, true),
+          );
+        }
       } else if (type == "boolean") {
         filter = new BooleanFilter(
           filterConfig.id,
@@ -164,11 +184,22 @@ export class FilterGeneratorService {
         const entityType = filterConfig.type || schema.additional;
         const filterEntities =
           await this.entityMapperService.loadType(entityType);
-        filter = new EntityFilter(filterConfig.id, label, filterEntities);
+        const entityFilter = new EntityFilter(
+          filterConfig.id,
+          label,
+          filterEntities,
+        );
+        filter = entityFilter;
+        if (this.hasEmptyValue(data, filterConfig.id)) {
+          entityFilter.options.unshift(this.createEmptyOption(filterConfig.id));
+        }
       } else {
         const options = [...new Set(data.map((c) => c[filterConfig.id]))];
         const fSO: FilterSelectionOption<T>[] =
           SelectableFilter.generateOptions(options, filterConfig.id);
+        if (this.hasEmptyValue(data, filterConfig.id)) {
+          fSO.unshift(this.createEmptyOption(filterConfig.id));
+        }
 
         filter = new SelectableFilter<T>(filterConfig.id, fSO, label);
       }

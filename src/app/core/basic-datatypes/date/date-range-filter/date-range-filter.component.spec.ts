@@ -7,6 +7,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { defaultDateFilters } from "./date-range-filter-panel/date-range-filter-panel.component";
 import moment from "moment";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
+import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 
 describe("DateRangeFilterComponent", () => {
   let component: DateRangeFilterComponent<any>;
@@ -104,6 +105,12 @@ describe("DateRangeFilterComponent", () => {
       test: testFilter,
     };
     expect(component.filterConfig.getFilter()).toEqual(expectedDateFilter);
+
+    dateFilter.selectedOptionValues = [EMPTY_FILTER_OPTION_KEY];
+    component.filterConfig = dateFilter;
+    expect(component.filterConfig.getFilter()).toEqual({
+      $or: [{ test: undefined }, { test: null }, { test: "" }],
+    });
   });
 
   it("should set the correct date filter when changing the date range manually", () => {

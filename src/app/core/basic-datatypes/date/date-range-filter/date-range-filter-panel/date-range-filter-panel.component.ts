@@ -16,6 +16,7 @@ import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { calculateDateRange } from "./date-range-utils";
+import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -52,12 +53,13 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterPanelComponent {
+  readonly emptyFilterOptionKey = EMPTY_FILTER_OPTION_KEY;
   filter = inject<DateFilter<any>>(MAT_DIALOG_DATA);
   private dialogRef =
     inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
 
   selectedRangeValue: DateRange<Date>;
-  selectedOption: DateRangeFilterConfigOption;
+  selectedOption: DateRangeFilterConfigOption | undefined;
   comparisonRange: DateRange<Date> = new DateRange(null, null);
 
   constructor() {
@@ -83,9 +85,11 @@ export class DateRangeFilterPanelComponent {
     this.comparisonRange = new DateRange(null, null);
   }
 
-  selectRangeAndClose(index: number | "all"): void {
+  selectRangeAndClose(index: number | "all" | "empty"): void {
     if (typeof index === "number") {
       this.filter.selectedOptionValues = [index.toString()];
+    } else if (index === "empty") {
+      this.filter.selectedOptionValues = [EMPTY_FILTER_OPTION_KEY];
     } else {
       this.filter.selectedOptionValues = [];
     }
