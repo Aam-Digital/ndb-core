@@ -6,6 +6,7 @@ import { Component, Input } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntityConfigService } from "../../entity/entity-config.service";
 
 @Component({
   template: ``,
@@ -39,6 +40,13 @@ describe("DialogViewComponent", () => {
         {
           provide: ComponentRegistry,
           useValue: { get: () => async () => MockComponent },
+        },
+        {
+          provide: EntityConfigService,
+          useValue: {
+            getRuntimeDetailsRoutePath: (entityType: typeof TestEntity) =>
+              `${entityType.route.replace(/^\//, "")}/:id`,
+          },
         },
         { provide: Router, useValue: mockRouter },
       ],
