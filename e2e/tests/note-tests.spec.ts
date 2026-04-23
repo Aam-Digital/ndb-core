@@ -1,7 +1,13 @@
-import { expect, loadApp, test } from "#e2e/fixtures.js";
+import {
+  argosScreenshot,
+  E2E_REF_DATE,
+  expect,
+  loadApp,
+  test,
+} from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
-import { Note } from "#src/app/child-dev-project/notes/model/note.js";
+import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
 
 const INITIAL_SUBJECT = "<NOTE DIALOG INITIAL>";
 const UPDATED_SUBJECT = "<NOTE DIALOG UPDATED>";
@@ -15,22 +21,24 @@ test("Edit note details in popup dialog and persist changes", async ({
   const [, demoAdmin] = users;
   const child = generateChild({ name: "Nila Rao" });
 
-  const note = Note.create(
-    new Date("2025-01-23T00:00:00.000Z"),
-    INITIAL_SUBJECT,
-    [child.getId()],
-  );
+  const note = generateNote({
+    child,
+    author: demoAdmin,
+    date: new Date(E2E_REF_DATE),
+  });
+  note.subject = INITIAL_SUBJECT;
   note.text = INITIAL_TEXT;
-  note.authors = [demoAdmin.getId()];
 
   await loadApp(page, [...users, child, note]);
 
   await page.getByRole("navigation").getByText("Notes").click();
+  await argosScreenshot(page, "notes-list");
 
   await page.getByRole("cell", { name: INITIAL_SUBJECT }).click();
 
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
+  await argosScreenshot(page, "note-dialog-open");
 
   await expect(dialog.getByRole("button", { name: "Save" })).toBeVisible();
 
