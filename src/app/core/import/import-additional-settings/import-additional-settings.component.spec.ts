@@ -42,4 +42,12 @@ describe("ImportAdditionalSettingsComponent", () => {
 
     expect(result).toBe(customSeparator);
   });
+
+  it("should allow custom separator via createCustomSeparator with multiple separators", async () => {
+    const customSeparator = ";";
+
+    const result = await component.createCustomSeparator(customSeparator);
+
+    expect(result).toBe(customSeparator);
+  });
 });

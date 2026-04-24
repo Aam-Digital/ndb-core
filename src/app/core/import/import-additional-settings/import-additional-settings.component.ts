@@ -10,6 +10,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 export interface ImportAdditionalSettings {
   multiValueSeparator?: string;
@@ -30,6 +31,7 @@ export interface ImportAdditionalSettings {
     HelpButtonComponent,
     BasicAutocompleteComponent,
     FormsModule,
+    CommonModule,
   ],
 })
 export class ImportAdditionalSettingsComponent {
@@ -37,8 +39,16 @@ export class ImportAdditionalSettingsComponent {
 
   settings = model<ImportAdditionalSettings>({});
 
+  // Input for auto-detected delimiter from parsed CSV data
+  autoDetectedDelimiter = input<string>();
+
   get multiValueSeparator(): string {
-    return this.settings()?.multiValueSeparator ?? ",";
+    // Use auto-detected delimiter as default, fallback to comma
+    return (
+      this.settings()?.multiValueSeparator ??
+      this.autoDetectedDelimiter() ??
+      ","
+    );
   }
 
   set multiValueSeparator(value: string) {
