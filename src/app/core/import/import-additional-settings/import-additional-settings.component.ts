@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   model,
 } from "@angular/core";
@@ -42,13 +43,29 @@ export class ImportAdditionalSettingsComponent {
   // Input for auto-detected delimiter from parsed CSV data
   autoDetectedDelimiter = input<string>();
 
+  // Computed signal for localized delimiter label
+  detectedDelimiterLabel = computed(() => {
+    const detected = this.autoDetectedDelimiter();
+    if (!detected) return null;
+
+    switch (detected) {
+      case ",":
+        return $localize`:Delimiter label for comma|,comma`;
+      case ";":
+        return $localize`:Delimiter label for semicolon|;semicolon`;
+      case "\t":
+        return $localize`:Delimiter label for tab|\t:tab`;
+      case "|":
+        return $localize`:Delimiter label for pipe|\|:pipe`;
+      case ":":
+        return $localize`:Delimiter label for colon|::colon`;
+      default:
+        return detected; // Fallback to raw character for unknown delimiters
+    }
+  });
+
   get multiValueSeparator(): string {
-    // Use auto-detected delimiter as default, fallback to comma
-    return (
-      this.settings()?.multiValueSeparator ??
-      this.autoDetectedDelimiter() ??
-      ","
-    );
+    return this.settings()?.multiValueSeparator ?? ",";
   }
 
   set multiValueSeparator(value: string) {
