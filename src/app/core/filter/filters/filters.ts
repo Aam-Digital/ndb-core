@@ -37,6 +37,7 @@ export function getNotDefinedFilterLabel(): string {
 export function createEmptyValueFilter<T extends Entity>(
   fieldName: string,
   includeNestedId = false,
+  includeEmptyArray = false,
 ): DataFilter<T> {
   const emptyFilterOptions: DataFilter<T>[] = [
     { [fieldName]: undefined } as DataFilter<T>,
@@ -50,6 +51,10 @@ export function createEmptyValueFilter<T extends Entity>(
       { [fieldName + ".id"]: null } as DataFilter<T>,
       { [fieldName + ".id"]: "" } as DataFilter<T>,
     );
+  }
+
+  if (includeEmptyArray) {
+    emptyFilterOptions.push({ [fieldName]: { $size: 0 } } as DataFilter<T>);
   }
 
   return {

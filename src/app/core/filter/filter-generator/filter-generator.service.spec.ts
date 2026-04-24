@@ -436,12 +436,17 @@ describe("FilterGeneratorService", () => {
     const filteredByInvalidX = filterService.getFilterPredicate(
       invalidOptionX.filter,
     );
-    expect(data.filter(filteredByInvalidX)).toEqual([e1]);
+    expect(data.filter((item) => filteredByInvalidX(item))).toEqual([e1]);
 
     const emptyOption = filter.options.find(
       (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
     );
-    expect(emptyOption).toBeUndefined();
+    expect(emptyOption).toBeTruthy();
+
+    const filteredByEmpty = filterService.getFilterPredicate(
+      emptyOption.filter,
+    );
+    expect(data.filter((item) => filteredByEmpty(item))).toEqual([e3]);
   });
 
   function filter<T extends Entity>(
