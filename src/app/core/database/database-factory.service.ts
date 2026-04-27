@@ -48,10 +48,7 @@ export class DatabaseFactoryService {
         this.alertService,
         // Lazily resolved via Injector to avoid a circular dependency between
         // DatabaseFactoryService and PouchdbCorruptionRecoveryService.
-        () =>
-          this.injector
-            .get(PouchdbCorruptionRecoveryService)
-            .promptResetApplicationDialog(),
+        this.injector.get(PouchdbCorruptionRecoveryService, null) ?? undefined,
       );
     } else if (environment.session_type === SessionType.online) {
       return new RemotePouchDatabase(

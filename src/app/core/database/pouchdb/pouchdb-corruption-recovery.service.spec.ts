@@ -1,7 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
-import { PouchdbCorruptionRecoveryService } from "./pouchdb-corruption-recovery.service";
+import {
+  isKnownMultiTabDatabaseCorruption,
+  PouchdbCorruptionRecoveryService,
+} from "./pouchdb-corruption-recovery.service";
 import { BackupService } from "../../admin/backup/backup.service";
 
 describe("PouchdbCorruptionRecoveryService", () => {
@@ -73,5 +76,40 @@ describe("PouchdbCorruptionRecoveryService", () => {
     expect(localStorage.getItem("foo")).toBe("bar");
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
+  });
+});
+
+describe("isKnownMultiTabDatabaseCorruption", () => {
+  it("should detect seq index constraint errors", () => {
+    const error = new Error(
+      "Database has a global failure ConstraintError: Unable to add key to index 'seq': at least one key does not satisfy the uniqueness requirements.",
+    );
+    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(true);
+  });
+
+  it("should detect unknown_error from IndexedDB adapter failures", () => {
+    const error = {
+      message: "unknown_error: Database encountered an unknown error",
+    };
+    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(false);
+  });
+
+  it("should not detect unknown_error when error is a plain string", () => {
+    expect(isKnownMultiTabDatabaseCorruption("unknown_error")).toBe(false);
+  });
+
+  it("should not classify unrelated validation errors", () => {
+    const error = new Error("validation error: invalid field value");
+    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(false);
+  });
+
+  it("should detect bulk save array errors with seq constraint", () => {
+    const bulkError = [
+      {
+        reason:
+          "Database has a global failure ConstraintError: Unable to add key to index 'seq'",
+      },
+    ];
+    expect(isKnownMultiTabDatabaseCorruption(bulkError)).toBe(true);
   });
 });

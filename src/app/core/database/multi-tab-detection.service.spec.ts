@@ -1,8 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import {
-  isKnownMultiTabDatabaseCorruption,
-  MultiTabDetectionService,
-} from "./multi-tab-detection.service";
+import { MultiTabDetectionService } from "./multi-tab-detection.service";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
 
 class MockBroadcastChannel {
@@ -143,38 +140,5 @@ describe("MultiTabDetectionService", () => {
     } finally {
       vi.useRealTimers();
     }
-  });
-
-  it("should detect seq index constraint errors", () => {
-    const error = new Error(
-      "Database has a global failure ConstraintError: Unable to add key to index 'seq': at least one key does not satisfy the uniqueness requirements.",
-    );
-    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(true);
-  });
-
-  it("should detect unknown_error from IndexedDB adapter failures", () => {
-    const error = {
-      message: "unknown_error: Database encountered an unknown error",
-    };
-    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(false);
-  });
-
-  it("should not detect unknown_error when error is a plain string", () => {
-    expect(isKnownMultiTabDatabaseCorruption("unknown_error")).toBe(false);
-  });
-
-  it("should not classify unrelated validation errors", () => {
-    const error = new Error("validation error: invalid field value");
-    expect(isKnownMultiTabDatabaseCorruption(error)).toBe(false);
-  });
-
-  it("should detect bulk save array errors with seq constraint", () => {
-    const bulkError = [
-      {
-        reason:
-          "Database has a global failure ConstraintError: Unable to add key to index 'seq'",
-      },
-    ];
-    expect(isKnownMultiTabDatabaseCorruption(bulkError)).toBe(true);
   });
 });

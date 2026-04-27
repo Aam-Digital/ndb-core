@@ -19,6 +19,7 @@ describe("SyncedPouchDatabase", () => {
   let mockSyncStateSubject: SyncStateSubject;
   let loginState: LoginStateSubject;
   let mockAlertService: { addDanger: Mock };
+  let mockCorruptionRecovery: { handleKnownMultiTabCorruption: Mock };
 
   beforeEach(() => {
     mockAuthService = {
@@ -30,6 +31,9 @@ describe("SyncedPouchDatabase", () => {
     loginState = new LoginStateSubject();
     mockAlertService = {
       addDanger: vi.fn(),
+    };
+    mockCorruptionRecovery = {
+      handleKnownMultiTabCorruption: vi.fn(),
     };
 
     service = new SyncedPouchDatabase(
@@ -191,7 +195,6 @@ describe("SyncedPouchDatabase", () => {
   });
 
   it("should use configured recovery callback for known multi-tab sync errors", async () => {
-    const onKnownMultiTabCorruption = vi.fn();
     const serviceWithCallback = new SyncedPouchDatabase(
       "unit-test-db",
       mockAuthService,
@@ -200,7 +203,7 @@ describe("SyncedPouchDatabase", () => {
       loginState,
       undefined,
       mockAlertService as any,
-      onKnownMultiTabCorruption,
+      mockCorruptionRecovery as any,
     );
 
     const mockLocalDb = {
@@ -222,12 +225,13 @@ describe("SyncedPouchDatabase", () => {
 
     await expect(serviceWithCallback.sync()).rejects.toBeTruthy();
 
-    expect(onKnownMultiTabCorruption).toHaveBeenCalledTimes(1);
+    expect(
+      mockCorruptionRecovery.handleKnownMultiTabCorruption,
+    ).toHaveBeenCalledTimes(1);
     expect(mockAlertService.addDanger).not.toHaveBeenCalled();
   });
 
   it("should use configured recovery callback for known multi-tab put errors", async () => {
-    const onKnownMultiTabCorruption = vi.fn();
     const serviceWithCallback = new SyncedPouchDatabase(
       "unit-test-db",
       mockAuthService,
@@ -236,7 +240,7 @@ describe("SyncedPouchDatabase", () => {
       loginState,
       undefined,
       mockAlertService as any,
-      onKnownMultiTabCorruption,
+      mockCorruptionRecovery as any,
     );
 
     vi.spyOn(
@@ -255,11 +259,12 @@ describe("SyncedPouchDatabase", () => {
     await expect(
       serviceWithCallback.put({ _id: "Child:1" }),
     ).rejects.toBeTruthy();
-    expect(onKnownMultiTabCorruption).toHaveBeenCalledTimes(1);
+    expect(
+      mockCorruptionRecovery.handleKnownMultiTabCorruption,
+    ).toHaveBeenCalledTimes(1);
   });
 
   it("should use configured recovery callback for known multi-tab query errors", async () => {
-    const onKnownMultiTabCorruption = vi.fn();
     const serviceWithCallback = new SyncedPouchDatabase(
       "unit-test-db",
       mockAuthService,
@@ -268,7 +273,7 @@ describe("SyncedPouchDatabase", () => {
       loginState,
       undefined,
       mockAlertService as any,
-      onKnownMultiTabCorruption,
+      mockCorruptionRecovery as any,
     );
 
     vi.spyOn(
@@ -287,7 +292,9 @@ describe("SyncedPouchDatabase", () => {
     await expect(
       serviceWithCallback.query("index/byField", {}),
     ).rejects.toBeTruthy();
-    expect(onKnownMultiTabCorruption).toHaveBeenCalledTimes(1);
+    expect(
+      mockCorruptionRecovery.handleKnownMultiTabCorruption,
+    ).toHaveBeenCalledTimes(1);
   });
 
   it("should not start additional syncs while a previous sync is still running", async () => {
