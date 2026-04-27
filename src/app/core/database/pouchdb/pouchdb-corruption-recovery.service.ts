@@ -27,7 +27,7 @@ export class PouchdbCorruptionRecoveryService {
     try {
       await this.confirmationDialog.getConfirmation(
         $localize`:multi-tab warning dialog title:Multiple Tabs Open`,
-        $localize`:multi-tab warning dialog text:This action is blocked because the app is open in multiple tabs.
+        $localize`:multi-tab warning dialog text:The app is open in multiple tabs, which can break the local database.
 
 Please close the other tabs and try again to avoid local database corruption.
 
