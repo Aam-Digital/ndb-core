@@ -531,8 +531,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="213"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:213</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:218</a></div>
                         </td>
                     </tr>
 
@@ -615,8 +615,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="220"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:220</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="225"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:225</a></div>
                         </td>
                     </tr>
 
@@ -905,8 +905,8 @@ if a conflict occurs without the forceUpdate flag being set, the save will fail,
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="250"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:250</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="255"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:255</a></div>
                         </td>
                     </tr>
 
@@ -1117,25 +1117,30 @@ export class EntityMapperService {
     entities: Entity[],
     forceUpdate: boolean &#x3D; false,
   ): Promise&lt;any[]&gt; {
+    if (!entities.length) {
+      return [];
+    }
+
     entities.forEach((e) &#x3D;&gt; this.assertPermission(e));
     entities.forEach((e) &#x3D;&gt; this.setEntityMetadata(e));
 
-    // group entities by their DATABASE
-    const groupedEntities &#x3D; new Map&lt;string, Entity[]&gt;();
+    const entitiesByDatabase &#x3D; new Map&lt;string, Entity[]&gt;();
     entities.forEach((e) &#x3D;&gt; {
-      const db &#x3D; e.getConstructor().DATABASE;
-      if (!groupedEntities.has(db)) {
-        groupedEntities.set(db, []);
+      const databaseName &#x3D; e.getConstructor().DATABASE;
+      if (!entitiesByDatabase.has(databaseName)) {
+        entitiesByDatabase.set(databaseName, []);
       }
-      groupedEntities.get(db).push(e);
+      entitiesByDatabase.get(databaseName).push(e);
     });
 
-    const savePromises &#x3D; Array.from(groupedEntities.entries()).map(
-      ([db, entities]) &#x3D;&gt; {
-        const rawData &#x3D; entities.map((e) &#x3D;&gt;
+    const savePromises &#x3D; Array.from(entitiesByDatabase.entries()).map(
+      ([databaseName, entitiesInDatabase]) &#x3D;&gt; {
+        const rawData &#x3D; entitiesInDatabase.map((e) &#x3D;&gt;
           this.entitySchemaService.transformEntityToDatabaseFormat(e),
         );
-        return this.dbResolver.getDatabase(db).putAll(rawData, forceUpdate);
+        return this.dbResolver
+          .getDatabase(databaseName)
+          .putAll(rawData, forceUpdate);
       },
     );
 

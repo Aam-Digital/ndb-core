@@ -1,0 +1,559 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >PouchdbCorruptionRecoveryService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
+Shows targeted dialogs and optionally resets the local database to a clean state.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#handleKnownMultiTabCorruption" >handleKnownMultiTabCorruption</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#promptMultiTabWarningDialog" >promptMultiTabWarningDialog</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#promptResetApplicationDialog" >promptResetApplicationDialog</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="handleKnownMultiTabCorruption"></a>
+                    <span class="name">
+                        <span ><b>handleKnownMultiTabCorruption</b></span>
+                        <a href="#handleKnownMultiTabCorruption"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>handleKnownMultiTabCorruption(err: unknown, logMessage: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:77</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>logMessage</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="promptMultiTabWarningDialog"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>promptMultiTabWarningDialog</b></span>
+                        <a href="#promptMultiTabWarningDialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>promptMultiTabWarningDialog()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="22"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:22</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="promptResetApplicationDialog"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>promptResetApplicationDialog</b></span>
+                        <a href="#promptResetApplicationDialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>promptResetApplicationDialog()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="44"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:44</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+import { ConfirmationDialogService } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import {
+  CustomYesNoButtons,
+  OkButton,
+} from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { LOCATION_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
+import { BackupService } from &quot;../../admin/backup/backup.service&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+
+/**
+ * Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
+ * Shows targeted dialogs and optionally resets the local database to a clean state.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class PouchdbCorruptionRecoveryService {
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly location &#x3D; inject&lt;Location&gt;(LOCATION_TOKEN);
+  private warningDialogOpen &#x3D; false;
+  private resetDialogOpen &#x3D; false;
+
+  async promptMultiTabWarningDialog(): Promise&lt;void&gt; {
+    if (this.warningDialogOpen) {
+      return;
+    }
+    this.warningDialogOpen &#x3D; true;
+
+    try {
+      await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:multi-tab warning dialog title:Multiple Tabs Open&#x60;,
+        $localize&#x60;:multi-tab warning dialog text:The app is open in multiple tabs, which can break the local database.
+
+Please close the other tabs and try again to avoid local database corruption.
+
+We are working on improvements to allow this in the future.&#x60;,
+        OkButton,
+        false,
+      );
+    } finally {
+      this.warningDialogOpen &#x3D; false;
+    }
+  }
+
+  async promptResetApplicationDialog(): Promise&lt;void&gt; {
+    if (this.resetDialogOpen) {
+      return;
+    }
+    this.resetDialogOpen &#x3D; true;
+
+    try {
+      const shouldReset &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:local db corruption dialog title:Local Database Needs Reset&#x60;,
+        $localize&#x60;:local db corruption dialog text:The local database appears corrupted and saving is no longer reliable.
+
+This can happen after using multiple tabs in parallel.
+We are working on improvements to allow this in the future.&#x60;,
+        CustomYesNoButtons(
+          $localize&#x60;:local db corruption dialog button reset:Reset Application&#x60;,
+          $localize&#x60;:Confirmation dialog Cancel:Cancel&#x60;,
+        ),
+        false,
+      );
+
+      if (shouldReset &#x3D;&#x3D;&#x3D; true) {
+        this.resetApplication();
+      }
+    } finally {
+      this.resetDialogOpen &#x3D; false;
+    }
+  }
+
+  private resetApplication() {
+    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, &quot;1&quot;);
+    this.location.pathname &#x3D; &quot;&quot;;
+  }
+
+  handleKnownMultiTabCorruption(err: unknown, logMessage: string): void {
+    if (!isKnownMultiTabDatabaseCorruption(err)) {
+      return;
+    }
+    Logging.warn(logMessage, err);
+    this.promptResetApplicationDialog().catch((callbackError) &#x3D;&gt;
+      Logging.warn(&quot;onKnownMultiTabCorruption callback failed&quot;, callbackError),
+    );
+  }
+}
+
+/**
+ * Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
+ * is used in multiple tabs with concurrent writes.
+ *
+ * We intentionally match on &#x60;transaction was aborted&#x60; because this is the
+ * reliable signal present on the actual error object propagated to app code
+ * after IndexedDB global-failure cases. The &#x60;unknown_error&#x60; label is too
+ * generic and may appear for unrelated failures.
+ */
+export function isKnownMultiTabDatabaseCorruption(error: unknown): boolean {
+  const text &#x3D; errorToText(error).toLowerCase();
+  const transactionAbortedMatch &#x3D; text.includes(&quot;transaction was aborted&quot;);
+  const globalFailureMatch &#x3D; text.includes(&quot;database has a global failure&quot;);
+  const constraintSeqMatch &#x3D;
+    text.includes(&quot;constrainterror&quot;) &amp;&amp; text.includes(&quot;seq&quot;);
+  const isKnownCorruption &#x3D;
+    transactionAbortedMatch || globalFailureMatch || constraintSeqMatch;
+
+  return isKnownCorruption;
+}
+
+function errorToText(error: unknown): string {
+  if (error instanceof Error) {
+    const errorWithExtras &#x3D; error as Error &amp; Record&lt;string, unknown&gt;;
+    return &#x60;${error.name} ${error.message} ${JSON.stringify(errorWithExtras)}&#x60;;
+  }
+  if (typeof error &#x3D;&#x3D;&#x3D; &quot;string&quot;) return error;
+  return JSON.stringify(error ?? &quot;&quot;);
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'PouchdbCorruptionRecoveryService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

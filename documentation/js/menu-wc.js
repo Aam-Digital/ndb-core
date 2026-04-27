@@ -2063,7 +2063,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/MenuService.html" data-type="entity-link" >MenuService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/MultiTabDetectionService.html" data-type="entity-link" >MultiTabDetectionService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/PermissionEnforcerService.html" data-type="entity-link" >PermissionEnforcerService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/PouchdbCorruptionRecoveryService.html" data-type="entity-link" >PouchdbCorruptionRecoveryService</a>
                                 </li>
                                 <li class="link">
                                     <a href="injectables/PrimaryActionService.html" data-type="entity-link" >PrimaryActionService</a>

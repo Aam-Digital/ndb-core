@@ -235,6 +235,15 @@ provides functionality to sync with a remote CouchDB.</p>
                                 <a href="#liveSync" >liveSync</a>
                             </li>
                             <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#put" >put</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#query" >query</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Async</span>
                                 <a href="#resetSync" >resetSync</a>
                             </li>
@@ -288,14 +297,7 @@ provides functionality to sync with a remote CouchDB.</p>
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
-                                <a href="#put" >put</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Async</span>
                                 <a href="#putAll" >putAll</a>
-                            </li>
-                            <li>
-                                <a href="#query" >query</a>
                             </li>
                             <li>
                                 <a href="#remove" >remove</a>
@@ -352,12 +354,12 @@ provides functionality to sync with a remote CouchDB.</p>
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, navigator: Navigator, loginStateSubject: <a href="../injectables/LoginStateSubject.html" target="_self">LoginStateSubject</a>, ngZone?: <a href="https://angular.io/api/core/NgZone" target="_blank">NgZone</a>, alertService?: <a href="../injectables/AlertService.html" target="_self">AlertService</a>)</code>
+<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, navigator: Navigator, loginStateSubject: <a href="../injectables/LoginStateSubject.html" target="_self">LoginStateSubject</a>, ngZone?: <a href="https://angular.io/api/core/NgZone" target="_blank">NgZone</a>, alertService?: <a href="../injectables/AlertService.html" target="_self">AlertService</a>, corruptionRecovery?: <a href="../injectables/PouchdbCorruptionRecoveryService.html" target="_self">PouchdbCorruptionRecoveryService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:57</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:66</a></div>
                             </td>
                         </tr>
 
@@ -458,6 +460,18 @@ provides functionality to sync with a remote CouchDB.</p>
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>corruptionRecovery</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PouchdbCorruptionRecoveryService.html" target="_self" >PouchdbCorruptionRecoveryService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -497,7 +511,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:28</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -523,7 +537,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="306" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:306</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="350" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:350</a></div>
                         </td>
                     </tr>
 
@@ -560,7 +574,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -591,7 +605,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -884,8 +898,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="283"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:283</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="327"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:327</a></div>
                         </td>
                     </tr>
 
@@ -926,8 +940,8 @@ Otherwise triggers a one-time sync and resolves when complete.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -974,7 +988,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:109</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:123</a></code>
 </div>
                         </td>
                     </tr>
@@ -1066,8 +1080,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="308"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:308</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="352"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:352</a></div>
                         </td>
                     </tr>
 
@@ -1079,6 +1093,187 @@ Can be used as a replication source for background migration.</p>
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="put"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>put</b></span>
+                        <a href="#put"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>put(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, forceOverwrite: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:250</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>object</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>forceOverwrite</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="query"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>query</b></span>
+                        <a href="#query"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>query(fun: string | unknown, options: <a href="../miscellaneous/typealiases.html#QueryOptions" target="_self">QueryOptions</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:262</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fun</td>
+                                            <td>
+                                                        <code>string | unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>options</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#QueryOptions" target="_self" >QueryOptions</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1105,8 +1300,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="268"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:268</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="312"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:312</a></div>
                         </td>
                     </tr>
 
@@ -1155,7 +1350,7 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:143</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:157</a></code>
 </div>
                         </td>
                     </tr>
@@ -1194,8 +1389,8 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="172"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:172</a></div>
                         </td>
                     </tr>
 
@@ -1878,111 +2073,6 @@ false if the document did not exist locally (benign — desired state already ac
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="put"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>put</b></span>
-                        <a href="#put"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>put(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, forceOverwrite: unknown)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:160</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Save a document to the database.
-(see <a href="../classes/Database.html">Database</a>)</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Default value</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>object</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                            </td>
-
-                                            <td>
-                                                    <p>The document to be saved</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>forceOverwrite</td>
-                                            <td>
-                                                        <code>unknown</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>false</code>
-                                            </td>
-
-                                            <td>
-                                                    <p>(Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="putAll"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -2081,105 +2171,6 @@ false if the document did not exist locally (benign — desired state already ac
                                 <p>array with the result for each object to be saved, if any item fails to be saved, this returns a rejected Promise.
 The save can partially fail and return a mix of success and error states in the array (e.g. <code>[{ ok: true, ... }, { error: true, ... }]</code>)</p>
 
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="query"></a>
-                    <span class="name">
-                        <span ><b>query</b></span>
-                        <a href="#query"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>query(fun: string | unknown, options: <a href="../miscellaneous/typealiases.html#QueryOptions" target="_self">QueryOptions</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:379</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Query data from the database based on a more complex, indexed request.
-(see <a href="../classes/Database.html">Database</a>)</p>
-<p>This is directly calling the PouchDB implementation of this function.
-Also see the documentation there: <a href="https://pouchdb.com/api.html#query_database">https://pouchdb.com/api.html#query_database</a></p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>fun</td>
-                                            <td>
-                                                        <code>string | unknown</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <p>The name of a previously saved database index</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>options</td>
-                                            <td>
-                                                            <code><a href="../miscellaneous/typealiases.html#QueryOptions" target="_self" >QueryOptions</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <p>Additional options for the query, like a <code>key</code>. See the PouchDB docs for details.</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
                             </div>
                 </td>
             </tr>
@@ -2584,7 +2575,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:30</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:35</a></div>
                                 </td>
                             </tr>
 
@@ -2606,7 +2597,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:47</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:56</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2640,7 +2631,7 @@ Useful for observing when this specific database&#39;s sync completes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="139" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:139</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="153" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:153</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2683,6 +2674,11 @@ import { EMPTY, from, interval, merge, of } from &quot;rxjs&quot;;
 import { LoginState } from &quot;../../session/session-states/login-state.enum&quot;;
 import { NotAvailableOfflineError } from &quot;../../session/not-available-offline.error&quot;;
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
+import { QueryOptions } from &quot;../database&quot;;
+import {
+  PouchdbCorruptionRecoveryService,
+  isKnownMultiTabDatabaseCorruption,
+} from &quot;./pouchdb-corruption-recovery.service&quot;;
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -2701,6 +2697,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
   POUCHDB_SYNC_BATCH_SIZE &#x3D; 100;
   SYNC_INTERVAL &#x3D; 30000;
 
+  private readonly navigator: Navigator;
+  private readonly loginStateSubject: LoginStateSubject;
+  private readonly alertService?: AlertService;
+  private readonly corruptionRecovery?: PouchdbCorruptionRecoveryService;
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject &#x3D; new SyncStateSubject();
 
@@ -2724,19 +2724,24 @@ export class SyncedPouchDatabase extends PouchDatabase {
     dbName: string,
     authService: KeycloakAuthService,
     globalSyncState: SyncStateSubject,
-    private navigator: Navigator,
-    private loginStateSubject: LoginStateSubject,
+    navigator: Navigator,
+    loginStateSubject: LoginStateSubject,
     ngZone?: NgZone,
     alertService?: AlertService,
+    corruptionRecovery?: PouchdbCorruptionRecoveryService,
   ) {
     super(dbName, globalSyncState, ngZone);
+    this.navigator &#x3D; navigator;
+    this.loginStateSubject &#x3D; loginStateSubject;
+    this.alertService &#x3D; alertService;
+    this.corruptionRecovery &#x3D; corruptionRecovery;
 
     this.remoteDatabase &#x3D; new RemotePouchDatabase(
       dbName,
       authService,
       undefined,
       ngZone,
-      alertService,
+      this.alertService,
     );
 
     this.logSyncContext();
@@ -2879,6 +2884,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
             &#x60;sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
             err,
           );
+        } else if (isKnownMultiTabDatabaseCorruption(err)) {
+          this.corruptionRecovery?.handleKnownMultiTabCorruption(
+            err,
+            &#x60;sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
+          );
         } else {
           Logging.warn(&#x60;sync failed [${this.dbName}]&#x60;, err);
         }
@@ -2890,6 +2900,31 @@ export class SyncedPouchDatabase extends PouchDatabase {
           this.remoteDatabase.trackLostPermissions &#x3D; true;
         }
       });
+  }
+
+  override async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
+    try {
+      return await super.put(object, forceOverwrite);
+    } catch (err) {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        &#x60;put failed [${this.dbName}]: likely multi-tab IndexedDB corruption&#x60;,
+      );
+      throw err;
+    }
+  }
+
+  override query(
+    fun: string | ((doc: any, emit: any) &#x3D;&gt; void),
+    options: QueryOptions,
+  ): Promise&lt;any&gt; {
+    return super.query(fun, options).catch((err) &#x3D;&gt; {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        &#x60;query failed [${this.dbName}]: likely multi-tab IndexedDB corruption&#x60;,
+      );
+      throw err;
+    });
   }
 
   private isDocumentWriteError(err: any): boolean {

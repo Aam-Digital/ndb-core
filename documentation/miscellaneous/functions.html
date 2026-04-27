@@ -235,6 +235,9 @@
                             <a href="#equals" title="src/app/utils/utils.ts" ><b>equals</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
                         </li>
                         <li>
+                            <a href="#errorToText" title="src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts" ><b>errorToText</b>&nbsp;&nbsp;&nbsp;(src/.../pouchdb-corruption-recovery.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#expectArrayWithExactContents" title="src/app/utils/test-utils/array-test-utils.ts" ><b>expectArrayWithExactContents</b>&nbsp;&nbsp;&nbsp;(src/.../array-test-utils.ts)</a>
                         </li>
                         <li>
@@ -395,6 +398,9 @@
                         </li>
                         <li>
                             <a href="#isInheritanceSourceReferenceField" title="src/app/core/import/import-inheritance-warning.util.ts" ><b>isInheritanceSourceReferenceField</b>&nbsp;&nbsp;&nbsp;(src/.../import-inheritance-warning.util.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isKnownMultiTabDatabaseCorruption" title="src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts" ><b>isKnownMultiTabDatabaseCorruption</b>&nbsp;&nbsp;&nbsp;(src/.../pouchdb-corruption-recovery.service.ts)</a>
                         </li>
                         <li>
                             <a href="#isManualItemWithoutLink" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" ><b>isManualItemWithoutLink</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</a>
@@ -4452,6 +4458,129 @@ The entity should also be added to the <a href="databaseEntities">databaseEntiti
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorToText"></a>
+                    <span class="name">
+                        <span ><b>errorToText</b></span>
+                        <a href="#errorToText"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>errorToText(error)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isKnownMultiTabDatabaseCorruption"></a>
+                    <span class="name">
+                        <span ><b>isKnownMultiTabDatabaseCorruption</b></span>
+                        <a href="#isKnownMultiTabDatabaseCorruption"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isKnownMultiTabDatabaseCorruption(error)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Detect IndexedDB/PouchDB corruption symptoms commonly observed when the app
+is used in multiple tabs with concurrent writes.</p>
+<p>We intentionally match on <code>transaction was aborted</code> because this is the
+reliable signal present on the actual error object propagated to app code
+after IndexedDB global-failure cases. The <code>unknown_error</code> label is too
+generic and may appear for unrelated failures.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
 
                                             <td>
                                                     No

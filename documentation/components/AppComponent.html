@@ -236,7 +236,7 @@ Actual logic and UI structure is defined in other modules.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/app.component.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/app.component.ts:50</a></div>
                             </td>
                         </tr>
 
@@ -273,7 +273,7 @@ Actual logic and UI structure is defined in other modules.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/app.component.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/app.component.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -294,6 +294,7 @@ import { DemoDataInitializerService } from &quot;./core/demo-data/demo-data-init
 import { environment } from &quot;environments/environment&quot;;
 import { SetupService } from &quot;./core/setup/setup.service&quot;;
 import { from, merge, Observable, of } from &quot;rxjs&quot;;
+import { MultiTabDetectionService } from &quot;./core/database/multi-tab-detection.service&quot;;
 
 /**
  * Component as the main entry point for the app.
@@ -320,6 +321,9 @@ export class AppComponent {
   configReady$: Observable&lt;boolean&gt;;
 
   constructor() {
+    // Initialize multi-tab monitoring globally so warnings are shown proactively.
+    inject(MultiTabDetectionService);
+
     this.configReady$ &#x3D; this.loginState.pipe(
       // if logged out, we don&#x27;t wait for config and treat this separately
       map((loginState) &#x3D;&gt; loginState !&#x3D;&#x3D; LoginState.LOGGED_IN),

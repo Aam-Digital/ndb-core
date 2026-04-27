@@ -205,8 +205,8 @@ depending on context and environment configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="33"
-                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:33</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -272,8 +272,8 @@ depending on context and environment configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="64"
-                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:64</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="68"
+                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:68</a></div>
                         </td>
                     </tr>
 
@@ -325,7 +325,7 @@ depending on context and environment configuration.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, NgZone } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Injector, NgZone } from &quot;@angular/core&quot;;
 import { Database } from &quot;./database&quot;;
 import { PouchDatabase } from &quot;./pouchdb/pouch-database&quot;;
 import { KeycloakAuthService } from &quot;../session/auth/keycloak/keycloak-auth.service&quot;;
@@ -341,6 +341,7 @@ import { SyncedPouchDatabase } from &quot;./pouchdb/synced-pouch-database&quot;;
 import { NAVIGATOR_TOKEN } from &quot;../../utils/di-tokens&quot;;
 import { Entity } from &quot;../entity/model/entity&quot;;
 import { AlertService } from &quot;../alerts/alert.service&quot;;
+import { PouchdbCorruptionRecoveryService } from &quot;./pouchdb/pouchdb-corruption-recovery.service&quot;;
 
 /**
  * Provides a method to generate Database instances
@@ -356,6 +357,7 @@ export class DatabaseFactoryService {
   private loginStateSubject &#x3D; inject(LoginStateSubject, { optional: true });
   private readonly ngZone &#x3D; inject(NgZone);
   private readonly alertService &#x3D; inject(AlertService);
+  private readonly injector &#x3D; inject(Injector);
 
   createDatabase(dbName: string): Database {
     // only the &quot;primary&quot; (app) database should manage the global login state
@@ -371,16 +373,18 @@ export class DatabaseFactoryService {
         this.loginStateSubject,
         this.ngZone,
         this.alertService,
+        // Lazily resolved via Injector to avoid a circular dependency between
+        // DatabaseFactoryService and PouchdbCorruptionRecoveryService.
+        this.injector.get(PouchdbCorruptionRecoveryService, null) ?? undefined,
       );
     } else if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
-      const db &#x3D; new RemotePouchDatabase(
+      return new RemotePouchDatabase(
         dbName,
         this.authService,
         syncState,
         this.ngZone,
         this.alertService,
       );
-      return db;
     } else if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
     } else {
