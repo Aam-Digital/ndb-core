@@ -24,7 +24,10 @@ import { InteractionType } from "#src/app/child-dev-project/notes/model/interact
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { ATTENDANCE_STATUS_CONFIG_ID, AttendanceStatusType } from "../model/attendance-status";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+} from "../model/attendance-status";
 import { AttendanceItem } from "../model/attendance-item";
 
 /**
@@ -82,7 +85,11 @@ export class EditLegacyAttendanceComponent
         this.getAttendance(childId).status ?? null,
       );
       ctrl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-        this.updateAttendanceValue(childId, "status", value as AttendanceStatusType);
+        this.updateAttendanceValue(
+          childId,
+          "status",
+          value as AttendanceStatusType,
+        );
       });
       this.statusControls.set(childId, ctrl);
     }
