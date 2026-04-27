@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   inject,
   Input,
   OnChanges,
@@ -8,6 +9,8 @@ import {
   ViewEncapsulation,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Entity } from "#src/app/core/entity/model/entity";
 import {
   MatCalendar,
@@ -16,7 +19,10 @@ import {
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { AttendanceItem } from "../../model/attendance-item";
-import { NullAttendanceStatusType } from "../../model/attendance-status";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  NullAttendanceStatusType,
+} from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import type { AttendanceStats } from "../../model/event-with-attendance";
@@ -24,7 +30,9 @@ import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
 import { PercentPipe } from "@angular/common";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
-import { AttendanceStatusSelectComponent } from "../../edit-attendance/attendance-status-select/attendance-status-select.component";
+import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
@@ -52,7 +60,8 @@ import { EventWithAttendance } from "../../model/event-with-attendance";
   imports: [
     MatDatepickerModule,
     CustomDatePipe,
-    AttendanceStatusSelectComponent,
+    EditConfigurableEnumComponent,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
@@ -67,6 +76,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   private formDialog = inject(FormDialogService);
   private analyticsService = inject(AnalyticsService);
   private attendanceService = inject(AttendanceService);
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() records: EventWithAttendance[] = [];
   @Input() highlightForChild: string;
@@ -81,6 +91,24 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEventAttendance: AttendanceItem;
   selectedEventAttendanceOriginal: AttendanceItem;
   selectedEventStats: AttendanceStats;
+
+  statusControl = new FormControl<ConfigurableEnumValue>(null);
+  statusFieldConfig: FormFieldConfig = {
+    id: "status",
+    dataType: "configurable-enum",
+    additional: ATTENDANCE_STATUS_CONFIG_ID,
+  };
+
+  constructor() {
+    this.statusControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => {
+        if (this.selectedEventAttendance) {
+          this.selectedEventAttendance.status = status as any;
+          this.save();
+        }
+      });
+  }
 
   private ensureParticipantInAttendance(
     event: EventWithAttendance,
@@ -118,12 +146,12 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.highlightForChild,
       );
 
-      if (!eventAttendance?.status?.style) {
+      if (!eventAttendance?.status?.id) {
         classes[
           "attendance-calendar-date-has-participants-with-unknown-status"
         ] = true;
       } else {
-        classes[eventAttendance.status.style] = true;
+        classes["attendance-status-" + eventAttendance.status.id] = true;
       }
 
       classes["attendance-calendar-date-has-remarks"] =
@@ -201,6 +229,10 @@ export class AttendanceCalendarComponent implements OnChanges {
         this.selectedEventAttendance = this.ensureParticipantInAttendance(
           this.selectedEvent,
           this.highlightForChild,
+        );
+        this.statusControl.setValue(
+          this.selectedEventAttendance.status ?? null,
+          { emitEvent: false },
         );
       }
       // clone attendance information to allow detecting and reverting changes

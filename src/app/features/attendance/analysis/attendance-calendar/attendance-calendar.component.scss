@@ -2,6 +2,12 @@
 @use "functions/gradient-helpers";
 @use "variables/sizes";
 
+/* Per-status calendar cell background colors (referenced via highlightDate in the component) */
+.attendance-status-PRESENT { background-color: #c8e6c9 !important; }
+.attendance-status-ABSENT { background-color: #ff8a65 !important; }
+.attendance-status-LATE { background-color: #ffecb3 !important; }
+.attendance-status-EXCUSED { background-color: #d7ccc8 !important; }
+
 mat-calendar {
   min-width: 200px;
   max-width: 300px;

@@ -11,7 +11,6 @@ import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { InteractionType } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { AttendanceStatusSelectComponent } from "../edit-attendance/attendance-status-select/attendance-status-select.component";
 import { EditLegacyAttendanceComponent } from "./edit-legacy-attendance.component";
 
 describe("EditLegacyAttendanceComponent", () => {

@@ -24,8 +24,14 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
-import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
+import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { AttendanceItem } from "../model/attendance-item";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+  NullAttendanceStatusType,
+} from "../model/attendance-status";
+import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 /**
  * Edit component for the `attendance` datatype.
@@ -45,7 +51,7 @@ import { AttendanceItem } from "../model/attendance-item";
     FontAwesomeModule,
     EntityBlockComponent,
     MatButtonModule,
-    AttendanceStatusSelectComponent,
+    EditConfigurableEnumComponent,
     MatInputModule,
     MatCardModule,
   ],
@@ -77,6 +83,44 @@ export class EditAttendanceComponent
   /** FormFieldConfig for the internal entity autocomplete */
   participantFieldConfig: FormFieldConfig;
 
+  /** The configurable-enum ID for attendance status options */
+  statusEnumId = ATTENDANCE_STATUS_CONFIG_ID;
+
+  /** FormFieldConfig passed to EditConfigurableEnumComponent for status selection */
+  statusFieldConfig: FormFieldConfig;
+
+  /** Per-participant FormControls used by EditConfigurableEnumComponent */
+  private statusControls = new Map<
+    string,
+    FormControl<ConfigurableEnumValue>
+  >();
+
+  /** Returns (and lazily creates) a FormControl for the given participant's status */
+  getStatusControl(participantId: string): FormControl<ConfigurableEnumValue> {
+    let ctrl = this.statusControls.get(participantId);
+    if (!ctrl) {
+      const item = this.getAttendanceItem(participantId);
+      ctrl = new FormControl<ConfigurableEnumValue>(
+        item?.status ?? NullAttendanceStatusType,
+        { nonNullable: true },
+      );
+      if (this.formControl.disabled) {
+        ctrl.disable({ emitEvent: false });
+      }
+      ctrl.valueChanges
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((status) =>
+          this.updateAttendanceValue(
+            participantId,
+            "status",
+            status as AttendanceStatusType,
+          ),
+        );
+      this.statusControls.set(participantId, ctrl);
+    }
+    return ctrl;
+  }
+
   /** Filter to exclude already-added participants from the autocomplete */
   participantFilter: WritableSignal<(e: Entity) => boolean> = signal(
     () => true,
@@ -97,6 +141,18 @@ export class EditAttendanceComponent
       }
     });
     this.resizeObserver.observe(this.elementRef.nativeElement);
+
+    // Allow config to override the status enum ID (via additional.status.additional)
+    const statusConfig = this.formFieldConfig?.additional?.status;
+    if (statusConfig?.additional) {
+      this.statusEnumId = statusConfig.additional;
+    }
+
+    this.statusFieldConfig = {
+      id: "status",
+      dataType: "configurable-enum",
+      additional: this.statusEnumId,
+    };
 
     // Build the config for the participant entity autocomplete
     // from the nested `additional.participant` schema config
@@ -121,15 +177,33 @@ export class EditAttendanceComponent
     // Re-render when the form control value or status changes externally (e.g. loading entity data, switching between view/edit mode)
     this.formControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+      .subscribe((items) => {
         this.updateParticipantFilter();
+        this.syncStatusControlValues(items ?? []);
         this.changeDetector.markForCheck();
       });
     this.formControl.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.changeDetector.markForCheck());
+      .subscribe(() => {
+        const disabled = this.formControl.disabled;
+        this.statusControls.forEach((ctrl) =>
+          disabled
+            ? ctrl.disable({ emitEvent: false })
+            : ctrl.enable({ emitEvent: false }),
+        );
+        this.changeDetector.markForCheck();
+      });
 
     this.updateParticipantFilter();
+  }
+
+  private syncStatusControlValues(items: AttendanceItem[]) {
+    for (const item of items) {
+      const ctrl = this.statusControls.get(item.participant);
+      if (ctrl && ctrl.value !== item.status) {
+        ctrl.setValue(item.status, { emitEvent: false });
+      }
+    }
   }
 
   private updateParticipantFilter() {
