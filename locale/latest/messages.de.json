@@ -1403,5 +1403,9 @@
   "947643849004342950": "Mögliches Duplikat",
   "3193976279273491157": "Aktionen",
   "5784762323121649665": "Vergleichen & Zusammenführen ",
-  "6986075166933303369": "Es konnte nicht nach Duplikaten gesucht werden: {$PH}"
+  "6986075166933303369": "Es konnte nicht nach Duplikaten gesucht werden: {$PH}",
+  "4591889250854899414": "Multiple Tabs Open",
+  "1138295763931490450": "The app is open in multiple tabs, which can break the local database.\n\nPlease close the other tabs and try again to avoid local database corruption.\n\nWe are working on improvements to allow this in the future.",
+  "2274988131600672071": "Local Database Needs Reset",
+  "882273144557925433": "The local database appears corrupted and saving is no longer reliable.\n\nThis can happen after using multiple tabs in parallel.\nWe are working on improvements to allow this in the future."
 }
