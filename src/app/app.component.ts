@@ -23,6 +23,7 @@ import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializ
 import { environment } from "environments/environment";
 import { SetupService } from "./core/setup/setup.service";
 import { from, merge, Observable, of } from "rxjs";
+import { MultiTabDetectionService } from "./core/database/multi-tab-detection.service";
 
 /**
  * Component as the main entry point for the app.
@@ -49,6 +50,9 @@ export class AppComponent {
   configReady$: Observable<boolean>;
 
   constructor() {
+    // Initialize multi-tab monitoring globally so warnings are shown proactively.
+    inject(MultiTabDetectionService);
+
     this.configReady$ = this.loginState.pipe(
       // if logged out, we don't wait for config and treat this separately
       map((loginState) => loginState !== LoginState.LOGGED_IN),
