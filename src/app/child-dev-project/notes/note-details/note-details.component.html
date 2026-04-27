@@ -1,10 +1,11 @@
-@if (isLoading || !tmpEntity) {
+@if (isLoading || !tmpEntity()) {
   <div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 } @else {
   <app-view-title>
-    {{ tmpEntity.date | customDate: "shortDate" }}: {{ tmpEntity.subject }}
+    {{ tmpEntity()!.date | customDate: "shortDate" }}:
+    {{ tmpEntity()!.subject }}
   </app-view-title>
 
   <div class="flex-column gap-regular">

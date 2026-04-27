@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  signal,
   ViewChild,
   ViewEncapsulation,
   inject,
@@ -65,10 +66,10 @@ export class SearchComponent {
   readonly NO_RESULTS = 3;
   readonly SHOW_RESULTS = 4;
 
-  state = this.NOTHING_ENTERED;
+  state = signal(this.NOTHING_ENTERED);
 
-  mobile = false;
-  searchActive = false;
+  mobile = signal(false);
+  searchActive = signal(false);
 
   formControl = new FormControl("");
 
@@ -76,7 +77,7 @@ export class SearchComponent {
   @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
   @ViewChild("autoResults") autocomplete: MatAutocomplete;
 
-  private currentSearchString = "";
+  private currentSearchString = signal("");
 
   constructor() {
     const screenWithObserver = inject(ScreenWidthObserver);
@@ -84,15 +85,15 @@ export class SearchComponent {
     screenWithObserver
       .platform()
       .pipe(untilDestroyed(this))
-      .subscribe((isDesktop) => (this.mobile = !isDesktop));
+      .subscribe((isDesktop) => this.mobile.set(!isDesktop));
 
     this.formControl.valueChanges
       .pipe(
         debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
         tap((next) => {
           const searchTerm = this.normalizeSearchTerm(next);
-          this.currentSearchString = searchTerm;
-          this.state = this.updateState(searchTerm);
+          this.currentSearchString.set(searchTerm);
+          this.state.set(this.updateState(searchTerm));
         }),
         map((next) => this.normalizeSearchTerm(next)),
         switchMap((next: string) => this.searchResults(next)),
@@ -114,7 +115,7 @@ export class SearchComponent {
 
   searchResults(searchTerm: string): Observable<Entity[]> {
     // Return empty results for invalid states or empty input
-    if (this.state !== this.SEARCH_IN_PROGRESS) {
+    if (this.state() !== this.SEARCH_IN_PROGRESS) {
       return of([]);
     }
 
@@ -122,17 +123,18 @@ export class SearchComponent {
 
     return from(this.searchService.getSearchResults(searchTerm)).pipe(
       map((entities) => {
-        if (this.currentSearchString !== originalSearchString) {
+        if (this.currentSearchString() !== originalSearchString) {
           // Abort because the results are not relevant anymore
           return [];
         }
         const filtered = this.prepareResults(entities);
-        this.state =
-          filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+        this.state.set(
+          filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS,
+        );
         return filtered;
       }),
       catchError((_err) => {
-        this.state = this.NO_RESULTS;
+        this.state.set(this.NO_RESULTS);
         return of([]);
       }),
     );
@@ -144,9 +146,9 @@ export class SearchComponent {
       optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
-    this.state = this.NOTHING_ENTERED;
-    if (this.mobile) {
-      this.searchActive = false;
+    this.state.set(this.NOTHING_ENTERED);
+    if (this.mobile()) {
+      this.searchActive.set(false);
     }
   }
 
@@ -157,25 +159,25 @@ export class SearchComponent {
   }
 
   toggleSearch() {
-    this.searchActive = !this.searchActive;
-    if (!this.searchActive) {
+    this.searchActive.update((active) => !active);
+    if (!this.searchActive()) {
       this.formControl.setValue("");
-      this.currentSearchString = "";
-      this.state = this.NOTHING_ENTERED;
+      this.currentSearchString.set("");
+      this.state.set(this.NOTHING_ENTERED);
     } else {
       setTimeout(() => this.searchInput?.nativeElement.focus());
     }
   }
 
   onFocusOut() {
-    if (this.mobile && !this.autocomplete.isOpen) {
-      this.searchActive = false;
+    if (this.mobile() && !this.autocomplete.isOpen) {
+      this.searchActive.set(false);
     }
     // Reset state if field is empty when losing focus
     const currentValue = this.normalizeSearchTerm(this.formControl.value);
     if (currentValue.length === 0) {
-      this.currentSearchString = "";
-      this.state = this.NOTHING_ENTERED;
+      this.currentSearchString.set("");
+      this.state.set(this.NOTHING_ENTERED);
     }
   }
 

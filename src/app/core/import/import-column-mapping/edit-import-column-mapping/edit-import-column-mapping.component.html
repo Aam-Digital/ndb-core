@@ -9,7 +9,7 @@
     />
   </mat-form-field>
 
-  @if (currentlyMappedDatatype?.importConfigComponent) {
+  @if (currentlyMappedDatatype()?.importConfigComponent) {
     <button
       class="margin-left-small config-button"
       mat-stroked-button
@@ -17,15 +17,15 @@
       i18n="
         import - column mapping - configure additional transformation button
       "
-      [matBadge]="mappingAdditionalWarning"
-      [matBadgeHidden]="!mappingAdditionalWarning"
+      [matBadge]="mappingAdditionalWarning()"
+      [matBadgeHidden]="!mappingAdditionalWarning()"
       matBadgeColor="warn"
     >
       Configure value mapping
     </button>
   }
 
-  @if (hasMultiMapping) {
+  @if (hasMultiMapping()) {
     <fa-icon
       icon="object-group"
       matTooltip="This field is mapped from multiple imported columns."
