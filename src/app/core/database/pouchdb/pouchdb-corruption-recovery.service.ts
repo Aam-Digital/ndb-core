@@ -15,13 +15,14 @@ import { BackupService } from "../../admin/backup/backup.service";
 export class PouchdbCorruptionRecoveryService {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly location = inject<Location>(LOCATION_TOKEN);
-  private dialogOpen = false;
+  private warningDialogOpen = false;
+  private resetDialogOpen = false;
 
   async promptMultiTabWarningDialog(): Promise<void> {
-    if (this.dialogOpen) {
+    if (this.warningDialogOpen) {
       return;
     }
-    this.dialogOpen = true;
+    this.warningDialogOpen = true;
 
     try {
       await this.confirmationDialog.getConfirmation(
@@ -35,15 +36,15 @@ We are working on improvements to allow this in the future.`,
         false,
       );
     } finally {
-      this.dialogOpen = false;
+      this.warningDialogOpen = false;
     }
   }
 
   async promptResetApplicationDialog(): Promise<void> {
-    if (this.dialogOpen) {
+    if (this.resetDialogOpen) {
       return;
     }
-    this.dialogOpen = true;
+    this.resetDialogOpen = true;
 
     try {
       const shouldReset = await this.confirmationDialog.getConfirmation(
@@ -63,7 +64,7 @@ We are working on improvements to allow this in the future.`,
         this.resetApplication();
       }
     } finally {
-      this.dialogOpen = false;
+      this.resetDialogOpen = false;
     }
   }
 
