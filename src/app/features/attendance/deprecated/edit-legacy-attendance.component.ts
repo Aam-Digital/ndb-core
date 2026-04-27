@@ -25,6 +25,9 @@ import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import {
+ 
+ ,
+
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
 } from "../model/attendance-status";
@@ -82,7 +85,11 @@ export class EditLegacyAttendanceComponent
     let ctrl = this.statusControls.get(childId);
     if (!ctrl) {
       ctrl = new FormControl<ConfigurableEnumValue>(
-        this.getAttendance(childId).status ?? null,
+        this.getAttendance(childId)
+          .status 
+     ?    ? null,
+         ,
+        
       );
       ctrl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
         this.updateAttendanceValue(

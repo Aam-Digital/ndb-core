@@ -21,6 +21,7 @@ import moment, { Moment } from "moment";
 import { AttendanceItem } from "../../model/attendance-item";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
   NullAttendanceStatusType,
 } from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -104,7 +105,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((status) => {
         if (this.selectedEventAttendance) {
-          this.selectedEventAttendance.status = status as any;
+          this.selectedEventAttendance.status = status as AttendanceStatusType;
           this.save();
         }
       });
