@@ -75,17 +75,17 @@ describe("PublicFormComponent", () => {
   it("should initialize component with values from PublicFormConfig once config is ready", async () => {
     vi.useFakeTimers();
     try {
-      expect(component.entityFormEntries.length).toBe(0);
+      expect(component.entityFormEntries().length).toBe(0);
       testFormConfig.title = "Some test title";
       testFormConfig.entity = "TestEntity";
 
       initComponent();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.entityFormEntries[0].entity.getConstructor()).toBe(
+      expect(component.entityFormEntries()[0].entity.getConstructor()).toBe(
         TestEntity,
       );
-      expect(component.formConfig.title).toBe("Some test title");
+      expect(component.formConfig().title).toBe("Some test title");
     } finally {
       vi.useRealTimers();
     }
@@ -104,14 +104,14 @@ describe("PublicFormComponent", () => {
       const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
       saveSpy.mockResolvedValue(undefined);
       (
-        component.entityFormEntries[0].form.formGroup.get("name") as any
+        component.entityFormEntries()[0].form.formGroup.get("name") as any
       ).setValue("some name");
 
       component.submit();
 
       expect(saveSpy).toHaveBeenCalledWith(
-        component.entityFormEntries[0].form,
-        component.entityFormEntries[0].entity,
+        component.entityFormEntries()[0].form,
+        component.entityFormEntries()[0].entity,
       );
       await vi.advanceTimersByTimeAsync(0);
       expect(navigateSpy).toHaveBeenCalledWith(
@@ -136,14 +136,14 @@ describe("PublicFormComponent", () => {
       const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
       saveSpy.mockResolvedValue(undefined);
       (
-        component.entityFormEntries[0].form.formGroup.get("name") as any
+        component.entityFormEntries()[0].form.formGroup.get("name") as any
       ).setValue("some name");
 
       component.submit();
 
       expect(saveSpy).toHaveBeenCalledWith(
-        component.entityFormEntries[0].form,
-        component.entityFormEntries[0].entity,
+        component.entityFormEntries()[0].form,
+        component.entityFormEntries()[0].entity,
       );
       await vi.advanceTimersByTimeAsync(0);
       expect(navigateSpy).toHaveBeenCalledWith(
@@ -164,7 +164,7 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       (
-        component.entityFormEntries[0].form.formGroup.get("name") as any
+        component.entityFormEntries()[0].form.formGroup.get("name") as any
       ).setValue("some name");
 
       await component.submit();
@@ -172,7 +172,7 @@ describe("PublicFormComponent", () => {
 
       const savedEntity = await TestBed.inject(EntityMapperService).load(
         TestEntity,
-        component.entityFormEntries[0].entity.getId(),
+        component.entityFormEntries()[0].entity.getId(),
       );
 
       expect(savedEntity.created?.by).toBe(`PublicForm:${FORM_ID}`);
@@ -194,19 +194,19 @@ describe("PublicFormComponent", () => {
         throw new InvalidFormFieldError();
       });
       (
-        component.entityFormEntries[0].form.formGroup.get("name") as any
+        component.entityFormEntries()[0].form.formGroup.get("name") as any
       ).setValue("some name");
 
       component.submit();
 
       expect(saveSpy).toHaveBeenCalledWith(
-        component.entityFormEntries[0].form,
-        component.entityFormEntries[0].entity,
+        component.entityFormEntries()[0].form,
+        component.entityFormEntries()[0].entity,
       );
       await vi.advanceTimersByTimeAsync(0);
-      expect(component.validationError).toBe(true);
+      expect(component.validationError()).toBe(true);
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name").value,
+        component.entityFormEntries()[0].form.formGroup.get("name").value,
       ).toEqual("some name");
     } finally {
       vi.useRealTimers();
@@ -219,10 +219,10 @@ describe("PublicFormComponent", () => {
       initComponent();
       await vi.advanceTimersByTimeAsync(0);
       (
-        component.entityFormEntries[0].form.formGroup.get("name") as any
+        component.entityFormEntries()[0].form.formGroup.get("name") as any
       ).setValue("some name");
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name").value,
+        component.entityFormEntries()[0].form.formGroup.get("name").value,
       ).toEqual("some name");
 
       component.reset();
@@ -258,7 +258,7 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name").value,
+        component.entityFormEntries()[0].form.formGroup.get("name").value,
       ).toEqual("default name");
     } finally {
       vi.useRealTimers();
@@ -283,7 +283,7 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(
-        component.entityFormEntries[0].form.formGroup.get("name").value,
+        component.entityFormEntries()[0].form.formGroup.get("name").value,
       ).toEqual("default name");
     } finally {
       vi.useRealTimers();
@@ -306,7 +306,7 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component).toBeDefined();
-      expect(component.error).toBe("no_permissions");
+      expect(component.error()).toBe("no_permissions");
     } finally {
       vi.useRealTimers();
     }
@@ -323,7 +323,7 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
-      expect(component.error).toBe("not_found");
+      expect(component.error()).toBe("not_found");
     } finally {
       vi.useRealTimers();
     }
@@ -341,7 +341,7 @@ describe("PublicFormComponent", () => {
       initComponent(config);
       await vi.advanceTimersByTimeAsync(0);
 
-      const lastColumn = component.formConfig.columns.at(-1);
+      const lastColumn = component.formConfig().columns.at(-1);
       expect(lastColumn?.fields).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -384,7 +384,7 @@ describe("PublicFormComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(
-        component.entityFormEntries[0].form.formGroup.get("other").value,
+        component.entityFormEntries()[0].form.formGroup.get("other").value,
       ).toEqual("prefilled default");
     } finally {
       vi.useRealTimers();
