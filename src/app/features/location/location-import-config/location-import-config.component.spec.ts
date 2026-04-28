@@ -66,4 +66,41 @@ describe("LocationImportConfigComponent", () => {
     } as LocationImportConfig);
     expect(mockDialogRef.close).toHaveBeenCalled();
   });
+
+  it("should auto-default skipAddressLookup to true when row count exceeds threshold and no prior config", async () => {
+    mockDialogData.values = Array(31).fill("some address");
+
+    fixture = TestBed.createComponent(LocationImportConfigComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.skipAddressLookup.value).toBe(true);
+  });
+
+  it("should respect existing skipAddressLookup=false config even when row count exceeds threshold", async () => {
+    mockDialogData.values = Array(31).fill("some address");
+    mockDialogData.col.additional = {
+      skipAddressLookup: false,
+    } as LocationImportConfig;
+
+    fixture = TestBed.createComponent(LocationImportConfigComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.skipAddressLookup.value).toBe(false);
+  });
+
+  it("should show warning hint when row count exceeds threshold", async () => {
+    mockDialogData.values = Array(31).fill("some address");
+
+    fixture = TestBed.createComponent(LocationImportConfigComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const hints = fixture.nativeElement.querySelectorAll("app-hint-box");
+    const warningHint = Array.from(hints).find((el: Element) =>
+      el.textContent.includes("Warning"),
+    );
+    expect(warningHint).toBeTruthy();
+  });
 });

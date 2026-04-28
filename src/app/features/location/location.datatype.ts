@@ -56,9 +56,13 @@ export class LocationDatatype extends DefaultDatatype<
       return undefined;
     }
 
-    let geoResults: GeoResult[];
+    let geoResults: GeoResult[] | undefined;
     if (!additional?.skipAddressLookup) {
-      geoResults = await lastValueFrom(this.geoService.lookup(val));
+      try {
+        geoResults = await lastValueFrom(this.geoService.lookup(val));
+      } catch {
+        geoResults = undefined;
+      }
     }
 
     return {

@@ -37,11 +37,15 @@ export class LocationImportConfigComponent {
   private readonly dialog = inject<MatDialogRef<any>>(MatDialogRef);
 
   skipAddressLookup = new FormControl(false);
+  readonly rowCount = this.data.values.length;
+  readonly LOOKUP_WARNING_THRESHOLD = 30;
 
   constructor() {
     const additional = this.data.col.additional as LocationImportConfig;
-    if (additional?.skipAddressLookup) {
+    if (additional?.skipAddressLookup !== undefined) {
       this.skipAddressLookup.setValue(additional.skipAddressLookup);
+    } else if (this.rowCount > this.LOOKUP_WARNING_THRESHOLD) {
+      this.skipAddressLookup.setValue(true);
     }
   }
 
