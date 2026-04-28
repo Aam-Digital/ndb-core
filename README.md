@@ -89,10 +89,10 @@ To learn more about the build process, see [/build](./build/README.md).
 
 This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.
 
-| Tool                         | Usage                                                                                                                     |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation. |
-| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                            |
+| Tool                         | Usage                                                                                                                                                                                        |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                                                                    |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                                                               |
 | **CodeRabbit** (GitHub)      | Automated PR reviews — configured via `.coderabbit.yaml`. Add the label **"Ready for Review"** to trigger a review (works in draft mode too; removing the label stops further auto-reviews). |
 
 ## Agents
