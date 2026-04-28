@@ -8,7 +8,7 @@ import { RoutedViewComponent } from "#src/app/core/ui/routed-view/routed-view.co
 
 @NgModule({})
 export class DeDuplicationModule {
-  static routes: Routes = [
+  static readonly routes: Routes = [
     {
       path: "review-duplicates",
       component: RoutedViewComponent,
