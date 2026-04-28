@@ -174,25 +174,30 @@ export class EntityMapperService {
     entities: Entity[],
     forceUpdate: boolean = false,
   ): Promise<any[]> {
+    if (!entities.length) {
+      return [];
+    }
+
     entities.forEach((e) => this.assertPermission(e));
     entities.forEach((e) => this.setEntityMetadata(e));
 
-    // group entities by their DATABASE
-    const groupedEntities = new Map<string, Entity[]>();
+    const entitiesByDatabase = new Map<string, Entity[]>();
     entities.forEach((e) => {
-      const db = e.getConstructor().DATABASE;
-      if (!groupedEntities.has(db)) {
-        groupedEntities.set(db, []);
+      const databaseName = e.getConstructor().DATABASE;
+      if (!entitiesByDatabase.has(databaseName)) {
+        entitiesByDatabase.set(databaseName, []);
       }
-      groupedEntities.get(db).push(e);
+      entitiesByDatabase.get(databaseName).push(e);
     });
 
-    const savePromises = Array.from(groupedEntities.entries()).map(
-      ([db, entities]) => {
-        const rawData = entities.map((e) =>
+    const savePromises = Array.from(entitiesByDatabase.entries()).map(
+      ([databaseName, entitiesInDatabase]) => {
+        const rawData = entitiesInDatabase.map((e) =>
           this.entitySchemaService.transformEntityToDatabaseFormat(e),
         );
-        return this.dbResolver.getDatabase(db).putAll(rawData, forceUpdate);
+        return this.dbResolver
+          .getDatabase(databaseName)
+          .putAll(rawData, forceUpdate);
       },
     );
 

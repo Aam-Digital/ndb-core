@@ -1,4 +1,4 @@
-import { inject, Injectable, NgZone } from "@angular/core";
+import { inject, Injectable, Injector, NgZone } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
@@ -14,6 +14,7 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { Entity } from "../entity/model/entity";
 import { AlertService } from "../alerts/alert.service";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
 
 /**
  * Provides a method to generate Database instances
@@ -29,6 +30,7 @@ export class DatabaseFactoryService {
   private loginStateSubject = inject(LoginStateSubject, { optional: true });
   private readonly ngZone = inject(NgZone);
   private readonly alertService = inject(AlertService);
+  private readonly injector = inject(Injector);
 
   createDatabase(dbName: string): Database {
     // only the "primary" (app) database should manage the global login state
@@ -44,16 +46,18 @@ export class DatabaseFactoryService {
         this.loginStateSubject,
         this.ngZone,
         this.alertService,
+        // Lazily resolved via Injector to avoid a circular dependency between
+        // DatabaseFactoryService and PouchdbCorruptionRecoveryService.
+        this.injector.get(PouchdbCorruptionRecoveryService, null) ?? undefined,
       );
     } else if (environment.session_type === SessionType.online) {
-      const db = new RemotePouchDatabase(
+      return new RemotePouchDatabase(
         dbName,
         this.authService,
         syncState,
         this.ngZone,
         this.alertService,
       );
-      return db;
     } else if (environment.session_type === SessionType.local) {
       return new PouchDatabase(dbName, syncState, this.ngZone);
     } else {

@@ -6,6 +6,7 @@ import {
   Output,
   inject,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ImportMetadata } from "../import-metadata";
@@ -45,15 +46,16 @@ export class ImportHistoryComponent implements OnInit {
   @Input() data: any[];
   @Output() itemSelected = new EventEmitter<ImportMetadata>();
 
-  previousImports: ImportMetadata[];
+  previousImports = signal<ImportMetadata[]>([]);
 
   constructor() {
     this.entityMapper
       .receiveUpdates(ImportMetadata)
       .pipe(untilDestroyed(this))
       .subscribe((update) => {
-        this.previousImports = applyUpdate(this.previousImports, update);
-        this.sortImports();
+        this.previousImports.update((imports) =>
+          this.sortImports(applyUpdate(imports, update)),
+        );
       });
   }
 
@@ -62,13 +64,15 @@ export class ImportHistoryComponent implements OnInit {
   }
 
   private async loadPreviousImports() {
-    this.previousImports =
-      await this.entityMapper.loadType<ImportMetadata>(ImportMetadata);
-    this.sortImports();
+    this.previousImports.set(
+      this.sortImports(
+        await this.entityMapper.loadType<ImportMetadata>(ImportMetadata),
+      ),
+    );
   }
 
-  private sortImports() {
-    this.previousImports.sort((a, b) => b.date.getTime() - a.date.getTime());
+  private sortImports(imports: ImportMetadata[]): ImportMetadata[] {
+    return [...imports].sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
   async undoImport(item: ImportMetadata) {

@@ -1,5 +1,5 @@
 <div class="white mat-subtitle-2 remove-margin-bottom">
-  @if (mobile && !searchActive) {
+  @if (mobile() && !searchActive()) {
     <button
       mat-icon-button
       matTooltip="Search"
@@ -11,7 +11,7 @@
   } @else {
     <mat-form-field
       class="full-width searchbar"
-      [class.mobile-search-wrapper]="mobile"
+      [class.mobile-search-wrapper]="mobile()"
     >
       <fa-icon
         matIconPrefix
@@ -31,7 +31,7 @@
         (blur)="onFocusOut()"
       />
 
-      @if (mobile) {
+      @if (mobile()) {
         <button mat-icon-button matSuffix (click)="toggleSearch()">
           <fa-icon icon="times"></fa-icon>
         </button>
@@ -44,7 +44,7 @@
   #autoResults="matAutocomplete"
   (optionSelected)="clickOption($event.option)"
 >
-  @switch (state) {
+  @switch (state()) {
     @case (TOO_FEW_CHARACTERS) {
       <mat-option class="result-hint" [disabled]="true">
         <p
