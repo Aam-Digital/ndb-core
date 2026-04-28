@@ -5,6 +5,7 @@ import {
   OnInit,
   signal,
   WritableSignal,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
@@ -82,6 +83,7 @@ export interface AdminEntityFieldData {
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-entity-field",
   templateUrl: "./admin-entity-field.component.html",
   styleUrls: [
@@ -211,6 +213,9 @@ export class AdminEntityFieldComponent implements OnInit {
       labelShort: [this.data.entitySchemaField.labelShort],
       displayFullLengthLabel: [
         this.data.entitySchemaField.displayFullLengthLabel ?? false,
+      ],
+      displayFullLengthOptionLabel: [
+        this.data.entitySchemaField.displayFullLengthOptionLabel ?? false,
       ],
       description: [this.data.entitySchemaField.description],
 

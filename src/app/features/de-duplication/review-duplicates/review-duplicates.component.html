@@ -1,0 +1,113 @@
+<app-view-title i18n>Review Possible Duplicates</app-view-title>
+
+<p class="description-text" i18n>
+  There may be duplicate registrations in the system. Please review the records
+  with a high similarity below.
+</p>
+
+<div class="flex-row align-center flex-wrap gap-regular search-controls">
+  <mat-form-field>
+    <mat-label i18n>Select record type</mat-label>
+    <app-entity-type-select
+      [ngModel]="selectedEntityType()"
+      (ngModelChange)="onEntityTypeChange($event)"
+    ></app-entity-type-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label i18n>Select fields for unique identifiers</mat-label>
+    <app-entity-field-select
+      [entityType]="selectedEntityType()"
+      [ngModel]="selectedFields()"
+      (ngModelChange)="selectedFields.set($event)"
+      [multi]="true"
+      [disabled]="!selectedEntityType()"
+    ></app-entity-field-select>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="search()"
+    [disabled]="
+      !selectedEntityType() || !selectedFields().length || isLoading()
+    "
+    i18n
+  >
+    Search Duplicates
+  </button>
+
+  <button mat-stroked-button (click)="clear()" [disabled]="!searched()" i18n>
+    Clear
+  </button>
+</div>
+
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+@if (searched() && !isLoading() && pairs().length === 0) {
+  <p class="no-results-message" i18n>
+    No duplicate records found for the selected fields.
+  </p>
+}
+
+@if (pairs().length > 0) {
+  <div class="mat-elevation-z1">
+    <table
+      mat-table
+      [dataSource]="paginatedPairs()"
+      class="full-width"
+      aria-label="List of possible duplicate records"
+      i18n-aria-label
+    >
+      <ng-container matColumnDef="record">
+        <th mat-header-cell *matHeaderCellDef i18n>Record</th>
+        <td mat-cell *matCellDef="let pair">
+          <app-entity-block [entity]="pair.record"></app-entity-block>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="possibleDuplicate">
+        <th mat-header-cell *matHeaderCellDef i18n>Possible Duplicate</th>
+        <td mat-cell *matCellDef="let pair">
+          <app-entity-block
+            [entity]="pair.possibleDuplicate"
+          ></app-entity-block>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef i18n>Actions</th>
+        <td mat-cell *matCellDef="let pair">
+          <button
+            mat-stroked-button
+            (click)="mergeRecords(pair)"
+            *appDisabledEntityOperation="{
+              entity: pair.record,
+              operation: 'update',
+            }"
+            i18n
+          >
+            Compare & Merge
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let pair; columns: displayedColumns"
+        class="table-list-item"
+      ></tr>
+    </table>
+
+    <mat-paginator
+      [length]="pairs().length"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+}

@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -35,7 +37,7 @@ import { FormsModule } from "@angular/forms";
 import { FilterComponent } from "../../filter/filter/filter.component";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
+import { ExportDialogComponent } from "../../export/export-dialog/export-dialog.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -71,6 +73,7 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
  */
 @RouteTarget("EntityList")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
@@ -90,7 +93,6 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
     FilterComponent,
     TabStateModule,
     ViewTitleComponent,
-    ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
     MatTooltipModule,
@@ -117,6 +119,7 @@ export class EntityListComponent<T extends Entity>
   });
   private readonly formDialog = inject(FormDialogService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
@@ -204,6 +207,7 @@ export class EntityListComponent<T extends Entity>
         }
 
         this.isDesktop = isDesktop;
+        this.cdr.markForCheck();
       });
   }
 
@@ -219,6 +223,7 @@ export class EntityListComponent<T extends Entity>
         config.entity.toLowerCase() ===
           this.entityConstructor?.ENTITY_TYPE?.toLowerCase(),
     );
+    this.cdr.markForCheck();
   }
 
   async copyPublicFormLinkForEntityType(config: PublicFormConfig) {
@@ -254,6 +259,7 @@ export class EntityListComponent<T extends Entity>
 
   protected async loadEntities() {
     this.allEntities = await this.getEntities();
+    this.cdr.markForCheck();
     this.listenToEntityUpdates();
   }
 
@@ -290,6 +296,7 @@ export class EntityListComponent<T extends Entity>
           if (!inProgress) {
             // reload the list once
             this.allEntities = await this.getEntities();
+            this.cdr.markForCheck();
             // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
             setTimeout(() => {
               requestAnimationFrame(() => {
@@ -308,6 +315,7 @@ export class EntityListComponent<T extends Entity>
           );
         }
         this.allEntities = applyUpdate(this.allEntities, updatedEntity);
+        this.cdr.markForCheck();
       });
   }
 
@@ -393,5 +401,16 @@ export class EntityListComponent<T extends Entity>
 
   onRowClick(row: T) {
     this.elementClick.emit(row);
+  }
+
+  openExportDialog() {
+    this.dialog.open(ExportDialogComponent, {
+      data: {
+        allEntities: this.allEntities,
+        filteredData: this.filteredData,
+        exportConfig: this.exportConfig,
+        filename: this.title.replaceAll(" ", ""),
+      },
+    });
   }
 }

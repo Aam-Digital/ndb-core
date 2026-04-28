@@ -21,6 +21,7 @@ import {
   inject,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Changelog } from "../changelog";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
@@ -41,6 +42,7 @@ import { RouterLink } from "@angular/router";
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./changelog.component.html",
   styleUrls: ["./changelog.component.scss"],
   imports: [

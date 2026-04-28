@@ -18,6 +18,7 @@ import { GroupParticipantResolverService } from "./deprecated/group-participant-
 import { AttendanceDatatype } from "./model/attendance.datatype";
 import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { extractParticipantIds } from "./model/participant-id-extractor";
 
 @Injectable({
   providedIn: "root",
@@ -195,7 +196,11 @@ ${byActivityEmits}
         ({ activityType, participantsField }) =>
           `      if (doc._id.startsWith("${activityType!.ENTITY_TYPE}:")) {
         for (var p of (doc["${participantsField}"] || [])) {
-          emit(p);
+          if (typeof p === "string") {
+            emit(p);
+          } else if (p && typeof p === "object" && typeof p.participant === "string") {
+            emit(p.participant);
+          }
         }
       }`,
       )
@@ -549,8 +554,9 @@ ${byParticipantChecks}
           date,
         );
     } else {
-      participantIds =
-        (activity[typeSettings.participantsField] as string[]) ?? [];
+      participantIds = extractParticipantIds(
+        activity[typeSettings.participantsField],
+      );
     }
 
     // Set attendance items

@@ -6,6 +6,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
@@ -38,6 +39,7 @@ import { EntityConstructor } from "app/core/entity/model/entity";
  * Configure a single notification rule.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-notification-rule",
   standalone: true,
   imports: [

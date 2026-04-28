@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -6,6 +7,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,6 +22,7 @@ import { EntityAction } from "./entity-action.interface";
 import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-actions-menu",
   templateUrl: "./entity-actions-menu.component.html",
   styleUrls: ["./entity-actions-menu.component.scss"],
@@ -36,6 +39,7 @@ export class EntityActionsMenuComponent implements OnChanges {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
   private readonly dialogRef = inject(MatDialogRef, { optional: true });
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() entity: Entity;
 
@@ -66,6 +70,7 @@ export class EntityActionsMenuComponent implements OnChanges {
   private async filterAvailableActions() {
     if (!this.entity) {
       this.actions = [];
+      this.cdr.markForCheck();
       return;
     }
 
@@ -73,6 +78,7 @@ export class EntityActionsMenuComponent implements OnChanges {
       this.entity,
     );
     this.actions = allActions;
+    this.cdr.markForCheck();
   }
 
   async executeAction(action: EntityAction) {

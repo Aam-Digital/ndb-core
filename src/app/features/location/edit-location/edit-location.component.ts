@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -24,13 +31,13 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @UntilDestroy()
 @DynamicComponent("EditLocation")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-edit-location",
   templateUrl: "./edit-location.component.html",
   styleUrls: [
     "./edit-location.component.scss",
     "../../../core/entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
   ],
-  //changeDetection: ChangeDetectionStrategy.OnPush, // disabled to update results from dialog
   imports: [
     FormsModule,
     MatInput,
@@ -48,6 +55,7 @@ export class EditLocationComponent
   extends CustomFormControlDirective<GeoLocation>
   implements EditComponent, OnInit
 {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly dialog = inject(MatDialog);
 
   @Input() formFieldConfig?: FormFieldConfig;
@@ -66,6 +74,7 @@ export class EditLocationComponent
   override set value(v: GeoLocation) {
     super.value = v;
     this.locationValue = v;
+    this.cdr.markForCheck();
   }
 
   override get value() {
@@ -77,7 +86,10 @@ export class EditLocationComponent
       this.locationValue = this.ngControl.control.value;
       this.ngControl.control.valueChanges
         .pipe(untilDestroyed(this))
-        .subscribe((value) => (this.locationValue = value));
+        .subscribe((value) => {
+          this.locationValue = value;
+          this.cdr.markForCheck();
+        });
     }
   }
 
@@ -120,6 +132,7 @@ export class EditLocationComponent
           } else {
             this.value = result;
           }
+          this.cdr.markForCheck();
         });
     }
   }

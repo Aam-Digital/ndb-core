@@ -2,13 +2,58 @@ import { Injectable, inject } from "@angular/core";
 import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
 import { Logging } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
-import { transformToReadableFormat } from "../../common-components/entities-table/value-accessor/value-accessor";
 import { Papa } from "ngx-papaparse";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityConstructor } from "app/core/entity/model/entity";
+import { ExportColumnMapping } from "app/core/entity/default-datatype/default.datatype";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { Workbook } from "exceljs";
+import moment from "moment";
 
-export type FileDownloadFormat = "csv" | "json" | "pdf";
+export interface ExportColumnResolver {
+  sourceFieldId: string;
+  schemaField: EntitySchemaField;
+  column: ExportColumnMapping;
+}
+
+/**
+ * Build export column resolvers for all fields in a schema.
+ *
+ * Iterates the schema, looks up each field's datatype, and collects
+ * the columns the datatype contributes via `getExportColumns`.
+ *
+ * @param useFieldIdAsFallbackLabel When true, fields without an explicit label
+ *   use the field id as label (useful for embedded schemas like attendance items).
+ */
+export function buildExportColumnResolvers(
+  schema: Map<string, EntitySchemaField>,
+  entitySchemaService: EntitySchemaService,
+  useFieldIdAsFallbackLabel = false,
+): ExportColumnResolver[] {
+  const resolvers: ExportColumnResolver[] = [];
+
+  for (const [fieldId, field] of schema.entries()) {
+    if (field.isInternalField) continue;
+
+    const schemaField: EntitySchemaField = {
+      ...field,
+      id: field.id ?? fieldId,
+      label: field.label || (useFieldIdAsFallbackLabel ? fieldId : undefined),
+    };
+
+    const datatype =
+      entitySchemaService.getDatatypeOrDefault(schemaField.dataType, true) ??
+      entitySchemaService.getDatatypeOrDefault(undefined);
+
+    for (const column of datatype.getExportColumns(schemaField)) {
+      resolvers.push({ sourceFieldId: fieldId, schemaField, column });
+    }
+  }
+
+  return resolvers;
+}
+
+export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx";
 
 /**
  * This service allows to start a download process from the browser.
@@ -16,9 +61,11 @@ export type FileDownloadFormat = "csv" | "json" | "pdf";
  */
 @Injectable({ providedIn: "root" })
 export class DownloadService {
-  private dataTransformationService = inject(DataTransformationService);
-  private papa = inject(Papa);
-  private entityMapperService = inject(EntityMapperService);
+  private readonly dataTransformationService = inject(
+    DataTransformationService,
+  );
+  private readonly papa = inject(Papa);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   /** CSV row separator */
   static readonly SEPARATOR_ROW = "\n";
@@ -46,8 +93,16 @@ export class DownloadService {
     const filenameWithExtension = filename.endsWith("." + format)
       ? filename
       : filename + "." + format;
-    const link = this.createDownloadLink(blobData, filenameWithExtension);
+    const objectUrl = globalThis.URL.createObjectURL(blobData);
+    const link = document.createElement("a");
+    link.setAttribute("style", "display:none;");
+    link.href = objectUrl;
+    link.download = filenameWithExtension;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    // defer revocation so the browser has time to initiate the download
+    setTimeout(() => globalThis.URL.revokeObjectURL(objectUrl), 1000);
   }
 
   private async getFormattedBlobData(
@@ -76,6 +131,12 @@ export class DownloadService {
           result = data;
         }
         return new Blob([result], { type: "text/csv" });
+      case "xlsx":
+        if (!Array.isArray(data)) {
+          Logging.warn("XLSX export requires an array of records.");
+          return new Blob([""]);
+        }
+        return this.createXlsx(data);
       case "pdf":
         return new Blob([data], { type: "application/pdf" });
       default:
@@ -84,122 +145,144 @@ export class DownloadService {
     }
   }
 
-  private createDownloadLink(blobData, filename: string): HTMLAnchorElement {
-    const link = document.createElement("a");
-    link.setAttribute("style", "display:none;");
-    document.body.appendChild(link);
-    link.href = window.URL.createObjectURL(blobData);
-    link.download = filename;
-    link.addEventListener("click", () => window.URL.revokeObjectURL(blobData));
-    return link;
-  }
-
   /**
-   * Creates a CSV string of the input data
+   * Creates a CSV string of the input data using the shared export data preparation.
    *
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
   async createCsv(data: any[]): Promise<string> {
-    let entityConstructor: any;
+    const [headers, ...rows] = await this.prepareExportData(data);
+    return this.papa.unparse(
+      { fields: headers, data: rows },
+      {
+        quotes: true,
+        newline: DownloadService.SEPARATOR_ROW,
+      },
+    );
+  }
 
+  /**
+   * Creates an XLSX Blob from the input data using the shared export data preparation.
+   */
+  async createXlsx(data: any[]): Promise<Blob> {
+    const rows = await this.prepareExportData(data);
+    const wb = new Workbook();
+    const ws = wb.addWorksheet("Export");
+    for (const row of rows) {
+      ws.addRow(row);
+    }
+    const headerRow = ws.getRow(1);
+    headerRow.font = { bold: true };
+    headerRow.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFD3D3D3" },
+    };
+    headerRow.commit();
+    const buffer = await wb.xlsx.writeBuffer();
+    return new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+  }
+
+  /**
+   * Prepares export data as row arrays (header row + data rows) for use with any export format.
+   *
+   * For entity data: uses schema column resolvers to produce human-readable headers and values.
+   * For plain objects: the first row contains the object keys as headers.
+   */
+  async prepareExportData(data: any[]): Promise<any[][]> {
+    let entityConstructor: EntityConstructor | undefined;
     if (data.length > 0 && typeof data[0]?.getConstructor === "function") {
       entityConstructor = data[0].getConstructor();
     }
-    const keys = new Set<string>();
-    data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
-
-    data = data.map(transformToReadableFormat);
 
     if (!entityConstructor) {
-      return this.papa.unparse(data, {
-        quotes: true,
-        header: true,
-        newline: DownloadService.SEPARATOR_ROW,
-        columns: [...keys],
-      });
+      const mapped = data.map((row) =>
+        Object.fromEntries(
+          Object.entries(row).map(([key, value]) => [
+            key,
+            this.ensureCsvFriendlyValue(value),
+          ]),
+        ),
+      );
+      const keys =
+        mapped.length > 0
+          ? Array.from(new Set(mapped.flatMap((r) => Object.keys(r))))
+          : [];
+      return [keys, ...mapped.map((r) => keys.map((k) => r[k]))];
     }
 
-    const result = await this.exportFile(data, entityConstructor);
-    return result;
-  }
-
-  async exportFile(data: any[], entityConstructor: EntityConstructor) {
     const entitySchema = entityConstructor.schema;
     const columnLabels = new Map<string, string>();
+    const columnResolvers = new Map<string, ExportColumnResolver>();
 
-    for (const [id, field] of entitySchema.entries()) {
-      if (!field.label || field.isInternalField) {
-        // skip "technical" fields without an explicit label or internal fields
-        continue;
-      }
-
-      columnLabels.set(id, field.label);
-
-      if (field.dataType === EntityDatatype.dataType) {
-        columnLabels.set(id + "_readable", field.label + " (readable)");
-      }
+    for (const resolver of buildExportColumnResolvers(
+      entitySchema,
+      this.entitySchemaService,
+    )) {
+      const columnId = resolver.sourceFieldId + resolver.column.keySuffix;
+      columnLabels.set(columnId, resolver.column.label);
+      columnResolvers.set(columnId, resolver);
     }
 
     const exportEntities = await Promise.all(
-      data.map((item) => this.mapEntityToExportRow(item, columnLabels)),
+      data.map((item) => this.mapEntityToExportRow(item, columnResolvers)),
     );
 
-    const columnKeys: string[] = Array.from(columnLabels.keys());
-    const labels: any[] = Array.from(columnLabels.values());
-    const orderedData: any[] = exportEntities.map((item) =>
-      columnKeys.map((key) => item[key]),
-    );
-
-    return this.papa.unparse(
-      {
-        fields: labels,
-        data: orderedData,
-      },
-      {
-        quotes: true,
-        newline: DownloadService.SEPARATOR_ROW,
-      },
-    );
+    const columnKeys = Array.from(columnLabels.keys());
+    const headers = Array.from(columnLabels.values());
+    return [
+      headers,
+      ...exportEntities.map((item) => columnKeys.map((key) => item[key])),
+    ];
   }
 
   private async mapEntityToExportRow(
-    item: Entity,
-    columnLabels: Map<string, string>,
+    item: any,
+    columnResolvers: Map<string, ExportColumnResolver>,
   ): Promise<Object> {
     const newItem = {};
-    for (const key in item) {
-      if (columnLabels.has(key)) {
-        newItem[key] = item[key];
-      }
 
-      if (columnLabels.has(key + "_readable")) {
-        newItem[key + "_readable"] = await this.loadRelatedEntitiesToString(
-          item[key],
-        );
-      }
+    for (const [columnId, resolver] of columnResolvers.entries()) {
+      const formattedValue = await resolver.column.resolveValue(
+        item[resolver.sourceFieldId],
+        resolver.schemaField,
+      );
+      newItem[columnId] = this.ensureCsvFriendlyValue(formattedValue);
     }
+
     return newItem;
   }
 
-  private async loadRelatedEntitiesToString(
-    value: string | string[],
-  ): Promise<string[]> {
-    if (!value) return [];
-
-    const relatedEntitiesToStrings: string[] = [];
-
-    const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
-    for (const relatedEntityId of relatedEntitiesIds) {
-      relatedEntitiesToStrings.push(
-        (
-          await this.entityMapperService
-            .load(Entity.extractTypeFromId(relatedEntityId), relatedEntityId)
-            .catch((e) => "<not_found>")
-        ).toString(),
-      );
+  /**
+   * Convert a value to a CSV/XLSX-friendly primitive, applying the same readable
+   * transformations as the UI (dates as YYYY-MM-DD, enum labels, location strings).
+   */
+  private ensureCsvFriendlyValue(value: any): any {
+    if (value === null || value === undefined) {
+      return value;
     }
 
-    return relatedEntitiesToStrings;
+    if (value instanceof Date) {
+      return moment(value).format("YYYY-MM-DD");
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((entry) => this.ensureCsvFriendlyValue(entry)).join(",");
+    }
+
+    if (typeof value === "object") {
+      if ("label" in value) {
+        return value.label;
+      }
+      if ("locationString" in value) {
+        return value.locationString;
+      }
+      return JSON.stringify(value);
+    }
+
+    return value;
   }
 }

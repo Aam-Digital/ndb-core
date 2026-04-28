@@ -19,6 +19,11 @@ import { EMPTY, from, interval, merge, of } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { AlertService } from "../../alerts/alert.service";
+import { QueryOptions } from "../database";
+import {
+  PouchdbCorruptionRecoveryService,
+  isKnownMultiTabDatabaseCorruption,
+} from "./pouchdb-corruption-recovery.service";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -37,6 +42,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
   POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
 
+  private readonly navigator: Navigator;
+  private readonly loginStateSubject: LoginStateSubject;
+  private readonly alertService?: AlertService;
+  private readonly corruptionRecovery?: PouchdbCorruptionRecoveryService;
   private remoteDatabase: RemotePouchDatabase;
   private syncState: SyncStateSubject = new SyncStateSubject();
 
@@ -60,19 +69,24 @@ export class SyncedPouchDatabase extends PouchDatabase {
     dbName: string,
     authService: KeycloakAuthService,
     globalSyncState: SyncStateSubject,
-    private navigator: Navigator,
-    private loginStateSubject: LoginStateSubject,
+    navigator: Navigator,
+    loginStateSubject: LoginStateSubject,
     ngZone?: NgZone,
     alertService?: AlertService,
+    corruptionRecovery?: PouchdbCorruptionRecoveryService,
   ) {
     super(dbName, globalSyncState, ngZone);
+    this.navigator = navigator;
+    this.loginStateSubject = loginStateSubject;
+    this.alertService = alertService;
+    this.corruptionRecovery = corruptionRecovery;
 
     this.remoteDatabase = new RemotePouchDatabase(
       dbName,
       authService,
       undefined,
       ngZone,
-      alertService,
+      this.alertService,
     );
 
     this.logSyncContext();
@@ -215,6 +229,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
             `sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
             err,
           );
+        } else if (isKnownMultiTabDatabaseCorruption(err)) {
+          this.corruptionRecovery?.handleKnownMultiTabCorruption(
+            err,
+            `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+          );
         } else {
           Logging.warn(`sync failed [${this.dbName}]`, err);
         }
@@ -226,6 +245,31 @@ export class SyncedPouchDatabase extends PouchDatabase {
           this.remoteDatabase.trackLostPermissions = true;
         }
       });
+  }
+
+  override async put(object: any, forceOverwrite = false): Promise<any> {
+    try {
+      return await super.put(object, forceOverwrite);
+    } catch (err) {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        `put failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+      );
+      throw err;
+    }
+  }
+
+  override query(
+    fun: string | ((doc: any, emit: any) => void),
+    options: QueryOptions,
+  ): Promise<any> {
+    return super.query(fun, options).catch((err) => {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        `query failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+      );
+      throw err;
+    });
   }
 
   private isDocumentWriteError(err: any): boolean {

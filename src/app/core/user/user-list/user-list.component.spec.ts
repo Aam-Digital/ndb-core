@@ -138,6 +138,17 @@ describe("UserListComponent", () => {
     expect(roleNames).toBe("user_app");
   });
 
+  it("should open dialog with null userAccount when addNewAccount is called", () => {
+    component.addNewAccount();
+
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      UserDetailsComponent,
+      expect.objectContaining({
+        data: { userAccount: null },
+      }),
+    );
+  });
+
   it("should reload users after dialog is closed with 'created' result", () => {
     mockUserAdminService.getAllUsers.mockClear();
     mockUserAdminService.getAllUsers.mockReturnValue(of(updatedMockUsers));

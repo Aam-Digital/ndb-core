@@ -4,6 +4,7 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -17,6 +18,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-list-filter",
   templateUrl: "./list-filter.component.html",
   styleUrls: ["./list-filter.component.scss"],

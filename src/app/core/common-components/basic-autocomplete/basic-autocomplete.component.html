@@ -23,7 +23,7 @@
     />
     <mat-chip-grid #chipList>
       <ng-container>
-        @for (item of _selectedOptions; track item.asString) {
+        @for (item of _selectedOptions(); track item.asString) {
           <mat-chip-row
             [editable]="!_disabled"
             class="chip"
@@ -77,7 +77,7 @@ Autocomplete
   (optionSelected)="select($event.option.value)"
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="true"
-  [panelWidth]="panelWidth"
+  [panelWidth]="panelWidth()"
 >
   <!-- Select All and Clear Buttons on top of options via content projection-->
   <div>
@@ -89,66 +89,90 @@ Autocomplete
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    <cdk-virtual-scroll-viewport
-      [style.height.px]="viewportHeight()"
-      [itemSize]="48"
-      minBufferPx="200"
-      maxBufferPx="500"
-    >
-      <mat-option
-        [value]="item"
-        cdkDrag
-        *cdkVirtualFor="
-          let item of autocompleteOptions();
-          trackBy: trackByOptionValueFn
-        "
+    @if (!displayFullLengthOptionLabel()) {
+      <cdk-virtual-scroll-viewport
+        [style.height.px]="viewportHeight()"
+        [itemSize]="48"
+        minBufferPx="200"
+        maxBufferPx="500"
       >
-        <div class="flex-row disable-autocomplete-active-color align-center">
-          @if (reorder) {
-            <div>
-              <fa-icon
-                icon="grip-vertical"
-                size="sm"
-                class="drag-handle"
-              ></fa-icon>
-            </div>
-          }
-          @if (multi) {
-            <mat-checkbox [checked]="item.selected"></mat-checkbox>
-          }
-          @if (!templateRef) {
-            <span
-              class="text-truncate"
-              [matTooltip]="item.asString"
-              matTooltipPosition="above"
-              [class.not-defined-label]="item.isEmpty"
-              [class.invalid-label]="item.isInvalid"
-            >
-              {{ item.asString }}
-            </span>
-          } @else {
-            <ng-template
-              class="item-option"
-              [ngTemplateOutlet]="templateRef"
-              [ngTemplateOutletContext]="{ $implicit: item.initial }"
-            ></ng-template>
-          }
-        </div>
-      </mat-option>
-    </cdk-virtual-scroll-viewport>
+        <mat-option
+          [value]="item"
+          cdkDrag
+          *cdkVirtualFor="
+            let item of autocompleteOptions();
+            trackBy: trackByOptionValueFn
+          "
+        >
+          <ng-container
+            [ngTemplateOutlet]="optionContent"
+            [ngTemplateOutletContext]="{ $implicit: item, truncate: true }"
+          ></ng-container>
+        </mat-option>
+      </cdk-virtual-scroll-viewport>
+    } @else {
+      @for (item of autocompleteOptions(); track item.asValue) {
+        <mat-option [value]="item" class="option-with-wrap" cdkDrag>
+          <ng-container
+            [ngTemplateOutlet]="optionContent"
+            [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"
+          ></ng-container>
+        </mat-option>
+      }
+    }
   </div>
 
+  <ng-template #optionContent let-item let-truncate="truncate">
+    <div
+      class="option-content flex-row disable-autocomplete-active-color align-center"
+    >
+      @if (reorder) {
+        <div>
+          <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>
+        </div>
+      }
+      @if (multi) {
+        <mat-checkbox [checked]="item.selected"></mat-checkbox>
+      }
+      @if (!templateRef) {
+        <span
+          class="option-label"
+          [class.text-truncate]="truncate"
+          [class.text-wrap]="!truncate"
+          [matTooltip]="item.asString"
+          matTooltipPosition="above"
+          [class.not-defined-label]="item.isEmpty"
+          [class.invalid-label]="item.isInvalid"
+        >
+          {{ item.asString }}
+        </span>
+      } @else {
+        <div class="option-label item-option">
+          <ng-template
+            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutletContext]="{ $implicit: item.initial }"
+          ></ng-template>
+        </div>
+      }
+    </div>
+  </ng-template>
+
   <!-- Create new option -->
-  @if (createOption && showAddOption && inputElement.value) {
-    <mat-option [value]="inputElement.value">
-      <em
-        i18n="
-          Label for adding an option in a dropdown|e.g. Add new My new Option
-        "
-        >Add new</em
+  @if (showAddOption() && inputElement.value) {
+    @for (option of availableCreateOptions; track $index) {
+      <mat-option
+        [value]="toCreateOptionValue(option, inputElement.value)"
+        [attr.aria-label]="createOptionAriaLabel(option, inputElement.value)"
       >
-      {{ createOptionDisplay(inputElement.value) }}
-    </mat-option>
+        <em
+          i18n="
+            Label for adding an option in a dropdown|e.g. Add new My new Option
+          "
+          >Add new</em
+        >
+        {{ createOptionLabel(option, inputElement.value) }}
+      </mat-option>
+    }
   }
 
   <mat-option style="display: none">
@@ -156,7 +180,7 @@ Autocomplete
       because the footer below will only be displayed with at least one mat-option -->
   </mat-option>
   <div class="autocomplete-footer">
-    @if (hasMoreOptions) {
+    @if (hasMoreOptions()) {
       <em
         class="more-options-hint"
         i18n="Hint shown when dropdown has more options than displayed"

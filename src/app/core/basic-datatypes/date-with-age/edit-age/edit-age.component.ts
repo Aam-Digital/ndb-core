@@ -1,5 +1,11 @@
 import { Entity } from "#src/app/core/entity/model/entity";
-import { Component, Input, OnInit, signal } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -14,6 +20,7 @@ import { DateWithAge } from "../dateWithAge";
 
 @DynamicComponent("EditAge")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-edit-age",
   templateUrl: "./edit-age.component.html",
   styleUrls: [

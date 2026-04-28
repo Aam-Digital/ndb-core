@@ -6,6 +6,7 @@ import {
   Output,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -25,6 +26,7 @@ import { IconButtonComponent } from "../../common-components/icon-button/icon-bu
  * This component can be used to display filters, for example above tables.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-filter",
   templateUrl: "./filter.component.html",
   imports: [

@@ -1,4 +1,11 @@
-import { Component, Injector, inject } from "@angular/core";
+import {
+  Component,
+  DestroyRef,
+  Injector,
+  ChangeDetectorRef,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MAT_DIALOG_DATA,
@@ -14,6 +21,7 @@ import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-co
 import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
 import { Router } from "@angular/router";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
  * Wrapper component for a modal/dialog view
@@ -24,6 +32,7 @@ import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.int
  * (also see RoutedViewComponent)
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     DialogCloseComponent,
@@ -44,6 +53,8 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
     const dialogData = inject<DialogViewData<T>>(MAT_DIALOG_DATA);
     const injector = inject(Injector);
     const router = inject(Router);
+    const cdr = inject(ChangeDetectorRef);
+    const destroyRef = inject(DestroyRef);
 
     super(injector, true);
 
@@ -64,6 +75,10 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
       ...dialogData.config,
       ...(dialogData.entity ? { entity: dialogData.entity } : {}),
     };
+
+    this.viewContext.changes$
+      .pipe(takeUntilDestroyed(destroyRef))
+      .subscribe(() => cdr.markForCheck());
   }
 
   declare componentInjector: Injector | undefined;

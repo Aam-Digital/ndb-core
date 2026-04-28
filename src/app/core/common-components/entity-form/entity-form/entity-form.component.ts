@@ -10,6 +10,7 @@ import {
   OnChanges,
   SimpleChanges,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -34,6 +35,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
  */
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",
   styleUrls: ["./entity-form.component.scss"],

@@ -7,6 +7,7 @@ import {
   inject,
   computed,
   signal,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -27,6 +28,7 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
  * Reusable component for editing conditions (field-value pairs) with JSON support
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-conditions-editor",
   templateUrl: "./conditions-editor.component.html",
   styleUrls: ["./conditions-editor.component.scss"],

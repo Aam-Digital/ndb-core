@@ -6,6 +6,7 @@ import {
   Output,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -24,6 +25,7 @@ import { ImportAdditionalSettings } from "../import-additional-settings/import-a
  * and define value matching and transformations.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-column-mapping",
   templateUrl: "./import-column-mapping.component.html",
   styleUrls: ["./import-column-mapping.component.scss"],

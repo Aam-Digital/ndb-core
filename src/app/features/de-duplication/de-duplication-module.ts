@@ -35,4 +35,11 @@ const dynamicComponents: [string, AsyncComponent][] = [
         (c) => c.BulkMergeRecordsComponent,
       ),
   ],
+  [
+    "ReviewDuplicates",
+    () =>
+      import("./review-duplicates/review-duplicates.component").then(
+        (c) => c.ReviewDuplicatesComponent,
+      ),
+  ],
 ];

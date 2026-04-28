@@ -1,10 +1,10 @@
 <app-dashboard-list-widget
   icon="exclamation-triangle"
   theme="attendance"
-  [subtitle]="label"
+  [subtitle]="subtitle()"
   explanation="Cases absent multiple times in the given week"
   i18n-explanation="Dashboard attendance component explanation tooltip"
-  [entries]="entries"
+  [entries]="entries()"
 >
   <div class="table-wrapper">
     <table mat-table i18n-aria-label aria-label="cases absent multiple times">
@@ -48,7 +48,7 @@
       ></tr>
     </table>
 
-    @if (entries?.length === 0) {
+    @if (entries().length === 0) {
       <div
         i18n="Placeholder if no absences are visible in dashboar"
         class="headline"

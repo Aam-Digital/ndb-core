@@ -254,7 +254,9 @@ export class EntityFormService {
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
-      throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
+      throw new Error(
+        $localize`Could not save ${entity.getType()}\: ${err?.message || String(err)}`,
+      );
     }
 
     this.unsavedChanges.pending = false;

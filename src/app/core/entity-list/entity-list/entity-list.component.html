@@ -181,44 +181,20 @@
 
   <button
     mat-menu-item
-    [appExportData]="allEntities"
-    format="csv"
-    [exportConfig]="exportConfig"
-    [filename]="title.replace(' ', '')"
+    (click)="openExportDialog()"
     angulartics2On="click"
     [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-    angularticsAction="list_csv_export"
-    matTooltip="Downloads all records in the database that your user account has permission to access"
+    angularticsAction="list_export"
+    matTooltip="Download records as CSV or XLSX"
     i18n-matTooltip
     matTooltipPosition="before"
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
-      aria-label="download csv"
+      aria-label="download"
       icon="download"
     ></fa-icon>
-    <span i18n="Download list contents as CSV"> Download all data (.csv) </span>
-  </button>
-
-  <button
-    mat-menu-item
-    [appExportData]="filteredData"
-    format="csv"
-    [exportConfig]="exportConfig"
-    [filename]="title.replace(' ', '')"
-    angulartics2On="click"
-    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-    angularticsAction="list_csv_export"
-    matTooltip="Downloads only the records currently visible with the applied filters"
-    i18n-matTooltip
-    matTooltipPosition="before"
-  >
-    <fa-icon
-      class="color-accent standard-icon-with-text"
-      aria-label="download csv"
-      icon="download"
-    ></fa-icon>
-    <span i18n="Download list contents as CSV"> Download current (.csv) </span>
+    <span i18n="Download list contents"> Download </span>
   </button>
 
   <button
@@ -284,6 +260,20 @@
         icon="tools"
       ></fa-icon>
       <span i18n>Configure Data Structure</span>
+    </button>
+  }
+
+  @if (!entityConstructor.isInternalEntity) {
+    <button
+      mat-menu-item
+      [routerLink]="['/review-duplicates']"
+      [queryParams]="{ entityType: entityConstructor.ENTITY_TYPE }"
+    >
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="copy"
+      ></fa-icon>
+      <span i18n>Review Possible Duplicates</span>
     </button>
   }
 

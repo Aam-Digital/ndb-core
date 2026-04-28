@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -34,6 +34,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ColorInputComponent } from "#src/app/core/common-components/color-input/color-input.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-configure-enum-popup",
   templateUrl: "./configure-enum-popup.component.html",
   styleUrls: ["./configure-enum-popup.component.scss"],

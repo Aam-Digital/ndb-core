@@ -6,6 +6,7 @@ import {
   SimpleChanges,
   TemplateRef,
   ViewChild,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
@@ -40,6 +41,7 @@ import {
  </app-admin-tabs>
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-tabs",
   imports: [
     CommonModule,

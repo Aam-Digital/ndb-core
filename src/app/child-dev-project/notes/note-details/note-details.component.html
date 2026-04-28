@@ -1,10 +1,11 @@
-@if (isLoading || !tmpEntity) {
+@if (isLoading || !tmpEntity()) {
   <div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 } @else {
   <app-view-title>
-    {{ tmpEntity.date | customDate: "shortDate" }}: {{ tmpEntity.subject }}
+    {{ tmpEntity()!.date | customDate: "shortDate" }}:
+    {{ tmpEntity()!.subject }}
   </app-view-title>
 
   <div class="flex-column gap-regular">
@@ -35,18 +36,7 @@
 
   <app-view-actions>
     <app-dialog-buttons [form]="form" [entity]="entity">
-      <button
-        mat-menu-item
-        [appExportData]="[entity]"
-        format="csv"
-        [exportConfig]="exportConfig"
-        [filename]="
-          'event_' +
-          entity.toString()?.replace(' ', '-') +
-          '_' +
-          (entity.date | customDate: 'shortDate')
-        "
-      >
+      <button mat-menu-item (click)="openExportDialog()">
         <fa-icon
           class="color-accent standard-icon-with-text"
           aria-label="download csv"

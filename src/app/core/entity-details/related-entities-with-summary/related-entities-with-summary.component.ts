@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { Entity } from "../../entity/model/entity";
@@ -11,6 +17,7 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
  */
 @DynamicComponent("RelatedEntitiesWithSummary")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-related-entities-with-summary",
   templateUrl: "./related-entities-with-summary.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],

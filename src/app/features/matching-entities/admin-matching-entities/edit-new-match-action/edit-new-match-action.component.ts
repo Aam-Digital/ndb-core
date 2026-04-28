@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
@@ -34,6 +35,7 @@ import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entit
 import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-select/entity-type-select.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-new-match-action",
   imports: [
     FontAwesomeModule,

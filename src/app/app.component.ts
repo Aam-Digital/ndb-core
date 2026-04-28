@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { map, mergeMap } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
@@ -23,12 +23,14 @@ import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializ
 import { environment } from "environments/environment";
 import { SetupService } from "./core/setup/setup.service";
 import { from, merge, Observable, of } from "rxjs";
+import { MultiTabDetectionService } from "./core/database/multi-tab-detection.service";
 
 /**
  * Component as the main entry point for the app.
  * Actual logic and UI structure is defined in other modules.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-root",
   template: `
     @if (configReady$ | async) {
@@ -48,6 +50,9 @@ export class AppComponent {
   configReady$: Observable<boolean>;
 
   constructor() {
+    // Initialize multi-tab monitoring globally so warnings are shown proactively.
+    inject(MultiTabDetectionService);
+
     this.configReady$ = this.loginState.pipe(
       // if logged out, we don't wait for config and treat this separately
       map((loginState) => loginState !== LoginState.LOGGED_IN),

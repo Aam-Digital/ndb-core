@@ -1,4 +1,9 @@
-import { Component, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { Logging } from "../../../logging/logging.service";
 import { LOCATION_TOKEN } from "../../../../utils/di-tokens";
 import { MatButtonModule } from "@angular/material/button";
@@ -6,6 +11,7 @@ import { RouterLink } from "@angular/router";
 import { ConfigService } from "../../config.service";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-not-found",
   templateUrl: "./not-found.component.html",
   styleUrls: ["./not-found.component.scss"],

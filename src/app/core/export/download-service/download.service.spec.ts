@@ -12,7 +12,10 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { Papa } from "ngx-papaparse";
-import { unparse } from "papaparse";
+import { parse, unparse } from "papaparse";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -47,6 +50,20 @@ describe("DownloadService", () => {
           useValue: mockDataTransformationService,
         },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
+        {
+          provide: EntityActionsService,
+          useValue: { anonymize: vi.fn() },
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: EntityDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: AttendanceDatatype,
+          multi: true,
+        },
         {
           provide: Papa,
           useValue: {
@@ -90,23 +107,17 @@ describe("DownloadService", () => {
   });
 
   it("should create a csv string correctly", async () => {
-    @DatabaseEntity("TestForCsvEntity")
-    class TestClass extends Entity {
-      propOne;
-      propTwo;
-    }
+    const mockRows = [
+      ["col1", "col2"],
+      ["val1", "val2"],
+    ];
+    vi.spyOn(service, "prepareExportData").mockResolvedValue(mockRows);
 
-    const test = new TestClass("1");
-    test._rev = "2";
-    test.propOne = "first";
-    test.propTwo = "second";
-    const expected =
-      '"_id","_rev","propOne","propTwo"' +
-      DownloadService.SEPARATOR_ROW +
-      '"TestForCsvEntity:1","2","first","second"';
-    vi.spyOn(service, "exportFile").mockResolvedValue(expected);
-    const result = await service.createCsv([test]);
-    expect(result).toEqual(expected);
+    const result = await service.createCsv([]);
+
+    expect(result).toBe(
+      '"col1","col2"' + DownloadService.SEPARATOR_ROW + '"val1","val2"',
+    );
   });
 
   it("should transform object values to their label for export when available (e.g. configurable-enum)", async () => {
@@ -213,6 +224,66 @@ describe("DownloadService", () => {
     );
   });
 
+  it("should add participant count and participation details columns in export", async () => {
+    class AttendanceDownloadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: AttendanceDatatype.dataType,
+        isArray: true,
+        label: "attendance",
+      })
+      attendance: any[];
+    }
+
+    const testEntity = new AttendanceDownloadTestEntity();
+    testEntity.attendance = [
+      {
+        participant: testSchool.getId(),
+        status: { label: "Present" },
+        remarks: "",
+      },
+      {
+        participant: testChild.getId(),
+        status: { label: "Absent" },
+        remarks: "Sick",
+      },
+    ];
+
+    const csvExport = await service.createCsv([testEntity]);
+    const parsed = parse<Record<string, string>>(csvExport, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    expect(parsed.errors).toHaveLength(0);
+    expect(parsed.data).toHaveLength(1);
+    expect(parsed.meta.fields).toContain("attendance (number of participants)");
+    expect(parsed.meta.fields).toContain("attendance (participation details)");
+
+    expect(parsed.data[0]["attendance (number of participants)"]).toBe("2");
+    expect(parsed.data[0]["attendance (participation details)"]).toBe(
+      `${testSchool.toString()} (Present), ${testChild.toString()} (Absent)`,
+    );
+  });
+
+  it("should stringify object values when csv output would otherwise be [object Object]", async () => {
+    @DatabaseEntity("ObjectFieldDownloadTestEntity")
+    class ObjectFieldDownloadTestEntity extends Entity {
+      @DatabaseField({ label: "details" })
+      details: any;
+    }
+
+    const testEntity = new ObjectFieldDownloadTestEntity();
+    testEntity.details = { a: 1, nested: { b: "x" } };
+
+    const csvExport = await service.createCsv([testEntity]);
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+
+    expect(rows).toHaveLength(1 + 1); // includes 1 header line
+    expect(rows[1]).not.toContain("[object Object]");
+    expect(rows[1]).toContain('""a"":1');
+    expect(rows[1]).toContain('""nested"":{');
+  });
+
   it("should export all properties using object keys as headers, if no schema is available", async () => {
     const docs = [
       { _id: "Test:1", name: "Child 1" },
@@ -229,6 +300,19 @@ describe("DownloadService", () => {
     expect(columnValues).toHaveLength(2);
     expect(columnHeaders).toHaveLength(2);
     expect(columnHeaders).toContain('"_id"');
+  });
+
+  it("should stringify object values for plain-row csv exports without schema", async () => {
+    const docs = [
+      { _id: "Test:1", details: { a: 1, nested: { b: "x" } } },
+      { _id: "Test:2", details: { a: 2 } },
+    ];
+
+    const csvExport = await service.createCsv(docs);
+
+    expect(csvExport).not.toContain("[object Object]");
+    expect(csvExport).toContain('""a"":1');
+    expect(csvExport).toContain('""nested"":{');
   });
 
   it("should only export columns that have labels defined in entity schema and use the schema labels as export headers", async () => {
@@ -289,6 +373,64 @@ describe("DownloadService", () => {
       '"date","number","string"',
       `"${dateString}","10","someString"`,
     ]);
+  });
+
+  it("should prepare export rows with headers and data for plain objects", async () => {
+    const data = [
+      { name: "Alice", age: 30 },
+      { name: "Bob", age: 25 },
+    ];
+
+    const rows = await service.prepareExportData(data);
+
+    expect(rows[0]).toEqual(["name", "age"]);
+    expect(rows[1]).toEqual(["Alice", 30]);
+    expect(rows[2]).toEqual(["Bob", 25]);
+  });
+
+  it("should prepare export rows with schema labels for entity data", async () => {
+    @DatabaseEntity("XlsxLabelTestEntity")
+    class XlsxLabelTestEntity extends Entity {
+      @DatabaseField({ label: "Full Name" })
+      fullName: string;
+      @DatabaseField({ label: "Score" })
+      score: number;
+    }
+
+    const entity = new XlsxLabelTestEntity();
+    entity.fullName = "Test Person";
+    entity.score = 42;
+
+    const rows = await service.prepareExportData([entity]);
+
+    expect(rows[0]).toContain("Full Name");
+    expect(rows[0]).toContain("Score");
+    expect(rows[1]).toContain("Test Person");
+    expect(rows[1]).toContain(42);
+  });
+
+  it("should add readable columns for referenced entities in export rows", async () => {
+    class XlsxEntityRefTestEntity extends Entity {
+      @DatabaseField({ dataType: EntityDatatype.dataType, label: "School" })
+      relatedEntity: string;
+    }
+
+    const testEntity = new XlsxEntityRefTestEntity();
+    testEntity.relatedEntity = testSchool.getId();
+
+    const rows = await service.prepareExportData([testEntity]);
+
+    expect(rows[0]).toContain("School");
+    expect(rows[0]).toContain("School (readable)");
+    expect(rows[1]).toContain(testSchool.getId());
+    expect(rows[1]).toContain(testSchool.toString());
+  });
+
+  it("should return empty rows array for empty data in export", async () => {
+    const rows = await service.prepareExportData([]);
+
+    expect(rows).toHaveLength(1); // one empty header row
+    expect(rows[0]).toHaveLength(0);
   });
 
   it("should export a location as its locationString only", async () => {

@@ -1,4 +1,11 @@
-import { Component, computed, input, OnInit, signal } from "@angular/core";
+import {
+  Component,
+  computed,
+  input,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -12,6 +19,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
  * Extends CustomFormControlDirective to integrate with Angular forms.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-searchable-checkbox",
   imports: [MatCheckbox, MatTooltip, FaIconComponent, ReactiveFormsModule],
   templateUrl: "./admin-searchable-checkbox.component.html",

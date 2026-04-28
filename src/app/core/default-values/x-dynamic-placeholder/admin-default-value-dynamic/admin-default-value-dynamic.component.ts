@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { DefaultValueConfigDynamic } from "../default-value-config-dynamic";
@@ -7,6 +7,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { MatFormFieldControl } from "@angular/material/form-field";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-default-value-dynamic",
   imports: [MatOption, MatSelect, MatTooltip, ReactiveFormsModule],
   templateUrl: "./admin-default-value-dynamic.component.html",

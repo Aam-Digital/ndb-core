@@ -5,6 +5,7 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -34,6 +35,7 @@ import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
  * For viewComponent of a field, see EntityFieldViewComponent.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-field-edit",
   templateUrl: "./entity-field-edit.component.html",
   styleUrls: ["./entity-field-edit.component.scss"],

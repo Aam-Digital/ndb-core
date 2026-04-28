@@ -1,7 +1,13 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { Component, inject, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -55,6 +61,7 @@ export interface AffectedEntity {
  * (also see AutomatedFieldUpdateConfigService)
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-automated-field-update",
   imports: [
     DialogCloseComponent,
@@ -73,8 +80,9 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
   private dialogRef =
     inject<MatDialogRef<AutomatedFieldUpdateComponent>>(MatDialogRef);
-  private entityFormService = inject(EntityFormService);
+  private readonly entityFormService = inject(EntityFormService);
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   entityConstructor: EntityConstructor;
 
@@ -101,6 +109,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       );
       entity.form.formGroup.controls[fieldId].setValue(formattedValue);
     }
+    this.cdr.markForCheck();
   }
 
   onConfirm(): void {

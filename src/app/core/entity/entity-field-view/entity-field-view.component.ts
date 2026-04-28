@@ -4,6 +4,7 @@ import {
   OnChanges,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   ColumnConfig,
@@ -22,6 +23,7 @@ import { Entity } from "../model/entity";
  * For editComponent form field, see EntityFieldEditComponent.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-field-view",
   templateUrl: "./entity-field-view.component.html",
   styleUrls: ["./entity-field-view.component.scss"],

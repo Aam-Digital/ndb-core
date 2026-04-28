@@ -1,0 +1,52 @@
+<h1 mat-dialog-title i18n="Export dialog title">
+  Download Data
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</h1>
+
+<div mat-dialog-content>
+  <p i18n="Export dialog format label">Format</p>
+  <mat-radio-group
+    [ngModel]="format()"
+    (ngModelChange)="format.set($event)"
+    aria-label="Export format"
+  >
+    <mat-radio-button value="csv" i18n="Export format CSV option"
+      >CSV</mat-radio-button
+    >
+    <mat-radio-button value="xlsx" i18n="Export format XLSX option"
+      >XLSX (Excel)</mat-radio-button
+    >
+  </mat-radio-group>
+
+  @if (data.filteredData) {
+    <p i18n="Export dialog scope label">Records to export</p>
+    <mat-radio-group
+      [ngModel]="scope()"
+      (ngModelChange)="scope.set($event)"
+      aria-label="Export scope"
+      i18n-aria-label
+    >
+      <mat-radio-button value="filtered" i18n="Export scope filtered option">
+        Current (filtered)
+      </mat-radio-button>
+      <mat-radio-button value="all" i18n="Export scope all option">
+        All records (including archived)
+      </mat-radio-button>
+    </mat-radio-group>
+  }
+</div>
+
+<div mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="download()"
+    i18n="Download button"
+  >
+    Download
+  </button>
+
+  <button mat-stroked-button mat-dialog-close i18n="Cancel button">
+    Cancel
+  </button>
+</div>

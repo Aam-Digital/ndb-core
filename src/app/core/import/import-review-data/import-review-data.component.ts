@@ -6,6 +6,8 @@ import {
   Output,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -42,6 +44,7 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-review-data",
   templateUrl: "./import-review-data.component.html",
   styleUrls: ["./import-review-data.component.scss"],
@@ -88,10 +91,10 @@ export class ImportReviewDataComponent implements OnChanges {
 
   @Output() importComplete = new EventEmitter<ImportMetadata>();
 
-  isLoading: boolean;
-  mappedEntities: Entity[] = [];
-  displayColumns: string[] = [];
-  transformationErrorColumns: string[] = [];
+  isLoading = signal(false);
+  mappedEntities = signal<Entity[]>([]);
+  displayColumns = signal<string[]>([]);
+  transformationErrorColumns = signal<string[]>([]);
   MULTIPLE_MATCHING_ENTITIES_KEY =
     ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY;
 
@@ -132,7 +135,7 @@ export class ImportReviewDataComponent implements OnChanges {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
       const result = await this.importService.transformRawDataToEntities(
         this.rawData,
@@ -150,19 +153,21 @@ export class ImportReviewDataComponent implements OnChanges {
         await this.showTransformationErrorDialog(result.errors);
       }
 
-      this.mappedEntities = result.entities.sort((a, b) => {
-        // sort _rev (existing records being updated) first, then new records
-        if (a._rev === b._rev) return 0;
-        if (!!a._rev) return -1;
-        return 1;
-      });
+      this.mappedEntities.set(
+        result.entities.sort((a, b) => {
+          // sort _rev (existing records being updated) first, then new records
+          if (a._rev === b._rev) return 0;
+          if (!!a._rev) return -1;
+          return 1;
+        }),
+      );
     } catch (e) {
       Logging.error("Failed to transform import data", e);
-      this.mappedEntities = [];
-      this.transformationErrorColumns = [];
+      this.mappedEntities.set([]);
+      this.transformationErrorColumns.set([]);
     }
 
-    this.displayColumns = [
+    this.displayColumns.set([
       this.IMPORT_STATUS_COLUMN,
       ...this.columnMapping
         // remove unmapped columns:
@@ -175,9 +180,9 @@ export class ImportReviewDataComponent implements OnChanges {
             ) === c,
         )
         .map(({ propertyName }) => propertyName),
-    ];
+    ]);
 
-    this.isLoading = false;
+    this.isLoading.set(false);
   }
 
   async startImport() {
@@ -189,7 +194,7 @@ export class ImportReviewDataComponent implements OnChanges {
           ImportDialogResult
         >(ImportConfirmSummaryComponent, {
           data: {
-            entitiesToImport: this.mappedEntities,
+            entitiesToImport: this.mappedEntities(),
             importSettings: {
               entityType: this.entityType,
               columnMapping: this.columnMapping,
@@ -228,6 +233,6 @@ export class ImportReviewDataComponent implements OnChanges {
 
   private setTransformationErrors(errors: ImportCellError[]): void {
     const uniqueColumns = [...new Set(errors.map((e) => e.column))];
-    this.transformationErrorColumns = uniqueColumns;
+    this.transformationErrorColumns.set(uniqueColumns);
   }
 }

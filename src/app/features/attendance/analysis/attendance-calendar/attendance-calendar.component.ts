@@ -6,6 +6,7 @@ import {
   SimpleChanges,
   ViewChild,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import {
@@ -40,6 +41,7 @@ import { EventWithAttendance } from "../../model/event-with-attendance";
  * and relies on inputs to receive data and updates.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
   styleUrls: [

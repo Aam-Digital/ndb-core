@@ -2,7 +2,12 @@ import { v4 as uuid } from "uuid";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { PanelComponent } from "#src/app/core/entity-details/EntityDetailsConfig";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
-import { Component, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -18,6 +23,7 @@ import { DashboardWidgetRegistryService } from "#src/app/core/dashboard/dashboar
  * Admin component to select components to be added to view configs or dashboard.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-widget-component-select",
   imports: [
     MatDialogModule,

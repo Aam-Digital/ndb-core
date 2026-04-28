@@ -1,4 +1,9 @@
-import { Component, Input, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -9,10 +14,10 @@ import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.p
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
-import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashboard-widget";
 
 @DynamicComponent("TodosDashboard")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-todos-dashboard",
   templateUrl: "./todos-dashboard.component.html",
   styleUrls: ["./todos-dashboard.component.scss"],
@@ -24,11 +29,11 @@ import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashbo
     CustomDatePipe,
   ],
 })
-export class TodosDashboardComponent extends DashboardWidget {
+export class TodosDashboardComponent {
   private formDialog = inject(FormDialogService);
   private currentUser = inject(CurrentUserSubject);
 
-  static override getRequiredEntities() {
+  static getRequiredEntities() {
     return Todo.ENTITY_TYPE;
   }
 
@@ -37,9 +42,10 @@ export class TodosDashboardComponent extends DashboardWidget {
 
   startDateLabel: string = Todo.schema.get("startDate").label;
 
-  @Input() subtitle: string = $localize`:dashboard widget subtitle:Tasks due`;
-  @Input() explanation: string =
-    $localize`:dashboard widget explanation:Tasks that are beyond their deadline`;
+  subtitle = input<string>($localize`:dashboard widget subtitle:Tasks due`);
+  explanation = input<string>(
+    $localize`:dashboard widget explanation:Tasks that are beyond their deadline`,
+  );
 
   filterEntries = (todo: Todo) => {
     return (

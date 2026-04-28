@@ -6,6 +6,7 @@ import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-d
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 import { migrateInheritedFieldConfig } from "../../features/inherited-field/inherited-field-config-migration";
 import { addDefaultImportViewConfig } from "../import/add-default-import-view";
+import { addDefaultReviewDuplicatesViewConfig } from "../../features/de-duplication/add-default-review-duplicates-view";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
@@ -160,6 +161,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
       addDefaultImportViewConfig,
+      addDefaultReviewDuplicatesViewConfig,
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
