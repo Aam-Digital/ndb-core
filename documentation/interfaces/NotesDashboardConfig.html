@@ -427,7 +427,7 @@ export class NotesDashboardComponent {
   /**
    * Entities displayed in the template with additional &quot;daysSinceLastNote&quot; field
    */
-  entries &#x3D; signal&lt;EntityWithRecentNoteInfo[]&gt;([]);
+  entries &#x3D; signal&lt;EntityWithRecentNoteInfo[] | undefined&gt;(undefined);
 
   subtitle &#x3D; computed(() &#x3D;&gt; {
     const entity &#x3D; this.entityDefinition();
@@ -449,6 +449,7 @@ export class NotesDashboardComponent {
       this.mode();
 
       let isCurrent &#x3D; true;
+      this.entries.set(undefined);
       untracked(() &#x3D;&gt; {
         void this.loadConcernedEntities(() &#x3D;&gt; isCurrent);
       });
