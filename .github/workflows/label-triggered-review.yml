@@ -1,5 +1,5 @@
 name: Label Triggered Review
-# Runs Argos visual review when 'Ready for AI Review' label is applied.
+# Runs Argos visual review when 'Ready for Review' label is applied.
 # CodeRabbit is triggered separately via .coderabbit.yaml (same label).
 
 on:
