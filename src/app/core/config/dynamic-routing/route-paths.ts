@@ -61,9 +61,14 @@ export function isReservedFixedRoutePath(path: string): boolean {
 
 /**
  * Heuristic to identify config views that represent entity navigation.
+ * Includes views with an explicit entityType config and detail views (path ending with /:id).
  */
 export function isEntityViewConfig(view: ViewConfig): boolean {
-  return Boolean(view?.config?.entityType || view?.config?.entity);
+  return Boolean(
+    view?.config?.entityType ||
+    view?.config?.entity ||
+    view?._id?.endsWith("/:id"),
+  );
 }
 
 /**
