@@ -2,6 +2,9 @@ name: QA
 
 on:
   workflow_call:
+    secrets:
+      ARGOS_TOKEN:
+        required: false
     inputs:
       upload-e2e-screenshots:
         type: boolean

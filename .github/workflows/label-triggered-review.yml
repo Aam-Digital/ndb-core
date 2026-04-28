@@ -14,7 +14,8 @@ jobs:
   argos-visual-review:
     if: github.event.label.name == 'Ready for Review'
     uses: ./.github/workflows/_qa.yaml
-    secrets: inherit
+    secrets:
+      ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
     with:
       upload-e2e-screenshots: true
       e2e-only: true
