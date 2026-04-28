@@ -1,3 +1,5 @@
+@use "../../../../common-components/special-option-labels.scss";
+
 .container {
   display: flex;
 }
@@ -18,10 +20,4 @@
 
 .selected-option {
   font-weight: bold;
-}
-
-.not-defined-label {
-  font-style: italic;
-  color: #888;
-  opacity: 0.85;
 }
