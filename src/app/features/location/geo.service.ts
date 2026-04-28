@@ -1,5 +1,14 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable, ReplaySubject, Subject, concat, of, timer } from "rxjs";
+import {
+  EMPTY,
+  Observable,
+  ReplaySubject,
+  Subject,
+  concat,
+  defer,
+  of,
+  timer,
+} from "rxjs";
 import { Coordinates } from "./coordinates";
 import { HttpClient } from "@angular/common/http";
 import { ConfigService } from "../../core/config/config.service";
@@ -52,16 +61,19 @@ export class GeoService {
       }
     });
 
-    // Process lookups sequentially with 1s gap to respect Nominatim rate limit
+    // Process lookups sequentially; only apply 1s gap after successful requests
+    // (failed requests skip the delay so errors don't block the queue for 1s each)
     this.lookupQueue$
       .pipe(
-        concatMap(({ term, resolve }) =>
-          concat(
+        concatMap(({ term, resolve }) => {
+          let succeeded = false;
+          return concat(
             this.fetchLookup(term).pipe(
               tap((results) => {
                 this.cache.set(term, results);
                 resolve.next(results);
                 resolve.complete();
+                succeeded = true;
               }),
               catchError(() => {
                 resolve.next([]);
@@ -69,9 +81,11 @@ export class GeoService {
                 return of([] as GeoResult[]);
               }),
             ),
-            timer(1000).pipe(ignoreElements()),
-          ),
-        ),
+            defer(() =>
+              succeeded ? timer(1000).pipe(ignoreElements()) : EMPTY,
+            ),
+          );
+        }),
       )
       .subscribe();
   }
