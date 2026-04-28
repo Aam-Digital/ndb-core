@@ -36,8 +36,8 @@ export class GeoService {
     email: environment.email,
   };
 
-  private cache = new Map<string, GeoResult[]>();
-  private lookupQueue$ = new Subject<{
+  private readonly cache = new Map<string, GeoResult[]>();
+  private readonly lookupQueue$ = new Subject<{
     term: string;
     resolve: ReplaySubject<GeoResult[]>;
   }>();
@@ -83,7 +83,7 @@ export class GeoService {
    */
   lookup(searchTerm: string): Observable<GeoResult[]> {
     if (this.cache.has(searchTerm)) {
-      return of(this.cache.get(searchTerm)!);
+      return of(this.cache.get(searchTerm));
     }
     const resolve = new ReplaySubject<GeoResult[]>(1);
     this.lookupQueue$.next({ term: searchTerm, resolve });
