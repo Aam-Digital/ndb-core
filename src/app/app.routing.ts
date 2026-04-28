@@ -24,6 +24,7 @@ import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
 import { AttendanceModule } from "./features/attendance/attendance.module";
+import { DeDuplicationModule } from "./features/de-duplication/de-duplication-module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { UnsavedChangesService } from "./core/entity-details/form/unsaved-changes.service";
 import { EntityPermissionGuard } from "./core/permissions/permission-guard/entity-permission.guard";
@@ -75,13 +76,14 @@ export const allRoutes: Routes = [
     },
   },
   {
+    path: "deduplication",
+    canActivate: [AuthGuard],
+    children: DeDuplicationModule.routes,
+  },
+  {
     path: "review-duplicates",
-    component: RoutedViewComponent,
-    canActivate: [AuthGuard, EntityPermissionGuard],
-    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
-    data: {
-      component: "ReviewDuplicates",
-    },
+    redirectTo: "deduplication/review-duplicates",
+    pathMatch: "full",
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

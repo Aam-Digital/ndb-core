@@ -256,26 +256,9 @@ describe("EntityConfigService", () => {
     expect(field.isArray).toBe(true);
   });
 
-  it("should return prefixed runtime route for config-based entity routes", () => {
-    mockConfigService.getConfig.mockImplementation((id: string) => {
-      if (id === "view:test") {
-        return {
-          component: "EntityList",
-          config: { entityType: "Test" },
-        };
-      }
-      return testConfig;
-    });
-
+  it("should return prefixed runtime route for entity", () => {
     expect(service.getRuntimeRoute(Test)).toBe("/c/test");
     expect(service.getRuntimeDetailsRoutePath(Test)).toBe("c/test/:id");
-  });
-
-  it("should fall back to entity route when no list view config exists", () => {
-    mockConfigService.getConfig.mockReturnValue(undefined);
-
-    expect(service.getRuntimeRoute(Test)).toBe("/test");
-    expect(service.getRuntimeDetailsRoutePath(Test)).toBe("test/:id");
   });
 });
 

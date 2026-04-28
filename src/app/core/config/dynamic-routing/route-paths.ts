@@ -10,7 +10,7 @@ export const CONFIG_ENTITY_ROUTE_PREFIX = "c";
  */
 export const RESERVED_FIXED_FEATURE_ROUTE_PATHS = [
   "import",
-  "review-duplicates",
+  "deduplication",
 ] as const;
 
 const RESERVED_FIXED_FEATURE_ROUTE_SET = new Set<string>(
