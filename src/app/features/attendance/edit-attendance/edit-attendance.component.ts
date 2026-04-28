@@ -90,7 +90,7 @@ export class EditAttendanceComponent
   statusFieldConfig: FormFieldConfig;
 
   /** Per-participant FormControls used by EditConfigurableEnumComponent */
-  private statusControls = new Map<
+  private readonly statusControls = new Map<
     string,
     FormControl<ConfigurableEnumValue>
   >();

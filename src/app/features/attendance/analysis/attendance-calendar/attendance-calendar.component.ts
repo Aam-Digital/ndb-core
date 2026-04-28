@@ -10,7 +10,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Entity } from "#src/app/core/entity/model/entity";
 import {
   MatCalendar,
@@ -36,7 +36,6 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -105,7 +104,9 @@ export class AttendanceCalendarComponent implements OnChanges {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((status) => {
         if (this.selectedEventAttendance) {
-          this.selectedEventAttendance.status = status as AttendanceStatusType;
+          const normalizedStatus: AttendanceStatusType =
+            (status as AttendanceStatusType) ?? NullAttendanceStatusType;
+          this.selectedEventAttendance.status = normalizedStatus;
           this.save();
         }
       });
