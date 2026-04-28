@@ -121,9 +121,13 @@ jobs:
 
       # See playwright.config.ts for more CI-specific configuration
       # The Argos reporter will automatically upload screenshots if uploadToArgos is enabled
-      - run: npx playwright test
+      - if: ${{ inputs.upload-e2e-screenshots }}
+        run: npx playwright test
         env:
-          ARGOS_TOKEN: ${{ inputs.upload-e2e-screenshots && secrets.ARGOS_TOKEN || '' }}
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+
+      - if: ${{ !inputs.upload-e2e-screenshots }}
+        run: npx playwright test
 
       - name: Upload test artifacts
         if: always()
