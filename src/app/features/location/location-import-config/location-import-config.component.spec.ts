@@ -21,6 +21,7 @@ describe("LocationImportConfigComponent", () => {
     mockDialogData = {
       col: { column: "address" } as ColumnMapping,
       values: ["123 Main St", "456 Oak Ave"],
+      totalRowCount: 2,
       entityType: undefined,
     };
 
@@ -68,7 +69,7 @@ describe("LocationImportConfigComponent", () => {
   });
 
   it("should auto-default skipAddressLookup to true when row count exceeds threshold and no prior config", async () => {
-    mockDialogData.values = Array(31).fill("some address");
+    mockDialogData.totalRowCount = 31;
 
     fixture = TestBed.createComponent(LocationImportConfigComponent);
     component = fixture.componentInstance;
@@ -78,7 +79,7 @@ describe("LocationImportConfigComponent", () => {
   });
 
   it("should respect existing skipAddressLookup=false config even when row count exceeds threshold", async () => {
-    mockDialogData.values = Array(31).fill("some address");
+    mockDialogData.totalRowCount = 31;
     mockDialogData.col.additional = {
       skipAddressLookup: false,
     } as LocationImportConfig;
@@ -91,7 +92,7 @@ describe("LocationImportConfigComponent", () => {
   });
 
   it("should show warning hint when row count exceeds threshold", async () => {
-    mockDialogData.values = Array(31).fill("some address");
+    mockDialogData.totalRowCount = 31;
 
     fixture = TestBed.createComponent(LocationImportConfigComponent);
     component = fixture.componentInstance;

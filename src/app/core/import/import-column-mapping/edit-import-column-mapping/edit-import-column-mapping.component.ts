@@ -138,6 +138,7 @@ export class EditImportColumnMappingComponent implements OnChanges {
         data: {
           col: this.columnMapping,
           values: [...uniqueValues],
+          totalRowCount: this.rawData.length,
           entityType: this.entityCtor,
           additionalSettings: this.additionalSettings,
         },
