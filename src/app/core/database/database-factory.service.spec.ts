@@ -14,6 +14,7 @@ import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.serv
 import { NAVIGATOR_TOKEN } from "app/utils/di-tokens";
 import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import { AlertService } from "../alerts/alert.service";
+import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
 
 describe("DatabaseFactoryService", () => {
   let service: DatabaseFactoryService;
@@ -26,6 +27,10 @@ describe("DatabaseFactoryService", () => {
         { provide: KeycloakAuthService, useValue: {} },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
         { provide: AlertService, useValue: mockAlertService },
+        {
+          provide: PouchdbCorruptionRecoveryService,
+          useValue: { handleKnownMultiTabCorruption: vi.fn() },
+        },
         SyncStateSubject,
         LoginStateSubject,
       ],
