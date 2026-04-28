@@ -7,6 +7,7 @@ import {
 } from "../import/import-sample-raw-data";
 import { importProvidersFrom } from "@angular/core";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { signal } from "@angular/core";
 
 const existingEntity = createEntityOfType("Child", "1");
 existingEntity["name"] = IMPORT_SAMPLE_RAW_DATA[0]["name"];
@@ -35,6 +36,6 @@ export const Preview: StoryObj<ImportReviewDataComponent> = {
 
 export const Loading: StoryObj<ImportReviewDataComponent> = {
   args: {
-    isLoading: true,
+    isLoading: signal(true),
   },
 };
