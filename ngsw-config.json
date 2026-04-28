@@ -23,6 +23,7 @@
           "/*.svg",
           "/assets/**",
           "!/assets/icons/*",
+          "!**/config.json",
           "!**/keycloak.json"
         ]
       }
