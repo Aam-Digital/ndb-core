@@ -10,37 +10,45 @@
     >
     </mat-calendar>
     <div class="panel">
-      <div>
-        <button
-          class="button"
-          mat-button
-          color="primary"
-          (mouseenter)="preselectAllRange()"
-          (mouseleave)="unselectRange()"
-          (click)="selectRangeAndClose('all')"
-          [class.selected-option]="filter.selectedOptionValues.length === 0"
-        >
-          All
-        </button>
-      </div>
+      <button
+        class="button"
+        mat-button
+        color="primary"
+        (click)="selectRangeAndClose('empty')"
+        [class.selected-option]="
+          filter.selectedOptionValues[0] === emptyFilterOptionKey
+        "
+        i18n="Filter option label"
+      >
+        <span class="not-defined-label">no date defined</span>
+      </button>
+      <button
+        class="button"
+        mat-button
+        color="primary"
+        (mouseenter)="preselectAllRange()"
+        (mouseleave)="unselectRange()"
+        (click)="selectRangeAndClose('all')"
+        [class.selected-option]="filter.selectedOptionValues.length === 0"
+      >
+        All
+      </button>
       @for (
         item of filter.rangeOptions;
         track item;
         let selectedIndexOfDateRanges = $index
       ) {
-        <div>
-          <button
-            class="button"
-            mat-button
-            color="primary"
-            [class.selected-option]="item === selectedOption"
-            (mouseenter)="preselectRange(item)"
-            (mouseleave)="unselectRange()"
-            (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
-          >
-            {{ item.label }}
-          </button>
-        </div>
+        <button
+          class="button"
+          mat-button
+          color="primary"
+          [class.selected-option]="item === selectedOption"
+          (mouseenter)="preselectRange(item)"
+          (mouseleave)="unselectRange()"
+          (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
+        >
+          {{ item.label }}
+        </button>
       }
     </div>
   </div>

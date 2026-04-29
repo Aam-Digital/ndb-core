@@ -17,6 +17,7 @@ import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 
 @UntilDestroy()
 @Component({
@@ -40,7 +41,11 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       this.filterConfig.selectedOptionChange
         .pipe(untilDestroyed(this))
         .subscribe(() => {
-          if (this.filterConfig.selectedOptionValues.length === 0) {
+          if (
+            this.filterConfig.selectedOptionValues.length === 0 ||
+            this.filterConfig.selectedOptionValues[0] ===
+              EMPTY_FILTER_OPTION_KEY
+          ) {
             this.fromDate = undefined;
             this.toDate = undefined;
             this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });

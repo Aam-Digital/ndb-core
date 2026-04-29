@@ -13,6 +13,7 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
+import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 
@@ -106,6 +107,11 @@ describe("DateRangeFilterPanelComponent", () => {
   it("should return empty array as filter.selectedOption when 'all' option has been chosen", async () => {
     component.selectRangeAndClose("all");
     expect(dateFilter.selectedOptionValues).toEqual([]);
+  });
+
+  it("should set empty option when selected", () => {
+    component.selectRangeAndClose("empty");
+    expect(dateFilter.selectedOptionValues).toEqual([EMPTY_FILTER_OPTION_KEY]);
   });
 
   it("should correctly calculate date ranges based on the config", () => {
