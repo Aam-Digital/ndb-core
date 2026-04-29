@@ -7,6 +7,7 @@ import {
   Output,
   SimpleChanges,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { ColumnMapping } from "../../column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
@@ -71,13 +72,13 @@ export class EditImportColumnMappingComponent implements OnChanges {
    * Existing column mappings of other columns
    * (e.g. to hide already mapped fields)
    */
-  @Input() otherColumnMappings: ColumnMapping[];
+  @Input() otherColumnMappings: ColumnMapping[] = [];
 
   /**
    * the actually imported data
    * (to let this component configure special transformations, e.g. to map values to dropdown categories)
    */
-  @Input() rawData: any[];
+  @Input() rawData: any[] = [];
 
   /**
    * Additional settings for import processing
@@ -86,13 +87,13 @@ export class EditImportColumnMappingComponent implements OnChanges {
 
   @Output() columnMappingChange = new EventEmitter<ColumnMapping>();
 
-  currentlyMappedDatatype: DefaultDatatype;
+  currentlyMappedDatatype = signal<DefaultDatatype | null>(null);
 
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
-  mappingAdditionalWarning: string;
+  mappingAdditionalWarning = signal<string | undefined>(undefined);
 
   /** whether the currently mapped datatype has been mapped to other columns also */
-  hasMultiMapping?: boolean;
+  hasMultiMapping = signal(false);
 
   hideOption = (option: FormFieldConfig) =>
     this.otherColumnMappings.some((c) => c.propertyName === option.id) &&
@@ -108,22 +109,28 @@ export class EditImportColumnMappingComponent implements OnChanges {
   }
 
   private updateHasMultiMapping() {
-    this.hasMultiMapping = this.otherColumnMappings.some(
-      (c) =>
-        this.columnMapping?.propertyName !== undefined &&
-        c.propertyName === this.columnMapping?.propertyName &&
-        c.column !== this.columnMapping?.column,
+    this.hasMultiMapping.set(
+      this.otherColumnMappings.some(
+        (mapping) =>
+          this.columnMapping?.propertyName !== undefined &&
+          mapping.propertyName === this.columnMapping?.propertyName &&
+          mapping.column !== this.columnMapping?.column,
+      ),
     );
   }
 
   async openMappingComponent() {
+    const currentDatatype = this.currentlyMappedDatatype();
+    if (!currentDatatype?.importConfigComponent) {
+      return;
+    }
     const uniqueValues = new Set<any>();
     this.rawData.forEach((obj) =>
       uniqueValues.add(obj[this.columnMapping.column]),
     );
 
     const configComponent = await this.componentRegistry.get(
-      this.currentlyMappedDatatype.importConfigComponent,
+      currentDatatype.importConfigComponent,
     )();
 
     this.dialog
@@ -154,13 +161,15 @@ export class EditImportColumnMappingComponent implements OnChanges {
   }
 
   private updateDatatypeAndWarning() {
-    const schema = this.entityCtor.schema.get(this.columnMapping.propertyName);
-    this.currentlyMappedDatatype = schema
+    const schema = this.entityCtor?.schema?.get(
+      this.columnMapping?.propertyName,
+    );
+    const datatype = schema
       ? this.schemaService.getDatatypeOrDefault(schema.dataType)
       : null;
-    this.mappingAdditionalWarning =
-      this.currentlyMappedDatatype?.importIncompleteAdditionalConfigBadge?.(
-        this.columnMapping,
-      );
+    this.currentlyMappedDatatype.set(datatype);
+    this.mappingAdditionalWarning.set(
+      datatype?.importIncompleteAdditionalConfigBadge?.(this.columnMapping),
+    );
   }
 }

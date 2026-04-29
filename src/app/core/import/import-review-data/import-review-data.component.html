@@ -1,4 +1,4 @@
-@if (isLoading) {
+@if (isLoading()) {
   <div>
     <div i18n>Preparing data for preview and import ...</div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -20,7 +20,7 @@
     </app-help-button>
   </div>
 
-  @let skippedRows = rawData?.length - mappedEntities?.length;
+  @let skippedRows = rawData?.length - mappedEntities().length;
   @if (skippedRows > 0) {
     <app-hint-box i18n>
       {{ skippedRows }} row(s) were skipped because no mappable data was found
@@ -28,12 +28,12 @@
     </app-hint-box>
   }
 
-  @if (transformationErrorColumns?.length > 0) {
+  @if (transformationErrorColumns().length > 0) {
     <app-hint-box>
       <div class="flex-row gap-small align-center warning-red">
         <span i18n>Some values could not be transformed and were skipped.</span>
         <span i18n>
-          Affected column(s): {{ transformationErrorColumns.join(", ") }}
+          Affected column(s): {{ transformationErrorColumns().join(", ") }}
         </span>
       </div>
     </app-hint-box>
@@ -41,8 +41,8 @@
 
   <app-entities-table
     [entityType]="entityConstructor"
-    [columnsToDisplay]="displayColumns"
-    [records]="mappedEntities"
+    [columnsToDisplay]="displayColumns()"
+    [records]="mappedEntities()"
     clickMode="none"
     [editable]="false"
   >
