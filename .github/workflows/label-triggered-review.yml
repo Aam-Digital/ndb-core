@@ -1,5 +1,5 @@
 name: Label Triggered Review
-# Runs Argos visual review when 'Ready for Review' label is applied.
+# Runs Argos visual review when 'Final Review' label is applied.
 # CodeRabbit is triggered separately via .coderabbit.yaml (same label).
 
 on:
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   argos-visual-review:
-    if: github.event.label.name == 'Ready for Review'
+    if: github.event.label.name == 'Final Review'
     uses: ./.github/workflows/_qa.yaml
     secrets:
       ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}

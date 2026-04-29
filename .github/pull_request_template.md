@@ -1,5 +1,5 @@
 - closes #GITHUB_ISSUE_NUMBER
-- closes #ANOTHER*GITHUB_ISSUE_NUMBER (\_delete if not applicable*)
+- closes #ANOTHER_GITHUB_ISSUE_NUMBER (_delete if not applicable_)
 
 ### PR Checklist
 
@@ -18,7 +18,7 @@ This helps us reduce the number of review cycles and use the time of our core re
   - while you are still working on initial implementation, keep the PR in "Draft" status
   - once you are done with your initial work, change to "Ready for Review". This will trigger some additional automated checks.
   - (PR = "Ready for Review" does not immediately request a manual review yet, first complete the further checks below)
-- [ ] add label **"Ready for Review"** to trigger Argos visual review and CodeRabbit AI review (can also be done while still in Draft)
+- [ ] add label **"Final Review"** to trigger Argos visual review and CodeRabbit AI review (can also be done while still in Draft)
 - [ ] marked each code review comment as resolved OR commented on it with a question, if unsure
   - both implementing suggestions of automatic code review or discarding them as not applicable is okay
 - [ ] all checkboxes in this checklist are checked (to show the reviewer this really is ready)
