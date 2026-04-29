@@ -71,7 +71,7 @@ export class NotesDashboardComponent {
   /**
    * Entities displayed in the template with additional "daysSinceLastNote" field
    */
-  entries = signal<EntityWithRecentNoteInfo[]>([]);
+  entries = signal<EntityWithRecentNoteInfo[] | undefined>(undefined);
 
   subtitle = computed(() => {
     const entity = this.entityDefinition();
@@ -93,6 +93,7 @@ export class NotesDashboardComponent {
       this.mode();
 
       let isCurrent = true;
+      this.entries.set(undefined);
       untracked(() => {
         void this.loadConcernedEntities(() => isCurrent);
       });
