@@ -872,9 +872,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/AttendanceManagerComponent.html" data-type="entity-link" >AttendanceManagerComponent</a>
                             </li>
                             <li class="link">
-                                <a href="components/AttendanceStatusSelectComponent.html" data-type="entity-link" >AttendanceStatusSelectComponent</a>
-                            </li>
-                            <li class="link">
                                 <a href="components/AttendanceSummaryComponent.html" data-type="entity-link" >AttendanceSummaryComponent</a>
                             </li>
                             <li class="link">
