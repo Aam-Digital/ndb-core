@@ -1,4 +1,9 @@
 reviews:
+  auto_review:
+    enabled: true
+    drafts: true
+    labels:
+      - Final Review
   path_instructions:
     - path: "src/app/core/entity/**"
       instructions: "Core entity system — extra scrutiny for schema changes, backward compatibility"
