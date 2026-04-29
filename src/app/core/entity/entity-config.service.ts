@@ -207,20 +207,14 @@ export class EntityConfigService {
       EntityConfigService.getListViewId(entityType),
     );
   }
+}
 
-  /**
-   * Resolve the route to be used in runtime navigation.
-   * All entity routes are namespaced under `/c/...`.
-   */
-  getRuntimeRoute(entityType: EntityConstructor): string {
-    return `/${CONFIG_ENTITY_ROUTE_PREFIX}/${normalizeRoutePath(entityType.route)}`;
-  }
+export function getEntityRuntimeRoute(entityType: EntityConstructor): string {
+  return `/${CONFIG_ENTITY_ROUTE_PREFIX}/${normalizeRoutePath(entityType.route)}`;
+}
 
-  /**
-   * Resolve the route pattern used to detect details-view routes in router config.
-   * Returns a path string without leading slash, matching Angular `Route.path`.
-   */
-  getRuntimeDetailsRoutePath(entityType: EntityConstructor): string {
-    return `${this.getRuntimeRoute(entityType).replace(/^\//, "")}/:id`;
-  }
+export function getEntityRuntimeDetailsRoutePath(
+  entityType: EntityConstructor,
+): string {
+  return `${getEntityRuntimeRoute(entityType).replace(/^\//, "")}/:id`;
 }

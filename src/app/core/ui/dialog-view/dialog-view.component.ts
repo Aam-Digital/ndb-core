@@ -14,7 +14,7 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from "@angular/material/dialog";
-import { EntityConfigService } from "../../entity/entity-config.service";
+import { getEntityRuntimeDetailsRoutePath } from "../../entity/entity-config.service";
 import { Entity } from "../../entity/model/entity";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
@@ -52,7 +52,6 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
     const dialogData = inject<DialogViewData<T>>(MAT_DIALOG_DATA);
     const injector = inject(Injector);
     const router = inject(Router);
-    const entityConfigService = inject(EntityConfigService);
     const cdr = inject(ChangeDetectorRef);
     const destroyRef = inject(DestroyRef);
 
@@ -62,7 +61,7 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
 
     let viewConfig = {};
     if (dialogData.entity) {
-      const detailsRoute = entityConfigService.getRuntimeDetailsRoutePath(
+      const detailsRoute = getEntityRuntimeDetailsRoutePath(
         dialogData.entity.getConstructor(),
       );
       viewConfig =

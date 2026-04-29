@@ -80,11 +80,6 @@ export const allRoutes: Routes = [
     canActivate: [AuthGuard],
     children: DeDuplicationModule.routes,
   },
-  {
-    path: "review-duplicates",
-    redirectTo: "deduplication/review-duplicates",
-    pathMatch: "full",
-  },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
 

@@ -1,6 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 
-import { EntityConfigService } from "./entity-config.service";
+import {
+  EntityConfigService,
+  getEntityRuntimeDetailsRoutePath,
+  getEntityRuntimeRoute,
+} from "./entity-config.service";
 import {
   DatabaseEntity,
   EntityRegistry,
@@ -257,8 +261,8 @@ describe("EntityConfigService", () => {
   });
 
   it("should return prefixed runtime route for entity", () => {
-    expect(service.getRuntimeRoute(Test)).toBe("/c/test");
-    expect(service.getRuntimeDetailsRoutePath(Test)).toBe("c/test/:id");
+    expect(getEntityRuntimeRoute(Test)).toBe("/c/test");
+    expect(getEntityRuntimeDetailsRoutePath(Test)).toBe("c/test/:id");
   });
 });
 

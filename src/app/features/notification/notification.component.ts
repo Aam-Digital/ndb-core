@@ -25,7 +25,7 @@ import { applyUpdate } from "../../core/entity/model/entity-update";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { NotificationConfig } from "./model/notification-config";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
-import { EntityConfigService } from "../../core/entity/entity-config.service";
+import { getEntityRuntimeRoute } from "../../core/entity/entity-config.service";
 
 /**
  * Display Notification indicator for toolbar
@@ -99,7 +99,6 @@ export class NotificationComponent implements OnInit {
   private readonly sessionInfo = inject(SessionSubject);
   private readonly router = inject(Router);
   private readonly entityRegistry = inject(EntityRegistry);
-  private readonly entityConfigService = inject(EntityConfigService);
   private readonly dbResolver = inject(DatabaseResolverService);
 
   ngOnInit() {
@@ -249,7 +248,7 @@ export class NotificationComponent implements OnInit {
 
     const entityCtr = this.entityRegistry.get(notification.context.entityType);
     if (entityCtr) {
-      url = this.entityConfigService.getRuntimeRoute(entityCtr);
+      url = getEntityRuntimeRoute(entityCtr);
       if (notification.context.entityId) {
         url += `/${notification.context.entityId}`;
       }

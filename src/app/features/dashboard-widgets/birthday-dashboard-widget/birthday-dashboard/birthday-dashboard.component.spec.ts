@@ -18,7 +18,6 @@ import {
 } from "../../../../core/entity/database-entity.decorator";
 import { DateWithAge } from "../../../../core/basic-datatypes/date-with-age/dateWithAge";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
-import { EntityConfigService } from "../../../../core/entity/entity-config.service";
 
 describe("BirthdayDashboardComponent", () => {
   let component: BirthdayDashboardComponent;
@@ -34,12 +33,6 @@ describe("BirthdayDashboardComponent", () => {
         {
           provide: EntityRegistry,
           useValue: entityRegistry,
-        },
-        {
-          provide: EntityConfigService,
-          useValue: {
-            getRuntimeRoute: (entityType: typeof Entity) => entityType.route,
-          },
         },
       ],
     }).compileComponents();

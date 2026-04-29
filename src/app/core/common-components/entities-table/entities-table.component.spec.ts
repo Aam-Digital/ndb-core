@@ -18,7 +18,6 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { Router, ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { EntityConfigService } from "../../entity/entity-config.service";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -68,13 +67,6 @@ describe("EntitiesTableComponent", () => {
               queryParams: {},
               queryParamMap: { get: () => null },
             },
-          },
-        },
-        {
-          provide: EntityConfigService,
-          useValue: {
-            getRuntimeRoute: (entityType: typeof TestEntity) =>
-              entityType.route,
           },
         },
       ],
@@ -259,13 +251,13 @@ describe("EntitiesTableComponent", () => {
     const child = new TestEntity();
     expect(child.isNew).toBe(true);
     component.showEntity(child);
-    expect(navigateSpy).toHaveBeenCalledWith([TestEntity.route, "new"]);
+    expect(navigateSpy).toHaveBeenCalledWith(["/c/test-entity", "new"]);
 
     child._rev = "1-existing";
     expect(child.isNew).toBe(false);
     component.showEntity(child);
     expect(navigateSpy).toHaveBeenCalledWith([
-      TestEntity.route,
+      "/c/test-entity",
       child.getId(true),
     ]);
   });

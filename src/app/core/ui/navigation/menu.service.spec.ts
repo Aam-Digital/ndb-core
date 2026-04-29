@@ -6,13 +6,10 @@ import { BehaviorSubject } from "rxjs";
 import { EntityMenuItem, NavigationMenuConfig } from "./menu-item";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interface";
-import { EntityConfigService } from "../../entity/entity-config.service";
-
 describe("MenuService", () => {
   let service: MenuService;
 
   let mockConfigService: any;
-  let mockEntityConfigService: any;
   let mockEntityRegistry: any;
   let mockConfigUpdated: BehaviorSubject<Config>;
 
@@ -22,9 +19,6 @@ describe("MenuService", () => {
       getConfig: vi.fn(),
       getAllConfigs: vi.fn(),
       configUpdates: mockConfigUpdated,
-    };
-    mockEntityConfigService = {
-      getRuntimeRoute: vi.fn((entityType) => entityType.route),
     };
     mockEntityRegistry = {
       get: vi.fn().mockImplementation((entityType: string) => ({
@@ -37,7 +31,6 @@ describe("MenuService", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: EntityConfigService, useValue: mockEntityConfigService },
         { provide: EntityRegistry, useValue: mockEntityRegistry },
       ],
     });
@@ -70,9 +63,9 @@ describe("MenuService", () => {
         {
           label: "Test Entities",
           icon: "child",
-          link: "/test-entity",
+          link: "/c/test-entity",
           subMenu: [
-            { label: "submenu label", icon: "child", link: "/test-entity" },
+            { label: "submenu label", icon: "child", link: "/c/test-entity" },
           ],
         },
       ]);

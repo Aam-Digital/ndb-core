@@ -26,7 +26,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
 import { ScreenWidthObserver } from "app/utils/media/screen-size-observer.service";
 import { MatButtonModule } from "@angular/material/button";
-import { EntityConfigService } from "../../entity/entity-config.service";
+import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -56,7 +56,6 @@ export class SearchComponent {
   private router = inject(Router);
   private userRoleGuard = inject(UserRoleGuard);
   private searchService = inject(SearchService);
-  private readonly entityConfigService = inject(EntityConfigService);
   private readonly resultsSubject = new BehaviorSubject<Entity[]>([]);
 
   static INPUT_DEBOUNCE_TIME_MS = 400;
@@ -143,9 +142,7 @@ export class SearchComponent {
   }
 
   async clickOption(optionElement) {
-    const route = this.entityConfigService.getRuntimeRoute(
-      optionElement.value.getConstructor(),
-    );
+    const route = getEntityRuntimeRoute(optionElement.value.getConstructor());
     await this.router.navigate([route, optionElement.value.getId(true)]);
     this.formControl.setValue("");
     this.state.set(this.NOTHING_ENTERED);
@@ -157,7 +154,7 @@ export class SearchComponent {
   private prepareResults(entities: Entity[]): Entity[] {
     return entities.filter((entity) =>
       this.userRoleGuard.checkRoutePermissions(
-        this.entityConfigService.getRuntimeRoute(entity.getConstructor()),
+        getEntityRuntimeRoute(entity.getConstructor()),
       ),
     );
   }

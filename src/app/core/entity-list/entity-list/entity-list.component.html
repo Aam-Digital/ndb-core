@@ -266,7 +266,7 @@
   @if (!entityConstructor.isInternalEntity) {
     <button
       mat-menu-item
-      [routerLink]="['/review-duplicates']"
+      [routerLink]="['/deduplication/review-duplicates']"
       [queryParams]="{ entityType: entityConstructor.ENTITY_TYPE }"
     >
       <fa-icon

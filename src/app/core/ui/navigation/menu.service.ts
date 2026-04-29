@@ -8,7 +8,7 @@ import {
   ViewConfig,
 } from "../../config/dynamic-routing/view-config.interface";
 import { getRuntimePathFromViewConfig } from "../../config/dynamic-routing/route-paths";
-import { EntityConfigService } from "../../entity/entity-config.service";
+import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 
 @Injectable({
   providedIn: "root",
@@ -16,8 +16,6 @@ import { EntityConfigService } from "../../entity/entity-config.service";
 export class MenuService {
   private configService = inject(ConfigService);
   private entities = inject(EntityRegistry);
-  private readonly entityConfigService = inject(EntityConfigService);
-
   /**
    * name of config array in the config json file
    */
@@ -79,7 +77,7 @@ export class MenuService {
       delete newItem["entityType"];
       newItem.label = item.label ?? entityType.labelPlural;
       newItem.icon = item.icon ?? entityType.icon;
-      newItem.link = this.entityConfigService.getRuntimeRoute(entityType);
+      newItem.link = getEntityRuntimeRoute(entityType);
     }
 
     if (item.subMenu) {
