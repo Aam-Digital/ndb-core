@@ -23,14 +23,12 @@
           </td>
 
           <td>
-            <app-attendance-status-select
-              [value]="item.status"
-              (valueChange)="
-                updateAttendanceValue(item.participant, 'status', $event)
-              "
-              [disabled]="formControl.disabled"
-            >
-            </app-attendance-status-select>
+            <mat-form-field class="margin-small">
+              <app-edit-configurable-enum
+                [formControl]="getStatusControl(item.participant)"
+                [formFieldConfig]="statusFieldConfig"
+              ></app-edit-configurable-enum>
+            </mat-form-field>
           </td>
 
           <td class="full-width">
@@ -87,14 +85,13 @@
           </div>
 
           <div class="attendance-item--content">
-            <app-attendance-status-select
-              [value]="item.status"
-              (valueChange)="
-                updateAttendanceValue(item.participant, 'status', $event)
-              "
-              [disabled]="formControl.disabled"
-            >
-            </app-attendance-status-select>
+            <mat-form-field class="margin-small">
+              <mat-label i18n="Attendance Status field label">Status</mat-label>
+              <app-edit-configurable-enum
+                [formControl]="getStatusControl(item.participant)"
+                [formFieldConfig]="statusFieldConfig"
+              ></app-edit-configurable-enum>
+            </mat-form-field>
             <mat-form-field>
               <mat-label i18n>Remarks</mat-label>
               <input
