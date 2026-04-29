@@ -60,7 +60,7 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Edit" }).click();
 
   const row = page.getByRole("row").filter({ hasText: childWithRemarkName });
-  await row.getByLabel("Present").click();
+  await row.getByText("Present").click();
   await page.getByRole("option", { name: "Absent" }).click();
   await row.getByLabel("Remarks").fill("CUSTOM REMARK");
 
@@ -83,7 +83,7 @@ test("Record attendance for one activity", async ({ page }) => {
   await expect(page.getByRole("textbox", { name: "Remarks" })).toHaveValue(
     "CUSTOM REMARK",
   );
-  await expect(page.getByRole("combobox", { name: "Absent" })).toBeVisible();
+  await expect(page.getByTitle("Absent")).toBeVisible();
 });
 
 test("View and download attendance report", async ({ page }) => {

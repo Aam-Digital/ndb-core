@@ -5,28 +5,28 @@
       "id": "PRESENT",
       "shortName": "P",
       "label": "Present",
-      "style": "attendance-P",
+      "color": "#c8e6c9",
       "countAs": "PRESENT"
     },
     {
       "id": "ABSENT",
       "shortName": "A",
       "label": "Absent",
-      "style": "attendance-A",
+      "color": "#ff8a65",
       "countAs": "ABSENT"
     },
     {
       "id": "LATE",
       "shortName": "L",
       "label": "Late",
-      "style": "attendance-L",
+      "color": "#ffecb3",
       "countAs": "PRESENT"
     },
     {
       "id": "EXCUSED",
       "shortName": "E",
       "label": "Excused",
-      "style": "attendance-E",
+      "color": "#d7ccc8",
       "countAs": "IGNORE"
     }
   ]

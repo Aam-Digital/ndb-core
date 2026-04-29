@@ -112,11 +112,11 @@
                   role="button"
                   class="group-select-option"
                   (click)="markAttendance(option)"
-                  [class]="
+                  [style.background-color]="
                     attendanceByParticipant()[participant.getId()]?.status
                       ?.id === option.id
-                      ? option.style
-                      : ''
+                      ? option.color
+                      : null
                   "
                 >
                   <div

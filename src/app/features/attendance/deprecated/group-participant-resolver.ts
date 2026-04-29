@@ -51,7 +51,7 @@ export class GroupParticipantResolverService {
       date,
     );
     return [
-      ...new Set(activity.participants?.concat(...schoolParticipants) ?? []),
+      ...new Set([...(activity.participants ?? []), ...schoolParticipants]),
     ].filter((p) => !(activity.excludedParticipants ?? []).includes(p));
   }
 
