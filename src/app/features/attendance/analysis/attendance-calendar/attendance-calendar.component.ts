@@ -40,6 +40,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EventWithAttendance } from "../../model/event-with-attendance";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Displays a calendar view of attendance events for a given activity,
@@ -107,7 +108,9 @@ export class AttendanceCalendarComponent implements OnChanges {
           const normalizedStatus: AttendanceStatusType =
             (status as AttendanceStatusType) ?? NullAttendanceStatusType;
           this.selectedEventAttendance.status = normalizedStatus;
-          this.save();
+          this.save().catch((error) =>
+            Logging.warn("Could not save attendance status change", error),
+          );
         }
       });
   }
