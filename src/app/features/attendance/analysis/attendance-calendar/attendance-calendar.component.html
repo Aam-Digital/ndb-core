@@ -23,11 +23,13 @@
       @if (highlightForChild) {
         <div>
           <div>
-            <app-attendance-status-select
-              [(value)]="selectedEventAttendance.status"
-              (valueChange)="save()"
-            >
-            </app-attendance-status-select>
+            <mat-form-field>
+              <mat-label i18n="Attendance Status field label">Status</mat-label>
+              <app-edit-configurable-enum
+                [formControl]="statusControl"
+                [formFieldConfig]="statusFieldConfig"
+              ></app-edit-configurable-enum>
+            </mat-form-field>
           </div>
           <div>
             <mat-form-field class="full-width">

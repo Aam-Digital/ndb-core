@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { FormControl, FormGroup } from "@angular/forms";
-import { MatInputHarness } from "@angular/material/input/testing";
 import { By } from "@angular/platform-browser";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
 import { Entity } from "#src/app/core/entity/model/entity";
@@ -11,8 +9,8 @@ import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { InteractionType } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { AttendanceStatusSelectComponent } from "../edit-attendance/attendance-status-select/attendance-status-select.component";
 import { EditLegacyAttendanceComponent } from "./edit-legacy-attendance.component";
+import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 
 describe("EditLegacyAttendanceComponent", () => {
   let component: EditLegacyAttendanceComponent;
@@ -62,7 +60,7 @@ describe("EditLegacyAttendanceComponent", () => {
     fixture.detectChanges();
 
     const element = fixture.debugElement.query(
-      By.directive(AttendanceStatusSelectComponent),
+      By.directive(EditConfigurableEnumComponent),
     );
 
     expect(element).toBeTruthy();
@@ -73,7 +71,7 @@ describe("EditLegacyAttendanceComponent", () => {
     fixture.detectChanges();
 
     const element = fixture.debugElement.query(
-      By.directive(AttendanceStatusSelectComponent),
+      By.directive(EditConfigurableEnumComponent),
     );
 
     expect(element).toBeFalsy();
@@ -101,16 +99,15 @@ describe("EditLegacyAttendanceComponent", () => {
     ).toBe(a1);
   });
 
-  it("should mark form as dirty when some attendance detail was changed", async () => {
+  it("should mark form as dirty when some attendance detail was changed", () => {
     categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
     fixture.detectChanges();
 
-    const inputElements =
-      await TestbedHarnessEnvironment.loader(fixture).getAllHarnesses(
-        MatInputHarness,
-      );
-    const firstRemarkInput = inputElements[2];
-    await firstRemarkInput.setValue("new remarks");
+    component.updateAttendanceValue(
+      childrenEntities[0].getId(),
+      "remarks",
+      "new remarks",
+    );
 
     expect(
       component.getAttendance(childrenEntities[0].getId()).remarks,

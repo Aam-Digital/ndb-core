@@ -1,11 +1,11 @@
-@if (error) {
+@if (error()) {
   <div class="flex-column place-center error-container">
     <fa-icon
       icon="triangle-exclamation"
       class="margin-bottom-regular"
       size="6x"
     ></fa-icon>
-    @switch (error) {
+    @switch (error()) {
       @case ("not_found") {
         <h1 i18n>Public Form not found</h1>
         <p i18n>
@@ -14,7 +14,7 @@
         </p>
       }
       @case ("no_permissions") {
-        <h1 i18n>No access to public form "{{ formConfig?.title }}"</h1>
+        <h1 i18n>No access to public form "{{ formConfig()?.title }}"</h1>
         <p i18n>
           Unfortunately, you do not have the required permissions to submit data
           through this form. Please contact the person who shared this link with
@@ -28,28 +28,28 @@
   <mat-card>
     <mat-card-header>
       <div class="card-container">
-        <mat-card-title>{{ formConfig?.title }}</mat-card-title>
+        <mat-card-title>{{ formConfig()?.title }}</mat-card-title>
         <div class="public-form-container">
-          @if (formConfig?.logo) {
+          @if (formConfig()?.logo) {
             <app-display-img
-              [entity]="formConfig"
+              [entity]="formConfig()"
               imgProperty="logo"
               class="public-form-image"
             ></app-display-img>
           }
         </div>
-        @if (formConfig?.description) {
+        @if (formConfig()?.description) {
           <!-- needs the @if wrapper because <markdown> doesn't seem to do good change detection -->
           <mat-card-subtitle>
-            <markdown>{{ formConfig?.description }}</markdown>
+            <markdown>{{ formConfig()?.description }}</markdown>
           </mat-card-subtitle>
         }
       </div>
     </mat-card-header>
 
-    @if (formConfig) {
+    @if (formConfig()) {
       <mat-card-content>
-        @for (entry of entityFormEntries; track $index) {
+        @for (entry of entityFormEntries(); track $index) {
           <app-entity-form
             [entity]="entry.entity"
             [fieldGroups]="entry.fieldGroups"
@@ -60,7 +60,7 @@
       </mat-card-content>
 
       <mat-card-footer>
-        @if (validationError) {
+        @if (validationError()) {
           <div
             class="flex-column align-start margin-bottom-regular invalid-fields-container"
             role="alert"
@@ -71,7 +71,7 @@
 
             @if (invalidFieldNames.length > 0) {
               <ul class="color-error invalid-fields-list">
-                @for (fieldName of invalidFieldNames; track fieldName) {
+                @for (fieldName of invalidFieldNames(); track fieldName) {
                   <li>{{ fieldName }}</li>
                 }
               </ul>
