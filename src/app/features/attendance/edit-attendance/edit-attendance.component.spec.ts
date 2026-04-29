@@ -6,9 +6,9 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
-import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
 import { EditAttendanceComponent } from "./edit-attendance.component";
 import { AttendanceItem } from "../model/attendance-item";
+import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
@@ -54,7 +54,7 @@ describe("EditAttendanceComponent", () => {
 
   it("should show attendance status selects for each participant", () => {
     const elements = fixture.debugElement.queryAll(
-      By.directive(AttendanceStatusSelectComponent),
+      By.directive(EditConfigurableEnumComponent),
     );
     expect(elements).toHaveLength(2);
   });

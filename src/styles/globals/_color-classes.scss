@@ -57,12 +57,6 @@
   }
 }
 
-@each $level, $color in colors.$attendance-levels {
-  .attendance-#{$level} {
-    background-color: $color !important;
-  }
-}
-
 /* Selected warning levels with color-adjustments */
 
 /* alias for w-100 */
