@@ -1,0 +1,68 @@
+name: QA - Unit & Code Quality
+
+on:
+  workflow_call:
+    inputs:
+      is-fork:
+        type: boolean
+        required: false
+        default: false
+        description: If true, skip steps that require credentials (for fork PRs)
+
+permissions:
+  contents: read
+  id-token: write # for QLTY code coverage (https://docs.qlty.sh/migration/coverage)
+
+jobs:
+  toolchain:
+    uses: ./.github/workflows/_node-toolchain.yml
+
+  code-quality:
+    needs: toolchain
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.toolchain.outputs.node-version }}
+          cache: npm
+
+      - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
+      - run: npm install --ci
+      - run: npx eslint --max-warnings=0
+      - run: npx tsc -p .
+      - run: npx tsc -p e2e
+      - name: actionlint
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+
+  test-unit:
+    needs: toolchain
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Berlin
+      FORCE_COLOR: 1
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.toolchain.outputs.node-version }}
+          cache: npm
+
+      - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
+      - run: npm ci --no-progress
+
+      - name: Cache angular
+        uses: actions/cache@v4
+        with:
+          path: .angular/cache
+          key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}
+      - run: npm run test-ci
+
+      - uses: qltysh/qlty-action/coverage@v1
+        if: ${{ !inputs.is-fork }}
+        with:
+          oidc: true
+          files: coverage/**/lcov.info
