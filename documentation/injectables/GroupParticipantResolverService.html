@@ -628,7 +628,7 @@ export class GroupParticipantResolverService {
       date,
     );
     return [
-      ...new Set(activity.participants?.concat(...schoolParticipants) ?? []),
+      ...new Set([...(activity.participants ?? []), ...schoolParticipants]),
     ].filter((p) &#x3D;&gt; !(activity.excludedParticipants ?? []).includes(p));
   }
 
