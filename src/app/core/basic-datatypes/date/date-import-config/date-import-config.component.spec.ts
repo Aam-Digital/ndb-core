@@ -15,7 +15,12 @@ describe("DateImportConfigComponent", () => {
   let data: MappingDialogData;
 
   beforeEach(async () => {
-    data = { values, totalRowCount: values.length, col: { column: "" }, entityType: undefined };
+    data = {
+      values,
+      totalRowCount: values.length,
+      col: { column: "" },
+      entityType: undefined,
+    };
     await TestBed.configureTestingModule({
       imports: [
         DateImportConfigComponent,
