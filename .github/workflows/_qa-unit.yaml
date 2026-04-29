@@ -60,7 +60,7 @@ jobs:
           key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}
       - run: npm run test-ci
 
-      - uses: qltysh/qlty-action/coverage@v1
+      - uses: qltysh/qlty-action/coverage@a2277a908db90c4c868832fb9204521fb940fdb4 # v1
         if: ${{ !inputs.is-fork }}
         with:
           oidc: true
