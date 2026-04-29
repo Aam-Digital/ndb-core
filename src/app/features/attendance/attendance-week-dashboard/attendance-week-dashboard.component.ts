@@ -89,7 +89,7 @@ export class AttendanceWeekDashboardComponent {
     return undefined;
   });
 
-  entries = signal<AttendanceWeekRow[][]>([]);
+  entries = signal<AttendanceWeekRow[][] | undefined>(undefined);
 
   constructor() {
     effect((onCleanup) => {
@@ -99,6 +99,7 @@ export class AttendanceWeekDashboardComponent {
       this.attendanceStatusType();
 
       let isCurrent = true;
+      this.entries.set(undefined);
       untracked(() => {
         void this.loadAttendanceOfAbsentees(() => isCurrent);
       });
