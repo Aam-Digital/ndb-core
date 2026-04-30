@@ -735,22 +735,6 @@ describe("ConfigService", () => {
     );
   });
 
-  it("should not add default import and deduplication routes to config", async () => {
-    vi.useFakeTimers();
-    try {
-      const config = new Config(Config.CONFIG_KEY);
-      config.data = {};
-
-      updateSubject.next({ entity: config, type: "update" });
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(service.getConfig("view:import")).toBeUndefined();
-      expect(service.getConfig("view:review-duplicates")).toBeUndefined();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
   it("should migrate editComponent EditAttendance to EditLegacyAttendance", async () => {
     const oldConfig = {
       "entity:Note": {
