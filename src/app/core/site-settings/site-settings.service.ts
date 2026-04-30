@@ -43,7 +43,11 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.init();
 
-    super.startLoading();
+    super.startLoading().catch((err) => {
+      const error = new Error("Failed to load site settings", { cause: err });
+      error.name = "SiteSettingsLoadError";
+      Logging.error(error);
+    });
   }
 
   init() {

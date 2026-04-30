@@ -2,11 +2,11 @@ import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
 import {
-  ErrorHandler,
-  Provider,
-  inject,
-  provideAppInitializer,
-  EnvironmentProviders,
+    ErrorHandler,
+    Provider,
+    inject,
+    provideAppInitializer,
+    EnvironmentProviders,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { LoginState } from "../session/session-states/login-state.enum";
@@ -40,6 +40,11 @@ export class LoggingService {
       release: "ndb-core@" + environment.appVersion,
       transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
+      ignoreErrors: [
+        // PouchDB throws this when syncing a database that doesn't exist yet on the server
+        // (e.g. notifications DB before the first event). Already handled in SyncedPouchDatabase.
+        /Database does not exist/,
+      ],
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }

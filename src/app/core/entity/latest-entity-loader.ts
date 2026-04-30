@@ -1,5 +1,4 @@
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
-import { Logging } from "../logging/logging.service";
 import { filter } from "rxjs/operators";
 import { Entity, EntityConstructor } from "./model/entity";
 import { HttpStatusCode } from "@angular/common/http";
@@ -43,6 +42,10 @@ export abstract class LatestEntityLoader<T extends Entity> {
   /**
    * Do an initial load of the entity to be available through the `entityUpdated` property
    * (without watching for continuous updates).
+   *
+   * Returns `undefined` if the entity does not exist (HTTP 404).
+   * Other errors are propagated and should be handled by the subclass with
+   * a domain-specific error so that monitoring tools (e.g. Sentry) can group them properly.
    */
   async loadOnce(): Promise<T | undefined> {
     try {
@@ -53,13 +56,10 @@ export abstract class LatestEntityLoader<T extends Entity> {
       this.entityUpdated.next(entity);
       return entity;
     } catch (err) {
-      if (err?.status !== HttpStatusCode.NotFound) {
-        Logging.error(
-          `Initial loading of record "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed [Service based on LatestEntityLoader]`,
-          err,
-        );
+      if (err?.status === HttpStatusCode.NotFound) {
+        return undefined;
       }
-      return undefined;
+      throw err;
     }
   }
 }
