@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { $localize } from "@angular/localize/init"; // import needed to make this file work in e2e test fixtures also
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity, EntityConstructor } from "../model/entity";
 import { ColumnMapping } from "../../import/column-mapping";
