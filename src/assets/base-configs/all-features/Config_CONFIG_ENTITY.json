@@ -602,10 +602,6 @@
       },
       "_id": "view:class-session/:id"
     },
-    "view:import": {
-      "component": "Import",
-      "_id": "view:import"
-    },
     "view:user": {
       "component": "EntityList",
       "config": {

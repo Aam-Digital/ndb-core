@@ -659,6 +659,57 @@ describe("ConfigService", () => {
     testConfigMigration(oldConfig, expectedConfig);
   });
 
+  it("should remove import and deduplication view configs migrated to fixed routes", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new Config(Config.CONFIG_KEY);
+      config.data = {
+        "view:import": {
+          component: "Import",
+          _id: "view:import",
+        },
+        "view:review-duplicates": {
+          component: "ReviewDuplicates",
+          _id: "view:review-duplicates",
+        },
+        "view:child": {
+          component: "EntityList",
+          _id: "view:child",
+        },
+      };
+
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(service.getConfig("view:import")).toBeUndefined();
+      expect(service.getConfig("view:review-duplicates")).toBeUndefined();
+      expect(service.getConfig("view:child")).toEqual(
+        expect.objectContaining({
+          component: "EntityList",
+          _id: "view:child",
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should not add default import and deduplication routes to config", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new Config(Config.CONFIG_KEY);
+      config.data = {};
+
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(service.getConfig("view:import")).toBeUndefined();
+      expect(service.getConfig("view:review-duplicates")).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should migrate editComponent EditAttendance to EditLegacyAttendance", async () => {
     const oldConfig = {
       "entity:Note": {

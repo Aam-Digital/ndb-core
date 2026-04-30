@@ -17,10 +17,12 @@ import {
   DialogViewComponent,
   DialogViewData,
 } from "../ui/dialog-view/dialog-view.component";
-import { EntityConfigService } from "../entity/entity-config.service";
+import {
+  EntityConfigService,
+  getEntityRuntimeDetailsRoutePath,
+} from "../entity/entity-config.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { Router } from "@angular/router";
-import { PREFIX_VIEW_CONFIG } from "../config/dynamic-routing/view-config.interface";
 
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
@@ -42,9 +44,9 @@ export class FormDialogService {
       );
       if (!hasDetailsViewConfig) {
         // check router config for code-defined view configs (not stored in DB config for e.g. Public forms)
-        const detailsRoute = EntityConfigService.getDetailsViewId(
+        const detailsRoute = getEntityRuntimeDetailsRoutePath(
           entity.getConstructor(),
-        ).substring(PREFIX_VIEW_CONFIG.length);
+        );
         hasDetailsViewConfig = this.router.config.some(
           (route) => route.path === detailsRoute,
         );

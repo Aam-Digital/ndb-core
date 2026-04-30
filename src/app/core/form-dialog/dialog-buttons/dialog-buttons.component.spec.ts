@@ -106,14 +106,12 @@ describe("DialogButtonsComponent", () => {
     child._rev = "existing";
     component.entity = child;
     TestBed.inject(Router).resetConfig([
-      { path: "test-entity/:id", redirectTo: "/" },
+      { path: "c/test-entity/:id", redirectTo: "/" },
     ]);
 
     component.ngOnInit();
 
-    expect(component.detailsRoute).toBe(
-      `${TestEntity.route}/${child.getId(true)}`,
-    );
+    expect(component.detailsRoute).toBe(`/c/test-entity/${child.getId(true)}`);
   });
 
   it("should close the dialog if a entity is deleted", async () => {

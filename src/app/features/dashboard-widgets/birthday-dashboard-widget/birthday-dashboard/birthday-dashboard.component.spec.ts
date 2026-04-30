@@ -32,7 +32,7 @@ describe("BirthdayDashboardComponent", () => {
         { provide: ConfigService, useValue: {} },
         {
           provide: EntityRegistry,
-          useValue: { entityRegistry },
+          useValue: entityRegistry,
         },
       ],
     }).compileComponents();
