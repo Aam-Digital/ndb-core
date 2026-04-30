@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { GeoResult, GeoService } from "./geo.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { ConfigService } from "../../core/config/config.service";
-import { of, Subject } from "rxjs";
+import { of, Subject, throwError } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import type { Mock } from "vitest";
@@ -146,5 +146,26 @@ describe("GeoService", () => {
     });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Library, Hamburg");
+  });
+
+  it("should return cached result on repeated lookup without additional HTTP request", () => {
+    const term = "Berlin";
+    const results = [createSearchResult({ city: "Berlin" })];
+    mockHttp.get.mockReturnValue(of(results));
+
+    service.lookup(term).subscribe();
+    expect(mockHttp.get).toHaveBeenCalledTimes(1);
+
+    service.lookup(term).subscribe();
+    expect(mockHttp.get).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return empty array when HTTP lookup fails instead of throwing", () => {
+    mockHttp.get.mockReturnValue(throwError(() => new Error("502")));
+
+    let result: GeoResult[] | undefined;
+    service.lookup("someSearch").subscribe((r) => (result = r));
+
+    expect(result).toEqual([]);
   });
 });
