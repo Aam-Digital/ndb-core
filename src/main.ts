@@ -7,6 +7,9 @@ import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 import { initLanguage } from "./bootstrap-i18n";
 import { BackupService } from "./app/core/admin/backup/backup.service";
 
+// Register before any async operations so the beforeinstallprompt event is not missed
+PwaInstallService.registerPWAInstallListener();
+
 bootstrap().catch((reason) => {
   Logging.error("Application Bootstrap failed", reason);
 }); // top-level await not possible here yet, therefore wrapped in `bootstrap()` function
@@ -20,9 +23,6 @@ async function bootstrap() {
   if (environment.production) {
     enableProdMode();
   }
-
-  // Listening to event as soon as possible
-  PwaInstallService.registerPWAInstallListener();
 
   await initLanguage();
 
