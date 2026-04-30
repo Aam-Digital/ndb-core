@@ -49,6 +49,6 @@ export class DisplayImgComponent implements OnChanges {
   }
 
   private isRemoteUrl(value: string): boolean {
-    return value.startsWith("https://") || value.startsWith("http://");
+    return value.startsWith("https://");
   }
 }

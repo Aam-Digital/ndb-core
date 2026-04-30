@@ -61,18 +61,6 @@ describe("DisplayImgComponent", () => {
     expect(component.imgSrc).toBe("https://example.com/logo.png");
   });
 
-  it("should use http:// remote URL directly without calling FileService", () => {
-    const entity = new TestEntity();
-    entity["photo"] = "http://example.com/logo.png";
-    component.entity = entity;
-    component.imgProperty = "photo";
-
-    component.ngOnChanges({ entity: undefined });
-
-    expect(mockFileService.loadFile).not.toHaveBeenCalled();
-    expect(component.imgSrc).toBe("http://example.com/logo.png");
-  });
-
   it("should use FileService for plain filename (not a URL)", () => {
     const entity = new TestEntity();
     entity["photo"] = "logo.png";
