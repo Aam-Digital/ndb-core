@@ -14,6 +14,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
+import { calculateAge, dateToString } from "../../../../utils/utils";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -48,6 +49,143 @@ export function patternWithMessage(
   };
 }
 
+function parseToDate(value: unknown): Date | undefined {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (dateOnlyMatch) {
+      const localDate = new Date(
+        Number(dateOnlyMatch[1]),
+        Number(dateOnlyMatch[2]) - 1,
+        Number(dateOnlyMatch[3]),
+      );
+      if (!Number.isNaN(localDate.getTime())) {
+        return localDate;
+      }
+    }
+
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+
+  if (typeof value === "number") {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+}
+
+function normalizeDateOnly(value: Date): Date {
+  return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+}
+
+function createDateComparisonValidator(
+  dateParamValue: unknown,
+  comparator: (controlDate: Date, paramDate: Date) => boolean,
+  errorKey: string,
+  paramName: "minDate" | "maxDate",
+): ValidatorFn {
+  const parsedParam = parseToDate(dateParamValue);
+  if (!parsedParam) {
+    return () => null;
+  }
+
+  const paramDate = normalizeDateOnly(parsedParam);
+  return (control: AbstractControl) => {
+    const controlDate = parseToDate(control.value);
+    if (!controlDate) {
+      return null;
+    }
+
+    const normalizedControlDate = normalizeDateOnly(controlDate);
+    if (comparator(normalizedControlDate, paramDate)) {
+      return null;
+    }
+
+    return {
+      [errorKey]: {
+        [paramName]: dateToString(paramDate),
+        currentDate: dateToString(normalizedControlDate),
+      },
+    };
+  };
+}
+
+function dateRangeMinValidator(minDateValue: unknown): ValidatorFn {
+  return createDateComparisonValidator(
+    minDateValue,
+    (control, param) => control >= param,
+    "minDate",
+    "minDate",
+  );
+}
+
+function dateRangeMaxValidator(maxDateValue: unknown): ValidatorFn {
+  return createDateComparisonValidator(
+    maxDateValue,
+    (control, param) => control <= param,
+    "maxDate",
+    "maxDate",
+  );
+}
+
+function createAgeComparisonValidator(
+  ageParamValue: unknown,
+  comparator: (age: number, param: number) => boolean,
+  errorKey: string,
+  paramName: "minAge" | "maxAge",
+): ValidatorFn {
+  const paramNum = Number(ageParamValue);
+  if (!Number.isFinite(paramNum)) {
+    return () => null;
+  }
+
+  return (control: AbstractControl) => {
+    const controlDate = parseToDate(control.value);
+    if (!controlDate) {
+      return null;
+    }
+
+    const age = calculateAge(controlDate);
+    if (comparator(age, paramNum)) {
+      return null;
+    }
+
+    return {
+      [errorKey]: {
+        [paramName]: paramNum,
+        currentAge: age,
+      },
+    };
+  };
+}
+
+function minAgeValidator(minAgeValue: unknown): ValidatorFn {
+  return createAgeComparisonValidator(
+    minAgeValue,
+    (age, param) => age >= param,
+    "minAge",
+    "minAge",
+  );
+}
+
+function maxAgeValidator(maxAgeValue: unknown): ValidatorFn {
+  return createAgeComparisonValidator(
+    maxAgeValue,
+    (age, param) => age <= param,
+    "maxAge",
+    "maxAge",
+  );
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -76,6 +214,14 @@ export class DynamicValidatorsService {
         return { fn: Validators.min(value as number) };
       case "max":
         return { fn: Validators.max(value as number) };
+      case "minDate":
+        return { fn: dateRangeMinValidator(value) };
+      case "maxDate":
+        return { fn: dateRangeMaxValidator(value) };
+      case "minAge":
+        return { fn: minAgeValidator(value) };
+      case "maxAge":
+        return { fn: maxAgeValidator(value) };
       case "pattern":
         if (typeof value === "object") {
           return { fn: patternWithMessage(value.pattern, value.message) };
@@ -206,6 +352,14 @@ export class DynamicValidatorsService {
         return $localize`Must be greater than ${validationValue.min}`;
       case "max":
         return $localize`Cannot be greater than ${validationValue.max}`;
+      case "minDate":
+        return $localize`Date must be on or after ${validationValue.minDate}`;
+      case "maxDate":
+        return $localize`Date must be on or before ${validationValue.maxDate}`;
+      case "minAge":
+        return $localize`Age must be at least ${validationValue.minAge}`;
+      case "maxAge":
+        return $localize`Age must be at most ${validationValue.maxAge}`;
       case "pattern":
         if (validationValue.message) {
           return validationValue.message;

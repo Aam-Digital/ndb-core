@@ -10,6 +10,28 @@
     </mat-form-field>
   }
 
+  @if (
+    entitySchemaField.dataType === "date-only" ||
+    entitySchemaField.dataType === "date-with-age"
+  ) {
+    <mat-form-field class="number-field">
+      <mat-label i18n>Minimum Date</mat-label>
+      <input formControlName="minDate" matInput type="date" />
+    </mat-form-field>
+    <mat-form-field class="number-field">
+      <mat-label i18n>Maximum Date</mat-label>
+      <input formControlName="maxDate" matInput type="date" />
+    </mat-form-field>
+    <mat-form-field class="number-field">
+      <mat-label i18n>Minimum Age</mat-label>
+      <input formControlName="minAge" matInput type="number" />
+    </mat-form-field>
+    <mat-form-field class="number-field">
+      <mat-label i18n>Maximum Age</mat-label>
+      <input formControlName="maxAge" matInput type="number" />
+    </mat-form-field>
+  }
+
   <!-- TODO: requires transformation of value to { pattern: string, message: string } before saving
   <mat-form-field *ngIf="entitySchemaField.dataType === 'string'">
     <mat-label i18n>Pattern (Regex)</mat-label>
