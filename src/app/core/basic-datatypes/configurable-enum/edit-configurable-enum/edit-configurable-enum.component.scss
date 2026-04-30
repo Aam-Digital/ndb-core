@@ -2,3 +2,46 @@
   min-width: 0;
   overflow: hidden;
 }
+
+:host {
+  position: relative;
+}
+
+.settings-icon {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  z-index: 1;
+  font-size: 0.5em;
+  padding: 0px 4px !important;
+  transition: all 0.2s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(
+      225deg,
+      rgba(0, 0, 0, 0.08) 50%,
+      transparent 50%
+    );
+    border-radius: 0 4px 0 0;
+    z-index: -1;
+    transition: all 0.2s ease;
+  }
+
+  &:hover {
+    font-size: 1em;
+    padding: 4px 6px !important;
+
+    &::before {
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+    }
+  }
+}

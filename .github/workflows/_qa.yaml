@@ -2,6 +2,9 @@ name: QA
 
 on:
   workflow_call:
+    secrets:
+      ARGOS_TOKEN:
+        required: false
     inputs:
       upload-e2e-screenshots:
         type: boolean
@@ -13,6 +16,11 @@ on:
         required: false
         default: false
         description: If true, skip e2e tests
+      e2e-only:
+        type: boolean
+        required: false
+        default: false
+        description: If true, skip code-quality and unit tests (run e2e only)
       is-fork:
         type: boolean
         required: false
@@ -29,6 +37,7 @@ jobs:
 
   code-quality:
     needs: toolchain
+    if: ${{ !inputs.e2e-only }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,6 +58,7 @@ jobs:
 
   test-unit:
     needs: toolchain
+    if: ${{ !inputs.e2e-only }}
     runs-on: ubuntu-latest
     env:
       TZ: Europe/Berlin
@@ -114,9 +124,13 @@ jobs:
 
       # See playwright.config.ts for more CI-specific configuration
       # The Argos reporter will automatically upload screenshots if uploadToArgos is enabled
-      - run: npx playwright test
+      - if: ${{ inputs.upload-e2e-screenshots }}
+        run: npx playwright test
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+
+      - if: ${{ !inputs.upload-e2e-screenshots }}
+        run: npx playwright test
 
       - name: Upload test artifacts
         if: always()

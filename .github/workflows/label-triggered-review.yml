@@ -1,0 +1,19 @@
+name: Label Triggered Review
+# Runs E2E + Argos visual review when 'Final Review' label is applied.
+# CodeRabbit is triggered separately via .coderabbit.yaml (same label).
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    if: github.event.label.name == 'Final Review'
+    uses: ./.github/workflows/_qa-e2e.yaml
+    secrets:
+      ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+    with:
+      is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}

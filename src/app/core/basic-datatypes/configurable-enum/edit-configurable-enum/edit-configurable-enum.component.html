@@ -27,12 +27,12 @@
       (click)="autocomplete.showAutocomplete()"
     ></fa-icon>
   }
-
-  @if (formControl.enabled && !!createNewOption && canEdit) {
-    <fa-icon
-      class="form-field-icon-suffix"
-      (click)="openSettings($event)"
-      icon="wrench"
-    ></fa-icon>
-  }
 </div>
+
+@if (formControl.enabled && !!createNewOption && canEdit) {
+  <fa-icon
+    class="form-field-icon-suffix settings-icon"
+    (click)="openSettings($event)"
+    icon="wrench"
+  ></fa-icon>
+}
