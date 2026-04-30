@@ -31,12 +31,14 @@ export abstract class LatestEntityLoader<T extends Entity> {
    * through the `entityUpdated` property
    */
   async startLoading() {
-    const initialValue = await this.loadOnce();
+    // Set up the live-updates subscription first, so it is always active
+    // regardless of whether the initial load below succeeds or fails.
     this.entityMapper
       .receiveUpdates(this.entityCtor)
       .pipe(filter(({ entity }) => entity.getId(true) === this.entityID))
       .subscribe(({ entity }) => this.entityUpdated.next(entity));
-    return initialValue;
+
+    return this.loadOnce();
   }
 
   /**
