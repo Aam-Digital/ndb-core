@@ -69,7 +69,7 @@ describe("RouterService", () => {
         canActivate: [AuthGuard, EntityPermissionGuard],
       },
       {
-        path: "child/:id",
+        path: "c/child/:id",
         component: RoutedViewComponent,
         data: { component: "EntityDetails", config: testViewConfig },
         canDeactivate: [expect.any(Function)],
@@ -194,11 +194,7 @@ describe("RouterService", () => {
       component: "EntityList",
       config: { entityType: "Child", foo: 2 },
     });
-    expect(router.config.find((r) => r.path === "child")).toEqual({
-      path: "child",
-      pathMatch: "full",
-      redirectTo: "/c/child",
-    });
+    expect(router.config.find((r) => r.path === "child")).toBeUndefined();
   });
 
   it("should add the user role guard if userIsPermitted is set", () => {
@@ -250,29 +246,5 @@ describe("RouterService", () => {
 
     const router = TestBed.inject<Router>(Router);
     expect(router.config.find((r) => r.path === "dashboard")).toBeDefined();
-  });
-
-  it("should skip config routes that conflict with reserved fixed routes during initRouting", () => {
-    const conflictingViewConfig: ViewConfig[] = [
-      {
-        _id: "view:import",
-        component: "Import",
-      },
-    ];
-    const getAllConfigSpy = vi.spyOn(
-      TestBed.inject(ConfigService),
-      "getAllConfigs",
-    );
-    getAllConfigSpy.mockReturnValue(conflictingViewConfig);
-    const fixedImportRoute = { path: "import", component: TestComponent };
-
-    service.reloadRouting(conflictingViewConfig, [fixedImportRoute], {
-      blockReservedRouteOverrides: true,
-    });
-
-    const router = TestBed.inject<Router>(Router);
-    expect(router.config.find((r) => r.path === "import")).toEqual(
-      fixedImportRoute,
-    );
   });
 });

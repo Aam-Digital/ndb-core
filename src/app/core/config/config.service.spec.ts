@@ -694,6 +694,47 @@ describe("ConfigService", () => {
     }
   });
 
+  it("should prefix entity links in navigationMenu items with /c/", async () => {
+    await testConfigMigration(
+      {
+        navigationMenu: {
+          items: [
+            { label: "Home", link: "/" },
+            { label: "Children", link: "/child" },
+            {
+              label: "Schools",
+              link: "/school",
+              subMenu: [{ label: "Overview", link: "/school-overview" }],
+            },
+            {
+              label: "Deduplication",
+              link: "/deduplication/review-duplicates",
+            },
+            { label: "Admin", link: "/admin/entity/Child" },
+          ],
+        },
+      },
+      {
+        navigationMenu: {
+          items: [
+            { label: "Home", link: "/" },
+            { label: "Children", link: "/c/child" },
+            {
+              label: "Schools",
+              link: "/c/school",
+              subMenu: [{ label: "Overview", link: "/c/school-overview" }],
+            },
+            {
+              label: "Deduplication",
+              link: "/deduplication/review-duplicates",
+            },
+            { label: "Admin", link: "/admin/entity/Child" },
+          ],
+        },
+      },
+    );
+  });
+
   it("should not add default import and deduplication routes to config", async () => {
     vi.useFakeTimers();
     try {

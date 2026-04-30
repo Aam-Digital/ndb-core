@@ -9,12 +9,7 @@ import { AuthGuard } from "../../session/auth.guard";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
-import {
-  getRuntimePathFromViewConfig,
-  isReservedFixedRoutePath,
-  normalizeRoutePath,
-  RuntimeViewPath,
-} from "./route-paths";
+import { getRuntimePathFromViewConfig } from "./route-paths";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -35,11 +30,7 @@ export class RouterService {
   initRouting() {
     const viewConfigs =
       this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
-    this.reloadRouting(viewConfigs, this.router.config, {
-      prefixEntityRoutes: true,
-      addLegacyEntityRedirects: true,
-      blockReservedRouteOverrides: true,
-    });
+    this.reloadRouting(viewConfigs, this.router.config);
   }
 
   /**
@@ -55,48 +46,19 @@ export class RouterService {
    *
    * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
-   * @param options Controls entity route prefixing, legacy redirects, and fixed-route override protection
    */
-  reloadRouting(
-    viewConfigs: ViewConfig[],
-    additionalRoutes: Route[] = [],
-    options: ReloadRoutingOptions = {},
-  ) {
+  reloadRouting(viewConfigs: ViewConfig[], additionalRoutes: Route[] = []) {
     const routes: Route[] = [];
-    const redirects: Route[] = [];
 
     for (const view of viewConfigs) {
       try {
-        const runtimePath = getRuntimePathFromViewConfig(view, {
-          prefixEntityRoutes: options.prefixEntityRoutes,
-        });
-        if (
-          options.blockReservedRouteOverrides &&
-          isReservedFixedRoutePath(runtimePath.path)
-        ) {
-          Logging.warn(
-            `Skipped config route ${view._id} because it conflicts with a reserved fixed route.`,
-          );
-          continue;
-        }
-
+        const runtimePath = getRuntimePathFromViewConfig(view);
         const newRoute = this.createRoute(
           view,
           runtimePath.path,
           additionalRoutes,
         );
         routes.push(newRoute);
-
-        const legacyRedirect = this.generateLegacyRedirect(
-          runtimePath,
-          options,
-          routes,
-          redirects,
-          additionalRoutes,
-        );
-        if (legacyRedirect) {
-          redirects.push(legacyRedirect);
-        }
       } catch (e) {
         Logging.warn(
           `Failed to create route for view ${view._id}: ${e instanceof Error ? e.message : e}`,
@@ -104,9 +66,7 @@ export class RouterService {
       }
     }
 
-    routes.push(...redirects);
-
-    // add routes from other sources (e.g. pre-existing  hard-coded routes)
+    // add routes from other sources (e.g. pre-existing hard-coded routes)
     const noDuplicates = additionalRoutes.filter(
       (r) => !routes.find((o) => o.path === r.path),
     );
@@ -140,45 +100,6 @@ export class RouterService {
     }
   }
 
-  /**
-   * Create a redirect from an old unprefixed entity path to the canonical runtime path.
-   * Redirects are skipped if they would collide with reserved or already existing routes.
-   */
-  private generateLegacyRedirect(
-    runtimePath: RuntimeViewPath,
-    options: ReloadRoutingOptions,
-    routes: Route[],
-    redirects: Route[],
-    additionalRoutes: Route[],
-  ): Route | undefined {
-    if (!options.addLegacyEntityRedirects || !runtimePath.legacyPath) {
-      return undefined;
-    }
-
-    const legacyPath = normalizeRoutePath(runtimePath.legacyPath);
-    if (
-      !legacyPath ||
-      legacyPath === runtimePath.path ||
-      isReservedFixedRoutePath(legacyPath)
-    ) {
-      return undefined;
-    }
-
-    if (
-      routes.some((route) => route.path === legacyPath) ||
-      redirects.some((route) => route.path === legacyPath) ||
-      additionalRoutes.some((route) => route.path === legacyPath)
-    ) {
-      return undefined;
-    }
-
-    return {
-      path: legacyPath,
-      pathMatch: "full",
-      redirectTo: `/${runtimePath.path}`,
-    };
-  }
-
   private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
     route.data = { ...route?.data }; // data of currently active route is readonly, which can throw errors here
     route.canActivate = [AuthGuard, EntityPermissionGuard];
@@ -202,22 +123,4 @@ export class RouterService {
 
     return route;
   }
-}
-
-/**
- * Optional behavior switches for route reloads.
- */
-interface ReloadRoutingOptions {
-  /**
-   * Prefix config-defined entity routes under `CONFIG_ENTITY_ROUTE_PREFIX`.
-   */
-  prefixEntityRoutes?: boolean;
-  /**
-   * Register legacy redirects from old entity paths to prefixed runtime paths.
-   */
-  addLegacyEntityRedirects?: boolean;
-  /**
-   * Prevent dynamic config from overriding fixed feature routes.
-   */
-  blockReservedRouteOverrides?: boolean;
 }

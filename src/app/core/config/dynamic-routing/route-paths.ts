@@ -5,34 +5,8 @@ import { PREFIX_VIEW_CONFIG, ViewConfig } from "./view-config.interface";
  */
 export const CONFIG_ENTITY_ROUTE_PREFIX = "c";
 
-/**
- * Fixed feature routes that must never be replaced by dynamic config.
- */
-export const RESERVED_FIXED_FEATURE_ROUTE_PATHS = [
-  "import",
-  "deduplication",
-] as const;
-
-const RESERVED_FIXED_FEATURE_ROUTE_SET = new Set<string>(
-  RESERVED_FIXED_FEATURE_ROUTE_PATHS,
-);
-
-interface RuntimeViewPathOptions {
-  /**
-   * When enabled, entity views are moved under `CONFIG_ENTITY_ROUTE_PREFIX`.
-   */
-  prefixEntityRoutes?: boolean;
-}
-
 export interface RuntimeViewPath {
-  /**
-   * Final path to register in Angular router config.
-   */
   path: string;
-  /**
-   * Optional legacy path (without prefix) for backward-compatible redirects.
-   */
-  legacyPath?: string;
 }
 
 /**
@@ -48,15 +22,6 @@ export function normalizeRoutePath(path: string): string {
  */
 export function getViewPathFromConfigId(viewConfigId: string): string {
   return normalizeRoutePath(viewConfigId.substring(PREFIX_VIEW_CONFIG.length));
-}
-
-/**
- * Detect whether a path collides with a reserved top-level fixed feature route.
- */
-export function isReservedFixedRoutePath(path: string): boolean {
-  const normalizedPath = normalizeRoutePath(path);
-  const topLevelPath = normalizedPath.split("/")[0];
-  return RESERVED_FIXED_FEATURE_ROUTE_SET.has(topLevelPath);
 }
 
 /**
@@ -80,19 +45,15 @@ export function getEntityRuntimePath(path: string): string {
 
 /**
  * Resolve the effective route path for a view config at runtime.
- * Optionally returns a legacy unprefixed path when entity prefixing is active.
+ * Entity views are always placed under `CONFIG_ENTITY_ROUTE_PREFIX`.
  */
 export function getRuntimePathFromViewConfig(
   view: ViewConfig,
-  options: RuntimeViewPathOptions = {},
 ): RuntimeViewPath {
   const rawPath = getViewPathFromConfigId(view._id);
-  if (!options.prefixEntityRoutes || !isEntityViewConfig(view) || !rawPath) {
+  if (!isEntityViewConfig(view) || !rawPath) {
     return { path: rawPath };
   }
 
-  return {
-    path: getEntityRuntimePath(rawPath),
-    legacyPath: rawPath,
-  };
+  return { path: getEntityRuntimePath(rawPath) };
 }

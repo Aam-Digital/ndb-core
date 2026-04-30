@@ -153,6 +153,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEditAttendanceComponent,
       migrateNotesManagerComponent,
       removeConfigRoutesMigratedToFixedFeatures,
+      migrateNavigationMenuEntityLinks,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -670,5 +671,50 @@ const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
   delete configPart.config.includeEventNotes;
   delete configPart.config.showEventNotesToggle;
 
+  return configPart;
+};
+
+const FIXED_ROUTE_PREFIXES = [
+  "/c/",
+  "/admin",
+  "/deduplication",
+  "/import",
+  "/login",
+  "/404",
+];
+
+function migrateNavMenuLink(link: string): string {
+  if (
+    !link?.startsWith("/") ||
+    link === "/" ||
+    FIXED_ROUTE_PREFIXES.some((prefix) => link.startsWith(prefix))
+  ) {
+    return link;
+  }
+  return `/c${link}`;
+}
+
+function migrateNavMenuItems(items: any[]): any[] {
+  return items.map((item) => {
+    if (item.link) {
+      item.link = migrateNavMenuLink(item.link);
+    }
+    if (item.subMenu) {
+      item.subMenu = migrateNavMenuItems(item.subMenu);
+    }
+    return item;
+  });
+}
+
+/**
+ * Prefix entity route links in navigationMenu items with `/c/` to match the entity route prefix.
+ * Applies to items and subMenus that have a hardcoded `link` not already under a fixed route.
+ */
+const migrateNavigationMenuEntityLinks: ConfigMigration = (key, configPart) => {
+  if (key !== "navigationMenu" || !Array.isArray(configPart?.items)) {
+    return configPart;
+  }
+
+  configPart.items = migrateNavMenuItems(configPart.items);
   return configPart;
 };

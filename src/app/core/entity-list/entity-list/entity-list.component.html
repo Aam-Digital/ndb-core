@@ -244,6 +244,20 @@
     </button>
   }
 
+  @if (!entityConstructor.isInternalEntity) {
+    <button
+      mat-menu-item
+      [routerLink]="['/deduplication/review-duplicates']"
+      [queryParams]="{ entityType: entityConstructor.ENTITY_TYPE }"
+    >
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="copy"
+      ></fa-icon>
+      <span i18n>Review Possible Duplicates</span>
+    </button>
+  }
+
   @if (
     ("update"
       | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
@@ -260,20 +274,6 @@
         icon="tools"
       ></fa-icon>
       <span i18n>Configure Data Structure</span>
-    </button>
-  }
-
-  @if (!entityConstructor.isInternalEntity) {
-    <button
-      mat-menu-item
-      [routerLink]="['/deduplication/review-duplicates']"
-      [queryParams]="{ entityType: entityConstructor.ENTITY_TYPE }"
-    >
-      <fa-icon
-        class="standard-icon-with-text color-accent"
-        icon="copy"
-      ></fa-icon>
-      <span i18n>Review Possible Duplicates</span>
     </button>
   }
 
