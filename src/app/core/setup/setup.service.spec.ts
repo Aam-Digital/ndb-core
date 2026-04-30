@@ -8,8 +8,8 @@ import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.s
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import {
-    HttpTestingController,
-    provideHttpClientTesting,
+  HttpTestingController,
+  provideHttpClientTesting,
 } from "@angular/common/http/testing";
 import { BaseConfig } from "./base-config";
 import type { Mock } from "vitest";
