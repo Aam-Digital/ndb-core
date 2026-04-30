@@ -85,7 +85,11 @@ export class InputFileComponent<T = any> {
         dynamicTyping: true,
         skipEmptyLines: true,
       });
-      result = { data: papaParsed.data, fields: papaParsed.meta.fields };
+      result = {
+        data: papaParsed.data,
+        fields: papaParsed.meta.fields,
+        detectedDelimiter: papaParsed.meta.delimiter, // PapaParse provides the detected delimiter
+      };
     } else if (this.fileType === "json") {
       result = { data: JSON.parse(fileContent) };
     }
@@ -111,4 +115,7 @@ export interface ParsedData<T = any[]> {
   /** meta information listing the fields contained in data objects */
   fields?: string[];
   filename?: string;
+
+  /** auto-detected CSV delimiter (only present for CSV files) */
+  detectedDelimiter?: string;
 }
