@@ -306,13 +306,15 @@ export class RemotePouchDatabase extends PouchDatabase {
               });
 
               if (result?.results) {
-                result.results.forEach((change: any) => {
-                  if (this.ngZone) {
-                    this.ngZone.run(() => this.changesFeed.next(change.doc));
-                  } else {
-                    this.changesFeed.next(change.doc);
-                  }
-                });
+                result.results.forEach(
+                  (change: PouchDB.Core.ChangesResponseChange<{}>) => {
+                    if (this.ngZone) {
+                      this.ngZone.run(() => this.changesFeed.next(change.doc));
+                    } else {
+                      this.changesFeed.next(change.doc);
+                    }
+                  },
+                );
                 lastSequence = result.last_seq;
               }
 
