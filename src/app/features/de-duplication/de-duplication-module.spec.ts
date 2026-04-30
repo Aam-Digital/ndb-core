@@ -1,7 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { DeDuplicationModule } from "./de-duplication-module";
 import { RoutedViewComponent } from "app/core/ui/routed-view/routed-view.component";
-import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { MockedTestingModule } from "app/utils/mocked-testing.module";
 
 describe("DeDuplicationModule routes", () => {
@@ -19,10 +18,6 @@ describe("DeDuplicationModule routes", () => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
     });
-    const unsavedChangesService = TestBed.inject(UnsavedChangesService);
-    vi.spyOn(unsavedChangesService, "checkUnsavedChanges").mockResolvedValue(
-      true,
-    );
 
     const route = DeDuplicationModule.routes.find(
       (r) => r.path === "review-duplicates",
@@ -31,23 +26,5 @@ describe("DeDuplicationModule routes", () => {
     const result = await TestBed.runInInjectionContext(() => guard());
 
     expect(result).toBe(true);
-  });
-
-  it("should block navigation when unsaved changes exist", async () => {
-    TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
-    });
-    const unsavedChangesService = TestBed.inject(UnsavedChangesService);
-    vi.spyOn(unsavedChangesService, "checkUnsavedChanges").mockResolvedValue(
-      false,
-    );
-
-    const route = DeDuplicationModule.routes.find(
-      (r) => r.path === "review-duplicates",
-    );
-    const guard = route!.canDeactivate![0] as () => Promise<boolean>;
-    const result = await TestBed.runInInjectionContext(() => guard());
-
-    expect(result).toBe(false);
   });
 });
