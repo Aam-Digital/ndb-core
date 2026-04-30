@@ -8,8 +8,8 @@ import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.s
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import {
-  HttpTestingController,
-  provideHttpClientTesting,
+    HttpTestingController,
+    provideHttpClientTesting,
 } from "@angular/common/http/testing";
 import { BaseConfig } from "./base-config";
 import type { Mock } from "vitest";
@@ -68,11 +68,12 @@ describe("SetupService", () => {
       },
     ];
     httpTesting
-      .expectOne("assets/base-configs/available-configs.json")
-      .flush(configFile);
-    httpTesting
       .expectOne("assets/base-configs/external-sources.json")
       .flush([]);
+    await Promise.resolve();
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush(configFile);
 
     const baseConfigs = await baseConfigsPromise;
     expect(baseConfigs).toBeTruthy();
@@ -85,11 +86,12 @@ describe("SetupService", () => {
     const baseConfigsPromise = service.getAvailableBaseConfig();
 
     httpTesting
-      .expectOne("assets/base-configs/available-configs.json")
-      .flush(null, { status: 404, statusText: "Not Found" });
-    httpTesting
       .expectOne("assets/base-configs/external-sources.json")
       .flush([]);
+    await Promise.resolve();
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush(null, { status: 404, statusText: "Not Found" });
 
     expect(await baseConfigsPromise).toEqual([]);
   });
@@ -113,13 +115,12 @@ describe("SetupService", () => {
     const promise = service.getAvailableBaseConfig();
 
     httpTesting
-      .expectOne("assets/base-configs/available-configs.json")
-      .flush([localConfig]);
-    httpTesting
       .expectOne("assets/base-configs/external-sources.json")
       .flush([externalUrl]);
-    // allow forkJoin to resolve before loadExternalConfigs makes its requests
     await Promise.resolve();
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush([localConfig]);
     httpTesting.expectOne(externalUrl).flush(externalConfig);
 
     const result = await promise;
@@ -141,12 +142,12 @@ describe("SetupService", () => {
     const promise = service.getAvailableBaseConfig();
 
     httpTesting
-      .expectOne("assets/base-configs/available-configs.json")
-      .flush([localConfig]);
-    httpTesting
       .expectOne("assets/base-configs/external-sources.json")
       .flush([externalUrl]);
     await Promise.resolve();
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush([localConfig]);
     httpTesting
       .expectOne(externalUrl)
       .flush(null, { status: 500, statusText: "Server Error" });
@@ -175,12 +176,12 @@ describe("SetupService", () => {
     const promise = service.getAvailableBaseConfig();
 
     httpTesting
-      .expectOne("assets/base-configs/available-configs.json")
-      .flush([localConfig]);
-    httpTesting
       .expectOne("assets/base-configs/external-sources.json")
       .flush([externalUrl]);
     await Promise.resolve();
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush([localConfig]);
     httpTesting.expectOne(externalUrl).flush(externalConfig);
 
     const result = await promise;
@@ -195,7 +196,7 @@ describe("SetupService", () => {
       description: "",
       entitiesToImport: ["entities.json"],
       baseUrl: "https://example.com/configs/codo/",
-    };
+    } as BaseConfig;
     const testEntityToImport = { _id: "Config:CONFIG_ENTITY", data: {} };
 
     const result = service.initSystemWithBaseConfig(testBaseConfig);
@@ -220,6 +221,7 @@ describe("SetupService", () => {
       description:
         "A basic setup with minimal configuration to get started quickly.",
       entitiesToImport: ["basic/config_1.json", "basic/config_2.json"],
+      baseUrl: "assets/base-configs/",
     };
     const testEntityToImport = {
       _id: "Config:CONFIG_ENTITY",

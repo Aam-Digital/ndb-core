@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { BaseConfig } from "./base-config";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
-import { combineLatest, filter, firstValueFrom, forkJoin, merge, Observable, of } from "rxjs";
+import { combineLatest, filter, firstValueFrom, merge, of } from "rxjs";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
@@ -31,74 +31,49 @@ export class SetupService {
   private readonly syncState = inject(SyncStateSubject);
 
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
-    const [local, externalSourceUrls] = await firstValueFrom(
-      forkJoin([
-        this.httpClient
-          .get<BaseConfig[]>(
-            this.BASE_CONFIGS_FOLDER + "/available-configs.json",
-            { responseType: "json" },
-          )
-          .pipe(
-            catchError((e) => {
-              if (e.status === 404) {
-                Logging.warn("No available-configs.json found.");
-                return of([]);
-              } else {
-                throw e;
-              }
-            }),
-          ),
-        this.loadExternalSourcesObservable(),
-      ]),
+    const externalSourceUrls = await firstValueFrom(
+      this.httpClient
+        .get<
+          string[]
+        >(this.BASE_CONFIGS_FOLDER + "/external-sources.json", { responseType: "json" })
+        .pipe(
+          catchError(() => {
+            Logging.debug("No external-sources.json found, skipping.");
+            return of([] as string[]);
+          }),
+        ),
     );
 
-    const externalConfigs = await this.loadExternalConfigs(externalSourceUrls);
-
-    // merge: local entries take precedence on id conflict
-    const localIds = new Set(local.map((c) => c.id));
-    const merged = [
-      ...local,
-      ...externalConfigs.filter((c) => !localIds.has(c.id)),
+    const descriptorUrls = [
+      this.BASE_CONFIGS_FOLDER + "/available-configs.json",
+      ...externalSourceUrls,
     ];
 
-    return merged;
+    const results = await Promise.all(
+      descriptorUrls.map((url) => this.loadConfigDescriptor(url)),
+    );
+
+    // flatten and deduplicate: first occurrence wins (local is listed first)
+    const seen = new Set<string>();
+    return results.flat().filter((c) => {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    });
   }
 
-  private loadExternalSourcesObservable(): Observable<string[]> {
-    return this.httpClient
-      .get<string[]>(this.BASE_CONFIGS_FOLDER + "/external-sources.json", {
-        responseType: "json",
-      })
-      .pipe(
-        catchError(() => {
-          Logging.debug("No external-sources.json found, skipping.");
-          return of([]);
-        }),
-      );
-  }
-
-  private async loadExternalConfigs(urls: string[]): Promise<BaseConfig[]> {
-    const results: BaseConfig[] = [];
-    for (const url of urls) {
-      try {
-        const baseUrl = url.substring(0, url.lastIndexOf("/") + 1);
-        const entries = await firstValueFrom(
-          this.httpClient
-            .get<BaseConfig | BaseConfig[]>(url, { responseType: "json" })
-            .pipe(catchError(() => of(null))),
-        );
-        if (!entries) {
-          Logging.warn("Failed to load external base config from", url);
-          continue;
-        }
-        for (const entry of asArray(entries)) {
-          results.push({ ...entry, baseUrl });
-        }
-      } catch (e) {
-        Logging.warn("Failed to load external base config from", url, e);
-      }
+  private async loadConfigDescriptor(url: string): Promise<BaseConfig[]> {
+    const baseUrl = url.substring(0, url.lastIndexOf("/") + 1);
+    const entries = await firstValueFrom(
+      this.httpClient
+        .get<BaseConfig | BaseConfig[]>(url, { responseType: "json" })
+        .pipe(catchError(() => of(null))),
+    );
+    if (!entries) {
+      Logging.warn("Failed to load config descriptor: " + url);
+      return [];
     }
-    return results;
+    return asArray(entries).map((entry) => ({ ...entry, baseUrl }));
   }
 
   /**
@@ -110,9 +85,7 @@ export class SetupService {
     Logging.debug("Initializing system with new base config", baseConfig);
 
     for (const file of baseConfig.entitiesToImport) {
-      const fileName = baseConfig.baseUrl
-        ? `${baseConfig.baseUrl}${file}`
-        : `${this.BASE_CONFIGS_FOLDER}/${file}`;
+      const fileName = `${baseConfig.baseUrl}${file}`;
 
       const docs = await firstValueFrom(
         this.httpClient.get<Object | Object[]>(fileName, {
