@@ -70,6 +70,9 @@ describe("SetupService", () => {
     httpTesting
       .expectOne("assets/base-configs/available-configs.json")
       .flush(configFile);
+    httpTesting
+      .expectOne("assets/base-configs/external-sources.json")
+      .flush([]);
 
     const baseConfigs = await baseConfigsPromise;
     expect(baseConfigs).toBeTruthy();
@@ -84,8 +87,130 @@ describe("SetupService", () => {
     httpTesting
       .expectOne("assets/base-configs/available-configs.json")
       .flush(null, { status: 404, statusText: "Not Found" });
+    httpTesting
+      .expectOne("assets/base-configs/external-sources.json")
+      .flush([]);
 
     expect(await baseConfigsPromise).toEqual([]);
+  });
+
+  it("should merge external configs from external-sources.json", async () => {
+    const localConfig: BaseConfig = {
+      id: "local",
+      name: "Local",
+      description: "",
+      entitiesToImport: [],
+    };
+    const externalConfig: BaseConfig = {
+      id: "external",
+      name: "External",
+      description: "",
+      entitiesToImport: ["entities.json"],
+    };
+    const externalUrl =
+      "https://example.com/configs/codo/available-config.json";
+
+    const promise = service.getAvailableBaseConfig();
+
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush([localConfig]);
+    httpTesting
+      .expectOne("assets/base-configs/external-sources.json")
+      .flush([externalUrl]);
+    // allow forkJoin to resolve before loadExternalConfigs makes its requests
+    await Promise.resolve();
+    httpTesting.expectOne(externalUrl).flush(externalConfig);
+
+    const result = await promise;
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe("local");
+    expect(result[1].id).toBe("external");
+    expect(result[1].baseUrl).toBe("https://example.com/configs/codo/");
+  });
+
+  it("should skip failed external source without blocking other results", async () => {
+    const localConfig: BaseConfig = {
+      id: "local",
+      name: "Local",
+      description: "",
+      entitiesToImport: [],
+    };
+    const externalUrl = "https://example.com/configs/bad/available-config.json";
+
+    const promise = service.getAvailableBaseConfig();
+
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush([localConfig]);
+    httpTesting
+      .expectOne("assets/base-configs/external-sources.json")
+      .flush([externalUrl]);
+    await Promise.resolve();
+    httpTesting
+      .expectOne(externalUrl)
+      .flush(null, { status: 500, statusText: "Server Error" });
+
+    const result = await promise;
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("local");
+  });
+
+  it("should prefer local config over external on id conflict", async () => {
+    const localConfig: BaseConfig = {
+      id: "shared",
+      name: "Local version",
+      description: "",
+      entitiesToImport: [],
+    };
+    const externalConfig: BaseConfig = {
+      id: "shared",
+      name: "External version",
+      description: "",
+      entitiesToImport: [],
+    };
+    const externalUrl =
+      "https://example.com/configs/codo/available-config.json";
+
+    const promise = service.getAvailableBaseConfig();
+
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush([localConfig]);
+    httpTesting
+      .expectOne("assets/base-configs/external-sources.json")
+      .flush([externalUrl]);
+    await Promise.resolve();
+    httpTesting.expectOne(externalUrl).flush(externalConfig);
+
+    const result = await promise;
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe("Local version");
+  });
+
+  it("should resolve entitiesToImport paths against baseUrl for external configs", async () => {
+    const testBaseConfig: BaseConfig = {
+      id: "external_setup",
+      name: "External Setup",
+      description: "",
+      entitiesToImport: ["entities.json"],
+      baseUrl: "https://example.com/configs/codo/",
+    };
+    const testEntityToImport = { _id: "Config:CONFIG_ENTITY", data: {} };
+
+    const result = service.initSystemWithBaseConfig(testBaseConfig);
+
+    httpTesting
+      .expectOne("https://example.com/configs/codo/entities.json")
+      .flush(testEntityToImport);
+
+    await result;
+
+    const actualConfig = await TestBed.inject(EntityMapperService).load(
+      Config,
+      Config.CONFIG_KEY,
+    );
+    expect(actualConfig).toBeTruthy();
   });
 
   it("should init multiple config files during init", async () => {

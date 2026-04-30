@@ -30,4 +30,11 @@ export interface BaseConfig {
    * The locale (language) of this configuration.
    */
   locale?: string;
+
+  /**
+   * Base URL from which `entitiesToImport` paths are resolved.
+   * When set (e.g. for externally loaded configs), file paths are fetched
+   * relative to this URL instead of the local `assets/base-configs/` folder.
+   */
+  baseUrl?: string;
 }
