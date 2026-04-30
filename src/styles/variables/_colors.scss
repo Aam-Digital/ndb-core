@@ -76,13 +76,3 @@ $w-levels: (
 @function w-level($level) {
   @return map.get($w-levels, $level);
 }
-
-/* Levels that are used when describing attendance values */
-$attendance-levels: (
-  /* Present */ P: #c8e6c9,
-  /* Holiday */ H: #cfd8dc,
-  /* Late */ L: #ffecb3,
-  /* Excused */ E: #d7ccc8,
-  /* Absent */ A: #ff8a65,
-  /* Unknown */ U: #dddddd
-);

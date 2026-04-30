@@ -19,11 +19,9 @@ env:
 
 jobs:
   qa:
-    uses: ./.github/workflows/_qa.yaml
+    uses: ./.github/workflows/_qa-unit.yaml
     secrets: inherit
     with:
-      upload-e2e-screenshots: false
-      skip-e2e: ${{ github.event.pull_request.draft }}
       is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
   build:
