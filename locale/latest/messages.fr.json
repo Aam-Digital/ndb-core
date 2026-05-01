@@ -1231,7 +1231,7 @@
   "4152813447463272962": "Configurez des modèles (sous forme de fichiers .docx) pour générer des documents PDF remplis de données dynamiques issues de vos enregistrements.",
   "6909260390474216005": "Modifier le texte de l'adresse",
   "8700121026680200191": "Effacer",
-  "6709567318505659787": "Par exemple : JJ.MM.AAAA {$START_LINK}(aide){$CLOSE_LINK}",
+  "6709567318505659787": "Par exemple : DD.MM.YYYY {$START_LINK}(aide){$CLOSE_LINK}",
   "5095493404590085374": "Nom de l'icône inconnu. Veuillez utiliser une icône Font Awesome valide.",
   "4679534700767709475": "Avertissement : Plusieurs enregistrements existants correspondent aux données importées, selon les champs d’identification sélectionnés à l’étape précédente. Par conséquent, un nouvel enregistrement sera créé au lieu de mettre à jour un enregistrement existant.",
   "5650463829778254379": "Correspondance stricte",
