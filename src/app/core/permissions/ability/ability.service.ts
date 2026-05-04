@@ -38,7 +38,17 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   }
 
   async initializeRules() {
-    const initialPermissions = await super.startLoading();
+    let initialPermissions: Config<DatabaseRules> | undefined;
+    try {
+      initialPermissions = await super.startLoading();
+    } catch (err) {
+      const error = new Error("Failed to load permission rules", {
+        cause: err,
+      });
+      error.name = "PermissionRulesLoadError";
+      Logging.error(error);
+    }
+
     if (initialPermissions) {
       await this.updateAbilityWithUserRules(initialPermissions.data);
     } else {

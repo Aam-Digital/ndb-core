@@ -74,7 +74,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   private abortWithError(message: string, cause?: unknown) {
-    Logging.error(message, cause);
+    const error = new Error(message, { cause });
+    error.name = "ConfigLoadError";
+    Logging.error(error);
     alert(
       $localize`We couldn't load the configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.`,
     );

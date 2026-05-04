@@ -190,13 +190,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
     // Track the last batch of synced doc IDs for diagnostics on write failures
     let lastSyncedDocIds: string[] = [];
 
-    const syncHandler = this.getPouchDB().sync(
-      this.remoteDatabase.getPouchDB(),
-      {
+    // Run PouchDB sync/replication outside Angular zone to:
+    //  - avoid wasted change-detection cycles for internal sync chatter
+    //  - prevent expected internal rejections (e.g. transient 404s for
+    //    not-yet-existing remote DBs) from being routed to Angular's
+    //    ErrorHandler / Sentry. Outer .then/.catch below still handle them
+    //    explicitly and re-enter the zone for state updates.
+    const createSyncHandler = () =>
+      this.getPouchDB().sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
-      },
-    );
+      });
+    const syncHandler = this.ngZone
+      ? this.ngZone.runOutsideAngular(createSyncHandler)
+      : createSyncHandler();
 
     syncHandler.on("change", (info) => {
       lastSyncedDocIds =
