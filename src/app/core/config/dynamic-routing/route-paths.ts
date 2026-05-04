@@ -5,10 +5,6 @@ import { PREFIX_VIEW_CONFIG, ViewConfig } from "./view-config.interface";
  */
 export const CONFIG_ENTITY_ROUTE_PREFIX = "c";
 
-export interface RuntimeViewPath {
-  path: string;
-}
-
 /**
  * Normalize a route path for internal comparisons.
  * Removes a single leading slash and keeps nested segments unchanged.
@@ -47,13 +43,11 @@ export function getEntityRuntimePath(path: string): string {
  * Resolve the effective route path for a view config at runtime.
  * Entity views are always placed under `CONFIG_ENTITY_ROUTE_PREFIX`.
  */
-export function getRuntimePathFromViewConfig(
-  view: ViewConfig,
-): RuntimeViewPath {
+export function getRuntimePathFromViewConfig(view: ViewConfig): string {
   const rawPath = getViewPathFromConfigId(view._id);
   if (!isEntityViewConfig(view) || !rawPath) {
-    return { path: rawPath };
+    return rawPath;
   }
 
-  return { path: getEntityRuntimePath(rawPath) };
+  return getEntityRuntimePath(rawPath);
 }

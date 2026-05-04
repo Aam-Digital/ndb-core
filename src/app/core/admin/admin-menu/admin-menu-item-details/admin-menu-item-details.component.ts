@@ -87,7 +87,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     ); // skip details views (with "/:id" placeholder)
 
     return availableViews.map((view) => {
-      const runtimePath = getRuntimePathFromViewConfig(view).path;
+      const runtimePath = getRuntimePathFromViewConfig(view);
       const link = runtimePath ? `/${runtimePath}` : "/";
       const label =
         view.config?.entityType?.trim() || view.component || runtimePath;

@@ -56,7 +56,7 @@ export class MenuService {
     return allConfigs
       .filter((view) => !view._id.includes("/:id")) // skip details views (with "/:id" placeholder)
       .map((view) => {
-        const runtimePath = getRuntimePathFromViewConfig(view).path;
+        const runtimePath = getRuntimePathFromViewConfig(view);
         const link = runtimePath ? `/${runtimePath}` : "/";
         const label =
           view.config?.entityType?.trim() || view.component || runtimePath;

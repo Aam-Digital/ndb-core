@@ -1175,7 +1175,7 @@
       "label": "Recurring Activity",
       "labelPlural": "Recurring Activities",
       "color": "#00838F",
-      "route": "attendance/recurring-activity",
+      "route": "recurring-activity",
       "attributes": {
         "title": {
           "dataType": "string",
@@ -1209,7 +1209,7 @@
         }
       }
     },
-    "view:attendance/recurring-activity": {
+    "view:recurring-activity": {
       "component": "EntityList",
       "config": {
         "entityType": "RecurringActivity",
@@ -1236,7 +1236,7 @@
       },
       "_id": "view:attendance/recurring-activity"
     },
-    "view:attendance/recurring-activity/:id": {
+    "view:recurring-activity/:id": {
       "component": "EntityDetails",
       "config": {
         "entityType": "RecurringActivity",

@@ -6,6 +6,7 @@ import { EmailClientService } from "./email-client.service";
 import { EmailDatatype } from "#src/app/core/basic-datatypes/string/email.datatype";
 import { AdminOverviewService } from "#src/app/core/admin/admin-overview/admin-overview.service";
 import { EmailTemplate } from "./email-template.entity";
+import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
 import { RouterService } from "#src/app/core/config/dynamic-routing/router.service";
 import { EntityDetailsConfig } from "#src/app/core/entity-details/EntityDetailsConfig";
 import { ViewConfig } from "#src/app/core/config/dynamic-routing/view-config.interface";
@@ -52,7 +53,7 @@ export class EmailClientServiceModule {
 
     adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Email Templates`,
-      link: EmailTemplate.route,
+      link: getEntityRuntimeRoute(EmailTemplate),
       subtitle: $localize`:admin menu item subtitle:Configure templates for sending emails, populated with the template's subject and body text.`,
     });
   }

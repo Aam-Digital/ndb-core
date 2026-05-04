@@ -18,6 +18,8 @@ import {
 import { Logging } from "../logging/logging.service";
 import { Config } from "./config";
 import { ConfigMigration } from "./config-migration";
+import { normalizeRoutePath } from "./dynamic-routing/route-paths";
+import { PREFIX_VIEW_CONFIG } from "./dynamic-routing/view-config.interface";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -153,13 +155,14 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEditAttendanceComponent,
       migrateNotesManagerComponent,
       removeConfigRoutesMigratedToFixedFeatures,
-      migrateNavigationMenuEntityLinks,
+      migrateAttendanceRecurringActivityRoute,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
     const defaultConfigs: ConfigMigration[] = [
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
+      migrateNavigationMenuEntityLinks, // must run last to see all default-added view configs
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
@@ -549,6 +552,79 @@ const removeConfigRoutesMigratedToFixedFeatures: ConfigMigration = (
 };
 
 /**
+ * The RecurringActivity entity list was previously nested under the attendance feature module path
+ * (`view:attendance/recurring-activity`). It is now a standalone entity route (`view:recurring-activity`).
+ * Also rewrites any hardcoded nav menu links so `migrateNavigationMenuEntityLinks` can convert them.
+ */
+const migrateAttendanceRecurringActivityRoute: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data)
+  ) {
+    return configPart;
+  }
+
+  const data = configPart.data;
+  const OLD_LIST = "view:attendance/recurring-activity";
+  const OLD_DETAILS = "view:attendance/recurring-activity/:id";
+  const NEW_LIST = "view:recurring-activity";
+  const NEW_DETAILS = "view:recurring-activity/:id";
+
+  if (data[OLD_LIST] && !data[NEW_LIST]) {
+    data[NEW_LIST] = data[OLD_LIST];
+    delete data[OLD_LIST];
+  } else {
+    delete data[OLD_LIST];
+  }
+
+  if (data[OLD_DETAILS] && !data[NEW_DETAILS]) {
+    data[NEW_DETAILS] = data[OLD_DETAILS];
+    delete data[OLD_DETAILS];
+  } else {
+    delete data[OLD_DETAILS];
+  }
+
+  // Rewrite any hardcoded nav links so the navigation migration can pick them up
+  if (Array.isArray(data?.navigationMenu?.items)) {
+    data.navigationMenu.items = rewriteNavMenuLinks(
+      data.navigationMenu.items,
+      "/attendance/recurring-activity",
+      "/recurring-activity",
+    );
+  }
+
+  // Update entity:RecurringActivity.route if it still points to the old nested path
+  if (
+    data["entity:RecurringActivity"]?.route === "attendance/recurring-activity"
+  ) {
+    data["entity:RecurringActivity"].route = "recurring-activity";
+  }
+
+  return configPart;
+};
+
+function rewriteNavMenuLinks(
+  items: any[],
+  oldLink: string,
+  newLink: string,
+): any[] {
+  return items.map((item) => {
+    if (item.link === oldLink) {
+      item = { ...item, link: newLink };
+    }
+    if (item.subMenu) {
+      item.subMenu = rewriteNavMenuLinks(item.subMenu, oldLink, newLink);
+    }
+    return item;
+  });
+}
+
+/**
  * Replace deprecated `ChildSchoolOverview`/`PreviousSchools`/`ChildrenOverview`
  * components with `RelatedEntities` using ChildSchoolRelation entity.
  * - If a config exists, only replace the component string.
@@ -674,47 +750,50 @@ const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
-const FIXED_ROUTE_PREFIXES = [
-  "/c/",
-  "/admin",
-  "/deduplication",
-  "/import",
-  "/login",
-  "/404",
-];
-
-function migrateNavMenuLink(link: string): string {
-  if (
-    !link?.startsWith("/") ||
-    link === "/" ||
-    FIXED_ROUTE_PREFIXES.some((prefix) => link.startsWith(prefix))
-  ) {
-    return link;
-  }
-  return `/c${link}`;
-}
-
-function migrateNavMenuItems(items: any[]): any[] {
-  return items.map((item) => {
-    if (item.link) {
-      item.link = migrateNavMenuLink(item.link);
-    }
-    if (item.subMenu) {
-      item.subMenu = migrateNavMenuItems(item.subMenu);
-    }
-    return item;
-  });
-}
-
 /**
- * Prefix entity route links in navigationMenu items with `/c/` to match the entity route prefix.
- * Applies to items and subMenus that have a hardcoded `link` not already under a fixed route.
+ * Migrate navigationMenu items that use a hardcoded entity route `link` to the `entityType` format.
+ * Looks up each item's path against the view configs in the same config document and converts
+ * only items whose view has a `config.entityType` — custom non-entity routes are left unchanged.
+ * Runs at the root Config document level to have access to all view configs.
  */
 const migrateNavigationMenuEntityLinks: ConfigMigration = (key, configPart) => {
-  if (key !== "navigationMenu" || !Array.isArray(configPart?.items)) {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data) ||
+    !Array.isArray(configPart.data?.navigationMenu?.items)
+  ) {
     return configPart;
   }
 
-  configPart.items = migrateNavMenuItems(configPart.items);
+  configPart.data.navigationMenu.items = migrateNavMenuItems(
+    configPart.data.navigationMenu.items,
+    configPart.data,
+  );
   return configPart;
 };
+
+function migrateNavMenuItems(items: any[], data: Record<string, any>): any[] {
+  return items.map((item) => {
+    const migrated = migrateNavMenuItem(item, data);
+    if (migrated.subMenu) {
+      migrated.subMenu = migrateNavMenuItems(migrated.subMenu, data);
+    }
+    return migrated;
+  });
+}
+
+function migrateNavMenuItem(item: any, data: Record<string, any>): any {
+  if (!item.link || item.entityType) return item;
+
+  const normalizedPath = normalizeRoutePath(item.link);
+  const viewConfig = data[`${PREFIX_VIEW_CONFIG}${normalizedPath}`];
+  const entityType =
+    viewConfig?.config?.entityType || viewConfig?.config?.entity;
+
+  if (!entityType) return item;
+
+  const { link: _removed, ...rest } = item;
+  return { ...rest, entityType };
+}

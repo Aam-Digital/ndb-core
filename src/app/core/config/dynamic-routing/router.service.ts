@@ -53,11 +53,7 @@ export class RouterService {
     for (const view of viewConfigs) {
       try {
         const runtimePath = getRuntimePathFromViewConfig(view);
-        const newRoute = this.createRoute(
-          view,
-          runtimePath.path,
-          additionalRoutes,
-        );
+        const newRoute = this.createRoute(view, runtimePath, additionalRoutes);
         routes.push(newRoute);
       } catch (e) {
         Logging.warn(

@@ -694,9 +694,24 @@ describe("ConfigService", () => {
     }
   });
 
-  it("should prefix entity links in navigationMenu items with /c/", async () => {
+  it("should migrate entity links in navigationMenu items to entityType format", async () => {
+    const entityViewConfigs = {
+      "view:child": {
+        component: "EntityList",
+        config: { entityType: "Child" },
+      },
+      "view:school": {
+        component: "EntityList",
+        config: { entityType: "School" },
+      },
+      "view:school-overview": {
+        component: "EntityList",
+        config: { entityType: "School" },
+      },
+    };
     await testConfigMigration(
       {
+        ...entityViewConfigs,
         navigationMenu: {
           items: [
             { label: "Home", link: "/" },
@@ -711,25 +726,61 @@ describe("ConfigService", () => {
               link: "/deduplication/review-duplicates",
             },
             { label: "Admin", link: "/admin/entity/Child" },
+            { label: "Help", link: "/help" },
           ],
         },
       },
       {
+        ...entityViewConfigs,
         navigationMenu: {
           items: [
             { label: "Home", link: "/" },
-            { label: "Children", link: "/c/child" },
+            { label: "Children", entityType: "Child" },
             {
               label: "Schools",
-              link: "/c/school",
-              subMenu: [{ label: "Overview", link: "/c/school-overview" }],
+              entityType: "School",
+              subMenu: [{ label: "Overview", entityType: "School" }],
             },
             {
               label: "Deduplication",
               link: "/deduplication/review-duplicates",
             },
             { label: "Admin", link: "/admin/entity/Child" },
+            { label: "Help", link: "/help" },
           ],
+        },
+      },
+    );
+  });
+
+  it("should rename view:attendance/recurring-activity to view:recurring-activity", async () => {
+    await testConfigMigration(
+      {
+        "view:attendance/recurring-activity": {
+          component: "EntityList",
+          config: { entityType: "RecurringActivity" },
+        },
+        "view:attendance/recurring-activity/:id": {
+          component: "EntityDetails",
+          config: { entityType: "RecurringActivity" },
+        },
+        navigationMenu: {
+          items: [
+            { label: "Activities", link: "/attendance/recurring-activity" },
+          ],
+        },
+      },
+      {
+        "view:recurring-activity": {
+          component: "EntityList",
+          config: { entityType: "RecurringActivity" },
+        },
+        "view:recurring-activity/:id": {
+          component: "EntityDetails",
+          config: { entityType: "RecurringActivity" },
+        },
+        navigationMenu: {
+          items: [{ label: "Activities", entityType: "RecurringActivity" }],
         },
       },
     );
