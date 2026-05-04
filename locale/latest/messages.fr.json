@@ -1181,7 +1181,6 @@
   "8636146226511237635": "Saisissez le corps de l'e-mail",
   "8883370938045576538": "Avertissement : « mm » est utilisé pour les minutes, utilisez plutôt « MM » pour les mois. ",
   "8992972844308357220": "Ce format ne peut pas analyser toutes les dates.",
-  "6428249056197039034": "Ignorer la recherche d'adresse ",
   "8708109892972682514": "Activez cette option pour importer les adresses en texte brut, sans chercher de coordonnées géographiques. Cela s'avère utile lors de l'importation de gros volumes de données afin d'éviter les limitations de débit, ou lorsque les adresses ne nécessitent pas de coordonnées cartographiques.",
   "9195188695728229921": "champs de recherche",
   "3643866539136239218": "Effacer la recherche",
@@ -1404,8 +1403,11 @@
   "3193976279273491157": "Actes",
   "5784762323121649665": "Comparer et fusionner ",
   "6986075166933303369": "Impossible de rechercher les doublons : {$PH}",
-  "4591889250854899414": "Multiple Tabs Open",
-  "1138295763931490450": "The app is open in multiple tabs, which can break the local database.\n\nPlease close the other tabs and try again to avoid local database corruption.\n\nWe are working on improvements to allow this in the future.",
-  "2274988131600672071": "Local Database Needs Reset",
-  "882273144557925433": "The local database appears corrupted and saving is no longer reliable.\n\nThis can happen after using multiple tabs in parallel.\nWe are working on improvements to allow this in the future."
+  "4591889250854899414": "Plusieurs onglets ouverts",
+  "1138295763931490450": "L'application est ouverte dans plusieurs onglets, ce qui peut endommager la base de données locale.\n\nVeuillez fermer les autres onglets et réessayer afin d'éviter toute corruption de la base de données locale.\n\nNous travaillons à l'amélioration de cette fonctionnalité.",
+  "2274988131600672071": "La base de données locale doit être réinitialisée.",
+  "882273144557925433": "La base de données locale semble corrompue et la sauvegarde n'est plus fiable.\n\nCe problème peut survenir après l'utilisation simultanée de plusieurs onglets.\n\nNous travaillons à l'amélioration de cette fonctionnalité.",
+  "3483406769163244984": "Large import: address lookups may be slow or fail. Open 'Configure value mapping' to skip lookups.",
+  "4386719278864238231": " Warning: This import has {$INTERPOLATION} unique addresses to look up. At 1 request/second (API rate limit), this will take ~{$INTERPOLATION} seconds and large imports may fail to look up addresses. \"Skip address lookup\" is recommended. ",
+  "5875856512247951063": " Skip address lookup and only import text "
 }

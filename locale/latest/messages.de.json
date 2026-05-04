@@ -1181,7 +1181,6 @@
   "8636146226511237635": "E-Mail-Text eingeben",
   "8883370938045576538": "Warnung: „mm“ wird für Minuten verwendet, für Monate verwenden Sie stattdessen „MM“. ",
   "8992972844308357220": "Das angegebene Format kann nicht alle Datumsangaben verarbeiten.",
-  "6428249056197039034": "Adresssuche überspringen ",
   "8708109892972682514": "Aktivieren Sie diese Option, um Adressen als Klartext zu importieren, ohne geografische Koordinaten zu ermitteln. Dies ist hilfreich beim Import großer Datenmengen, um Übertragungsbeschränkungen zu vermeiden, oder wenn die Adressen keine Kartenkoordinaten benötigen.",
   "9195188695728229921": "Suchfelder",
   "3643866539136239218": "Suche zurücksetzen",
@@ -1404,8 +1403,11 @@
   "3193976279273491157": "Aktionen",
   "5784762323121649665": "Vergleichen & Zusammenführen ",
   "6986075166933303369": "Es konnte nicht nach Duplikaten gesucht werden: {$PH}",
-  "4591889250854899414": "Multiple Tabs Open",
-  "1138295763931490450": "The app is open in multiple tabs, which can break the local database.\n\nPlease close the other tabs and try again to avoid local database corruption.\n\nWe are working on improvements to allow this in the future.",
-  "2274988131600672071": "Local Database Needs Reset",
-  "882273144557925433": "The local database appears corrupted and saving is no longer reliable.\n\nThis can happen after using multiple tabs in parallel.\nWe are working on improvements to allow this in the future."
+  "4591889250854899414": "Mehrere Tabs geöffnet",
+  "1138295763931490450": "Die App ist in mehreren Tabs geöffnet, was die lokale Datenbank beschädigen kann.\n\nBitte schließen Sie die anderen Tabs, um eine Beschädigung der lokalen Datenbank zu vermeiden.\n\nWir arbeiten an Verbesserungen, um dies zukünftig zu ermöglichen.",
+  "2274988131600672071": "Lokale Datenbank muss zurückgesetzt werden",
+  "882273144557925433": "Die lokale Datenbank scheint beschädigt zu sein und das Speichern ist nicht mehr möglich.\n\nDies kann passieren, nachdem Daten parallel in mehreren Tabs gleichzeitig gespeichert wurden. Wir arbeiten an Verbesserungen, um dies zukünftig zu ermöglichen.",
+  "3483406769163244984": "Large import: address lookups may be slow or fail. Open 'Configure value mapping' to skip lookups.",
+  "4386719278864238231": " Warning: This import has {$INTERPOLATION} unique addresses to look up. At 1 request/second (API rate limit), this will take ~{$INTERPOLATION} seconds and large imports may fail to look up addresses. \"Skip address lookup\" is recommended. ",
+  "5875856512247951063": " Skip address lookup and only import text "
 }
