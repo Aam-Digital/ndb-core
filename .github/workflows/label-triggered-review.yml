@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   qa:
@@ -17,3 +18,19 @@ jobs:
       ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
     with:
       is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+
+  remove-label:
+    name: Remove 'Final Review' label
+    needs: qa
+    if: always() && github.event.label.name == 'Final Review'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              name: 'Final Review',
+            })
