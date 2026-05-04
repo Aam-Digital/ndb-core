@@ -22,7 +22,12 @@ import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-ed
 import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.service";
 import { InteractionType } from "#src/app/child-dev-project/notes/model/interaction-type.interface";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { AttendanceStatusSelectComponent } from "../edit-attendance/attendance-status-select/attendance-status-select.component";
+import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
+import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+} from "../model/attendance-status";
 import { AttendanceItem } from "../model/attendance-item";
 
 /**
@@ -40,7 +45,7 @@ import { AttendanceItem } from "../model/attendance-item";
     FontAwesomeModule,
     EntityBlockComponent,
     MatButtonModule,
-    AttendanceStatusSelectComponent,
+    EditConfigurableEnumComponent,
     MatInputModule,
     MatCardModule,
   ],
@@ -62,6 +67,34 @@ export class EditLegacyAttendanceComponent
 
   showAttendance = false;
   mobile = false;
+
+  readonly statusFieldConfig: FormFieldConfig = {
+    id: "status",
+    dataType: "configurable-enum",
+    additional: ATTENDANCE_STATUS_CONFIG_ID,
+  };
+  private readonly statusControls = new Map<
+    string,
+    FormControl<ConfigurableEnumValue>
+  >();
+
+  getStatusControl(childId: string): FormControl<ConfigurableEnumValue> {
+    let ctrl = this.statusControls.get(childId);
+    if (!ctrl) {
+      ctrl = new FormControl<ConfigurableEnumValue>(
+        this.getAttendance(childId).status ?? null,
+      );
+      ctrl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+        this.updateAttendanceValue(
+          childId,
+          "status",
+          value as AttendanceStatusType,
+        );
+      });
+      this.statusControls.set(childId, ctrl);
+    }
+    return ctrl;
+  }
 
   get formControl(): FormControl<string[]> {
     return this.ngControl.control as FormControl<string[]>;

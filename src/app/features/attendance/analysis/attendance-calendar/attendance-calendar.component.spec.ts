@@ -174,7 +174,7 @@ describe("AttendanceCalendarComponent", () => {
 
     const classes = component.highlightDate(testDate);
 
-    expect(classes[presentStatus.style]).toBe(true);
+    expect(classes["attendance-status-" + presentStatus.id]).toBe(true);
     expect(
       classes["attendance-calendar-date-has-participants-with-unknown-status"],
     ).toBeFalsy();

@@ -1,0 +1,67 @@
+name: QA - E2E
+
+on:
+  workflow_call:
+    secrets:
+      ARGOS_TOKEN:
+        required: false
+    inputs:
+      is-fork:
+        type: boolean
+        required: false
+        default: false
+        description: If true, skip steps that require credentials (for fork PRs)
+
+permissions:
+  contents: read
+
+jobs:
+  toolchain:
+    uses: ./.github/workflows/_node-toolchain.yml
+
+  test-e2e:
+    needs: toolchain
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Berlin
+      FORCE_COLOR: 1
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.toolchain.outputs.node-version }}
+          cache: npm
+
+      - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
+      - run: npm install --ci
+
+      - name: Cache playwright
+        id: cache-playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
+
+      - if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
+
+      - name: Cache angular
+        uses: actions/cache@v4
+        with:
+          path: .angular/cache
+          key: angular-v1-devel-${{ hashFiles('package-lock.json') }}
+
+      - run: npx ng build --configuration=development
+
+      - run: npx playwright test
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: |
+            test-results/**/trace.zip
