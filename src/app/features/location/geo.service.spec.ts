@@ -160,12 +160,13 @@ describe("GeoService", () => {
     expect(mockHttp.get).toHaveBeenCalledTimes(1);
   });
 
-  it("should return empty array when HTTP lookup fails instead of throwing", () => {
-    mockHttp.get.mockReturnValue(throwError(() => new Error("502")));
+  it("should propagate HTTP errors to subscribers so callers can show error messages", () => {
+    const err = new Error("502");
+    mockHttp.get.mockReturnValue(throwError(() => err));
 
-    let result: GeoResult[] | undefined;
-    service.lookup("someSearch").subscribe((r) => (result = r));
+    let caughtError: unknown;
+    service.lookup("someSearch").subscribe({ error: (e) => (caughtError = e) });
 
-    expect(result).toEqual([]);
+    expect(caughtError).toBe(err);
   });
 });

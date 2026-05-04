@@ -75,9 +75,8 @@ export class GeoService {
                 resolve.complete();
                 succeeded = true;
               }),
-              catchError(() => {
-                resolve.next([]);
-                resolve.complete();
+              catchError((err) => {
+                resolve.error(err);
                 return of([] as GeoResult[]);
               }),
             ),

@@ -1,12 +1,13 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  inject,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-  ChangeDetectionStrategy,
+  computed,
+  inject,
   signal,
 } from "@angular/core";
 import { ColumnMapping } from "../../column-mapping";
@@ -94,6 +95,20 @@ export class EditImportColumnMappingComponent implements OnChanges {
 
   /** whether the currently mapped datatype has been mapped to other columns also */
   hasMultiMapping = signal(false);
+
+  /** show ⚠️ when this is a location column, row count is large, and lookup is not skipped */
+  showLookupWarning = computed(() => {
+    if (
+      this.currentlyMappedDatatype()?.importConfigComponent !==
+      "LocationImportConfig"
+    )
+      return false;
+    if (this.rawData.length <= 50) return false;
+    const additional = this.columnMapping.additional as {
+      skipAddressLookup?: boolean;
+    };
+    return additional?.skipAddressLookup !== true;
+  });
 
   hideOption = (option: FormFieldConfig) =>
     this.otherColumnMappings.some((c) => c.propertyName === option.id) &&
