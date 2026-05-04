@@ -32,8 +32,8 @@ export const environment = {
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
 
-  demo_mode: false,
-  session_type: SessionType.synced,
+  demo_mode: true,
+  session_type: SessionType.mock,
   email: undefined,
 
   /** Keycloak API for user management */
