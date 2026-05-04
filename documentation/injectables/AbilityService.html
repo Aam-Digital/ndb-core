@@ -306,7 +306,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:47</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:52</a></code>
 </div>
                         </td>
                     </tr>
@@ -316,6 +316,9 @@
                 <td class="col-md-4">
                         <div class="io-description"><p>Do an initial load of the entity to be available through the <code>entityUpdated</code> property
 (without watching for continuous updates).</p>
+<p>Returns <code>undefined</code> if the entity does not exist (HTTP 404).
+Other errors are propagated and should be handled by the subclass with
+a domain-specific error so that monitoring tools (e.g. Sentry) can group them properly.</p>
 </div>
 
                         <div class="io-description">
@@ -354,7 +357,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:28</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:27</a></code>
 </div>
                         </td>
                     </tr>
@@ -401,7 +404,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:34</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:33</a></code>
 </div>
                         </td>
                     </tr>
@@ -490,7 +493,7 @@ through the <code>entityUpdated</code> property</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:15</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -550,7 +553,17 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
   }
 
   async initializeRules() {
-    const initialPermissions &#x3D; await super.startLoading();
+    let initialPermissions: Config&lt;DatabaseRules&gt; | undefined;
+    try {
+      initialPermissions &#x3D; await super.startLoading();
+    } catch (err) {
+      const error &#x3D; new Error(&quot;Failed to load permission rules&quot;, {
+        cause: err,
+      });
+      error.name &#x3D; &quot;PermissionRulesLoadError&quot;;
+      Logging.error(error);
+    }
+
     if (initialPermissions) {
       await this.updateAbilityWithUserRules(initialPermissions.data);
     } else {

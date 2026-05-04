@@ -217,7 +217,7 @@ when you need to work with continuous updates of a specific entity from the data
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:14</a></div>
                             </td>
                         </tr>
 
@@ -308,7 +308,7 @@ when you need to work with continuous updates of a specific entity from the data
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:14</a></div>
                         </td>
                     </tr>
 
@@ -350,8 +350,8 @@ when you need to work with continuous updates of a specific entity from the data
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="47"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:47</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -360,6 +360,9 @@ when you need to work with continuous updates of a specific entity from the data
                 <td class="col-md-4">
                         <div class="io-description"><p>Do an initial load of the entity to be available through the <code>entityUpdated</code> property
 (without watching for continuous updates).</p>
+<p>Returns <code>undefined</code> if the entity does not exist (HTTP 404).
+Other errors are propagated and should be handled by the subclass with
+a domain-specific error so that monitoring tools (e.g. Sentry) can group them properly.</p>
 </div>
 
                         <div class="io-description">
@@ -392,8 +395,8 @@ when you need to work with continuous updates of a specific entity from the data
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="28"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:28</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -433,8 +436,8 @@ when you need to work with continuous updates of a specific entity from the data
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -464,7 +467,6 @@ through the <code>entityUpdated</code> property</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityMapperService } from &quot;./entity-mapper/entity-mapper.service&quot;;
-import { Logging } from &quot;../logging/logging.service&quot;;
 import { filter } from &quot;rxjs/operators&quot;;
 import { Entity, EntityConstructor } from &quot;./model/entity&quot;;
 import { HttpStatusCode } from &quot;@angular/common/http&quot;;
@@ -497,17 +499,23 @@ export abstract class LatestEntityLoader&lt;T extends Entity&gt; {
    * through the &#x60;entityUpdated&#x60; property
    */
   async startLoading() {
-    const initialValue &#x3D; await this.loadOnce();
+    // Set up the live-updates subscription first, so it is always active
+    // regardless of whether the initial load below succeeds or fails.
     this.entityMapper
       .receiveUpdates(this.entityCtor)
       .pipe(filter(({ entity }) &#x3D;&gt; entity.getId(true) &#x3D;&#x3D;&#x3D; this.entityID))
       .subscribe(({ entity }) &#x3D;&gt; this.entityUpdated.next(entity));
-    return initialValue;
+
+    return this.loadOnce();
   }
 
   /**
    * Do an initial load of the entity to be available through the &#x60;entityUpdated&#x60; property
    * (without watching for continuous updates).
+   *
+   * Returns &#x60;undefined&#x60; if the entity does not exist (HTTP 404).
+   * Other errors are propagated and should be handled by the subclass with
+   * a domain-specific error so that monitoring tools (e.g. Sentry) can group them properly.
    */
   async loadOnce(): Promise&lt;T | undefined&gt; {
     try {
@@ -518,13 +526,10 @@ export abstract class LatestEntityLoader&lt;T extends Entity&gt; {
       this.entityUpdated.next(entity);
       return entity;
     } catch (err) {
-      if (err?.status !&#x3D;&#x3D; HttpStatusCode.NotFound) {
-        Logging.error(
-          &#x60;Initial loading of record &quot;${this.entityCtor.ENTITY_TYPE}:${this.entityID}&quot; failed [Service based on LatestEntityLoader]&#x60;,
-          err,
-        );
+      if (err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.NotFound) {
+        return undefined;
       }
-      return undefined;
+      throw err;
     }
   }
 }

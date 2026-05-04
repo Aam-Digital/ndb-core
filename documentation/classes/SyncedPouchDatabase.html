@@ -537,7 +537,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="350" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:350</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="357" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:357</a></div>
                         </td>
                     </tr>
 
@@ -898,8 +898,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="327"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:327</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="334"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:334</a></div>
                         </td>
                     </tr>
 
@@ -1080,8 +1080,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="352"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:352</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="359"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:359</a></div>
                         </td>
                     </tr>
 
@@ -1126,7 +1126,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:250</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:257</a></code>
 </div>
                         </td>
                     </tr>
@@ -1219,7 +1219,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:262</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:269</a></code>
 </div>
                         </td>
                     </tr>
@@ -1300,8 +1300,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="312"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:312</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="319"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:319</a></div>
                         </td>
                     </tr>
 
@@ -2845,13 +2845,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
     // Track the last batch of synced doc IDs for diagnostics on write failures
     let lastSyncedDocIds: string[] &#x3D; [];
 
-    const syncHandler &#x3D; this.getPouchDB().sync(
-      this.remoteDatabase.getPouchDB(),
-      {
+    // Run PouchDB sync/replication outside Angular zone to:
+    //  - avoid wasted change-detection cycles for internal sync chatter
+    //  - prevent expected internal rejections (e.g. transient 404s for
+    //    not-yet-existing remote DBs) from being routed to Angular&#x27;s
+    //    ErrorHandler / Sentry. Outer .then/.catch below still handle them
+    //    explicitly and re-enter the zone for state updates.
+    const createSyncHandler &#x3D; () &#x3D;&gt;
+      this.getPouchDB().sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
-      },
-    );
+      });
+    const syncHandler &#x3D; this.ngZone
+      ? this.ngZone.runOutsideAngular(createSyncHandler)
+      : createSyncHandler();
 
     syncHandler.on(&quot;change&quot;, (info) &#x3D;&gt; {
       lastSyncedDocIds &#x3D;

@@ -277,8 +277,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="154"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:154</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="158"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:158</a></div>
                         </td>
                     </tr>
 
@@ -352,8 +352,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="49"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:49</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -397,7 +397,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:47</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:52</a></code>
 </div>
                         </td>
                     </tr>
@@ -407,6 +407,9 @@
                 <td class="col-md-4">
                         <div class="io-description"><p>Do an initial load of the entity to be available through the <code>entityUpdated</code> property
 (without watching for continuous updates).</p>
+<p>Returns <code>undefined</code> if the entity does not exist (HTTP 404).
+Other errors are propagated and should be handled by the subclass with
+a domain-specific error so that monitoring tools (e.g. Sentry) can group them properly.</p>
 </div>
 
                         <div class="io-description">
@@ -445,7 +448,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:28</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:27</a></code>
 </div>
                         </td>
                     </tr>
@@ -492,7 +495,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:34</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:33</a></code>
 </div>
                         </td>
                     </tr>
@@ -770,7 +773,7 @@ through the <code>entityUpdated</code> property</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:15</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -835,7 +838,11 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
 
     this.init();
 
-    super.startLoading();
+    super.startLoading().catch((err) &#x3D;&gt; {
+      const error &#x3D; new Error(&quot;Failed to load site settings&quot;, { cause: err });
+      error.name &#x3D; &quot;SiteSettingsLoadError&quot;;
+      Logging.error(error);
+    });
   }
 
   init() {

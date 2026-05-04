@@ -317,8 +317,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="136"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:136</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="138"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:138</a></div>
                         </td>
                     </tr>
 
@@ -394,8 +394,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="102"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:102</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -470,8 +470,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="103"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:103</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -539,8 +539,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="104"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:104</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -608,8 +608,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="122"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:122</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:124</a></div>
                         </td>
                     </tr>
 
@@ -693,8 +693,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="114"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:114</a></div>
                         </td>
                     </tr>
 
@@ -770,8 +770,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -900,8 +900,8 @@ that defines how the interface and data models should look.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="94"
-                                    class="link-to-prism">src/app/core/config/config.service.ts:94</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/app/core/config/config.service.ts:96</a></div>
                         </td>
                     </tr>
 
@@ -975,7 +975,7 @@ that defines how the interface and data models should look.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:34</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:33</a></code>
 </div>
                         </td>
                     </tr>
@@ -1062,7 +1062,7 @@ through the <code>entityUpdated</code> property</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:15</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -1158,7 +1158,9 @@ export class ConfigService extends LatestEntityLoader&lt;Config&gt; {
   }
 
   private abortWithError(message: string, cause?: unknown) {
-    Logging.error(message, cause);
+    const error &#x3D; new Error(message, { cause });
+    error.name &#x3D; &quot;ConfigLoadError&quot;;
+    Logging.error(error);
     alert(
       $localize&#x60;We couldn&#x27;t load the configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.&#x60;,
     );
