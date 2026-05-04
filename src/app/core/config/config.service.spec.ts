@@ -786,6 +786,57 @@ describe("ConfigService", () => {
     );
   });
 
+  it("should migrate ShortcutDashboard entity links to use /c/ prefix", async () => {
+    await testConfigMigration(
+      {
+        "view:child": {
+          component: "EntityList",
+          config: { entityType: "Child" },
+        },
+        "view:": {
+          component: "Dashboard",
+          config: {
+            widgets: [
+              {
+                component: "ShortcutDashboard",
+                config: {
+                  shortcuts: [
+                    { label: "Add Child", icon: "plus", link: "/child/new" },
+                    { label: "Record Attendance", link: "/attendance/add-day" },
+                    { label: "Already migrated", link: "/c/child" },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      {
+        "view:child": {
+          component: "EntityList",
+          config: { entityType: "Child" },
+        },
+        "view:": {
+          component: "Dashboard",
+          config: {
+            widgets: [
+              {
+                component: "ShortcutDashboard",
+                config: {
+                  shortcuts: [
+                    { label: "Add Child", icon: "plus", link: "/c/child/new" },
+                    { label: "Record Attendance", link: "/attendance/add-day" },
+                    { label: "Already migrated", link: "/c/child" },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+    );
+  });
+
   it("should migrate editComponent EditAttendance to EditLegacyAttendance", async () => {
     const oldConfig = {
       "entity:Note": {

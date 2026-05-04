@@ -90,7 +90,7 @@
                 {
                   "label": "Add Child",
                   "icon": "plus",
-                  "link": "/child/new"
+                  "link": "/c/child/new"
                 },
                 {
                   "label": "Public Registration Form",

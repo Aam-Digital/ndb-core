@@ -90,7 +90,7 @@
                 {
                   "label": "Kind hinzufügen",
                   "icon": "plus",
-                  "link": "/child/new"
+                  "link": "/c/child/new"
                 },
                 {
                   "label": "Öffentliches Anmelde-Formular",

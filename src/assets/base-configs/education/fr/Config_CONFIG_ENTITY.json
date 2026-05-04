@@ -90,7 +90,7 @@
                 {
                   "label": "Ajouter un enfant",
                   "icon": "plus",
-                  "link": "/child/new"
+                  "link": "/c/child/new"
                 },
                 {
                   "label": "Formulaire d'inscription publique",
