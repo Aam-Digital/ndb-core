@@ -222,6 +222,7 @@ import {
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
 import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
 import { MappingDialogData } from &quot;../../../core/import/import-column-mapping/mapping-dialog-data&quot;;
 import { HintBoxComponent } from &quot;#src/app/core/common-components/hint-box/hint-box.component&quot;;
@@ -244,6 +245,7 @@ export interface LocationImportConfig {
     MatCheckboxModule,
     ReactiveFormsModule,
     MatButtonModule,
+    MatTooltip,
     HintBoxComponent,
   ],
 })
@@ -252,11 +254,15 @@ export class LocationImportConfigComponent {
   private readonly dialog &#x3D; inject&lt;MatDialogRef&lt;any&gt;&gt;(MatDialogRef);
 
   skipAddressLookup &#x3D; new FormControl(false);
+  readonly rowCount &#x3D; this.data.values.length;
+  readonly LOOKUP_WARNING_THRESHOLD &#x3D; 50;
 
   constructor() {
     const additional &#x3D; this.data.col.additional as LocationImportConfig;
-    if (additional?.skipAddressLookup) {
+    if (additional?.skipAddressLookup !&#x3D;&#x3D; undefined) {
       this.skipAddressLookup.setValue(additional.skipAddressLookup);
+    } else if (this.rowCount &gt; this.LOOKUP_WARNING_THRESHOLD) {
+      this.skipAddressLookup.setValue(true);
     }
   }
 

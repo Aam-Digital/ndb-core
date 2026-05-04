@@ -192,7 +192,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/features/location/geo.service.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/location/geo.service.ts:51</a></div>
                             </td>
                         </tr>
 
@@ -225,15 +225,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:92</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Returns locations that match the search term</p>
+                        <div class="io-description"><p>Returns locations that match the search term.
+Results are cached and requests are throttled to ≤1/sec per Nominatim policy.</p>
 </div>
 
                             <div class="io-description">
@@ -299,8 +300,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="91"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:91</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:144</a></div>
                         </td>
                     </tr>
 
@@ -366,8 +367,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:109</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="162"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:162</a></div>
                         </td>
                     </tr>
 
@@ -427,14 +428,28 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
-import { Observable, of } from &quot;rxjs&quot;;
+import {
+  Observable,
+  ReplaySubject,
+  Subject,
+  concat,
+  defer,
+  of,
+  timer,
+} from &quot;rxjs&quot;;
 import { Coordinates } from &quot;./coordinates&quot;;
 import { HttpClient } from &quot;@angular/common/http&quot;;
 import { ConfigService } from &quot;../../core/config/config.service&quot;;
 import { AnalyticsService } from &quot;../../core/analytics/analytics.service&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { MAP_CONFIG_KEY, MapConfig } from &quot;./map-config&quot;;
-import { catchError, map } from &quot;rxjs/operators&quot;;
+import {
+  catchError,
+  concatMap,
+  ignoreElements,
+  map,
+  tap,
+} from &quot;rxjs/operators&quot;;
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -458,6 +473,12 @@ export class GeoService {
     email: environment.email,
   };
 
+  private readonly cache &#x3D; new Map&lt;string, GeoResult[]&gt;();
+  private readonly lookupQueue$ &#x3D; new Subject&lt;{
+    term: string;
+    resolve: ReplaySubject&lt;GeoResult[]&gt;;
+  }&gt;();
+
   constructor() {
     const configService &#x3D; inject(ConfigService);
 
@@ -467,13 +488,46 @@ export class GeoService {
         this.countrycodes &#x3D; config.countrycodes;
       }
     });
+
+    // Process lookups sequentially with a 1s cooldown after every attempt
+    // (Nominatim usage policy: max 1 request/sec regardless of success or failure)
+    this.lookupQueue$
+      .pipe(
+        concatMap(({ term, resolve }) &#x3D;&gt;
+          concat(
+            this.fetchLookup(term).pipe(
+              tap((results) &#x3D;&gt; {
+                this.cache.set(term, results);
+                resolve.next(results);
+                resolve.complete();
+              }),
+              catchError((err) &#x3D;&gt; {
+                resolve.error(err);
+                return of([] as GeoResult[]);
+              }),
+            ),
+            defer(() &#x3D;&gt; timer(1000).pipe(ignoreElements())),
+          ),
+        ),
+      )
+      .subscribe();
   }
 
   /**
-   * Returns locations that match the search term
+   * Returns locations that match the search term.
+   * Results are cached and requests are throttled to ≤1/sec per Nominatim policy.
    * @param searchTerm e.g. &#x60;Rollbergstraße Berlin&#x60;
    */
   lookup(searchTerm: string): Observable&lt;GeoResult[]&gt; {
+    if (this.cache.has(searchTerm)) {
+      return of(this.cache.get(searchTerm));
+    }
+    const resolve &#x3D; new ReplaySubject&lt;GeoResult[]&gt;(1);
+    this.lookupQueue$.next({ term: searchTerm, resolve });
+    return resolve.asObservable();
+  }
+
+  private fetchLookup(searchTerm: string): Observable&lt;GeoResult[]&gt; {
     this.analytics.eventTrack(&quot;lookup_executed&quot;, {
       category: &quot;Map&quot;,
       value: searchTerm.length,
