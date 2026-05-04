@@ -32,14 +32,23 @@ export class DisplayImgComponent implements OnChanges {
       changes.hasOwnProperty("property")
     ) {
       delete this.imgSrc;
-      if (this.entity[this.imgProperty]) {
-        this.fileService
-          .loadFile(this.entity, this.imgProperty)
-          .subscribe((res) => {
-            // doesn't work with safeUrl
-            this.imgSrc = Object.values(res)[0];
-          });
+      const value = this.entity[this.imgProperty];
+      if (value) {
+        if (this.isRemoteUrl(value)) {
+          this.imgSrc = value;
+        } else {
+          this.fileService
+            .loadFile(this.entity, this.imgProperty)
+            .subscribe((res) => {
+              // doesn't work with safeUrl
+              this.imgSrc = Object.values(res)[0];
+            });
+        }
       }
     }
+  }
+
+  private isRemoteUrl(value: string): boolean {
+    return value.startsWith("https://");
   }
 }
