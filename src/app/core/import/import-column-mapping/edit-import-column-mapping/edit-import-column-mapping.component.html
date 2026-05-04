@@ -23,6 +23,14 @@
     >
       Configure value mapping
     </button>
+    @if (showLookupWarning()) {
+      <fa-icon
+        icon="triangle-exclamation"
+        class="lookup-warning-icon"
+        matTooltip="Large import: address lookups may be slow or fail. Open 'Configure value mapping' to skip lookups."
+        i18n-matTooltip
+      ></fa-icon>
+    }
   }
 
   @if (hasMultiMapping()) {

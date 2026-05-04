@@ -22,6 +22,7 @@ describe("DiscreteImportConfigComponent", () => {
   beforeEach(async () => {
     data = {
       values,
+      totalRowCount: values.length,
       col: { column: "", propertyName: "category" },
       entityType: TestEntity,
     };
