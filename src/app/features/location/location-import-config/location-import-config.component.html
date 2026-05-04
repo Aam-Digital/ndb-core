@@ -1,7 +1,7 @@
 <mat-dialog-content>
   @if (rowCount > LOOKUP_WARNING_THRESHOLD) {
     <app-hint-box type="warning" i18n>
-      Warning: This import has {{ rowCount }} rows with address lookups. At 1
+      Warning: This import has {{ rowCount }} unique addresses to look up. At 1
       request/second (API rate limit), this will take ~{{ rowCount }} seconds
       and large imports may fail to look up addresses. "Skip address lookup" is
       recommended.

@@ -8,6 +8,11 @@ import {
 import { MappingDialogData } from "../../../core/import/import-column-mapping/mapping-dialog-data";
 import { ColumnMapping } from "../../../core/import/column-mapping";
 
+const OVER_THRESHOLD_VALUES = Array.from(
+  { length: 51 },
+  (_, i) => `Address ${i + 1}`,
+);
+
 describe("LocationImportConfigComponent", () => {
   let component: LocationImportConfigComponent;
   let fixture: ComponentFixture<LocationImportConfigComponent>;
@@ -68,8 +73,8 @@ describe("LocationImportConfigComponent", () => {
     expect(mockDialogRef.close).toHaveBeenCalled();
   });
 
-  it("should auto-default skipAddressLookup to true when row count exceeds threshold and no prior config", async () => {
-    mockDialogData.totalRowCount = 51;
+  it("should auto-default skipAddressLookup to true when unique address count exceeds threshold and no prior config", async () => {
+    mockDialogData.values = OVER_THRESHOLD_VALUES;
 
     fixture = TestBed.createComponent(LocationImportConfigComponent);
     component = fixture.componentInstance;
@@ -78,8 +83,8 @@ describe("LocationImportConfigComponent", () => {
     expect(component.skipAddressLookup.value).toBe(true);
   });
 
-  it("should respect existing skipAddressLookup=false config even when row count exceeds threshold", async () => {
-    mockDialogData.totalRowCount = 51;
+  it("should respect existing skipAddressLookup=false config even when unique address count exceeds threshold", async () => {
+    mockDialogData.values = OVER_THRESHOLD_VALUES;
     mockDialogData.col.additional = {
       skipAddressLookup: false,
     } as LocationImportConfig;
@@ -91,8 +96,8 @@ describe("LocationImportConfigComponent", () => {
     expect(component.skipAddressLookup.value).toBe(false);
   });
 
-  it("should show warning hint when row count exceeds threshold", async () => {
-    mockDialogData.totalRowCount = 51;
+  it("should show warning hint when unique address count exceeds threshold", async () => {
+    mockDialogData.values = OVER_THRESHOLD_VALUES;
 
     fixture = TestBed.createComponent(LocationImportConfigComponent);
     component = fixture.componentInstance;

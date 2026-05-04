@@ -103,7 +103,10 @@ export class EditImportColumnMappingComponent implements OnChanges {
       "LocationImportConfig"
     )
       return false;
-    if (this.rawData.length <= 50) return false;
+    const uniqueAddressCount = new Set(
+      this.rawData.map((row) => row[this.columnMapping.column]),
+    ).size;
+    if (uniqueAddressCount <= 50) return false;
     const additional = this.columnMapping.additional as {
       skipAddressLookup?: boolean;
     };

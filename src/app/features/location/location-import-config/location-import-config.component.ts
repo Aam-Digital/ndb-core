@@ -39,7 +39,7 @@ export class LocationImportConfigComponent {
   private readonly dialog = inject<MatDialogRef<any>>(MatDialogRef);
 
   skipAddressLookup = new FormControl(false);
-  readonly rowCount = this.data.totalRowCount;
+  readonly rowCount = this.data.values.length;
   readonly LOOKUP_WARNING_THRESHOLD = 50;
 
   constructor() {
