@@ -1,6 +1,5 @@
 import { Injectable, inject } from "@angular/core";
 import {
-  EMPTY,
   Observable,
   ReplaySubject,
   Subject,
@@ -61,30 +60,26 @@ export class GeoService {
       }
     });
 
-    // Process lookups sequentially; only apply 1s gap after successful requests
-    // (failed requests skip the delay so errors don't block the queue for 1s each)
+    // Process lookups sequentially with a 1s cooldown after every attempt
+    // (Nominatim usage policy: max 1 request/sec regardless of success or failure)
     this.lookupQueue$
       .pipe(
-        concatMap(({ term, resolve }) => {
-          let succeeded = false;
-          return concat(
+        concatMap(({ term, resolve }) =>
+          concat(
             this.fetchLookup(term).pipe(
               tap((results) => {
                 this.cache.set(term, results);
                 resolve.next(results);
                 resolve.complete();
-                succeeded = true;
               }),
               catchError((err) => {
                 resolve.error(err);
                 return of([] as GeoResult[]);
               }),
             ),
-            defer(() =>
-              succeeded ? timer(1000).pipe(ignoreElements()) : EMPTY,
-            ),
-          );
-        }),
+            defer(() => timer(1000).pipe(ignoreElements())),
+          ),
+        ),
       )
       .subscribe();
   }
