@@ -25,6 +25,7 @@ describe("EntityImportConfigComponent", () => {
   beforeEach(() => {
     data = {
       values: [],
+      totalRowCount: 0,
       col: { column: "", propertyName: "ref" },
       entityType: TestEntity,
     };
