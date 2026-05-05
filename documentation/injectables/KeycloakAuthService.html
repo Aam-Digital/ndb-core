@@ -160,6 +160,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Optional</span>
                                 <a href="#accessToken" >accessToken</a>
                             </li>
                             <li>
@@ -202,6 +203,9 @@
                             <li>
                                 <a href="#logSuccessfulAuth" >logSuccessfulAuth</a>
                             </li>
+                            <li>
+                                <a href="#resetKeycloakInit" >resetKeycloakInit</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -240,8 +244,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="231"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:231</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="306"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:306</a></div>
                         </td>
                     </tr>
 
@@ -309,8 +313,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="254"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:254</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="342"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:342</a></div>
                         </td>
                     </tr>
 
@@ -351,8 +355,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="261"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:261</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="349"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:349</a></div>
                         </td>
                     </tr>
 
@@ -390,8 +394,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="246"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:246</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="332"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:332</a></div>
                         </td>
                     </tr>
 
@@ -429,8 +433,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="269"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:269</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="357"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:357</a></div>
                         </td>
                     </tr>
 
@@ -438,6 +442,47 @@ Only works with internet connection.</p>
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Log timestamp of last successful authentication</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resetKeycloakInit"></a>
+                    <span class="name">
+                        <span ><b>resetKeycloakInit</b></span>
+                        <a href="#resetKeycloakInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>resetKeycloakInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="323"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:323</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Clear the memoised Keycloak init so the next call re-runs initKeycloak.
+Required after logout (Keycloak SPA state is otherwise stuck on the
+previous session) and during recovery from a stuck init.</p>
 </div>
 
                         <div class="io-description">
@@ -460,6 +505,7 @@ Only works with internet connection.</p>
                 <td class="col-md-4">
                     <a name="accessToken"></a>
                     <span class="name">
+                            <span class="modifier">Optional</span>
                         <span ><b>accessToken</b></span>
                         <a href="#accessToken"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -473,7 +519,7 @@ Only works with internet connection.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -526,7 +572,7 @@ Only works with internet connection.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -570,7 +616,7 @@ user clicks &quot;Log in&quot;.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -626,7 +672,7 @@ user clicks &quot;Log in&quot;.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:100</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:124</a></div>
                         </td>
                     </tr>
 
@@ -660,7 +706,14 @@ import { KeycloakUserDto } from &quot;../../../user/user-admin-service/keycloak-
 import { ActivatedRoute } from &quot;@angular/router&quot;;
 import { ThirdPartyAuthenticationService } from &quot;../../../../features/third-party-authentication/third-party-authentication.service&quot;;
 import { reuseFirstAsync } from &quot;#src/app/utils/reuse-first-async&quot;;
-import { defer, firstValueFrom, throwError, timer, TimeoutError } from &quot;rxjs&quot;;
+import {
+  defer,
+  firstValueFrom,
+  Subscription,
+  throwError,
+  timer,
+  TimeoutError,
+} from &quot;rxjs&quot;;
 import { retry, timeout } from &quot;rxjs/operators&quot;;
 
 /**
@@ -672,6 +725,21 @@ const KEYCLOAK_OPERATION_TIMEOUT_MS &#x3D; 15_000;
 
 /** Backoff schedule for explicit user-initiated login retries. */
 const LOGIN_RETRY_DELAYS_MS &#x3D; [1_000, 3_000];
+
+/**
+ * Backoff schedule for *background* token refreshes (OnTokenExpired).
+ * Kept short — if the background refresh keeps failing, the next API
+ * call&#x27;s 401 will trigger an explicit login, so there is no point
+ * retrying for many seconds and stalling the user&#x27;s request.
+ */
+const TOKEN_REFRESH_RETRY_DELAYS_MS &#x3D; [2_000, 5_000];
+
+/**
+ * Minimum remaining lifetime (in seconds) requested when refreshing the
+ * token in the background. Matches keycloak-js&#x27;s &#x60;updateToken(minValidity)&#x60;
+ * argument.
+ */
+const TOKEN_MIN_VALIDITY_SECONDS &#x3D; 30;
 
 /**
  * Browser/keycloak-js error messages that indicate a transient network
@@ -702,11 +770,13 @@ function isRetryableNetworkError(err: any): boolean {
 @Injectable()
 export class KeycloakAuthService {
   static readonly LAST_AUTH_KEY &#x3D; &quot;LAST_REMOTE_LOGIN&quot;;
-  accessToken: string;
+  accessToken?: string;
 
   private keycloak &#x3D; inject(KeycloakService);
   private activatedRoute &#x3D; inject(ActivatedRoute);
   private thirdPartyAuthService &#x3D; inject(ThirdPartyAuthenticationService);
+
+  private keycloakEventsSub?: Subscription;
 
   /**
    * Check for an existing SSO session without redirecting to Keycloak.
@@ -818,15 +888,66 @@ export class KeycloakAuthService {
       throw err;
     }
 
-    // auto-refresh expiring tokens, as suggested by https://github.com/mauriciovigolo/keycloak-angular?tab&#x3D;readme-ov-file#keycloak-js-events
-    this.keycloak.keycloakEvents$.subscribe((event) &#x3D;&gt; {
-      if (event.type &#x3D;&#x3D; KeycloakEventTypeLegacy.OnTokenExpired) {
-        this.login().catch((err) &#x3D;&gt;
-          Logging.debug(&quot;automatic token refresh failed&quot;, err),
-        );
-      }
-    });
+    // Silently refresh expiring tokens in the background. We deliberately
+    // do NOT fall back to a full keycloak.login() redirect here: that would
+    // yank the user out of whatever they were doing the moment a transient
+    // 504 from the proxy disrupted a refresh. If the silent refresh keeps
+    // failing, the next authenticated request will hit a 401 and the
+    // existing 401-retry path will then explicitly call login().
+    this.keycloakEventsSub?.unsubscribe();
+    this.keycloakEventsSub &#x3D; this.keycloak.keycloakEvents$.subscribe(
+      (event) &#x3D;&gt; {
+        if (event.type &#x3D;&#x3D; KeycloakEventTypeLegacy.OnTokenExpired) {
+          this.refreshKeycloakToken()
+            .then(() &#x3D;&gt; this.cacheCurrentToken())
+            .catch((err) &#x3D;&gt;
+              Logging.debug(
+                &quot;automatic token refresh failed; will re-auth on next 401&quot;,
+                err,
+              ),
+            );
+        }
+      },
+    );
   });
+
+  /**
+   * Silently refresh the Keycloak access token if it expires within
+   * {@link TOKEN_MIN_VALIDITY_SECONDS}. Bounded by the same per-operation
+   * timeout as init/login and retried on transient network errors so a
+   * single 504 from the proxy doesn&#x27;t disrupt an active session.
+   */
+  private refreshKeycloakToken(): Promise&lt;boolean&gt; {
+    return firstValueFrom(
+      defer(() &#x3D;&gt; this.keycloak.updateToken(TOKEN_MIN_VALIDITY_SECONDS)).pipe(
+        timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+        retry({
+          count: TOKEN_REFRESH_RETRY_DELAYS_MS.length,
+          delay: (err, retryCount) &#x3D;&gt; {
+            if (!isRetryableNetworkError(err)) return throwError(() &#x3D;&gt; err);
+            const delayMs &#x3D;
+              TOKEN_REFRESH_RETRY_DELAYS_MS[retryCount - 1] ??
+              TOKEN_REFRESH_RETRY_DELAYS_MS[
+                TOKEN_REFRESH_RETRY_DELAYS_MS.length - 1
+              ];
+            Logging.debug(
+              &#x60;Token refresh attempt ${retryCount} failed; retrying in ${delayMs}ms&#x60;,
+              err,
+            );
+            return timer(delayMs);
+          },
+          resetOnSuccess: true,
+        }),
+      ),
+    );
+  }
+
+  private async cacheCurrentToken(): Promise&lt;void&gt; {
+    const token &#x3D; await this.keycloak.getToken();
+    if (token) {
+      this.accessToken &#x3D; token;
+    }
+  }
 
   private isOfflineOrUnavailableError(err: any): boolean {
     // All retryable network errors (5xx / timeout / abort / fetch failures)
@@ -891,9 +1012,22 @@ export class KeycloakAuthService {
   }
 
   /**
+   * Clear the memoised Keycloak init so the next call re-runs initKeycloak.
+   * Required after logout (Keycloak SPA state is otherwise stuck on the
+   * previous session) and during recovery from a stuck init.
+   */
+  resetKeycloakInit(): void {
+    this.initKeycloak.cache.clear();
+    this.keycloakEventsSub?.unsubscribe();
+    this.keycloakEventsSub &#x3D; undefined;
+  }
+
+  /**
    * Forward to the keycloak logout endpoint to clear the session.
    */
   async logout() {
+    this.resetKeycloakInit();
+    this.accessToken &#x3D; undefined;
     return await this.keycloak.logout(location.href);
   }
 

@@ -559,6 +559,12 @@
                             <a href="#todoDueStatusFilter" title="src/app/features/todos/add-default-todo-views.ts" ><b>todoDueStatusFilter</b>&nbsp;&nbsp;&nbsp;(src/.../add-default-todo-views.ts)</a>
                         </li>
                         <li>
+                            <a href="#TOKEN_MIN_VALIDITY_SECONDS" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" ><b>TOKEN_MIN_VALIDITY_SECONDS</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#TOKEN_REFRESH_RETRY_DELAYS_MS" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" ><b>TOKEN_REFRESH_RETRY_DELAYS_MS</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#UNIQUE_PROPERTY_ERROR_KEY" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" ><b>UNIQUE_PROPERTY_ERROR_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</a>
                         </li>
                         <li>
@@ -4584,6 +4590,75 @@ that a hung proxy/upstream surfaces a clear failure to the user.</p>
 failure rather than a real authentication problem. Matched against both
 <code>err.message</code> and <code>err.toString()</code> since some thrown values (e.g. plain
 strings from keycloak-js) only expose the text via <code>toString()</code>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TOKEN_MIN_VALIDITY_SECONDS"></a>
+                    <span class="name">
+                        <span ><b>TOKEN_MIN_VALIDITY_SECONDS</b></span>
+                        <a href="#TOKEN_MIN_VALIDITY_SECONDS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>30</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Minimum remaining lifetime (in seconds) requested when refreshing the
+token in the background. Matches keycloak-js&#39;s <code>updateToken(minValidity)</code>
+argument.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TOKEN_REFRESH_RETRY_DELAYS_MS"></a>
+                    <span class="name">
+                        <span ><b>TOKEN_REFRESH_RETRY_DELAYS_MS</b></span>
+                        <a href="#TOKEN_REFRESH_RETRY_DELAYS_MS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[2_000, 5_000]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Backoff schedule for <em>background</em> token refreshes (OnTokenExpired).
+Kept short — if the background refresh keeps failing, the next API
+call&#39;s 401 will trigger an explicit login, so there is no point
+retrying for many seconds and stalling the user&#39;s request.</p>
 </div>
                 </td>
             </tr>
