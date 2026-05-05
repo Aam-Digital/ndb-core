@@ -26,9 +26,8 @@ const LOGIN_RETRY_DELAYS_MS = [1_000, 3_000];
 function isRetryableNetworkError(err: any): boolean {
   if (!err) return false;
   if (err instanceof TimeoutError) return true;
-  if (err?.name === "AbortError" || err?.name === "TimeoutError") return true;
-  const status = err?.status;
-  if (status === 502 || status === 503 || status === 504) return true;
+  if (["AbortError", "TimeoutError"].includes(err?.name)) return true;
+  if ([502, 503, 504].includes(err?.status)) return true;
   return false;
 }
 
@@ -165,16 +164,10 @@ export class KeycloakAuthService {
   ];
 
   private isOfflineOrUnavailableError(err: any): boolean {
-    if (err instanceof TimeoutError) {
-      return true;
-    }
-    if (err?.name === "AbortError" || err?.name === "TimeoutError") {
-      return true;
-    }
-    // Recognise transient gateway/upstream errors as "unavailable" so they
-    // surface as RemoteLoginNotAvailableError rather than spamming Sentry.
-    const status = err?.status;
-    if (status === 502 || status === 503 || status === 504) {
+    // All retryable network errors (5xx / timeout / abort) also count as
+    // "unavailable" so they map to RemoteLoginNotAvailableError instead of
+    // spamming Sentry.
+    if (isRetryableNetworkError(err)) {
       return true;
     }
     const message = err?.message ?? "";
