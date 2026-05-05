@@ -210,8 +210,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="82"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:82</a></div>
                         </td>
                     </tr>
 
@@ -291,8 +291,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="22"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:22</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:24</a></div>
                         </td>
                     </tr>
 
@@ -330,8 +330,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="44"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:44</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="49"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:49</a></div>
                         </td>
                     </tr>
 
@@ -362,6 +362,8 @@ import {
 import { LOCATION_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
 import { BackupService } from &quot;../../admin/backup/backup.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { environment } from &quot;../../../../environments/environment&quot;;
+import { SessionType } from &quot;../../session/session-type&quot;;
 
 /**
  * Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
@@ -375,6 +377,9 @@ export class PouchdbCorruptionRecoveryService {
   private resetDialogOpen &#x3D; false;
 
   async promptMultiTabWarningDialog(): Promise&lt;void&gt; {
+    if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
+      return;
+    }
     if (this.warningDialogOpen) {
       return;
     }
