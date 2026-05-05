@@ -24,6 +24,7 @@ import {
 } from "#src/app/core/config/dynamic-routing/view-config.interface";
 import { ConfigService } from "#src/app/core/config/config.service";
 import { isManualItemWithoutLink } from "../menu-item-for-admin-ui";
+import { getRuntimePathFromViewConfig } from "#src/app/core/config/dynamic-routing/route-paths";
 
 /**
  * Dialog component to edit a single menu item's details.
@@ -86,9 +87,11 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     ); // skip details views (with "/:id" placeholder)
 
     return availableViews.map((view) => {
-      const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
-      const label = view.config?.entityType?.trim() || view.component || id;
-      return { value: id, label };
+      const runtimePath = getRuntimePathFromViewConfig(view);
+      const link = runtimePath ? `/${runtimePath}` : "/";
+      const label =
+        view.config?.entityType?.trim() || view.component || runtimePath;
+      return { value: link, label };
     });
   }
 

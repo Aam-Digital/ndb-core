@@ -19,6 +19,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { getEntityRuntimeRoute } from "../../../../core/entity/entity-config.service";
 import { EntityFieldLabelComponent } from "../../../../core/entity/entity-field-label/entity-field-label.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
@@ -309,7 +310,7 @@ export class EntityCountDashboardComponent {
     const params = {};
     params[field] = filterId;
 
-    this.router.navigate([this.entityDefinition().route], {
+    this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
       queryParams: params,
     });
   }
