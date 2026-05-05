@@ -9,6 +9,7 @@ import { AuthGuard } from "../../session/auth.guard";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
+import { getRuntimePathFromViewConfig } from "./route-paths";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -51,16 +52,17 @@ export class RouterService {
 
     for (const view of viewConfigs) {
       try {
-        const newRoute = this.createRoute(view, additionalRoutes);
+        const runtimePath = getRuntimePathFromViewConfig(view);
+        const newRoute = this.createRoute(view, runtimePath, additionalRoutes);
         routes.push(newRoute);
       } catch (e) {
         Logging.warn(
-          `Failed to create route for view ${view._id}: ${e.message}`,
+          `Failed to create route for view ${view._id}: ${e instanceof Error ? e.message : e}`,
         );
       }
     }
 
-    // add routes from other sources (e.g. pre-existing  hard-coded routes)
+    // add routes from other sources (e.g. pre-existing hard-coded routes)
     const noDuplicates = additionalRoutes.filter(
       (r) => !routes.find((o) => o.path === r.path),
     );
@@ -76,12 +78,11 @@ export class RouterService {
     this.router.resetConfig(routes);
   }
 
-  private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
-    const path = view._id
-      .substring(PREFIX_VIEW_CONFIG.length)
-      // remove leading slash if present
-      .replace(/^\//, "");
-
+  private createRoute(
+    view: ViewConfig,
+    path: string,
+    additionalRoutes: Route[],
+  ) {
     const existingRoute = additionalRoutes.find((r) => r.path === path);
 
     if (existingRoute) {

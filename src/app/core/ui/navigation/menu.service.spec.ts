@@ -4,16 +4,13 @@ import { ConfigService } from "app/core/config/config.service";
 import { Config } from "@playwright/test";
 import { BehaviorSubject } from "rxjs";
 import { EntityMenuItem, NavigationMenuConfig } from "./menu-item";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "app/core/entity/database-entity.decorator";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interface";
-
 describe("MenuService", () => {
   let service: MenuService;
 
   let mockConfigService: any;
+  let mockEntityRegistry: any;
   let mockConfigUpdated: BehaviorSubject<Config>;
 
   beforeEach(() => {
@@ -23,11 +20,18 @@ describe("MenuService", () => {
       getAllConfigs: vi.fn(),
       configUpdates: mockConfigUpdated,
     };
+    mockEntityRegistry = {
+      get: vi.fn().mockImplementation((entityType: string) => ({
+        labelPlural: entityType === "TestEntity" ? "Test Entities" : entityType,
+        icon: "child",
+        route: "/test-entity",
+      })),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: mockEntityRegistry },
       ],
     });
     service = TestBed.inject(MenuService);
@@ -59,9 +63,9 @@ describe("MenuService", () => {
         {
           label: "Test Entities",
           icon: "child",
-          link: "/test-entity",
+          link: "/c/test-entity",
           subMenu: [
-            { label: "submenu label", icon: "child", link: "/test-entity" },
+            { label: "submenu label", icon: "child", link: "/c/test-entity" },
           ],
         },
       ]);
@@ -102,8 +106,8 @@ describe("MenuService", () => {
     const routes = service.loadAvailableRoutes();
 
     expect(routes).toEqual([
-      { value: "/child", label: "Child" },
-      { value: "/school", label: "School" },
+      { value: "/c/child", label: "Child" },
+      { value: "/c/school", label: "School" },
       { value: "/", label: "Dashboard" },
     ]);
   });
