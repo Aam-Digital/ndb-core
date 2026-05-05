@@ -1,6 +1,7 @@
 <div
-  class="day-cell attendance-{{ attendance?.status?.shortName || 'U' }} "
+  class="day-cell"
   [class.has-remark]="attendance?.remarks"
+  [style.backgroundColor]="attendance?.status?.color"
   [matTooltipShowDelay]="200"
   [matTooltip]="tooltip"
   matTooltipPosition="above"
