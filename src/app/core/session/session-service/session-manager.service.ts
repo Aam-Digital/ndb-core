@@ -52,6 +52,16 @@ export class SessionManagerService {
   private databaseResolver = inject(DatabaseResolverService);
 
   readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
+  /**
+   * sessionStorage key that, when present, makes the next call to
+   * {@link checkRemoteSession} skip the silent SSO check.
+   *
+   * Set right before a logout so that, after Keycloak redirects back to
+   * /login, we do not run another (now guaranteed to fail) silent check
+   * that would block the UI behind a spinner for several seconds.
+   * Consumed (removed) on the next checkRemoteSession call.
+   */
+  static readonly SKIP_NEXT_SSO_CHECK_KEY = "SKIP_NEXT_SSO_CHECK";
   private remoteLoggedIn = false;
   private updateSubscription: Subscription;
 
@@ -61,6 +71,17 @@ export class SessionManagerService {
    */
   async checkRemoteSession() {
     this.loginStateSubject.next(LoginState.IN_PROGRESS);
+
+    // Skip the silent SSO check on the page load right after a logout.
+    // We already know the remote session is gone; running another silent
+    // check would only add several seconds of spinner before the user can
+    // click "Log in" again.
+    if (sessionStorage.getItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY)) {
+      sessionStorage.removeItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY);
+      this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+      return;
+    }
+
     if (this.remoteLoginAvailable()) {
       return this.remoteAuthService
         .checkSession()
@@ -153,6 +174,14 @@ export class SessionManagerService {
    */
   async logout() {
     if (this.remoteLoggedIn) {
+      // Tell the next page load (after the Keycloak logout redirect round-trip)
+      // not to run another silent SSO check — it would only delay the login
+      // form by several seconds before failing as expected.
+      sessionStorage.setItem(
+        SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY,
+        "1",
+      );
+
       if (this.navigator.onLine) {
         // This will forward to the keycloak logout page
         await this.remoteAuthService.logout();
@@ -175,6 +204,13 @@ export class SessionManagerService {
   clearRemoteSessionIfNecessary() {
     if (localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
       localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
+      // The remote logout below redirects through Keycloak and back to /login.
+      // Skip the silent SSO check on that next page load to avoid a needless
+      // multi-second spinner.
+      sessionStorage.setItem(
+        SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY,
+        "1",
+      );
       return this.remoteAuthService.logout();
     }
   }
