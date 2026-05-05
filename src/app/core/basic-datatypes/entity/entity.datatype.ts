@@ -23,8 +23,9 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { Logging } from "app/core/logging/logging.service";
 import { ImportProcessingContext } from "../../import/import-processing-context";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ExportColumnMapping } from "../../entity/default-datatype/default.datatype";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -39,6 +40,7 @@ export class EntityDatatype extends StringDatatype {
   private entityMapper = inject(EntityMapperService);
   private removeService = inject(EntityActionsService);
   private schemaService = inject(EntitySchemaService);
+  private entityRegistry = inject(EntityRegistry);
 
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;
@@ -75,17 +77,19 @@ export class EntityDatatype extends StringDatatype {
    *
    * @param val The value from an import that should be mapped to an entity reference.
    * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
-   * @param additional The field of the referenced entity that should be compared with the val. (e.g. if we run importMapFunction for a field that is an entity-reference to a "School" entity, this could be "name" if the "School" entity has a "name" property and the import should use that name to match the correct school)
+   * @param additional The field of the referenced entity that should be compared with the val.
+   *   Can be a plain string (legacy) or an object `{ refField: string, valueMapping?: any }`.
    * @param importProcessingContext context to share information across calls for multiple columns and rows.
    * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
    */
   override async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
-    additional: string,
+    additional: string | EntityAdditional,
     importProcessingContext: ImportProcessingContext,
   ): Promise<string | undefined> {
-    if (!additional || val == null) {
+    const normalized = normalizeEntityAdditional(additional);
+    if (!normalized?.refField || val == null) {
       return undefined;
     }
 
@@ -101,12 +105,37 @@ export class EntityDatatype extends StringDatatype {
     for (const colMapping of importProcessingContext.importSettings.columnMapping.filter(
       (m) => m.propertyName === schemaField.id,
     )) {
+      const colAdditional = normalizeEntityAdditional(colMapping.additional);
+      const colRefField = colAdditional?.refField;
+      const colValueMapping = colAdditional?.valueMapping;
       const colValue = importProcessingContext.row[colMapping.column];
 
+      let normalizedColValue: string;
+      if (colValueMapping !== undefined) {
+        const refFieldSchema = context.refEntityCtor?.schema?.get(colRefField);
+        const refDatatype = refFieldSchema
+          ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
+          : null;
+        if (refDatatype) {
+          const mapped = await refDatatype.importMapFunction(
+            colValue,
+            refFieldSchema,
+            colValueMapping,
+          );
+          const inDbFormat = refDatatype.transformToDatabaseFormat(
+            mapped,
+            refFieldSchema,
+          );
+          normalizedColValue = normalizeValue(inDbFormat);
+        } else {
+          normalizedColValue = normalizeValue(colValue);
+        }
+      } else {
+        normalizedColValue = normalizeValue(colValue);
+      }
+
       context.filteredEntities = context.filteredEntities.filter(
-        (entity) =>
-          normalizeValue(entity[colMapping.additional]) ===
-          normalizeValue(colValue),
+        (entity) => normalizeValue(entity[colRefField]) === normalizedColValue,
       );
     }
 
@@ -139,6 +168,7 @@ export class EntityDatatype extends StringDatatype {
       context.entities = (await this.entityMapper.loadType(entityType)).map(
         (e) => this.schemaService.transformEntityToDatabaseFormat(e),
       );
+      context.refEntityCtor = this.entityRegistry.get(entityType);
     } catch (error) {
       Logging.error("Error in EntityDatatype importMapFunction:", error);
       return undefined;
@@ -194,6 +224,33 @@ export class EntityDatatype extends StringDatatype {
 }
 
 /**
+ * Structure for the `additional` field of an entity reference ColumnMapping.
+ * Can be a plain string (legacy) or an object with optional valueMapping config.
+ */
+export interface EntityAdditional {
+  /** The property of the referenced entity to match against the import value. */
+  refField: string;
+  /** Optional: additional config for transforming the import value (passed to the sub-field's importMapFunction). */
+  valueMapping?: any;
+}
+
+/**
+ * Normalizes the `additional` config of an entity reference column mapping.
+ * Accepts legacy string format or new object format.
+ */
+export function normalizeEntityAdditional(
+  additional: string | EntityAdditional | any,
+): EntityAdditional | undefined {
+  if (!additional) {
+    return undefined;
+  }
+  if (typeof additional === "string") {
+    return { refField: additional };
+  }
+  return additional as EntityAdditional;
+}
+
+/**
  * Normalizes a value for comparison, converting it to a standardized string format.
  * Ensures both numbers and strings are treated consistently.
  *
@@ -233,6 +290,17 @@ class EntityFieldImportContext {
 
   set entities(value: any[]) {
     this.globalContext[`entities_${this.schemaField.additional}`] = value;
+  }
+
+  /**
+   * Constructor of the referenced entity type (to access schema for value mapping)
+   */
+  get refEntityCtor(): EntityConstructor | undefined {
+    return this.globalContext[`ctor_${this.schemaField.additional}`];
+  }
+
+  set refEntityCtor(value: EntityConstructor) {
+    this.globalContext[`ctor_${this.schemaField.additional}`] = value;
   }
 
   /**

@@ -32,11 +32,11 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
  * Lets users select which property of the referenced entity to match against import values,
  * and optionally configure a value transformation for that property.
  */
-@DynamicComponent("EntityImportConfig")
+@DynamicComponent("EntityImportInline")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-entity-import-config",
-  templateUrl: "./entity-import-config.component.html",
+  selector: "app-entity-import-inline",
+  templateUrl: "./entity-import-inline.component.html",
   imports: [
     MatSelectModule,
     MatFormFieldModule,
@@ -47,7 +47,7 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
     DynamicComponentDirective,
   ],
 })
-export class EntityImportConfigComponent implements OnChanges {
+export class EntityImportInlineComponent implements OnChanges {
   private entityRegistry = inject(EntityRegistry);
   private schemaService = inject(EntitySchemaService);
 
@@ -85,7 +85,7 @@ export class EntityImportConfigComponent implements OnChanges {
     const refDatatype = this.schemaService.getDatatypeOrDefault(
       refFieldSchema.dataType,
     );
-    if (!refDatatype?.importConfigComponent) return null;
+    if (!refDatatype?.importInlineComponent) return null;
 
     const additional = this.col?.additional as EntityAdditional;
     // Synthetic column mapping for the sub-field's inline component
@@ -96,7 +96,7 @@ export class EntityImportConfigComponent implements OnChanges {
     };
 
     return {
-      component: refDatatype.importConfigComponent,
+      component: refDatatype.importInlineComponent,
       config: {
         col: syntheticCol,
         rawData: this.rawData,
@@ -144,7 +144,13 @@ export class EntityImportConfigComponent implements OnChanges {
           ([prop, schema]) =>
             (!!schema.label && !schema.isInternalField) || prop === "_id",
         )
-        .map(([prop, schema]) => ({ label: schema.label ?? prop, property: prop }));
+        .map(([prop, schema]) => ({
+         
+         ,
+       
+          label: schema.label ?? prop,
+          property: prop,
+        }));
       this.availableProperties.set(props);
     }
 

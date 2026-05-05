@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  computed,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    Input,
+    OnChanges,
+    SimpleChanges,
+    computed,
+    signal,
 } from "@angular/core";
 import { ColumnMapping } from "../../../core/import/column-mapping";
 import { EntityConstructor } from "../../../core/entity/model/entity";
@@ -26,14 +26,30 @@ const LOOKUP_WARNING_THRESHOLD = 50;
  * Inline import configuration component for location fields,
  * shown inside the column mapping UI to let users skip address lookup.
  */
-@DynamicComponent("LocationImportConfig")
+@DynamicComponent("LocationImportInline")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-location-import-config",
-  templateUrl: "./location-import-config.component.html",
+  selector: "app-location-import-inline",
+  template: `
+    @if (showLookupWarning()) {
+      <fa-icon
+        icon="triangle-exclamation"
+        class="lookup-warning-icon"
+        matTooltip="Large import: address lookups may be slow or fail. Consider skipping lookups below."
+        i18n-matTooltip
+      ></fa-icon>
+    }
+    <mat-checkbox
+      [(ngModel)]="skipLookup"
+      (ngModelChange)="onToggle($event)"
+      i18n="import - location - skip address lookup checkbox"
+    >
+      Skip address lookup
+    </mat-checkbox>
+  `,
   imports: [MatCheckboxModule, FormsModule, FaIconComponent, MatTooltip],
 })
-export class LocationImportConfigComponent implements OnChanges {
+export class LocationImportInlineComponent implements OnChanges {
   @Input() col: ColumnMapping;
   @Input() rawData: any[] = [];
   @Input() entityType: EntityConstructor;

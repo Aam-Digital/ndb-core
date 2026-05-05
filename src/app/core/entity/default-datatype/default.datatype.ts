@@ -18,7 +18,6 @@
 import { $localize } from "@angular/localize/init"; // import needed to make this file work in e2e test fixtures also
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity, EntityConstructor } from "../model/entity";
-import { ColumnMapping } from "../../import/column-mapping";
 import { asArray } from "../../../utils/asArray";
 
 /**
@@ -195,20 +194,13 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
-   * A component to be display as a dialog to configure the transformation function
-   * (e.g. defining a format or mapping)
+   * A component to be rendered inline to configure the import transformation
+   * (e.g. defining a format or value mapping).
+   *
+   * The component receives inputs:
+   * `col`, `rawData`, `entityType`, `otherColumnMappings`, `additionalSettings`, `onColumnMappingChange`
    */
   importConfigComponent?: string;
-
-  /**
-   * Output a label indicating whether the given column mapping needs user configuration for the "additional" config
-   * or has a valid, complete "additional" config.
-   * returns "undefined" if no user action is required.
-   * @param col
-   */
-  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    return undefined;
-  }
 
   /**
    * Return the (potentially adjusted) schema field for this datatype.

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DateImportConfigComponent } from "./date-import-config.component";
+import { DateImportDialogComponent } from "./date-import-dialog.component";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -8,9 +8,9 @@ import moment from "moment";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-describe("DateImportConfigComponent", () => {
-  let component: DateImportConfigComponent;
-  let fixture: ComponentFixture<DateImportConfigComponent>;
+describe("DateImportDialogComponent", () => {
+  let component: DateImportDialogComponent;
+  let fixture: ComponentFixture<DateImportDialogComponent>;
   const values = ["01/02/2023", "14/04/2023", "5/4/2023"];
   let data: MappingDialogData;
 
@@ -23,7 +23,7 @@ describe("DateImportConfigComponent", () => {
     };
     await TestBed.configureTestingModule({
       imports: [
-        DateImportConfigComponent,
+        DateImportDialogComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
@@ -37,7 +37,7 @@ describe("DateImportConfigComponent", () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DateImportConfigComponent);
+    fixture = TestBed.createComponent(DateImportDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

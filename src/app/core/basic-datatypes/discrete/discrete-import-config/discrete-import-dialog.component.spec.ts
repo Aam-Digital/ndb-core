@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DiscreteImportConfigComponent } from "./discrete-import-config.component";
+import { DiscreteImportDialogComponent } from "./discrete-import-dialog.component";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
@@ -11,9 +11,9 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 
-describe("DiscreteImportConfigComponent", () => {
-  let component: DiscreteImportConfigComponent;
-  let fixture: ComponentFixture<DiscreteImportConfigComponent>;
+describe("DiscreteImportDialogComponent", () => {
+  let component: DiscreteImportDialogComponent;
+  let fixture: ComponentFixture<DiscreteImportDialogComponent>;
   const values = ["male", "female", "male", "other"];
   let data: MappingDialogData;
 
@@ -27,7 +27,7 @@ describe("DiscreteImportConfigComponent", () => {
       entityType: TestEntity,
     };
     await TestBed.configureTestingModule({
-      imports: [DiscreteImportConfigComponent, MockedTestingModule.withState()],
+      imports: [DiscreteImportDialogComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: () => undefined } },
@@ -42,7 +42,7 @@ describe("DiscreteImportConfigComponent", () => {
       TestBed.inject(DefaultDatatype) as unknown as DefaultDatatype[]
     ).find((x) => x instanceof ConfigurableEnumDatatype);
 
-    fixture = TestBed.createComponent(DiscreteImportConfigComponent);
+    fixture = TestBed.createComponent(DiscreteImportDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,218 +1,69 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  ChangeDetectionStrategy,
-} from "@angular/core";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  FormsModule,
-} from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
-import { splitArrayValue } from "app/core/import/import.service";
-import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
-import { KeyValuePipe } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
-import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
-import { DynamicEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component";
-import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
+import { ChangeDetectionStrategy, Component, Input, inject } from "@angular/core";
+import { ColumnMapping } from "../../../import/column-mapping";
+import { EntityConstructor } from "../../../entity/model/entity";
+import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
+import { MatDialog } from "@angular/material/dialog";
+import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
+import { DiscreteImportDialogComponent } from "./discrete-import-dialog.component";
 import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
+import { MatButtonModule } from "@angular/material/button";
+import { MatBadgeModule } from "@angular/material/badge";
+import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 /**
- * UI to configure import value mappings for discrete datatypes like boolean or enum.
+ * Inline import configuration component for discrete fields (enum, boolean, etc.),
+ * shown inside the column mapping UI to let users define value-to-value mappings.
  */
 @DynamicComponent("DiscreteImportConfig")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-discrete-import-config",
   templateUrl: "./discrete-import-config.component.html",
-  styleUrls: ["./discrete-import-config.component.scss"],
-  imports: [
-    MatDialogModule,
-    MatFormFieldModule,
-    KeyValuePipe,
-    MatButtonModule,
-    ReactiveFormsModule,
-    DynamicEditComponent,
-    HintBoxComponent,
-    MatCheckboxModule,
-    FormsModule,
-    HelpButtonComponent,
-  ],
+  imports: [MatButtonModule, MatBadgeModule],
 })
-export class DiscreteImportConfigComponent implements OnInit {
-  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
-  private fb = inject(FormBuilder);
-  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
-  private confirmation = inject(ConfirmationDialogService);
-  private schemaService = inject(EntitySchemaService);
-  private configurableEnumService = inject(ConfigurableEnumService);
+export class DiscreteImportConfigComponent {
+  private dialog = inject(MatDialog);
 
-  form: FormGroup;
-  component: string;
-  schema: EntitySchemaField;
-  enableSplitting: boolean;
-  separator: string;
+  @Input() col: ColumnMapping;
+  @Input() rawData: any[] = [];
+  @Input() entityType: EntityConstructor;
+  @Input() otherColumnMappings: ColumnMapping[] = [];
+  @Input() additionalSettings: ImportAdditionalSettings;
+  @Input() onColumnMappingChange: (col: ColumnMapping) => void;
 
-  ngOnInit() {
-    this.schema = this.data.entityType.schema.get(this.data.col.propertyName);
-    this.component = this.schemaService.getComponent(this.schema, "edit");
-    this.separator = this.data.additionalSettings?.multiValueSeparator ?? ",";
-
-    const discreteAdditional = this.data.col
-      .additional as DiscreteColumnMappingAdditional;
-
-    // For array fields: default to splitting (but can be disabled)
-    // For single-select: never split
-    if (this.schema?.isArray) {
-      this.enableSplitting = discreteAdditional?.enableSplitting ?? true;
-    } else {
-      this.enableSplitting = false;
+  badge(): string | undefined {
+    const additional = this.col?.additional as DiscreteColumnMappingAdditional;
+    const valueMappings = additional?.values;
+    if (!valueMappings) {
+      return "?";
     }
-
-    this.buildForm();
+    const unmappedCount = Object.values(valueMappings).filter(
+      (v) => v === undefined,
+    ).length;
+    return unmappedCount > 0 ? unmappedCount.toString() : undefined;
   }
 
-  /**
-   * Rebuild form when user toggles splitting option.
-   * Attempts to preserve existing mappings where possible.
-   */
-  onSplittingToggle() {
-    // Save current mappings before rebuilding
-    const currentMappings = this.getValuesInDatabaseFormat(
-      this.form.getRawValue(),
+  openConfig() {
+    const uniqueValues = new Set<any>(
+      this.rawData.map((row) => row[this.col.column]),
     );
 
-    this.buildForm();
-
-    // Try to restore mappings that still match
-    const newFormValue = {};
-    for (const key in this.form.controls) {
-      if (currentMappings[key] !== undefined) {
-        newFormValue[key] = this.schemaService.valueToEntityFormat(
-          currentMappings[key],
-          this.schema,
-        );
-      }
-    }
-    if (Object.keys(newFormValue).length > 0) {
-      this.form.patchValue(newFormValue);
-    }
-  }
-
-  /**
-   * Build the form with value mappings
-   */
-  private buildForm() {
-    const discreteAdditional = this.data.col
-      .additional as DiscreteColumnMappingAdditional;
-    const splitValues = this.splitAndFlattenValues(this.data.values);
-    this.form = this.fb.group(
-      this.getFormValues(discreteAdditional?.values, splitValues),
-    );
-  }
-
-  /**
-   * Split raw values using the configured separator and return unique individual values.
-   */
-  private splitAndFlattenValues(values: any[]): string[] {
-    const uniqueValues = new Set<string>();
-
-    for (const value of values) {
-      if (value == null || value === "") {
-        continue;
-      }
-
-      // Split values only if user enabled splitting for this column
-      const parts: string[] = this.enableSplitting
-        ? splitArrayValue(value, this.separator)
-        : [String(value)];
-      parts.forEach((part) => uniqueValues.add(part));
-    }
-
-    return [...uniqueValues];
-  }
-
-  private getFormValues(additional: any, values: string[]) {
-    additional = additional || {};
-
-    let enumOptions = [];
-    if (this.schema?.additional) {
-      const enumEntity = this.configurableEnumService.getEnum(
-        this.schema.additional,
-      );
-      enumOptions = enumEntity?.values ?? [];
-    }
-
-    const formObj = {};
-    for (const value of values) {
-      let initialValue: string;
-
-      if (value in additional) {
-        initialValue = additional[value];
-      } else {
-        const matchedEnumOption = enumOptions.find(
-          (opt) => opt.id === value || opt.label === value,
-        );
-        initialValue = matchedEnumOption?.id ?? value;
-      }
-      formObj[value] = new FormControl(
-        this.schemaService.valueToEntityFormat(initialValue, this.schema),
-      );
-    }
-
-    return formObj;
-  }
-
-  async save() {
-    const rawValues = this.getValuesInDatabaseFormat(this.form.getRawValue());
-    const allFilled = Object.values(rawValues).every((val) => !!val);
-    const confirmed =
-      allFilled ||
-      (await this.confirmation.getConfirmation(
-        $localize`Ignore values?`,
-        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
-      ));
-    if (confirmed) {
-      // Save value mappings and splitting setting in 'additional'
-      const discreteAdditional: DiscreteColumnMappingAdditional = {
-        values: rawValues,
-      };
-      if (this.schema?.isArray) {
-        discreteAdditional.enableSplitting = this.enableSplitting;
-      }
-      this.data.col.additional = discreteAdditional;
-
-      this.dialog.close();
-    }
-  }
-
-  /**
-   * Transform object property values into their database format values to be stored.
-   * @private
-   */
-  private getValuesInDatabaseFormat(rawValues: any) {
-    for (const k in rawValues) {
-      rawValues[k] = this.schemaService.valueToDatabaseFormat(
-        rawValues[k],
-        this.schema,
-      );
-    }
-
-    return rawValues;
+    this.dialog
+      .open<DiscreteImportDialogComponent, MappingDialogData>(
+        DiscreteImportDialogComponent,
+        {
+          data: {
+            col: this.col,
+            values: [...uniqueValues],
+            totalRowCount: this.rawData.length,
+            entityType: this.entityType,
+            additionalSettings: this.additionalSettings,
+          },
+          width: "80vw",
+          disableClose: true,
+        },
+      )
+      .afterClosed()
+      .subscribe(() => this.onColumnMappingChange?.(this.col));
   }
 }

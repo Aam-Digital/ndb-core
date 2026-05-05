@@ -1,27 +1,16 @@
-<mat-dialog-content>
-  @if (rowCount > LOOKUP_WARNING_THRESHOLD) {
-    <app-hint-box type="warning" i18n>
-      Warning: This import has {{ rowCount }} unique addresses to look up. At 1
-      request/second (API rate limit), this will take ~{{ rowCount }} seconds
-      and large imports may fail to look up addresses. "Skip address lookup" is
-      recommended.
-    </app-hint-box>
-  }
-  <div class="flex-row gap-regular align-center">
-    <mat-checkbox
-      [formControl]="skipAddressLookup"
-      i18n
-      matTooltip="Enable this option to import addresses as plain text without attempting to look up geographic coordinates. This is useful when importing large amounts of data to avoid rate limits, or when the addresses don't need map coordinates."
-      i18n-matTooltip
-    >
-      Skip address lookup and only import text
-    </mat-checkbox>
-  </div>
-</mat-dialog-content>
+@if (showLookupWarning()) {
+  <fa-icon
+    icon="triangle-exclamation"
+    class="lookup-warning-icon"
+    matTooltip="Large import: address lookups may be slow or fail. Consider skipping lookups below."
+    i18n-matTooltip
+  ></fa-icon>
+}
 
-<mat-dialog-actions>
-  <button mat-raised-button color="accent" (click)="save()" i18n>
-    Save & Close
-  </button>
-  <button mat-stroked-button matDialogClose i18n>Cancel</button>
-</mat-dialog-actions>
+<mat-checkbox
+  [(ngModel)]="skipLookup"
+  (ngModelChange)="onToggle($event)"
+  i18n="import - location - skip address lookup checkbox"
+>
+  Skip address lookup
+</mat-checkbox>

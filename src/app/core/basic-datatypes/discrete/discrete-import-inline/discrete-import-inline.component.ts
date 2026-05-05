@@ -1,30 +1,44 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  inject,
+    ChangeDetectionStrategy,
+    Component,
+    Input,
+    inject,
 } from "@angular/core";
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
-import { DateImportDialogComponent } from "./date-import-dialog.component";
+import { DiscreteImportConfigComponent } from "../discrete-import-config/discrete-import-config.component";
+import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
 import { MatButtonModule } from "@angular/material/button";
+import { MatBadgeModule } from "@angular/material/badge";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 /**
- * Inline import configuration component for date fields,
- * shown inside the column mapping UI to let users define a date format string.
+ * Inline import configuration component for discrete fields (enum, boolean, etc.),
+ * shown inside the column mapping UI to let users define value-to-value mappings.
  */
-@DynamicComponent("DateImportConfig")
+@DynamicComponent("DiscreteImportInline")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-date-import-config",
-  templateUrl: "./date-import-config.component.html",
-  imports: [MatButtonModule],
+  selector: "app-discrete-import-inline",
+  template: `
+    <button
+      class="margin-left-small config-button"
+      mat-stroked-button
+      (click)="openConfig()"
+      i18n="import - column mapping - configure discrete value mapping button"
+      [matBadge]="badge()"
+      [matBadgeHidden]="!badge()"
+      matBadgeColor="warn"
+    >
+      Configure value mapping
+    </button>
+  `,
+  imports: [MatButtonModule, MatBadgeModule],
 })
-export class DateImportConfigComponent {
+export class DiscreteImportInlineComponent {
   private dialog = inject(MatDialog);
 
   @Input() col: ColumnMapping;
@@ -34,14 +48,26 @@ export class DateImportConfigComponent {
   @Input() additionalSettings: ImportAdditionalSettings;
   @Input() onColumnMappingChange: (col: ColumnMapping) => void;
 
+  badge(): string | undefined {
+    const additional = this.col?.additional as DiscreteColumnMappingAdditional;
+    const valueMappings = additional?.values;
+    if (!valueMappings) {
+      return "?";
+    }
+    const unmappedCount = Object.values(valueMappings).filter(
+      (v) => v === undefined,
+    ).length;
+    return unmappedCount > 0 ? unmappedCount.toString() : undefined;
+  }
+
   openConfig() {
     const uniqueValues = new Set<any>(
       this.rawData.map((row) => row[this.col.column]),
     );
 
     this.dialog
-      .open<DateImportDialogComponent, MappingDialogData>(
-        DateImportDialogComponent,
+      .open<DiscreteImportConfigComponent, MappingDialogData>(
+        DiscreteImportConfigComponent,
         {
           data: {
             col: this.col,

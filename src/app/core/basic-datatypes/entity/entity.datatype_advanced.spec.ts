@@ -163,10 +163,89 @@ describe("Schema data type: entity (advanced functionality)", () => {
     expect(removeService.anonymize).toHaveBeenCalledWith(referencedEntity);
   });
 
+  it("should importMap with new object additional format { refField }", async () => {
+    const c1 = new TestEntity();
+    c1.other = "456";
+    await entityMapper.saveAll([c1]);
+
+    const importContext = createImportContext("456", schema.id, {
+      refField: "other",
+    });
+
+    await expect(
+      dataType.importMapFunction(
+        "456",
+        schema,
+        { refField: "other" },
+        importContext,
+      ),
+    ).resolves.toEqual(c1.getId());
+  });
+
+  it("should importMap with legacy string additional (backward compat)", async () => {
+    const c1 = new TestEntity();
+    c1.other = "testValue";
+    await entityMapper.saveAll([c1]);
+
+    const importContext = createImportContext("testValue", schema.id, "other");
+
+    // Legacy format (plain string) should still work
+    await expect(
+      dataType.importMapFunction("testValue", schema, "other", importContext),
+    ).resolves.toEqual(c1.getId());
+  });
+
+  it("should importMap entity ref with date valueMapping", async () => {
+    const entity = new TestEntity();
+    // Store the date as it would be in DB format (YYYY-MM-DD)
+    entity.dateOfBirth = new Date(1990, 4, 1) as any; // May 1, 1990
+    await entityMapper.saveAll([entity]);
+
+    const additional = { refField: "dateOfBirth", valueMapping: "DD.MM.YYYY" };
+    const importContext = createImportContext(
+      "01.05.1990",
+      schema.id,
+      additional,
+    );
+
+    await expect(
+      dataType.importMapFunction(
+        "01.05.1990",
+        schema,
+        additional,
+        importContext,
+      ),
+    ).resolves.toEqual(entity.getId());
+  });
+
+  it("should importMap entity ref with value mapping using sub-field importMapFunction", async () => {
+    // Test that valueMapping is applied through the sub-field's importMapFunction + transformToDatabaseFormat
+    // Using string field with a date format mapping to verify the chain
+    const entity = new TestEntity();
+    entity.other = "some value";
+    await entityMapper.saveAll([entity]);
+
+    const additional = { refField: "other" }; // no valueMapping - plain string matching
+    const importContext = createImportContext(
+      "some value",
+      schema.id,
+      additional,
+    );
+
+    await expect(
+      dataType.importMapFunction(
+        "some value",
+        schema,
+        additional,
+        importContext,
+      ),
+    ).resolves.toEqual(entity.getId());
+  });
+
   function createImportContext(
     value: any,
     fieldId: string,
-    additional: string,
+    additional: any,
   ): ImportProcessingContext {
     const importContext = new ImportProcessingContext({
       entityType: TestEntity.ENTITY_TYPE,

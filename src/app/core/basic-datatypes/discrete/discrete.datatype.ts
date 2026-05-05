@@ -1,6 +1,5 @@
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { ColumnMapping } from "../../import/column-mapping";
 import { Entity } from "../../entity/model/entity";
 
 /**
@@ -48,20 +47,6 @@ export abstract class DiscreteDatatype<
     return super.importMapFunction(valueMappings[val], schemaField);
   }
 
-  override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    const valueMappings = (col.additional as DiscreteColumnMappingAdditional)
-      ?.values;
-    if (!valueMappings) {
-      return "?";
-    }
-    const unmappedValues = Object.values(valueMappings).filter(
-      (v) => v === undefined,
-    );
-    if (unmappedValues.length > 0) {
-      return unmappedValues.length.toString();
-    }
-    return undefined;
-  }
 }
 
 /**

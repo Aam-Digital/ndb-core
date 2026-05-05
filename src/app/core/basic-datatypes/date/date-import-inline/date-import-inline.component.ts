@@ -9,7 +9,7 @@ import { EntityConstructor } from "../../../entity/model/entity";
 import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
-import { DateImportDialogComponent } from "./date-import-dialog.component";
+import { DateImportConfigComponent } from "../date-import-config/date-import-config.component";
 import { MatButtonModule } from "@angular/material/button";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
@@ -17,14 +17,23 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
  * Inline import configuration component for date fields,
  * shown inside the column mapping UI to let users define a date format string.
  */
-@DynamicComponent("DateImportConfig")
+@DynamicComponent("DateImportInline")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-date-import-config",
-  templateUrl: "./date-import-config.component.html",
+  selector: "app-date-import-inline",
+  template: `
+    <button
+      class="margin-left-small config-button"
+      mat-stroked-button
+      (click)="openConfig()"
+      i18n="import - column mapping - configure date format button"
+    >
+      Configure value mapping
+    </button>
+  `,
   imports: [MatButtonModule],
 })
-export class DateImportConfigComponent {
+export class DateImportInlineComponent {
   private dialog = inject(MatDialog);
 
   @Input() col: ColumnMapping;
@@ -40,8 +49,8 @@ export class DateImportConfigComponent {
     );
 
     this.dialog
-      .open<DateImportDialogComponent, MappingDialogData>(
-        DateImportDialogComponent,
+      .open<DateImportConfigComponent, MappingDialogData>(
+        DateImportConfigComponent,
         {
           data: {
             col: this.col,
