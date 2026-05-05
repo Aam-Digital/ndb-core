@@ -31,24 +31,55 @@ export class SetupService {
   private readonly syncState = inject(SyncStateSubject);
 
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
-    const doc = await firstValueFrom(
+    const externalSourceUrlsRaw = await firstValueFrom(
       this.httpClient
         .get<
-          BaseConfig[]
-        >(this.BASE_CONFIGS_FOLDER + "/available-configs.json", { responseType: "json" })
+          string[]
+        >(this.BASE_CONFIGS_FOLDER + "/external-sources.json", { responseType: "json" })
         .pipe(
-          catchError((e) => {
-            if (e.status === 404) {
-              Logging.warn("No available-configs.json found.");
-              return of([]);
-            } else {
-              throw e;
-            }
+          catchError(() => {
+            Logging.debug("No external-sources.json found, skipping.");
+            return of([] as string[]);
           }),
         ),
     );
 
-    return doc;
+    const validatedExternalSourceUrls = Array.isArray(externalSourceUrlsRaw)
+      ? externalSourceUrlsRaw.filter(
+          (item): item is string => typeof item === "string",
+        )
+      : [];
+
+    const descriptorUrls = [
+      this.BASE_CONFIGS_FOLDER + "/available-configs.json",
+      ...validatedExternalSourceUrls,
+    ];
+
+    const results = await Promise.all(
+      descriptorUrls.map((url) => this.loadConfigDescriptor(url)),
+    );
+
+    // flatten and deduplicate: first occurrence wins (local is listed first)
+    const seen = new Set<string>();
+    return results.flat().filter((c) => {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    });
+  }
+
+  private async loadConfigDescriptor(url: string): Promise<BaseConfig[]> {
+    const baseUrl = url.substring(0, url.lastIndexOf("/") + 1);
+    const entries = await firstValueFrom(
+      this.httpClient
+        .get<BaseConfig | BaseConfig[]>(url, { responseType: "json" })
+        .pipe(catchError(() => of(null))),
+    );
+    if (!entries) {
+      Logging.warn("Failed to load config descriptor: " + url);
+      return [];
+    }
+    return asArray(entries).map((entry) => ({ ...entry, baseUrl }));
   }
 
   /**
@@ -60,7 +91,7 @@ export class SetupService {
     Logging.debug("Initializing system with new base config", baseConfig);
 
     for (const file of baseConfig.entitiesToImport) {
-      const fileName = `${this.BASE_CONFIGS_FOLDER}/${file}`;
+      const fileName = `${baseConfig.baseUrl}${file}`;
 
       const docs = await firstValueFrom(
         this.httpClient.get<Object | Object[]>(fileName, {

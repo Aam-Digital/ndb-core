@@ -32,6 +32,7 @@ test("Edit note details in popup dialog and persist changes", async ({
   await loadApp(page, [...users, child, note]);
 
   await page.getByRole("navigation").getByText("Notes").click();
+  await expect(page.getByLabel("Date")).toBeVisible(); // wait for filter to be loaded
   await argosScreenshot(page, "notes-list");
 
   await page.getByRole("cell", { name: INITIAL_SUBJECT }).click();
