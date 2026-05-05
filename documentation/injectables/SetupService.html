@@ -253,8 +253,8 @@ that users can select to start with setting up their system.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/core/setup/setup.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/core/setup/setup.service.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -326,8 +326,8 @@ saving all given base-config entities to the database.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="115"
-                                    class="link-to-prism">src/app/core/setup/setup.service.ts:115</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/app/core/setup/setup.service.ts:146</a></div>
                         </td>
                     </tr>
 
@@ -434,24 +434,55 @@ export class SetupService {
   private readonly syncState &#x3D; inject(SyncStateSubject);
 
   async getAvailableBaseConfig(): Promise&lt;BaseConfig[]&gt; {
-    const doc &#x3D; await firstValueFrom(
+    const externalSourceUrlsRaw &#x3D; await firstValueFrom(
       this.httpClient
         .get&lt;
-          BaseConfig[]
-        &gt;(this.BASE_CONFIGS_FOLDER + &quot;/available-configs.json&quot;, { responseType: &quot;json&quot; })
+          string[]
+        &gt;(this.BASE_CONFIGS_FOLDER + &quot;/external-sources.json&quot;, { responseType: &quot;json&quot; })
         .pipe(
-          catchError((e) &#x3D;&gt; {
-            if (e.status &#x3D;&#x3D;&#x3D; 404) {
-              Logging.warn(&quot;No available-configs.json found.&quot;);
-              return of([]);
-            } else {
-              throw e;
-            }
+          catchError(() &#x3D;&gt; {
+            Logging.debug(&quot;No external-sources.json found, skipping.&quot;);
+            return of([] as string[]);
           }),
         ),
     );
 
-    return doc;
+    const validatedExternalSourceUrls &#x3D; Array.isArray(externalSourceUrlsRaw)
+      ? externalSourceUrlsRaw.filter(
+          (item): item is string &#x3D;&gt; typeof item &#x3D;&#x3D;&#x3D; &quot;string&quot;,
+        )
+      : [];
+
+    const descriptorUrls &#x3D; [
+      this.BASE_CONFIGS_FOLDER + &quot;/available-configs.json&quot;,
+      ...validatedExternalSourceUrls,
+    ];
+
+    const results &#x3D; await Promise.all(
+      descriptorUrls.map((url) &#x3D;&gt; this.loadConfigDescriptor(url)),
+    );
+
+    // flatten and deduplicate: first occurrence wins (local is listed first)
+    const seen &#x3D; new Set&lt;string&gt;();
+    return results.flat().filter((c) &#x3D;&gt; {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    });
+  }
+
+  private async loadConfigDescriptor(url: string): Promise&lt;BaseConfig[]&gt; {
+    const baseUrl &#x3D; url.substring(0, url.lastIndexOf(&quot;/&quot;) + 1);
+    const entries &#x3D; await firstValueFrom(
+      this.httpClient
+        .get&lt;BaseConfig | BaseConfig[]&gt;(url, { responseType: &quot;json&quot; })
+        .pipe(catchError(() &#x3D;&gt; of(null))),
+    );
+    if (!entries) {
+      Logging.warn(&quot;Failed to load config descriptor: &quot; + url);
+      return [];
+    }
+    return asArray(entries).map((entry) &#x3D;&gt; ({ ...entry, baseUrl }));
   }
 
   /**
@@ -463,7 +494,7 @@ export class SetupService {
     Logging.debug(&quot;Initializing system with new base config&quot;, baseConfig);
 
     for (const file of baseConfig.entitiesToImport) {
-      const fileName &#x3D; &#x60;${this.BASE_CONFIGS_FOLDER}/${file}&#x60;;
+      const fileName &#x3D; &#x60;${baseConfig.baseUrl}${file}&#x60;;
 
       const docs &#x3D; await firstValueFrom(
         this.httpClient.get&lt;Object | Object[]&gt;(fileName, {
