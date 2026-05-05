@@ -63,6 +63,7 @@ describe("KeycloakAuthService", () => {
     };
     mockKeycloak.getToken.mockResolvedValue(keycloakToken);
     mockKeycloak.updateToken.mockResolvedValue(true);
+    mockKeycloak.init.mockResolvedValue(undefined);
     const mockActivatedRoute = { snapshot: { queryParams: {} } };
 
     TestBed.configureTestingModule({

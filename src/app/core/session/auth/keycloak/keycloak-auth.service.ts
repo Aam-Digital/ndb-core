@@ -57,7 +57,7 @@ export class KeycloakAuthService {
     await this.initKeycloak();
 
     await firstValueFrom(
-      defer(() => Promise.resolve(this.keycloak.updateToken())).pipe(
+      defer(() => this.keycloak.updateToken()).pipe(
         timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
       ),
     );
@@ -122,18 +122,16 @@ export class KeycloakAuthService {
     try {
       await firstValueFrom(
         defer(() =>
-          Promise.resolve(
-            this.keycloak.init({
-              config: window.location.origin + "/assets/keycloak.json",
-              initOptions: {
-                onLoad: "check-sso",
-                silentCheckSsoRedirectUri:
-                  window.location.origin + "/assets/silent-check-sso.html",
-              },
-              // GitHub API rejects if non GitHub bearer token is present
-              shouldAddToken: ({ url }) => !url.includes("api.github.com"),
-            }),
-          ),
+          this.keycloak.init({
+            config: window.location.origin + "/assets/keycloak.json",
+            initOptions: {
+              onLoad: "check-sso",
+              silentCheckSsoRedirectUri:
+                window.location.origin + "/assets/silent-check-sso.html",
+            },
+            // GitHub API rejects if non GitHub bearer token is present
+            shouldAddToken: ({ url }) => !url.includes("api.github.com"),
+          }),
         ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
       );
     } catch (err) {
