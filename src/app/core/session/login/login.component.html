@@ -40,7 +40,11 @@
           </div>
         } @else if (ssoCheckDone()) {
           @if (loginError(); as error) {
-            <div class="login-error" role="alert">
+            <div
+              class="login-error"
+              role="alert"
+              [matTooltip]="loginTechnicalError()"
+            >
               <fa-icon icon="triangle-exclamation"></fa-icon>
               <span>{{ error }}</span>
             </div>
