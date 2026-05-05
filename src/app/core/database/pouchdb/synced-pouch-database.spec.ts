@@ -25,6 +25,7 @@ describe("SyncedPouchDatabase", () => {
     mockAuthService = {
       login: vi.fn(),
       addAuthHeader: vi.fn(),
+      addFreshAuthHeader: vi.fn(),
     };
     mockNavigator = { onLine: true };
     mockSyncStateSubject = new SyncStateSubject();

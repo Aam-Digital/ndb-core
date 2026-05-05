@@ -23,6 +23,21 @@ const KEYCLOAK_OPERATION_TIMEOUT_MS = 15_000;
 /** Backoff schedule for explicit user-initiated login retries. */
 const LOGIN_RETRY_DELAYS_MS = [1_000, 3_000];
 
+/**
+ * Backoff schedule for *background* token refreshes (OnTokenExpired,
+ * getValidToken). Kept short — if a background refresh keeps failing the
+ * next API call's 401 will trigger an explicit login, so there is no
+ * point retrying for many seconds and stalling the user's request.
+ */
+const TOKEN_REFRESH_RETRY_DELAYS_MS = [2_000, 5_000];
+
+/**
+ * Minimum remaining lifetime (in seconds) the cached token must have
+ * before an HTTP request will reuse it without first asking Keycloak
+ * for a refresh. Matches keycloak-js's `updateToken(minValidity)` arg.
+ */
+const TOKEN_MIN_VALIDITY_SECONDS = 30;
+
 function isRetryableNetworkError(err: any): boolean {
   if (!err) return false;
   if (err instanceof TimeoutError) return true;
@@ -38,7 +53,7 @@ function isRetryableNetworkError(err: any): boolean {
 @Injectable()
 export class KeycloakAuthService {
   static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
-  accessToken: string;
+  accessToken?: string;
 
   private keycloak = inject(KeycloakService);
   private activatedRoute = inject(ActivatedRoute);
@@ -146,15 +161,86 @@ export class KeycloakAuthService {
       throw err;
     }
 
-    // auto-refresh expiring tokens, as suggested by https://github.com/mauriciovigolo/keycloak-angular?tab=readme-ov-file#keycloak-js-events
+    // Silently refresh expiring tokens in the background. We deliberately
+    // do NOT fall back to a full keycloak.login() redirect here: that would
+    // yank the user out of whatever they were doing the moment a transient
+    // 504 from the proxy disrupted a refresh. If the silent refresh keeps
+    // failing, the next authenticated request will hit a 401 and the
+    // existing 401-retry path will then explicitly call login().
     this.keycloak.keycloakEvents$.subscribe((event) => {
       if (event.type == KeycloakEventTypeLegacy.OnTokenExpired) {
-        this.login().catch((err) =>
-          Logging.debug("automatic token refresh failed", err),
-        );
+        this.refreshKeycloakToken()
+          .then(() => this.cacheCurrentToken())
+          .catch((err) =>
+            Logging.debug(
+              "automatic token refresh failed; will re-auth on next 401",
+              err,
+            ),
+          );
       }
     });
   });
+
+  /**
+   * Silently refresh the Keycloak access token if it expires within
+   * {@link TOKEN_MIN_VALIDITY_SECONDS}. Bounded by the same per-operation
+   * timeout as init/login and retried on transient network errors so a
+   * single 504 from the proxy doesn't disrupt an active session.
+   */
+  private refreshKeycloakToken(): Promise<boolean> {
+    return firstValueFrom(
+      defer(() => this.keycloak.updateToken(TOKEN_MIN_VALIDITY_SECONDS)).pipe(
+        timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+        retry({
+          count: TOKEN_REFRESH_RETRY_DELAYS_MS.length,
+          delay: (err, retryCount) => {
+            if (!isRetryableNetworkError(err)) return throwError(() => err);
+            const delayMs =
+              TOKEN_REFRESH_RETRY_DELAYS_MS[retryCount - 1] ??
+              TOKEN_REFRESH_RETRY_DELAYS_MS[
+                TOKEN_REFRESH_RETRY_DELAYS_MS.length - 1
+              ];
+            Logging.debug(
+              `Token refresh attempt ${retryCount} failed; retrying in ${delayMs}ms`,
+              err,
+            );
+            return timer(delayMs);
+          },
+          resetOnSuccess: true,
+        }),
+      ),
+    );
+  }
+
+  private async cacheCurrentToken(): Promise<void> {
+    const token = await this.keycloak.getToken();
+    if (token) {
+      this.accessToken = token;
+    }
+  }
+
+  /**
+   * Returns a token guaranteed to be valid for at least the next
+   * {@link TOKEN_MIN_VALIDITY_SECONDS} seconds, refreshing silently first
+   * if the cached token is closer to expiry. Returns null if no session
+   * exists. On refresh failure, falls back to the cached token — the
+   * caller's request will then get a 401 and trigger explicit re-auth.
+   */
+  async getValidToken(): Promise<string | null> {
+    if (!this.accessToken) {
+      return null;
+    }
+    try {
+      await this.refreshKeycloakToken();
+      await this.cacheCurrentToken();
+    } catch (err) {
+      Logging.debug(
+        "getValidToken: silent refresh failed; using cached token",
+        err,
+      );
+    }
+    return this.accessToken;
+  }
 
   private static readonly NETWORK_ERROR_PATTERNS = [
     "Failed to fetch",
@@ -241,9 +327,32 @@ export class KeycloakAuthService {
   }
 
   /**
+   * Refresh the access token if it is close to expiry, then add the Bearer
+   * auth header to the given headers object. Prefer this over the bare
+   * {@link addAuthHeader} for any HTTP/PouchDB request that can afford to
+   * await a Promise — it removes the race window where a request goes out
+   * with a token that's already expired.
+   */
+  async addFreshAuthHeader(headers: any): Promise<void> {
+    await this.getValidToken();
+    this.addAuthHeader(headers);
+  }
+
+  /**
+   * Clear the memoised Keycloak init so the next call re-runs initKeycloak.
+   * Required after logout (Keycloak SPA state is otherwise stuck on the
+   * previous session) and during recovery from a stuck init.
+   */
+  resetKeycloakInit(): void {
+    this.initKeycloak.cache.clear();
+  }
+
+  /**
    * Forward to the keycloak logout endpoint to clear the session.
    */
   async logout() {
+    this.resetKeycloakInit();
+    this.accessToken = undefined;
     return await this.keycloak.logout(location.href);
   }
 

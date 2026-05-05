@@ -8,7 +8,10 @@ import { Observable, of, throwError } from "rxjs";
 
 class MockKeycloakAuthService {
   addAuthHeader(headers: Record<string, string>) {
-    headers["Authorization"] = "Bearer mock-token";
+    headers["Authorization"] = "Bearer test-token";
+  }
+  async addFreshAuthHeader(headers: Record<string, string>) {
+    this.addAuthHeader(headers);
   }
 }
 

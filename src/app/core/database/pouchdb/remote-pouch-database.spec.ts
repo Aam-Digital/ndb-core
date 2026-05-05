@@ -17,6 +17,7 @@ describe("RemotePouchDatabase tests", () => {
     mockAuthService = {
       login: vi.fn(),
       addAuthHeader: vi.fn(),
+      addFreshAuthHeader: vi.fn(),
     };
     mockAuthService.addAuthHeader.mockImplementation(() => {});
     // Prevent real HTTP requests from PouchDB during tests
@@ -38,9 +39,11 @@ describe("RemotePouchDatabase tests", () => {
     mockAuthService.login.mockResolvedValue(undefined);
     // providing "valid" token on second call
     let calls = 0;
-    mockAuthService.addAuthHeader.mockImplementation((headers) => {
-      headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
-    });
+    mockAuthService.addFreshAuthHeader.mockImplementation(
+      async (headers: any) => {
+        headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
+      },
+    );
     (PouchDB.fetch as Mock).mockImplementation(async (url, opts) => {
       calls++;
       if (opts.headers["Authorization"] === "valid") {
@@ -60,7 +63,7 @@ describe("RemotePouchDatabase tests", () => {
 
     expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
     expect(mockAuthService.login).toHaveBeenCalled();
-    expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
+    expect(mockAuthService.addFreshAuthHeader).toHaveBeenCalledTimes(2);
   });
 
   it("should set ngsw-bypass header on fetch requests", async () => {
