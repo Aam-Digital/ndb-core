@@ -240,8 +240,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="155"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:155</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="231"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:231</a></div>
                         </td>
                     </tr>
 
@@ -309,8 +309,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="178"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:178</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="254"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:254</a></div>
                         </td>
                     </tr>
 
@@ -351,8 +351,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="185"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:185</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="261"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:261</a></div>
                         </td>
                     </tr>
 
@@ -390,8 +390,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="170"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:170</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="246"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:246</a></div>
                         </td>
                     </tr>
 
@@ -429,8 +429,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="193"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:193</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="269"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:269</a></div>
                         </td>
                     </tr>
 
@@ -473,7 +473,7 @@ Only works with internet connection.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -502,7 +502,19 @@ Only works with internet connection.</p>
                         <i>Default value : </i><code>reuseFirstAsync(async (): Promise&lt;SessionInfo | null&gt; &#x3D;&gt; {
     await this.initKeycloak();
 
-    await this.keycloak.updateToken();
+    try {
+      await firstValueFrom(
+        defer(() &#x3D;&gt; this.keycloak.updateToken()).pipe(
+          timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+        ),
+      );
+    } catch (err) {
+      if (this.isOfflineOrUnavailableError(err)) {
+        Logging.debug(&quot;Keycloak updateToken failed (offline/unavailable)&quot;, err);
+        throw new RemoteLoginNotAvailableError(err);
+      }
+      throw err;
+    }
     const token &#x3D; await this.keycloak.getToken();
     if (!token) {
       return null;
@@ -514,7 +526,7 @@ Only works with internet connection.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:30</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -522,6 +534,10 @@ Only works with internet connection.</p>
                 <td class="col-md-4">
                     <div class="io-description"><p>Check for an existing SSO session without redirecting to Keycloak.
 Returns the session info if already authenticated, or null if not.</p>
+<p>Intentionally does NOT retry on transient errors: this runs silently on
+page load and the user is already waiting on the spinner. Failing fast
+lets the login form render quickly; a retry happens implicitly when the
+user clicks &quot;Log in&quot;.</p>
 </div>
                 </td>
             </tr>
@@ -554,7 +570,7 @@ Returns the session info if already authenticated, or null if not.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -580,32 +596,46 @@ Returns the session info if already authenticated, or null if not.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>reuseFirstAsync(async (): Promise&lt;SessionInfo&gt; &#x3D;&gt; {
-    const existing &#x3D; await this.checkSession();
-    if (existing) {
-      return existing;
-    }
-
-    // Forward to the keycloak login page.
-    await this.keycloak.login({
-      redirectUri: location.href,
-      ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
-    });
-    const token &#x3D; await this.keycloak.getToken();
-
-    return this.processToken(token);
-  })</code>
+                        <i>Default value : </i><code>reuseFirstAsync(
+    async (): Promise&lt;SessionInfo&gt; &#x3D;&gt;
+      firstValueFrom(
+        defer(() &#x3D;&gt; this.loginOnce()).pipe(
+          retry({
+            count: LOGIN_RETRY_DELAYS_MS.length,
+            delay: (err, retryCount) &#x3D;&gt; {
+              const retryable &#x3D;
+                isRetryableNetworkError(err) ||
+                (err instanceof RemoteLoginNotAvailableError &amp;&amp;
+                  isRetryableNetworkError(err.cause));
+              if (!retryable) return throwError(() &#x3D;&gt; err);
+              const delayMs &#x3D;
+                LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
+                LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
+              Logging.debug(
+                &#x60;Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms&#x60;,
+                err,
+              );
+              return timer(delayMs);
+            },
+            resetOnSuccess: true,
+          }),
+        ),
+      ),
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:100</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Check for an existing session or forward to the keycloak login page.</p>
+                    <div class="io-description"><p>Check for an existing session or forward to the keycloak login page.
+Retries on transient network errors (5xx / timeout / abort) since this
+is invoked by an explicit user action and a single transient failure
+shouldn&#39;t push the user back to the offline fallback.</p>
 </div>
                 </td>
             </tr>
@@ -630,6 +660,41 @@ import { KeycloakUserDto } from &quot;../../../user/user-admin-service/keycloak-
 import { ActivatedRoute } from &quot;@angular/router&quot;;
 import { ThirdPartyAuthenticationService } from &quot;../../../../features/third-party-authentication/third-party-authentication.service&quot;;
 import { reuseFirstAsync } from &quot;#src/app/utils/reuse-first-async&quot;;
+import { defer, firstValueFrom, throwError, timer, TimeoutError } from &quot;rxjs&quot;;
+import { retry, timeout } from &quot;rxjs/operators&quot;;
+
+/**
+ * Hard upper bound on individual Keycloak network operations
+ * (init, token refresh). Picked well above expected RTT but short enough
+ * that a hung proxy/upstream surfaces a clear failure to the user.
+ */
+const KEYCLOAK_OPERATION_TIMEOUT_MS &#x3D; 15_000;
+
+/** Backoff schedule for explicit user-initiated login retries. */
+const LOGIN_RETRY_DELAYS_MS &#x3D; [1_000, 3_000];
+
+/**
+ * Browser/keycloak-js error messages that indicate a transient network
+ * failure rather than a real authentication problem. Matched against both
+ * &#x60;err.message&#x60; and &#x60;err.toString()&#x60; since some thrown values (e.g. plain
+ * strings from keycloak-js) only expose the text via &#x60;toString()&#x60;.
+ */
+const NETWORK_ERROR_PATTERNS &#x3D; [
+  &quot;Failed to fetch&quot;,
+  &quot;NetworkError&quot;,
+  &quot;Load failed&quot;,
+  &quot;Network request failed&quot;,
+  &quot;Timeout when waiting for 3rd party check iframe message.&quot;,
+];
+
+function isRetryableNetworkError(err: any): boolean {
+  if (!err) return false;
+  if (err instanceof TimeoutError) return true;
+  if ([&quot;AbortError&quot;, &quot;TimeoutError&quot;].includes(err?.name)) return true;
+  if ([502, 503, 504].includes(err?.status)) return true;
+  const message &#x3D; &#x60;${err?.message ?? &quot;&quot;} ${err?.toString?.() ?? &quot;&quot;}&#x60;;
+  return NETWORK_ERROR_PATTERNS.some((pattern) &#x3D;&gt; message.includes(pattern));
+}
 
 /**
  * Handles the remote session with keycloak
@@ -646,11 +711,28 @@ export class KeycloakAuthService {
   /**
    * Check for an existing SSO session without redirecting to Keycloak.
    * Returns the session info if already authenticated, or null if not.
+   *
+   * Intentionally does NOT retry on transient errors: this runs silently on
+   * page load and the user is already waiting on the spinner. Failing fast
+   * lets the login form render quickly; a retry happens implicitly when the
+   * user clicks &quot;Log in&quot;.
    */
   checkSession &#x3D; reuseFirstAsync(async (): Promise&lt;SessionInfo | null&gt; &#x3D;&gt; {
     await this.initKeycloak();
 
-    await this.keycloak.updateToken();
+    try {
+      await firstValueFrom(
+        defer(() &#x3D;&gt; this.keycloak.updateToken()).pipe(
+          timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+        ),
+      );
+    } catch (err) {
+      if (this.isOfflineOrUnavailableError(err)) {
+        Logging.debug(&quot;Keycloak updateToken failed (offline/unavailable)&quot;, err);
+        throw new RemoteLoginNotAvailableError(err);
+      }
+      throw err;
+    }
     const token &#x3D; await this.keycloak.getToken();
     if (!token) {
       return null;
@@ -661,8 +743,38 @@ export class KeycloakAuthService {
 
   /**
    * Check for an existing session or forward to the keycloak login page.
+   * Retries on transient network errors (5xx / timeout / abort) since this
+   * is invoked by an explicit user action and a single transient failure
+   * shouldn&#x27;t push the user back to the offline fallback.
    */
-  login &#x3D; reuseFirstAsync(async (): Promise&lt;SessionInfo&gt; &#x3D;&gt; {
+  login &#x3D; reuseFirstAsync(
+    async (): Promise&lt;SessionInfo&gt; &#x3D;&gt;
+      firstValueFrom(
+        defer(() &#x3D;&gt; this.loginOnce()).pipe(
+          retry({
+            count: LOGIN_RETRY_DELAYS_MS.length,
+            delay: (err, retryCount) &#x3D;&gt; {
+              const retryable &#x3D;
+                isRetryableNetworkError(err) ||
+                (err instanceof RemoteLoginNotAvailableError &amp;&amp;
+                  isRetryableNetworkError(err.cause));
+              if (!retryable) return throwError(() &#x3D;&gt; err);
+              const delayMs &#x3D;
+                LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
+                LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
+              Logging.debug(
+                &#x60;Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms&#x60;,
+                err,
+              );
+              return timer(delayMs);
+            },
+            resetOnSuccess: true,
+          }),
+        ),
+      ),
+  );
+
+  private async loginOnce(): Promise&lt;SessionInfo&gt; {
     const existing &#x3D; await this.checkSession();
     if (existing) {
       return existing;
@@ -676,24 +788,28 @@ export class KeycloakAuthService {
     const token &#x3D; await this.keycloak.getToken();
 
     return this.processToken(token);
-  });
+  }
 
   private initKeycloak &#x3D; memoize(async () &#x3D;&gt; {
     try {
-      await this.keycloak.init({
-        config: window.location.origin + &quot;/assets/keycloak.json&quot;,
-        initOptions: {
-          onLoad: &quot;check-sso&quot;,
-          silentCheckSsoRedirectUri:
-            window.location.origin + &quot;/assets/silent-check-sso.html&quot;,
-        },
-        // GitHub API rejects if non GitHub bearer token is present
-        shouldAddToken: ({ url }) &#x3D;&gt; !url.includes(&quot;api.github.com&quot;),
-      });
+      await firstValueFrom(
+        defer(() &#x3D;&gt;
+          this.keycloak.init({
+            config: window.location.origin + &quot;/assets/keycloak.json&quot;,
+            initOptions: {
+              onLoad: &quot;check-sso&quot;,
+              silentCheckSsoRedirectUri:
+                window.location.origin + &quot;/assets/silent-check-sso.html&quot;,
+            },
+            // GitHub API rejects if non GitHub bearer token is present
+            shouldAddToken: ({ url }) &#x3D;&gt; !url.includes(&quot;api.github.com&quot;),
+          }),
+        ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
+      );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
         Logging.debug(&quot;Keycloak init failed (offline/unavailable)&quot;, err);
-        err &#x3D; new RemoteLoginNotAvailableError();
+        err &#x3D; new RemoteLoginNotAvailableError(err);
       } else {
         Logging.error(&quot;Keycloak init failed&quot;, err);
       }
@@ -712,21 +828,11 @@ export class KeycloakAuthService {
     });
   });
 
-  private static readonly NETWORK_ERROR_PATTERNS &#x3D; [
-    &quot;Failed to fetch&quot;,
-    &quot;NetworkError&quot;,
-    &quot;Load failed&quot;,
-    &quot;Network request failed&quot;,
-    &quot;Timeout when waiting for 3rd party check iframe message.&quot;,
-  ];
-
   private isOfflineOrUnavailableError(err: any): boolean {
-    const message &#x3D; err?.message ?? &quot;&quot;;
-    if (
-      KeycloakAuthService.NETWORK_ERROR_PATTERNS.some((pattern) &#x3D;&gt;
-        message.includes(pattern),
-      )
-    ) {
+    // All retryable network errors (5xx / timeout / abort / fetch failures)
+    // also count as &quot;unavailable&quot; so they map to RemoteLoginNotAvailableError
+    // instead of spamming Sentry.
+    if (isRetryableNetworkError(err)) {
       return true;
     }
     return !navigator.onLine;

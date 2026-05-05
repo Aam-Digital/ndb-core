@@ -337,6 +337,9 @@
                             <a href="#isActiveIndicator" title="src/app/core/entity-details/related-time-period-entities/related-time-period-entities.component.ts" ><b>isActiveIndicator</b>&nbsp;&nbsp;&nbsp;(src/.../related-time-period-entities.component.ts)</a>
                         </li>
                         <li>
+                            <a href="#KEYCLOAK_OPERATION_TIMEOUT_MS" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" ><b>KEYCLOAK_OPERATION_TIMEOUT_MS</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#LANGUAGE_LOCAL_STORAGE_KEY" title="src/app/core/language/language-statics.ts" ><b>LANGUAGE_LOCAL_STORAGE_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../language-statics.ts)</a>
                         </li>
                         <li>
@@ -356,6 +359,9 @@
                         </li>
                         <li>
                             <a href="#Logging" title="src/app/core/logging/logging.service.ts" ><b>Logging</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#LOGIN_RETRY_DELAYS_MS" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" ><b>LOGIN_RETRY_DELAYS_MS</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</a>
                         </li>
                         <li>
                             <a href="#MAP_CONFIG_KEY" title="src/app/features/location/map-config.ts" ><b>MAP_CONFIG_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../map-config.ts)</a>
@@ -452,6 +458,9 @@
                         </li>
                         <li>
                             <a href="#NAVIGATOR_TOKEN" title="src/app/utils/di-tokens.ts" ><b>NAVIGATOR_TOKEN</b>&nbsp;&nbsp;&nbsp;(src/.../di-tokens.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#NETWORK_ERROR_PATTERNS" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" ><b>NETWORK_ERROR_PATTERNS</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</a>
                         </li>
                         <li>
                             <a href="#noSpecialUrlChars" title="src/app/features/public-form/edit-publicform-route/edit-publicform-route.component.ts" ><b>noSpecialUrlChars</b>&nbsp;&nbsp;&nbsp;(src/.../edit-publicform-route.component.ts)</a>
@@ -4468,6 +4477,116 @@ The list of which env maps to which file can be found in <code>.angular-cli.json
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/session/auth/keycloak/keycloak-auth.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="KEYCLOAK_OPERATION_TIMEOUT_MS"></a>
+                    <span class="name">
+                        <span ><b>KEYCLOAK_OPERATION_TIMEOUT_MS</b></span>
+                        <a href="#KEYCLOAK_OPERATION_TIMEOUT_MS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>15_000</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Hard upper bound on individual Keycloak network operations
+(init, token refresh). Picked well above expected RTT but short enough
+that a hung proxy/upstream surfaces a clear failure to the user.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="LOGIN_RETRY_DELAYS_MS"></a>
+                    <span class="name">
+                        <span ><b>LOGIN_RETRY_DELAYS_MS</b></span>
+                        <a href="#LOGIN_RETRY_DELAYS_MS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[1_000, 3_000]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Backoff schedule for explicit user-initiated login retries.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="NETWORK_ERROR_PATTERNS"></a>
+                    <span class="name">
+                        <span ><b>NETWORK_ERROR_PATTERNS</b></span>
+                        <a href="#NETWORK_ERROR_PATTERNS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  &quot;Failed to fetch&quot;,
+  &quot;NetworkError&quot;,
+  &quot;Load failed&quot;,
+  &quot;Network request failed&quot;,
+  &quot;Timeout when waiting for 3rd party check iframe message.&quot;,
+]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Browser/keycloak-js error messages that indicate a transient network
+failure rather than a real authentication problem. Matched against both
+<code>err.message</code> and <code>err.toString()</code> since some thrown values (e.g. plain
+strings from keycloak-js) only expose the text via <code>toString()</code>.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
