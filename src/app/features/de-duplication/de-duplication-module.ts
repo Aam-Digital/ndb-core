@@ -1,10 +1,23 @@
 import { Injector, NgModule, inject } from "@angular/core";
+import { Routes } from "@angular/router";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { EntityActionsMenuService } from "#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { BulkMergeService } from "./bulk-merge-service";
+import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
+import { RoutedViewComponent } from "#src/app/core/ui/routed-view/routed-view.component";
 
 @NgModule({})
 export class DeDuplicationModule {
+  static readonly routes: Routes = [
+    {
+      path: "review-duplicates",
+      component: RoutedViewComponent,
+      data: { component: "ReviewDuplicates" },
+      canDeactivate: [
+        () => inject(UnsavedChangesService).checkUnsavedChanges(),
+      ],
+    },
+  ];
   constructor() {
     const components = inject(ComponentRegistry);
     const entityActionsMenuService = inject(EntityActionsMenuService);

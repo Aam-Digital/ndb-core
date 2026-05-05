@@ -13,6 +13,7 @@ import { RouteTarget } from "#src/app/route-target";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
 import { AttendanceService } from "../../attendance.service";
+import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
 
 @RouteTarget("AttendanceManager")
 @Component({
@@ -36,4 +37,6 @@ export class AttendanceManagerComponent {
     this.attendanceService.activityTypes;
 
   eventTypes: Signal<EntityConstructor[]> = this.attendanceService.eventTypes;
+
+  protected readonly getEntityRuntimeRoute = getEntityRuntimeRoute;
 }

@@ -90,7 +90,7 @@
                 {
                   "label": "Kind hinzufügen",
                   "icon": "plus",
-                  "link": "/child/new"
+                  "link": "/c/child/new"
                 },
                 {
                   "label": "Öffentliches Anmelde-Formular",
@@ -341,10 +341,6 @@
         ]
       },
       "_id": "view:note/:id"
-    },
-    "view:import": {
-      "component": "Import",
-      "_id": "view:import"
     },
     "view:child": {
       "component": "EntityList",
@@ -678,7 +674,7 @@
       "labelPlural": "Aktivitäten",
       "icon": "calendar-days",
       "color": "#00838F",
-      "route": "attendance/recurring-activity",
+      "route": "recurring-activity",
       "attributes": {
         "title": {
           "dataType": "string",
@@ -712,7 +708,7 @@
         }
       }
     },
-    "view:attendance/recurring-activity": {
+    "view:recurring-activity": {
       "component": "EntityList",
       "config": {
         "entityType": "RecurringActivity",
@@ -739,7 +735,7 @@
       },
       "_id": "view:attendance/recurring-activity"
     },
-    "view:attendance/recurring-activity/:id": {
+    "view:recurring-activity/:id": {
       "component": "EntityDetails",
       "config": {
         "entityType": "RecurringActivity",

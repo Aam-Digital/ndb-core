@@ -13,6 +13,7 @@ import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
 import { TemplateExportService } from "./template-export-service/template-export.service";
 import { TemplateExport } from "./template-export.entity";
+import { getEntityRuntimeRoute } from "../../core/entity/entity-config.service";
 
 /**
  * Manage template files with placeholders that can be used to render files for export of entities.
@@ -65,7 +66,7 @@ export class TemplateExportModule {
 
     adminOverviewService.addTemplateItems({
       label: $localize`:admin menu item:Export Templates`,
-      link: TemplateExport.route,
+      link: getEntityRuntimeRoute(TemplateExport),
       subtitle: $localize`:admin menu item subtitle:Configure templates (as .docx files) to generate PDF documents populated with dynamic data from your records.`,
     });
   }

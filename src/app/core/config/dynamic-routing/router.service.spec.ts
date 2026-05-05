@@ -15,7 +15,8 @@ import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component"
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 import { EntityListComponent } from "../../entity-list/entity-list/entity-list.component";
 
-class TestComponent extends Component {}
+@Component({ template: "" })
+class TestComponent {}
 
 describe("RouterService", () => {
   let service: RouterService;
@@ -68,7 +69,7 @@ describe("RouterService", () => {
         canActivate: [AuthGuard, EntityPermissionGuard],
       },
       {
-        path: "child/:id",
+        path: "c/child/:id",
         component: RoutedViewComponent,
         data: { component: "EntityDetails", config: testViewConfig },
         canDeactivate: [expect.any(Function)],
@@ -89,6 +90,33 @@ describe("RouterService", () => {
     service.reloadRouting(testViewConfigs);
 
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
+  });
+
+  it("should keep addRoutes behavior unchanged for module-local routes", () => {
+    const testViewConfigs: ViewConfig[] = [
+      {
+        _id: "view:public-form/edit",
+        component: "PublicFormEdit",
+        config: { custom: true },
+      },
+    ];
+    const expectedRoutes = [
+      {
+        path: "public-form/edit",
+        component: RoutedViewComponent,
+        data: { component: "PublicFormEdit", config: { custom: true } },
+        canDeactivate: [expect.any(Function)],
+        canActivate: [AuthGuard, EntityPermissionGuard],
+      },
+    ];
+    const router = TestBed.inject<Router>(Router);
+    vi.spyOn(router, "resetConfig");
+
+    service.addRoutes(testViewConfigs);
+
+    expect(router.resetConfig).toHaveBeenCalledWith(
+      expect.arrayContaining(expectedRoutes),
+    );
   });
 
   it("should extend a view config route of lazy loaded routes (hard coded)", () => {
@@ -122,14 +150,26 @@ describe("RouterService", () => {
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
   });
 
-  it("should update existing routes when config changes", () => {
+  it("should update existing routes when config changes and prefix entity routes", () => {
     const routeConfigs1: ViewConfig[] = [
-      { _id: "view:child", component: "ChildrenList" },
+      {
+        _id: "view:child",
+        component: "EntityList",
+        config: { entityType: "Child" },
+      },
       { _id: "view:other", component: "EntityDetails" },
     ];
     const routeConfigs2: ViewConfig[] = [
-      { _id: "view:child", component: "ChildrenList", config: { foo: 1 } },
-      { _id: "view:child2", component: "ChildrenList", config: { foo: 2 } },
+      {
+        _id: "view:child",
+        component: "EntityList",
+        config: { entityType: "Child", foo: 1 },
+      },
+      {
+        _id: "view:child2",
+        component: "EntityList",
+        config: { entityType: "Child", foo: 2 },
+      },
     ];
     const getAllConfigSpy = vi.spyOn(
       TestBed.inject(ConfigService),
@@ -142,14 +182,19 @@ describe("RouterService", () => {
     service.initRouting();
 
     const router = TestBed.inject<Router>(Router);
-    expect(router.config.find((r) => r.path === "child").data).toEqual({
-      component: "ChildrenList",
-      config: { foo: 1 },
+    const childRoute = router.config.find((r) => r.path === "c/child");
+    expect(childRoute).toBeDefined();
+    expect(childRoute!.data).toEqual({
+      component: "EntityList",
+      config: { entityType: "Child", foo: 1 },
     });
-    expect(router.config.find((r) => r.path === "child2").data).toEqual({
-      component: "ChildrenList",
-      config: { foo: 2 },
+    const child2Route = router.config.find((r) => r.path === "c/child2");
+    expect(child2Route).toBeDefined();
+    expect(child2Route!.data).toEqual({
+      component: "EntityList",
+      config: { entityType: "Child", foo: 2 },
     });
+    expect(router.config.find((r) => r.path === "child")).toBeUndefined();
   });
 
   it("should add the user role guard if userIsPermitted is set", () => {
@@ -186,5 +231,20 @@ describe("RouterService", () => {
     service.reloadRouting([], [wildcardRoute]);
 
     expect(wildcardRoute).toEqual({ path: "**", component: NotFoundComponent });
+  });
+
+  it("should keep non-entity config routes unprefixed during initRouting", () => {
+    const getAllConfigSpy = vi.spyOn(
+      TestBed.inject(ConfigService),
+      "getAllConfigs",
+    );
+    getAllConfigSpy.mockReturnValue([
+      { _id: "view:dashboard", component: "Dashboard" },
+    ]);
+
+    service.initRouting();
+
+    const router = TestBed.inject<Router>(Router);
+    expect(router.config.find((r) => r.path === "dashboard")).toBeDefined();
   });
 });

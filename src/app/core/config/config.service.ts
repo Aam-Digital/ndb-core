@@ -5,8 +5,6 @@ import { shareReplay } from "rxjs/operators";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 import { migrateInheritedFieldConfig } from "../../features/inherited-field/inherited-field-config-migration";
-import { addDefaultImportViewConfig } from "../import/add-default-import-view";
-import { addDefaultReviewDuplicatesViewConfig } from "../../features/de-duplication/add-default-review-duplicates-view";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
@@ -20,6 +18,11 @@ import {
 import { Logging } from "../logging/logging.service";
 import { Config } from "./config";
 import { ConfigMigration } from "./config-migration";
+import {
+  CONFIG_ENTITY_ROUTE_PREFIX,
+  normalizeRoutePath,
+} from "./dynamic-routing/route-paths";
+import { PREFIX_VIEW_CONFIG } from "./dynamic-routing/view-config.interface";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -156,14 +159,16 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEditDescriptionOnly,
       migrateEditAttendanceComponent,
       migrateNotesManagerComponent,
+      removeConfigRoutesMigratedToFixedFeatures,
+      migrateAttendanceRecurringActivityRoute,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
     const defaultConfigs: ConfigMigration[] = [
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
-      addDefaultImportViewConfig,
-      addDefaultReviewDuplicatesViewConfig,
+      migrateShortcutDashboardLinks,
+      migrateNavigationMenuEntityLinks, // must run last to see all default-added view configs
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
@@ -534,6 +539,169 @@ const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
+const removeConfigRoutesMigratedToFixedFeatures: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data)
+  ) {
+    return configPart;
+  }
+
+  delete configPart.data["view:import"];
+  delete configPart.data["view:review-duplicates"];
+  return configPart;
+};
+
+/**
+ * The RecurringActivity entity list was previously nested under the attendance feature module path
+ * (`view:attendance/recurring-activity`). It is now a standalone entity route (`view:recurring-activity`).
+ * Also rewrites any hardcoded nav menu links so `migrateNavigationMenuEntityLinks` can convert them.
+ */
+const migrateAttendanceRecurringActivityRoute: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data)
+  ) {
+    return configPart;
+  }
+
+  const data = configPart.data;
+  const OLD_LIST = "view:attendance/recurring-activity";
+  const OLD_DETAILS = "view:attendance/recurring-activity/:id";
+  const NEW_LIST = "view:recurring-activity";
+  const NEW_DETAILS = "view:recurring-activity/:id";
+
+  if (data[OLD_LIST] && !data[NEW_LIST]) {
+    data[NEW_LIST] = data[OLD_LIST];
+    delete data[OLD_LIST];
+  } else {
+    delete data[OLD_LIST];
+  }
+
+  if (data[OLD_DETAILS] && !data[NEW_DETAILS]) {
+    data[NEW_DETAILS] = data[OLD_DETAILS];
+    delete data[OLD_DETAILS];
+  } else {
+    delete data[OLD_DETAILS];
+  }
+
+  // Rewrite any hardcoded nav links so the navigation migration can pick them up
+  if (Array.isArray(data?.navigationMenu?.items)) {
+    data.navigationMenu.items = rewriteNavMenuLinks(
+      data.navigationMenu.items,
+      "/attendance/recurring-activity",
+      "/recurring-activity",
+    );
+  }
+
+  // Update entity:RecurringActivity.route if it still points to the old nested path
+  if (
+    data["entity:RecurringActivity"]?.route === "attendance/recurring-activity"
+  ) {
+    data["entity:RecurringActivity"].route = "recurring-activity";
+  }
+
+  return configPart;
+};
+
+function rewriteNavMenuLinks(
+  items: any[],
+  oldLink: string,
+  newLink: string,
+): any[] {
+  return items.map((item) => {
+    if (item.link === oldLink) {
+      item = { ...item, link: newLink };
+    }
+    if (item.subMenu) {
+      item.subMenu = rewriteNavMenuLinks(item.subMenu, oldLink, newLink);
+    }
+    return item;
+  });
+}
+
+/**
+ * Migrate ShortcutDashboard widget `link` values that point to entity routes
+ * to use the runtime `/c/` prefix.
+ * Detects entity routes by looking up matching view configs with `entityType` in the same document.
+ * Non-entity links (e.g. `/attendance/add-day`, `/import`) are left unchanged.
+ * Runs at the root Config document level to have access to all view configs.
+ */
+const migrateShortcutDashboardLinks: ConfigMigration = (key, configPart) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data)
+  ) {
+    return configPart;
+  }
+
+  const data = configPart.data;
+  const entityBasePaths = buildEntityBasePaths(data);
+  if (entityBasePaths.size === 0) return configPart;
+
+  for (const dataKey of Object.keys(data)) {
+    if (!dataKey.startsWith(PREFIX_VIEW_CONFIG)) continue;
+    const viewConfig = data[dataKey];
+    if (!Array.isArray(viewConfig?.config?.widgets)) continue;
+    for (const widget of viewConfig.config.widgets) {
+      if (
+        widget.component === "ShortcutDashboard" &&
+        Array.isArray(widget.config?.shortcuts)
+      ) {
+        widget.config.shortcuts = widget.config.shortcuts.map((shortcut: any) =>
+          migrateShortcutItem(shortcut, entityBasePaths),
+        );
+      }
+    }
+  }
+
+  return configPart;
+};
+
+function buildEntityBasePaths(data: Record<string, any>): Set<string> {
+  const paths = new Set<string>();
+  for (const key of Object.keys(data)) {
+    if (!key.startsWith(PREFIX_VIEW_CONFIG)) continue;
+    const path = key.substring(PREFIX_VIEW_CONFIG.length);
+    if (!path || path.includes("/:id")) continue;
+    const viewConfig = data[key];
+    if (viewConfig?.config?.entityType || viewConfig?.config?.entity) {
+      paths.add(path);
+    }
+  }
+  return paths;
+}
+
+function migrateShortcutItem(item: any, entityBasePaths: Set<string>): any {
+  if (!item.link || item.link.startsWith(`/${CONFIG_ENTITY_ROUTE_PREFIX}/`)) {
+    return item;
+  }
+  const normalizedLink = normalizeRoutePath(item.link);
+  const segments = normalizedLink.split("/");
+  for (let i = segments.length; i >= 1; i--) {
+    const base = segments.slice(0, i).join("/");
+    if (entityBasePaths.has(base)) {
+      return {
+        ...item,
+        link: `/${CONFIG_ENTITY_ROUTE_PREFIX}/${normalizedLink}`,
+      };
+    }
+  }
+  return item;
+}
+
 /**
  * Replace deprecated `ChildSchoolOverview`/`PreviousSchools`/`ChildrenOverview`
  * components with `RelatedEntities` using ChildSchoolRelation entity.
@@ -659,3 +827,51 @@ const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
 
   return configPart;
 };
+
+/**
+ * Migrate navigationMenu items that use a hardcoded entity route `link` to the `entityType` format.
+ * Looks up each item's path against the view configs in the same config document and converts
+ * only items whose view has a `config.entityType` — custom non-entity routes are left unchanged.
+ * Runs at the root Config document level to have access to all view configs.
+ */
+const migrateNavigationMenuEntityLinks: ConfigMigration = (key, configPart) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data) ||
+    !Array.isArray(configPart.data?.navigationMenu?.items)
+  ) {
+    return configPart;
+  }
+
+  configPart.data.navigationMenu.items = migrateNavMenuItems(
+    configPart.data.navigationMenu.items,
+    configPart.data,
+  );
+  return configPart;
+};
+
+function migrateNavMenuItems(items: any[], data: Record<string, any>): any[] {
+  return items.map((item) => {
+    const migrated = migrateNavMenuItem(item, data);
+    if (migrated.subMenu) {
+      migrated.subMenu = migrateNavMenuItems(migrated.subMenu, data);
+    }
+    return migrated;
+  });
+}
+
+function migrateNavMenuItem(item: any, data: Record<string, any>): any {
+  if (!item.link || item.entityType) return item;
+
+  const normalizedPath = normalizeRoutePath(item.link);
+  const viewConfig = data[`${PREFIX_VIEW_CONFIG}${normalizedPath}`];
+  const entityType =
+    viewConfig?.config?.entityType || viewConfig?.config?.entity;
+
+  if (!entityType) return item;
+
+  const { link: _removed, ...rest } = item;
+  return { ...rest, entityType };
+}
