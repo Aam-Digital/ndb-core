@@ -94,6 +94,9 @@ export class LoginComponent implements OnInit {
    */
   loginError = signal<string | null>(null);
 
+  /** Raw technical error from the login service, shown as a tooltip on the error message. */
+  loginTechnicalError = signal<string | null>(null);
+
   /**
    * localStorage key under which the online-only preference is persisted.
    * Read by bootstrap-environment.ts on every page load (before Angular DI starts)
@@ -141,6 +144,7 @@ export class LoginComponent implements OnInit {
       this.loginInProgress.set(state === LoginState.IN_PROGRESS);
       if (state === LoginState.LOGGED_IN) {
         this.loginError.set(null);
+        this.loginTechnicalError.set(null);
         this.routeAfterLogin();
       }
       if (state === LoginState.LOGIN_FAILED && this.userInitiatedLogin) {
@@ -244,7 +248,12 @@ export class LoginComponent implements OnInit {
   tryLogin() {
     this.showOfflineSection.set(true);
     this.loginError.set(null);
+    this.loginTechnicalError.set(null);
     this.userInitiatedLogin = true;
-    return this.sessionManager.remoteLogin();
+    this.sessionManager.remoteLogin().catch((err: unknown) => {
+      this.loginTechnicalError.set(
+        err instanceof Error ? err.message : String(err),
+      );
+    });
   }
 }
