@@ -63,6 +63,7 @@ describe("KeycloakAuthService", () => {
     };
     mockKeycloak.getToken.mockResolvedValue(keycloakToken);
     mockKeycloak.updateToken.mockResolvedValue(true);
+    mockKeycloak.init.mockResolvedValue(undefined);
     const mockActivatedRoute = { snapshot: { queryParams: {} } };
 
     TestBed.configureTestingModule({
@@ -247,6 +248,44 @@ describe("KeycloakAuthService", () => {
     } finally {
       Object.defineProperty(Navigator.prototype, "onLine", originalOnLine!);
     }
+  });
+
+  it("should retry login on a transient 504 from Keycloak and eventually succeed", async () => {
+    vi.useFakeTimers();
+    try {
+      const transient = { status: 504 } as any;
+      mockKeycloak.init
+        .mockRejectedValueOnce(transient)
+        .mockRejectedValueOnce(transient)
+        .mockResolvedValueOnce(undefined);
+
+      const promise = service.login();
+      // Advance through both backoff delays (1s + 3s).
+      await vi.advanceTimersByTimeAsync(5_000);
+
+      await expect(promise).resolves.toEqual(
+        expect.objectContaining({ name: "test" }),
+      );
+      expect(mockKeycloak.init).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should NOT retry login on a 4xx error", async () => {
+    const authError = { status: 401 } as any;
+    mockKeycloak.init.mockRejectedValue(authError);
+
+    await expect(service.login()).rejects.toBe(authError);
+    expect(mockKeycloak.init).toHaveBeenCalledTimes(1);
+  });
+
+  it("should NOT retry checkSession (silent path on initial load)", async () => {
+    const transient = { status: 504 } as any;
+    mockKeycloak.init.mockRejectedValue(transient);
+
+    await expect(service.checkSession()).rejects.toBeDefined();
+    expect(mockKeycloak.init).toHaveBeenCalledTimes(1);
   });
 
   it.skip("should gracefully handle failed re-authorization", async () => {
