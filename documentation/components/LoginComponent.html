@@ -239,10 +239,16 @@
                                 <a href="#enableOfflineLogin" >enableOfflineLogin</a>
                             </li>
                             <li>
+                                <a href="#loginError" >loginError</a>
+                            </li>
+                            <li>
                                 <a href="#loginInProgress" >loginInProgress</a>
                             </li>
                             <li>
                                 <a href="#loginState" >loginState</a>
+                            </li>
+                            <li>
+                                <a href="#loginTechnicalError" >loginTechnicalError</a>
                             </li>
                             <li>
                                 <a href="#offlineUsers" >offlineUsers</a>
@@ -306,7 +312,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/session/login/login.component.ts:101</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="119" class="link-to-prism">src/app/core/session/login/login.component.ts:119</a></div>
                             </td>
                         </tr>
 
@@ -343,8 +349,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="140"
-                                    class="link-to-prism">src/app/core/session/login/login.component.ts:140</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="174"
+                                    class="link-to-prism">src/app/core/session/login/login.component.ts:174</a></div>
                         </td>
                     </tr>
 
@@ -410,8 +416,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="199"
-                                    class="link-to-prism">src/app/core/session/login/login.component.ts:199</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="248"
+                                    class="link-to-prism">src/app/core/session/login/login.component.ts:248</a></div>
                         </td>
                     </tr>
 
@@ -420,7 +426,7 @@
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                 </td>
@@ -446,16 +452,69 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/session/login/login.component.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/session/login/login.component.ts:80</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether offline-login buttons are clickable.
+Becomes true once the remote login has failed or after a hard timeout,
+so the user always has a fallback path to enter the app.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loginError"></a>
+                    <span class="name">
+                        <span ><b>loginError</b></span>
+                        <a href="#loginError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;string | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/session/login/login.component.ts:95</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Human-readable error to display when a <em>user-initiated</em> remote login
+fails. Stays null for the silent SSO check on initial page load (whose
+&quot;failure&quot; simply means the user is not yet logged in and is the normal
+state we expect to render the login form).</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -478,12 +537,12 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
+                        <i>Default value : </i><code>signal(false)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/session/login/login.component.ts:74</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/session/login/login.component.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -514,10 +573,47 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/session/login/login.component.ts:69</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/session/login/login.component.ts:71</a></div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loginTechnicalError"></a>
+                    <span class="name">
+                        <span ><b>loginTechnicalError</b></span>
+                        <a href="#loginTechnicalError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;string | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/core/session/login/login.component.ts:98</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Raw technical error from the login service, shown as a tooltip on the error message.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -545,7 +641,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/session/login/login.component.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/session/login/login.component.ts:74</a></div>
                         </td>
                     </tr>
 
@@ -565,13 +661,18 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/session/login/login.component.ts:101</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="119" class="link-to-prism">src/app/core/session/login/login.component.ts:119</a></div>
                         </td>
                     </tr>
 
@@ -608,7 +709,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/session/login/login.component.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/session/login/login.component.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -634,12 +735,12 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
+                        <i>Default value : </i><code>signal(false)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/session/login/login.component.ts:77</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/session/login/login.component.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -678,7 +779,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/session/login/login.component.ts:95</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/core/session/login/login.component.ts:113</a></div>
                         </td>
                     </tr>
 
@@ -718,7 +819,7 @@ Hidden when session_type_choice is false (operator enforces a fixed session type
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/session/login/login.component.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/session/login/login.component.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -744,12 +845,12 @@ Hidden when session_type_choice is false (operator enforces a fixed session type
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
+                        <i>Default value : </i><code>signal(false)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/session/login/login.component.ts:80</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/session/login/login.component.ts:87</a></div>
                         </td>
                     </tr>
 
@@ -773,6 +874,7 @@ Hidden when session_type_choice is false (operator enforces a fixed session type
   OnInit,
   inject,
   ChangeDetectionStrategy,
+  signal,
 } from &quot;@angular/core&quot;;
 import { MatCardModule } from &quot;@angular/material/card&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
@@ -793,6 +895,7 @@ import { race, timer } from &quot;rxjs&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -823,14 +926,30 @@ export class LoginComponent implements OnInit {
   siteSettingsService &#x3D; inject(SiteSettingsService);
 
   offlineUsers: SessionInfo[] &#x3D; [];
-  enableOfflineLogin: boolean;
-  loginInProgress &#x3D; false;
+  /**
+   * Whether offline-login buttons are clickable.
+   * Becomes true once the remote login has failed or after a hard timeout,
+   * so the user always has a fallback path to enter the app.
+   */
+  enableOfflineLogin &#x3D; signal(false);
+  loginInProgress &#x3D; signal(false);
 
   /** Whether the offline login section should be shown at all. */
-  showOfflineSection &#x3D; false;
+  showOfflineSection &#x3D; signal(false);
 
   /** Whether the initial silent SSO check has completed (showing the login form). */
-  ssoCheckDone &#x3D; false;
+  ssoCheckDone &#x3D; signal(false);
+
+  /**
+   * Human-readable error to display when a *user-initiated* remote login
+   * fails. Stays null for the silent SSO check on initial page load (whose
+   * &quot;failure&quot; simply means the user is not yet logged in and is the normal
+   * state we expect to render the login form).
+   */
+  loginError &#x3D; signal&lt;string | null&gt;(null);
+
+  /** Raw technical error from the login service, shown as a tooltip on the error message. */
+  loginTechnicalError &#x3D; signal&lt;string | null&gt;(null);
 
   /**
    * localStorage key under which the online-only preference is persisted.
@@ -851,33 +970,46 @@ export class LoginComponent implements OnInit {
       environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online);
 
   /** User preference: use online-only mode instead of synced. */
-  onlineOnly: boolean;
+  onlineOnly &#x3D; signal(false);
 
   constructor() {
     const sessionManager &#x3D; this.sessionManager;
 
     // restore previous online-only preference from localStorage
-    this.onlineOnly &#x3D;
+    const initialOnlineOnly &#x3D;
       localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) &#x3D;&#x3D;&#x3D; &quot;true&quot; ||
       environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online;
-    this.applyOnlineOnlyMode(this.onlineOnly);
+    this.onlineOnly.set(initialOnlineOnly);
+    this.applyOnlineOnlyMode(initialOnlineOnly);
 
-    this.enableOfflineLogin &#x3D; !this.sessionManager.remoteLoginAvailable();
-    this.showOfflineSection &#x3D; !navigator.onLine;
+    this.enableOfflineLogin.set(!this.sessionManager.remoteLoginAvailable());
+    this.showOfflineSection.set(!navigator.onLine);
 
     // Only do a silent SSO check — don&#x27;t redirect to Keycloak yet.
     // This allows the user to see and interact with the login page settings first.
-    sessionManager.checkRemoteSession().then(() &#x3D;&gt; {
-      this.ssoCheckDone &#x3D; true;
+    sessionManager.checkRemoteSession().finally(() &#x3D;&gt; {
+      this.ssoCheckDone.set(true);
       sessionManager.clearRemoteSessionIfNecessary();
     });
   }
 
   ngOnInit() {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) &#x3D;&gt; {
-      this.loginInProgress &#x3D; state &#x3D;&#x3D;&#x3D; LoginState.IN_PROGRESS;
+      this.loginInProgress.set(state &#x3D;&#x3D;&#x3D; LoginState.IN_PROGRESS);
       if (state &#x3D;&#x3D;&#x3D; LoginState.LOGGED_IN) {
+        this.loginError.set(null);
+        this.loginTechnicalError.set(null);
         this.routeAfterLogin();
+      }
+      if (state &#x3D;&#x3D;&#x3D; LoginState.LOGIN_FAILED &amp;&amp; this.userInitiatedLogin) {
+        // Only surface a visible error after a user actually clicked &quot;Log in&quot;.
+        // The silent SSO check on initial page load also ends in LOGIN_FAILED
+        // when the user is simply not logged in yet — that is the normal
+        // path and should not show an error banner.
+        this.userInitiatedLogin &#x3D; false;
+        this.loginError.set(
+          $localize&#x60;:Login error message:Could not reach the login service. Please check your internet connection and try again.&#x60;,
+        );
       }
     });
 
@@ -886,12 +1018,15 @@ export class LoginComponent implements OnInit {
       this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
       timer(10000),
     ).subscribe(() &#x3D;&gt; {
-      this.enableOfflineLogin &#x3D; true;
+      // Always reveal the fallback after a hard timeout or on login failure,
+      // so a stuck remote login can never trap the user without an escape.
+      this.enableOfflineLogin.set(true);
+      this.showOfflineSection.set(true);
     });
   }
 
   onOnlineOnlyChanged(checked: boolean) {
-    this.onlineOnly &#x3D; checked;
+    this.onlineOnly.set(checked);
     if (checked) {
       localStorage.setItem(LoginComponent.ONLINE_ONLY_KEY, &quot;true&quot;);
     } else {
@@ -927,7 +1062,7 @@ export class LoginComponent implements OnInit {
   private routeAfterLogin() {
     const redirectUri &#x3D; this.route.snapshot.queryParams[&quot;redirect_uri&quot;] || &quot;&quot;;
     const safeRedirectUri &#x3D; this.safeRedirectUrl(redirectUri);
-    setTimeout(() &#x3D;&gt; this.router.navigateByUrl(safeRedirectUri), 0);
+    this.router.navigateByUrl(safeRedirectUri);
   }
 
   private safeRedirectUrl(redirectUri: string): string {
@@ -940,18 +1075,40 @@ export class LoginComponent implements OnInit {
 
       // validate same origin and path
       if (fullUrl.origin !&#x3D;&#x3D; base || !fullUrl.pathname.startsWith(&quot;/&quot;)) {
+        Logging.debug(
+          &#x60;Login: rejected redirect_uri (cross-origin or invalid path): ${redirectUri}&#x60;,
+        );
         return &quot;/&quot;;
       }
 
       return fullUrl.pathname + fullUrl.search + fullUrl.hash;
     } catch (e) {
+      Logging.debug(
+        &#x60;Login: rejected redirect_uri (parse error): ${redirectUri}&#x60;,
+        e,
+      );
       return &quot;/&quot;; // fallback for invalid urls
     }
   }
 
+  /**
+   * True between the moment the user clicks &quot;Log in&quot; and the next
+   * resolution of loginState (LOGGED_IN or LOGIN_FAILED). Used to
+   * distinguish a user-initiated failure (show error) from the silent
+   * initial SSO check failure (do not show error).
+   */
+  private userInitiatedLogin &#x3D; false;
+
   tryLogin() {
-    this.showOfflineSection &#x3D; true;
-    return this.sessionManager.remoteLogin();
+    this.showOfflineSection.set(true);
+    this.loginError.set(null);
+    this.loginTechnicalError.set(null);
+    this.userInitiatedLogin &#x3D; true;
+    this.sessionManager.remoteLogin().catch((err: unknown) &#x3D;&gt; {
+      this.loginTechnicalError.set(
+        err instanceof Error ? err.message : String(err),
+      );
+    });
   }
 }
 </code></pre>
@@ -974,7 +1131,7 @@ export class LoginComponent implements OnInit {
       &lt;!-- ONLINE-ONLY OPTION --&gt;
       @if (showOnlineOnlyOption) {
         &lt;mat-checkbox
-          [ngModel]&#x3D;&quot;onlineOnly&quot;
+          [ngModel]&#x3D;&quot;onlineOnly()&quot;
           (ngModelChange)&#x3D;&quot;onOnlineOnlyChanged($event)&quot;
           matTooltip&#x3D;&quot;When enabled, data is not synced and stored on this device. This is faster but you cannot use the app offline later.&quot;
           i18n-matTooltip&#x3D;&quot;online-only mode tooltip&quot;
@@ -990,7 +1147,7 @@ export class LoginComponent implements OnInit {
         matTooltip&#x3D;&quot;It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection.&quot;
         i18n-matTooltip&#x3D;&quot;online login tooltip&quot;
       &gt;
-        @if (loginInProgress) {
+        @if (loginInProgress()) {
           &lt;div&gt;
             &lt;em i18n&#x3D;&quot;login progess bar title&quot;&gt;Checking online login ...&lt;/em&gt;
             &lt;mat-progress-bar
@@ -998,7 +1155,17 @@ export class LoginComponent implements OnInit {
               class&#x3D;&quot;login-check-progressbar&quot;
             &gt;&lt;/mat-progress-bar&gt;
           &lt;/div&gt;
-        } @else if (ssoCheckDone) {
+        } @else if (ssoCheckDone()) {
+          @if (loginError(); as error) {
+            &lt;div
+              class&#x3D;&quot;login-error&quot;
+              role&#x3D;&quot;alert&quot;
+              [matTooltip]&#x3D;&quot;loginTechnicalError()&quot;
+            &gt;
+              &lt;fa-icon icon&#x3D;&quot;triangle-exclamation&quot;&gt;&lt;/fa-icon&gt;
+              &lt;span&gt;{{ error }}&lt;/span&gt;
+            &lt;/div&gt;
+          }
           &lt;div&gt;
             &lt;button
               mat-flat-button
@@ -1015,7 +1182,7 @@ export class LoginComponent implements OnInit {
       &lt;/div&gt;
 
       &lt;!-- OFFLINE --&gt;
-      @if (showOfflineSection &amp;&amp; offlineUsers.length &gt; 0) {
+      @if (showOfflineSection() &amp;&amp; offlineUsers.length &gt; 0) {
         &lt;mat-card class&#x3D;&quot;margin-top-large&quot; appearance&#x3D;&quot;outlined&quot;&gt;
           &lt;mat-card-header
             matTooltip&#x3D;&quot;You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login.&quot;
@@ -1038,7 +1205,7 @@ export class LoginComponent implements OnInit {
                 &lt;button
                   mat-list-item
                   (click)&#x3D;&quot;sessionManager.offlineLogin(user)&quot;
-                  [disabled]&#x3D;&quot;!enableOfflineLogin&quot;
+                  [disabled]&#x3D;&quot;!enableOfflineLogin()&quot;
                 &gt;
                   &lt;fa-icon matListItemIcon icon&#x3D;&quot;user&quot;&gt;&lt;/fa-icon&gt;
                   {{ user.email ?? user.name }}
@@ -1065,6 +1232,10 @@ export class LoginComponent implements OnInit {
   color: colors.$error;
   font-size: 90%;
   text-align: justify;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 :host {
@@ -1113,7 +1284,7 @@ export class LoginComponent implements OnInit {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><mat-card appearance="raised" class="full-width border-box-sizing">  <mat-card-header class="header">    <mat-card-title style="text-align: center" i18n="Sign in title">      Welcome    </mat-card-title>    <mat-card-subtitle i18n="Sign in subtitle">      to your system      <em>{{ siteSettingsService.siteName | async }}</em>    </mat-card-subtitle>  </mat-card-header>  <mat-card-content>    <div class="gap-regular flex-column">      <!-- ONLINE-ONLY OPTION -->      @if (showOnlineOnlyOption) {        <mat-checkbox          [ngModel]="onlineOnly"          (ngModelChange)="onOnlineOnlyChanged($event)"          matTooltip="When enabled, data is not synced and stored on this device. This is faster but you cannot use the app offline later."          i18n-matTooltip="online-only mode tooltip"        >          <span i18n="online-only checkbox label"            >Online-only mode (no offline sync)</span          >        </mat-checkbox>      }      <!-- ONLINE -->      <div        matTooltip="It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection."        i18n-matTooltip="online login tooltip"      >        @if (loginInProgress) {          <div>            <em i18n="login progess bar title">Checking online login ...</em>            <mat-progress-bar              mode="indeterminate"              class="login-check-progressbar"            ></mat-progress-bar>          </div>        } @else if (ssoCheckDone) {          <div>            <button              mat-flat-button              color="primary"              type="button"              (click)="tryLogin()"              i18n="Login button"              style="width: 100%"            >              Log in            </button>          </div>        }      </div>      <!-- OFFLINE -->      @if (showOfflineSection && offlineUsers.length > 0) {        <mat-card class="margin-top-large" appearance="outlined">          <mat-card-header            matTooltip="You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login."            i18n-matTooltip="offline login tooltip"          >            <h3              mat-card-title              class="offline-title"              i18n="offline section title"            >              Offline Login            </h3>            <mat-card-subtitle i18n="Select user for offline login title"              >Log in as user ...</mat-card-subtitle            >          </mat-card-header>          <mat-card-content>            <mat-action-list>              @for (user of offlineUsers; track user.id) {                <button                  mat-list-item                  (click)="sessionManager.offlineLogin(user)"                  [disabled]="!enableOfflineLogin"                >                  <fa-icon matListItemIcon icon="user"></fa-icon>                  {{ user.email ?? user.name }}                </button>              }            </mat-action-list>          </mat-card-content>        </mat-card>      }    </div>  </mat-card-content></mat-card></div>'
+        var COMPONENT_TEMPLATE = '<div><mat-card appearance="raised" class="full-width border-box-sizing">  <mat-card-header class="header">    <mat-card-title style="text-align: center" i18n="Sign in title">      Welcome    </mat-card-title>    <mat-card-subtitle i18n="Sign in subtitle">      to your system      <em>{{ siteSettingsService.siteName | async }}</em>    </mat-card-subtitle>  </mat-card-header>  <mat-card-content>    <div class="gap-regular flex-column">      <!-- ONLINE-ONLY OPTION -->      @if (showOnlineOnlyOption) {        <mat-checkbox          [ngModel]="onlineOnly()"          (ngModelChange)="onOnlineOnlyChanged($event)"          matTooltip="When enabled, data is not synced and stored on this device. This is faster but you cannot use the app offline later."          i18n-matTooltip="online-only mode tooltip"        >          <span i18n="online-only checkbox label"            >Online-only mode (no offline sync)</span          >        </mat-checkbox>      }      <!-- ONLINE -->      <div        matTooltip="It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection."        i18n-matTooltip="online login tooltip"      >        @if (loginInProgress()) {          <div>            <em i18n="login progess bar title">Checking online login ...</em>            <mat-progress-bar              mode="indeterminate"              class="login-check-progressbar"            ></mat-progress-bar>          </div>        } @else if (ssoCheckDone()) {          @if (loginError(); as error) {            <div              class="login-error"              role="alert"              [matTooltip]="loginTechnicalError()"            >              <fa-icon icon="triangle-exclamation"></fa-icon>              <span>{{ error }}</span>            </div>          }          <div>            <button              mat-flat-button              color="primary"              type="button"              (click)="tryLogin()"              i18n="Login button"              style="width: 100%"            >              Log in            </button>          </div>        }      </div>      <!-- OFFLINE -->      @if (showOfflineSection() && offlineUsers.length > 0) {        <mat-card class="margin-top-large" appearance="outlined">          <mat-card-header            matTooltip="You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login."            i18n-matTooltip="offline login tooltip"          >            <h3              mat-card-title              class="offline-title"              i18n="offline section title"            >              Offline Login            </h3>            <mat-card-subtitle i18n="Select user for offline login title"              >Log in as user ...</mat-card-subtitle            >          </mat-card-header>          <mat-card-content>            <mat-action-list>              @for (user of offlineUsers; track user.id) {                <button                  mat-list-item                  (click)="sessionManager.offlineLogin(user)"                  [disabled]="!enableOfflineLogin()"                >                  <fa-icon matListItemIcon icon="user"></fa-icon>                  {{ user.email ?? user.name }}                </button>              }            </mat-action-list>          </mat-card-content>        </mat-card>      }    </div>  </mat-card-content></mat-card></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
     var ACTUAL_COMPONENT = {'name': 'LoginComponent'};
