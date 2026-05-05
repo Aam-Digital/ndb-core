@@ -270,7 +270,7 @@ as a full page view or in a modal dialog.
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/ui/dialog-view/dialog-view.component.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/ui/dialog-view/dialog-view.component.ts:49</a></div>
                             </td>
                         </tr>
 
@@ -307,7 +307,7 @@ as a full page view or in a modal dialog.
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/ui/dialog-view/dialog-view.component.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/ui/dialog-view/dialog-view.component.ts:48</a></div>
                         </td>
                     </tr>
 
@@ -340,7 +340,7 @@ as a full page view or in a modal dialog.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/AbstractViewComponent.html#source" target="_self" >AbstractViewComponent:84</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/AbstractViewComponent.html#source" target="_self" >AbstractViewComponent:83</a></code>
 </div>
                         </td>
                     </tr>
@@ -367,7 +367,7 @@ as a full page view or in a modal dialog.
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/ui/dialog-view/dialog-view.component.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/ui/dialog-view/dialog-view.component.ts:49</a></div>
                         </td>
                     </tr>
 
@@ -429,13 +429,12 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from &quot;@angular/material/dialog&quot;;
-import { EntityConfigService } from &quot;../../entity/entity-config.service&quot;;
+import { getEntityRuntimeDetailsRoutePath } from &quot;../../entity/entity-config.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { DialogCloseComponent } from &quot;../../common-components/dialog-close/dialog-close.component&quot;;
 import { DynamicComponentPipe } from &quot;../../config/dynamic-components/dynamic-component.pipe&quot;;
 import { AbstractViewComponent } from &quot;../abstract-view/abstract-view.component&quot;;
 import { Router } from &quot;@angular/router&quot;;
-import { PREFIX_VIEW_CONFIG } from &quot;../../config/dynamic-routing/view-config.interface&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 
 /**
@@ -477,9 +476,9 @@ export class DialogViewComponent&lt;T &#x3D; any&gt; extends AbstractViewCompone
 
     let viewConfig &#x3D; {};
     if (dialogData.entity) {
-      const detailsRoute &#x3D; EntityConfigService.getDetailsViewId(
+      const detailsRoute &#x3D; getEntityRuntimeDetailsRoutePath(
         dialogData.entity.getConstructor(),
-      ).substring(PREFIX_VIEW_CONFIG.length);
+      );
       viewConfig &#x3D;
         router.config.find((route) &#x3D;&gt; route.path &#x3D;&#x3D;&#x3D; detailsRoute)?.data
           ?.config ?? {};

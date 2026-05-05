@@ -229,7 +229,7 @@ and their schemas to existing entities</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/entity/entity-config.service.ts:43</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/entity/entity-config.service.ts:47</a></div>
                             </td>
                         </tr>
 
@@ -264,8 +264,8 @@ and their schemas to existing entities</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="135"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:135</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:139</a></div>
                         </td>
                     </tr>
 
@@ -363,8 +363,8 @@ If no arguments are provided, they will be loaded from the config</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="192"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:192</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:196</a></div>
                         </td>
                     </tr>
 
@@ -432,8 +432,8 @@ If no arguments are provided, they will be loaded from the config</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="38"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:38</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -501,8 +501,8 @@ If no arguments are provided, they will be loaded from the config</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="186"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:186</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:190</a></div>
                         </td>
                     </tr>
 
@@ -576,8 +576,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="199"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:199</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="203"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:203</a></div>
                         </td>
                     </tr>
 
@@ -645,8 +645,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="41"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:41</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="45"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:45</a></div>
                         </td>
                     </tr>
 
@@ -712,8 +712,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -779,8 +779,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="69"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:69</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="73"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -838,7 +838,7 @@ trigger an error message</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/entity/entity-config.service.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/entity/entity-config.service.ts:36</a></div>
                         </td>
                     </tr>
 
@@ -862,6 +862,10 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from &quot;../config/dynamic-routing/view-config.interface&quot;;
+import {
+  CONFIG_ENTITY_ROUTE_PREFIX,
+  normalizeRoutePath,
+} from &quot;../config/dynamic-routing/route-paths&quot;;
 import { EntitySchemaField } from &quot;./schema/entity-schema-field&quot;;
 import { EntitySchema } from &quot;./schema/entity-schema&quot;;
 import { EntityDetailsConfig } from &quot;../entity-details/EntityDetailsConfig&quot;;
@@ -1056,6 +1060,16 @@ export class EntityConfigService {
       EntityConfigService.getListViewId(entityType),
     );
   }
+}
+
+export function getEntityRuntimeRoute(entityType: EntityConstructor): string {
+  return &#x60;/${CONFIG_ENTITY_ROUTE_PREFIX}/${normalizeRoutePath(entityType.route)}&#x60;;
+}
+
+export function getEntityRuntimeDetailsRoutePath(
+  entityType: EntityConstructor,
+): string {
+  return &#x60;${getEntityRuntimeRoute(entityType).replace(/^\//, &quot;&quot;)}/:id&#x60;;
 }
 </code></pre>
     </div>

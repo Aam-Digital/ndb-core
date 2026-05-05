@@ -155,6 +155,7 @@ import { EmailClientService } from &quot;./email-client.service&quot;;
 import { EmailDatatype } from &quot;#src/app/core/basic-datatypes/string/email.datatype&quot;;
 import { AdminOverviewService } from &quot;#src/app/core/admin/admin-overview/admin-overview.service&quot;;
 import { EmailTemplate } from &quot;./email-template.entity&quot;;
+import { getEntityRuntimeRoute } from &quot;#src/app/core/entity/entity-config.service&quot;;
 import { RouterService } from &quot;#src/app/core/config/dynamic-routing/router.service&quot;;
 import { EntityDetailsConfig } from &quot;#src/app/core/entity-details/EntityDetailsConfig&quot;;
 import { ViewConfig } from &quot;#src/app/core/config/dynamic-routing/view-config.interface&quot;;
@@ -201,7 +202,7 @@ export class EmailClientServiceModule {
 
     adminOverviewService.addTemplateItems({
       label: $localize&#x60;:admin menu item:Email Templates&#x60;,
-      link: EmailTemplate.route,
+      link: getEntityRuntimeRoute(EmailTemplate),
       subtitle: $localize&#x60;:admin menu item subtitle:Configure templates for sending emails, populated with the template&#x27;s subject and body text.&#x60;,
     });
   }

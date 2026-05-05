@@ -701,13 +701,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/TemplateExportModule.html" data-type="entity-link" >TemplateExportModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-TemplateExportModule-a42d305ee2cf4fb8746a1348a403ff27b3128188e4816ee6fd76faeb6ae2c4726283c64ca09bb4abc50e4f4dba75a6426fe3a6c4193a7e5d5c130547eb40e7a6"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-a42d305ee2cf4fb8746a1348a403ff27b3128188e4816ee6fd76faeb6ae2c4726283c64ca09bb4abc50e4f4dba75a6426fe3a6c4193a7e5d5c130547eb40e7a6"' }>
+                                        'data-bs-target="#injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-a42d305ee2cf4fb8746a1348a403ff27b3128188e4816ee6fd76faeb6ae2c4726283c64ca09bb4abc50e4f4dba75a6426fe3a6c4193a7e5d5c130547eb40e7a6"' :
-                                        'id="xs-injectables-links-module-TemplateExportModule-a42d305ee2cf4fb8746a1348a403ff27b3128188e4816ee6fd76faeb6ae2c4726283c64ca09bb4abc50e4f4dba75a6426fe3a6c4193a7e5d5c130547eb40e7a6"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' :
+                                        'id="xs-injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' }>
                                         <li class="link">
                                             <a href="injectables/TemplateExportFileDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >TemplateExportFileDatatype</a>
                                         </li>

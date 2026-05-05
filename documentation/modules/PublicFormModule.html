@@ -163,6 +163,7 @@ import { ViewConfig } from &quot;../../core/config/dynamic-routing/view-config.i
 import { EntityDetailsConfig } from &quot;../../core/entity-details/EntityDetailsConfig&quot;;
 import { EntityListConfig } from &quot;../../core/entity-list/EntityListConfig&quot;;
 import { PublicFormConfig } from &quot;./public-form-config&quot;;
+import { getEntityRuntimeRoute } from &quot;../../core/entity/entity-config.service&quot;;
 import { publicFormRoutes } from &quot;./public-form-routing&quot;;
 import { PublicFormsService } from &quot;./public-forms.service&quot;;
 
@@ -187,7 +188,7 @@ export class PublicFormModule {
     routerService.addRoutes(viewConfigs);
     adminOverviewService.addTemplateItems({
       label: $localize&#x60;:admin menu item:Public Forms&#x60;,
-      link: PublicFormConfig.route,
+      link: getEntityRuntimeRoute(PublicFormConfig),
       subtitle: $localize&#x60;:admin menu item subtitle:Configure public forms shareable via link or website, to collect data even without a user account.&#x60;,
     });
     publicFormsService.initCustomFormActions();

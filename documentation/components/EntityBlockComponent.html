@@ -627,6 +627,7 @@ import { TemplateTooltipDirective } from &quot;../../../common-components/templa
 import { DynamicComponent } from &quot;../../../config/dynamic-components/dynamic-component.decorator&quot;;
 import { EntityFieldViewComponent } from &quot;../../../entity/entity-field-view/entity-field-view.component&quot;;
 import { EntityMapperService } from &quot;../../../entity/entity-mapper/entity-mapper.service&quot;;
+import { getEntityRuntimeRoute } from &quot;../../../entity/entity-config.service&quot;;
 import { Entity } from &quot;../../../entity/model/entity&quot;;
 import { Logging } from &quot;../../../logging/logging.service&quot;;
 import { resourceWithRetention } from &quot;../../../../utils/resourceWithRetention&quot;;
@@ -651,7 +652,6 @@ import { resourceWithRetention } from &quot;../../../../utils/resourceWithRetent
 export class EntityBlockComponent {
   private entityMapper &#x3D; inject(EntityMapperService);
   private router &#x3D; inject(Router);
-
   /** The entity to display directly. Takes precedence over entityId. */
   entity &#x3D; input&lt;Entity&gt;();
 
@@ -708,7 +708,10 @@ export class EntityBlockComponent {
       return;
     }
 
-    this.router.navigate([entity.getConstructor().route, entity.getId(true)]);
+    this.router.navigate([
+      getEntityRuntimeRoute(entity.getConstructor()),
+      entity.getId(true),
+    ]);
   }
 }
 </code></pre>

@@ -148,12 +148,25 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injector, NgModule, inject } from &quot;@angular/core&quot;;
+import { Routes } from &quot;@angular/router&quot;;
 import { AsyncComponent, ComponentRegistry } from &quot;../../dynamic-components&quot;;
 import { EntityActionsMenuService } from &quot;#src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service&quot;;
 import { BulkMergeService } from &quot;./bulk-merge-service&quot;;
+import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
+import { RoutedViewComponent } from &quot;#src/app/core/ui/routed-view/routed-view.component&quot;;
 
 @NgModule({})
 export class DeDuplicationModule {
+  static readonly routes: Routes &#x3D; [
+    {
+      path: &quot;review-duplicates&quot;,
+      component: RoutedViewComponent,
+      data: { component: &quot;ReviewDuplicates&quot; },
+      canDeactivate: [
+        () &#x3D;&gt; inject(UnsavedChangesService).checkUnsavedChanges(),
+      ],
+    },
+  ];
   constructor() {
     const components &#x3D; inject(ComponentRegistry);
     const entityActionsMenuService &#x3D; inject(EntityActionsMenuService);

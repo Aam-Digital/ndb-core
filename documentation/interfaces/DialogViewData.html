@@ -325,13 +325,12 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from &quot;@angular/material/dialog&quot;;
-import { EntityConfigService } from &quot;../../entity/entity-config.service&quot;;
+import { getEntityRuntimeDetailsRoutePath } from &quot;../../entity/entity-config.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { DialogCloseComponent } from &quot;../../common-components/dialog-close/dialog-close.component&quot;;
 import { DynamicComponentPipe } from &quot;../../config/dynamic-components/dynamic-component.pipe&quot;;
 import { AbstractViewComponent } from &quot;../abstract-view/abstract-view.component&quot;;
 import { Router } from &quot;@angular/router&quot;;
-import { PREFIX_VIEW_CONFIG } from &quot;../../config/dynamic-routing/view-config.interface&quot;;
 import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 
 /**
@@ -373,9 +372,9 @@ export class DialogViewComponent&lt;T &#x3D; any&gt; extends AbstractViewCompone
 
     let viewConfig &#x3D; {};
     if (dialogData.entity) {
-      const detailsRoute &#x3D; EntityConfigService.getDetailsViewId(
+      const detailsRoute &#x3D; getEntityRuntimeDetailsRoutePath(
         dialogData.entity.getConstructor(),
-      ).substring(PREFIX_VIEW_CONFIG.length);
+      );
       viewConfig &#x3D;
         router.config.find((route) &#x3D;&gt; route.path &#x3D;&#x3D;&#x3D; detailsRoute)?.data
           ?.config ?? {};

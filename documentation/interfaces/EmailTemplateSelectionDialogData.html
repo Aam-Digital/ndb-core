@@ -329,6 +329,7 @@ import { MatInputModule } from &quot;@angular/material/input&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { RouterLink } from &quot;@angular/router&quot;;
 import { EmailTemplate } from &quot;../email-template.entity&quot;;
+import { getEntityRuntimeRoute } from &quot;#src/app/core/entity/entity-config.service&quot;;
 import { HelpButtonComponent } from &quot;#src/app/core/common-components/help-button/help-button.component&quot;;
 import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
 import { switchMap, distinctUntilChanged } from &quot;rxjs/operators&quot;;
@@ -378,6 +379,8 @@ export interface EmailTemplateSelectionResult {
   styleUrl: &quot;./email-template-selection-dialog.component.scss&quot;,
 })
 export class EmailTemplateSelectionDialogComponent implements OnInit {
+  protected readonly emailTemplateRoute &#x3D; getEntityRuntimeRoute(EmailTemplate);
+
   emailTemplateSelectionForm: FormControl &#x3D; new FormControl();
   emailContentForm &#x3D; new FormGroup({
     subject: new FormControl&lt;string&gt;(&quot;&quot;, { validators: [Validators.required] }),

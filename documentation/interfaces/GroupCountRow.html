@@ -517,6 +517,7 @@ import { ConfigurableEnumValue } from &quot;app/core/basic-datatypes/configurabl
 import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
 import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
 import { EntityRegistry } from &quot;../../../../core/entity/database-entity.decorator&quot;;
+import { getEntityRuntimeRoute } from &quot;../../../../core/entity/entity-config.service&quot;;
 import { EntityFieldLabelComponent } from &quot;../../../../core/entity/entity-field-label/entity-field-label.component&quot;;
 import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
 import {
@@ -807,7 +808,7 @@ export class EntityCountDashboardComponent {
     const params &#x3D; {};
     params[field] &#x3D; filterId;
 
-    this.router.navigate([this.entityDefinition().route], {
+    this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
       queryParams: params,
     });
   }

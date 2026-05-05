@@ -196,7 +196,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:26</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:27</a></div>
                             </td>
                         </tr>
 
@@ -229,8 +229,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="68"
-                                    class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:68</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:71</a></div>
                         </td>
                     </tr>
 
@@ -299,8 +299,8 @@ by looking up the entityType from EntityRegistry and then using its config.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -348,7 +348,7 @@ by looking up the entityType from EntityRegistry and then using its config.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:26</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/ui/navigation/menu.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -376,6 +376,8 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from &quot;../../config/dynamic-routing/view-config.interface&quot;;
+import { getRuntimePathFromViewConfig } from &quot;../../config/dynamic-routing/route-paths&quot;;
+import { getEntityRuntimeRoute } from &quot;../../entity/entity-config.service&quot;;
 
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -383,7 +385,6 @@ import {
 export class MenuService {
   private configService &#x3D; inject(ConfigService);
   private entities &#x3D; inject(EntityRegistry);
-
   /**
    * name of config array in the config json file
    */
@@ -424,9 +425,11 @@ export class MenuService {
     return allConfigs
       .filter((view) &#x3D;&gt; !view._id.includes(&quot;/:id&quot;)) // skip details views (with &quot;/:id&quot; placeholder)
       .map((view) &#x3D;&gt; {
-        const id &#x3D; view._id.replace(PREFIX_VIEW_CONFIG, &quot;/&quot;);
-        const label &#x3D; view.config?.entityType?.trim() || view.component || id;
-        return { value: id, label };
+        const runtimePath &#x3D; getRuntimePathFromViewConfig(view);
+        const link &#x3D; runtimePath ? &#x60;/${runtimePath}&#x60; : &quot;/&quot;;
+        const label &#x3D;
+          view.config?.entityType?.trim() || view.component || runtimePath;
+        return { value: link, label };
       });
   }
 
@@ -441,7 +444,7 @@ export class MenuService {
       delete newItem[&quot;entityType&quot;];
       newItem.label &#x3D; item.label ?? entityType.labelPlural;
       newItem.icon &#x3D; item.icon ?? entityType.icon;
-      newItem.link &#x3D; entityType.route;
+      newItem.link &#x3D; getEntityRuntimeRoute(entityType);
     }
 
     if (item.subMenu) {
