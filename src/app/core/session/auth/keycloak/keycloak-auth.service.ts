@@ -24,17 +24,17 @@ const KEYCLOAK_OPERATION_TIMEOUT_MS = 15_000;
 const LOGIN_RETRY_DELAYS_MS = [1_000, 3_000];
 
 /**
- * Backoff schedule for *background* token refreshes (OnTokenExpired,
- * getValidToken). Kept short — if a background refresh keeps failing the
- * next API call's 401 will trigger an explicit login, so there is no
- * point retrying for many seconds and stalling the user's request.
+ * Backoff schedule for *background* token refreshes (OnTokenExpired).
+ * Kept short — if the background refresh keeps failing, the next API
+ * call's 401 will trigger an explicit login, so there is no point
+ * retrying for many seconds and stalling the user's request.
  */
 const TOKEN_REFRESH_RETRY_DELAYS_MS = [2_000, 5_000];
 
 /**
- * Minimum remaining lifetime (in seconds) the cached token must have
- * before an HTTP request will reuse it without first asking Keycloak
- * for a refresh. Matches keycloak-js's `updateToken(minValidity)` arg.
+ * Minimum remaining lifetime (in seconds) requested when refreshing the
+ * token in the background. Matches keycloak-js's `updateToken(minValidity)`
+ * argument.
  */
 const TOKEN_MIN_VALIDITY_SECONDS = 30;
 
@@ -241,29 +241,6 @@ export class KeycloakAuthService {
     }
   }
 
-  /**
-   * Returns a token guaranteed to be valid for at least the next
-   * {@link TOKEN_MIN_VALIDITY_SECONDS} seconds, refreshing silently first
-   * if the cached token is closer to expiry. Returns null if no session
-   * exists. On refresh failure, falls back to the cached token — the
-   * caller's request will then get a 401 and trigger explicit re-auth.
-   */
-  async getValidToken(): Promise<string | null> {
-    if (!this.accessToken) {
-      return null;
-    }
-    try {
-      await this.refreshKeycloakToken();
-      await this.cacheCurrentToken();
-    } catch (err) {
-      Logging.debug(
-        "getValidToken: silent refresh failed; using cached token",
-        err,
-      );
-    }
-    return this.accessToken;
-  }
-
   private isOfflineOrUnavailableError(err: any): boolean {
     // All retryable network errors (5xx / timeout / abort / fetch failures)
     // also count as "unavailable" so they map to RemoteLoginNotAvailableError
@@ -324,18 +301,6 @@ export class KeycloakAuthService {
         headers["Authorization"] = "Bearer " + this.accessToken;
       }
     }
-  }
-
-  /**
-   * Refresh the access token if it is close to expiry, then add the Bearer
-   * auth header to the given headers object. Prefer this over the bare
-   * {@link addAuthHeader} for any HTTP/PouchDB request that can afford to
-   * await a Promise — it removes the race window where a request goes out
-   * with a token that's already expired.
-   */
-  async addFreshAuthHeader(headers: any): Promise<void> {
-    await this.getValidToken();
-    this.addAuthHeader(headers);
   }
 
   /**

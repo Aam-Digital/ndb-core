@@ -116,7 +116,7 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     const remoteUrl =
       environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
-    await this.authService.addFreshAuthHeader(opts.headers);
+    this.authService.addAuthHeader(opts.headers);
     // bypass Angular service worker to avoid synthetic 504 errors on network blips
     if (opts.headers?.set && typeof opts.headers.set === "function") {
       opts.headers.set("ngsw-bypass", "true");
@@ -140,7 +140,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     ) {
       try {
         await this.authService.login();
-        await this.authService.addFreshAuthHeader(opts.headers);
+        this.authService.addAuthHeader(opts.headers);
         result = await PouchDB.fetch(remoteUrl, opts);
       } catch (err) {
         Logging.debug("Failed retried fetch from DB after 401", err);

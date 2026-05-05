@@ -142,52 +142,6 @@ describe("KeycloakAuthService", () => {
     expect(objHeaders["Authorization"]).toBe(`Bearer ${keycloakToken}`);
   });
 
-  it("getValidToken triggers a silent refresh and returns the fresh token", async () => {
-    await service.login();
-    mockKeycloak.updateToken.mockClear();
-
-    const refreshedToken = "header." + btoa(JSON.stringify({ sub: "x" })) + ".";
-    mockKeycloak.getToken.mockResolvedValueOnce(refreshedToken);
-
-    const token = await service.getValidToken();
-
-    expect(mockKeycloak.updateToken).toHaveBeenCalledWith(30);
-    expect(token).toBe(refreshedToken);
-  });
-
-  it("getValidToken returns null when no session exists", async () => {
-    expect(await service.getValidToken()).toBeNull();
-    expect(mockKeycloak.updateToken).not.toHaveBeenCalled();
-  });
-
-  it("getValidToken falls back to the cached token when the silent refresh fails", async () => {
-    await service.login();
-    vi.useFakeTimers();
-    try {
-      mockKeycloak.updateToken.mockRejectedValue({ status: 504 } as any);
-
-      const promise = service.getValidToken();
-      // Drive past both retry delays (2s + 5s) so the failure resolves quickly.
-      await vi.advanceTimersByTimeAsync(8_000);
-
-      // The cached token is the one captured during login(), not the (failing) refresh.
-      expect(await promise).toBe(keycloakToken);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("addFreshAuthHeader refreshes then attaches the Bearer header", async () => {
-    await service.login();
-    mockKeycloak.updateToken.mockClear();
-
-    const headers: any = {};
-    await service.addFreshAuthHeader(headers);
-
-    expect(mockKeycloak.updateToken).toHaveBeenCalledWith(30);
-    expect(headers["Authorization"]).toBe(`Bearer ${keycloakToken}`);
-  });
-
   it("resetKeycloakInit clears the memoised init so the next call re-runs init", async () => {
     await service.login();
     expect(mockKeycloak.init).toHaveBeenCalledTimes(1);

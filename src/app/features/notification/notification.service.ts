@@ -129,24 +129,22 @@ export class NotificationService {
     return firstValueFrom(
       this.firebaseMessaging.getToken
         .pipe(
-          mergeMap(async (token) => {
+          mergeMap((token) => {
             if (!token) {
-              return false;
+              return Promise.resolve(false);
             }
             const headers = {};
-            await this.authService.addFreshAuthHeader(headers);
+            this.authService.addAuthHeader(headers);
 
-            return firstValueFrom(
-              this.httpClient
-                .get(this.NOTIFICATION_API_URL + "/device/" + token, {
-                  headers,
-                })
-                .pipe(
-                  map((value) => {
-                    return value !== null;
-                  }),
-                ),
-            );
+            return this.httpClient
+              .get(this.NOTIFICATION_API_URL + "/device/" + token, {
+                headers,
+              })
+              .pipe(
+                map((value) => {
+                  return value !== null;
+                }),
+              );
           }),
         )
         .pipe(
@@ -202,27 +200,24 @@ export class NotificationService {
     notificationToken: string,
     deviceName: string = "web", // todo something useful here
   ): Promise<Object> {
-    return this.postWithFreshAuth(this.NOTIFICATION_API_URL + "/device", {
-      deviceToken: notificationToken,
-      deviceName,
-    });
-  }
-
-  private async postWithFreshAuth(url: string, payload: any): Promise<Object> {
+    const payload = { deviceToken: notificationToken, deviceName };
     const headers = {};
-    await this.authService.addFreshAuthHeader(headers);
-    return firstValueFrom(this.httpClient.post(url, payload, { headers }));
+    this.authService.addAuthHeader(headers);
+
+    return firstValueFrom(
+      this.httpClient.post(this.NOTIFICATION_API_URL + "/device", payload, {
+        headers,
+      }),
+    );
   }
 
   /**
    * Unregister the device with the backend using the FCM token.
    * @param notificationToken - The FCM token for the device.
    */
-  async unRegisterNotificationToken(
-    notificationToken: string,
-  ): Promise<Object> {
+  unRegisterNotificationToken(notificationToken: string): Promise<Object> {
     const headers = {};
-    await this.authService.addFreshAuthHeader(headers);
+    this.authService.addAuthHeader(headers);
 
     return firstValueFrom(
       this.httpClient.delete(
@@ -234,9 +229,9 @@ export class NotificationService {
     );
   }
 
-  async testNotification(): Promise<Object> {
+  testNotification(): Promise<Object> {
     const headers = {};
-    await this.authService.addFreshAuthHeader(headers);
+    this.authService.addAuthHeader(headers);
 
     return firstValueFrom(
       this.httpClient
