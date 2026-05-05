@@ -23,12 +23,27 @@ const KEYCLOAK_OPERATION_TIMEOUT_MS = 15_000;
 /** Backoff schedule for explicit user-initiated login retries. */
 const LOGIN_RETRY_DELAYS_MS = [1_000, 3_000];
 
+/**
+ * Browser/keycloak-js error messages that indicate a transient network
+ * failure rather than a real authentication problem. Matched against both
+ * `err.message` and `err.toString()` since some thrown values (e.g. plain
+ * strings from keycloak-js) only expose the text via `toString()`.
+ */
+const NETWORK_ERROR_PATTERNS = [
+  "Failed to fetch",
+  "NetworkError",
+  "Load failed",
+  "Network request failed",
+  "Timeout when waiting for 3rd party check iframe message.",
+];
+
 function isRetryableNetworkError(err: any): boolean {
   if (!err) return false;
   if (err instanceof TimeoutError) return true;
   if (["AbortError", "TimeoutError"].includes(err?.name)) return true;
   if ([502, 503, 504].includes(err?.status)) return true;
-  return false;
+  const message = `${err?.message ?? ""} ${err?.toString?.() ?? ""}`;
+  return NETWORK_ERROR_PATTERNS.some((pattern) => message.includes(pattern));
 }
 
 /**
@@ -155,27 +170,11 @@ export class KeycloakAuthService {
     });
   });
 
-  private static readonly NETWORK_ERROR_PATTERNS = [
-    "Failed to fetch",
-    "NetworkError",
-    "Load failed",
-    "Network request failed",
-    "Timeout when waiting for 3rd party check iframe message.",
-  ];
-
   private isOfflineOrUnavailableError(err: any): boolean {
-    // All retryable network errors (5xx / timeout / abort) also count as
-    // "unavailable" so they map to RemoteLoginNotAvailableError instead of
-    // spamming Sentry.
+    // All retryable network errors (5xx / timeout / abort / fetch failures)
+    // also count as "unavailable" so they map to RemoteLoginNotAvailableError
+    // instead of spamming Sentry.
     if (isRetryableNetworkError(err)) {
-      return true;
-    }
-    const message = err?.message ?? "";
-    if (
-      KeycloakAuthService.NETWORK_ERROR_PATTERNS.some((pattern) =>
-        message.includes(pattern),
-      )
-    ) {
       return true;
     }
     return !navigator.onLine;
