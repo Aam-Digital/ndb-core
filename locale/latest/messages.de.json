@@ -1409,5 +1409,6 @@
   "882273144557925433": "Die lokale Datenbank scheint beschädigt zu sein und das Speichern ist nicht mehr möglich.\n\nDies kann passieren, nachdem Daten parallel in mehreren Tabs gleichzeitig gespeichert wurden. Wir arbeiten an Verbesserungen, um dies zukünftig zu ermöglichen.",
   "3483406769163244984": "Large import: address lookups may be slow or fail. Open 'Configure value mapping' to skip lookups.",
   "4386719278864238231": " Warning: This import has {$INTERPOLATION} unique addresses to look up. At 1 request/second (API rate limit), this will take ~{$INTERPOLATION} seconds and large imports may fail to look up addresses. \"Skip address lookup\" is recommended. ",
-  "5875856512247951063": " Skip address lookup and only import text "
+  "5875856512247951063": " Skip address lookup and only import text ",
+  "5454660468604811925": "Could not reach the login service. Please check your internet connection and try again."
 }
