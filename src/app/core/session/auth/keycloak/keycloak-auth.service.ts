@@ -10,6 +10,27 @@ import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-
 import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
 import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
+import { defer, firstValueFrom, throwError, timer, TimeoutError } from "rxjs";
+import { retry, timeout } from "rxjs/operators";
+
+/**
+ * Hard upper bound on individual Keycloak network operations
+ * (init, token refresh). Picked well above expected RTT but short enough
+ * that a hung proxy/upstream surfaces a clear failure to the user.
+ */
+const KEYCLOAK_OPERATION_TIMEOUT_MS = 15_000;
+
+/** Backoff schedule for explicit user-initiated login retries. */
+const LOGIN_RETRY_DELAYS_MS = [1_000, 3_000];
+
+function isRetryableNetworkError(err: any): boolean {
+  if (!err) return false;
+  if (err instanceof TimeoutError) return true;
+  if (err?.name === "AbortError" || err?.name === "TimeoutError") return true;
+  const status = err?.status;
+  if (status === 502 || status === 503 || status === 504) return true;
+  return false;
+}
 
 /**
  * Handles the remote session with keycloak
@@ -26,11 +47,20 @@ export class KeycloakAuthService {
   /**
    * Check for an existing SSO session without redirecting to Keycloak.
    * Returns the session info if already authenticated, or null if not.
+   *
+   * Intentionally does NOT retry on transient errors: this runs silently on
+   * page load and the user is already waiting on the spinner. Failing fast
+   * lets the login form render quickly; a retry happens implicitly when the
+   * user clicks "Log in".
    */
   checkSession = reuseFirstAsync(async (): Promise<SessionInfo | null> => {
     await this.initKeycloak();
 
-    await this.keycloak.updateToken();
+    await firstValueFrom(
+      defer(() => Promise.resolve(this.keycloak.updateToken())).pipe(
+        timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+      ),
+    );
     const token = await this.keycloak.getToken();
     if (!token) {
       return null;
@@ -41,8 +71,38 @@ export class KeycloakAuthService {
 
   /**
    * Check for an existing session or forward to the keycloak login page.
+   * Retries on transient network errors (5xx / timeout / abort) since this
+   * is invoked by an explicit user action and a single transient failure
+   * shouldn't push the user back to the offline fallback.
    */
-  login = reuseFirstAsync(async (): Promise<SessionInfo> => {
+  login = reuseFirstAsync(
+    async (): Promise<SessionInfo> =>
+      firstValueFrom(
+        defer(() => this.loginOnce()).pipe(
+          retry({
+            count: LOGIN_RETRY_DELAYS_MS.length,
+            delay: (err, retryCount) => {
+              const retryable =
+                isRetryableNetworkError(err) ||
+                (err instanceof RemoteLoginNotAvailableError &&
+                  isRetryableNetworkError(err.cause));
+              if (!retryable) return throwError(() => err);
+              const delayMs =
+                LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
+                LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
+              Logging.debug(
+                `Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms`,
+                err,
+              );
+              return timer(delayMs);
+            },
+            resetOnSuccess: true,
+          }),
+        ),
+      ),
+  );
+
+  private async loginOnce(): Promise<SessionInfo> {
     const existing = await this.checkSession();
     if (existing) {
       return existing;
@@ -56,24 +116,30 @@ export class KeycloakAuthService {
     const token = await this.keycloak.getToken();
 
     return this.processToken(token);
-  });
+  }
 
   private initKeycloak = memoize(async () => {
     try {
-      await this.keycloak.init({
-        config: window.location.origin + "/assets/keycloak.json",
-        initOptions: {
-          onLoad: "check-sso",
-          silentCheckSsoRedirectUri:
-            window.location.origin + "/assets/silent-check-sso.html",
-        },
-        // GitHub API rejects if non GitHub bearer token is present
-        shouldAddToken: ({ url }) => !url.includes("api.github.com"),
-      });
+      await firstValueFrom(
+        defer(() =>
+          Promise.resolve(
+            this.keycloak.init({
+              config: window.location.origin + "/assets/keycloak.json",
+              initOptions: {
+                onLoad: "check-sso",
+                silentCheckSsoRedirectUri:
+                  window.location.origin + "/assets/silent-check-sso.html",
+              },
+              // GitHub API rejects if non GitHub bearer token is present
+              shouldAddToken: ({ url }) => !url.includes("api.github.com"),
+            }),
+          ),
+        ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
+      );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
         Logging.debug("Keycloak init failed (offline/unavailable)", err);
-        err = new RemoteLoginNotAvailableError();
+        err = new RemoteLoginNotAvailableError(err);
       } else {
         Logging.error("Keycloak init failed", err);
       }
@@ -101,6 +167,18 @@ export class KeycloakAuthService {
   ];
 
   private isOfflineOrUnavailableError(err: any): boolean {
+    if (err instanceof TimeoutError) {
+      return true;
+    }
+    if (err?.name === "AbortError" || err?.name === "TimeoutError") {
+      return true;
+    }
+    // Recognise transient gateway/upstream errors as "unavailable" so they
+    // surface as RemoteLoginNotAvailableError rather than spamming Sentry.
+    const status = err?.status;
+    if (status === 502 || status === 503 || status === 504) {
+      return true;
+    }
     const message = err?.message ?? "";
     if (
       KeycloakAuthService.NETWORK_ERROR_PATTERNS.some((pattern) =>
