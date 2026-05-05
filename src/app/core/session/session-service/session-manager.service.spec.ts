@@ -112,6 +112,7 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
+    sessionStorage.clear();
   });
 
   it("should update the session info once authenticated", async () => {
@@ -259,6 +260,45 @@ describe("SessionManagerService", () => {
     service.clearRemoteSessionIfNecessary();
 
     expect(mockKeycloak.logout).toHaveBeenCalled();
+  });
+
+  it("should set the skip-next-sso-check flag on remote logout", async () => {
+    sessionStorage.removeItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY);
+    await service.remoteLogin();
+
+    await service.logout();
+
+    expect(
+      sessionStorage.getItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY),
+    ).toBe("1");
+  });
+
+  it("should not set the skip-next-sso-check flag if no remote session was active", async () => {
+    sessionStorage.removeItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY);
+    await service.offlineLogin(dbUser);
+
+    await service.logout();
+
+    expect(
+      sessionStorage.getItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY),
+    ).toBeNull();
+  });
+
+  it("should skip the silent SSO check when the skip flag is set", async () => {
+    sessionStorage.setItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY, "1");
+    const remoteLoginAvailableSpy = vi
+      .spyOn(service, "remoteLoginAvailable")
+      .mockReturnValue(true);
+
+    await service.checkRemoteSession();
+
+    expect(loginStateSubject.value).toBe(LoginState.LOGIN_FAILED);
+    // The skip-flag short-circuit means we should not even consult
+    // remoteLoginAvailable() / Keycloak after logout.
+    expect(remoteLoginAvailableSpy).not.toHaveBeenCalled();
+    expect(
+      sessionStorage.getItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY),
+    ).toBeNull();
   });
 
   it("should use current user db if database has content", async () => {
