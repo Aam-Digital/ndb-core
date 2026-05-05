@@ -38,9 +38,11 @@ describe("RemotePouchDatabase tests", () => {
     mockAuthService.login.mockResolvedValue(undefined);
     // providing "valid" token on second call
     let calls = 0;
-    mockAuthService.addAuthHeader.mockImplementation((headers: any) => {
+    mockAuthService.addAuthHeader.mockImplementation(
+      (headers: Record<string, string>) => {
       headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
-    });
+      },
+    );
     (PouchDB.fetch as Mock).mockImplementation(async (url, opts) => {
       calls++;
       if (opts.headers["Authorization"] === "valid") {
