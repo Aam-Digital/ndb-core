@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -6,5 +6,8 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
   imports: [],
   templateUrl: "./hint-box.component.html",
   styleUrl: "./hint-box.component.scss",
+  host: { "[attr.type]": "type" },
 })
-export class HintBoxComponent {}
+export class HintBoxComponent {
+  @Input() type: "info" | "warning" = "info";
+}

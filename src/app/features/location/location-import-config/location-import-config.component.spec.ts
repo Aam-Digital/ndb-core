@@ -8,6 +8,11 @@ import {
 import { MappingDialogData } from "../../../core/import/import-column-mapping/mapping-dialog-data";
 import { ColumnMapping } from "../../../core/import/column-mapping";
 
+const OVER_THRESHOLD_VALUES = Array.from(
+  { length: 51 },
+  (_, i) => `Address ${i + 1}`,
+);
+
 describe("LocationImportConfigComponent", () => {
   let component: LocationImportConfigComponent;
   let fixture: ComponentFixture<LocationImportConfigComponent>;
@@ -21,6 +26,7 @@ describe("LocationImportConfigComponent", () => {
     mockDialogData = {
       col: { column: "address" } as ColumnMapping,
       values: ["123 Main St", "456 Oak Ave"],
+      totalRowCount: 2,
       entityType: undefined,
     };
 
@@ -65,5 +71,42 @@ describe("LocationImportConfigComponent", () => {
       skipAddressLookup: true,
     } as LocationImportConfig);
     expect(mockDialogRef.close).toHaveBeenCalled();
+  });
+
+  it("should auto-default skipAddressLookup to true when unique address count exceeds threshold and no prior config", async () => {
+    mockDialogData.values = OVER_THRESHOLD_VALUES;
+
+    fixture = TestBed.createComponent(LocationImportConfigComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.skipAddressLookup.value).toBe(true);
+  });
+
+  it("should respect existing skipAddressLookup=false config even when unique address count exceeds threshold", async () => {
+    mockDialogData.values = OVER_THRESHOLD_VALUES;
+    mockDialogData.col.additional = {
+      skipAddressLookup: false,
+    } as LocationImportConfig;
+
+    fixture = TestBed.createComponent(LocationImportConfigComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.skipAddressLookup.value).toBe(false);
+  });
+
+  it("should show warning hint when unique address count exceeds threshold", async () => {
+    mockDialogData.values = OVER_THRESHOLD_VALUES;
+
+    fixture = TestBed.createComponent(LocationImportConfigComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const hints = fixture.nativeElement.querySelectorAll("app-hint-box");
+    const warningHint = Array.from(hints).find((el: Element) =>
+      el.textContent.includes("Warning"),
+    );
+    expect(warningHint).toBeTruthy();
   });
 });
