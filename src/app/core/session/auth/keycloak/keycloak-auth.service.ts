@@ -10,7 +10,14 @@ import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-
 import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
 import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
-import { defer, firstValueFrom, throwError, timer, TimeoutError } from "rxjs";
+import {
+  defer,
+  firstValueFrom,
+  Subscription,
+  throwError,
+  timer,
+  TimeoutError,
+} from "rxjs";
 import { retry, timeout } from "rxjs/operators";
 
 /**
@@ -72,6 +79,8 @@ export class KeycloakAuthService {
   private keycloak = inject(KeycloakService);
   private activatedRoute = inject(ActivatedRoute);
   private thirdPartyAuthService = inject(ThirdPartyAuthenticationService);
+
+  private keycloakEventsSub?: Subscription;
 
   /**
    * Check for an existing SSO session without redirecting to Keycloak.
@@ -189,18 +198,21 @@ export class KeycloakAuthService {
     // 504 from the proxy disrupted a refresh. If the silent refresh keeps
     // failing, the next authenticated request will hit a 401 and the
     // existing 401-retry path will then explicitly call login().
-    this.keycloak.keycloakEvents$.subscribe((event) => {
-      if (event.type == KeycloakEventTypeLegacy.OnTokenExpired) {
-        this.refreshKeycloakToken()
-          .then(() => this.cacheCurrentToken())
-          .catch((err) =>
-            Logging.debug(
-              "automatic token refresh failed; will re-auth on next 401",
-              err,
-            ),
-          );
-      }
-    });
+    this.keycloakEventsSub?.unsubscribe();
+    this.keycloakEventsSub = this.keycloak.keycloakEvents$.subscribe(
+      (event) => {
+        if (event.type == KeycloakEventTypeLegacy.OnTokenExpired) {
+          this.refreshKeycloakToken()
+            .then(() => this.cacheCurrentToken())
+            .catch((err) =>
+              Logging.debug(
+                "automatic token refresh failed; will re-auth on next 401",
+                err,
+              ),
+            );
+        }
+      },
+    );
   });
 
   /**
@@ -310,6 +322,8 @@ export class KeycloakAuthService {
    */
   resetKeycloakInit(): void {
     this.initKeycloak.cache.clear();
+    this.keycloakEventsSub?.unsubscribe();
+    this.keycloakEventsSub = undefined;
   }
 
   /**
