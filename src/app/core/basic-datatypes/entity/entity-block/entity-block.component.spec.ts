@@ -6,7 +6,6 @@ import { Router } from "@angular/router";
 import { Logging } from "../../../logging/logging.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DatabaseException } from "../../../database/pouchdb/pouch-database";
-
 describe("EntityBlockComponent", () => {
   let component: EntityBlockComponent;
   let fixture: ComponentFixture<EntityBlockComponent>;
@@ -80,7 +79,7 @@ describe("EntityBlockComponent", () => {
 
     component.showDetailsPage();
 
-    expect(mockRouter.navigate).toHaveBeenCalledWith([TestEntity.route, "1"]);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(["/c/test-entity", "1"]);
   });
 
   it("should log a warning if entity cannot be loaded", async () => {

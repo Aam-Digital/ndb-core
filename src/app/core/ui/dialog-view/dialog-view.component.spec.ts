@@ -6,7 +6,6 @@ import { Component, Input } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-
 @Component({
   template: ``,
   // eslint-disable-next-line @angular-eslint/prefer-standalone
@@ -74,7 +73,10 @@ describe("DialogViewComponent", () => {
     mockDialogData.entity = testEntity;
 
     const testRouteConfig = { config: { viewConfig: "2" } };
-    mockRouter.config.push({ path: "test-entity/:id", data: testRouteConfig });
+    mockRouter.config.push({
+      path: "c/test-entity/:id",
+      data: testRouteConfig,
+    });
     mockRouter.config.push({ path: "other", data: {} });
 
     createComponent();

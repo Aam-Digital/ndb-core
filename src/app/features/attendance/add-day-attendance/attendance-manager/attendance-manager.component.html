@@ -51,7 +51,7 @@
           <button
             mat-raised-button
             class="full-width"
-            [routerLink]="activity.route"
+            [routerLink]="getEntityRuntimeRoute(activity)"
             *appDisabledEntityOperation="{
               entity: activity,
               operation: 'read',

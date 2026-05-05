@@ -14,13 +14,12 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from "@angular/material/dialog";
-import { EntityConfigService } from "../../entity/entity-config.service";
+import { getEntityRuntimeDetailsRoutePath } from "../../entity/entity-config.service";
 import { Entity } from "../../entity/model/entity";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
 import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
 import { Router } from "@angular/router";
-import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
@@ -62,9 +61,9 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
 
     let viewConfig = {};
     if (dialogData.entity) {
-      const detailsRoute = EntityConfigService.getDetailsViewId(
+      const detailsRoute = getEntityRuntimeDetailsRoutePath(
         dialogData.entity.getConstructor(),
-      ).substring(PREFIX_VIEW_CONFIG.length);
+      );
       viewConfig =
         router.config.find((route) => route.path === detailsRoute)?.data
           ?.config ?? {};

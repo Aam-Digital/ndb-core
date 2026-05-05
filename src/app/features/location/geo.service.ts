@@ -1,12 +1,26 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable, of } from "rxjs";
+import {
+  Observable,
+  ReplaySubject,
+  Subject,
+  concat,
+  defer,
+  of,
+  timer,
+} from "rxjs";
 import { Coordinates } from "./coordinates";
 import { HttpClient } from "@angular/common/http";
 import { ConfigService } from "../../core/config/config.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { environment } from "../../../environments/environment";
 import { MAP_CONFIG_KEY, MapConfig } from "./map-config";
-import { catchError, map } from "rxjs/operators";
+import {
+  catchError,
+  concatMap,
+  ignoreElements,
+  map,
+  tap,
+} from "rxjs/operators";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -30,6 +44,12 @@ export class GeoService {
     email: environment.email,
   };
 
+  private readonly cache = new Map<string, GeoResult[]>();
+  private readonly lookupQueue$ = new Subject<{
+    term: string;
+    resolve: ReplaySubject<GeoResult[]>;
+  }>();
+
   constructor() {
     const configService = inject(ConfigService);
 
@@ -39,13 +59,46 @@ export class GeoService {
         this.countrycodes = config.countrycodes;
       }
     });
+
+    // Process lookups sequentially with a 1s cooldown after every attempt
+    // (Nominatim usage policy: max 1 request/sec regardless of success or failure)
+    this.lookupQueue$
+      .pipe(
+        concatMap(({ term, resolve }) =>
+          concat(
+            this.fetchLookup(term).pipe(
+              tap((results) => {
+                this.cache.set(term, results);
+                resolve.next(results);
+                resolve.complete();
+              }),
+              catchError((err) => {
+                resolve.error(err);
+                return of([] as GeoResult[]);
+              }),
+            ),
+            defer(() => timer(1000).pipe(ignoreElements())),
+          ),
+        ),
+      )
+      .subscribe();
   }
 
   /**
-   * Returns locations that match the search term
+   * Returns locations that match the search term.
+   * Results are cached and requests are throttled to ≤1/sec per Nominatim policy.
    * @param searchTerm e.g. `Rollbergstraße Berlin`
    */
   lookup(searchTerm: string): Observable<GeoResult[]> {
+    if (this.cache.has(searchTerm)) {
+      return of(this.cache.get(searchTerm));
+    }
+    const resolve = new ReplaySubject<GeoResult[]>(1);
+    this.lookupQueue$.next({ term: searchTerm, resolve });
+    return resolve.asObservable();
+  }
+
+  private fetchLookup(searchTerm: string): Observable<GeoResult[]> {
     this.analytics.eventTrack("lookup_executed", {
       category: "Map",
       value: searchTerm.length,

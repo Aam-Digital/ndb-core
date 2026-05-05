@@ -9,6 +9,10 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from "../config/dynamic-routing/view-config.interface";
+import {
+  CONFIG_ENTITY_ROUTE_PREFIX,
+  normalizeRoutePath,
+} from "../config/dynamic-routing/route-paths";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { EntitySchema } from "./schema/entity-schema";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
@@ -203,4 +207,14 @@ export class EntityConfigService {
       EntityConfigService.getListViewId(entityType),
     );
   }
+}
+
+export function getEntityRuntimeRoute(entityType: EntityConstructor): string {
+  return `/${CONFIG_ENTITY_ROUTE_PREFIX}/${normalizeRoutePath(entityType.route)}`;
+}
+
+export function getEntityRuntimeDetailsRoutePath(
+  entityType: EntityConstructor,
+): string {
+  return `${getEntityRuntimeRoute(entityType).replace(/^\//, "")}/:id`;
 }

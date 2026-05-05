@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { of } from "rxjs";
+import { of, throwError } from "rxjs";
 import { GeoLocation } from "./geo-location";
 import { GeoResult, GeoService } from "./geo.service";
 import { LocationDatatype } from "./location.datatype";
@@ -123,6 +123,19 @@ describe("Schema data type: location", () => {
     const res2 = await service.importMapFunction("");
     expect(res2).toBeUndefined();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
+  });
+
+  it("should fall back to text-only location when lookup throws (e.g. API throttling)", async () => {
+    mockGeoService.lookup.mockReturnValue(
+      throwError(() => new Error("502 rate limit")),
+    );
+
+    const result = await service.importMapFunction("some address");
+
+    expect(result).toEqual({
+      locationString: "some address",
+      geoLookup: undefined,
+    });
   });
 
   it("should skip geo lookup and only set locationString when skipAddressLookup is true", async () => {

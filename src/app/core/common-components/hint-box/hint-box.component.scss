@@ -7,3 +7,8 @@
   border-radius: 4px;
   @include mat-elevation.elevation(1);
 }
+
+:host([type="warning"]) .hint-banner {
+  background: #fff3e0;
+  border-left: 4px solid #f57c00;
+}

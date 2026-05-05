@@ -26,6 +26,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
 import { ScreenWidthObserver } from "app/utils/media/screen-size-observer.service";
 import { MatButtonModule } from "@angular/material/button";
+import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -141,10 +142,8 @@ export class SearchComponent {
   }
 
   async clickOption(optionElement) {
-    await this.router.navigate([
-      optionElement.value.getConstructor().route,
-      optionElement.value.getId(true),
-    ]);
+    const route = getEntityRuntimeRoute(optionElement.value.getConstructor());
+    await this.router.navigate([route, optionElement.value.getId(true)]);
     this.formControl.setValue("");
     this.state.set(this.NOTHING_ENTERED);
     if (this.mobile()) {
@@ -154,7 +153,9 @@ export class SearchComponent {
 
   private prepareResults(entities: Entity[]): Entity[] {
     return entities.filter((entity) =>
-      this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route),
+      this.userRoleGuard.checkRoutePermissions(
+        getEntityRuntimeRoute(entity.getConstructor()),
+      ),
     );
   }
 

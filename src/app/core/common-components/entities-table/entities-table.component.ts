@@ -37,6 +37,7 @@ import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entit
 import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
@@ -459,7 +460,7 @@ export class EntitiesTableComponent<
         break;
       case "navigate":
         this.router.navigate([
-          entity.getConstructor().route,
+          getEntityRuntimeRoute(entity.getConstructor()),
           entity.isNew ? "new" : entity.getId(true),
         ]);
         break;

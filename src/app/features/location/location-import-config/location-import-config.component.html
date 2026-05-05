@@ -1,14 +1,21 @@
 <mat-dialog-content>
+  @if (rowCount > LOOKUP_WARNING_THRESHOLD) {
+    <app-hint-box type="warning" i18n>
+      Warning: This import has {{ rowCount }} unique addresses to look up. At 1
+      request/second (API rate limit), this will take ~{{ rowCount }} seconds
+      and large imports may fail to look up addresses. "Skip address lookup" is
+      recommended.
+    </app-hint-box>
+  }
   <div class="flex-row gap-regular align-center">
-    <mat-checkbox [formControl]="skipAddressLookup" i18n>
-      Skip address lookup
-    </mat-checkbox>
-    <app-hint-box i18n
-      >Enable this option to import addresses as plain text without attempting
-      to look up geographic coordinates. This is useful when importing large
-      amounts of data to avoid rate limits, or when the addresses don't need map
-      coordinates.</app-hint-box
+    <mat-checkbox
+      [formControl]="skipAddressLookup"
+      i18n
+      matTooltip="Enable this option to import addresses as plain text without attempting to look up geographic coordinates. This is useful when importing large amounts of data to avoid rate limits, or when the addresses don't need map coordinates."
+      i18n-matTooltip
     >
+      Skip address lookup and only import text
+    </mat-checkbox>
   </div>
 </mat-dialog-content>
 
