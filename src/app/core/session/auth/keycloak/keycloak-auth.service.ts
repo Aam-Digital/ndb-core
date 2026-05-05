@@ -70,11 +70,19 @@ export class KeycloakAuthService {
   checkSession = reuseFirstAsync(async (): Promise<SessionInfo | null> => {
     await this.initKeycloak();
 
-    await firstValueFrom(
-      defer(() => this.keycloak.updateToken()).pipe(
-        timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
-      ),
-    );
+    try {
+      await firstValueFrom(
+        defer(() => this.keycloak.updateToken()).pipe(
+          timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+        ),
+      );
+    } catch (err) {
+      if (this.isOfflineOrUnavailableError(err)) {
+        Logging.debug("Keycloak updateToken failed (offline/unavailable)", err);
+        throw new RemoteLoginNotAvailableError(err);
+      }
+      throw err;
+    }
     const token = await this.keycloak.getToken();
     if (!token) {
       return null;
