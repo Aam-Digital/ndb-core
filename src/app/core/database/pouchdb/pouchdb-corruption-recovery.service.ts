@@ -7,6 +7,8 @@ import {
 import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
 import { BackupService } from "../../admin/backup/backup.service";
 import { Logging } from "../../logging/logging.service";
+import { environment } from "../../../../environments/environment";
+import { SessionType } from "../../session/session-type";
 
 /**
  * Handles user-facing recovery flows when PouchDB IndexedDB corruption is detected.
@@ -20,6 +22,9 @@ export class PouchdbCorruptionRecoveryService {
   private resetDialogOpen = false;
 
   async promptMultiTabWarningDialog(): Promise<void> {
+    if (environment.session_type === SessionType.online) {
+      return;
+    }
     if (this.warningDialogOpen) {
       return;
     }
