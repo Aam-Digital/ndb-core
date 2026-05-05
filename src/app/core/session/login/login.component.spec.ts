@@ -191,4 +191,46 @@ describe("LoginComponent", () => {
       fixture.nativeElement.querySelector(".login-check-progressbar"),
     ).toBeFalsy();
   });
+
+  it("should NOT show an error after the silent SSO check fails on initial load", () => {
+    fixture.detectChanges();
+
+    // Simulate the initial silent SSO check transitioning to LOGIN_FAILED
+    // (the normal "you are not yet logged in" path).
+    loginState.next(LoginState.IN_PROGRESS);
+    loginState.next(LoginState.LOGIN_FAILED);
+    fixture.detectChanges();
+
+    expect(component.loginError()).toBeNull();
+    expect(fixture.nativeElement.querySelector(".login-error")).toBeFalsy();
+  });
+
+  it("should show an error message when a user-initiated remote login fails", () => {
+    fixture.detectChanges();
+
+    component.tryLogin();
+    loginState.next(LoginState.IN_PROGRESS);
+    loginState.next(LoginState.LOGIN_FAILED);
+    fixture.detectChanges();
+
+    expect(component.loginError()).toBeTruthy();
+    const errorEl = fixture.nativeElement.querySelector(".login-error");
+    expect(errorEl).toBeTruthy();
+    expect(errorEl.textContent).toContain("login service");
+  });
+
+  it("should clear the error when the user retries", () => {
+    fixture.detectChanges();
+    component.tryLogin();
+    loginState.next(LoginState.IN_PROGRESS);
+    loginState.next(LoginState.LOGIN_FAILED);
+    fixture.detectChanges();
+    expect(component.loginError()).toBeTruthy();
+
+    component.tryLogin();
+    fixture.detectChanges();
+
+    expect(component.loginError()).toBeNull();
+    expect(fixture.nativeElement.querySelector(".login-error")).toBeFalsy();
+  });
 });

@@ -39,6 +39,12 @@
             ></mat-progress-bar>
           </div>
         } @else if (ssoCheckDone()) {
+          @if (loginError(); as error) {
+            <div class="login-error" role="alert">
+              <fa-icon icon="triangle-exclamation"></fa-icon>
+              <span>{{ error }}</span>
+            </div>
+          }
           <div>
             <button
               mat-flat-button

@@ -87,6 +87,14 @@ export class LoginComponent implements OnInit {
   ssoCheckDone = signal(false);
 
   /**
+   * Human-readable error to display when a *user-initiated* remote login
+   * fails. Stays null for the silent SSO check on initial page load (whose
+   * "failure" simply means the user is not yet logged in and is the normal
+   * state we expect to render the login form).
+   */
+  loginError = signal<string | null>(null);
+
+  /**
    * localStorage key under which the online-only preference is persisted.
    * Read by bootstrap-environment.ts on every page load (before Angular DI starts)
    * to set environment.session_type before any database instances are created.
@@ -132,7 +140,18 @@ export class LoginComponent implements OnInit {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
       this.loginInProgress.set(state === LoginState.IN_PROGRESS);
       if (state === LoginState.LOGGED_IN) {
+        this.loginError.set(null);
         this.routeAfterLogin();
+      }
+      if (state === LoginState.LOGIN_FAILED && this.userInitiatedLogin) {
+        // Only surface a visible error after a user actually clicked "Log in".
+        // The silent SSO check on initial page load also ends in LOGIN_FAILED
+        // when the user is simply not logged in yet — that is the normal
+        // path and should not show an error banner.
+        this.userInitiatedLogin = false;
+        this.loginError.set(
+          $localize`:Login error message:Could not reach the login service. Please check your internet connection and try again.`,
+        );
       }
     });
 
@@ -214,8 +233,18 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  /**
+   * True between the moment the user clicks "Log in" and the next
+   * resolution of loginState (LOGGED_IN or LOGIN_FAILED). Used to
+   * distinguish a user-initiated failure (show error) from the silent
+   * initial SSO check failure (do not show error).
+   */
+  private userInitiatedLogin = false;
+
   tryLogin() {
     this.showOfflineSection.set(true);
+    this.loginError.set(null);
+    this.userInitiatedLogin = true;
     return this.sessionManager.remoteLogin();
   }
 }
