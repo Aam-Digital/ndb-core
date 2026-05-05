@@ -40,7 +40,7 @@ describe("RemotePouchDatabase tests", () => {
     let calls = 0;
     mockAuthService.addAuthHeader.mockImplementation(
       (headers: Record<string, string>) => {
-      headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
+        headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
       },
     );
     (PouchDB.fetch as Mock).mockImplementation(async (url, opts) => {
