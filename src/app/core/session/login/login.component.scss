@@ -5,6 +5,10 @@
   color: colors.$error;
   font-size: 90%;
   text-align: justify;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 :host {
