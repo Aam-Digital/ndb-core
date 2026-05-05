@@ -20,6 +20,7 @@ import {
   OnInit,
   inject,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -40,6 +41,7 @@ import { race, timer } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -70,14 +72,19 @@ export class LoginComponent implements OnInit {
   siteSettingsService = inject(SiteSettingsService);
 
   offlineUsers: SessionInfo[] = [];
-  enableOfflineLogin: boolean;
-  loginInProgress = false;
+  /**
+   * Whether offline-login buttons are clickable.
+   * Becomes true once the remote login has failed or after a hard timeout,
+   * so the user always has a fallback path to enter the app.
+   */
+  enableOfflineLogin = signal(false);
+  loginInProgress = signal(false);
 
   /** Whether the offline login section should be shown at all. */
-  showOfflineSection = false;
+  showOfflineSection = signal(false);
 
   /** Whether the initial silent SSO check has completed (showing the login form). */
-  ssoCheckDone = false;
+  ssoCheckDone = signal(false);
 
   /**
    * localStorage key under which the online-only preference is persisted.
@@ -98,31 +105,32 @@ export class LoginComponent implements OnInit {
       environment.session_type === SessionType.online);
 
   /** User preference: use online-only mode instead of synced. */
-  onlineOnly: boolean;
+  onlineOnly = signal(false);
 
   constructor() {
     const sessionManager = this.sessionManager;
 
     // restore previous online-only preference from localStorage
-    this.onlineOnly =
+    const initialOnlineOnly =
       localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) === "true" ||
       environment.session_type === SessionType.online;
-    this.applyOnlineOnlyMode(this.onlineOnly);
+    this.onlineOnly.set(initialOnlineOnly);
+    this.applyOnlineOnlyMode(initialOnlineOnly);
 
-    this.enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
-    this.showOfflineSection = !navigator.onLine;
+    this.enableOfflineLogin.set(!this.sessionManager.remoteLoginAvailable());
+    this.showOfflineSection.set(!navigator.onLine);
 
     // Only do a silent SSO check — don't redirect to Keycloak yet.
     // This allows the user to see and interact with the login page settings first.
-    sessionManager.checkRemoteSession().then(() => {
-      this.ssoCheckDone = true;
+    sessionManager.checkRemoteSession().finally(() => {
+      this.ssoCheckDone.set(true);
       sessionManager.clearRemoteSessionIfNecessary();
     });
   }
 
   ngOnInit() {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
-      this.loginInProgress = state === LoginState.IN_PROGRESS;
+      this.loginInProgress.set(state === LoginState.IN_PROGRESS);
       if (state === LoginState.LOGGED_IN) {
         this.routeAfterLogin();
       }
@@ -133,12 +141,15 @@ export class LoginComponent implements OnInit {
       this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
       timer(10000),
     ).subscribe(() => {
-      this.enableOfflineLogin = true;
+      // Always reveal the fallback after a hard timeout or on login failure,
+      // so a stuck remote login can never trap the user without an escape.
+      this.enableOfflineLogin.set(true);
+      this.showOfflineSection.set(true);
     });
   }
 
   onOnlineOnlyChanged(checked: boolean) {
-    this.onlineOnly = checked;
+    this.onlineOnly.set(checked);
     if (checked) {
       localStorage.setItem(LoginComponent.ONLINE_ONLY_KEY, "true");
     } else {
@@ -174,7 +185,7 @@ export class LoginComponent implements OnInit {
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
     const safeRedirectUri = this.safeRedirectUrl(redirectUri);
-    setTimeout(() => this.router.navigateByUrl(safeRedirectUri), 0);
+    this.router.navigateByUrl(safeRedirectUri);
   }
 
   private safeRedirectUrl(redirectUri: string): string {
@@ -187,17 +198,24 @@ export class LoginComponent implements OnInit {
 
       // validate same origin and path
       if (fullUrl.origin !== base || !fullUrl.pathname.startsWith("/")) {
+        Logging.debug(
+          `Login: rejected redirect_uri (cross-origin or invalid path): ${redirectUri}`,
+        );
         return "/";
       }
 
       return fullUrl.pathname + fullUrl.search + fullUrl.hash;
     } catch (e) {
+      Logging.debug(
+        `Login: rejected redirect_uri (parse error): ${redirectUri}`,
+        e,
+      );
       return "/"; // fallback for invalid urls
     }
   }
 
   tryLogin() {
-    this.showOfflineSection = true;
+    this.showOfflineSection.set(true);
     return this.sessionManager.remoteLogin();
   }
 }
