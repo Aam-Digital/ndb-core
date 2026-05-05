@@ -38,13 +38,27 @@ const TOKEN_REFRESH_RETRY_DELAYS_MS = [2_000, 5_000];
  */
 const TOKEN_MIN_VALIDITY_SECONDS = 30;
 
+/**
+ * Browser/keycloak-js error messages that indicate a transient network
+ * failure rather than a real authentication problem. Matched against both
+ * `err.message` and `err.toString()` since some thrown values (e.g. plain
+ * strings from keycloak-js) only expose the text via `toString()`.
+ */
+const NETWORK_ERROR_PATTERNS = [
+  "Failed to fetch",
+  "NetworkError",
+  "Load failed",
+  "Network request failed",
+  "Timeout when waiting for 3rd party check iframe message.",
+];
+
 function isRetryableNetworkError(err: any): boolean {
   if (!err) return false;
   if (err instanceof TimeoutError) return true;
-  if (err?.name === "AbortError" || err?.name === "TimeoutError") return true;
-  const status = err?.status;
-  if (status === 502 || status === 503 || status === 504) return true;
-  return false;
+  if (["AbortError", "TimeoutError"].includes(err?.name)) return true;
+  if ([502, 503, 504].includes(err?.status)) return true;
+  const message = `${err?.message ?? ""} ${err?.toString?.() ?? ""}`;
+  return NETWORK_ERROR_PATTERNS.some((pattern) => message.includes(pattern));
 }
 
 /**
@@ -71,11 +85,19 @@ export class KeycloakAuthService {
   checkSession = reuseFirstAsync(async (): Promise<SessionInfo | null> => {
     await this.initKeycloak();
 
-    await firstValueFrom(
-      defer(() => this.keycloak.updateToken()).pipe(
-        timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
-      ),
-    );
+    try {
+      await firstValueFrom(
+        defer(() => this.keycloak.updateToken()).pipe(
+          timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS }),
+        ),
+      );
+    } catch (err) {
+      if (this.isOfflineOrUnavailableError(err)) {
+        Logging.debug("Keycloak updateToken failed (offline/unavailable)", err);
+        throw new RemoteLoginNotAvailableError(err);
+      }
+      throw err;
+    }
     const token = await this.keycloak.getToken();
     if (!token) {
       return null;
@@ -242,33 +264,11 @@ export class KeycloakAuthService {
     return this.accessToken;
   }
 
-  private static readonly NETWORK_ERROR_PATTERNS = [
-    "Failed to fetch",
-    "NetworkError",
-    "Load failed",
-    "Network request failed",
-    "Timeout when waiting for 3rd party check iframe message.",
-  ];
-
   private isOfflineOrUnavailableError(err: any): boolean {
-    if (err instanceof TimeoutError) {
-      return true;
-    }
-    if (err?.name === "AbortError" || err?.name === "TimeoutError") {
-      return true;
-    }
-    // Recognise transient gateway/upstream errors as "unavailable" so they
-    // surface as RemoteLoginNotAvailableError rather than spamming Sentry.
-    const status = err?.status;
-    if (status === 502 || status === 503 || status === 504) {
-      return true;
-    }
-    const message = err?.message ?? "";
-    if (
-      KeycloakAuthService.NETWORK_ERROR_PATTERNS.some((pattern) =>
-        message.includes(pattern),
-      )
-    ) {
+    // All retryable network errors (5xx / timeout / abort / fetch failures)
+    // also count as "unavailable" so they map to RemoteLoginNotAvailableError
+    // instead of spamming Sentry.
+    if (isRetryableNetworkError(err)) {
       return true;
     }
     return !navigator.onLine;
