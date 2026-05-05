@@ -31,7 +31,7 @@ export class SetupService {
   private readonly syncState = inject(SyncStateSubject);
 
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
-    const externalSourceUrls = await firstValueFrom(
+    const externalSourceUrlsRaw = await firstValueFrom(
       this.httpClient
         .get<
           string[]
@@ -44,9 +44,15 @@ export class SetupService {
         ),
     );
 
+    const validatedExternalSourceUrls = Array.isArray(externalSourceUrlsRaw)
+      ? externalSourceUrlsRaw.filter(
+          (item): item is string => typeof item === "string",
+        )
+      : [];
+
     const descriptorUrls = [
       this.BASE_CONFIGS_FOLDER + "/available-configs.json",
-      ...externalSourceUrls,
+      ...validatedExternalSourceUrls,
     ];
 
     const results = await Promise.all(
