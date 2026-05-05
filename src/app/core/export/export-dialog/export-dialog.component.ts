@@ -10,8 +10,10 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatRadioModule } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
+import { AlertService } from "../../alerts/alert.service";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import {
   DownloadService,
@@ -41,6 +43,7 @@ export interface ExportDialogData {
   imports: [
     MatDialogModule,
     MatButtonModule,
+    MatProgressBarModule,
     MatRadioModule,
     FormsModule,
     DialogCloseComponent,
@@ -51,21 +54,34 @@ export class ExportDialogComponent {
     inject<MatDialogRef<ExportDialogComponent>>(MatDialogRef);
   data = inject<ExportDialogData>(MAT_DIALOG_DATA);
   private readonly downloadService = inject(DownloadService);
+  private readonly alertService = inject(AlertService);
 
   format = signal<FileDownloadFormat>("csv");
   scope = signal<"filtered" | "all">("filtered");
+  isLoading = signal<boolean>(false);
 
   async download() {
-    const exportData =
-      this.data.filteredData && this.scope() === "filtered"
-        ? this.data.filteredData
-        : this.data.allEntities;
-    await this.downloadService.triggerDownload(
-      exportData,
-      this.format(),
-      this.data.filename,
-      this.data.exportConfig,
-    );
-    this.dialogRef.close();
+    this.isLoading.set(true);
+    await new Promise<void>((resolve) => setTimeout(resolve));
+    try {
+      const exportData =
+        this.data.filteredData && this.scope() === "filtered"
+          ? this.data.filteredData
+          : this.data.allEntities;
+      await this.downloadService.triggerDownload(
+        exportData,
+        this.format(),
+        this.data.filename,
+        this.data.exportConfig,
+      );
+      this.dialogRef.close();
+    } catch (e) {
+      console.error("Export download failed:", e);
+      this.alertService.addWarning(
+        $localize`Failed to download export [${e instanceof Error ? e.message : e}]`,
+      );
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }
