@@ -98,7 +98,7 @@ describe("LoginComponent", () => {
     vi.useFakeTimers();
     try {
       const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
-      vi.spyOn(sessionManager, "getOfflineUsers").mockReturnValue(mockUsers);
+      vi.spyOn(sessionManager, "getOfflineUsers").mockResolvedValue(mockUsers);
       loginState.next(LoginState.LOGGED_OUT);
       fixture.detectChanges();
 
@@ -120,7 +120,7 @@ describe("LoginComponent", () => {
     vi.useFakeTimers();
     const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
     try {
-      vi.spyOn(sessionManager, "getOfflineUsers").mockReturnValue(mockUsers);
+      vi.spyOn(sessionManager, "getOfflineUsers").mockResolvedValue(mockUsers);
 
       loginState.next(LoginState.LOGGED_OUT);
       fixture.detectChanges();

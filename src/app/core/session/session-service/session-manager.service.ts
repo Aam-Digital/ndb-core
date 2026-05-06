@@ -170,9 +170,9 @@ export class SessionManagerService {
   }
 
   /**
-   * Get a list of all users that can log in offline
+   * Get a list of all users that can log in offline (have a local database).
    */
-  getOfflineUsers(): SessionInfo[] {
+  getOfflineUsers(): Promise<SessionInfo[]> {
     return this.localAuthService.getStoredUsers();
   }
 

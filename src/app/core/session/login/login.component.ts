@@ -159,7 +159,9 @@ export class LoginComponent implements OnInit {
       }
     });
 
-    this.offlineUsers = this.sessionManager.getOfflineUsers();
+    this.sessionManager.getOfflineUsers().then((users) => {
+      this.offlineUsers = users;
+    });
     race(
       this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
       timer(10000),
