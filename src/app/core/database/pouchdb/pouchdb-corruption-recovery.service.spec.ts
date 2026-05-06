@@ -62,14 +62,9 @@ describe("PouchdbCorruptionRecoveryService", () => {
   });
 
   it("should skip multi-tab warning dialog in online-only mode", async () => {
-    const originalSessionType = environment.session_type;
     environment.session_type = SessionType.online;
-    try {
-      await service.promptMultiTabWarningDialog();
-      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
-    } finally {
-      environment.session_type = originalSessionType;
-    }
+    await service.promptMultiTabWarningDialog();
+    expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
   });
 
   it("should show multi-tab warning again when prompted again", async () => {

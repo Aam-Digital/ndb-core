@@ -1,6 +1,13 @@
 import { enableVitestProxyZoneCompat } from "./app/utils/test-utils/vitest-proxy-zone-compat";
+import { environment } from "./environments/environment";
+import { SessionType } from "./app/core/session/session-type";
 
 enableVitestProxyZoneCompat();
+
+// Reset environment.session_type after every test to prevent cross-test pollution.
+afterEach(() => {
+  environment.session_type = SessionType.mock;
+});
 
 if (!window.matchMedia) {
   Object.defineProperty(window, "matchMedia", {

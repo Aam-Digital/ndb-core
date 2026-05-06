@@ -65,10 +65,6 @@ describe("LoginComponent", () => {
     component = fixture.componentInstance;
   });
 
-  afterEach(() => {
-    environment.session_type = SessionType.mock;
-  });
-
   it("should be created", () => {
     expect(component).toBeTruthy();
   });
