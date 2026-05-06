@@ -1221,7 +1221,7 @@ export class LoggingService {
     this.logToConsole(message, logLevel, ...context);
 
     if (logLevel !&#x3D;&#x3D; LogLevel.DEBUG &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.INFO) {
-      this.logToRemoteMonitoring(message, logLevel);
+      this.logToRemoteMonitoring(message, logLevel, ...context);
     }
   }
 
@@ -1245,7 +1245,11 @@ export class LoggingService {
     }
   }
 
-  private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
+  private logToRemoteMonitoring(
+    message: any,
+    logLevel: LogLevel,
+    ...context: any[]
+  ) {
     if (logLevel &#x3D;&#x3D;&#x3D; LogLevel.ERROR) {
       if (message instanceof Error) {
         Sentry.captureException(message);
@@ -1255,7 +1259,10 @@ export class LoggingService {
         );
       }
     } else {
-      Sentry.captureMessage(message, this.translateLogLevel(logLevel));
+      Sentry.captureMessage(message, {
+        level: this.translateLogLevel(logLevel),
+        extra: context.length &gt; 0 ? { context } : undefined,
+      });
     }
   }
 

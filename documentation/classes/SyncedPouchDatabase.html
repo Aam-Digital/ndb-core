@@ -537,7 +537,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="357" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:357</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="358" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:358</a></div>
                         </td>
                     </tr>
 
@@ -898,8 +898,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="334"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:334</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="335"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:335</a></div>
                         </td>
                     </tr>
 
@@ -1080,8 +1080,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="359"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:359</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="360"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:360</a></div>
                         </td>
                     </tr>
 
@@ -1126,7 +1126,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:257</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:258</a></code>
 </div>
                         </td>
                     </tr>
@@ -1219,7 +1219,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:269</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:270</a></code>
 </div>
                         </td>
                     </tr>
@@ -1300,8 +1300,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="319"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:319</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="320"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:320</a></div>
                         </td>
                     </tr>
 
@@ -2888,7 +2888,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
         if (this.isDocumentWriteError(err)) {
           Logging.warn(
-            &#x60;sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
+            &#x60;sync failed: document write error (possible oversized document)&#x60;,
+            { db: this.dbName, lastSyncedBatch: lastSyncedDocIds },
             err,
           );
         } else if (isKnownMultiTabDatabaseCorruption(err)) {
@@ -2897,7 +2898,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
             &#x60;sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
           );
         } else {
-          Logging.warn(&#x60;sync failed [${this.dbName}]&#x60;, err);
+          Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
         }
         this.syncState.next(SyncState.FAILED);
         throw err;
