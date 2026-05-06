@@ -67,6 +67,11 @@
           "link": "/report"
         },
         {
+          "label": "Help",
+          "icon": "question",
+          "link": "/help"
+        },
+        {
           "label": "Admin",
           "icon": "wrench",
           "subMenu": [
@@ -1301,6 +1306,13 @@
     "view:report": {
       "component": "Reporting",
       "_id": "view:report"
+    },
+    "view:help": {
+      "component": "MarkdownPage",
+      "config": {
+        "markdownEntityId": "MarkdownContent:help"
+      },
+      "_id": "view:help"
     },
     "entity:Child": {
       "label": "Child",
