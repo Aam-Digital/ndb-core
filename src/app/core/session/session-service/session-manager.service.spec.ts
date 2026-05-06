@@ -1,5 +1,6 @@
 import { SessionManagerService } from "./session-manager.service";
 import { LoginState } from "../session-states/login-state.enum";
+import { SyncState } from "../session-states/sync-state.enum";
 import {
   LoginStateSubject,
   SessionType,
@@ -123,12 +124,38 @@ describe("SessionManagerService", () => {
     };
     mockKeycloak.login.mockResolvedValue(updatedUser);
     const saveUserSpy = vi.spyOn(TestBed.inject(LocalAuthService), "saveUser");
+    const syncStateSubject = TestBed.inject(SyncStateSubject);
 
     await service.remoteLogin();
 
-    expect(saveUserSpy).toHaveBeenCalledWith(updatedUser);
+    // Session state is available immediately after login, before sync completes
     expect(sessionInfo.value).toEqual(updatedUser);
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+    expect(saveUserSpy).not.toHaveBeenCalled();
+
+    // Offline user entry is only saved once the first sync completes
+    syncStateSubject.next(SyncState.COMPLETED);
+    expect(saveUserSpy).toHaveBeenCalledWith(updatedUser);
+  });
+
+  it("should not register offline user before sync has completed", async () => {
+    const saveUserSpy = vi.spyOn(TestBed.inject(LocalAuthService), "saveUser");
+
+    await service.remoteLogin();
+    // SyncState.COMPLETED not emitted yet
+
+    expect(saveUserSpy).not.toHaveBeenCalled();
+  });
+
+  it("should not register offline user if logout happens before sync completes", async () => {
+    const saveUserSpy = vi.spyOn(TestBed.inject(LocalAuthService), "saveUser");
+    const syncStateSubject = TestBed.inject(SyncStateSubject);
+
+    await service.remoteLogin();
+    await service.logout();
+    syncStateSubject.next(SyncState.COMPLETED);
+
+    expect(saveUserSpy).not.toHaveBeenCalled();
   });
 
   it("should initialize current user as the entity to which a login is connected", async () => {
@@ -292,7 +319,7 @@ describe("SessionManagerService", () => {
 
     await service.checkRemoteSession();
 
-    expect(loginStateSubject.value).toBe(LoginState.LOGIN_FAILED);
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_OUT);
     // The skip-flag short-circuit means we should not even consult
     // remoteLoginAvailable() / Keycloak after logout.
     expect(remoteLoginAvailableSpy).not.toHaveBeenCalled();

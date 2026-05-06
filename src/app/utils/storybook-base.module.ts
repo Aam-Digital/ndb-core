@@ -151,7 +151,7 @@ export const entityFormStorybookDefaultParameters = {
         remoteLogin: () => Promise.resolve(),
         remoteLoginAvailable: () => false,
         offlineLogin: () => Promise.resolve(),
-        getOfflineUsers: () => [],
+        getOfflineUsers: () => Promise.resolve([]),
         clearRemoteSessionIfNecessary: () => {},
       },
     },

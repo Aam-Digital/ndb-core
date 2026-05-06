@@ -106,6 +106,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .pipe(takeUntil(this.destroy$))
       .subscribe((state: SyncState) => this.globalSyncState.next(state));
 
+    // Start live sync whenever the user is logged in.
+    // Note: if the user logged in offline (no Keycloak token), syncing will
+    // hit a 401 and the RemotePouchDatabase fetch interceptor will trigger a
+    // Keycloak login redirect. This is intentional — we want users to
+    // authenticate online when connectivity is available.
     this.loginStateSubject
       .pipe(
         takeUntil(this.destroy$),

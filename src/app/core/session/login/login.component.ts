@@ -36,8 +36,7 @@ import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { waitForChangeTo } from "../session-states/session-utils";
-import { race, timer } from "rxjs";
+import { from, race, timer } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
@@ -133,9 +132,20 @@ export class LoginComponent implements OnInit {
 
     // Only do a silent SSO check — don't redirect to Keycloak yet.
     // This allows the user to see and interact with the login page settings first.
-    sessionManager.checkRemoteSession().finally(() => {
-      this.ssoCheckDone.set(true);
-      sessionManager.clearRemoteSessionIfNecessary();
+    // Wait for the full flow (including clearRemoteSession) before enabling offline login,
+    // so that any pending Keycloak logout redirect completes without confusing the user.
+    const ssoFlowComplete = sessionManager
+      .checkRemoteSession()
+      .finally(async () => {
+        await sessionManager.clearRemoteSessionIfNecessary();
+        this.ssoCheckDone.set(true);
+      });
+
+    // Enable offline login once the SSO check + cleanup is fully done,
+    // or after a hard timeout as failsafe (so a stuck check never traps the user).
+    race(from(ssoFlowComplete), timer(10000)).subscribe(() => {
+      this.enableOfflineLogin.set(true);
+      this.showOfflineSection.set(true);
     });
   }
 
@@ -147,27 +157,17 @@ export class LoginComponent implements OnInit {
         this.loginTechnicalError.set(null);
         this.routeAfterLogin();
       }
-      if (state === LoginState.LOGIN_FAILED && this.userInitiatedLogin) {
-        // Only surface a visible error after a user actually clicked "Log in".
-        // The silent SSO check on initial page load also ends in LOGIN_FAILED
-        // when the user is simply not logged in yet — that is the normal
-        // path and should not show an error banner.
-        this.userInitiatedLogin = false;
+      if (state === LoginState.LOGIN_FAILED) {
+        // LOGIN_FAILED is only emitted by user-initiated remoteLogin(),
+        // not by the silent SSO check (which emits LOGGED_OUT on no session).
         this.loginError.set(
           $localize`:Login error message:Could not reach the login service. Please check your internet connection and try again.`,
         );
       }
     });
 
-    this.offlineUsers = this.sessionManager.getOfflineUsers();
-    race(
-      this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
-      timer(10000),
-    ).subscribe(() => {
-      // Always reveal the fallback after a hard timeout or on login failure,
-      // so a stuck remote login can never trap the user without an escape.
-      this.enableOfflineLogin.set(true);
-      this.showOfflineSection.set(true);
+    this.sessionManager.getOfflineUsers().then((users) => {
+      this.offlineUsers = users;
     });
   }
 
@@ -237,19 +237,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  /**
-   * True between the moment the user clicks "Log in" and the next
-   * resolution of loginState (LOGGED_IN or LOGIN_FAILED). Used to
-   * distinguish a user-initiated failure (show error) from the silent
-   * initial SSO check failure (do not show error).
-   */
-  private userInitiatedLogin = false;
-
   tryLogin() {
     this.showOfflineSection.set(true);
     this.loginError.set(null);
     this.loginTechnicalError.set(null);
-    this.userInitiatedLogin = true;
     this.sessionManager.remoteLogin().catch((err: unknown) => {
       this.loginTechnicalError.set(
         err instanceof Error ? err.message : String(err),
