@@ -94,42 +94,38 @@ describe("LoginComponent", () => {
     }
   });
 
-  it("should show offline login if remote login fails", async () => {
-    vi.useFakeTimers();
-    try {
-      const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
-      vi.spyOn(sessionManager, "getOfflineUsers").mockResolvedValue(mockUsers);
-      loginState.next(LoginState.LOGGED_OUT);
-      fixture.detectChanges();
+  it("should show offline login after SSO check completes without session", async () => {
+    const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
+    vi.spyOn(sessionManager, "getOfflineUsers").mockResolvedValue(mockUsers);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-      loginState.next(LoginState.IN_PROGRESS);
-      expect(component.enableOfflineLogin()).toBe(false);
-      expect(loginState.value).toBe(LoginState.IN_PROGRESS);
-
-      loginState.next(LoginState.LOGIN_FAILED);
-      await vi.advanceTimersByTimeAsync(0);
-      expect(component.enableOfflineLogin()).toBe(true);
-      expect(component.showOfflineSection()).toBe(true);
-      expect(component.offlineUsers).toEqual(mockUsers);
-    } finally {
-      vi.useRealTimers();
-    }
+    // SSO check resolved immediately in the constructor (mock returns resolved promise),
+    // so enableOfflineLogin is already true.
+    expect(component.enableOfflineLogin()).toBe(true);
+    expect(component.showOfflineSection()).toBe(true);
+    expect(component.offlineUsers).toEqual(mockUsers);
   });
 
-  it("should show offline login after 5 seconds", async () => {
+  it("should show offline login after 10 seconds", async () => {
     vi.useFakeTimers();
-    const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
     try {
+      // Use a never-resolving promise so only the timer fires
+      vi.spyOn(sessionManager, "checkRemoteSession").mockReturnValue(
+        new Promise(() => {}),
+      );
+      const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
       vi.spyOn(sessionManager, "getOfflineUsers").mockResolvedValue(mockUsers);
 
-      loginState.next(LoginState.LOGGED_OUT);
+      // Recreate component after fake timers so timer(10000) is captured
+      fixture = TestBed.createComponent(LoginComponent);
+      component = fixture.componentInstance;
       fixture.detectChanges();
-      loginState.next(LoginState.IN_PROGRESS);
+
       expect(component.enableOfflineLogin()).toBe(false);
       expect(component.showOfflineSection()).toBe(false);
 
       await vi.advanceTimersByTimeAsync(10000);
-      await fixture.whenStable();
       expect(component.enableOfflineLogin()).toBe(true);
       expect(component.showOfflineSection()).toBe(true);
       expect(component.offlineUsers).toEqual(mockUsers);
@@ -184,7 +180,7 @@ describe("LoginComponent", () => {
       fixture.nativeElement.querySelector(".login-check-progressbar"),
     ).toBeTruthy();
 
-    loginState.next(LoginState.LOGIN_FAILED);
+    loginState.next(LoginState.LOGGED_OUT);
     fixture.detectChanges();
     expect(component.loginInProgress()).toBe(false);
     expect(
@@ -192,13 +188,13 @@ describe("LoginComponent", () => {
     ).toBeFalsy();
   });
 
-  it("should NOT show an error after the silent SSO check fails on initial load", () => {
+  it("should NOT show an error after the silent SSO check completes without session", () => {
     fixture.detectChanges();
 
-    // Simulate the initial silent SSO check transitioning to LOGIN_FAILED
+    // Simulate the initial silent SSO check transitioning to LOGGED_OUT
     // (the normal "you are not yet logged in" path).
     loginState.next(LoginState.IN_PROGRESS);
-    loginState.next(LoginState.LOGIN_FAILED);
+    loginState.next(LoginState.LOGGED_OUT);
     fixture.detectChanges();
 
     expect(component.loginError()).toBeNull();

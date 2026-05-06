@@ -75,7 +75,8 @@ export class SessionManagerService {
 
   /**
    * Silently check for an existing SSO session without redirecting.
-   * If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.
+   * If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
+   * (this is not a failure — the user simply hasn't logged in yet).
    */
   async checkRemoteSession() {
     this.loginStateSubject.next(LoginState.IN_PROGRESS);
@@ -86,7 +87,7 @@ export class SessionManagerService {
     // click "Log in" again.
     if (sessionStorage.getItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY)) {
       sessionStorage.removeItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY);
-      this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+      this.loginStateSubject.next(LoginState.LOGGED_OUT);
       return;
     }
 
@@ -97,13 +98,23 @@ export class SessionManagerService {
           if (user) {
             return this.handleRemoteLogin(user);
           }
-          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+          this.setLoggedOutIfNotAlready();
         })
         .catch(() => {
-          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+          this.setLoggedOutIfNotAlready();
         });
     }
-    this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+    this.setLoggedOutIfNotAlready();
+  }
+
+  /**
+   * Only transition to LOGGED_OUT if not already logged in (e.g. via offlineLogin).
+   * Prevents a slow-resolving SSO check from overwriting a successful offline login.
+   */
+  private setLoggedOutIfNotAlready() {
+    if (this.loginStateSubject.value !== LoginState.LOGGED_IN) {
+      this.loginStateSubject.next(LoginState.LOGGED_OUT);
+    }
   }
 
   /**

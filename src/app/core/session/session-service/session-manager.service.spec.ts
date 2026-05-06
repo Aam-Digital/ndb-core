@@ -319,7 +319,7 @@ describe("SessionManagerService", () => {
 
     await service.checkRemoteSession();
 
-    expect(loginStateSubject.value).toBe(LoginState.LOGIN_FAILED);
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_OUT);
     // The skip-flag short-circuit means we should not even consult
     // remoteLoginAvailable() / Keycloak after logout.
     expect(remoteLoginAvailableSpy).not.toHaveBeenCalled();
