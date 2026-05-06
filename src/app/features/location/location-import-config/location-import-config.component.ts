@@ -43,7 +43,7 @@ export class LocationImportConfigComponent implements OnChanges {
 
   skipLookup = signal(false);
 
-  private uniqueAddressCount = signal(0);
+  private readonly uniqueAddressCount = signal(0);
 
   showLookupWarning = computed(
     () =>

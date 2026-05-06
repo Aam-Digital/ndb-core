@@ -81,7 +81,7 @@ export class EditImportColumnMappingComponent implements OnChanges {
   inlineComponentConfig = signal<DynamicComponentConfig | null>(null);
 
   /** Stable reference for the callback passed into the inline component */
-  private boundUpdateMapping = () => this.updateMapping(true);
+  private readonly boundUpdateMapping = () => this.updateMapping(true);
 
   hideOption = (option: FormFieldConfig) =>
     this.otherColumnMappings.some((c) => c.propertyName === option.id) &&

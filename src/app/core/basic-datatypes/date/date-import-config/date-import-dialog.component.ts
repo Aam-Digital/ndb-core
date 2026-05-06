@@ -39,8 +39,8 @@ import { DateDatatype } from "../date.datatype";
 })
 export class DateImportDialogComponent {
   data = inject<MappingDialogData>(MAT_DIALOG_DATA);
-  private confirmation = inject(ConfirmationDialogService);
-  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+  private readonly confirmation = inject(ConfirmationDialogService);
+  private readonly dialog = inject<MatDialogRef<any>>(MatDialogRef);
 
   format = new FormControl("");
   valid = false;

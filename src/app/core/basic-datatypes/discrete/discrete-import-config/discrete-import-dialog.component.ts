@@ -56,11 +56,11 @@ import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
 })
 export class DiscreteImportDialogComponent implements OnInit {
   data = inject<MappingDialogData>(MAT_DIALOG_DATA);
-  private fb = inject(FormBuilder);
-  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
-  private confirmation = inject(ConfirmationDialogService);
-  private schemaService = inject(EntitySchemaService);
-  private configurableEnumService = inject(ConfigurableEnumService);
+  private readonly fb = inject(FormBuilder);
+  private readonly dialog = inject<MatDialogRef<any>>(MatDialogRef);
+  private readonly confirmation = inject(ConfirmationDialogService);
+  private readonly schemaService = inject(EntitySchemaService);
+  private readonly configurableEnumService = inject(ConfigurableEnumService);
 
   form: FormGroup;
   component: string;

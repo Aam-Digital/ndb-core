@@ -40,7 +40,7 @@ export class EntityDatatype extends StringDatatype {
   private entityMapper = inject(EntityMapperService);
   private removeService = inject(EntityActionsService);
   private schemaService = inject(EntitySchemaService);
-  private entityRegistry = inject(EntityRegistry);
+  private readonly entityRegistry = inject(EntityRegistry);
 
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;

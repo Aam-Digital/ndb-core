@@ -27,7 +27,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   imports: [MatButtonModule, MatBadgeModule],
 })
 export class DiscreteImportConfigComponent {
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   @Input() col: ColumnMapping;
   @Input() rawData: any[] = [];

@@ -48,8 +48,8 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
   ],
 })
 export class EntityImportConfigComponent implements OnChanges {
-  private entityRegistry = inject(EntityRegistry);
-  private schemaService = inject(EntitySchemaService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly schemaService = inject(EntitySchemaService);
 
   @Input() col: ColumnMapping;
   @Input() rawData: any[] = [];

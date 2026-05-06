@@ -34,7 +34,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   imports: [MatButtonModule],
 })
 export class DateImportInlineComponent {
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
 
   @Input() col: ColumnMapping;
   @Input() rawData: any[] = [];
