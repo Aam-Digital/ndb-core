@@ -573,7 +573,7 @@ export const entityFormStorybookDefaultParameters &#x3D; {
         remoteLogin: () &#x3D;&gt; Promise.resolve(),
         remoteLoginAvailable: () &#x3D;&gt; false,
         offlineLogin: () &#x3D;&gt; Promise.resolve(),
-        getOfflineUsers: () &#x3D;&gt; [],
+        getOfflineUsers: () &#x3D;&gt; Promise.resolve([]),
         clearRemoteSessionIfNecessary: () &#x3D;&gt; {},
       },
     },

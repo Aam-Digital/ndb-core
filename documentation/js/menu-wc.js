@@ -649,13 +649,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/StorybookBaseModule.html" data-type="entity-link" >StorybookBaseModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-StorybookBaseModule-2cb3914f3b704aa49e7e8bbd412a0f4890cace1a2007c4126c17dd2cf5b2bb23e9b276e37e268124584a570791445e21e6ef516e90887a8cc2569b3a59889621"' : 'data-bs-target="#xs-injectables-links-module-StorybookBaseModule-2cb3914f3b704aa49e7e8bbd412a0f4890cace1a2007c4126c17dd2cf5b2bb23e9b276e37e268124584a570791445e21e6ef516e90887a8cc2569b3a59889621"' }>
+                                        'data-bs-target="#injectables-links-module-StorybookBaseModule-ba941ac300c64b5723a70f6440136eaf10a657e1371b1535a0bb2d5138c4d1d3edafade3ab9b363113e176c87e2ca77b8bff173a77c215c2b0c119a65cba0070"' : 'data-bs-target="#xs-injectables-links-module-StorybookBaseModule-ba941ac300c64b5723a70f6440136eaf10a657e1371b1535a0bb2d5138c4d1d3edafade3ab9b363113e176c87e2ca77b8bff173a77c215c2b0c119a65cba0070"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-StorybookBaseModule-2cb3914f3b704aa49e7e8bbd412a0f4890cace1a2007c4126c17dd2cf5b2bb23e9b276e37e268124584a570791445e21e6ef516e90887a8cc2569b3a59889621"' :
-                                        'id="xs-injectables-links-module-StorybookBaseModule-2cb3914f3b704aa49e7e8bbd412a0f4890cace1a2007c4126c17dd2cf5b2bb23e9b276e37e268124584a570791445e21e6ef516e90887a8cc2569b3a59889621"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-StorybookBaseModule-ba941ac300c64b5723a70f6440136eaf10a657e1371b1535a0bb2d5138c4d1d3edafade3ab9b363113e176c87e2ca77b8bff173a77c215c2b0c119a65cba0070"' :
+                                        'id="xs-injectables-links-module-StorybookBaseModule-ba941ac300c64b5723a70f6440136eaf10a657e1371b1535a0bb2d5138c4d1d3edafade3ab9b363113e176c87e2ca77b8bff173a77c215c2b0c119a65cba0070"' }>
                                         <li class="link">
                                             <a href="injectables/AnalyticsService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >AnalyticsService</a>
                                         </li>

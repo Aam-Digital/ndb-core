@@ -161,6 +161,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#getStoredUsers" >getStoredUsers</a>
                             </li>
                             <li>
@@ -190,6 +191,7 @@
                 <td class="col-md-4">
                     <a name="getStoredUsers"></a>
                     <span class="name">
+                            <span class="modifier">Async</span>
                         <span ><b>getStoredUsers</b></span>
                         <a href="#getStoredUsers"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -197,26 +199,28 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getStoredUsers()</code>
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStoredUsers()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="16"
-                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:16</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="19"
+                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:19</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Get a list of users stored in the local storage.</p>
+                        <div class="io-description"><p>Get a list of users stored in the local storage that have an existing local database.
+Users without a local IndexedDB are filtered out (e.g. stale entries from online-only logins).</p>
 </div>
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/SessionInfo.html" target="_self" >SessionInfo[]</a></code>
+                            <b>Returns : </b>        <code><a href="../interfaces/SessionInfo.html" target="_self" >Promise&lt;SessionInfo[]&gt;</a></code>
 
                         </div>
                 </td>
@@ -243,15 +247,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="26"
-                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:26</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:71</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Saves a user to the local storage</p>
+                        <div class="io-description"><p>Saves a user to the local storage so they can log in offline later.
+Has no effect in online-only mode, since no local database is available.</p>
 </div>
 
                             <div class="io-description">
@@ -263,7 +268,6 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -278,10 +282,6 @@
                                             </td>
 
 
-                                            <td>
-                                                    <p>a object holding the username and the roles of the user</p>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -305,6 +305,8 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
 import { SessionInfo } from &quot;../session-info&quot;;
+import { environment } from &quot;../../../../../environments/environment&quot;;
+import { SessionType } from &quot;../../session-type&quot;;
 
 /**
  * Manages the offline login.
@@ -316,19 +318,65 @@ export class LocalAuthService {
   private readonly STORED_USER_PREFIX &#x3D; &quot;USER-&quot;;
 
   /**
-   * Get a list of users stored in the local storage.
+   * Get a list of users stored in the local storage that have an existing local database.
+   * Users without a local IndexedDB are filtered out (e.g. stale entries from online-only logins).
    */
-  getStoredUsers(): SessionInfo[] {
-    return Object.entries(localStorage)
+  async getStoredUsers(): Promise&lt;SessionInfo[]&gt; {
+    const users: SessionInfo[] &#x3D; Object.entries(localStorage)
       .filter(([key]) &#x3D;&gt; key.startsWith(this.STORED_USER_PREFIX))
       .map(([_, user]) &#x3D;&gt; JSON.parse(user));
+
+    if (users.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+
+    const existingDbNames &#x3D; await this.listIndexedDbNames();
+    return users.filter((user) &#x3D;&gt; this.hasLocalDatabase(user, existingDbNames));
   }
 
   /**
-   * Saves a user to the local storage
-   * @param user a object holding the username and the roles of the user
+   * Check whether a user has an existing local PouchDB in IndexedDB.
+   * PouchDB prefixes IndexedDB database names with &quot;_pouch_&quot;.
+   * Checks both the current UUID-based name (&lt;id&gt;-app) and the legacy username-based name (&lt;name&gt;-app).
+   */
+  private hasLocalDatabase(user: SessionInfo, dbNames: Set&lt;string&gt;): boolean {
+    return (
+      dbNames.has(&#x60;_pouch_${user.id}-app&#x60;) ||
+      dbNames.has(&#x60;_pouch_${user.name}-app&#x60;)
+    );
+  }
+
+  /**
+   * List all IndexedDB database names, or return an empty set if the API is unavailable.
+   */
+  private async listIndexedDbNames(): Promise&lt;Set&lt;string&gt;&gt; {
+    try {
+      if (typeof indexedDB?.databases &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
+        const dbs &#x3D; await indexedDB.databases();
+        return new Set(dbs.map((db) &#x3D;&gt; db.name).filter(Boolean));
+      }
+    } catch {
+      // API not available (e.g. SSR or restricted context)
+    }
+    // If API is not available, allow all stored users (safe fallback)
+    return new Set(
+      Object.entries(localStorage)
+        .filter(([key]) &#x3D;&gt; key.startsWith(this.STORED_USER_PREFIX))
+        .map(([_, user]) &#x3D;&gt; {
+          const u: SessionInfo &#x3D; JSON.parse(user);
+          return &#x60;_pouch_${u.id}-app&#x60;;
+        }),
+    );
+  }
+
+  /**
+   * Saves a user to the local storage so they can log in offline later.
+   * Has no effect in online-only mode, since no local database is available.
    */
   saveUser(user: SessionInfo) {
+    if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
+      return;
+    }
     localStorage.setItem(
       this.STORED_USER_PREFIX + user.name,
       JSON.stringify(user),

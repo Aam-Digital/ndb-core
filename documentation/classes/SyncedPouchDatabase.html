@@ -537,7 +537,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="358" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:358</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="363" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:363</a></div>
                         </td>
                     </tr>
 
@@ -898,8 +898,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="335"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:335</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="340"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:340</a></div>
                         </td>
                     </tr>
 
@@ -988,7 +988,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:123</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:128</a></code>
 </div>
                         </td>
                     </tr>
@@ -1080,8 +1080,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="360"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:360</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="365"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:365</a></div>
                         </td>
                     </tr>
 
@@ -1126,7 +1126,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:258</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:263</a></code>
 </div>
                         </td>
                     </tr>
@@ -1219,7 +1219,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:270</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:275</a></code>
 </div>
                         </td>
                     </tr>
@@ -1300,8 +1300,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="320"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:320</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="325"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:325</a></div>
                         </td>
                     </tr>
 
@@ -1350,7 +1350,7 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:157</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:162</a></code>
 </div>
                         </td>
                     </tr>
@@ -1389,8 +1389,8 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="172"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:172</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="177"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:177</a></div>
                         </td>
                     </tr>
 
@@ -2631,7 +2631,7 @@ Useful for observing when this specific database&#39;s sync completes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="153" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:153</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="158" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:158</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2761,6 +2761,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .pipe(takeUntil(this.destroy$))
       .subscribe((state: SyncState) &#x3D;&gt; this.globalSyncState.next(state));
 
+    // Start live sync whenever the user is logged in.
+    // Note: if the user logged in offline (no Keycloak token), syncing will
+    // hit a 401 and the RemotePouchDatabase fetch interceptor will trigger a
+    // Keycloak login redirect. This is intentional — we want users to
+    // authenticate online when connectivity is available.
     this.loginStateSubject
       .pipe(
         takeUntil(this.destroy$),

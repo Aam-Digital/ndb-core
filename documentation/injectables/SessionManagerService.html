@@ -246,8 +246,8 @@ After a successful login, the database for the current user is initialised.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -255,7 +255,8 @@ After a successful login, the database for the current user is initialised.</p>
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Silently check for an existing SSO session without redirecting.
-If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.</p>
+If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
+(this is not a failure — the user simply hasn&#39;t logged in yet).</p>
 </div>
 
                         <div class="io-description">
@@ -286,8 +287,8 @@ If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="204"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:204</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="226"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:226</a></div>
                         </td>
                     </tr>
 
@@ -323,19 +324,19 @@ If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="167"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:167</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="186"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:186</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Get a list of all users that can log in offline</p>
+                        <div class="io-description"><p>Get a list of all users that can log in offline (have a local database).</p>
 </div>
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/SessionInfo.html" target="_self" >SessionInfo[]</a></code>
+                            <b>Returns : </b>        <code><a href="../interfaces/SessionInfo.html" target="_self" >Promise&lt;SessionInfo[]&gt;</a></code>
 
                         </div>
                 </td>
@@ -364,8 +365,8 @@ If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="175"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:175</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:194</a></div>
                         </td>
                     </tr>
 
@@ -404,8 +405,8 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="128"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:128</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="147"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:147</a></div>
                         </td>
                     </tr>
 
@@ -475,8 +476,8 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="125"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:125</a></div>
                         </td>
                     </tr>
 
@@ -516,8 +517,8 @@ Should only be called if there is an internet connection</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="120"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:120</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:139</a></div>
                         </td>
                     </tr>
 
@@ -564,7 +565,7 @@ Should only be called if there is an internet connection</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -597,7 +598,7 @@ Should only be called if there is an internet connection</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:64</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -624,7 +625,12 @@ Consumed (removed) on the next checkRemoteSession call.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 
 import { SessionInfo, SessionSubject } from &quot;../auth/session-info&quot;;
-import { LoginStateSubject, hasRemoteSession } from &quot;../session-type&quot;;
+import {
+  LoginStateSubject,
+  SyncStateSubject,
+  hasRemoteSession,
+} from &quot;../session-type&quot;;
+import { SyncState } from &quot;../session-states/sync-state.enum&quot;;
 import { LoginState } from &quot;../session-states/login-state.enum&quot;;
 import { Router } from &quot;@angular/router&quot;;
 import { KeycloakAuthService } from &quot;../auth/keycloak/keycloak-auth.service&quot;;
@@ -656,6 +662,7 @@ export class SessionManagerService {
   private navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN);
   private configService &#x3D; inject(ConfigService);
   private databaseResolver &#x3D; inject(DatabaseResolverService);
+  private readonly syncStateSubject &#x3D; inject(SyncStateSubject);
 
   readonly RESET_REMOTE_SESSION_KEY &#x3D; &quot;RESET_REMOTE&quot;;
   /**
@@ -670,10 +677,13 @@ export class SessionManagerService {
   static readonly SKIP_NEXT_SSO_CHECK_KEY &#x3D; &quot;SKIP_NEXT_SSO_CHECK&quot;;
   private remoteLoggedIn &#x3D; false;
   private updateSubscription: Subscription;
+  /** Subscription waiting for first sync completion before registering the user for offline login. */
+  private syncSaveSubscription: Subscription | undefined;
 
   /**
    * Silently check for an existing SSO session without redirecting.
-   * If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.
+   * If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
+   * (this is not a failure — the user simply hasn&#x27;t logged in yet).
    */
   async checkRemoteSession() {
     this.loginStateSubject.next(LoginState.IN_PROGRESS);
@@ -684,7 +694,7 @@ export class SessionManagerService {
     // click &quot;Log in&quot; again.
     if (sessionStorage.getItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY)) {
       sessionStorage.removeItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY);
-      this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+      this.loginStateSubject.next(LoginState.LOGGED_OUT);
       return;
     }
 
@@ -695,13 +705,23 @@ export class SessionManagerService {
           if (user) {
             return this.handleRemoteLogin(user);
           }
-          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+          this.setLoggedOutIfNotAlready();
         })
         .catch(() &#x3D;&gt; {
-          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+          this.setLoggedOutIfNotAlready();
         });
     }
-    this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+    this.setLoggedOutIfNotAlready();
+  }
+
+  /**
+   * Only transition to LOGGED_OUT if not already logged in (e.g. via offlineLogin).
+   * Prevents a slow-resolving SSO check from overwriting a successful offline login.
+   */
+  private setLoggedOutIfNotAlready() {
+    if (this.loginStateSubject.value !&#x3D;&#x3D; LoginState.LOGGED_IN) {
+      this.loginStateSubject.next(LoginState.LOGGED_OUT);
+    }
   }
 
   /**
@@ -768,9 +788,9 @@ export class SessionManagerService {
   }
 
   /**
-   * Get a list of all users that can log in offline
+   * Get a list of all users that can log in offline (have a local database).
    */
-  getOfflineUsers(): SessionInfo[] {
+  getOfflineUsers(): Promise&lt;SessionInfo[]&gt; {
     return this.localAuthService.getStoredUsers();
   }
 
@@ -798,8 +818,11 @@ export class SessionManagerService {
     // resetting app state
     this.sessionInfo.next(undefined);
     this.updateSubscription?.unsubscribe();
+    this.syncSaveSubscription?.unsubscribe();
+    this.syncSaveSubscription &#x3D; undefined;
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
+    this.syncStateSubject.next(SyncState.UNSYNCED);
     this.remoteLoggedIn &#x3D; false;
     await this.databaseResolver.resetDatabases();
     return this.router.navigate([&quot;/login&quot;], {
@@ -824,7 +847,16 @@ export class SessionManagerService {
   private async handleRemoteLogin(user: SessionInfo) {
     this.remoteLoggedIn &#x3D; true;
     await this.initializeUser(user);
-    this.localAuthService.saveUser(user);
+
+    // Defer saving the offline-login entry until the first sync completes,
+    // so the option is only shown when local data is actually available.
+    this.syncSaveSubscription?.unsubscribe();
+    this.syncSaveSubscription &#x3D; this.syncStateSubject
+      .pipe(
+        filter((state) &#x3D;&gt; state &#x3D;&#x3D;&#x3D; SyncState.COMPLETED),
+        take(1),
+      )
+      .subscribe(() &#x3D;&gt; this.localAuthService.saveUser(user));
   }
 }
 </code></pre>

@@ -722,8 +722,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="260"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:260</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="263"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:263</a></div>
                         </td>
                     </tr>
 
@@ -871,7 +871,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:266</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:269</a></code>
 </div>
                         </td>
                     </tr>
@@ -948,7 +948,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:289</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:292</a></code>
 </div>
                         </td>
                     </tr>
@@ -2351,7 +2351,10 @@ export class RemotePouchDatabase extends PouchDatabase {
       this.showConnectionIssueAlert();
     }
 
-    // retry login if request failed with unauthorized
+    // Retry login if request failed with unauthorized.
+    // This will redirect to Keycloak if the token is expired or missing,
+    // which is intentional — it ensures users re-authenticate online
+    // when connectivity is available (including after an offline login).
     if (
       result?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Unauthorized &amp;&amp;
       !this.unauthenticatedSession
