@@ -233,7 +233,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
         if (this.isDocumentWriteError(err)) {
           Logging.warn(
-            `sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+            `sync failed: document write error (possible oversized document)`,
+            { db: this.dbName, lastSyncedBatch: lastSyncedDocIds },
             err,
           );
         } else if (isKnownMultiTabDatabaseCorruption(err)) {
@@ -242,7 +243,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
             `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
           );
         } else {
-          Logging.warn(`sync failed [${this.dbName}]`, err);
+          Logging.warn(`sync failed`, { db: this.dbName }, err);
         }
         this.syncState.next(SyncState.FAILED);
         throw err;

@@ -2,11 +2,11 @@ import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
 import {
-  ErrorHandler,
-  Provider,
-  inject,
-  provideAppInitializer,
-  EnvironmentProviders,
+    ErrorHandler,
+    Provider,
+    inject,
+    provideAppInitializer,
+    EnvironmentProviders,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { LoginState } from "../session/session-states/login-state.enum";
@@ -167,7 +167,7 @@ export class LoggingService {
     this.logToConsole(message, logLevel, ...context);
 
     if (logLevel !== LogLevel.DEBUG && logLevel !== LogLevel.INFO) {
-      this.logToRemoteMonitoring(message, logLevel);
+      this.logToRemoteMonitoring(message, logLevel, ...context);
     }
   }
 
@@ -191,7 +191,11 @@ export class LoggingService {
     }
   }
 
-  private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
+  private logToRemoteMonitoring(
+    message: any,
+    logLevel: LogLevel,
+    ...context: any[]
+  ) {
     if (logLevel === LogLevel.ERROR) {
       if (message instanceof Error) {
         Sentry.captureException(message);
@@ -201,7 +205,10 @@ export class LoggingService {
         );
       }
     } else {
-      Sentry.captureMessage(message, this.translateLogLevel(logLevel));
+      Sentry.captureMessage(message, {
+        level: this.translateLogLevel(logLevel),
+        extra: context.length > 0 ? { context } : undefined,
+      });
     }
   }
 
