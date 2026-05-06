@@ -1410,5 +1410,6 @@
   "3483406769163244984": "Großer Import: Adress-Suchen können langsam sein oder fehlschlagen. Wählen Sie ggf. die Addressauflösung zu überspringen.",
   "4386719278864238231": "Warnung: Dieser Import muss {$INTERPOLATION} eindeutige Adressen nachschlagen. Bei einer Anfrage pro Sekunde (API-Ratenlimit) dauert dies ca. {$INTERPOLATION} Sekunden. Bei großen Importen kann die Adressauflösung fehlschlagen. Es wird empfohlen, die Adressauflösung zu überspringen. ",
   "5875856512247951063": "Adressensuche überspringen und nur Text importieren ",
-  "5454660468604811925": "Der Login-Server konnte nicht erreicht werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+  "5454660468604811925": "Der Login-Server konnte nicht erreicht werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+  "1913716452476591237": "Download failed [{$PH}]"
 }
