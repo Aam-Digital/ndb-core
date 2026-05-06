@@ -56,14 +56,11 @@ describe("LocalAuthService", () => {
   });
 
   it("should not save user in online-only mode", () => {
-    const originalSessionType = environment.session_type;
     environment.session_type = SessionType.online;
     testUser = { name: TEST_USER, id: "101", roles: [] };
 
     service.saveUser(testUser);
 
     expect(localStorage.getItem("USER-" + testUser.name)).toBeNull();
-
-    environment.session_type = originalSessionType;
   });
 });

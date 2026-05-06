@@ -55,13 +55,8 @@ describe("DatabaseFactoryService", () => {
   });
 
   it("should default to indexeddb adapter for synced session type", () => {
-    const prev = environment.session_type;
-    try {
-      environment.session_type = SessionType.synced;
-      const db = service.createDatabase("test-db") as SyncedPouchDatabase;
-      expect(db.adapter).toBe("indexeddb");
-    } finally {
-      environment.session_type = prev;
-    }
+    environment.session_type = SessionType.synced;
+    const db = service.createDatabase("test-db") as SyncedPouchDatabase;
+    expect(db.adapter).toBe("indexeddb");
   });
 });
