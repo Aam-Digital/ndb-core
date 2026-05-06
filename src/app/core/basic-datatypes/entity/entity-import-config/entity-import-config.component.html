@@ -1,4 +1,4 @@
-<div class="flex-row gap-regular align-center flex-wrap">
+<div class="flex-column gap-small">
   @if (showInheritanceHint()) {
     <app-hint-box type="warning" class="margin-bottom-regular">
       <strong i18n>⚠️ Manual update required</strong>
@@ -9,27 +9,29 @@
     </app-hint-box>
   }
 
-  <mat-form-field class="margin-left-small">
-    <mat-label i18n="import - entity - match by property label">
-      Match by {{ referencedEntity()?.label }} property
-    </mat-label>
-    <mat-select
-      [ngModel]="selectedRefField()"
-      (ngModelChange)="onRefFieldChange($event)"
-    >
-      @for (prop of availableProperties(); track prop.property) {
-        <mat-option [value]="prop.property">{{ prop.label }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <div class="flex-row gap-regular align-center">
+    <mat-form-field class="margin-left-small">
+      <mat-label i18n="import - entity - match by property label">
+        Match by {{ referencedEntity()?.label }} property
+      </mat-label>
+      <mat-select
+        [ngModel]="selectedRefField()"
+        (ngModelChange)="onRefFieldChange($event)"
+      >
+        @for (prop of availableProperties(); track prop.property) {
+          <mat-option [value]="prop.property">{{ prop.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-  @if (hasMultiMapping()) {
-    <fa-icon
-      icon="object-group"
-      matTooltip="This field is mapped from multiple imported columns."
-      i18n-matTooltip
-    ></fa-icon>
-  }
+    @if (hasMultiMapping()) {
+      <fa-icon
+        icon="object-group"
+        matTooltip="This field is mapped from multiple imported columns."
+        i18n-matTooltip
+      ></fa-icon>
+    }
+  </div>
 
   @if (subFieldInlineConfig()) {
     <ng-container [appDynamicComponent]="subFieldInlineConfig()" />
