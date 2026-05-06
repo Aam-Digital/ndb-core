@@ -18,7 +18,12 @@
 import { Injectable, inject } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
-import { LoginStateSubject, hasRemoteSession } from "../session-type";
+import {
+  LoginStateSubject,
+  SyncStateSubject,
+  hasRemoteSession,
+} from "../session-type";
+import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
@@ -50,6 +55,7 @@ export class SessionManagerService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
   private configService = inject(ConfigService);
   private databaseResolver = inject(DatabaseResolverService);
+  private readonly syncStateSubject = inject(SyncStateSubject);
 
   readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
   /**
@@ -64,6 +70,8 @@ export class SessionManagerService {
   static readonly SKIP_NEXT_SSO_CHECK_KEY = "SKIP_NEXT_SSO_CHECK";
   private remoteLoggedIn = false;
   private updateSubscription: Subscription;
+  /** Subscription waiting for first sync completion before registering the user for offline login. */
+  private syncSaveSubscription: Subscription | undefined;
 
   /**
    * Silently check for an existing SSO session without redirecting.
@@ -192,6 +200,8 @@ export class SessionManagerService {
     // resetting app state
     this.sessionInfo.next(undefined);
     this.updateSubscription?.unsubscribe();
+    this.syncSaveSubscription?.unsubscribe();
+    this.syncSaveSubscription = undefined;
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
@@ -218,6 +228,15 @@ export class SessionManagerService {
   private async handleRemoteLogin(user: SessionInfo) {
     this.remoteLoggedIn = true;
     await this.initializeUser(user);
-    this.localAuthService.saveUser(user);
+
+    // Defer saving the offline-login entry until the first sync completes,
+    // so the option is only shown when local data is actually available.
+    this.syncSaveSubscription?.unsubscribe();
+    this.syncSaveSubscription = this.syncStateSubject
+      .pipe(
+        filter((state) => state === SyncState.COMPLETED),
+        take(1),
+      )
+      .subscribe(() => this.localAuthService.saveUser(user));
   }
 }
