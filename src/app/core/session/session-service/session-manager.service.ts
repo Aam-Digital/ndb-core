@@ -204,6 +204,7 @@ export class SessionManagerService {
     this.syncSaveSubscription = undefined;
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
+    this.syncStateSubject.next(SyncState.UNSYNCED);
     this.remoteLoggedIn = false;
     await this.databaseResolver.resetDatabases();
     return this.router.navigate(["/login"], {
