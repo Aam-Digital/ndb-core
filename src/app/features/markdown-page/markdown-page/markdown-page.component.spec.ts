@@ -52,9 +52,7 @@ describe("MarkdownPageComponent", () => {
   it("renders entity content in the DOM when markdownEntityId resolves to a MarkdownContent entity", async () => {
     const entity = new MarkdownContent("test-entity-1");
     entity.content = "# Hello";
-    (mockEntityMapper.load as ReturnType<typeof vi.fn>).mockResolvedValue(
-      entity,
-    );
+    mockEntityMapper.load.mockResolvedValue(entity);
 
     component.markdownEntityId = "test-entity-1";
     fixture.detectChanges();
