@@ -40,6 +40,10 @@
   }
 </div>
 
+@if (downloadError()) {
+  <mat-error class="margin-left-regular">{{ downloadError() }}</mat-error>
+}
+
 <div mat-dialog-actions>
   <button
     mat-raised-button
@@ -59,8 +63,4 @@
   >
     Cancel
   </button>
-
-  @if (downloadError()) {
-    <mat-error>{{ downloadError() }}</mat-error>
-  }
 </div>
