@@ -10,10 +10,11 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatRadioModule } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
-import { AlertService } from "../../alerts/alert.service";
+import { Logging } from "../../logging/logging.service";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import {
   DownloadService,
@@ -43,6 +44,7 @@ export interface ExportDialogData {
   imports: [
     MatDialogModule,
     MatButtonModule,
+    MatFormFieldModule,
     MatProgressBarModule,
     MatRadioModule,
     FormsModule,
@@ -54,14 +56,15 @@ export class ExportDialogComponent {
     inject<MatDialogRef<ExportDialogComponent>>(MatDialogRef);
   data = inject<ExportDialogData>(MAT_DIALOG_DATA);
   private readonly downloadService = inject(DownloadService);
-  private readonly alertService = inject(AlertService);
 
   format = signal<FileDownloadFormat>("csv");
   scope = signal<"filtered" | "all">("filtered");
   isLoading = signal<boolean>(false);
+  downloadError = signal<string | null>(null);
 
   async download() {
     this.isLoading.set(true);
+    this.downloadError.set(null);
     await new Promise<void>((resolve) => setTimeout(resolve));
     try {
       const exportData =
@@ -76,9 +79,9 @@ export class ExportDialogComponent {
       );
       this.dialogRef.close();
     } catch (e) {
-      console.error("Export download failed:", e);
-      this.alertService.addWarning(
-        $localize`Failed to download export [${e instanceof Error ? e.message : e}]`,
+      Logging.warn("Export download failed:", e);
+      this.downloadError.set(
+        $localize`Download failed [${e instanceof Error ? e.message : e}]`,
       );
     } finally {
       this.isLoading.set(false);

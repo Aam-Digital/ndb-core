@@ -59,4 +59,8 @@
   >
     Cancel
   </button>
+
+  @if (downloadError()) {
+    <mat-error>{{ downloadError() }}</mat-error>
+  }
 </div>
