@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { DownloadService } from "./download.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { DatabaseEntity, EntityRegistry } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 
 import { DatabaseField } from "../../entity/database-field.decorator";
@@ -54,6 +54,7 @@ describe("DownloadService", () => {
           provide: EntityActionsService,
           useValue: { anonymize: vi.fn() },
         },
+        { provide: EntityRegistry, useValue: new EntityRegistry() },
         {
           provide: DefaultDatatype,
           useClass: EntityDatatype,
