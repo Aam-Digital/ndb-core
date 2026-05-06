@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
   computed,
+  effect,
+  input,
   signal,
 } from "@angular/core";
 import { ColumnMapping } from "../../../core/import/column-mapping";
@@ -49,13 +48,13 @@ const LOOKUP_WARNING_THRESHOLD = 50;
   `,
   imports: [MatCheckboxModule, FormsModule, FaIconComponent, MatTooltip],
 })
-export class LocationImportInlineComponent implements OnChanges {
-  @Input() col: ColumnMapping;
-  @Input() rawData: any[] = [];
-  @Input() entityType: EntityConstructor;
-  @Input() otherColumnMappings: ColumnMapping[] = [];
-  @Input() additionalSettings: ImportAdditionalSettings;
-  @Input() onColumnMappingChange: (col: ColumnMapping) => void;
+export class LocationImportInlineComponent {
+  col = input.required<ColumnMapping>();
+  rawData = input<any[]>([]);
+  entityType = input<EntityConstructor>();
+  otherColumnMappings = input<ColumnMapping[]>([]);
+  additionalSettings = input<ImportAdditionalSettings>();
+  onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
   skipLookup = signal(false);
 
@@ -67,20 +66,22 @@ export class LocationImportInlineComponent implements OnChanges {
       !this.skipLookup(),
   );
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["col"] || changes["rawData"]) {
-      const additional = this.col?.additional as LocationImportConfig;
+  constructor() {
+    effect(() => {
+      const col = this.col();
+      const rawData = this.rawData();
+      const additional = col?.additional as LocationImportConfig;
       this.skipLookup.set(additional?.skipAddressLookup ?? false);
-
-      const count = new Set(this.rawData.map((row) => row[this.col?.column]))
-        .size;
+      const count = new Set(rawData.map((row) => row[col?.column])).size;
       this.uniqueAddressCount.set(count);
-    }
+    });
   }
 
   onToggle(value: boolean) {
     this.skipLookup.set(value);
-    this.col.additional = { skipAddressLookup: value } as LocationImportConfig;
-    this.onColumnMappingChange?.(this.col);
+    this.col().additional = {
+      skipAddressLookup: value,
+    } as LocationImportConfig;
+    this.onColumnMappingChange()?.(this.col());
   }
 }

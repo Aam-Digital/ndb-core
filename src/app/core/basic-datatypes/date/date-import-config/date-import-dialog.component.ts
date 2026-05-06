@@ -1,10 +1,13 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { from } from "rxjs";
+import { switchMap } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MatInputModule } from "@angular/material/input";
@@ -53,7 +56,12 @@ export class DateImportDialogComponent {
     this.values = this.data.values
       .filter((val) => !!val)
       .map((value) => ({ value }));
-    this.format.valueChanges.subscribe(() => this.checkDateValues());
+    this.format.valueChanges
+      .pipe(
+        switchMap(() => from(this.checkDateValues())),
+        takeUntilDestroyed(),
+      )
+      .subscribe();
     this.format.setValue(this.data.col.additional);
   }
 
