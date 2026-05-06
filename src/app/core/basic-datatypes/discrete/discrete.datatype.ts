@@ -46,7 +46,6 @@ export abstract class DiscreteDatatype<
 
     return super.importMapFunction(valueMappings[val], schemaField);
   }
-
 }
 
 /**

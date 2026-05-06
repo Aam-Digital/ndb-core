@@ -144,7 +144,10 @@ export class EntityImportConfigComponent implements OnChanges {
           ([prop, schema]) =>
             (!!schema.label && !schema.isInternalField) || prop === "_id",
         )
-        .map(([prop, schema]) => ({ label: schema.label ?? prop, property: prop }));
+        .map(([prop, schema]) => ({
+          label: schema.label ?? prop,
+          property: prop,
+        }));
       this.availableProperties.set(props);
     }
 

@@ -1,8 +1,8 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    Input,
-    inject,
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
 } from "@angular/core";
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";

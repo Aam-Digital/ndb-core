@@ -118,8 +118,7 @@ export class EditImportColumnMappingComponent implements OnChanges {
   }
 
   private updateInlineComponentConfig() {
-    const componentName =
-      this.currentlyMappedDatatype()?.importConfigComponent;
+    const componentName = this.currentlyMappedDatatype()?.importConfigComponent;
     if (!componentName) {
       this.inlineComponentConfig.set(null);
       return;

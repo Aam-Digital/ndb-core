@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    Input,
-    OnChanges,
-    SimpleChanges,
-    computed,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  computed,
+  signal,
 } from "@angular/core";
 import { ColumnMapping } from "../../../core/import/column-mapping";
 import { EntityConstructor } from "../../../core/entity/model/entity";
