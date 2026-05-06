@@ -22,6 +22,7 @@ type KeycloakServiceMock = {
   getToken: Mock;
   login: Mock;
   init: Mock;
+  logout: Mock;
   keycloakEvents$: Subject<KeycloakEvent>;
 };
 
@@ -59,11 +60,13 @@ describe("KeycloakAuthService", () => {
       getToken: vi.fn(),
       login: vi.fn(),
       init: vi.fn(),
+      logout: vi.fn(),
       keycloakEvents$: new Subject(),
     };
     mockKeycloak.getToken.mockResolvedValue(keycloakToken);
     mockKeycloak.updateToken.mockResolvedValue(true);
     mockKeycloak.init.mockResolvedValue(undefined);
+    mockKeycloak.logout.mockResolvedValue(undefined);
     const mockActivatedRoute = { snapshot: { queryParams: {} } };
 
     TestBed.configureTestingModule({
@@ -139,7 +142,31 @@ describe("KeycloakAuthService", () => {
     expect(objHeaders["Authorization"]).toBe(`Bearer ${keycloakToken}`);
   });
 
-  it("should re-authorize (login) when access token expires", async () => {
+  it("resetKeycloakInit clears the memoised init so the next call re-runs init", async () => {
+    await service.login();
+    expect(mockKeycloak.init).toHaveBeenCalledTimes(1);
+
+    service.resetKeycloakInit();
+    await service.login();
+
+    expect(mockKeycloak.init).toHaveBeenCalledTimes(2);
+  });
+
+  it("logout clears cached state and resets init", async () => {
+    await service.login();
+    mockKeycloak.init.mockClear();
+
+    await service.logout();
+
+    expect(mockKeycloak.logout).toHaveBeenCalled();
+    expect(service.accessToken).toBeUndefined();
+
+    // Subsequent login must re-run init since logout reset it.
+    await service.login();
+    expect(mockKeycloak.init).toHaveBeenCalledTimes(1);
+  });
+
+  it("should silently refresh the token (no redirect) when OnTokenExpired fires", async () => {
     vi.useFakeTimers();
     try {
       service.login();
@@ -148,13 +175,43 @@ describe("KeycloakAuthService", () => {
 
       mockKeycloak.updateToken.mockClear();
       mockKeycloak.getToken.mockClear();
+      mockKeycloak.login.mockClear();
 
       mockKeycloak.keycloakEvents$.next({
         type: KeycloakEventTypeLegacy.OnTokenExpired,
       });
       await vi.advanceTimersByTimeAsync(0);
-      expect(mockKeycloak.updateToken).toHaveBeenCalled();
+      // Background refresh, not a full redirect.
+      expect(mockKeycloak.updateToken).toHaveBeenCalledWith(30);
       expect(mockKeycloak.getToken).toHaveBeenCalled();
+      expect(mockKeycloak.login).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should retry OnTokenExpired refresh on transient 504 and succeed", async () => {
+    vi.useFakeTimers();
+    try {
+      // Establish an active session first.
+      service.login();
+      await vi.advanceTimersByTimeAsync(0);
+      mockKeycloak.updateToken.mockClear();
+      mockKeycloak.login.mockClear();
+
+      const transient = { status: 504 } as any;
+      mockKeycloak.updateToken
+        .mockRejectedValueOnce(transient)
+        .mockResolvedValueOnce(true);
+
+      mockKeycloak.keycloakEvents$.next({
+        type: KeycloakEventTypeLegacy.OnTokenExpired,
+      });
+      // First attempt fails immediately, then 2s backoff before retry.
+      await vi.advanceTimersByTimeAsync(2_500);
+
+      expect(mockKeycloak.updateToken).toHaveBeenCalledTimes(2);
+      expect(mockKeycloak.login).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }

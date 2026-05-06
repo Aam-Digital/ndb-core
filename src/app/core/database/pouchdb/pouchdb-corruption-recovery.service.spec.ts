@@ -6,6 +6,8 @@ import {
   PouchdbCorruptionRecoveryService,
 } from "./pouchdb-corruption-recovery.service";
 import { BackupService } from "../../admin/backup/backup.service";
+import { environment } from "../../../../environments/environment";
+import { SessionType } from "../../session/session-type";
 
 describe("PouchdbCorruptionRecoveryService", () => {
   let service: PouchdbCorruptionRecoveryService;
@@ -57,6 +59,17 @@ describe("PouchdbCorruptionRecoveryService", () => {
     expect(localStorage.getItem("foo")).toBe("bar");
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
+  });
+
+  it("should skip multi-tab warning dialog in online-only mode", async () => {
+    const originalSessionType = environment.session_type;
+    environment.session_type = SessionType.online;
+    try {
+      await service.promptMultiTabWarningDialog();
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    } finally {
+      environment.session_type = originalSessionType;
+    }
   });
 
   it("should show multi-tab warning again when prompted again", async () => {
