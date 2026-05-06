@@ -85,7 +85,7 @@ export class EntityImportInlineComponent implements OnChanges {
     const refDatatype = this.schemaService.getDatatypeOrDefault(
       refFieldSchema.dataType,
     );
-    if (!refDatatype?.importInlineComponent) return null;
+    if (!refDatatype?.importConfigComponent) return null;
 
     const additional = this.col?.additional as EntityAdditional;
     // Synthetic column mapping for the sub-field's inline component
@@ -96,7 +96,7 @@ export class EntityImportInlineComponent implements OnChanges {
     };
 
     return {
-      component: refDatatype.importInlineComponent,
+      component: refDatatype.importConfigComponent,
       config: {
         col: syntheticCol,
         rawData: this.rawData,
@@ -145,9 +145,6 @@ export class EntityImportInlineComponent implements OnChanges {
             (!!schema.label && !schema.isInternalField) || prop === "_id",
         )
         .map(([prop, schema]) => ({
-         
-         ,
-       
           label: schema.label ?? prop,
           property: prop,
         }));
