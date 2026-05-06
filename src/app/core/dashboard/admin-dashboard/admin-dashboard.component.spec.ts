@@ -57,6 +57,6 @@ describe("AdminDashboardComponent", () => {
     } as any);
 
     await component.addNewWidget();
-    expect(component.dashboardConfig.widgets).toContain(newWidget);
+    expect(component.dashboardConfig().widgets).toContain(newWidget);
   });
 });
