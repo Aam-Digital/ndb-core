@@ -21,6 +21,7 @@ import {
   Input,
   OnInit,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { MarkdownPageModule } from "../markdown-page.module";
 import { RouteTarget } from "../../../route-target";
@@ -43,7 +44,7 @@ export class MarkdownPageComponent implements OnInit {
   /** markdown entity content to be displayed */
   @Input() markdownEntityId?: string;
 
-  markdownContent: string = "";
+  markdownContent = signal<string>("");
 
   private entityMapper = inject(EntityMapperService);
 
@@ -55,7 +56,7 @@ export class MarkdownPageComponent implements OnInit {
       );
 
       if (markdownEntity) {
-        this.markdownContent = markdownEntity.content;
+        this.markdownContent.set(markdownEntity.content);
       }
     }
   }
