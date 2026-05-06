@@ -280,7 +280,7 @@ export class QueryService {
 
     return ids
       .filter((id) => {
-        if (typeof id !== "string") {
+        if (typeof id !== "string" || !id) {
           console.debug("invalid entity id in Query :toEntities", id);
           return false;
         }
