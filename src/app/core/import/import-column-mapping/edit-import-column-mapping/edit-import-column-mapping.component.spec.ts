@@ -26,18 +26,19 @@ describe("EditImportColumnMappingComponent", () => {
 
     fixture = TestBed.createComponent(EditImportColumnMappingComponent);
     component = fixture.componentInstance;
-    component.columnMapping = columnMapping;
-    component.otherColumnMappings = [];
-    component.rawData = rawData;
-    component.entityCtor = TestEntity;
+    fixture.componentRef.setInput("columnMapping", columnMapping);
+    fixture.componentRef.setInput("otherColumnMappings", []);
+    fixture.componentRef.setInput("rawData", rawData);
+    fixture.componentRef.setInput("entityCtor", TestEntity);
     fixture.detectChanges();
 
     vi.spyOn(component.columnMappingChange, "emit");
   });
 
   it("should emit changes after selected entity-field is changed", async () => {
-    component.columnMapping = { column: "name" };
-    component.entityCtor = TestEntity;
+    fixture.componentRef.setInput("columnMapping", { column: "name" });
+    fixture.componentRef.setInput("entityCtor", TestEntity);
+    fixture.detectChanges();
 
     component.updateMapping();
 
@@ -47,28 +48,39 @@ describe("EditImportColumnMappingComponent", () => {
   });
 
   it("should clear additional when updateMapping is called without settingAdditional flag", () => {
-    component.columnMapping = {
+    fixture.componentRef.setInput("columnMapping", {
       column: "test",
       propertyName: "category",
       additional: "someValue",
-    };
+    });
+    fixture.detectChanges();
 
     component.updateMapping();
 
-    expect(component.columnMapping.additional).toBeUndefined();
-    expect(component.columnMappingChange.emit).toHaveBeenCalled();
+    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
+      expect.objectContaining({ column: "test", propertyName: "category" }),
+    );
+    const emitted = (component.columnMappingChange.emit as any).mock
+      .calls[0][0];
+    expect(emitted.additional).toBeUndefined();
   });
 
   it("should preserve additional when updateMapping is called with settingAdditional=true", () => {
-    component.columnMapping = {
+    fixture.componentRef.setInput("columnMapping", {
       column: "test",
       propertyName: "category",
       additional: "someValue",
-    };
+    });
+    fixture.detectChanges();
 
     component.updateMapping(true);
 
-    expect(component.columnMapping.additional).toBe("someValue");
-    expect(component.columnMappingChange.emit).toHaveBeenCalled();
+    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        column: "test",
+        propertyName: "category",
+        additional: "someValue",
+      }),
+    );
   });
 });

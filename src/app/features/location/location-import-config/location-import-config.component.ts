@@ -1,11 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
   computed,
-  signal,
+  input,
 } from "@angular/core";
 import { ColumnMapping } from "../../../core/import/column-mapping";
 import { EntityConstructor } from "../../../core/entity/model/entity";
@@ -33,17 +30,24 @@ const LOOKUP_WARNING_THRESHOLD = 50;
   templateUrl: "./location-import-config.component.html",
   imports: [MatCheckboxModule, FormsModule, FaIconComponent, MatTooltip],
 })
-export class LocationImportConfigComponent implements OnChanges {
-  @Input() col: ColumnMapping;
-  @Input() rawData: any[] = [];
-  @Input() entityType: EntityConstructor;
-  @Input() otherColumnMappings: ColumnMapping[] = [];
-  @Input() additionalSettings: ImportAdditionalSettings;
-  @Input() onColumnMappingChange: (col: ColumnMapping) => void;
+export class LocationImportConfigComponent {
+  col = input<ColumnMapping>();
+  rawData = input<any[]>([]);
+  entityType = input<EntityConstructor>();
+  otherColumnMappings = input<ColumnMapping[]>([]);
+  additionalSettings = input<ImportAdditionalSettings>();
+  onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
-  skipLookup = signal(false);
+  skipLookup = computed(
+    () =>
+      (this.col()?.additional as LocationImportConfig)?.skipAddressLookup ??
+      false,
+    // this state updates after toggling by the parent updating the input
+  );
 
-  private readonly uniqueAddressCount = signal(0);
+  private readonly uniqueAddressCount = computed(
+    () => new Set(this.rawData().map((row) => row[this.col()?.column])).size,
+  );
 
   showLookupWarning = computed(
     () =>
@@ -51,20 +55,11 @@ export class LocationImportConfigComponent implements OnChanges {
       !this.skipLookup(),
   );
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["col"] || changes["rawData"]) {
-      const additional = this.col?.additional as LocationImportConfig;
-      this.skipLookup.set(additional?.skipAddressLookup ?? false);
-
-      const count = new Set(this.rawData.map((row) => row[this.col?.column]))
-        .size;
-      this.uniqueAddressCount.set(count);
-    }
-  }
-
   onToggle(value: boolean) {
-    this.skipLookup.set(value);
-    this.col.additional = { skipAddressLookup: value } as LocationImportConfig;
-    this.onColumnMappingChange?.(this.col);
+    const col = this.col();
+    this.onColumnMappingChange()?.({
+      ...col,
+      additional: { skipAddressLookup: value } as LocationImportConfig,
+    });
   }
 }

@@ -72,8 +72,11 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
-   * Handles type conversion between numbers and strings to improve matching.
+   * Maps a value from an import to an actual entity in the database.
+   *
+   * Finds all column mappings targeting this field, resolves each column's comparison value
+   * (applying any configured value mapping), and progressively filters candidate entities
+   * until a unique match is found.
    *
    * @param val The value from an import that should be mapped to an entity reference.
    * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
@@ -88,8 +91,8 @@ export class EntityDatatype extends StringDatatype {
     additional: string | EntityAdditional,
     importProcessingContext: ImportProcessingContext,
   ): Promise<string | undefined> {
-    const normalized = normalizeEntityAdditional(additional);
-    if (!normalized?.refField || val == null) {
+    const fieldConfig = normalizeEntityAdditional(additional);
+    if (!fieldConfig?.refField || val == null) {
       return undefined;
     }
 
@@ -100,67 +103,104 @@ export class EntityDatatype extends StringDatatype {
 
     await this.loadImportMapEntities(schemaField.additional, context);
 
-    // find all columns that map to this schemaField from importProcessingContext
-    // and filter entities accordingly (for all conditions)
-    for (const colMapping of importProcessingContext.importSettings.columnMapping.filter(
-      (m) => m.propertyName === schemaField.id,
-    )) {
-      const colAdditional = normalizeEntityAdditional(colMapping.additional);
-      const colRefField = colAdditional?.refField;
-      const colValueMapping = colAdditional?.valueMapping;
-      const colValue = importProcessingContext.row[colMapping.column];
+    const columnMappings = this.getColumnMappingsForField(
+      schemaField.id,
+      importProcessingContext,
+    );
 
-      let normalizedColValue: string;
-      if (colValueMapping !== undefined) {
-        const refFieldSchema = context.refEntityCtor?.schema?.get(colRefField);
-        const refDatatype = refFieldSchema
-          ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
-          : null;
-        if (refDatatype) {
-          const mapped = await refDatatype.importMapFunction(
-            colValue,
-            refFieldSchema,
-            colValueMapping,
-            importProcessingContext,
-          );
-          const inDbFormat = refDatatype.transformToDatabaseFormat(
-            mapped,
-            refFieldSchema,
-          );
-          normalizedColValue = normalizeValue(inDbFormat);
-        } else {
-          normalizedColValue = normalizeValue(colValue);
-        }
-      } else {
-        normalizedColValue = normalizeValue(colValue);
-      }
+    for (const mapping of columnMappings) {
+      const mappingConfig = normalizeEntityAdditional(mapping.additional);
+      const rawValue = importProcessingContext.row[mapping.column];
+
+      const expectedValue = await this.resolveColumnValue(
+        rawValue,
+        mappingConfig?.refField,
+        mappingConfig?.valueMapping,
+        context,
+        importProcessingContext,
+      );
 
       context.filteredEntities = context.filteredEntities.filter(
-        (entity) => normalizeValue(entity[colRefField]) === normalizedColValue,
+        (entity) =>
+          normalizeValue(entity[mappingConfig?.refField]) === expectedValue,
       );
     }
 
-    if (context.filteredEntities.length === 1) {
-      return context.filteredEntities[0]._id;
-    } else {
-      if (context.filteredEntities.length > 1) {
-        Logging.debug(
-          "No unique match found in EntityDatatype importMapFunction",
-          context.filteredEntities.length,
-        );
-      }
-      return undefined;
+    return this.pickSingleMatch(context.filteredEntities);
+  }
+
+  /**
+   * Returns all column mappings that target the given field.
+   */
+  private getColumnMappingsForField(
+    fieldId: string,
+    importProcessingContext: ImportProcessingContext,
+  ) {
+    return importProcessingContext.importSettings.columnMapping.filter(
+      (m) => m.propertyName === fieldId,
+    );
+  }
+
+  /**
+   * Resolves the effective comparison value for a column,
+   * applying any configured value mapping through the referenced field's datatype.
+   */
+  private async resolveColumnValue(
+    rawValue: any,
+    refField: string,
+    valueMapping: any | undefined,
+    context: EntityFieldImportContext,
+    importProcessingContext: ImportProcessingContext,
+  ): Promise<string> {
+    if (valueMapping === undefined) {
+      return normalizeValue(rawValue);
     }
+
+    const refFieldSchema = context.refEntityCtor?.schema?.get(refField);
+    const refDatatype = refFieldSchema
+      ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
+      : null;
+
+    if (!refDatatype) {
+      return normalizeValue(rawValue);
+    }
+
+    const mappedValue = await refDatatype.importMapFunction(
+      rawValue,
+      refFieldSchema,
+      valueMapping,
+      importProcessingContext,
+    );
+    const dbFormat = refDatatype.transformToDatabaseFormat(
+      mappedValue,
+      refFieldSchema,
+    );
+    return normalizeValue(dbFormat);
+  }
+
+  /**
+   * Returns the entity ID if exactly one candidate remains, otherwise undefined.
+   */
+  private pickSingleMatch(candidates: any[]): string | undefined {
+    if (candidates.length === 1) {
+      return candidates[0]._id;
+    }
+    if (candidates.length > 1) {
+      Logging.debug(
+        "No unique match found in EntityDatatype importMapFunction",
+        candidates.length,
+      );
+    }
+    return undefined;
   }
 
   /**
    * Load the required entity type's entities into context's cache if not available yet.
-   * @private
    */
   private async loadImportMapEntities(
     entityType: string,
     context: EntityFieldImportContext,
-  ) {
+  ): Promise<void> {
     if (context.entities) {
       return;
     }
@@ -171,8 +211,8 @@ export class EntityDatatype extends StringDatatype {
       );
       context.refEntityCtor = this.entityRegistry.get(entityType);
     } catch (error) {
-      Logging.error("Error in EntityDatatype importMapFunction:", error);
-      return undefined;
+      Logging.error("Error loading entities for import mapping:", error);
+      context.entities = [];
     }
   }
 

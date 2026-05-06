@@ -26,10 +26,10 @@ describe("EntityImportConfigComponent", () => {
       column: "test",
       propertyName: "ref",
     };
-    component.col = col;
-    component.entityType = TestEntity;
-    component.otherColumnMappings = [];
-    component.ngOnChanges({ col: {} as any });
+    fixture.componentRef.setInput("col", col);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("otherColumnMappings", []);
+    fixture.detectChanges();
 
     expect(component.referencedEntity()).not.toBeNull();
     expect(component.availableProperties().length).toBeGreaterThan(0);
@@ -40,17 +40,28 @@ describe("EntityImportConfigComponent", () => {
       column: "test",
       propertyName: "ref",
     };
-    component.col = col;
-    component.entityType = TestEntity;
-    component.otherColumnMappings = [];
-    component.onColumnMappingChange = vi.fn();
-    component.ngOnChanges({ col: {} as any });
+    const onChangeFn = vi.fn();
+    fixture.componentRef.setInput("col", col);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("otherColumnMappings", []);
+    fixture.componentRef.setInput("onColumnMappingChange", onChangeFn);
+    fixture.detectChanges();
 
     component.onRefFieldChange("name");
 
-    expect(component.selectedRefField()).toBe("name");
-    expect(component.col.additional).toEqual(
-      expect.objectContaining({ refField: "name" }),
+    expect(onChangeFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        column: "test",
+        propertyName: "ref",
+        additional: expect.objectContaining({ refField: "name" }),
+      }),
     );
+
+    // Simulate parent re-setting the input with the updated value
+    const updatedCol = onChangeFn.mock.calls[0][0];
+    fixture.componentRef.setInput("col", updatedCol);
+    fixture.detectChanges();
+
+    expect(component.selectedRefField()).toBe("name");
   });
 });

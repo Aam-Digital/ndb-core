@@ -28,30 +28,40 @@ describe("DiscreteImportConfigComponent", () => {
   });
 
   it("should show badge with ? when no value mappings exist", () => {
-    component.col = { column: "gender", propertyName: "category" };
+    fixture.componentRef.setInput("col", {
+      column: "gender",
+      propertyName: "category",
+    });
 
     expect(component.badge()).toBe("?");
   });
 
   it("should show badge count for unmapped values", () => {
-    component.col = {
+    fixture.componentRef.setInput("col", {
       column: "gender",
       propertyName: "category",
       additional: { values: { male: "M", female: undefined } },
-    };
+    });
 
     expect(component.badge()).toBe("1");
   });
 
   it("should open dialog and notify on close", () => {
-    component.col = { column: "gender", propertyName: "category" };
-    component.rawData = [{ gender: "male" }, { gender: "female" }];
-    component.entityType = TestEntity;
-    component.onColumnMappingChange = vi.fn();
+    const onChangeFn = vi.fn();
+    fixture.componentRef.setInput("col", {
+      column: "gender",
+      propertyName: "category",
+    });
+    fixture.componentRef.setInput("rawData", [
+      { gender: "male" },
+      { gender: "female" },
+    ]);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("onColumnMappingChange", onChangeFn);
 
     component.openConfig();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(component.onColumnMappingChange).toHaveBeenCalledWith(component.col);
+    expect(onChangeFn).toHaveBeenCalledWith(component.col());
   });
 });

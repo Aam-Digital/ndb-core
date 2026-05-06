@@ -1,11 +1,11 @@
 <div class="flex-row gap-regular align-center">
   <mat-form-field>
-    <mat-label>{{ columnMapping.column }}</mat-label>
+    <mat-label>{{ columnMapping()?.column }}</mat-label>
     <app-entity-field-select
-      [entityType]="entityCtor"
+      [entityType]="entityCtor()"
       [hideOption]="hideOption"
-      [(ngModel)]="columnMapping.propertyName"
-      (ngModelChange)="updateMapping()"
+      [ngModel]="columnMapping()?.propertyName"
+      (ngModelChange)="onFieldSelected($event)"
     />
   </mat-form-field>
 

@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   inject,
+  input,
 } from "@angular/core";
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
@@ -29,15 +29,16 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 export class DiscreteImportConfigComponent {
   private readonly dialog = inject(MatDialog);
 
-  @Input() col: ColumnMapping;
-  @Input() rawData: any[] = [];
-  @Input() entityType: EntityConstructor;
-  @Input() otherColumnMappings: ColumnMapping[] = [];
-  @Input() additionalSettings: ImportAdditionalSettings;
-  @Input() onColumnMappingChange: (col: ColumnMapping) => void;
+  col = input<ColumnMapping>();
+  rawData = input<any[]>([]);
+  entityType = input<EntityConstructor>();
+  otherColumnMappings = input<ColumnMapping[]>([]);
+  additionalSettings = input<ImportAdditionalSettings>();
+  onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
   badge(): string | undefined {
-    const additional = this.col?.additional as DiscreteColumnMappingAdditional;
+    const additional = this.col()
+      ?.additional as DiscreteColumnMappingAdditional;
     const valueMappings = additional?.values;
     if (!valueMappings) {
       return "?";
@@ -49,8 +50,9 @@ export class DiscreteImportConfigComponent {
   }
 
   openConfig() {
+    const col = this.col();
     const uniqueValues = new Set<any>(
-      this.rawData.map((row) => row[this.col.column]),
+      this.rawData().map((row) => row[col.column]),
     );
 
     this.dialog
@@ -58,17 +60,17 @@ export class DiscreteImportConfigComponent {
         DiscreteImportDialogComponent,
         {
           data: {
-            col: this.col,
+            col: col,
             values: [...uniqueValues],
-            totalRowCount: this.rawData.length,
-            entityType: this.entityType,
-            additionalSettings: this.additionalSettings,
+            totalRowCount: this.rawData().length,
+            entityType: this.entityType(),
+            additionalSettings: this.additionalSettings(),
           },
           width: "80vw",
           disableClose: true,
         },
       )
       .afterClosed()
-      .subscribe(() => this.onColumnMappingChange?.(this.col));
+      .subscribe(() => this.onColumnMappingChange()?.(col));
   }
 }

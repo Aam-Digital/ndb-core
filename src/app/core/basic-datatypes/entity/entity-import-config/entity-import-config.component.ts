@@ -1,12 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
   computed,
   inject,
-  signal,
+  input,
 } from "@angular/core";
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
@@ -47,31 +44,66 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
     DynamicComponentDirective,
   ],
 })
-export class EntityImportConfigComponent implements OnChanges {
+export class EntityImportConfigComponent {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly schemaService = inject(EntitySchemaService);
 
-  @Input() col: ColumnMapping;
-  @Input() rawData: any[] = [];
-  @Input() entityType: EntityConstructor;
-  @Input() otherColumnMappings: ColumnMapping[] = [];
-  @Input() additionalSettings: ImportAdditionalSettings;
-  @Input() onColumnMappingChange: (col: ColumnMapping) => void;
+  col = input<ColumnMapping>();
+  rawData = input<any[]>([]);
+  entityType = input<EntityConstructor>();
+  otherColumnMappings = input<ColumnMapping[]>([]);
+  additionalSettings = input<ImportAdditionalSettings>();
+  onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
-  referencedEntity = signal<EntityConstructor | null>(null);
-  availableProperties = signal<{ property: string; label: string }[]>([]);
-  selectedRefField = signal<string>("");
-  showInheritanceHint = signal(false);
+  selectedRefField = computed(() => {
+    const col = this.col();
+    const current = normalizeEntityAdditional(col?.additional);
+    return current?.refField ?? "";
+  });
 
-  hasMultiMapping = computed(
-    () =>
-      this.col?.propertyName !== undefined &&
-      this.otherColumnMappings?.some(
-        (m) =>
-          m.propertyName === this.col.propertyName &&
-          m.column !== this.col.column,
-      ),
-  );
+  referencedEntity = computed<EntityConstructor | null>(() => {
+    const col = this.col();
+    const entityType = this.entityType();
+    if (!col?.propertyName || !entityType) return null;
+
+    const fieldSchema = entityType.schema.get(col.propertyName);
+    const entityName = fieldSchema?.additional;
+    if (!entityName) return null;
+
+    return this.entityRegistry.get(entityName) ?? null;
+  });
+
+  availableProperties = computed(() => {
+    const entity = this.referencedEntity();
+    if (!entity) return [];
+    return [...entity.schema.entries()]
+      .filter(
+        ([prop, schema]) =>
+          (!!schema.label && !schema.isInternalField) || prop === "_id",
+      )
+      .map(([prop, schema]) => ({
+        label: schema.label ?? prop,
+        property: prop,
+      }));
+  });
+
+  showInheritanceHint = computed(() => {
+    const col = this.col();
+    const entityType = this.entityType();
+    if (!col?.propertyName || !entityType) return false;
+    return isInheritanceSourceReferenceField(entityType, col.propertyName);
+  });
+
+  hasMultiMapping = computed(() => {
+    const col = this.col();
+    const otherColumnMappings = this.otherColumnMappings();
+    return (
+      col?.propertyName !== undefined &&
+      otherColumnMappings?.some(
+        (m) => m.propertyName === col.propertyName && m.column !== col.column,
+      )
+    );
+  });
 
   /** Config for the sub-field's inline component (for value transformation config) */
   subFieldInlineConfig = computed(() => {
@@ -87,10 +119,11 @@ export class EntityImportConfigComponent implements OnChanges {
     );
     if (!refDatatype?.importConfigComponent) return null;
 
-    const additional = this.col?.additional as EntityAdditional;
+    const col = this.col();
+    const additional = col?.additional as EntityAdditional;
     // Synthetic column mapping for the sub-field's inline component
     const syntheticCol: ColumnMapping = {
-      column: this.col.column,
+      column: col.column,
       propertyName: refField,
       additional: additional?.valueMapping,
     };
@@ -99,66 +132,34 @@ export class EntityImportConfigComponent implements OnChanges {
       component: refDatatype.importConfigComponent,
       config: {
         col: syntheticCol,
-        rawData: this.rawData,
+        rawData: this.rawData(),
         entityType: refEntity,
         otherColumnMappings: [],
-        additionalSettings: this.additionalSettings,
+        additionalSettings: this.additionalSettings(),
         onColumnMappingChange: (updatedCol: ColumnMapping) => {
-          const current = normalizeEntityAdditional(this.col.additional) ?? {
+          const current = normalizeEntityAdditional(col.additional) ?? {
             refField: refField,
           };
-          this.col.additional = {
-            ...current,
-            refField: refField,
-            valueMapping: updatedCol.additional,
-          } as EntityAdditional;
-          this.onColumnMappingChange?.(this.col);
+          const updatedParentCol: ColumnMapping = {
+            ...col,
+            additional: {
+              ...current,
+              refField: refField,
+              valueMapping: updatedCol.additional,
+            } as EntityAdditional,
+          };
+          this.onColumnMappingChange()?.(updatedParentCol);
         },
       },
     };
   });
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["col"] || changes["entityType"]) {
-      this.initFromInputs();
-    }
-  }
-
-  private initFromInputs() {
-    if (!this.col?.propertyName || !this.entityType) return;
-
-    this.showInheritanceHint.set(
-      isInheritanceSourceReferenceField(this.entityType, this.col.propertyName),
-    );
-
-    const fieldSchema = this.entityType.schema.get(this.col.propertyName);
-    const entityName = fieldSchema?.additional;
-    if (!entityName) return;
-
-    const entity = this.entityRegistry.get(entityName);
-    this.referencedEntity.set(entity ?? null);
-
-    if (entity) {
-      const props = [...entity.schema.entries()]
-        .filter(
-          ([prop, schema]) =>
-            (!!schema.label && !schema.isInternalField) || prop === "_id",
-        )
-        .map(([prop, schema]) => ({
-          label: schema.label ?? prop,
-          property: prop,
-        }));
-      this.availableProperties.set(props);
-    }
-
-    const current = normalizeEntityAdditional(this.col.additional);
-    this.selectedRefField.set(current?.refField ?? "");
-  }
-
   onRefFieldChange(newRefField: string) {
-    this.selectedRefField.set(newRefField);
+    const col = this.col();
     // Clear valueMapping when ref field changes
-    this.col.additional = { refField: newRefField } as EntityAdditional;
-    this.onColumnMappingChange?.(this.col);
+    this.onColumnMappingChange()?.({
+      ...col,
+      additional: { refField: newRefField } as EntityAdditional,
+    });
   }
 }

@@ -1,13 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
+  computed,
   inject,
-  signal,
+  input,
+  output,
 } from "@angular/core";
 import { DynamicComponentConfig } from "../../../config/dynamic-components/dynamic-component-config.interface";
 import { ColumnMapping } from "../../column-mapping";
@@ -30,7 +27,6 @@ import { ImportAdditionalSettings } from "../../import-additional-settings/impor
   selector: "app-edit-import-column-mapping",
   templateUrl: "./edit-import-column-mapping.component.html",
   styleUrls: ["./edit-import-column-mapping.component.scss"],
-  standalone: true,
   imports: [
     MatInputModule,
     EntityFieldSelectComponent,
@@ -38,101 +34,86 @@ import { ImportAdditionalSettings } from "../../import-additional-settings/impor
     DynamicComponentDirective,
   ],
 })
-export class EditImportColumnMappingComponent implements OnChanges {
+export class EditImportColumnMappingComponent {
   private schemaService = inject(EntitySchemaService);
 
-  @Input() set columnMapping(value: ColumnMapping) {
-    const newValueString = JSON.stringify(value);
-    if (newValueString === JSON.stringify(this._columnMapping)) {
-      return;
-    }
-    this._columnMapping = JSON.parse(newValueString);
-  }
+  columnMapping = input.required<ColumnMapping>();
 
-  get columnMapping(): ColumnMapping {
-    return this._columnMapping;
-  }
-
-  /** internal deep-copy to not change properties of object by reference */
-  private _columnMapping: ColumnMapping;
-
-  @Input() entityCtor: EntityConstructor;
+  entityCtor = input.required<EntityConstructor>();
 
   /**
    * Existing column mappings of other columns
    * (e.g. to hide already mapped fields)
    */
-  @Input() otherColumnMappings: ColumnMapping[] = [];
+  otherColumnMappings = input<ColumnMapping[]>([]);
 
   /**
    * the actually imported data
    * (to let this component configure special transformations, e.g. to map values to dropdown categories)
    */
-  @Input() rawData: any[] = [];
+  rawData = input<any[]>([]);
 
   /**
    * Additional settings for import processing
    */
-  @Input() additionalSettings: ImportAdditionalSettings;
+  additionalSettings = input<ImportAdditionalSettings>();
 
-  @Output() columnMappingChange = new EventEmitter<ColumnMapping>();
+  columnMappingChange = output<ColumnMapping>();
 
-  currentlyMappedDatatype = signal<DefaultDatatype | null>(null);
-  inlineComponentConfig = signal<DynamicComponentConfig | null>(null);
+  currentlyMappedDatatype = computed<DefaultDatatype | null>(() => {
+    const col = this.columnMapping();
+    const schema = this.entityCtor()?.schema?.get(col?.propertyName);
+    return schema
+      ? this.schemaService.getDatatypeOrDefault(schema.dataType)
+      : null;
+  });
 
-  /** Stable reference for the callback passed into the inline component */
-  private readonly boundUpdateMapping = () => this.updateMapping(true);
+  inlineComponentConfig = computed<DynamicComponentConfig | null>(() => {
+    const componentName = this.currentlyMappedDatatype()?.importConfigComponent;
+    if (!componentName) return null;
+    return {
+      component: componentName,
+      config: {
+        col: this.columnMapping(),
+        rawData: this.rawData(),
+        entityType: this.entityCtor(),
+        otherColumnMappings: this.otherColumnMappings(),
+        additionalSettings: this.additionalSettings(),
+        onColumnMappingChange: this.onInlineComponentChange,
+      },
+    };
+  });
+
+  /**
+   * Callback for inline config components to propagate column mapping changes.
+   * Defined as a stable reference (class field) to avoid re-rendering the dynamic component on each recomputation.
+   */
+  private readonly onInlineComponentChange = (updatedCol: ColumnMapping) => {
+    this.columnMappingChange.emit({ ...updatedCol, manuallyUpdated: true });
+  };
 
   hideOption = (option: FormFieldConfig) =>
-    this.otherColumnMappings.some((c) => c.propertyName === option.id) &&
+    this.otherColumnMappings().some((c) => c.propertyName === option.id) &&
     !this.schemaService.getDatatypeOrDefault(option.dataType)
       .importAllowsMultiMapping &&
-    option.id !== this.columnMapping.propertyName;
+    option.id !== this.columnMapping()?.propertyName;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["columnMapping"]) {
-      this.updateDatatype();
-    }
-    this.updateInlineComponentConfig();
+  onFieldSelected(propertyName: string) {
+    const col = this.columnMapping();
+    this.columnMappingChange.emit({
+      ...col,
+      propertyName,
+      additional: undefined,
+      manuallyUpdated: true,
+    });
   }
 
   updateMapping(settingAdditional = false) {
+    const col = this.columnMapping();
+    const updated: ColumnMapping = { ...col, manuallyUpdated: true };
     if (!settingAdditional) {
-      delete this.columnMapping.additional;
+      delete updated.additional;
     }
-
-    this.columnMapping.manuallyUpdated = true;
-
-    this.updateDatatype();
-    this.columnMappingChange.emit(this.columnMapping);
-  }
-
-  private updateDatatype() {
-    const schema = this.entityCtor?.schema?.get(
-      this.columnMapping?.propertyName,
-    );
-    const datatype = schema
-      ? this.schemaService.getDatatypeOrDefault(schema.dataType)
-      : null;
-    this.currentlyMappedDatatype.set(datatype);
-  }
-
-  private updateInlineComponentConfig() {
-    const componentName = this.currentlyMappedDatatype()?.importConfigComponent;
-    if (!componentName) {
-      this.inlineComponentConfig.set(null);
-      return;
-    }
-    this.inlineComponentConfig.set({
-      component: componentName,
-      config: {
-        col: this.columnMapping,
-        rawData: this.rawData,
-        entityType: this.entityCtor,
-        otherColumnMappings: this.otherColumnMappings,
-        additionalSettings: this.additionalSettings,
-        onColumnMappingChange: this.boundUpdateMapping,
-      },
-    });
+    this.columnMappingChange.emit(updated);
   }
 }

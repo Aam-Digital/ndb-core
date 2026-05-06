@@ -28,14 +28,21 @@ describe("DateImportConfigComponent", () => {
   });
 
   it("should open dialog and notify on close", () => {
-    component.col = { column: "date", propertyName: "dateOfBirth" };
-    component.rawData = [{ date: "2024-01-01" }, { date: "2024-02-01" }];
-    component.entityType = TestEntity;
-    component.onColumnMappingChange = vi.fn();
+    const onChangeFn = vi.fn();
+    fixture.componentRef.setInput("col", {
+      column: "date",
+      propertyName: "dateOfBirth",
+    });
+    fixture.componentRef.setInput("rawData", [
+      { date: "2024-01-01" },
+      { date: "2024-02-01" },
+    ]);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("onColumnMappingChange", onChangeFn);
 
     component.openConfig();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(component.onColumnMappingChange).toHaveBeenCalledWith(component.col);
+    expect(onChangeFn).toHaveBeenCalledWith(component.col());
   });
 });
