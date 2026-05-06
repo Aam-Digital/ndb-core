@@ -218,14 +218,12 @@ describe("Schema data type: entity (advanced functionality)", () => {
     ).resolves.toEqual(entity.getId());
   });
 
-  it("should importMap entity ref with value mapping using sub-field importMapFunction", async () => {
-    // Test that valueMapping is applied through the sub-field's importMapFunction + transformToDatabaseFormat
-    // Using string field with a date format mapping to verify the chain
+  it("should importMap entity ref using object additional format with refField", async () => {
     const entity = new TestEntity();
     entity.other = "some value";
     await entityMapper.saveAll([entity]);
 
-    const additional = { refField: "other" }; // no valueMapping - plain string matching
+    const additional = { refField: "other" };
     const importContext = createImportContext(
       "some value",
       schema.id,

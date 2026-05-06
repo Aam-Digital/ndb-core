@@ -34,7 +34,7 @@
   <mat-list>
     @for (val of values; track val) {
       <mat-list-item [class.invalid]="!val.parsed">
-        {{ val.value }} -> {{ val.parsed | customDate }}
+        {{ val.value }} -&gt; {{ val.parsed | customDate }}
       </mat-list-item>
     }
   </mat-list>

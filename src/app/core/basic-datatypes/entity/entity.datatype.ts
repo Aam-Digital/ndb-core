@@ -121,6 +121,7 @@ export class EntityDatatype extends StringDatatype {
             colValue,
             refFieldSchema,
             colValueMapping,
+            importProcessingContext,
           );
           const inDbFormat = refDatatype.transformToDatabaseFormat(
             mapped,
