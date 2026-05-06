@@ -725,7 +725,7 @@ export class QueryService {
 
     return ids
       .filter((id) &#x3D;&gt; {
-        if (typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+        if (typeof id !&#x3D;&#x3D; &quot;string&quot; || !id) {
           console.debug(&quot;invalid entity id in Query :toEntities&quot;, id);
           return false;
         }

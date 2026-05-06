@@ -367,8 +367,11 @@ import {
   MatDialogRef,
 } from &quot;@angular/material/dialog&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
 import { MatRadioModule } from &quot;@angular/material/radio&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 import { DialogCloseComponent } from &quot;../../common-components/dialog-close/dialog-close.component&quot;;
 import {
   DownloadService,
@@ -398,6 +401,8 @@ export interface ExportDialogData {
   imports: [
     MatDialogModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatProgressBarModule,
     MatRadioModule,
     FormsModule,
     DialogCloseComponent,
@@ -411,19 +416,33 @@ export class ExportDialogComponent {
 
   format &#x3D; signal&lt;FileDownloadFormat&gt;(&quot;csv&quot;);
   scope &#x3D; signal&lt;&quot;filtered&quot; | &quot;all&quot;&gt;(&quot;filtered&quot;);
+  isLoading &#x3D; signal&lt;boolean&gt;(false);
+  downloadError &#x3D; signal&lt;string | null&gt;(null);
 
   async download() {
-    const exportData &#x3D;
-      this.data.filteredData &amp;&amp; this.scope() &#x3D;&#x3D;&#x3D; &quot;filtered&quot;
-        ? this.data.filteredData
-        : this.data.allEntities;
-    await this.downloadService.triggerDownload(
-      exportData,
-      this.format(),
-      this.data.filename,
-      this.data.exportConfig,
-    );
-    this.dialogRef.close();
+    this.isLoading.set(true);
+    this.downloadError.set(null);
+    await new Promise&lt;void&gt;((resolve) &#x3D;&gt; setTimeout(resolve));
+    try {
+      const exportData &#x3D;
+        this.data.filteredData &amp;&amp; this.scope() &#x3D;&#x3D;&#x3D; &quot;filtered&quot;
+          ? this.data.filteredData
+          : this.data.allEntities;
+      await this.downloadService.triggerDownload(
+        exportData,
+        this.format(),
+        this.data.filename,
+        this.data.exportConfig,
+      );
+      this.dialogRef.close();
+    } catch (e) {
+      Logging.warn(&quot;Export download failed:&quot;, e);
+      this.downloadError.set(
+        $localize&#x60;Download failed [${e instanceof Error ? e.message : String(e)}]&#x60;,
+      );
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }
 </code></pre>
