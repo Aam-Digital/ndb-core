@@ -1,8 +1,15 @@
 import { enableVitestProxyZoneCompat } from "./app/utils/test-utils/vitest-proxy-zone-compat";
 import { environment } from "./environments/environment";
 import { SessionType } from "./app/core/session/session-type";
+import { getTestBed } from "@angular/core/testing";
 
 enableVitestProxyZoneCompat();
+
+// Destroy the Angular TestBed module after each test to prevent stale
+// `providedIn: 'root'` singleton instances from leaking across tests.
+beforeEach(() => {
+  getTestBed().resetTestingModule();
+});
 
 // Reset environment.session_type after every test to prevent cross-test pollution.
 afterEach(() => {

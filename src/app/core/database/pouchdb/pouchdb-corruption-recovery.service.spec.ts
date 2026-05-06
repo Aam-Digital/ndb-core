@@ -20,7 +20,6 @@ describe("PouchdbCorruptionRecoveryService", () => {
     };
     location = { pathname: "/entities/Entity:1" };
 
-    TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         PouchdbCorruptionRecoveryService,
