@@ -18,7 +18,12 @@
 import { Injectable, inject } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
-import { LoginStateSubject, hasRemoteSession } from "../session-type";
+import {
+  LoginStateSubject,
+  SyncStateSubject,
+  hasRemoteSession,
+} from "../session-type";
+import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
@@ -50,6 +55,7 @@ export class SessionManagerService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
   private configService = inject(ConfigService);
   private databaseResolver = inject(DatabaseResolverService);
+  private readonly syncStateSubject = inject(SyncStateSubject);
 
   readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
   /**
@@ -64,10 +70,13 @@ export class SessionManagerService {
   static readonly SKIP_NEXT_SSO_CHECK_KEY = "SKIP_NEXT_SSO_CHECK";
   private remoteLoggedIn = false;
   private updateSubscription: Subscription;
+  /** Subscription waiting for first sync completion before registering the user for offline login. */
+  private syncSaveSubscription: Subscription | undefined;
 
   /**
    * Silently check for an existing SSO session without redirecting.
-   * If a session exists, complete the login. Otherwise, set state to LOGIN_FAILED.
+   * If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
+   * (this is not a failure — the user simply hasn't logged in yet).
    */
   async checkRemoteSession() {
     this.loginStateSubject.next(LoginState.IN_PROGRESS);
@@ -78,7 +87,7 @@ export class SessionManagerService {
     // click "Log in" again.
     if (sessionStorage.getItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY)) {
       sessionStorage.removeItem(SessionManagerService.SKIP_NEXT_SSO_CHECK_KEY);
-      this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+      this.loginStateSubject.next(LoginState.LOGGED_OUT);
       return;
     }
 
@@ -89,13 +98,23 @@ export class SessionManagerService {
           if (user) {
             return this.handleRemoteLogin(user);
           }
-          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+          this.setLoggedOutIfNotAlready();
         })
         .catch(() => {
-          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+          this.setLoggedOutIfNotAlready();
         });
     }
-    this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+    this.setLoggedOutIfNotAlready();
+  }
+
+  /**
+   * Only transition to LOGGED_OUT if not already logged in (e.g. via offlineLogin).
+   * Prevents a slow-resolving SSO check from overwriting a successful offline login.
+   */
+  private setLoggedOutIfNotAlready() {
+    if (this.loginStateSubject.value !== LoginState.LOGGED_IN) {
+      this.loginStateSubject.next(LoginState.LOGGED_OUT);
+    }
   }
 
   /**
@@ -162,9 +181,9 @@ export class SessionManagerService {
   }
 
   /**
-   * Get a list of all users that can log in offline
+   * Get a list of all users that can log in offline (have a local database).
    */
-  getOfflineUsers(): SessionInfo[] {
+  getOfflineUsers(): Promise<SessionInfo[]> {
     return this.localAuthService.getStoredUsers();
   }
 
@@ -192,8 +211,11 @@ export class SessionManagerService {
     // resetting app state
     this.sessionInfo.next(undefined);
     this.updateSubscription?.unsubscribe();
+    this.syncSaveSubscription?.unsubscribe();
+    this.syncSaveSubscription = undefined;
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
+    this.syncStateSubject.next(SyncState.UNSYNCED);
     this.remoteLoggedIn = false;
     await this.databaseResolver.resetDatabases();
     return this.router.navigate(["/login"], {
@@ -218,6 +240,15 @@ export class SessionManagerService {
   private async handleRemoteLogin(user: SessionInfo) {
     this.remoteLoggedIn = true;
     await this.initializeUser(user);
-    this.localAuthService.saveUser(user);
+
+    // Defer saving the offline-login entry until the first sync completes,
+    // so the option is only shown when local data is actually available.
+    this.syncSaveSubscription?.unsubscribe();
+    this.syncSaveSubscription = this.syncStateSubject
+      .pipe(
+        filter((state) => state === SyncState.COMPLETED),
+        take(1),
+      )
+      .subscribe(() => this.localAuthService.saveUser(user));
   }
 }
