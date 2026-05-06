@@ -8,7 +8,7 @@
 }
 
 <mat-checkbox
-  [(ngModel)]="skipLookup"
+  [ngModel]="skipLookup()"
   (ngModelChange)="onToggle($event)"
   i18n="import - location - skip address lookup checkbox"
 >

@@ -9,7 +9,7 @@ import { EntityConstructor } from "../../../entity/model/entity";
 import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
-import { DateImportConfigComponent } from "../date-import-config/date-import-config.component";
+import { DateImportDialogComponent } from "../date-import-config/date-import-dialog.component";
 import { MatButtonModule } from "@angular/material/button";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
@@ -49,8 +49,8 @@ export class DateImportInlineComponent {
     );
 
     this.dialog
-      .open<DateImportConfigComponent, MappingDialogData>(
-        DateImportConfigComponent,
+      .open<DateImportDialogComponent, MappingDialogData>(
+        DateImportDialogComponent,
         {
           data: {
             col: this.col,

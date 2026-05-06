@@ -38,7 +38,7 @@ import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
 @DynamicComponent("DiscreteImportDialog")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-discrete-import-config",
+  selector: "app-discrete-import-dialog",
   templateUrl: "./discrete-import-dialog.component.html",
   styleUrls: ["./discrete-import-dialog.component.scss"],
   imports: [

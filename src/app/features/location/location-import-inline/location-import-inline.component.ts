@@ -40,7 +40,7 @@ const LOOKUP_WARNING_THRESHOLD = 50;
       ></fa-icon>
     }
     <mat-checkbox
-      [(ngModel)]="skipLookup"
+      [ngModel]="skipLookup()"
       (ngModelChange)="onToggle($event)"
       i18n="import - location - skip address lookup checkbox"
     >
@@ -57,19 +57,20 @@ export class LocationImportInlineComponent implements OnChanges {
   @Input() additionalSettings: ImportAdditionalSettings;
   @Input() onColumnMappingChange: (col: ColumnMapping) => void;
 
-  skipLookup = false;
+  skipLookup = signal(false);
 
   private uniqueAddressCount = signal(0);
 
   showLookupWarning = computed(
     () =>
-      this.uniqueAddressCount() > LOOKUP_WARNING_THRESHOLD && !this.skipLookup,
+      this.uniqueAddressCount() > LOOKUP_WARNING_THRESHOLD &&
+      !this.skipLookup(),
   );
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["col"] || changes["rawData"]) {
       const additional = this.col?.additional as LocationImportConfig;
-      this.skipLookup = additional?.skipAddressLookup ?? false;
+      this.skipLookup.set(additional?.skipAddressLookup ?? false);
 
       const count = new Set(this.rawData.map((row) => row[this.col?.column]))
         .size;
@@ -78,6 +79,7 @@ export class LocationImportInlineComponent implements OnChanges {
   }
 
   onToggle(value: boolean) {
+    this.skipLookup.set(value);
     this.col.additional = { skipAddressLookup: value } as LocationImportConfig;
     this.onColumnMappingChange?.(this.col);
   }

@@ -9,7 +9,7 @@ import { EntityConstructor } from "../../../entity/model/entity";
 import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
-import { DiscreteImportConfigComponent } from "../discrete-import-config/discrete-import-config.component";
+import { DiscreteImportDialogComponent } from "../discrete-import-config/discrete-import-dialog.component";
 import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
@@ -66,8 +66,8 @@ export class DiscreteImportInlineComponent {
     );
 
     this.dialog
-      .open<DiscreteImportConfigComponent, MappingDialogData>(
-        DiscreteImportConfigComponent,
+      .open<DiscreteImportDialogComponent, MappingDialogData>(
+        DiscreteImportDialogComponent,
         {
           data: {
             col: this.col,
