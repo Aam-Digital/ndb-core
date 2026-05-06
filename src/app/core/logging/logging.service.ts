@@ -2,11 +2,11 @@ import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
 import {
-    ErrorHandler,
-    Provider,
-    inject,
-    provideAppInitializer,
-    EnvironmentProviders,
+  ErrorHandler,
+  Provider,
+  inject,
+  provideAppInitializer,
+  EnvironmentProviders,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { LoginState } from "../session/session-states/login-state.enum";
