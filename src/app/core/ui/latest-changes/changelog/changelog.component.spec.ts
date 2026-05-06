@@ -92,7 +92,7 @@ describe("ChangelogComponent", () => {
 
   it("should be created", () => {
     expect(component).toBeTruthy();
-    expect(component.changelogs).toEqual([testChangelog]);
+    expect(component.changelogs()).toEqual([testChangelog]);
   });
 
   it("should add release info to end of array on 'show previous'", () => {
@@ -101,6 +101,6 @@ describe("ChangelogComponent", () => {
     );
     component.loadPreviousRelease();
 
-    expect(component.changelogs).toEqual([testChangelog, testChangelog]);
+    expect(component.changelogs()).toEqual([testChangelog, testChangelog]);
   });
 });
