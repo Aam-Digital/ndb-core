@@ -31,23 +31,20 @@ describe("EntityFieldEditComponent", () => {
   });
 
   it("should use EntityFormService to extend field config", () => {
-    component.field = "testField";
-    component.entity = new Entity();
+    fixture.componentRef.setInput("field", "testField");
+    fixture.componentRef.setInput("entity", new Entity());
 
-    component.ngOnChanges({ field: true as any });
-
+    // Read the signal to trigger the lazy computation
+    expect(component._field()).toEqual(mockField);
     expect(mockFormService.extendFormFieldConfig).toHaveBeenCalledWith(
       "testField",
       Entity,
     );
-    expect(component._field).toEqual(mockField);
   });
 
   it("should silently hide if no entity with constructor is given", () => {
-    component.field = "testField";
-    component.entity = undefined;
-
-    component.ngOnChanges({ field: true as any });
+    fixture.componentRef.setInput("field", "testField");
+    fixture.componentRef.setInput("entity", undefined);
 
     expect(component).toBeTruthy();
   });
