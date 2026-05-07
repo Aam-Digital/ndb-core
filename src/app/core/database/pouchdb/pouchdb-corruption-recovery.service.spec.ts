@@ -29,6 +29,10 @@ describe("PouchdbCorruptionRecoveryService", () => {
     });
 
     service = TestBed.inject(PouchdbCorruptionRecoveryService);
+    // Reset internal singleton state to prevent leakage from prior tests
+    // (the service is `providedIn: 'root'` so it may persist).
+    (service as any).warningDialogOpen = false;
+    (service as any).resetDialogOpen = false;
     localStorage.clear();
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
   });
