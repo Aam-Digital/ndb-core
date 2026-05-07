@@ -517,20 +517,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="modules/ImportModule.html" data-type="entity-link" >ImportModule</a>
-                                    <li class="chapter inner">
-                                        <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                            'data-bs-target="#components-links-module-ImportModule-594dfc3a77c09d1656041d4c7b9ccc27eef657dd10abb1eb6e75c1de22be7190ce495ae571e6c6a8b74064ac4752f9c2e2236dedfa4075adf93ccbe7b933e91e"' : 'data-bs-target="#xs-components-links-module-ImportModule-594dfc3a77c09d1656041d4c7b9ccc27eef657dd10abb1eb6e75c1de22be7190ce495ae571e6c6a8b74064ac4752f9c2e2236dedfa4075adf93ccbe7b933e91e"' }>
-                                            <span class="icon ion-md-cog"></span>
-                                            <span>Components</span>
-                                            <span class="icon ion-ios-arrow-down"></span>
-                                        </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-ImportModule-594dfc3a77c09d1656041d4c7b9ccc27eef657dd10abb1eb6e75c1de22be7190ce495ae571e6c6a8b74064ac4752f9c2e2236dedfa4075adf93ccbe7b933e91e"' :
-                                            'id="xs-components-links-module-ImportModule-594dfc3a77c09d1656041d4c7b9ccc27eef657dd10abb1eb6e75c1de22be7190ce495ae571e6c6a8b74064ac4752f9c2e2236dedfa4075adf93ccbe7b933e91e"' }>
-                                            <li class="link">
-                                                <a href="components/DiscreteImportConfigComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >DiscreteImportConfigComponent</a>
-                                            </li>
-                                        </ul>
-                                    </li>
                             </li>
                             <li class="link">
                                 <a href="modules/LanguageModule.html" data-type="entity-link" >LanguageModule</a>
@@ -971,6 +957,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/DateImportConfigComponent.html" data-type="entity-link" >DateImportConfigComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/DateImportDialogComponent.html" data-type="entity-link" >DateImportDialogComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/DateRangeFilterComponent.html" data-type="entity-link" >DateRangeFilterComponent</a>
                             </li>
                             <li class="link">
@@ -990,6 +979,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/DiscreteImportConfigComponent.html" data-type="entity-link" >DiscreteImportConfigComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/DiscreteImportDialogComponent.html" data-type="entity-link" >DiscreteImportDialogComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/DisplayAgeComponent.html" data-type="entity-link" >DisplayAgeComponent</a>
@@ -2379,6 +2371,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityAction.html" data-type="entity-link" >EntityAction</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EntityAdditional.html" data-type="entity-link" >EntityAdditional</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityBlockConfig.html" data-type="entity-link" >EntityBlockConfig</a>

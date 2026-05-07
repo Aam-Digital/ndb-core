@@ -237,9 +237,6 @@ Stored as a simple ID string.</p>
                                 <a href="#detectFieldInEntity" >detectFieldInEntity</a>
                             </li>
                             <li>
-                                <a href="#importIncompleteAdditionalConfigBadge" >importIncompleteAdditionalConfigBadge</a>
-                            </li>
-                            <li>
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
                             </li>
                         </ul>
@@ -289,7 +286,7 @@ Stored as a simple ID string.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:154</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
 </div>
                         </td>
                     </tr>
@@ -390,7 +387,7 @@ Stored as a simple ID string.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:52</a></code>
 </div>
                         </td>
                     </tr>
@@ -453,7 +450,7 @@ Stored as a simple ID string.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>importMapFunction(val: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, additional: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, importProcessingContext: <a href="../classes/ImportProcessingContext.html" target="_self">ImportProcessingContext</a>)</code>
+                    <code>importMapFunction(val: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, additional: <a href="../interfaces/EntityAdditional.html" target="_self">string | EntityAdditional</a>, importProcessingContext: <a href="../classes/ImportProcessingContext.html" target="_self">ImportProcessingContext</a>)</code>
                 </td>
             </tr>
 
@@ -466,7 +463,7 @@ Stored as a simple ID string.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:82</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:88</a></code>
 </div>
                         </td>
                     </tr>
@@ -474,8 +471,11 @@ Stored as a simple ID string.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
-Handles type conversion between numbers and strings to improve matching.</p>
+                        <div class="io-description"><p>Maps a value from an import to an actual entity in the database.</p>
+<p>Finds all column mappings targeting this field, resolves each column&#39;s comparison value
+(applying any configured value mapping), and progressively filters candidate entities
+until a unique match is found.</p>
+<p>  Can be a plain string (legacy) or an object <code>{ refField: string, valueMapping?: any }</code>.</p>
 </div>
 
                             <div class="io-description">
@@ -526,7 +526,7 @@ Handles type conversion between numbers and strings to improve matching.</p>
                                         <tr>
                                                 <td>additional</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                            <code><a href="../interfaces/EntityAdditional.html" target="_self" >string | EntityAdditional</a></code>
                                             </td>
 
                                             <td>
@@ -535,7 +535,8 @@ Handles type conversion between numbers and strings to improve matching.</p>
 
 
                                             <td>
-                                                    <p>The field of the referenced entity that should be compared with the val. (e.g. if we run importMapFunction for a field that is an entity-reference to a &quot;School&quot; entity, this could be &quot;name&quot; if the &quot;School&quot; entity has a &quot;name&quot; property and the import should use that name to match the correct school)</p>
+                                                    <p>The field of the referenced entity that should be compared with the val.
+Can be a plain string (legacy) or an object <code>{ refField: string, valueMapping?: any }</code>.</p>
 
                                             </td>
                                         </tr>
@@ -748,7 +749,7 @@ Handles type conversion between numbers and strings to improve matching.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:99</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:98</a></code>
 </div>
                         </td>
                     </tr>
@@ -847,7 +848,7 @@ Handles type conversion between numbers and strings to improve matching.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:84</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:83</a></code>
 </div>
                         </td>
                     </tr>
@@ -926,83 +927,6 @@ forwarding their own relevant datatype identifiers.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="importIncompleteAdditionalConfigBadge"></a>
-                    <span class="name">
-                        <span ><b>importIncompleteAdditionalConfigBadge</b></span>
-                        <a href="#importIncompleteAdditionalConfigBadge"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>importIncompleteAdditionalConfigBadge(col: <a href="../interfaces/ColumnMapping.html" target="_self">ColumnMapping</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:209</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Output a label indicating whether the given column mapping needs user configuration for the &quot;additional&quot; config
-or has a valid, complete &quot;additional&quot; config.
-returns &quot;undefined&quot; if no user action is required.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>col</td>
-                                            <td>
-                                                            <code><a href="../interfaces/ColumnMapping.html" target="_self" >ColumnMapping</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="normalizeSchemaField"></a>
                     <span class="name">
                         <span ><b>normalizeSchemaField</b></span>
@@ -1025,7 +949,7 @@ returns &quot;undefined&quot; if no user action is required.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:217</a></code>
 </div>
                         </td>
                     </tr>
@@ -1122,7 +1046,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:43</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:45</a></code>
 </div>
                         </td>
                     </tr>
@@ -1161,7 +1085,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:45</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:47</a></code>
 </div>
                         </td>
                     </tr>
@@ -1200,7 +1124,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:48</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -1239,7 +1163,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:47</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:49</a></code>
 </div>
                         </td>
                     </tr>
@@ -1279,7 +1203,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:44</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:46</a></code>
 </div>
                         </td>
                     </tr>
@@ -1318,7 +1242,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:46</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:48</a></code>
 </div>
                         </td>
                     </tr>
@@ -1340,8 +1264,9 @@ import { EntityActionsService } from &quot;../../entity/entity-actions/entity-ac
 import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
-import { Entity } from &quot;../../entity/model/entity&quot;;
+import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { ExportColumnMapping } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -1356,6 +1281,7 @@ export class EntityDatatype extends StringDatatype {
   private entityMapper &#x3D; inject(EntityMapperService);
   private removeService &#x3D; inject(EntityActionsService);
   private schemaService &#x3D; inject(EntitySchemaService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
 
   static override dataType &#x3D; &quot;entity&quot;;
   static override label: string &#x3D; $localize&#x60;:datatype-label:link to another record&#x60;;
@@ -1387,22 +1313,27 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
-   * Handles type conversion between numbers and strings to improve matching.
+   * Maps a value from an import to an actual entity in the database.
+   *
+   * Finds all column mappings targeting this field, resolves each column&#x27;s comparison value
+   * (applying any configured value mapping), and progressively filters candidate entities
+   * until a unique match is found.
    *
    * @param val The value from an import that should be mapped to an entity reference.
    * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
-   * @param additional The field of the referenced entity that should be compared with the val. (e.g. if we run importMapFunction for a field that is an entity-reference to a &quot;School&quot; entity, this could be &quot;name&quot; if the &quot;School&quot; entity has a &quot;name&quot; property and the import should use that name to match the correct school)
+   * @param additional The field of the referenced entity that should be compared with the val.
+   *   Can be a plain string (legacy) or an object &#x60;{ refField: string, valueMapping?: any }&#x60;.
    * @param importProcessingContext context to share information across calls for multiple columns and rows.
    * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
    */
   override async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
-    additional: string,
+    additional: string | EntityAdditional,
     importProcessingContext: ImportProcessingContext,
   ): Promise&lt;string | undefined&gt; {
-    if (!additional || val &#x3D;&#x3D; null) {
+    const fieldConfig &#x3D; normalizeEntityAdditional(additional);
+    if (!fieldConfig?.refField || val &#x3D;&#x3D; null) {
       return undefined;
     }
 
@@ -1413,41 +1344,104 @@ export class EntityDatatype extends StringDatatype {
 
     await this.loadImportMapEntities(schemaField.additional, context);
 
-    // find all columns that map to this schemaField from importProcessingContext
-    // and filter entities accordingly (for all conditions)
-    for (const colMapping of importProcessingContext.importSettings.columnMapping.filter(
-      (m) &#x3D;&gt; m.propertyName &#x3D;&#x3D;&#x3D; schemaField.id,
-    )) {
-      const colValue &#x3D; importProcessingContext.row[colMapping.column];
+    const columnMappings &#x3D; this.getColumnMappingsForField(
+      schemaField.id,
+      importProcessingContext,
+    );
+
+    for (const mapping of columnMappings) {
+      const mappingConfig &#x3D; normalizeEntityAdditional(mapping.additional);
+      const rawValue &#x3D; importProcessingContext.row[mapping.column];
+
+      const expectedValue &#x3D; await this.resolveColumnValue(
+        rawValue,
+        mappingConfig?.refField,
+        mappingConfig?.valueMapping,
+        context,
+        importProcessingContext,
+      );
 
       context.filteredEntities &#x3D; context.filteredEntities.filter(
         (entity) &#x3D;&gt;
-          normalizeValue(entity[colMapping.additional]) &#x3D;&#x3D;&#x3D;
-          normalizeValue(colValue),
+          normalizeValue(entity[mappingConfig?.refField]) &#x3D;&#x3D;&#x3D; expectedValue,
       );
     }
 
-    if (context.filteredEntities.length &#x3D;&#x3D;&#x3D; 1) {
-      return context.filteredEntities[0]._id;
-    } else {
-      if (context.filteredEntities.length &gt; 1) {
-        Logging.debug(
-          &quot;No unique match found in EntityDatatype importMapFunction&quot;,
-          context.filteredEntities.length,
-        );
-      }
-      return undefined;
+    return this.pickSingleMatch(context.filteredEntities);
+  }
+
+  /**
+   * Returns all column mappings that target the given field.
+   */
+  private getColumnMappingsForField(
+    fieldId: string,
+    importProcessingContext: ImportProcessingContext,
+  ) {
+    return importProcessingContext.importSettings.columnMapping.filter(
+      (m) &#x3D;&gt; m.propertyName &#x3D;&#x3D;&#x3D; fieldId,
+    );
+  }
+
+  /**
+   * Resolves the effective comparison value for a column,
+   * applying any configured value mapping through the referenced field&#x27;s datatype.
+   */
+  private async resolveColumnValue(
+    rawValue: any,
+    refField: string,
+    valueMapping: any | undefined,
+    context: EntityFieldImportContext,
+    importProcessingContext: ImportProcessingContext,
+  ): Promise&lt;string&gt; {
+    if (valueMapping &#x3D;&#x3D;&#x3D; undefined) {
+      return normalizeValue(rawValue);
     }
+
+    const refFieldSchema &#x3D; context.refEntityCtor?.schema?.get(refField);
+    const refDatatype &#x3D; refFieldSchema
+      ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
+      : null;
+
+    if (!refDatatype) {
+      return normalizeValue(rawValue);
+    }
+
+    const mappedValue &#x3D; await refDatatype.importMapFunction(
+      rawValue,
+      refFieldSchema,
+      valueMapping,
+      importProcessingContext,
+    );
+    const dbFormat &#x3D; refDatatype.transformToDatabaseFormat(
+      mappedValue,
+      refFieldSchema,
+    );
+    return normalizeValue(dbFormat);
+  }
+
+  /**
+   * Returns the entity ID if exactly one candidate remains, otherwise undefined.
+   */
+  private pickSingleMatch(candidates: any[]): string | undefined {
+    if (candidates.length &#x3D;&#x3D;&#x3D; 1) {
+      return candidates[0]._id;
+    }
+    if (candidates.length &gt; 1) {
+      Logging.debug(
+        &quot;No unique match found in EntityDatatype importMapFunction&quot;,
+        candidates.length,
+      );
+    }
+    return undefined;
   }
 
   /**
    * Load the required entity type&#x27;s entities into context&#x27;s cache if not available yet.
-   * @private
    */
   private async loadImportMapEntities(
     entityType: string,
     context: EntityFieldImportContext,
-  ) {
+  ): Promise&lt;void&gt; {
     if (context.entities) {
       return;
     }
@@ -1456,9 +1450,10 @@ export class EntityDatatype extends StringDatatype {
       context.entities &#x3D; (await this.entityMapper.loadType(entityType)).map(
         (e) &#x3D;&gt; this.schemaService.transformEntityToDatabaseFormat(e),
       );
+      context.refEntityCtor &#x3D; this.entityRegistry.get(entityType);
     } catch (error) {
-      Logging.error(&quot;Error in EntityDatatype importMapFunction:&quot;, error);
-      return undefined;
+      Logging.error(&quot;Error loading entities for import mapping:&quot;, error);
+      context.entities &#x3D; [];
     }
   }
 
@@ -1511,6 +1506,33 @@ export class EntityDatatype extends StringDatatype {
 }
 
 /**
+ * Structure for the &#x60;additional&#x60; field of an entity reference ColumnMapping.
+ * Can be a plain string (legacy) or an object with optional valueMapping config.
+ */
+export interface EntityAdditional {
+  /** The property of the referenced entity to match against the import value. */
+  refField: string;
+  /** Optional: additional config for transforming the import value (passed to the sub-field&#x27;s importMapFunction). */
+  valueMapping?: any;
+}
+
+/**
+ * Normalizes the &#x60;additional&#x60; config of an entity reference column mapping.
+ * Accepts legacy string format or new object format.
+ */
+export function normalizeEntityAdditional(
+  additional: string | EntityAdditional | any,
+): EntityAdditional | undefined {
+  if (!additional) {
+    return undefined;
+  }
+  if (typeof additional &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+    return { refField: additional };
+  }
+  return additional as EntityAdditional;
+}
+
+/**
  * Normalizes a value for comparison, converting it to a standardized string format.
  * Ensures both numbers and strings are treated consistently.
  *
@@ -1550,6 +1572,17 @@ class EntityFieldImportContext {
 
   set entities(value: any[]) {
     this.globalContext[&#x60;entities_${this.schemaField.additional}&#x60;] &#x3D; value;
+  }
+
+  /**
+   * Constructor of the referenced entity type (to access schema for value mapping)
+   */
+  get refEntityCtor(): EntityConstructor | undefined {
+    return this.globalContext[&#x60;ctor_${this.schemaField.additional}&#x60;];
+  }
+
+  set refEntityCtor(value: EntityConstructor) {
+    this.globalContext[&#x60;ctor_${this.schemaField.additional}&#x60;] &#x3D; value;
   }
 
   /**

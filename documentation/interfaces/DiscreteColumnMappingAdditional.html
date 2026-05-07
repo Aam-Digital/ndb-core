@@ -279,7 +279,6 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DefaultDatatype } from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
-import { ColumnMapping } from &quot;../../import/column-mapping&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 
 /**
@@ -325,21 +324,6 @@ export abstract class DiscreteDatatype&lt;
     }
 
     return super.importMapFunction(valueMappings[val], schemaField);
-  }
-
-  override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    const valueMappings &#x3D; (col.additional as DiscreteColumnMappingAdditional)
-      ?.values;
-    if (!valueMappings) {
-      return &quot;?&quot;;
-    }
-    const unmappedValues &#x3D; Object.values(valueMappings).filter(
-      (v) &#x3D;&gt; v &#x3D;&#x3D;&#x3D; undefined,
-    );
-    if (unmappedValues.length &gt; 0) {
-      return unmappedValues.length.toString();
-    }
-    return undefined;
   }
 }
 

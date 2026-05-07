@@ -322,7 +322,6 @@ Use an empty string for the primary/default column.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { $localize } from &quot;@angular/localize/init&quot;; // import needed to make this file work in e2e test fixtures also
 import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
 import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
-import { ColumnMapping } from &quot;../../import/column-mapping&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
 
 /**
@@ -499,20 +498,13 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
   }
 
   /**
-   * A component to be display as a dialog to configure the transformation function
-   * (e.g. defining a format or mapping)
+   * A component to be rendered inline to configure the import transformation
+   * (e.g. defining a format or value mapping).
+   *
+   * The component receives inputs:
+   * &#x60;col&#x60;, &#x60;rawData&#x60;, &#x60;entityType&#x60;, &#x60;otherColumnMappings&#x60;, &#x60;additionalSettings&#x60;, &#x60;onColumnMappingChange&#x60;
    */
   importConfigComponent?: string;
-
-  /**
-   * Output a label indicating whether the given column mapping needs user configuration for the &quot;additional&quot; config
-   * or has a valid, complete &quot;additional&quot; config.
-   * returns &quot;undefined&quot; if no user action is required.
-   * @param col
-   */
-  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    return undefined;
-  }
 
   /**
    * Return the (potentially adjusted) schema field for this datatype.

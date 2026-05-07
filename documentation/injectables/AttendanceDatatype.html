@@ -254,9 +254,6 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                                 <a href="#anonymize" >anonymize</a>
                             </li>
                             <li>
-                                <a href="#importIncompleteAdditionalConfigBadge" >importIncompleteAdditionalConfigBadge</a>
-                            </li>
-                            <li>
                                     <span class="modifier">Async</span>
                                 <a href="#importMapFunction" >importMapFunction</a>
                             </li>
@@ -784,7 +781,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:259</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:251</a></code>
 </div>
                         </td>
                     </tr>
@@ -870,83 +867,6 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="importIncompleteAdditionalConfigBadge"></a>
-                    <span class="name">
-                        <span ><b>importIncompleteAdditionalConfigBadge</b></span>
-                        <a href="#importIncompleteAdditionalConfigBadge"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>importIncompleteAdditionalConfigBadge(col: <a href="../interfaces/ColumnMapping.html" target="_self">ColumnMapping</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:209</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Output a label indicating whether the given column mapping needs user configuration for the &quot;additional&quot; config
-or has a valid, complete &quot;additional&quot; config.
-returns &quot;undefined&quot; if no user action is required.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>col</td>
-                                            <td>
-                                                            <code><a href="../interfaces/ColumnMapping.html" target="_self" >ColumnMapping</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="importMapFunction"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -971,7 +891,7 @@ returns &quot;undefined&quot; if no user action is required.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:188</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:187</a></code>
 </div>
                         </td>
                     </tr>
@@ -1350,7 +1270,7 @@ to share information across processing of multiple columns and rows.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:123</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:122</a></code>
 </div>
                         </td>
                     </tr>
@@ -1391,15 +1311,17 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:201</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:203</a></code>
 </div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>A component to be display as a dialog to configure the transformation function
-(e.g. defining a format or mapping)</p>
+                    <div class="io-description"><p>A component to be rendered inline to configure the import transformation
+(e.g. defining a format or value mapping).</p>
+<p>The component receives inputs:
+<code>col</code>, <code>rawData</code>, <code>entityType</code>, <code>otherColumnMappings</code>, <code>additionalSettings</code>, <code>onColumnMappingChange</code></p>
 </div>
                 </td>
             </tr>

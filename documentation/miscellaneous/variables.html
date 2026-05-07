@@ -364,6 +364,9 @@
                             <a href="#LOGIN_RETRY_DELAYS_MS" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" ><b>LOGIN_RETRY_DELAYS_MS</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</a>
                         </li>
                         <li>
+                            <a href="#LOOKUP_WARNING_THRESHOLD" title="src/app/features/location/location-import-config/location-import-config.component.ts" ><b>LOOKUP_WARNING_THRESHOLD</b>&nbsp;&nbsp;&nbsp;(src/.../location-import-config.component.ts)</a>
+                        </li>
+                        <li>
                             <a href="#MAP_CONFIG_KEY" title="src/app/features/location/map-config.ts" ><b>MAP_CONFIG_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../map-config.ts)</a>
                         </li>
                         <li>
@@ -4385,17 +4388,17 @@ The list of which env maps to which file can be found in <code>.angular-cli.json
     () &#x3D;&gt; import(&quot;./import/import.component&quot;).then((c) &#x3D;&gt; c.ImportComponent),
   ],
   [
-    &quot;DiscreteImportConfig&quot;,
-    () &#x3D;&gt;
-      import(&quot;../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component&quot;).then(
-        (c) &#x3D;&gt; c.DiscreteImportConfigComponent,
-      ),
-  ],
-  [
     &quot;DateImportConfig&quot;,
     () &#x3D;&gt;
       import(&quot;../basic-datatypes/date/date-import-config/date-import-config.component&quot;).then(
         (c) &#x3D;&gt; c.DateImportConfigComponent,
+      ),
+  ],
+  [
+    &quot;DiscreteImportConfig&quot;,
+    () &#x3D;&gt;
+      import(&quot;../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component&quot;).then(
+        (c) &#x3D;&gt; c.DiscreteImportConfigComponent,
       ),
   ],
   [
@@ -5041,6 +5044,35 @@ is considered desktop.</p>
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>new LoggingService()</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/location/location-import-config/location-import-config.component.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="LOOKUP_WARNING_THRESHOLD"></a>
+                    <span class="name">
+                        <span ><b>LOOKUP_WARNING_THRESHOLD</b></span>
+                        <a href="#LOOKUP_WARNING_THRESHOLD"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>50</code>
                     </td>
                 </tr>
 

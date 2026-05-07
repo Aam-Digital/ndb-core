@@ -1,0 +1,707 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  EntityAdditional</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/basic-datatypes/entity/entity.datatype.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Structure for the <code>additional</code> field of an entity reference ColumnMapping.
+Can be a plain string (legacy) or an object with optional valueMapping config.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#refField" 
+>
+                                            refField
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#valueMapping" 
+>
+                                            valueMapping
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="refField"></a>
+                                        <span class="name "><b>refField</b>
+                                            <a href="#refField">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>refField:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>The property of the referenced entity to match against the import value.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="valueMapping"></a>
+                                        <span class="name "><b>valueMapping</b>
+                                            <a href="#valueMapping">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>valueMapping:         <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Optional: additional config for transforming the import value (passed to the sub-field&#39;s importMapFunction).</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { StringDatatype } from &quot;../string/string.datatype&quot;;
+import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
+import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityActionsService } from &quot;../../entity/entity-actions/entity-actions.service&quot;;
+import { Logging } from &quot;app/core/logging/logging.service&quot;;
+import { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
+import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
+import { ExportColumnMapping } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
+
+/**
+ * Datatype for the EntitySchemaService to handle a single reference to another entity.
+ * Stored as a simple ID string.
+ *
+ * Example:
+ *
+ * &#x60;@DatabaseField({dataType: &#x27;entity&#x27;, additional: &#x27;Child&#x27;}) relatedEntity: string;&#x60;
+ */
+@Injectable()
+export class EntityDatatype extends StringDatatype {
+  private entityMapper &#x3D; inject(EntityMapperService);
+  private removeService &#x3D; inject(EntityActionsService);
+  private schemaService &#x3D; inject(EntitySchemaService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+
+  static override dataType &#x3D; &quot;entity&quot;;
+  static override label: string &#x3D; $localize&#x60;:datatype-label:link to another record&#x60;;
+  override editComponent &#x3D; &quot;EditEntity&quot;;
+  override viewComponent &#x3D; &quot;DisplayEntity&quot;;
+  override importConfigComponent &#x3D; &quot;EntityImportConfig&quot;;
+  override importAllowsMultiMapping &#x3D; true;
+
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    if (!schemaField.label) {
+      return [];
+    }
+
+    return [
+      {
+        keySuffix: &quot;&quot;,
+        label: schemaField.label,
+        resolveValue: (value) &#x3D;&gt; value,
+      },
+      {
+        keySuffix: &quot;_readable&quot;,
+        label: schemaField.label + &quot; (readable)&quot;,
+        resolveValue: async (value: string | string[]) &#x3D;&gt;
+          this.loadRelatedEntitiesToString(value, schemaField),
+      },
+    ];
+  }
+
+  /**
+   * Maps a value from an import to an actual entity in the database.
+   *
+   * Finds all column mappings targeting this field, resolves each column&#x27;s comparison value
+   * (applying any configured value mapping), and progressively filters candidate entities
+   * until a unique match is found.
+   *
+   * @param val The value from an import that should be mapped to an entity reference.
+   * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
+   * @param additional The field of the referenced entity that should be compared with the val.
+   *   Can be a plain string (legacy) or an object &#x60;{ refField: string, valueMapping?: any }&#x60;.
+   * @param importProcessingContext context to share information across calls for multiple columns and rows.
+   * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
+   */
+  override async importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional: string | EntityAdditional,
+    importProcessingContext: ImportProcessingContext,
+  ): Promise&lt;string | undefined&gt; {
+    const fieldConfig &#x3D; normalizeEntityAdditional(additional);
+    if (!fieldConfig?.refField || val &#x3D;&#x3D; null) {
+      return undefined;
+    }
+
+    const context &#x3D; new EntityFieldImportContext(
+      importProcessingContext,
+      schemaField,
+    );
+
+    await this.loadImportMapEntities(schemaField.additional, context);
+
+    const columnMappings &#x3D; this.getColumnMappingsForField(
+      schemaField.id,
+      importProcessingContext,
+    );
+
+    for (const mapping of columnMappings) {
+      const mappingConfig &#x3D; normalizeEntityAdditional(mapping.additional);
+      const rawValue &#x3D; importProcessingContext.row[mapping.column];
+
+      const expectedValue &#x3D; await this.resolveColumnValue(
+        rawValue,
+        mappingConfig?.refField,
+        mappingConfig?.valueMapping,
+        context,
+        importProcessingContext,
+      );
+
+      context.filteredEntities &#x3D; context.filteredEntities.filter(
+        (entity) &#x3D;&gt;
+          normalizeValue(entity[mappingConfig?.refField]) &#x3D;&#x3D;&#x3D; expectedValue,
+      );
+    }
+
+    return this.pickSingleMatch(context.filteredEntities);
+  }
+
+  /**
+   * Returns all column mappings that target the given field.
+   */
+  private getColumnMappingsForField(
+    fieldId: string,
+    importProcessingContext: ImportProcessingContext,
+  ) {
+    return importProcessingContext.importSettings.columnMapping.filter(
+      (m) &#x3D;&gt; m.propertyName &#x3D;&#x3D;&#x3D; fieldId,
+    );
+  }
+
+  /**
+   * Resolves the effective comparison value for a column,
+   * applying any configured value mapping through the referenced field&#x27;s datatype.
+   */
+  private async resolveColumnValue(
+    rawValue: any,
+    refField: string,
+    valueMapping: any | undefined,
+    context: EntityFieldImportContext,
+    importProcessingContext: ImportProcessingContext,
+  ): Promise&lt;string&gt; {
+    if (valueMapping &#x3D;&#x3D;&#x3D; undefined) {
+      return normalizeValue(rawValue);
+    }
+
+    const refFieldSchema &#x3D; context.refEntityCtor?.schema?.get(refField);
+    const refDatatype &#x3D; refFieldSchema
+      ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
+      : null;
+
+    if (!refDatatype) {
+      return normalizeValue(rawValue);
+    }
+
+    const mappedValue &#x3D; await refDatatype.importMapFunction(
+      rawValue,
+      refFieldSchema,
+      valueMapping,
+      importProcessingContext,
+    );
+    const dbFormat &#x3D; refDatatype.transformToDatabaseFormat(
+      mappedValue,
+      refFieldSchema,
+    );
+    return normalizeValue(dbFormat);
+  }
+
+  /**
+   * Returns the entity ID if exactly one candidate remains, otherwise undefined.
+   */
+  private pickSingleMatch(candidates: any[]): string | undefined {
+    if (candidates.length &#x3D;&#x3D;&#x3D; 1) {
+      return candidates[0]._id;
+    }
+    if (candidates.length &gt; 1) {
+      Logging.debug(
+        &quot;No unique match found in EntityDatatype importMapFunction&quot;,
+        candidates.length,
+      );
+    }
+    return undefined;
+  }
+
+  /**
+   * Load the required entity type&#x27;s entities into context&#x27;s cache if not available yet.
+   */
+  private async loadImportMapEntities(
+    entityType: string,
+    context: EntityFieldImportContext,
+  ): Promise&lt;void&gt; {
+    if (context.entities) {
+      return;
+    }
+
+    try {
+      context.entities &#x3D; (await this.entityMapper.loadType(entityType)).map(
+        (e) &#x3D;&gt; this.schemaService.transformEntityToDatabaseFormat(e),
+      );
+      context.refEntityCtor &#x3D; this.entityRegistry.get(entityType);
+    } catch (error) {
+      Logging.error(&quot;Error loading entities for import mapping:&quot;, error);
+      context.entities &#x3D; [];
+    }
+  }
+
+  /**
+   * Recursively calls anonymize on the referenced entity and saves it.
+   * @param value
+   * @param schemaField
+   * @param parent
+   */
+  override async anonymize(
+    value,
+    schemaField: EntitySchemaField,
+    parent,
+  ): Promise&lt;string&gt; {
+    const referencedEntity &#x3D; await this.entityMapper.load(
+      schemaField.additional,
+      value,
+    );
+
+    if (!referencedEntity) {
+      // TODO: remove broken references?
+      return value;
+    }
+
+    await this.removeService.anonymize(referencedEntity);
+    return value;
+  }
+
+  private async loadRelatedEntitiesToString(
+    value: string | string[],
+    schemaField: EntitySchemaField,
+  ): Promise&lt;string[]&gt; {
+    if (!value) return [];
+
+    const relatedEntitiesToStrings: string[] &#x3D; [];
+
+    const relatedEntitiesIds: string[] &#x3D; Array.isArray(value) ? value : [value];
+    for (const relatedEntityId of relatedEntitiesIds) {
+      const entityType &#x3D;
+        Entity.extractTypeFromId(relatedEntityId) || schemaField.additional;
+      const relatedEntity &#x3D; await this.entityMapper
+        .load(entityType, relatedEntityId)
+        .catch(() &#x3D;&gt; undefined);
+
+      relatedEntitiesToStrings.push(relatedEntity?.toString() ?? &quot;&lt;not_found&gt;&quot;);
+    }
+
+    return relatedEntitiesToStrings;
+  }
+}
+
+/**
+ * Structure for the &#x60;additional&#x60; field of an entity reference ColumnMapping.
+ * Can be a plain string (legacy) or an object with optional valueMapping config.
+ */
+export interface EntityAdditional {
+  /** The property of the referenced entity to match against the import value. */
+  refField: string;
+  /** Optional: additional config for transforming the import value (passed to the sub-field&#x27;s importMapFunction). */
+  valueMapping?: any;
+}
+
+/**
+ * Normalizes the &#x60;additional&#x60; config of an entity reference column mapping.
+ * Accepts legacy string format or new object format.
+ */
+export function normalizeEntityAdditional(
+  additional: string | EntityAdditional | any,
+): EntityAdditional | undefined {
+  if (!additional) {
+    return undefined;
+  }
+  if (typeof additional &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+    return { refField: additional };
+  }
+  return additional as EntityAdditional;
+}
+
+/**
+ * Normalizes a value for comparison, converting it to a standardized string format.
+ * Ensures both numbers and strings are treated consistently.
+ *
+ * @param val The value to normalize.
+ * @returns The normalized value as a string.
+ */
+function normalizeValue(val: any): string {
+  if (val &#x3D;&#x3D; null) {
+    return &quot;&quot;;
+  }
+  return String(val).trim().toLowerCase(); // Convert everything to string and trim spaces
+}
+
+/**
+ * Manage cache access to the current import processing context.
+ */
+class EntityFieldImportContext {
+  private contextKey: string;
+
+  constructor(
+    private globalContext: ImportProcessingContext,
+    private schemaField: EntitySchemaField,
+  ) {
+    this.contextKey &#x3D; &#x60;${schemaField.id}_${globalContext.rowIndex}&#x60;;
+
+    if (!globalContext[this.contextKey]) {
+      globalContext[this.contextKey] &#x3D; {};
+    }
+  }
+
+  /**
+   * Entities (in database format for easier comparison!)
+   */
+  get entities(): any[] | undefined {
+    return this.globalContext[&#x60;entities_${this.schemaField.additional}&#x60;];
+  }
+
+  set entities(value: any[]) {
+    this.globalContext[&#x60;entities_${this.schemaField.additional}&#x60;] &#x3D; value;
+  }
+
+  /**
+   * Constructor of the referenced entity type (to access schema for value mapping)
+   */
+  get refEntityCtor(): EntityConstructor | undefined {
+    return this.globalContext[&#x60;ctor_${this.schemaField.additional}&#x60;];
+  }
+
+  set refEntityCtor(value: EntityConstructor) {
+    this.globalContext[&#x60;ctor_${this.schemaField.additional}&#x60;] &#x3D; value;
+  }
+
+  /**
+   * Entities already filter by any other column conditions
+   * (in database format for easier comparison!)
+   */
+  get filteredEntities(): any[] {
+    return (
+      this.globalContext[this.contextKey].filteredEntities ??
+      this.entities ??
+      []
+    );
+  }
+
+  set filteredEntities(value: any[]) {
+    this.globalContext[this.contextKey].filteredEntities &#x3D; value;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntityAdditional.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

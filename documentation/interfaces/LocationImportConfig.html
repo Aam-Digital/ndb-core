@@ -213,64 +213,69 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ChangeDetectionStrategy, Component, inject } from &quot;@angular/core&quot;;
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from &quot;@angular/material/dialog&quot;;
-import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from &quot;@angular/core&quot;;
+import { ColumnMapping } from &quot;../../../core/import/column-mapping&quot;;
+import { EntityConstructor } from &quot;../../../core/entity/model/entity&quot;;
+import { ImportAdditionalSettings } from &quot;../../../core/import/import-additional-settings/import-additional-settings.component&quot;;
 import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
-import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { FormsModule } from &quot;@angular/forms&quot;;
+import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
 import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
-import { MappingDialogData } from &quot;../../../core/import/import-column-mapping/mapping-dialog-data&quot;;
-import { HintBoxComponent } from &quot;#src/app/core/common-components/hint-box/hint-box.component&quot;;
 
 export interface LocationImportConfig {
   skipAddressLookup: boolean;
 }
 
+const LOOKUP_WARNING_THRESHOLD &#x3D; 50;
+
 /**
- * Configuration dialog for importing location data.
- * Allows users to skip the address lookup when importing.
+ * Inline import configuration component for location fields,
+ * shown inside the column mapping UI to let users skip address lookup.
  */
 @DynamicComponent(&quot;LocationImportConfig&quot;)
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-location-import-config&quot;,
   templateUrl: &quot;./location-import-config.component.html&quot;,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatDialogModule,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatTooltip,
-    HintBoxComponent,
-  ],
+  imports: [MatCheckboxModule, FormsModule, FaIconComponent, MatTooltip],
 })
 export class LocationImportConfigComponent {
-  data &#x3D; inject&lt;MappingDialogData&gt;(MAT_DIALOG_DATA);
-  private readonly dialog &#x3D; inject&lt;MatDialogRef&lt;any&gt;&gt;(MatDialogRef);
+  col &#x3D; input&lt;ColumnMapping&gt;();
+  rawData &#x3D; input&lt;any[]&gt;([]);
+  entityType &#x3D; input&lt;EntityConstructor&gt;();
+  otherColumnMappings &#x3D; input&lt;ColumnMapping[]&gt;([]);
+  additionalSettings &#x3D; input&lt;ImportAdditionalSettings&gt;();
+  onColumnMappingChange &#x3D; input&lt;(col: ColumnMapping) &#x3D;&gt; void&gt;();
 
-  skipAddressLookup &#x3D; new FormControl(false);
-  readonly rowCount &#x3D; this.data.values.length;
-  readonly LOOKUP_WARNING_THRESHOLD &#x3D; 50;
+  skipLookup &#x3D; computed(
+    () &#x3D;&gt;
+      (this.col()?.additional as LocationImportConfig)?.skipAddressLookup ??
+      false,
+    // this state updates after toggling by the parent updating the input
+  );
 
-  constructor() {
-    const additional &#x3D; this.data.col.additional as LocationImportConfig;
-    if (additional?.skipAddressLookup !&#x3D;&#x3D; undefined) {
-      this.skipAddressLookup.setValue(additional.skipAddressLookup);
-    } else if (this.rowCount &gt; this.LOOKUP_WARNING_THRESHOLD) {
-      this.skipAddressLookup.setValue(true);
-    }
-  }
+  private readonly uniqueAddressCount &#x3D; computed(
+    () &#x3D;&gt; new Set(this.rawData().map((row) &#x3D;&gt; row[this.col()?.column])).size,
+  );
 
-  save() {
-    this.data.col.additional &#x3D; {
-      skipAddressLookup: this.skipAddressLookup.value,
-    } as LocationImportConfig;
-    this.dialog.close();
+  showLookupWarning &#x3D; computed(
+    () &#x3D;&gt;
+      this.uniqueAddressCount() &gt; LOOKUP_WARNING_THRESHOLD &amp;&amp;
+      !this.skipLookup(),
+  );
+
+  onToggle(value: boolean) {
+    const col &#x3D; this.col();
+    this.onColumnMappingChange()?.({
+      ...col,
+      additional: { skipAddressLookup: value } as LocationImportConfig,
+    });
   }
 }
 </code></pre>
