@@ -16,7 +16,10 @@ import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { calculateDateRange } from "./date-range-utils";
-import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
+import {
+  EMPTY_FILTER_OPTION_KEY,
+  getNotDefinedFilterLabel,
+} from "app/core/filter/filters/filters";
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -55,6 +58,7 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
 })
 export class DateRangeFilterPanelComponent {
   readonly emptyFilterOptionKey = EMPTY_FILTER_OPTION_KEY;
+  readonly notDefinedLabel = getNotDefinedFilterLabel();
   filter = inject<DateFilter<any>>(MAT_DIALOG_DATA);
   private dialogRef =
     inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
@@ -94,6 +98,7 @@ export class DateRangeFilterPanelComponent {
     } else {
       this.filter.selectedOptionValues = [];
     }
+    this.filter.selectedOptionChange.emit(this.filter.selectedOptionValues);
     this.dialogRef.close();
   }
 
@@ -106,6 +111,7 @@ export class DateRangeFilterPanelComponent {
         start < selectedDate
           ? [dateToString(start), dateToString(selectedDate)]
           : [dateToString(selectedDate), dateToString(start)];
+      this.filter.selectedOptionChange.emit(this.filter.selectedOptionValues);
       this.dialogRef.close();
     }
   }

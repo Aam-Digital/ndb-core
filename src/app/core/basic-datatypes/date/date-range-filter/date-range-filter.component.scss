@@ -1,0 +1,18 @@
+.date-suffix {
+	display: flex;
+	align-items: center;
+	gap: 0;
+}
+
+.compact-chip {
+	height: 28px;
+	line-height: 20px;
+	background-color: #eaf3fb;
+	color: #1e567e;
+	font-size: 0.8125rem;
+	border-radius: 16px;
+}
+
+.date-reset-button {
+	color: #000;
+}
