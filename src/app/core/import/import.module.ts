@@ -1,6 +1,5 @@
 import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry, ComponentTuple } from "../../dynamic-components";
-import { DiscreteImportConfigComponent } from "../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
 import { EntityActionsMenuService } from "../entity-details/entity-actions-menu/entity-actions-menu.service";
 import { ImportAdditionalService } from "./additional-actions/import-additional.service";
 import { EntityAction } from "../entity-details/entity-actions-menu/entity-action.interface";
@@ -10,9 +9,7 @@ import { Router } from "@angular/router";
 /**
  * UI enabling users to import data from spreadsheets through a guided workflow.
  */
-@NgModule({
-  imports: [DiscreteImportConfigComponent],
-})
+@NgModule({})
 export class ImportModule {
   private importAdditionalService = inject(ImportAdditionalService);
   private router = inject(Router);
@@ -68,17 +65,17 @@ const importComponents: ComponentTuple[] = [
     () => import("./import/import.component").then((c) => c.ImportComponent),
   ],
   [
-    "DiscreteImportConfig",
-    () =>
-      import("../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component").then(
-        (c) => c.DiscreteImportConfigComponent,
-      ),
-  ],
-  [
     "DateImportConfig",
     () =>
       import("../basic-datatypes/date/date-import-config/date-import-config.component").then(
         (c) => c.DateImportConfigComponent,
+      ),
+  ],
+  [
+    "DiscreteImportConfig",
+    () =>
+      import("../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component").then(
+        (c) => c.DiscreteImportConfigComponent,
       ),
   ],
   [

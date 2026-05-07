@@ -1,0 +1,57 @@
+<mat-dialog-content>
+  <app-hint-box i18n
+    >For each unique value from your imported data (left), select the category
+    value from the system's data structure into which it will be transformed.
+    The values you do not assign here will be ignored (remain empty) during
+    import.</app-hint-box
+  >
+
+  @if (schema?.isArray) {
+    <div style="margin-bottom: 16px">
+      <mat-checkbox
+        [(ngModel)]="enableSplitting"
+        (change)="onSplittingToggle()"
+      >
+        <span i18n>Split values at separator ({{ separator }})</span>
+      </mat-checkbox>
+      <app-help-button
+        text="Enable this to split values containing the separator into multiple entries. Disable for values that contain the separator as part of the text (e.g., 'media (article, ad, tv)')."
+        i18n-text="import discrete config split toggle help"
+      >
+      </app-help-button>
+    </div>
+  }
+
+  <table class="mapping-table">
+    <tr>
+      <th i18n="Import mapping header" class="first-column">Imported values</th>
+      <th i18n="Import mapping header">Assigned values</th>
+    </tr>
+    @for (ctrl of form.controls | keyvalue; track ctrl.key) {
+      <tr>
+        <td class="first-column">{{ ctrl.key }}:</td>
+        <td>
+          <mat-form-field>
+            <app-dynamic-edit
+              [formControl]="$any(ctrl.value)"
+              [formFieldConfig]="{
+                id: ctrl.key,
+                editComponent: component,
+                dataType: schema.dataType,
+                additional: schema.additional,
+                label: ctrl.key,
+              }"
+            ></app-dynamic-edit>
+          </mat-form-field>
+        </td>
+      </tr>
+    }
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="save()" i18n>
+    Save & Close
+  </button>
+  <button mat-stroked-button matDialogClose i18n>Cancel</button>
+</mat-dialog-actions>
