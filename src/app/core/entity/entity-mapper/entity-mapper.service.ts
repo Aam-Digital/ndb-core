@@ -68,6 +68,16 @@ export class EntityMapperService {
     return this.transformToEntityFormat(result, ctor);
   }
 
+  public async loadPaginated<T extends Entity>(
+    entityType: EntityConstructor<T> | string,
+    options?: { limit?: number; skip?: number },
+  ): Promise<T[]> {
+    const ctor = this.resolveConstructor(entityType);
+    const db = this.dbResolver.getDatabase(ctor.DATABASE);
+    const records = await db.getAll(ctor.ENTITY_TYPE, options);
+    return records.map((record) => this.transformToEntityFormat(record, ctor));
+  }
+
   /**
    * Load all entities from the database of the given type (for example a list of entities of the type User).
    * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
