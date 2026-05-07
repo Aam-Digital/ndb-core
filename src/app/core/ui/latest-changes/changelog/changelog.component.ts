@@ -16,12 +16,13 @@
  */
 
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
   OnInit,
+  signal,
   ViewChild,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Changelog } from "../changelog";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
@@ -59,8 +60,7 @@ export class ChangelogComponent implements OnInit {
   private latestChangesService = inject(LatestChangesService);
   private markdownService = inject(MarkdownService);
 
-  /** The array of relevant changelog entries to be displayed */
-  changelogs: Changelog[];
+  changelogs = signal<Changelog[] | undefined>(undefined);
 
   /** Display advanced information that may not be useful to normal users */
   showAdvancedDetails = false;
@@ -71,7 +71,7 @@ export class ChangelogComponent implements OnInit {
     if (isObservable(this.data)) {
       this.data
         .pipe(untilDestroyed(this))
-        .subscribe((changelog) => (this.changelogs = changelog));
+        .subscribe((changelog) => this.changelogs.set(changelog));
     }
 
     this.customizeMarkdownRenderer();
@@ -85,18 +85,17 @@ export class ChangelogComponent implements OnInit {
    * Add one more previous release card to the end of the currently displayed list of changelogs.
    */
   loadPreviousRelease() {
-    if (!this.changelogs) {
+    const current = this.changelogs();
+    if (!current) {
       return;
     }
 
-    const lastDisplayedVersion =
-      this.changelogs[this.changelogs.length - 1]?.tag_name;
+    const lastDisplayedVersion = current[current.length - 1]?.tag_name;
     this.latestChangesService
       .getChangelogsBeforeVersion(lastDisplayedVersion, 1)
       .pipe(untilDestroyed(this))
       .subscribe((additionalChangelog) => {
-        this.changelogs.push(...additionalChangelog);
-
+        this.changelogs.set([...this.changelogs(), ...additionalChangelog]);
         setTimeout(() => this.scrollToBottomOfReleases());
       });
   }
