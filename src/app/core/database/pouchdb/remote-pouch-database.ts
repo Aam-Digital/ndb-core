@@ -133,7 +133,10 @@ export class RemotePouchDatabase extends PouchDatabase {
       this.showConnectionIssueAlert();
     }
 
-    // retry login if request failed with unauthorized
+    // Retry login if request failed with unauthorized.
+    // This will redirect to Keycloak if the token is expired or missing,
+    // which is intentional — it ensures users re-authenticate online
+    // when connectivity is available (including after an offline login).
     if (
       result?.status === HttpStatusCode.Unauthorized &&
       !this.unauthenticatedSession

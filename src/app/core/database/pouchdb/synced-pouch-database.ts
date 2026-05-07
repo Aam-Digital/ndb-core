@@ -106,6 +106,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .pipe(takeUntil(this.destroy$))
       .subscribe((state: SyncState) => this.globalSyncState.next(state));
 
+    // Start live sync whenever the user is logged in.
+    // Note: if the user logged in offline (no Keycloak token), syncing will
+    // hit a 401 and the RemotePouchDatabase fetch interceptor will trigger a
+    // Keycloak login redirect. This is intentional — we want users to
+    // authenticate online when connectivity is available.
     this.loginStateSubject
       .pipe(
         takeUntil(this.destroy$),
@@ -233,7 +238,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
         if (this.isDocumentWriteError(err)) {
           Logging.warn(
-            `sync failed [${this.dbName}]: document write error (possible oversized document). Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+            `sync failed: document write error (possible oversized document)`,
+            { db: this.dbName, lastSyncedBatch: lastSyncedDocIds },
             err,
           );
         } else if (isKnownMultiTabDatabaseCorruption(err)) {
@@ -242,7 +248,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
             `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
           );
         } else {
-          Logging.warn(`sync failed [${this.dbName}]`, err);
+          Logging.warn(`sync failed`, { db: this.dbName }, err);
         }
         this.syncState.next(SyncState.FAILED);
         throw err;

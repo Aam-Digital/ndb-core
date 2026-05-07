@@ -3,6 +3,10 @@
   <app-dialog-close mat-dialog-close></app-dialog-close>
 </h1>
 
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
 <div mat-dialog-content>
   <p i18n="Export dialog format label">Format</p>
   <mat-radio-group
@@ -36,17 +40,27 @@
   }
 </div>
 
+@if (downloadError()) {
+  <mat-error class="margin-left-regular">{{ downloadError() }}</mat-error>
+}
+
 <div mat-dialog-actions>
   <button
     mat-raised-button
     color="accent"
+    [disabled]="isLoading()"
     (click)="download()"
     i18n="Download button"
   >
     Download
   </button>
 
-  <button mat-stroked-button mat-dialog-close i18n="Cancel button">
+  <button
+    mat-stroked-button
+    mat-dialog-close
+    [disabled]="isLoading()"
+    i18n="Cancel button"
+  >
     Cancel
   </button>
 </div>

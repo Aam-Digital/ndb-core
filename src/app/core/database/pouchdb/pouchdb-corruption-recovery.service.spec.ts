@@ -6,6 +6,8 @@ import {
   PouchdbCorruptionRecoveryService,
 } from "./pouchdb-corruption-recovery.service";
 import { BackupService } from "../../admin/backup/backup.service";
+import { environment } from "../../../../environments/environment";
+import { SessionType } from "../../session/session-type";
 
 describe("PouchdbCorruptionRecoveryService", () => {
   let service: PouchdbCorruptionRecoveryService;
@@ -13,6 +15,10 @@ describe("PouchdbCorruptionRecoveryService", () => {
   let location: { pathname: string };
 
   beforeEach(() => {
+    // Defensive reset of the global session_type, in case a prior test (in
+    // this file or another) left it in a non-default state.
+    environment.session_type = SessionType.mock;
+
     confirmationDialog = {
       getConfirmation: vi.fn(),
     };
@@ -27,6 +33,10 @@ describe("PouchdbCorruptionRecoveryService", () => {
     });
 
     service = TestBed.inject(PouchdbCorruptionRecoveryService);
+    // Reset internal singleton state to prevent leakage from prior tests
+    // (the service is `providedIn: 'root'` so it may persist).
+    (service as any).warningDialogOpen = false;
+    (service as any).resetDialogOpen = false;
     localStorage.clear();
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
   });
@@ -57,6 +67,16 @@ describe("PouchdbCorruptionRecoveryService", () => {
     expect(localStorage.getItem("foo")).toBe("bar");
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
+  });
+
+  it("should skip multi-tab warning dialog in online-only mode", async () => {
+    environment.session_type = SessionType.online;
+    try {
+      await service.promptMultiTabWarningDialog();
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    } finally {
+      environment.session_type = SessionType.mock;
+    }
   });
 
   it("should show multi-tab warning again when prompted again", async () => {
