@@ -144,11 +144,19 @@ export class AdminDashboardComponent implements OnInit {
     });
 
     const selectedWidget = await firstValueFrom(dialogRef.afterClosed());
-    if (selectedWidget) {
-      this.dashboardConfig.update((config) => ({
-        ...config,
-        widgets: [...config.widgets, selectedWidget],
-      }));
+    if (!selectedWidget) return;
+
+    this.dashboardConfig.update((config) => ({
+      ...config,
+      widgets: [...config.widgets, selectedWidget],
+    }));
+
+    // Open settings dialog when no config was pre-filled, so user can set required fields
+    const hasNoConfig =
+      !selectedWidget.config || Object.keys(selectedWidget.config).length === 0;
+    if (hasNoConfig) {
+      const newIndex = this.dashboardConfig().widgets.length - 1;
+      await this.editWidget(selectedWidget, newIndex);
     }
   }
 
