@@ -15,14 +15,19 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   {
     direction,
     active,
-  }: { direction: "asc" | "desc" | ""; active: PROPERTY | "" },
+    sortValueFns,
+  }: {
+    direction: "asc" | "desc" | "";
+    active: PROPERTY | "";
+    sortValueFns?: Record<string, (v: any) => number | string | undefined>;
+  },
 ): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
     return data;
   }
   data.sort((objA, objB) => {
-    const valueA = getComparableValue(objA.record, active);
-    const valueB = getComparableValue(objB.record, active);
+    const valueA = getComparableValue(objA.record, active, sortValueFns);
+    const valueB = getComparableValue(objB.record, active, sortValueFns);
     const primaryComparison = compareValues(valueA, valueB);
 
     // If the primary values are equal, sort by the created at
@@ -44,8 +49,14 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
 function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   obj: OBJECT,
   key: PROPERTY,
+  sortValueFns?: Record<string, (v: any) => number | string | undefined>,
 ): number | string | Symbol {
   let value = obj[key];
+
+  const customSortValue = sortValueFns?.[String(key)]?.(value);
+  if (customSortValue !== undefined) {
+    return customSortValue;
+  }
 
   // Special handling for Age columns
   if (value === undefined && key === "age") {

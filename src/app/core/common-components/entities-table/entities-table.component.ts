@@ -31,6 +31,7 @@ import {
 import { Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntityFieldEditComponent } from "../../entity/entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entity-field-label.component";
@@ -477,10 +478,37 @@ export class EntitiesTableComponent<
       tableSort<T, keyof T>(data, {
         active: (sort.active as keyof T) ?? "",
         direction: sort.direction,
+        sortValueFns: this.buildSortValueFns(),
       });
     dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
     return dataSource;
+  }
+
+  /**
+   * Builds a map of column id → sort value extractor for columns whose datatype
+   * defines custom sort logic (via {@link DefaultDatatype.sortValue}).
+   * Passed to {@link tableSort} so complex field types (e.g. attendance arrays)
+   * are sorted by a meaningful value rather than the raw object.
+   */
+  private buildSortValueFns(): Record<
+    string,
+    (v: any) => number | string | undefined
+  > {
+    const sortValueByColumnId: Record<
+      string,
+      (v: any) => number | string | undefined
+    > = {};
+    for (const col of this._columns) {
+      const datatype = this.schemaService.getDatatypeOrDefault(
+        col.dataType,
+        true,
+      );
+      if (datatype?.sortValue !== DefaultDatatype.prototype.sortValue) {
+        sortValueByColumnId[col.id] = (v) => datatype.sortValue(v);
+      }
+    }
+    return sortValueByColumnId;
   }
 
   private emitFilteredRecordsFromDataSource() {
@@ -542,6 +570,15 @@ export class EntitiesTableComponent<
   private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
     if (c.viewComponent === "DisplayAge") {
       // we have implemented support for age specifically
+      return;
+    }
+
+    const datatype = this.schemaService.getDatatypeOrDefault(c.dataType, true);
+    if (
+      c.isArray &&
+      datatype?.sortValue !== DefaultDatatype.prototype.sortValue
+    ) {
+      // datatype provides custom sort logic, keep sorting enabled
       return;
     }
 

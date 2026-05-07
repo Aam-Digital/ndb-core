@@ -74,6 +74,21 @@ describe("TableSort", () => {
     expect(result).toEqual(values);
   });
 
+  it("should sort by sortValueFns result when provided for the active column", () => {
+    const rows = [
+      { record: new E([{ p: 1 }, { p: 2 }, { p: 3 }]) },
+      { record: new E([{ p: 1 }]) },
+      { record: new E([{ p: 1 }, { p: 2 }]) },
+    ];
+    const sortValueFns = { key: (v: any[]) => v.length };
+    const result = tableSort([...rows], {
+      direction: "asc",
+      active: "key",
+      sortValueFns,
+    });
+    expect(result.map((r) => r.record.key.length)).toEqual([1, 2, 3]);
+  });
+
   function testSort(
     sortedArray: any[],
     direction: "asc" | "desc" | "" = "asc",

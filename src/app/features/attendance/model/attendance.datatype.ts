@@ -1,6 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 import { AttendanceItem } from "./attendance-item";
+import { AttendanceLogicalStatus } from "./attendance-status";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EventAttendanceMapDatatype } from "../deprecated/event-attendance-map.datatype";
@@ -79,6 +80,27 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
         },
       },
     ];
+  }
+
+  /**
+   * Returns the attendance percentage (0–1) for use as the sort key in list columns.
+   * Calculated as present / (present + absent), ignoring participants with IGNORE status (e.g. Excused).
+   * Returns 0 if no participants have a countable status.
+   */
+  override sortValue(fieldValue: AttendanceItem[]): number {
+    const items = Array.isArray(fieldValue) ? fieldValue : [];
+    let present = 0;
+    let counted = 0;
+    for (const item of items) {
+      const countAs = item.status?.countAs;
+      if (countAs === AttendanceLogicalStatus.PRESENT) {
+        present++;
+        counted++;
+      } else if (countAs === AttendanceLogicalStatus.ABSENT) {
+        counted++;
+      }
+    }
+    return counted > 0 ? present / counted : 0;
   }
 
   private async toParticipationDetails(
