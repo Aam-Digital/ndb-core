@@ -42,7 +42,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 })
 export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   private dialog = inject(MatDialog);
-  private changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   fromDate: Date | null = null;
   toDate: Date | null = null;
