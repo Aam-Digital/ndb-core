@@ -110,6 +110,71 @@ describe("DynamicValidatorsService", () => {
     );
   });
 
+  it("should validate minDate and maxDate", async () => {
+    const config: FormValidatorConfig = {
+      minDate: "2010-01-01",
+      maxDate: "2020-12-31",
+    };
+
+    const validators = service.buildValidators(
+      config,
+      new TestEntity(),
+    ).validators;
+
+    expect(validators).toHaveLength(2);
+    await testValidator(
+      validators[0],
+      new Date(2010, 0, 1),
+      new Date(2009, 11, 31),
+    );
+    await testValidator(
+      validators[1],
+      new Date(2020, 11, 31),
+      new Date(2021, 0, 1),
+    );
+
+    const invalidDateControl = new UntypedFormControl(new Date(2009, 11, 31));
+    invalidDateControl.markAsDirty();
+    const validationErrors = validators[0](invalidDateControl);
+    expect(validationErrors.minDate.errorMessage).toContain("on or after");
+  });
+
+  it("should validate minAge and maxAge", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 3, 24));
+
+    try {
+      const config: FormValidatorConfig = {
+        minAge: 9,
+        maxAge: 25,
+      };
+
+      const validators = service.buildValidators(
+        config,
+        new TestEntity(),
+      ).validators;
+
+      expect(validators).toHaveLength(2);
+      await testValidator(
+        validators[0],
+        new Date(2015, 3, 24),
+        new Date(2018, 3, 25),
+      );
+      await testValidator(
+        validators[1],
+        new Date(2010, 3, 24),
+        new Date(1990, 3, 24),
+      );
+
+      const invalidAgeControl = new UntypedFormControl(new Date(1990, 3, 24));
+      invalidAgeControl.markAsDirty();
+      const validationErrors = validators[1](invalidAgeControl);
+      expect(validationErrors.maxAge.errorMessage).toContain("at most");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should build uniqueId async validator", async () => {
     const config: FormValidatorConfig = {
       uniqueId: true,
