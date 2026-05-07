@@ -1,11 +1,10 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -52,74 +51,57 @@ import { DynamicEditComponent } from "./dynamic-edit/dynamic-edit.component";
     ErrorHintComponent,
   ],
 })
-export class EntityFieldEditComponent<
-  T extends Entity = Entity,
-> implements OnChanges {
+export class EntityFieldEditComponent<T extends Entity = Entity> {
   private entityFormService = inject(EntityFormService);
   private entitySchemaService = inject(EntitySchemaService);
 
   /** field id or full config */
-  @Input() field: ColumnConfig;
-  /** full field config extended from schema (used internally and for template) */
-  _field: FormFieldConfig;
+  field = input<ColumnConfig>();
 
-  /**
-   * The FormControl of this field
-   */
-  formControl: FormControl;
+  entity = input<T>();
+  form = input<EntityForm<T>>();
 
-  @Input() entity: T;
-  @Input() form: EntityForm<T>;
+  /** Whether to display the field in a limited space, hiding details like the help description button. */
+  compactMode = input<boolean>();
 
-  /**
-   * Whether to display the field in a limited space, hiding details like the help description button.
-   */
-  @Input() compactMode: boolean;
+  /** Whether to display the field label or not. */
+  hideLabel = input<boolean>();
 
-  /**
-   * Whether to display the field label or not.
-   */
-  @Input() hideLabel: boolean;
+  /** Whether to hide the inherit value button for inherited-field default values. */
+  hideInheritButton = input<boolean>(false);
 
-  /**
-   * Whether to hide the inherit value button for inherited-field default values.
-   */
-  @Input() hideInheritButton: boolean = false;
-
-  isPartiallyAnonymized: boolean;
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.field || changes.entity) {
-      this.updateField();
-    }
-
-    if (this.form && this._field) {
-      this.formControl = this.form.formGroup.get(this._field.id) as FormControl;
-    }
-
-    this.isPartiallyAnonymized =
-      this.entity?.anonymized &&
-      this.entity?.getSchema()?.get(this._field?.id)?.anonymize ===
-        "retain-anonymized";
-  }
-
-  private updateField() {
-    if (!this.field) {
-      this._field = undefined;
-      return;
-    }
-
-    if (this.entity?.getConstructor()) {
-      this._field = this.entityFormService.extendFormFieldConfig(
-        this.field,
-        this.entity.getConstructor(),
+  /** full field config extended from schema */
+  readonly _field = computed<FormFieldConfig | undefined>(() => {
+    const field = this.field();
+    if (!field) return undefined;
+    const entity = this.entity();
+    if (entity?.getConstructor()) {
+      return this.entityFormService.extendFormFieldConfig(
+        field,
+        entity.getConstructor(),
       );
-    } else {
-      this._field = toFormFieldConfig(this.field);
-      // add editComponent (because we cannot rely on the entity's schema yet for a new field)
-      this._field.editComponent =
-        this._field.editComponent ??
-        this.entitySchemaService.getComponent(this._field, "edit");
     }
-  }
+    const result = toFormFieldConfig(field);
+    // add editComponent (because we cannot rely on the entity's schema yet for a new field)
+    result.editComponent =
+      result.editComponent ??
+      this.entitySchemaService.getComponent(result, "edit");
+    return result;
+  });
+
+  readonly formControl = computed<FormControl | null>(() => {
+    const form = this.form();
+    const field = this._field();
+    if (!form || !field) return null;
+    return form.formGroup.get(field.id) as FormControl;
+  });
+
+  readonly isPartiallyAnonymized = computed<boolean>(() => {
+    const entity = this.entity();
+    const field = this._field();
+    return (
+      entity?.anonymized &&
+      entity?.getSchema()?.get(field?.id)?.anonymize === "retain-anonymized"
+    );
+  });
 }

@@ -1,42 +1,42 @@
-@if (_field && form && _field.editComponent) {
+@if (_field() && form() && _field().editComponent) {
   <div
     class="flex-row"
-    [class.hidden]="_field?.hideFromForm"
+    [class.hidden]="_field()?.hideFromForm"
     [class.readonlyAfterSet]="
-      _field?.validators?.readonlyAfterSet &&
-      form?.formGroup?.enabled &&
-      formControl?.disabled
+      _field()?.validators?.readonlyAfterSet &&
+      form()?.formGroup?.enabled &&
+      formControl()?.disabled
     "
   >
     <div class="flex-grow">
       <mat-form-field
         floatLabel="always"
         class="allow-full-width"
-        id="entity-field__{{ _field.id }}"
+        id="entity-field__{{ _field().id }}"
       >
-        @if (!hideLabel && _field.displayFullLengthLabel) {
+        @if (!hideLabel() && _field().displayFullLengthLabel) {
           <div
             class="full-label"
-            [class.full-label-disabled]="formControl?.disabled"
+            [class.full-label-disabled]="formControl()?.disabled"
           >
-            {{ _field.label }}
-            @if (_field?.validators?.required) {
-              <span [class.color-error]="formControl?.enabled">*</span>
+            {{ _field().label }}
+            @if (_field()?.validators?.required) {
+              <span [class.color-error]="formControl()?.enabled">*</span>
             }
           </div>
         }
-        @if (!hideLabel && !_field.displayFullLengthLabel) {
+        @if (!hideLabel() && !_field().displayFullLengthLabel) {
           <mat-label>
-            <span [matTooltip]="_field.label" matTooltipPosition="before">
-              {{ _field.label }}
-              @if (_field?.validators?.required) {
-                <span [class.color-error]="formControl?.enabled">*</span>
+            <span [matTooltip]="_field().label" matTooltipPosition="before">
+              {{ _field().label }}
+              @if (_field()?.validators?.required) {
+                <span [class.color-error]="formControl()?.enabled">*</span>
               }
             </span>
           </mat-label>
         }
 
-        @if (isPartiallyAnonymized) {
+        @if (isPartiallyAnonymized()) {
           <fa-icon
             matIconPrefix
             class="input-prefix-icon"
@@ -47,18 +47,18 @@
         }
 
         <app-dynamic-edit
-          [formControl]="formControl"
-          [formFieldConfig]="_field"
-          [entity]="entity"
+          [formControl]="formControl()"
+          [formFieldConfig]="_field()"
+          [entity]="entity()"
         ></app-dynamic-edit>
 
         <mat-error>
-          <app-error-hint [form]="formControl"></app-error-hint>
+          <app-error-hint [form]="formControl()"></app-error-hint>
         </mat-error>
       </mat-form-field>
     </div>
 
-    @if (_field?.validators?.readonlyAfterSet && form?.formGroup?.enabled) {
+    @if (_field()?.validators?.readonlyAfterSet && form()?.formGroup?.enabled) {
       <button
         mat-icon-button
         i18n-matTooltip
@@ -69,21 +69,21 @@
       </button>
     }
 
-    @if (!compactMode) {
-      <app-help-button [text]="_field.description"></app-help-button>
+    @if (!compactMode()) {
+      <app-help-button [text]="_field().description"></app-help-button>
     }
 
-    @if (!hideInheritButton) {
+    @if (!hideInheritButton()) {
       <app-inherited-value-button
-        [form]="form"
-        [field]="_field"
-        [entity]="entity"
+        [form]="form()"
+        [field]="_field()"
+        [entity]="entity()"
       ></app-inherited-value-button>
     }
   </div>
 } @else {
   <app-entity-field-view
-    [field]="_field"
-    [entity]="entity"
+    [field]="_field()"
+    [entity]="entity()"
   ></app-entity-field-view>
 }

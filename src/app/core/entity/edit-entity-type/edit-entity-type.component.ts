@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnInit,
+  computed,
+  input,
 } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityTypeSelectComponent } from "../entity-type-select/entity-type-select.component";
@@ -24,18 +24,13 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
     { provide: MatFormFieldControl, useExisting: EditEntityTypeComponent },
   ],
 })
-export class EditEntityTypeComponent
-  extends CustomFormControlDirective<string | string[]>
-  implements OnInit
-{
-  @Input() formFieldConfig?: FormFieldConfig;
-  multi = false;
+export class EditEntityTypeComponent extends CustomFormControlDirective<
+  string | string[]
+> {
+  formFieldConfig = input<FormFieldConfig>();
+  readonly multi = computed(() => this.formFieldConfig()?.isArray ?? false);
 
   get formControl(): FormControl<string | string[]> {
     return this.ngControl.control as FormControl<string | string[]>;
-  }
-
-  ngOnInit() {
-    this.multi = this.formFieldConfig?.isArray ?? false;
   }
 }

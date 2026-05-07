@@ -22,8 +22,8 @@ describe("EntityFieldViewComponent", () => {
     fixture = TestBed.createComponent(EntityFieldViewComponent);
     component = fixture.componentInstance;
 
-    component.entity = testEntity;
-    component.field = { id: testProperty };
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.componentRef.setInput("field", { id: testProperty });
 
     fixture.detectChanges();
   });
@@ -33,15 +33,15 @@ describe("EntityFieldViewComponent", () => {
   });
 
   it("should get component from schema if not given", () => {
-    component.ngOnChanges({ field: true as any });
+    fixture.componentRef.setInput("field", { id: testProperty });
 
-    expect(component._field.viewComponent).toBe("DisplayDate");
+    expect(component._field().viewComponent).toBe("DisplayDate");
   });
 
   it("should get label from schema", () => {
-    component.ngOnChanges({ field: true as any });
+    fixture.componentRef.setInput("field", { id: testProperty });
 
-    expect(component._field.label).toBe(
+    expect(component._field().label).toBe(
       TestEntity.schema.get(testProperty).label,
     );
   });
@@ -53,11 +53,10 @@ describe("EntityFieldViewComponent", () => {
       viewComponent: "DisplayText",
       additional: "Some additional information",
     };
-    component.field = testField;
-    component.ngOnChanges({ field: true as any });
+    fixture.componentRef.setInput("field", testField);
 
-    expect(component._field.label).toBe(testField.label);
-    expect(component._field.viewComponent).toBe(testField.viewComponent);
-    expect(component._field.additional).toBe(testField.additional);
+    expect(component._field().label).toBe(testField.label);
+    expect(component._field().viewComponent).toBe(testField.viewComponent);
+    expect(component._field().additional).toBe(testField.additional);
   });
 });
