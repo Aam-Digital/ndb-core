@@ -22,4 +22,24 @@
     matSuffix
     (click)="openDialog($event)"
   ></mat-datepicker-toggle>
+  @if (isAnyDateFilterActive()) {
+    <div matSuffix class="date-suffix">
+      @if (isNoDateFilterActive()) {
+        <mat-chip class="compact-chip" selected>
+          <span i18n>No date</span>
+        </mat-chip>
+      }
+      <button
+        mat-icon-button
+        type="button"
+        class="date-reset-button"
+        aria-label="Reset date filter"
+        matTooltip="Clear date filter"
+        i18n-matTooltip="Tooltip: clears the date filter"
+        (click)="resetNoDateFilter()"
+      >
+        <fa-icon icon="xmark"></fa-icon>
+      </button>
+    </div>
+  }
 </mat-form-field>

@@ -28,6 +28,40 @@ import { EventEmitter, Type } from "@angular/core";
  */
 export type DataFilter<T> = MongoQuery<T> | {};
 
+export const EMPTY_FILTER_OPTION_KEY = "__empty__";
+
+export function getNotDefinedFilterLabel(): string {
+  return $localize`:filter option:not defined`;
+}
+
+export function createEmptyValueFilter<T extends Entity>(
+  fieldName: string,
+  includeNestedId = false,
+  includeEmptyArray = false,
+): DataFilter<T> {
+  const emptyFilterOptions: DataFilter<T>[] = [
+    { [fieldName]: undefined } as DataFilter<T>,
+    { [fieldName]: null } as DataFilter<T>,
+    { [fieldName]: "" } as DataFilter<T>,
+  ];
+
+  if (includeNestedId) {
+    emptyFilterOptions.push(
+      { [fieldName + ".id"]: undefined } as DataFilter<T>,
+      { [fieldName + ".id"]: null } as DataFilter<T>,
+      { [fieldName + ".id"]: "" } as DataFilter<T>,
+    );
+  }
+
+  if (includeEmptyArray) {
+    emptyFilterOptions.push({ [fieldName]: { $size: 0 } } as DataFilter<T>);
+  }
+
+  return {
+    $or: emptyFilterOptions,
+  } as DataFilter<T>;
+}
+
 export abstract class Filter<T extends Entity> {
   /**
    * The component used to display filter option to the user.
@@ -153,6 +187,12 @@ export interface FilterSelectionOption<T> {
 
   /** Optional color */
   color?: string;
+
+  /** Optional marker to highlight invalid values in the UI */
+  isInvalid?: boolean;
+
+  /** Optional marker to highlight missing/empty values in the UI */
+  isEmpty?: boolean;
 
   /**
    * The filter query which should be used if this filter is selected

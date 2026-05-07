@@ -11,7 +11,11 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FilterService } from "../filter.service";
-import { FilterSelectionOption, SelectableFilter } from "../filters/filters";
+import {
+  EMPTY_FILTER_OPTION_KEY,
+  FilterSelectionOption,
+  SelectableFilter,
+} from "../filters/filters";
 import { Entity } from "../../entity/model/entity";
 import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
@@ -305,11 +309,79 @@ describe("FilterGeneratorService", () => {
       await service.generate([{ id: "enumField" }], TestEntity, data)
     )[0] as ConfigurableEnumFilter<TestEntity>;
 
-    const emptyOption = filter.options.find((opt) => opt.key === null);
+    const emptyOption = filter.options.find(
+      (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+    );
     expect(emptyOption).toBeTruthy();
 
     const filtered = filterService.getFilterPredicate(emptyOption.filter);
-    expect(data.filter(filtered)).toEqual([e1, e2, e3, e4, e5, e6]);
+    expect(data.filter((item) => filtered(item))).toEqual([
+      e1,
+      e2,
+      e3,
+      e4,
+      e5,
+      e6,
+    ]);
+  });
+
+  it("should add empty option for generic selectable filters", async () => {
+    const e1 = new TestEntity();
+    e1.other = "muslim";
+    const e2 = new TestEntity();
+    e2.other = "";
+    const e3 = new TestEntity();
+    e3.other = null as any;
+    const e4 = new TestEntity();
+
+    const data = [e1, e2, e3, e4];
+
+    const filter = (
+      await service.generate([{ id: "other" }], TestEntity, data)
+    )[0] as SelectableFilter<TestEntity>;
+
+    const emptyOption = filter.options.find(
+      (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+    );
+    expect(emptyOption).toBeTruthy();
+
+    const filtered = filterService.getFilterPredicate(emptyOption.filter);
+    expect(data.filter((item) => filtered(item))).toEqual([e2, e3, e4]);
+  });
+
+  it("should add empty option for entity reference filters", async () => {
+    const school = new TestEntity();
+    school.name = "First School";
+    await TestBed.inject(EntityMapperService).saveAll([school]);
+
+    const relationWithSchool = new ChildSchoolRelation();
+    relationWithSchool.schoolId = school.getId();
+    const relationWithNull = new ChildSchoolRelation();
+    relationWithNull["schoolId"] = null;
+    const relationWithUndefined = new ChildSchoolRelation();
+
+    const data = [relationWithSchool, relationWithNull, relationWithUndefined];
+
+    const schema = ChildSchoolRelation.schema.get("schoolId");
+    const originalSchemaAdditional = schema.additional;
+    schema.additional = TestEntity.ENTITY_TYPE;
+
+    const filter = (
+      await service.generate([{ id: "schoolId" }], ChildSchoolRelation, data)
+    )[0] as EntityFilter<ChildSchoolRelation>;
+
+    const emptyOption = filter.options.find(
+      (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+    );
+    expect(emptyOption).toBeTruthy();
+
+    const filtered = filterService.getFilterPredicate(emptyOption.filter);
+    expect(data.filter((item) => filtered(item))).toEqual([
+      relationWithNull,
+      relationWithUndefined,
+    ]);
+
+    schema.additional = originalSchemaAdditional;
   });
 
   it("should handle array values (multi-select fields) and show invalid options correctly", async () => {
@@ -338,8 +410,10 @@ describe("FilterGeneratorService", () => {
     ];
     const e2 = new TestEntity();
     e2["tags"] = [{ id: "INVALID_Y", label: "Invalid Y" }];
+    const e3 = new TestEntity();
+    e3["tags"] = [];
 
-    const data = [e1, e2];
+    const data = [e1, e2, e3];
 
     const filter = (
       await service.generate([{ id: "tags" }], TestEntity, data)
@@ -362,7 +436,17 @@ describe("FilterGeneratorService", () => {
     const filteredByInvalidX = filterService.getFilterPredicate(
       invalidOptionX.filter,
     );
-    expect(data.filter(filteredByInvalidX)).toEqual([e1]);
+    expect(data.filter((item) => filteredByInvalidX(item))).toEqual([e1]);
+
+    const emptyOption = filter.options.find(
+      (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+    );
+    expect(emptyOption).toBeTruthy();
+
+    const filteredByEmpty = filterService.getFilterPredicate(
+      emptyOption.filter,
+    );
+    expect(data.filter((item) => filteredByEmpty(item))).toEqual([e3]);
   });
 
   function filter<T extends Entity>(
