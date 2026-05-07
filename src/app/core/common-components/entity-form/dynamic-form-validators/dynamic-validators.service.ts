@@ -55,6 +55,11 @@ function parseToDate(value: unknown): Date | undefined {
   }
 
   if (typeof value === "string") {
+    // Handle special placeholder "$now"
+    if (value === "$now") {
+      return new Date();
+    }
+
     const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (dateOnlyMatch) {
       const localDate = new Date(

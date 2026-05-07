@@ -16,19 +16,50 @@
   ) {
     <mat-form-field class="number-field">
       <mat-label i18n>Minimum Date</mat-label>
-      <input formControlName="minDate" matInput type="date" />
+      <input
+        matInput
+        formControlName="minDate"
+        [matDatepicker]="minDatePicker"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="minDatePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #minDatePicker></mat-datepicker>
     </mat-form-field>
     <mat-form-field class="number-field">
       <mat-label i18n>Maximum Date</mat-label>
-      <input formControlName="maxDate" matInput type="date" />
+      <input
+        matInput
+        formControlName="maxDate"
+        [matDatepicker]="maxDatePicker"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="maxDatePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #maxDatePicker></mat-datepicker>
+    </mat-form-field>
+  }
+
+  @if (entitySchemaField.dataType === "date-with-age") {
+    <mat-form-field class="number-field">
+      <mat-label i18n>Minimum Age (Calculated)</mat-label>
+      <input formControlName="minAge" matInput type="number" readonly />
+      <app-help-button
+        matSuffix
+        text="Automatically calculated from the minimum date. This field is read-only."
+        i18n-text
+      ></app-help-button>
     </mat-form-field>
     <mat-form-field class="number-field">
-      <mat-label i18n>Minimum Age</mat-label>
-      <input formControlName="minAge" matInput type="number" />
-    </mat-form-field>
-    <mat-form-field class="number-field">
-      <mat-label i18n>Maximum Age</mat-label>
-      <input formControlName="maxAge" matInput type="number" />
+      <mat-label i18n>Maximum Age (Calculated)</mat-label>
+      <input formControlName="maxAge" matInput type="number" readonly />
+      <app-help-button
+        matSuffix
+        text="Automatically calculated from the maximum date. This field is read-only."
+        i18n-text
+      ></app-help-button>
     </mat-form-field>
   }
 
