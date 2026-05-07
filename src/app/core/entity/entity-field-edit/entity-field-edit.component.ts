@@ -84,7 +84,8 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
     const result = toFormFieldConfig(field);
     // add editComponent (because we cannot rely on the entity's schema yet for a new field)
     result.editComponent =
-      result.editComponent ?? this.entitySchemaService.getComponent(result, "edit");
+      result.editComponent ??
+      this.entitySchemaService.getComponent(result, "edit");
     return result;
   });
 
