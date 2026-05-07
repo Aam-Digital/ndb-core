@@ -15,6 +15,10 @@ describe("PouchdbCorruptionRecoveryService", () => {
   let location: { pathname: string };
 
   beforeEach(() => {
+    // Defensive reset of the global session_type, in case a prior test (in
+    // this file or another) left it in a non-default state.
+    environment.session_type = SessionType.mock;
+
     confirmationDialog = {
       getConfirmation: vi.fn(),
     };
@@ -67,8 +71,12 @@ describe("PouchdbCorruptionRecoveryService", () => {
 
   it("should skip multi-tab warning dialog in online-only mode", async () => {
     environment.session_type = SessionType.online;
-    await service.promptMultiTabWarningDialog();
-    expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    try {
+      await service.promptMultiTabWarningDialog();
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    } finally {
+      environment.session_type = SessionType.mock;
+    }
   });
 
   it("should show multi-tab warning again when prompted again", async () => {
