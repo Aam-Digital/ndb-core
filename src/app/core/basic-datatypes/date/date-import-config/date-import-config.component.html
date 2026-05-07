@@ -1,48 +1,8 @@
-<mat-dialog-content>
-  <mat-form-field>
-    <mat-label i18n>Date format</mat-label>
-    <input [formControl]="format" matInput />
-
-    <mat-hint>
-      <div i18n>
-        e.g. DD.MM.YYYY
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format"
-          target="_blank"
-          rel="noopener"
-          >(help)</a
-        >
-      </div>
-
-      @if (hasLowercaseMM) {
-        <div i18n>
-          Warning: "mm" is used for minutes, for months use "MM" instead.
-        </div>
-      }
-
-      @if (format.errors) {
-        <div class="warning" i18n>This format cannot parse all dates.</div>
-      }
-    </mat-hint>
-  </mat-form-field>
-
-  <app-help-button
-    text="Define how date values in your imported data are formatted, so that the system correctly understands them. Values that do not match the given format will be ignored (remain empty) during import."
-    i18n-text="import - value mapping (date) - help text"
-  ></app-help-button>
-
-  <mat-list>
-    @for (val of values; track val) {
-      <mat-list-item [class.invalid]="!val.parsed">
-        {{ val.value }} -> {{ val.parsed | customDate }}
-      </mat-list-item>
-    }
-  </mat-list>
-</mat-dialog-content>
-
-<mat-dialog-actions>
-  <button mat-raised-button color="accent" (click)="save()" i18n>
-    Save & Close
-  </button>
-  <button mat-stroked-button matDialogClose i18n>Cancel</button>
-</mat-dialog-actions>
+<button
+  class="margin-left-small config-button"
+  mat-stroked-button
+  (click)="openConfig()"
+  i18n="import - column mapping - configure date format button"
+>
+  Configure value mapping
+</button>

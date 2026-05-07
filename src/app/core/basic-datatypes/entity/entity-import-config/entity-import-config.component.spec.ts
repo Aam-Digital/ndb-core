@@ -1,88 +1,67 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { EntityImportConfigComponent } from "./entity-import-config.component";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../../../entity/database-entity.decorator";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { HarnessLoader } from "@angular/cdk/testing";
-import { MatSelectHarness } from "@angular/material/select/testing";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
-import { MarkdownModule } from "ngx-markdown";
+import { ColumnMapping } from "../../../import/column-mapping";
 
 describe("EntityImportConfigComponent", () => {
   let component: EntityImportConfigComponent;
   let fixture: ComponentFixture<EntityImportConfigComponent>;
-  let loader: HarnessLoader;
-  let data: MappingDialogData;
 
-  beforeEach(() => {
-    data = {
-      values: [],
-      totalRowCount: 0,
-      col: { column: "", propertyName: "ref" },
-      entityType: TestEntity,
-    };
-    TestBed.configureTestingModule({
-      imports: [
-        EntityImportConfigComponent,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
-        MarkdownModule.forRoot(),
-      ],
-      providers: [
-        { provide: MAT_DIALOG_DATA, useValue: data },
-        { provide: MatDialogRef, useValue: { close: () => undefined } },
-        { provide: EntityRegistry, useValue: entityRegistry },
-      ],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [EntityImportConfigComponent, MockedTestingModule.withState()],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(EntityImportConfigComponent);
-    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should show all properties of the provided entity that have a label, plus _id", () => {
-    const childPropertiesWithLabel = [...TestEntity.schema.entries()]
-      .filter(
-        ([prop, schema]) =>
-          (!!schema.label && !schema.isInternalField) || prop === "_id",
-      )
-      .map(([property, schema]) => ({
-        property,
-        label: schema.label,
-      }));
-    expect(component.availableProperties).toEqual(childPropertiesWithLabel);
+  it("should initialize available properties from referenced entity", () => {
+    const col: ColumnMapping = {
+      column: "test",
+      propertyName: "ref",
+    };
+    fixture.componentRef.setInput("col", col);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("otherColumnMappings", []);
+    fixture.detectChanges();
+
+    expect(component.referencedEntity()).not.toBeNull();
+    expect(component.availableProperties().length).toBeGreaterThan(0);
   });
 
-  it("should show confirmation dialog if no property is selected", () => {
-    const confirmationSpy = vi.spyOn(
-      TestBed.inject(ConfirmationDialogService),
-      "getConfirmation",
+  it("should update additional when ref field changes", () => {
+    const col: ColumnMapping = {
+      column: "test",
+      propertyName: "ref",
+    };
+    const onChangeFn = vi.fn();
+    fixture.componentRef.setInput("col", col);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("otherColumnMappings", []);
+    fixture.componentRef.setInput("onColumnMappingChange", onChangeFn);
+    fixture.detectChanges();
+
+    component.onRefFieldChange("name");
+
+    expect(onChangeFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        column: "test",
+        propertyName: "ref",
+        additional: expect.objectContaining({ refField: "name" }),
+      }),
     );
-    component.propertyForm.setValue(undefined);
 
-    component.save();
+    // Simulate parent re-setting the input with the updated value
+    const updatedCol = onChangeFn.mock.calls[0][0];
+    fixture.componentRef.setInput("col", updatedCol);
+    fixture.detectChanges();
 
-    expect(confirmationSpy).toHaveBeenCalled();
-  });
-
-  it("should assign property to additional on save", async () => {
-    const select = await loader.getHarness(MatSelectHarness);
-
-    await select.clickOptions({ text: "Name" });
-    await component.save();
-
-    expect(data.col.additional).toBe("name");
+    expect(component.selectedRefField()).toBe("name");
   });
 });
