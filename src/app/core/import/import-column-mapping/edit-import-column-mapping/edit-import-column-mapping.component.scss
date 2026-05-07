@@ -1,5 +1,5 @@
 mat-form-field {
-  width: calc(100% - 240px);
+  flex-grow: 1;
   max-width: 500px;
   min-width: min(240px, 100vw);
 }

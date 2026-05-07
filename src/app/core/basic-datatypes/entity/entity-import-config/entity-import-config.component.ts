@@ -1,84 +1,165 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
-import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { MatButtonModule } from "@angular/material/button";
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from "@angular/core";
+import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
-import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
-import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { MatSelectModule } from "@angular/material/select";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormsModule } from "@angular/forms";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatTooltip } from "@angular/material/tooltip";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
+import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
+import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import {
+  EntityAdditional,
+  normalizeEntityAdditional,
+} from "../entity.datatype";
 import { isInheritanceSourceReferenceField } from "../../../import/import-inheritance-warning.util";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 
 /**
- * Configuration UI for the EntityDatatype's import mapping function.
+ * Inline import configuration component for entity reference fields.
+ * Lets users select which property of the referenced entity to match against import values,
+ * and optionally configure a value transformation for that property.
  */
 @DynamicComponent("EntityImportConfig")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-import-config",
   templateUrl: "./entity-import-config.component.html",
-  styleUrls: ["./entity-import-config.component.scss"],
   imports: [
-    MatFormFieldModule,
     MatSelectModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    HelpButtonComponent,
+    MatFormFieldModule,
+    FormsModule,
+    FaIconComponent,
+    MatTooltip,
     HintBoxComponent,
+    DynamicComponentDirective,
   ],
 })
 export class EntityImportConfigComponent {
-  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
-  private confirmation = inject(ConfirmationDialogService);
-  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
-  private entities = inject(EntityRegistry);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly schemaService = inject(EntitySchemaService);
 
-  entity: EntityConstructor;
-  propertyForm = new FormControl("");
-  availableProperties: { property: string; label: string }[] = [];
-  showInheritanceImportHint = false;
+  col = input<ColumnMapping>();
+  rawData = input<any[]>([]);
+  entityType = input<EntityConstructor>();
+  otherColumnMappings = input<ColumnMapping[]>([]);
+  additionalSettings = input<ImportAdditionalSettings>();
+  onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
-  constructor() {
-    const propertyName = this.data.col.propertyName;
+  selectedRefField = computed(() => {
+    const col = this.col();
+    const current = normalizeEntityAdditional(col?.additional);
+    return current?.refField ?? "";
+  });
 
-    this.showInheritanceImportHint = isInheritanceSourceReferenceField(
-      this.data.entityType,
-      propertyName,
-    );
+  referencedEntity = computed<EntityConstructor | null>(() => {
+    const col = this.col();
+    const entityType = this.entityType();
+    if (!col?.propertyName || !entityType) return null;
 
-    const entityName = this.data.entityType.schema.get(propertyName).additional;
-    this.entity = this.entities.get(entityName);
-    this.availableProperties = [...this.entity.schema.entries()]
+    const fieldSchema = entityType.schema.get(col.propertyName);
+    const entityName = fieldSchema?.additional;
+    if (!entityName) return null;
+
+    return this.entityRegistry.get(entityName) ?? null;
+  });
+
+  availableProperties = computed(() => {
+    const entity = this.referencedEntity();
+    if (!entity) return [];
+    return [...entity.schema.entries()]
       .filter(
         ([prop, schema]) =>
           (!!schema.label && !schema.isInternalField) || prop === "_id",
       )
       .map(([prop, schema]) => ({
-        label: schema.label,
+        label: schema.label ?? prop,
         property: prop,
       }));
-    this.propertyForm.setValue(this.data.col.additional);
-  }
+  });
 
-  async save() {
-    const confirmed =
-      this.propertyForm.value ||
-      (await this.confirmation.getConfirmation(
-        $localize`Ignore for import?`,
-        $localize`If no property is selected, this column will be skipped during import. Are you sure to keep it unmapped?`,
-      ));
-    if (confirmed) {
-      this.data.col.additional = this.propertyForm.value;
-      this.dialog.close();
-    }
+  showInheritanceHint = computed(() => {
+    const col = this.col();
+    const entityType = this.entityType();
+    if (!col?.propertyName || !entityType) return false;
+    return isInheritanceSourceReferenceField(entityType, col.propertyName);
+  });
+
+  hasMultiMapping = computed(() => {
+    const col = this.col();
+    const otherColumnMappings = this.otherColumnMappings();
+    return (
+      col?.propertyName !== undefined &&
+      otherColumnMappings?.some(
+        (m) => m.propertyName === col.propertyName && m.column !== col.column,
+      )
+    );
+  });
+
+  /** Config for the sub-field's inline component (for value transformation config) */
+  subFieldInlineConfig = computed(() => {
+    const refField = this.selectedRefField();
+    const refEntity = this.referencedEntity();
+    if (!refField || !refEntity) return null;
+
+    const refFieldSchema = refEntity.schema.get(refField);
+    if (!refFieldSchema) return null;
+
+    const refDatatype = this.schemaService.getDatatypeOrDefault(
+      refFieldSchema.dataType,
+    );
+    if (!refDatatype?.importConfigComponent) return null;
+
+    const col = this.col();
+    const additional = col?.additional as EntityAdditional;
+    // Synthetic column mapping for the sub-field's inline component
+    const syntheticCol: ColumnMapping = {
+      column: col.column,
+      propertyName: refField,
+      additional: additional?.valueMapping,
+    };
+
+    return {
+      component: refDatatype.importConfigComponent,
+      config: {
+        col: syntheticCol,
+        rawData: this.rawData(),
+        entityType: refEntity,
+        otherColumnMappings: [],
+        additionalSettings: this.additionalSettings(),
+        onColumnMappingChange: (updatedCol: ColumnMapping) => {
+          const current = normalizeEntityAdditional(col.additional) ?? {
+            refField: refField,
+          };
+          const updatedParentCol: ColumnMapping = {
+            ...col,
+            additional: {
+              ...current,
+              refField: refField,
+              valueMapping: updatedCol.additional,
+            } as EntityAdditional,
+          };
+          this.onColumnMappingChange()?.(updatedParentCol);
+        },
+      },
+    };
+  });
+
+  onRefFieldChange(newRefField: string) {
+    const col = this.col();
+    // Clear valueMapping when ref field changes
+    this.onColumnMappingChange()?.({
+      ...col,
+      additional: { refField: newRefField } as EntityAdditional,
+    });
   }
 }

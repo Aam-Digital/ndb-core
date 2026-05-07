@@ -75,7 +75,10 @@ export class ImportColumnMappingComponent implements OnChanges {
     originalColumnMapping: ColumnMapping,
     newColumnMapping: ColumnMapping,
   ) {
-    Object.assign(originalColumnMapping, newColumnMapping);
+    const index = this.columnMapping.indexOf(originalColumnMapping);
+    if (index >= 0) {
+      this.columnMapping[index] = { ...newColumnMapping };
+    }
     this.columnMapping = [...this.columnMapping];
     this.columnMappingChange.emit(this.columnMapping);
   }

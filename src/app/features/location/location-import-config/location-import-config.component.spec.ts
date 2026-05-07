@@ -1,112 +1,64 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import {
-  LocationImportConfig,
-  LocationImportConfigComponent,
-} from "./location-import-config.component";
-import { MappingDialogData } from "../../../core/import/import-column-mapping/mapping-dialog-data";
+import { LocationImportConfigComponent } from "./location-import-config.component";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ColumnMapping } from "../../../core/import/column-mapping";
-
-const OVER_THRESHOLD_VALUES = Array.from(
-  { length: 51 },
-  (_, i) => `Address ${i + 1}`,
-);
 
 describe("LocationImportConfigComponent", () => {
   let component: LocationImportConfigComponent;
   let fixture: ComponentFixture<LocationImportConfigComponent>;
-  let mockDialogRef: any;
-  let mockDialogData: MappingDialogData;
 
   beforeEach(async () => {
-    mockDialogRef = {
-      close: vi.fn().mockName("MatDialogRef.close"),
-    };
-    mockDialogData = {
-      col: { column: "address" } as ColumnMapping,
-      values: ["123 Main St", "456 Oak Ave"],
-      totalRowCount: 2,
-      entityType: undefined,
-    };
-
     await TestBed.configureTestingModule({
-      imports: [LocationImportConfigComponent, NoopAnimationsModule],
-      providers: [
-        { provide: MatDialogRef, useValue: mockDialogRef },
-        { provide: MAT_DIALOG_DATA, useValue: mockDialogData },
-      ],
+      imports: [LocationImportConfigComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LocationImportConfigComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should initialize skipAddressLookup to false by default", () => {
-    expect(component.skipAddressLookup.value).toBe(false);
-  });
-
-  it("should initialize skipAddressLookup from existing config", async () => {
-    mockDialogData.col.additional = {
-      skipAddressLookup: true,
-    } as LocationImportConfig;
-
-    fixture = TestBed.createComponent(LocationImportConfigComponent);
-    component = fixture.componentInstance;
+  it("should initialize skipLookup from column additional", () => {
+    const col: ColumnMapping = {
+      column: "address",
+      propertyName: "address",
+      additional: { skipAddressLookup: true },
+    };
+    fixture.componentRef.setInput("col", col);
+    fixture.componentRef.setInput("rawData", [{ address: "Street 1" }]);
+    fixture.componentRef.setInput("entityType", TestEntity);
     fixture.detectChanges();
 
-    expect(component.skipAddressLookup.value).toBe(true);
+    expect(component.skipLookup()).toBe(true);
   });
 
-  it("should save config and close dialog", () => {
-    component.skipAddressLookup.setValue(true);
-    component.save();
-
-    expect(mockDialogData.col.additional).toEqual({
-      skipAddressLookup: true,
-    } as LocationImportConfig);
-    expect(mockDialogRef.close).toHaveBeenCalled();
-  });
-
-  it("should auto-default skipAddressLookup to true when unique address count exceeds threshold and no prior config", async () => {
-    mockDialogData.values = OVER_THRESHOLD_VALUES;
-
-    fixture = TestBed.createComponent(LocationImportConfigComponent);
-    component = fixture.componentInstance;
+  it("should update additional on toggle", () => {
+    const col: ColumnMapping = {
+      column: "address",
+      propertyName: "address",
+    };
+    const onChangeFn = vi.fn();
+    fixture.componentRef.setInput("col", col);
+    fixture.componentRef.setInput("onColumnMappingChange", onChangeFn);
     fixture.detectChanges();
 
-    expect(component.skipAddressLookup.value).toBe(true);
-  });
+    component.onToggle(true);
 
-  it("should respect existing skipAddressLookup=false config even when unique address count exceeds threshold", async () => {
-    mockDialogData.values = OVER_THRESHOLD_VALUES;
-    mockDialogData.col.additional = {
-      skipAddressLookup: false,
-    } as LocationImportConfig;
-
-    fixture = TestBed.createComponent(LocationImportConfigComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-
-    expect(component.skipAddressLookup.value).toBe(false);
-  });
-
-  it("should show warning hint when unique address count exceeds threshold", async () => {
-    mockDialogData.values = OVER_THRESHOLD_VALUES;
-
-    fixture = TestBed.createComponent(LocationImportConfigComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-
-    const hints = fixture.nativeElement.querySelectorAll("app-hint-box");
-    const warningHint = Array.from(hints).find((el: Element) =>
-      el.textContent.includes("Warning"),
+    expect(onChangeFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        column: "address",
+        propertyName: "address",
+        additional: { skipAddressLookup: true },
+      }),
     );
-    expect(warningHint).toBeTruthy();
+
+    // Simulate parent re-setting the input with the updated value
+    const updatedCol = onChangeFn.mock.calls[0][0];
+    fixture.componentRef.setInput("col", updatedCol);
+    fixture.detectChanges();
+
+    expect(component.skipLookup()).toBe(true);
   });
 });

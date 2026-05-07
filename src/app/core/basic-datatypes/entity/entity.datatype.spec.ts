@@ -5,6 +5,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 describe("Schema data type: entity", () => {
   testDatatype(EntityDatatype, "1", "1", "User");
@@ -31,6 +32,7 @@ describe("Schema data type: entity", () => {
             provide: EntitySchemaService,
             useValue: { transformEntityToDatabaseFormat: vi.fn() },
           },
+          { provide: EntityRegistry, useValue: new EntityRegistry() },
         ],
       });
 
