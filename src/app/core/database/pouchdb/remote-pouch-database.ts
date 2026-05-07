@@ -133,7 +133,10 @@ export class RemotePouchDatabase extends PouchDatabase {
       this.showConnectionIssueAlert();
     }
 
-    // retry login if request failed with unauthorized
+    // Retry login if request failed with unauthorized.
+    // This will redirect to Keycloak if the token is expired or missing,
+    // which is intentional — it ensures users re-authenticate online
+    // when connectivity is available (including after an offline login).
     if (
       result?.status === HttpStatusCode.Unauthorized &&
       !this.unauthenticatedSession
@@ -290,36 +293,50 @@ export class RemotePouchDatabase extends PouchDatabase {
     const db = await this.getPouchDBOnceReady();
     let lastSequence: string | number = "now";
 
-    timer(0, this.CHANGES_POLLING_INTERVAL)
-      .pipe(
-        exhaustMap(async () => {
-          try {
-            const result = await db.changes({
-              since: lastSequence,
-              include_docs: true,
-            });
-
-            if (result?.results) {
-              result.results.forEach((change: any) => {
-                if (this.ngZone) {
-                  this.ngZone.run(() => this.changesFeed.next(change.doc));
-                } else {
-                  this.changesFeed.next(change.doc);
-                }
+    // Run the polling loop outside Angular's zone to avoid:
+    //  - a full app-wide change-detection cycle for every poll fetch
+    //  - PouchDB-internal promise rejections being routed to Angular's
+    //    ErrorHandler / Sentry. We re-enter the zone explicitly only when
+    //    emitting to changesFeed so subscribers still trigger CD.
+    const startPolling = () =>
+      timer(0, this.CHANGES_POLLING_INTERVAL)
+        .pipe(
+          exhaustMap(async () => {
+            try {
+              const result = await db.changes({
+                since: lastSequence,
+                include_docs: true,
               });
-              lastSequence = result.last_seq;
-            }
 
-            return result;
-          } catch (err) {
-            Logging.debug("Error polling changes from remote database", err);
-            // Continue polling despite errors
-            return null;
-          }
-        }),
-        takeUntil(this.destroy$),
-      )
-      .subscribe();
+              if (result?.results) {
+                result.results.forEach(
+                  (change: PouchDB.Core.ChangesResponseChange<{}>) => {
+                    if (this.ngZone) {
+                      this.ngZone.run(() => this.changesFeed.next(change.doc));
+                    } else {
+                      this.changesFeed.next(change.doc);
+                    }
+                  },
+                );
+                lastSequence = result.last_seq;
+              }
+
+              return result;
+            } catch (err) {
+              Logging.debug("Error polling changes from remote database", err);
+              // Continue polling despite errors
+              return null;
+            }
+          }),
+          takeUntil(this.destroy$),
+        )
+        .subscribe();
+
+    if (this.ngZone) {
+      this.ngZone.runOutsideAngular(startPolling);
+    } else {
+      startPolling();
+    }
 
     Logging.debug(
       `Started periodic changes polling for ${this.dbName} (interval: ${this.CHANGES_POLLING_INTERVAL}ms)`,

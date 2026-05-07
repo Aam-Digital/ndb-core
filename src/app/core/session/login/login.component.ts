@@ -20,6 +20,7 @@ import {
   OnInit,
   inject,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -35,11 +36,11 @@ import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { waitForChangeTo } from "../session-states/session-utils";
-import { race, timer } from "rxjs";
+import { from, race, timer } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -70,14 +71,30 @@ export class LoginComponent implements OnInit {
   siteSettingsService = inject(SiteSettingsService);
 
   offlineUsers: SessionInfo[] = [];
-  enableOfflineLogin: boolean;
-  loginInProgress = false;
+  /**
+   * Whether offline-login buttons are clickable.
+   * Becomes true once the remote login has failed or after a hard timeout,
+   * so the user always has a fallback path to enter the app.
+   */
+  enableOfflineLogin = signal(false);
+  loginInProgress = signal(false);
 
   /** Whether the offline login section should be shown at all. */
-  showOfflineSection = false;
+  showOfflineSection = signal(false);
 
   /** Whether the initial silent SSO check has completed (showing the login form). */
-  ssoCheckDone = false;
+  ssoCheckDone = signal(false);
+
+  /**
+   * Human-readable error to display when a *user-initiated* remote login
+   * fails. Stays null for the silent SSO check on initial page load (whose
+   * "failure" simply means the user is not yet logged in and is the normal
+   * state we expect to render the login form).
+   */
+  loginError = signal<string | null>(null);
+
+  /** Raw technical error from the login service, shown as a tooltip on the error message. */
+  loginTechnicalError = signal<string | null>(null);
 
   /**
    * localStorage key under which the online-only preference is persisted.
@@ -98,47 +115,64 @@ export class LoginComponent implements OnInit {
       environment.session_type === SessionType.online);
 
   /** User preference: use online-only mode instead of synced. */
-  onlineOnly: boolean;
+  onlineOnly = signal(false);
 
   constructor() {
     const sessionManager = this.sessionManager;
 
     // restore previous online-only preference from localStorage
-    this.onlineOnly =
+    const initialOnlineOnly =
       localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) === "true" ||
       environment.session_type === SessionType.online;
-    this.applyOnlineOnlyMode(this.onlineOnly);
+    this.onlineOnly.set(initialOnlineOnly);
+    this.applyOnlineOnlyMode(initialOnlineOnly);
 
-    this.enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
-    this.showOfflineSection = !navigator.onLine;
+    this.enableOfflineLogin.set(!this.sessionManager.remoteLoginAvailable());
+    this.showOfflineSection.set(!navigator.onLine);
 
     // Only do a silent SSO check — don't redirect to Keycloak yet.
     // This allows the user to see and interact with the login page settings first.
-    sessionManager.checkRemoteSession().then(() => {
-      this.ssoCheckDone = true;
-      sessionManager.clearRemoteSessionIfNecessary();
+    // Wait for the full flow (including clearRemoteSession) before enabling offline login,
+    // so that any pending Keycloak logout redirect completes without confusing the user.
+    const ssoFlowComplete = sessionManager
+      .checkRemoteSession()
+      .finally(async () => {
+        await sessionManager.clearRemoteSessionIfNecessary();
+        this.ssoCheckDone.set(true);
+      });
+
+    // Enable offline login once the SSO check + cleanup is fully done,
+    // or after a hard timeout as failsafe (so a stuck check never traps the user).
+    race(from(ssoFlowComplete), timer(10000)).subscribe(() => {
+      this.enableOfflineLogin.set(true);
+      this.showOfflineSection.set(true);
     });
   }
 
   ngOnInit() {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
-      this.loginInProgress = state === LoginState.IN_PROGRESS;
+      this.loginInProgress.set(state === LoginState.IN_PROGRESS);
       if (state === LoginState.LOGGED_IN) {
+        this.loginError.set(null);
+        this.loginTechnicalError.set(null);
         this.routeAfterLogin();
+      }
+      if (state === LoginState.LOGIN_FAILED) {
+        // LOGIN_FAILED is only emitted by user-initiated remoteLogin(),
+        // not by the silent SSO check (which emits LOGGED_OUT on no session).
+        this.loginError.set(
+          $localize`:Login error message:Could not reach the login service. Please check your internet connection and try again.`,
+        );
       }
     });
 
-    this.offlineUsers = this.sessionManager.getOfflineUsers();
-    race(
-      this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
-      timer(10000),
-    ).subscribe(() => {
-      this.enableOfflineLogin = true;
+    this.sessionManager.getOfflineUsers().then((users) => {
+      this.offlineUsers = users;
     });
   }
 
   onOnlineOnlyChanged(checked: boolean) {
-    this.onlineOnly = checked;
+    this.onlineOnly.set(checked);
     if (checked) {
       localStorage.setItem(LoginComponent.ONLINE_ONLY_KEY, "true");
     } else {
@@ -174,7 +208,7 @@ export class LoginComponent implements OnInit {
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
     const safeRedirectUri = this.safeRedirectUrl(redirectUri);
-    setTimeout(() => this.router.navigateByUrl(safeRedirectUri), 0);
+    this.router.navigateByUrl(safeRedirectUri);
   }
 
   private safeRedirectUrl(redirectUri: string): string {
@@ -187,17 +221,30 @@ export class LoginComponent implements OnInit {
 
       // validate same origin and path
       if (fullUrl.origin !== base || !fullUrl.pathname.startsWith("/")) {
+        Logging.debug(
+          `Login: rejected redirect_uri (cross-origin or invalid path): ${redirectUri}`,
+        );
         return "/";
       }
 
       return fullUrl.pathname + fullUrl.search + fullUrl.hash;
     } catch (e) {
+      Logging.debug(
+        `Login: rejected redirect_uri (parse error): ${redirectUri}`,
+        e,
+      );
       return "/"; // fallback for invalid urls
     }
   }
 
   tryLogin() {
-    this.showOfflineSection = true;
-    return this.sessionManager.remoteLogin();
+    this.showOfflineSection.set(true);
+    this.loginError.set(null);
+    this.loginTechnicalError.set(null);
+    this.sessionManager.remoteLogin().catch((err: unknown) => {
+      this.loginTechnicalError.set(
+        err instanceof Error ? err.message : String(err),
+      );
+    });
   }
 }

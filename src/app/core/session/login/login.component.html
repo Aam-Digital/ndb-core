@@ -14,7 +14,7 @@
       <!-- ONLINE-ONLY OPTION -->
       @if (showOnlineOnlyOption) {
         <mat-checkbox
-          [ngModel]="onlineOnly"
+          [ngModel]="onlineOnly()"
           (ngModelChange)="onOnlineOnlyChanged($event)"
           matTooltip="When enabled, data is not synced and stored on this device. This is faster but you cannot use the app offline later."
           i18n-matTooltip="online-only mode tooltip"
@@ -30,7 +30,7 @@
         matTooltip="It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection."
         i18n-matTooltip="online login tooltip"
       >
-        @if (loginInProgress) {
+        @if (loginInProgress()) {
           <div>
             <em i18n="login progess bar title">Checking online login ...</em>
             <mat-progress-bar
@@ -38,7 +38,17 @@
               class="login-check-progressbar"
             ></mat-progress-bar>
           </div>
-        } @else if (ssoCheckDone) {
+        } @else if (ssoCheckDone()) {
+          @if (loginError(); as error) {
+            <div
+              class="login-error"
+              role="alert"
+              [matTooltip]="loginTechnicalError()"
+            >
+              <fa-icon icon="triangle-exclamation"></fa-icon>
+              <span>{{ error }}</span>
+            </div>
+          }
           <div>
             <button
               mat-flat-button
@@ -55,7 +65,7 @@
       </div>
 
       <!-- OFFLINE -->
-      @if (showOfflineSection && offlineUsers.length > 0) {
+      @if (showOfflineSection() && offlineUsers.length > 0) {
         <mat-card class="margin-top-large" appearance="outlined">
           <mat-card-header
             matTooltip="You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login."
@@ -78,7 +88,7 @@
                 <button
                   mat-list-item
                   (click)="sessionManager.offlineLogin(user)"
-                  [disabled]="!enableOfflineLogin"
+                  [disabled]="!enableOfflineLogin()"
                 >
                   <fa-icon matListItemIcon icon="user"></fa-icon>
                   {{ user.email ?? user.name }}

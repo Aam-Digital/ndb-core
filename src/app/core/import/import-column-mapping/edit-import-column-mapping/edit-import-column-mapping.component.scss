@@ -1,9 +1,13 @@
 mat-form-field {
-  width: calc(100% - 240px);
+  flex-grow: 1;
   max-width: 500px;
   min-width: min(240px, 100vw);
 }
 
 .config-button {
   max-width: 240px;
+}
+
+.lookup-warning-icon {
+  color: #f57c00;
 }

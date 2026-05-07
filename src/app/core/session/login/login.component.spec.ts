@@ -65,10 +65,6 @@ describe("LoginComponent", () => {
     component = fixture.componentInstance;
   });
 
-  afterEach(() => {
-    environment.session_type = SessionType.mock;
-  });
-
   it("should be created", () => {
     expect(component).toBeTruthy();
   });
@@ -77,8 +73,7 @@ describe("LoginComponent", () => {
     expect(sessionManager.checkRemoteSession).toHaveBeenCalled();
   });
 
-  it("should route to redirect uri once state changes to 'logged-in'", async () => {
-    vi.useFakeTimers();
+  it("should route to redirect uri once state changes to 'logged-in'", () => {
     vi.stubGlobal("location", { origin: "http://localhost" });
     try {
       const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigateByUrl");
@@ -88,53 +83,146 @@ describe("LoginComponent", () => {
 
       fixture.detectChanges();
       loginState.next(LoginState.LOGGED_IN);
-      await vi.advanceTimersByTimeAsync(100);
 
       expect(navigateSpy).toHaveBeenCalledWith("/someUrl");
     } finally {
-      vi.useRealTimers();
       vi.unstubAllGlobals();
     }
   });
 
-  it("should show offline login if remote login fails", async () => {
+  it("should show offline login after SSO check completes without session", async () => {
+    const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
+    vi.spyOn(sessionManager, "getOfflineUsers").mockResolvedValue(mockUsers);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // SSO check resolved immediately in the constructor (mock returns resolved promise),
+    // so enableOfflineLogin is already true.
+    expect(component.enableOfflineLogin()).toBe(true);
+    expect(component.showOfflineSection()).toBe(true);
+    expect(component.offlineUsers).toEqual(mockUsers);
+  });
+
+  it("should show offline login after 10 seconds", async () => {
     vi.useFakeTimers();
     try {
+      // Use a never-resolving promise so only the timer fires
+      vi.spyOn(sessionManager, "checkRemoteSession").mockReturnValue(
+        new Promise(() => {}),
+      );
       const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
-      vi.spyOn(sessionManager, "getOfflineUsers").mockReturnValue(mockUsers);
-      loginState.next(LoginState.LOGGED_OUT);
+      vi.spyOn(sessionManager, "getOfflineUsers").mockResolvedValue(mockUsers);
+
+      // Recreate component after fake timers so timer(10000) is captured
+      fixture = TestBed.createComponent(LoginComponent);
+      component = fixture.componentInstance;
       fixture.detectChanges();
 
-      loginState.next(LoginState.IN_PROGRESS);
-      expect(component.enableOfflineLogin).toBe(false);
-      expect(loginState.value).toBe(LoginState.IN_PROGRESS);
+      expect(component.enableOfflineLogin()).toBe(false);
+      expect(component.showOfflineSection()).toBe(false);
 
-      loginState.next(LoginState.LOGIN_FAILED);
-      await vi.advanceTimersByTimeAsync(0);
-      expect(component.enableOfflineLogin).toBe(true);
+      await vi.advanceTimersByTimeAsync(10000);
+      expect(component.enableOfflineLogin()).toBe(true);
+      expect(component.showOfflineSection()).toBe(true);
       expect(component.offlineUsers).toEqual(mockUsers);
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("should show offline login after 5 seconds", async () => {
-    vi.useFakeTimers();
-    const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
-    try {
-      vi.spyOn(sessionManager, "getOfflineUsers").mockReturnValue(mockUsers);
+  it("should reveal the 'Log in' button after the silent SSO check resolves (OnPush)", async () => {
+    // Override the mock with a deferred promise so we can observe the
+    // pre-resolution state before allowing the silent SSO check to complete.
+    let resolveSsoCheck: () => void;
+    const ssoCheckPromise = new Promise<void>((res) => {
+      resolveSsoCheck = res;
+    });
+    vi.spyOn(sessionManager, "checkRemoteSession").mockReturnValue(
+      ssoCheckPromise,
+    );
 
-      loginState.next(LoginState.LOGGED_OUT);
-      fixture.detectChanges();
-      loginState.next(LoginState.IN_PROGRESS);
-      expect(component.enableOfflineLogin).toBe(false);
+    // Re-create the component after re-mocking so the new promise is used.
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
 
-      await vi.advanceTimersByTimeAsync(10000);
-      await fixture.whenStable();
-      expect(component.enableOfflineLogin).toBe(true);
-      expect(component.offlineUsers).toEqual(mockUsers);
-    } finally {
-      vi.useRealTimers();
-    }
+    // While the silent check is pending: spinner shown, no button.
+    expect(component.ssoCheckDone()).toBe(false);
+    expect(
+      fixture.nativeElement.querySelector("button[mat-flat-button]"),
+    ).toBeFalsy();
+
+    // Resolve the silent check and let the .finally callback run.
+    resolveSsoCheck!();
+    await ssoCheckPromise;
+    await Promise.resolve();
+    fixture.detectChanges();
+
+    expect(component.ssoCheckDone()).toBe(true);
+    const loginButton = fixture.nativeElement.querySelector(
+      "button[mat-flat-button]",
+    );
+    expect(loginButton).toBeTruthy();
+    expect(loginButton.textContent).toContain("Log in");
+  });
+
+  it("should keep the spinner state in sync with login state changes (OnPush)", () => {
+    fixture.detectChanges();
+
+    loginState.next(LoginState.IN_PROGRESS);
+    fixture.detectChanges();
+    expect(component.loginInProgress()).toBe(true);
+    expect(
+      fixture.nativeElement.querySelector(".login-check-progressbar"),
+    ).toBeTruthy();
+
+    loginState.next(LoginState.LOGGED_OUT);
+    fixture.detectChanges();
+    expect(component.loginInProgress()).toBe(false);
+    expect(
+      fixture.nativeElement.querySelector(".login-check-progressbar"),
+    ).toBeFalsy();
+  });
+
+  it("should NOT show an error after the silent SSO check completes without session", () => {
+    fixture.detectChanges();
+
+    // Simulate the initial silent SSO check transitioning to LOGGED_OUT
+    // (the normal "you are not yet logged in" path).
+    loginState.next(LoginState.IN_PROGRESS);
+    loginState.next(LoginState.LOGGED_OUT);
+    fixture.detectChanges();
+
+    expect(component.loginError()).toBeNull();
+    expect(fixture.nativeElement.querySelector(".login-error")).toBeFalsy();
+  });
+
+  it("should show an error message when a user-initiated remote login fails", () => {
+    fixture.detectChanges();
+
+    component.tryLogin();
+    loginState.next(LoginState.IN_PROGRESS);
+    loginState.next(LoginState.LOGIN_FAILED);
+    fixture.detectChanges();
+
+    expect(component.loginError()).toBeTruthy();
+    const errorEl = fixture.nativeElement.querySelector(".login-error");
+    expect(errorEl).toBeTruthy();
+    expect(errorEl.textContent).toContain("login service");
+  });
+
+  it("should clear the error when the user retries", () => {
+    fixture.detectChanges();
+    component.tryLogin();
+    loginState.next(LoginState.IN_PROGRESS);
+    loginState.next(LoginState.LOGIN_FAILED);
+    fixture.detectChanges();
+    expect(component.loginError()).toBeTruthy();
+
+    component.tryLogin();
+    fixture.detectChanges();
+
+    expect(component.loginError()).toBeNull();
+    expect(fixture.nativeElement.querySelector(".login-error")).toBeFalsy();
   });
 });

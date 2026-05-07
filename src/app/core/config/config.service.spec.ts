@@ -659,6 +659,184 @@ describe("ConfigService", () => {
     testConfigMigration(oldConfig, expectedConfig);
   });
 
+  it("should remove import and deduplication view configs migrated to fixed routes", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new Config(Config.CONFIG_KEY);
+      config.data = {
+        "view:import": {
+          component: "Import",
+          _id: "view:import",
+        },
+        "view:review-duplicates": {
+          component: "ReviewDuplicates",
+          _id: "view:review-duplicates",
+        },
+        "view:child": {
+          component: "EntityList",
+          _id: "view:child",
+        },
+      };
+
+      updateSubject.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(service.getConfig("view:import")).toBeUndefined();
+      expect(service.getConfig("view:review-duplicates")).toBeUndefined();
+      expect(service.getConfig("view:child")).toEqual(
+        expect.objectContaining({
+          component: "EntityList",
+          _id: "view:child",
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should migrate entity links in navigationMenu items to entityType format", async () => {
+    const entityViewConfigs = {
+      "view:child": {
+        component: "EntityList",
+        config: { entityType: "Child" },
+      },
+      "view:school": {
+        component: "EntityList",
+        config: { entityType: "School" },
+      },
+      "view:school-overview": {
+        component: "EntityList",
+        config: { entityType: "School" },
+      },
+    };
+    await testConfigMigration(
+      {
+        ...entityViewConfigs,
+        navigationMenu: {
+          items: [
+            { label: "Home", link: "/" },
+            { label: "Children", link: "/child" },
+            {
+              label: "Schools",
+              link: "/school",
+              subMenu: [{ label: "Overview", link: "/school-overview" }],
+            },
+            {
+              label: "Deduplication",
+              link: "/deduplication/review-duplicates",
+            },
+            { label: "Admin", link: "/admin/entity/Child" },
+            { label: "Help", link: "/help" },
+          ],
+        },
+      },
+      {
+        ...entityViewConfigs,
+        navigationMenu: {
+          items: [
+            { label: "Home", link: "/" },
+            { label: "Children", entityType: "Child" },
+            {
+              label: "Schools",
+              entityType: "School",
+              subMenu: [{ label: "Overview", entityType: "School" }],
+            },
+            {
+              label: "Deduplication",
+              link: "/deduplication/review-duplicates",
+            },
+            { label: "Admin", link: "/admin/entity/Child" },
+            { label: "Help", link: "/help" },
+          ],
+        },
+      },
+    );
+  });
+
+  it("should rename view:attendance/recurring-activity to view:recurring-activity", async () => {
+    await testConfigMigration(
+      {
+        "view:attendance/recurring-activity": {
+          component: "EntityList",
+          config: { entityType: "RecurringActivity" },
+        },
+        "view:attendance/recurring-activity/:id": {
+          component: "EntityDetails",
+          config: { entityType: "RecurringActivity" },
+        },
+        navigationMenu: {
+          items: [
+            { label: "Activities", link: "/attendance/recurring-activity" },
+          ],
+        },
+      },
+      {
+        "view:recurring-activity": {
+          component: "EntityList",
+          config: { entityType: "RecurringActivity" },
+        },
+        "view:recurring-activity/:id": {
+          component: "EntityDetails",
+          config: { entityType: "RecurringActivity" },
+        },
+        navigationMenu: {
+          items: [{ label: "Activities", entityType: "RecurringActivity" }],
+        },
+      },
+    );
+  });
+
+  it("should migrate ShortcutDashboard entity links to use /c/ prefix", async () => {
+    await testConfigMigration(
+      {
+        "view:child": {
+          component: "EntityList",
+          config: { entityType: "Child" },
+        },
+        "view:": {
+          component: "Dashboard",
+          config: {
+            widgets: [
+              {
+                component: "ShortcutDashboard",
+                config: {
+                  shortcuts: [
+                    { label: "Add Child", icon: "plus", link: "/child/new" },
+                    { label: "Record Attendance", link: "/attendance/add-day" },
+                    { label: "Already migrated", link: "/c/child" },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      {
+        "view:child": {
+          component: "EntityList",
+          config: { entityType: "Child" },
+        },
+        "view:": {
+          component: "Dashboard",
+          config: {
+            widgets: [
+              {
+                component: "ShortcutDashboard",
+                config: {
+                  shortcuts: [
+                    { label: "Add Child", icon: "plus", link: "/c/child/new" },
+                    { label: "Record Attendance", link: "/attendance/add-day" },
+                    { label: "Already migrated", link: "/c/child" },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+    );
+  });
+
   it("should migrate editComponent EditAttendance to EditLegacyAttendance", async () => {
     const oldConfig = {
       "entity:Note": {

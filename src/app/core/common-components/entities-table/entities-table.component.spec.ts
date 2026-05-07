@@ -251,13 +251,13 @@ describe("EntitiesTableComponent", () => {
     const child = new TestEntity();
     expect(child.isNew).toBe(true);
     component.showEntity(child);
-    expect(navigateSpy).toHaveBeenCalledWith([TestEntity.route, "new"]);
+    expect(navigateSpy).toHaveBeenCalledWith(["/c/test-entity", "new"]);
 
     child._rev = "1-existing";
     expect(child.isNew).toBe(false);
     component.showEntity(child);
     expect(navigateSpy).toHaveBeenCalledWith([
-      TestEntity.route,
+      "/c/test-entity",
       child.getId(true),
     ]);
   });

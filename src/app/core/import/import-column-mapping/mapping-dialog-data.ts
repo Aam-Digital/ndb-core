@@ -5,6 +5,7 @@ import { ImportAdditionalSettings } from "../import-additional-settings/import-a
 export interface MappingDialogData {
   col: ColumnMapping;
   values: any[];
+  totalRowCount: number;
   entityType: EntityConstructor;
   additionalSettings?: ImportAdditionalSettings;
 }

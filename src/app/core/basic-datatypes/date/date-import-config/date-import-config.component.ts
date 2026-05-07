@@ -1,97 +1,61 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
-import { MatInputModule } from "@angular/material/input";
-import { CustomDatePipe } from "../custom-date.pipe";
-import { MatListModule } from "@angular/material/list";
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from "@angular/core";
+import { ColumnMapping } from "../../../import/column-mapping";
+import { EntityConstructor } from "../../../entity/model/entity";
+import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
+import { MatDialog } from "@angular/material/dialog";
+import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
+import { DateImportDialogComponent } from "./date-import-dialog.component";
 import { MatButtonModule } from "@angular/material/button";
-import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { DateDatatype } from "../date.datatype";
 
 /**
- * Configuration dialog for parsing date value of data imported from a file.
+ * Inline import configuration component for date fields,
+ * shown inside the column mapping UI to let users define a date format string.
  */
 @DynamicComponent("DateImportConfig")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-import-config",
   templateUrl: "./date-import-config.component.html",
-  styleUrls: ["./date-import-config.component.scss"],
-  imports: [
-    MatDialogModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatListModule,
-    CustomDatePipe,
-    MatButtonModule,
-    HelpButtonComponent,
-  ],
+  imports: [MatButtonModule],
 })
 export class DateImportConfigComponent {
-  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
-  private confirmation = inject(ConfirmationDialogService);
-  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+  private readonly dialog = inject(MatDialog);
 
-  format = new FormControl("");
-  valid = false;
-  values: { value: string; parsed?: Date }[] = [];
+  col = input<ColumnMapping>();
+  rawData = input<any[]>([]);
+  entityType = input<EntityConstructor>();
+  otherColumnMappings = input<ColumnMapping[]>([]);
+  additionalSettings = input<ImportAdditionalSettings>();
+  onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
-  /**
-   * The date formatting interprets lowercase "mm" as minutes instead of months,
-   * this may lead to misunderstandings, so we check for it and show a warning if detected.
-   */
-  hasLowercaseMM: boolean;
-
-  constructor() {
-    this.values = this.data.values
-      .filter((val) => !!val)
-      .map((value) => ({ value }));
-    this.format.valueChanges.subscribe(() => this.checkDateValues());
-    this.format.setValue(this.data.col.additional);
-  }
-
-  async checkDateValues() {
-    this.format.setErrors(undefined);
-    this.hasLowercaseMM = /mm/.test(this.format.value || "");
-    const dateType = new DateDatatype();
-    for (const val of this.values) {
-      // TODO: check and improve the date parsing. Tests fail with moment.js > 2.29
-      const date = await dateType.importMapFunction(
-        val.value,
-        undefined, // the schema is not needed here, we can skip loading it
-        this.format.value,
-      );
-      if (date instanceof Date && !isNaN(date.getTime())) {
-        val.parsed = date;
-      } else {
-        delete val.parsed;
-        this.format.setErrors({ parsingError: true });
-      }
-    }
-    // Sort unparsed dates to front
-    this.values.sort((v1, v2) =>
-      v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0,
+  openConfig() {
+    const col = this.col();
+    const uniqueValues = new Set<any>(
+      this.rawData().map((row) => row[col.column]),
     );
-  }
 
-  async save() {
-    const confirmed =
-      !this.format.errors ||
-      (await this.confirmation.getConfirmation(
-        $localize`Ignore values?`,
-        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
-      ));
-
-    if (confirmed) {
-      this.data.col.additional = this.format.value;
-      this.dialog.close();
-    }
+    this.dialog
+      .open<DateImportDialogComponent, MappingDialogData>(
+        DateImportDialogComponent,
+        {
+          data: {
+            col: col,
+            values: [...uniqueValues],
+            totalRowCount: this.rawData().length,
+            entityType: this.entityType(),
+            additionalSettings: this.additionalSettings(),
+          },
+          width: "80vw",
+          disableClose: true,
+        },
+      )
+      .afterClosed()
+      .subscribe(() => this.onColumnMappingChange()?.(col));
   }
 }

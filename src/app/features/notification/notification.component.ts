@@ -25,6 +25,7 @@ import { applyUpdate } from "../../core/entity/model/entity-update";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { NotificationConfig } from "./model/notification-config";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { getEntityRuntimeRoute } from "../../core/entity/entity-config.service";
 
 /**
  * Display Notification indicator for toolbar
@@ -247,7 +248,7 @@ export class NotificationComponent implements OnInit {
 
     const entityCtr = this.entityRegistry.get(notification.context.entityType);
     if (entityCtr) {
-      url = `/${entityCtr?.route}`;
+      url = getEntityRuntimeRoute(entityCtr);
       if (notification.context.entityId) {
         url += `/${notification.context.entityId}`;
       }

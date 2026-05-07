@@ -3,7 +3,10 @@ import { AttendanceExportService } from "./attendance-export.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { DownloadService } from "#src/app/core/export/download-service/download.service";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+} from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { AttendanceItem } from "./model/attendance-item";
 import { NullAttendanceStatusType } from "./model/attendance-status";
@@ -68,6 +71,7 @@ describe("AttendanceExportService", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: DownloadService, useValue: mockDownloadService },
         { provide: EntityActionsService, useValue: mockEntityActionsService },
+        { provide: EntityRegistry, useValue: new EntityRegistry() },
         { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
       ],
     });

@@ -89,11 +89,6 @@
         ]
       }
     },
-    "view:import": {
-      "component": "Import",
-      "config": {},
-      "_id": "view:import"
-    },
     "view:report": {
       "component": "Reporting",
       "config": {},
