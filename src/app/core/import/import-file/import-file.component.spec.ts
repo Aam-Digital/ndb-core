@@ -35,4 +35,24 @@ describe("ImportSelectFileComponent", () => {
     expect(component.data).toBeUndefined();
     expect(component.inputFileField.formControl.getRawValue()).toEqual(null);
   });
+
+  it("should handle parsed CSV data with auto-detected separators", () => {
+    const testData: ParsedData<any> = {
+      data: [{ name: "Tabby", items: "item1;item2;item3" }],
+      detectedDelimiter: ";",
+    };
+    component.onFileLoad(testData);
+    expect(component.data).toEqual(testData);
+  });
+
+  it("should pass through detected delimiter from PapaParse", () => {
+    const testData: ParsedData<any> = {
+      data: [{ name: "John", age: 30 }],
+      fields: ["name", "age"],
+      detectedDelimiter: "|",
+      filename: "test.csv",
+    };
+    component.onFileLoad(testData);
+    expect(component.data.detectedDelimiter).toBe("|");
+  });
 });

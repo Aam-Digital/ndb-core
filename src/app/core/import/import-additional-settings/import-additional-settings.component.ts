@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   model,
 } from "@angular/core";
@@ -10,6 +11,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 export interface ImportAdditionalSettings {
   multiValueSeparator?: string;
@@ -30,12 +32,37 @@ export interface ImportAdditionalSettings {
     HelpButtonComponent,
     BasicAutocompleteComponent,
     FormsModule,
+    CommonModule,
   ],
 })
 export class ImportAdditionalSettingsComponent {
   entityType = input<string>();
 
   settings = model<ImportAdditionalSettings>({});
+
+  // Input for auto-detected delimiter from parsed CSV data
+  autoDetectedDelimiter = input<string>();
+
+  // Computed signal for localized delimiter label
+  detectedDelimiterLabel = computed(() => {
+    const detected = this.autoDetectedDelimiter();
+    if (!detected) return null;
+
+    switch (detected) {
+      case ",":
+        return $localize`:Delimiter label for comma|,comma`;
+      case ";":
+        return $localize`:Delimiter label for semicolon|;semicolon`;
+      case "\t":
+        return $localize`:Delimiter label for tab|\t:tab`;
+      case "|":
+        return $localize`:Delimiter label for pipe|\|:pipe`;
+      case ":":
+        return $localize`:Delimiter label for colon|::colon`;
+      default:
+        return detected; // Fallback to raw character for unknown delimiters
+    }
+  });
 
   get multiValueSeparator(): string {
     return this.settings()?.multiValueSeparator ?? ",";

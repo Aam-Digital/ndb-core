@@ -66,6 +66,9 @@ export class ImportComponent {
 
   importSettings: Partial<ImportSettings> = {};
 
+  /** Auto-detected CSV delimiter from the uploaded file */
+  detectedDelimiter?: string;
+
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
 
@@ -105,6 +108,7 @@ export class ImportComponent {
   onDataLoaded(data: ParsedData) {
     this.rawData = data.data;
     this.importSettings.filename = data.filename;
+    this.detectedDelimiter = data.detectedDelimiter;
 
     if (this.importSettings.columnMapping) {
       this.alertService.addInfo(
