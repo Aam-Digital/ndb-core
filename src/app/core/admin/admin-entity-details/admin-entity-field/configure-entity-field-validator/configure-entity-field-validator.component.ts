@@ -41,7 +41,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 })
 export class ConfigureEntityFieldValidatorComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   validatorForm: FormGroup;
 

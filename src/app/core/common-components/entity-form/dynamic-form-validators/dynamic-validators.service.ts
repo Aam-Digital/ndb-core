@@ -60,7 +60,8 @@ function parseToDate(value: unknown): Date | undefined {
       return new Date();
     }
 
-    const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
+    const dateOnlyMatch = dateRegex.exec(value);
     if (dateOnlyMatch) {
       const localDate = new Date(
         Number(dateOnlyMatch[1]),
