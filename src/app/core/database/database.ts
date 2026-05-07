@@ -114,12 +114,14 @@ export abstract class Database {
   /**
    * Load all documents (with the given prefix) from the database.
    * @param prefix The string prefix of document ids that should be retrieved
+   * @param options Additional options for the query, like a `limit`. See the PouchDB docs for details.
    */
-  getAll(prefix = ""): Promise<Array<any>> {
+  getAll(prefix = "", options = {}): Promise<Array<any>> {
     return this.allDocs({
       include_docs: true,
       startkey: prefix,
       endkey: prefix + "\ufff0",
+      ...options,
     });
   }
 

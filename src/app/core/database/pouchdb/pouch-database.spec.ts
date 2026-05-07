@@ -302,6 +302,20 @@ describe("PouchDatabase tests", () => {
     await expect(database.isEmpty()).resolves.toEqual(false);
   });
 
+  it("should allow to fetch docs with pagination", async () => {
+    await Promise.all(
+      [1, 2, 3].map((id) =>
+        database.put({ _id: `User:${id}`, name: `User ${id}` }),
+      ),
+    );
+    let docs = await database.getAll("User:", { limit: 2 });
+    expect(docs).toHaveLength(2);
+    docs = await database.getAll("User:", { limit: 4 });
+    expect(docs).toHaveLength(3);
+    docs = await database.getAll("User:", { limit: 4, skip: 2 });
+    expect(docs).toHaveLength(1);
+  });
+
   describe("purge", () => {
     it("should purge doc and emit changes deletion event", async () => {
       await database.put({ _id: "Child:2", name: "test" });
