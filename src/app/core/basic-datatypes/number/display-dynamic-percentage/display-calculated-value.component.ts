@@ -79,8 +79,8 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
   private _bmi(): number {
     const entity = this.entity();
     const config = this.config();
-    const weight: number = entity?.[config?.valueFields[0]];
-    const height: number = entity?.[config?.valueFields[1]];
+    const weight: number = entity?.[config?.valueFields?.[0]];
+    const height: number = entity?.[config?.valueFields?.[1]];
 
     const bmi = weight / ((height / 100) * (height / 100));
     return Math.round(bmi * 100) / 100;

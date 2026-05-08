@@ -22,11 +22,9 @@ describe("DisplayEntityComponent", () => {
 
   it("should handle single value and array value", () => {
     fixture.componentRef.setInput("value", "id-1");
-    component.ngOnInit();
-    expect(component.entityIds).toEqual(["id-1"]);
+    expect(component.entityIds()).toEqual(["id-1"]);
 
     fixture.componentRef.setInput("value", ["id-1", "id-2"]);
-    component.ngOnInit();
-    expect(component.entityIds).toEqual(["id-1", "id-2"]);
+    expect(component.entityIds()).toEqual(["id-1", "id-2"]);
   });
 });

@@ -11,7 +11,13 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   selector: "app-display-url",
   template: `
     @if (value()) {
-      <a [href]="value()" target="_blank" class="clickable">{{ value() }}</a>
+      <a
+        [href]="value()"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="clickable"
+        >{{ value() }}</a
+      >
     } @else {
       <span>-</span>
     }

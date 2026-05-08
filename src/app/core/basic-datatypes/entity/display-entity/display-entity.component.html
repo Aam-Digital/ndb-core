@@ -1,6 +1,6 @@
-@if (entityIds?.length < aggregationThreshold) {
+@if (entityIds()?.length < aggregationThreshold) {
   <!-- Display each entity -->
-  @for (e of entityIds; track e) {
+  @for (e of entityIds(); track e) {
     <app-entity-block class="display-entity" [entityId]="e"></app-entity-block>
   }
 } @else {
