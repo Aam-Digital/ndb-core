@@ -1,16 +1,13 @@
 import {
   Component,
-  effect,
-  signal,
-  WritableSignal,
+  computed,
   inject,
+  resource,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { ChildSchoolRelation } from "../model/childSchoolRelation";
-import { Logging } from "../../../core/logging/logging.service";
 
 @DynamicComponent("DisplayParticipantsCount")
 @Component({
@@ -21,24 +18,13 @@ import { Logging } from "../../../core/logging/logging.service";
 export class DisplayParticipantsCountComponent extends ViewDirective<any> {
   private _childrenService = inject(ChildrenService);
 
-  participantRelationsCount: WritableSignal<number> = signal(null);
+  private relationsResource = resource({
+    params: () => this.entity()?.getId(),
+    loader: ({ params: entityId }) =>
+      this._childrenService.queryActiveRelationsOf(entityId),
+  });
 
-  constructor() {
-    super();
-    effect(() => {
-      const entity = this.entity();
-      if (!entity) return;
-      this._childrenService
-        .queryActiveRelationsOf(entity.getId())
-        .then((relations: ChildSchoolRelation[]) => {
-          this.participantRelationsCount.set(relations.length);
-        })
-        .catch((reason) => {
-          Logging.error(
-            "Could not calculate participantRelationsCount, error response from ChildrenService." +
-              reason,
-          );
-        });
-    });
-  }
+  participantRelationsCount = computed(
+    () => this.relationsResource.value()?.length ?? null,
+  );
 }
