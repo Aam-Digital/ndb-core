@@ -314,12 +314,8 @@ export class EntityCountDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig &#x3D; {
-      entityType: this.formControl.value?.entityType || &quot;Child&quot;,
-      groupBy:
-        this.formControl.value?.groupBy &amp;&amp;
-        this.formControl.value.groupBy.length &gt; 0
-          ? [...this.formControl.value.groupBy]
-          : [&quot;center&quot;, &quot;gender&quot;],
+      entityType: this.formControl.value?.entityType,
+      groupBy: [...(this.formControl.value?.groupBy ?? [])],
     };
   }
 

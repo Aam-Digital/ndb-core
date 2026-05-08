@@ -333,8 +333,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="60"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-settings.component/entity-count-dashboard-settings.component.ts:60</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="56"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-settings.component/entity-count-dashboard-settings.component.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -370,8 +370,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="64"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-settings.component/entity-count-dashboard-settings.component.ts:64</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-settings.component/entity-count-dashboard-settings.component.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -475,12 +475,8 @@ export class EntityCountDashboardSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.localConfig &#x3D; {
-      entityType: this.formControl.value?.entityType || &quot;Child&quot;,
-      groupBy:
-        this.formControl.value?.groupBy &amp;&amp;
-        this.formControl.value.groupBy.length &gt; 0
-          ? [...this.formControl.value.groupBy]
-          : [&quot;center&quot;, &quot;gender&quot;],
+      entityType: this.formControl.value?.entityType,
+      groupBy: [...(this.formControl.value?.groupBy ?? [])],
     };
   }
 

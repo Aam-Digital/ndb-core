@@ -697,7 +697,7 @@ export class EntityCountDashboardComponent {
     );
     groupCounts &#x3D; this.mergeNotDefinedGroups(groupCounts);
 
-    if (field.dataType &#x3D;&#x3D;&#x3D; &quot;configurable-enum&quot;) {
+    if (field?.dataType &#x3D;&#x3D;&#x3D; &quot;configurable-enum&quot;) {
       return this.getEnumGroupCounts(groupCounts, field);
     }
 
