@@ -1401,12 +1401,12 @@
   "2274988131600672071": "Lokale Datenbank muss zurückgesetzt werden",
   "882273144557925433": "Die lokale Datenbank scheint beschädigt zu sein und das Speichern ist nicht mehr möglich.\n\nDies kann passieren, nachdem Daten parallel in mehreren Tabs gleichzeitig gespeichert wurden. Wir arbeiten an Verbesserungen, um dies zukünftig zu ermöglichen.",
   "5454660468604811925": "Der Login-Server konnte nicht erreicht werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
-  "1913716452476591237": "Download failed [{$PH}]",
-  "5830500205758990228": " Configure value mapping\n",
-  "5901674250370539358": " Match by {$INTERPOLATION} property ",
-  "5758462877753736339": "Large import: address lookups may be slow or fail. Consider skipping lookups below.",
-  "1759705639664777658": " Skip address lookup\n",
-  "9023640098177902376": " no date defined ",
-  "8386976308507652568": " All ",
-  "7810810299906483082": "Clear date filter"
+  "1913716452476591237": "Download fehlgeschlagen [{$PH}]",
+  "5830500205758990228": "Wertzuordnung konfigurieren",
+  "5901674250370539358": "Abgleich mit Feld \"{$INTERPOLATION}\" ",
+  "5758462877753736339": "Großer Import: Adress-Suche kann langsam sein oder fehlschlagen. Überspringen Sie gegebenenfalls die folgenden Adressauflösungen.",
+  "1759705639664777658": "Adress-Suche überspringen",
+  "9023640098177902376": "Kein Datum definiert ",
+  "8386976308507652568": " Alle ",
+  "7810810299906483082": "Datumsfilter zurücksetzen"
 }
