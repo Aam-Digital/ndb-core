@@ -240,7 +240,7 @@ The filter can either be one of the predefined options or two manually entered d
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:20</a></div>
                             </td>
                         </tr>
 
@@ -338,7 +338,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:15</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:20</a></code>
 </div>
                         </td>
                     </tr>
@@ -373,7 +373,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:19</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:24</a></code>
 </div>
                         </td>
                     </tr>
@@ -408,7 +408,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:18</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:23</a></code>
 </div>
                         </td>
                     </tr>
@@ -436,7 +436,7 @@ The filter can either be one of the predefined options or two manually entered d
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:25</a></div>
                         </td>
                     </tr>
 
@@ -473,7 +473,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:45</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:75</a></code>
 </div>
                         </td>
                     </tr>
@@ -520,7 +520,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:37</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:67</a></code>
 </div>
                         </td>
                     </tr>
@@ -555,8 +555,8 @@ The filter can either be one of the predefined options or two manually entered d
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="29"
-                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:29</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="34"
+                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:34</a></div>
                         </td>
                     </tr>
 
@@ -600,7 +600,7 @@ The filter can either be one of the predefined options or two manually entered d
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:41</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:46</a></code>
 </div>
                         </td>
                     </tr>
@@ -637,8 +637,8 @@ The filter can either be one of the predefined options or two manually entered d
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -669,7 +669,12 @@ import moment from &quot;moment&quot;;
 import { calculateDateRange } from &quot;app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils&quot;;
 import { isValidDate } from &quot;../../../utils/utils&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
-import { DataFilter, Filter } from &quot;./filters&quot;;
+import {
+  createEmptyValueFilter,
+  DataFilter,
+  EMPTY_FILTER_OPTION_KEY,
+  Filter,
+} from &quot;./filters&quot;;
 import { DateRangeFilterConfigOption } from &quot;../../entity-list/EntityListConfig&quot;;
 import { DateRangeFilterComponent } from &quot;../../basic-datatypes/date/date-range-filter/date-range-filter.component&quot;;
 
@@ -705,6 +710,10 @@ export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
   }
 
   getFilter(): DataFilter&lt;T&gt; {
+    if (this.selectedOptionValues[0] &#x3D;&#x3D;&#x3D; EMPTY_FILTER_OPTION_KEY) {
+      return createEmptyValueFilter(this.name, false);
+    }
+
     const range &#x3D; this.getDateRange();
     const filterObject: { $gte?: string; $lte?: string } &#x3D; {};
     if (range.start) {

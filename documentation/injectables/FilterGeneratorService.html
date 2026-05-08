@@ -197,8 +197,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="47"
-                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:47</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -317,7 +317,9 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 import {
+  createEmptyValueFilter,
   DataFilter,
+  EMPTY_FILTER_OPTION_KEY,
   Filter,
   FilterSelectionOption,
   SelectableFilter,
@@ -354,6 +356,56 @@ export class FilterGeneratorService {
   private schemaService &#x3D; inject(EntitySchemaService);
   private placeholderService &#x3D; inject(DynamicPlaceholderValueService);
 
+  private isEmptyValue(value: unknown): boolean {
+    return value &#x3D;&#x3D;&#x3D; undefined || value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; &quot;&quot;;
+  }
+
+  private hasEmptyValue&lt;T extends Entity&gt;(
+    data: T[],
+    fieldName: string,
+    includeNestedId &#x3D; false,
+    includeEmptyArray &#x3D; false,
+  ): boolean {
+    return (data ?? []).some((entity) &#x3D;&gt; {
+      const value &#x3D; entity?.[fieldName];
+      if (this.isEmptyValue(value)) {
+        return true;
+      }
+
+      if (includeEmptyArray &amp;&amp; Array.isArray(value) &amp;&amp; value.length &#x3D;&#x3D;&#x3D; 0) {
+        return true;
+      }
+
+      if (
+        includeNestedId &amp;&amp;
+        value &amp;&amp;
+        typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+        &quot;id&quot; in value
+      ) {
+        return this.isEmptyValue((value as { id?: unknown }).id);
+      }
+
+      return false;
+    });
+  }
+
+  private createEmptyOption&lt;T extends Entity&gt;(
+    fieldName: string,
+    includeNestedId &#x3D; false,
+    includeEmptyArray &#x3D; false,
+  ): FilterSelectionOption&lt;T&gt; {
+    return {
+      key: EMPTY_FILTER_OPTION_KEY,
+      label: $localize&#x60;:filter option:not defined&#x60;,
+      isEmpty: true,
+      filter: createEmptyValueFilter(
+        fieldName,
+        includeNestedId,
+        includeEmptyArray,
+      ),
+    };
+  }
+
   /**
    *
    * @param filterConfigs
@@ -385,18 +437,12 @@ export class FilterGeneratorService {
             ? value.id
             : value;
 
-        let hasEmptyArray &#x3D; false;
         const dataValues &#x3D; [
           ...new Set(
             (data ?? []).flatMap((e) &#x3D;&gt; {
               const v &#x3D; e?.[filterConfig.id];
               // Handle array values (multi-select fields)
               if (Array.isArray(v)) {
-                // Empty arrays should be treated as &quot;not defined&quot;
-                if (v.length &#x3D;&#x3D;&#x3D; 0) {
-                  hasEmptyArray &#x3D; true;
-                  return [];
-                }
                 return v.map(extractId);
               }
               // Handle single object value
@@ -418,36 +464,20 @@ export class FilterGeneratorService {
             filter: { [filterConfig.id + &quot;.id&quot;]: invalidId } as DataFilter&lt;T&gt;,
           }));
 
-        // Add &quot;empty&quot; option if there are empty/undefined values or empty arrays
-        const hasEmpty &#x3D;
-          hasEmptyArray ||
-          dataValues.some((v) &#x3D;&gt; v &#x3D;&#x3D;&#x3D; undefined || v &#x3D;&#x3D;&#x3D; null || v &#x3D;&#x3D;&#x3D; &quot;&quot;);
-        const emptyOption &#x3D; hasEmpty
-          ? [
-              {
-                key: null,
-                label: $localize&#x60;:filter option:not defined&#x60;,
-                isEmpty: true,
-                filter: {
-                  $or: [
-                    { [filterConfig.id]: undefined },
-                    { [filterConfig.id]: null },
-                    { [filterConfig.id + &quot;.id&quot;]: undefined },
-                    { [filterConfig.id + &quot;.id&quot;]: null },
-                    { [filterConfig.id + &quot;.id&quot;]: &quot;&quot; },
-                  ],
-                } as DataFilter&lt;T&gt;,
-              },
-            ]
-          : [];
-
-        filter &#x3D; new ConfigurableEnumFilter(
+        const enumFilter &#x3D; new ConfigurableEnumFilter(
           filterConfig.id,
           label,
           enumValues,
           filterConfig.singleSelectOnly,
-          [...invalidOptions, ...emptyOption],
+          invalidOptions,
         );
+        filter &#x3D; enumFilter;
+        const isArrayField &#x3D; schema.isArray &#x3D;&#x3D;&#x3D; true;
+        if (this.hasEmptyValue(data, filterConfig.id, true, isArrayField)) {
+          enumFilter.options.unshift(
+            this.createEmptyOption(filterConfig.id, true, isArrayField),
+          );
+        }
       } else if (type &#x3D;&#x3D; &quot;boolean&quot;) {
         filter &#x3D; new BooleanFilter(
           filterConfig.id,
@@ -481,11 +511,28 @@ export class FilterGeneratorService {
         const entityType &#x3D; filterConfig.type || schema.additional;
         const filterEntities &#x3D;
           await this.entityMapperService.loadType(entityType);
-        filter &#x3D; new EntityFilter(filterConfig.id, label, filterEntities);
+        const entityFilter &#x3D; new EntityFilter(
+          filterConfig.id,
+          label,
+          filterEntities,
+        );
+        filter &#x3D; entityFilter;
+        const isArrayField &#x3D; schema.isArray &#x3D;&#x3D;&#x3D; true;
+        if (this.hasEmptyValue(data, filterConfig.id, false, isArrayField)) {
+          entityFilter.options.unshift(
+            this.createEmptyOption(filterConfig.id, false, isArrayField),
+          );
+        }
       } else {
         const options &#x3D; [...new Set(data.map((c) &#x3D;&gt; c[filterConfig.id]))];
         const fSO: FilterSelectionOption&lt;T&gt;[] &#x3D;
           SelectableFilter.generateOptions(options, filterConfig.id);
+        const isArrayField &#x3D; schema.isArray &#x3D;&#x3D;&#x3D; true;
+        if (this.hasEmptyValue(data, filterConfig.id, false, isArrayField)) {
+          fSO.unshift(
+            this.createEmptyOption(filterConfig.id, false, isArrayField),
+          );
+        }
 
         filter &#x3D; new SelectableFilter&lt;T&gt;(filterConfig.id, fSO, label);
       }

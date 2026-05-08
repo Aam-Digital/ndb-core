@@ -248,7 +248,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/core/filter/filters/filters.ts:93</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="123" class="link-to-prism">src/app/core/filter/filters/filters.ts:123</a></div>
                             </td>
                         </tr>
 
@@ -373,7 +373,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:105</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:135</a></code>
 </div>
                         </td>
                     </tr>
@@ -414,7 +414,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:103</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:133</a></code>
 </div>
                         </td>
                     </tr>
@@ -447,7 +447,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/core/filter/filters/filters.ts:104</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/core/filter/filters/filters.ts:134</a></div>
                         </td>
                     </tr>
 
@@ -479,7 +479,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/filter/filters/filters.ts:106</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="136" class="link-to-prism">src/app/core/filter/filters/filters.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -516,7 +516,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:35</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:65</a></code>
 </div>
                         </td>
                     </tr>
@@ -560,7 +560,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:45</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:75</a></code>
 </div>
                         </td>
                     </tr>
@@ -607,7 +607,7 @@ an instance of this FilterSelection class can manage all filter selection logic.
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:37</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:67</a></code>
 </div>
                         </td>
                     </tr>
@@ -644,8 +644,8 @@ an instance of this FilterSelection class can manage all filter selection logic.
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -757,7 +757,7 @@ that is true of a data item&#39;s property exactly matches that value.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:126</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Filter.html#source" target="_self" >Filter:156</a></code>
 </div>
                         </td>
                     </tr>
@@ -797,8 +797,8 @@ If the given key is undefined or invalid, the returned filter matches any elemen
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="116"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:116</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:146</a></div>
                         </td>
                     </tr>
 
@@ -873,6 +873,36 @@ import { EventEmitter, Type } from &quot;@angular/core&quot;;
  * The filter is parsed using ucast {@link https://github.com/stalniy/ucast/tree/master/packages/mongo2js}
  */
 export type DataFilter&lt;T&gt; &#x3D; MongoQuery&lt;T&gt; | {};
+
+export const EMPTY_FILTER_OPTION_KEY &#x3D; &quot;__empty__&quot;;
+
+export function createEmptyValueFilter&lt;T extends Entity&gt;(
+  fieldName: string,
+  includeNestedId &#x3D; false,
+  includeEmptyArray &#x3D; false,
+): DataFilter&lt;T&gt; {
+  const emptyFilterOptions: DataFilter&lt;T&gt;[] &#x3D; [
+    { [fieldName]: undefined } as DataFilter&lt;T&gt;,
+    { [fieldName]: null } as DataFilter&lt;T&gt;,
+    { [fieldName]: &quot;&quot; } as DataFilter&lt;T&gt;,
+  ];
+
+  if (includeNestedId) {
+    emptyFilterOptions.push(
+      { [fieldName + &quot;.id&quot;]: undefined } as DataFilter&lt;T&gt;,
+      { [fieldName + &quot;.id&quot;]: null } as DataFilter&lt;T&gt;,
+      { [fieldName + &quot;.id&quot;]: &quot;&quot; } as DataFilter&lt;T&gt;,
+    );
+  }
+
+  if (includeEmptyArray) {
+    emptyFilterOptions.push({ [fieldName]: { $size: 0 } } as DataFilter&lt;T&gt;);
+  }
+
+  return {
+    $or: emptyFilterOptions,
+  } as DataFilter&lt;T&gt;;
+}
 
 export abstract class Filter&lt;T extends Entity&gt; {
   /**
@@ -999,6 +1029,12 @@ export interface FilterSelectionOption&lt;T&gt; {
 
   /** Optional color */
   color?: string;
+
+  /** Optional marker to highlight invalid values in the UI */
+  isInvalid?: boolean;
+
+  /** Optional marker to highlight missing/empty values in the UI */
+  isEmpty?: boolean;
 
   /**
    * The filter query which should be used if this filter is selected
