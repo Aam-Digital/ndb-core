@@ -1,7 +1,7 @@
 import { Entity } from "#src/app/core/entity/model/entity";
 import {
   Component,
-  Input,
+  input,
   OnInit,
   signal,
   ChangeDetectionStrategy,
@@ -40,8 +40,8 @@ export class EditAgeComponent
   extends CustomFormControlDirective<DateWithAge>
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   age = signal<number | null>(null);
 

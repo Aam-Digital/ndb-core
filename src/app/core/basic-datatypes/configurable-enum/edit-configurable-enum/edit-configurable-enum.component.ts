@@ -2,9 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
+  input,
   OnInit,
   ViewChild,
   DestroyRef,
@@ -60,9 +60,9 @@ export class EditConfigurableEnumComponent
   extends CustomFormControlDirective<
     ConfigurableEnumValue | ConfigurableEnumValue[]
   >
-  implements OnInit, OnChanges, EditComponent
+  implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
   @ViewChild(BasicAutocompleteComponent)
   autocompleteComponent: BasicAutocompleteComponent<
     ConfigurableEnumValue,
@@ -87,6 +87,17 @@ export class EditConfigurableEnumComponent
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
   createNewOption: (input: string) => Promise<ConfigurableEnumValue>;
 
+  constructor() {
+    super();
+    effect(() => {
+      const config = this.formFieldConfig();
+      this.multi = config?.isArray ?? false;
+      this.enumId = config?.additional;
+      this.updateEnumData();
+      this.updateInvalidOptions();
+    });
+  }
+
   get formControl(): FormControl<
     ConfigurableEnumValue | ConfigurableEnumValue[]
   > {
@@ -96,23 +107,13 @@ export class EditConfigurableEnumComponent
   }
 
   ngOnInit() {
-    this.multi = this.formFieldConfig?.isArray ?? false;
-    this.enumId = this.formFieldConfig?.additional;
-    this.updateEnumData();
-    this.updateInvalidOptions();
-
-    // Subscribe to value changes to trigger change detection
     if (this.formControl) {
       this.formControl.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
-          this.changeDetector.markForCheck();
+          this.updateInvalidOptions();
         });
     }
-  }
-
-  ngOnChanges(): void {
-    this.updateInvalidOptions();
   }
 
   private updateInvalidOptions(): void {
@@ -134,7 +135,7 @@ export class EditConfigurableEnumComponent
       return [];
     }
 
-    let additionalOptions;
+    let additionalOptions: ConfigurableEnumValue[] | undefined;
     const value = this.formControl.value;
 
     if (
@@ -199,6 +200,7 @@ export class EditConfigurableEnumComponent
     if (
       value &&
       !Array.isArray(value) &&
+      !(value as any).isInvalidOption &&
       // value not in options anymore
       !this.enumEntity.values.some((v) => v.id === value.id) &&
       // but was in options previously

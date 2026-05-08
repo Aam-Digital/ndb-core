@@ -40,9 +40,14 @@ describe("EditConfigurableEnumComponent", () => {
 
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component, "test", {
-      additional: "some-id",
-    });
+    setupCustomFormControlEditComponent(
+      component,
+      "test",
+      {
+        additional: "some-id",
+      },
+      fixture,
+    );
     fixture.detectChanges();
   });
 
@@ -51,22 +56,19 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should extract the enum ID", () => {
-    component.formFieldConfig = { id: "test", additional: "some-id" };
-    component.ngOnInit();
     expect(component.enumId).toBe("some-id");
   });
 
-  it("should detect multi selection mode", () => {
-    component.formFieldConfig = { id: "test", additional: "some-id" };
-    component.ngOnInit();
+  it("should detect multi selection mode", async () => {
     expect(component.multi).toBeFalsy();
 
-    component.formFieldConfig = {
+    fixture.componentRef.setInput("formFieldConfig", {
       id: "test",
       additional: "some-id",
       isArray: true,
-    };
-    component.ngOnInit();
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.multi).toBe(true);
   });
 
@@ -83,12 +85,11 @@ describe("EditConfigurableEnumComponent", () => {
     };
 
     component.ngControl.control.setValue(invalidOption);
-    component.ngOnChanges();
     expect(component.invalidOptions).toEqual([invalidOption]);
 
     component.ngControl.control.setValue([invalidOption, invalid2]);
     component.multi = true;
-    component.ngOnChanges();
+    component.ngControl.control.setValue([invalidOption, invalid2]);
     expect(component.invalidOptions).toEqual([invalidOption, invalid2]);
   });
 
@@ -133,8 +134,6 @@ describe("EditConfigurableEnumComponent", () => {
       isInvalidOption: true,
     });
 
-    component.ngOnChanges();
-
     expect(component.options).toEqual([
       { id: "1", label: "1" },
       { id: "a", label: "a", isInvalidOption: true },
@@ -159,8 +158,6 @@ describe("EditConfigurableEnumComponent", () => {
     const option2 = { id: "2", label: "2" };
     component.enumEntity.values = [option1, option2];
     component.ngControl.control.setValue(option1);
-
-    component.ngOnChanges();
 
     // simulate removing option "2"
     mockDialog.open.mockReturnValue({ afterClosed: () => of({}) } as any);

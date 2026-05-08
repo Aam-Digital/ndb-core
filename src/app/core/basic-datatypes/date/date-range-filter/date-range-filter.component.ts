@@ -1,11 +1,9 @@
 import {
   Component,
-  EventEmitter,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
@@ -16,9 +14,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-range-filter",
@@ -26,53 +22,55 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   styleUrls: ["./date-range-filter.component.scss"],
   imports: [MatFormFieldModule, MatDatepickerModule, FormsModule],
 })
-export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
+export class DateRangeFilterComponent<T extends Entity> {
   private dialog = inject(MatDialog);
 
   fromDate: Date;
   toDate: Date;
 
-  @Input() filterConfig: DateFilter<T>;
-  @Output() dateRangeChange = new EventEmitter<{ from: Date; to: Date }>();
+  filterConfig = input<DateFilter<T>>();
+  dateRangeChange = output<{ from: Date; to: Date }>();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.filterConfig) {
-      this.filterConfig.selectedOptionChange
-        .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          if (this.filterConfig.selectedOptionValues.length === 0) {
-            this.fromDate = undefined;
-            this.toDate = undefined;
-            this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
-          }
-        });
+  constructor() {
+    effect((onCleanup) => {
+      const filterConfig = this.filterConfig();
+      if (!filterConfig) return;
+
+      const sub = filterConfig.selectedOptionChange.subscribe(() => {
+        if (filterConfig.selectedOptionValues.length === 0) {
+          this.fromDate = undefined;
+          this.toDate = undefined;
+          this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
+        }
+      });
       this.initDates();
-    }
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   private initDates() {
-    const range = this.filterConfig.getDateRange();
+    const filterConfig = this.filterConfig();
+    if (!filterConfig) return;
+    const range = filterConfig.getDateRange();
     if (
       (range.start !== this.fromDate || range.start === undefined) &&
       (range.end !== this.toDate || range.end === undefined)
     ) {
       this.fromDate = range.start;
       this.toDate = range.end;
-      this.filterConfig.selectedOptionChange.emit(
-        this.filterConfig.selectedOptionValues,
-      );
+      filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
       this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
     }
   }
 
   dateChangedManually() {
-    this.filterConfig.selectedOptionValues = [
+    const filterConfig = this.filterConfig();
+    if (!filterConfig) return;
+    filterConfig.selectedOptionValues = [
       isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
       isValidDate(this.toDate) ? dateToString(this.toDate) : "",
     ];
-    this.filterConfig.selectedOptionChange.emit(
-      this.filterConfig.selectedOptionValues,
-    );
+    filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
     this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
   }
 
@@ -82,7 +80,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
-        data: this.filterConfig,
+        data: this.filterConfig(),
       })
       .afterClosed()
       .subscribe(() => this.initDates());

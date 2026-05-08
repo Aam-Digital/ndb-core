@@ -2,7 +2,7 @@ import { CustomFormControlDirective } from "#src/app/core/common-components/basi
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -26,7 +26,7 @@ export class EditUrlComponent
   extends CustomFormControlDirective<string>
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   get formControl(): FormControl<string> {
     return this.ngControl.control as FormControl<string>;

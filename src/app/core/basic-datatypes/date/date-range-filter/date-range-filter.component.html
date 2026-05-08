@@ -1,5 +1,5 @@
 <mat-form-field appearance="fill" floatLabel="always" class="full-width">
-  <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
+  <mat-label>{{ filterConfig()?.label || filterConfig()?.name }}</mat-label>
 
   <mat-date-range-input>
     <input
