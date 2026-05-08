@@ -11,7 +11,7 @@ export abstract class ViewDirective<T, C = any> {
 
   formFieldConfig = input<FormFieldConfig>();
   // eslint-disable-next-line @angular-eslint/no-input-rename -- alias required: "config" is already the name of the computed that merges formFieldConfig.additional with the direct input
-  protected readonly _directConfig = input<C>(undefined, { alias: "config" });
+  readonly _directConfig = input<C>(undefined, { alias: "config" });
 
   readonly config = computed<C>(() => {
     const ffc = this.formFieldConfig();
