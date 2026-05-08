@@ -205,8 +205,8 @@ on request or automatically on the first visit of a new version after update.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -412,16 +412,17 @@ export class LatestChangesService {
     const releasesUpToCurrentVersion &#x3D; releases.filter(
       (r) &#x3D;&gt; this.compareVersion(r.tag_name, currentVersion) &lt;&#x3D; 0,
     );
-    if (releasesUpToCurrentVersion.length &lt; 1) {
-      return [];
-    }
 
     if (previousVersion) {
+      if (releasesUpToCurrentVersion.length &lt; 1) {
+        return [];
+      }
       return releasesUpToCurrentVersion
         .filter((r) &#x3D;&gt; this.compareVersion(r.tag_name, previousVersion) &gt; 0)
         .sort((a, b) &#x3D;&gt; this.compareVersion(b.tag_name, a.tag_name));
     } else {
-      return [releasesUpToCurrentVersion[0]];
+      // Show current version&#x27;s release; fall back to latest if version not found in GitHub releases
+      return [releasesUpToCurrentVersion[0] ?? releases[0]].filter(Boolean);
     }
   }
 
