@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ReadonlyFunctionComponent } from "./readonly-function.component";
-import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("ReadonlyFunctionComponent", () => {
@@ -17,9 +16,6 @@ describe("ReadonlyFunctionComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReadonlyFunctionComponent);
     component = fixture.componentInstance;
-    const formGroup = new UntypedFormGroup({});
-    const formControl = new UntypedFormControl();
-    formGroup.registerControl("name", formControl);
     fixture.componentRef.setInput("entity", TestEntity.create("nameBefore"));
     fixture.componentRef.setInput("config", (entity) => entity.toString());
     fixture.detectChanges();

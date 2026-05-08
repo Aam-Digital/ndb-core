@@ -59,10 +59,9 @@ describe("DisplayTodoCompletionComponent", () => {
         completedBy: completingChild.getId(),
         completedAt: new Date(),
       });
-      component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.completedBy).toEqual(completingChild);
+      expect(component.completedBy.value()).toEqual(completingChild);
     } finally {
       vi.useRealTimers();
     }

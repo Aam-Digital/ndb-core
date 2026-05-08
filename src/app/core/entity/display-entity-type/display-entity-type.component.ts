@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit,
+  computed,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -13,21 +13,21 @@ import { asArray } from "app/utils/asArray";
   selector: "app-display-entity-type",
   standalone: true,
   providers: [EntityTypeLabelPipe],
-  template: `<span class="display-entity-type-label">{{ entityLabel }}</span>`,
+  template: `<span class="display-entity-type-label">{{
+    entityLabel()
+  }}</span>`,
   styleUrls: ["./display-entity-type.component.scss"],
 })
-export class DisplayEntityTypeComponent
-  extends ViewDirective<string[] | string, string>
-  implements OnInit
-{
+export class DisplayEntityTypeComponent extends ViewDirective<
+  string[] | string,
+  string
+> {
   private entityTypeLabelPipe = inject(EntityTypeLabelPipe);
 
-  entityLabel: string;
-
-  async ngOnInit() {
+  entityLabel = computed(() => {
     const entityIds = this.value() ? asArray(this.value()) : [];
-    this.entityLabel = entityIds
+    return entityIds
       .map((id) => this.entityTypeLabelPipe.transform(id) || id)
       .join(", ");
-  }
+  });
 }

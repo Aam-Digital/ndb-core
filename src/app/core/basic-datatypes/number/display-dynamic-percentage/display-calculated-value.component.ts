@@ -57,7 +57,7 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
     return undefined;
   });
 
-  private _percentage(): number {
+  private _percentage(): number | undefined {
     const config = this.config();
     const entity = this.entity();
     const actual: number = entity?.[config?.valueFields?.[0] ?? config?.actual];
@@ -66,6 +66,7 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
     if (Number.isFinite(actual) && Number.isFinite(total) && total != 0) {
       return (actual / total) * 100;
     }
+    return undefined;
   }
 
   private _bmi(): number {
@@ -77,8 +78,8 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
     const bmi = weight / ((height / 100) * (height / 100));
     return Math.round(bmi * 100) / 100;
   }
-  private _bmiColor(bmi: number) {
-    if (Number.isNaN(bmi) || !Number.isFinite(bmi)) {
+  private _bmiColor(bmi: number | undefined) {
+    if (bmi == undefined || Number.isNaN(bmi) || !Number.isFinite(bmi)) {
       return "#DEDEDE";
     }
     if (bmi <= 16 || bmi >= 30) {

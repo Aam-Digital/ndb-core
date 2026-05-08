@@ -1,8 +1,7 @@
 import {
-  ChangeDetectorRef,
   Component,
-  OnInit,
   inject,
+  resource,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
@@ -21,24 +20,15 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
   styleUrls: ["./display-todo-completion.component.scss"],
   imports: [FontAwesomeModule, CustomDatePipe],
 })
-export class DisplayTodoCompletionComponent
-  extends ViewDirective<TodoCompletion>
-  implements OnInit
-{
-  private entityMapper = inject(EntityMapperService);
-  private readonly cdr = inject(ChangeDetectorRef);
+export class DisplayTodoCompletionComponent extends ViewDirective<TodoCompletion> {
+  private readonly entityMapper = inject(EntityMapperService);
 
-  completedBy: Entity;
-
-  ngOnInit() {
-    const value = this.value();
-    if (value?.completedBy) {
-      const entityId = value.completedBy;
+  completedBy = resource({
+    params: () => this.value()?.completedBy,
+    loader: async ({ params: entityId }) => {
+      if (!entityId) return undefined;
       const entityType = Entity.extractTypeFromId(entityId);
-      this.entityMapper.load(entityType, entityId).then((res) => {
-        this.completedBy = res;
-        this.cdr.markForCheck();
-      });
-    }
-  }
+      return this.entityMapper.load(entityType, entityId);
+    },
+  });
 }
