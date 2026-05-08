@@ -6,7 +6,6 @@ import { Component, ChangeDetectionStrategy, input } from "@angular/core";
   imports: [],
   templateUrl: "./hint-box.component.html",
   styleUrl: "./hint-box.component.scss",
-  host: { "[attr.type]": "type()" },
 })
 export class HintBoxComponent {
   type = input<"info" | "warning">("info");
