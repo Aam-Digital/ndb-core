@@ -1,9 +1,8 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  Output,
   inject,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { readFile } from "../../../utils/utils";
@@ -35,9 +34,9 @@ export class InputFileComponent<T = any> {
   private papa = inject(Papa);
 
   /** returns parsed data as an object on completing load after user selects a file */
-  @Output() fileLoad = new EventEmitter<ParsedData<T>>();
+  fileLoad = output<ParsedData<T>>();
 
-  @Input() fileType: "csv" | "json";
+  fileType = input<"csv" | "json">();
 
   parsedData: ParsedData<T>;
   formControl = new FormControl();
@@ -46,7 +45,7 @@ export class InputFileComponent<T = any> {
     this.formControl.reset();
 
     try {
-      const file = this.getFileFromInputEvent($event, this.fileType);
+      const file = this.getFileFromInputEvent($event, this.fileType());
       this.formControl.setValue(file.name);
 
       const fileContent = await readFile(file);
@@ -70,7 +69,7 @@ export class InputFileComponent<T = any> {
       allowedFileType &&
       !file.name.toLowerCase().endsWith("." + allowedFileType)
     ) {
-      throw { fileInvalid: `Only ${this.fileType} files are supported` };
+      throw { fileInvalid: `Only ${this.fileType()} files are supported` };
     }
 
     return file;
@@ -79,14 +78,14 @@ export class InputFileComponent<T = any> {
   private parseContent(fileContent: string, filename?: string) {
     let result;
 
-    if (this.fileType === "csv") {
+    if (this.fileType() === "csv") {
       const papaParsed = this.papa.parse(fileContent, {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
       });
       result = { data: papaParsed.data, fields: papaParsed.meta.fields };
-    } else if (this.fileType === "json") {
+    } else if (this.fileType() === "json") {
       result = { data: JSON.parse(fileContent) };
     }
 

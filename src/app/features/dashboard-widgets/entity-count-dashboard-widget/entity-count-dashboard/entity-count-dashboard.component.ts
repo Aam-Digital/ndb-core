@@ -199,7 +199,7 @@ export class EntityCountDashboardComponent {
     );
     groupCounts = this.mergeNotDefinedGroups(groupCounts);
 
-    if (field.dataType === "configurable-enum") {
+    if (field?.dataType === "configurable-enum") {
       return this.getEnumGroupCounts(groupCounts, field);
     }
 

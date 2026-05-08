@@ -1,7 +1,7 @@
 import {
   Component,
   inject,
-  Input,
+  input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Angulartics2OnModule } from "angulartics2";
@@ -38,20 +38,20 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   private entityRemoveService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
 
-  @Input() row: TableRow<T>;
+  row = input.required<TableRow<T>>();
 
   form: EntityForm<T>;
 
   async edit() {
     this.form = await this.entityFormService.createEntityForm(
-      Array.from(this.row.record.getSchema().keys()),
-      this.row.record,
+      Array.from(this.row().record.getSchema().keys()),
+      this.row().record,
       true,
     );
 
-    this.row.formGroup = this.form.formGroup;
+    this.row().formGroup = this.form.formGroup;
 
-    this.row.formGroup.enable();
+    this.row().formGroup.enable();
   }
 
   /**
@@ -59,11 +59,11 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
    */
   async save(): Promise<void> {
     try {
-      this.row.record = await this.entityFormService.saveChanges(
+      this.row().record = await this.entityFormService.saveChanges(
         this.form,
-        this.row.record,
+        this.row().record,
       );
-      delete this.row.formGroup;
+      delete this.row().formGroup;
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
@@ -72,14 +72,14 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   }
 
   async delete(): Promise<void> {
-    await this.entityRemoveService.delete(this.row.record);
+    await this.entityRemoveService.delete(this.row().record);
   }
 
   /**
    * Discard any changes to the given entity and reset it to the state before the user started editing.
    */
   resetChanges() {
-    delete this.row.formGroup;
+    delete this.row().formGroup;
     this.unsavedChanges.pending = false;
   }
 }
