@@ -16,9 +16,9 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
   templateUrl: "./display-participants-count.component.html",
 })
 export class DisplayParticipantsCountComponent extends ViewDirective<any> {
-  private _childrenService = inject(ChildrenService);
+  private readonly _childrenService = inject(ChildrenService);
 
-  private relationsResource = resource({
+  private readonly relationsResource = resource({
     params: () => this.entity()?.getId(),
     loader: ({ params: entityId }) =>
       this._childrenService.queryActiveRelationsOf(entityId),
