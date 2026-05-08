@@ -19,14 +19,14 @@
 <!-- WIDGET PREVIEW AREA -->
 <div
   cdkDropList
-  [cdkDropListData]="dashboardConfig.widgets"
+  [cdkDropListData]="dashboardConfig().widgets"
   (cdkDropListDropped)="drop($event)"
   cdkDropListOrientation="mixed"
   class="widgets-container drop-list"
 >
   @for (
-    widgetConfig of dashboardConfig.widgets;
-    track widgetConfig;
+    widgetConfig of dashboardConfig().widgets;
+    track $index;
     let i = $index
   ) {
     <mat-card
