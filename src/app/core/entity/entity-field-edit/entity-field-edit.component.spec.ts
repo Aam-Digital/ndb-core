@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ComponentRegistry } from "../../../dynamic-components";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Entity } from "../model/entity";
 import { EntityFieldEditComponent } from "./entity-field-edit.component";
 
@@ -10,6 +11,7 @@ describe("EntityFieldEditComponent", () => {
   let fixture: ComponentFixture<EntityFieldEditComponent>;
 
   let mockFormService: any;
+  let mockSchemaService: any;
   const mockField = { id: "testField" };
 
   beforeEach(() => {
@@ -18,10 +20,15 @@ describe("EntityFieldEditComponent", () => {
     };
     mockFormService.extendFormFieldConfig.mockReturnValue(mockField);
 
+    mockSchemaService = {
+      getComponent: vi.fn().mockReturnValue(undefined),
+    };
+
     TestBed.configureTestingModule({
       imports: [EntityFieldEditComponent],
       providers: [
         { provide: EntityFormService, useValue: mockFormService },
+        { provide: EntitySchemaService, useValue: mockSchemaService },
         ComponentRegistry,
       ],
     });
@@ -46,6 +53,8 @@ describe("EntityFieldEditComponent", () => {
     fixture.componentRef.setInput("field", "testField");
     fixture.componentRef.setInput("entity", undefined);
 
-    expect(component).toBeTruthy();
+    const result = component._field();
+    expect(result).toBeDefined();
+    expect(mockFormService.extendFormFieldConfig).not.toHaveBeenCalled();
   });
 });

@@ -99,7 +99,7 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
   readonly isPartiallyAnonymized = computed<boolean>(() => {
     const entity = this.entity();
     const field = this._field();
-    return (
+    return !!(
       entity?.anonymized &&
       entity?.getSchema()?.get(field?.id)?.anonymize === "retain-anonymized"
     );
