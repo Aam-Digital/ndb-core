@@ -68,10 +68,8 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
   private _percentage(): number {
     const config = this.config();
     const entity = this.entity();
-    const actual: number =
-      entity?.[config?.valueFields?.[0] ?? config?.actual];
-    const total: number =
-      entity?.[config?.valueFields?.[1] ?? config?.total];
+    const actual: number = entity?.[config?.valueFields?.[0] ?? config?.actual];
+    const total: number = entity?.[config?.valueFields?.[1] ?? config?.total];
 
     if (Number.isFinite(actual) && Number.isFinite(total) && total != 0) {
       return (actual / total) * 100;

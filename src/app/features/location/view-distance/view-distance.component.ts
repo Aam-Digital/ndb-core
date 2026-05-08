@@ -54,8 +54,8 @@ export class ViewDistanceComponent
   distanceFunction = (_entity: Entity) => "-";
 
   ngOnInit() {
-    this.config()?.compareCoordinates
-      .pipe(untilDestroyed(this))
+    this.config()
+      ?.compareCoordinates.pipe(untilDestroyed(this))
       .subscribe((coordinates) => this.setDistanceFunction(coordinates));
   }
 

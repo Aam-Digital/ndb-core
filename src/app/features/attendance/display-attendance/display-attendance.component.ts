@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed } from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { AttendanceItem } from "../model/attendance-item";
@@ -69,6 +65,4 @@ export class DisplayAttendanceComponent extends ViewDirective<
       return "w-" + WarningLevel.OK;
     }
   });
-
-
 }

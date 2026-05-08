@@ -37,7 +37,10 @@ describe("DisplayParticipantsCountComponent", () => {
 
     fixture = TestBed.createComponent(DisplayParticipantsCountComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput("entity", createEntityOfType("School", "s-1"));
+    fixture.componentRef.setInput(
+      "entity",
+      createEntityOfType("School", "s-1"),
+    );
     fixture.detectChanges();
   });
 
@@ -52,7 +55,10 @@ describe("DisplayParticipantsCountComponent", () => {
 
   it("should handle empty response from ChildrenService", async () => {
     mockChildrenService.queryActiveRelationsOf.mockResolvedValue([]);
-    fixture.componentRef.setInput("entity", createEntityOfType("School", "s-2"));
+    fixture.componentRef.setInput(
+      "entity",
+      createEntityOfType("School", "s-2"),
+    );
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.participantRelationsCount()).toBe(0);
@@ -61,7 +67,10 @@ describe("DisplayParticipantsCountComponent", () => {
   it("should handle error response from ChildrenService", async () => {
     mockChildrenService.queryActiveRelationsOf.mockRejectedValue(new Error());
     component.participantRelationsCount.set(null);
-    fixture.componentRef.setInput("entity", createEntityOfType("School", "s-3"));
+    fixture.componentRef.setInput(
+      "entity",
+      createEntityOfType("School", "s-3"),
+    );
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.participantRelationsCount()).toBeNull();
