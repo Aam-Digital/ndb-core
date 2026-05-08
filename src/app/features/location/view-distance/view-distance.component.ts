@@ -39,7 +39,7 @@ export interface ViewDistanceConfig {
   selector: "app-view-distance",
   template: `
     <app-readonly-function
-      [entity]="entity"
+      [entity]="entity()"
       [config]="distanceFunction"
     ></app-readonly-function>
   `,
@@ -54,7 +54,7 @@ export class ViewDistanceComponent
   distanceFunction = (_entity: Entity) => "-";
 
   ngOnInit() {
-    this.config.compareCoordinates
+    this.config()?.compareCoordinates
       .pipe(untilDestroyed(this))
       .subscribe((coordinates) => this.setDistanceFunction(coordinates));
   }
@@ -63,7 +63,7 @@ export class ViewDistanceComponent
     this.distanceFunction = (e: Entity) => {
       const closest = getMinDistanceKm(
         e,
-        this.config.coordinatesProperties ?? [],
+        this.config()?.coordinatesProperties ?? [],
         compareCoordinates,
       );
       if (closest === null) {

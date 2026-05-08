@@ -25,7 +25,7 @@ export class DisplayEntityTypeComponent
   entityLabel: string;
 
   async ngOnInit() {
-    const entityIds = this.value ? asArray(this.value) : [];
+    const entityIds = this.value() ? asArray(this.value()) : [];
     this.entityLabel = entityIds
       .map((id) => this.entityTypeLabelPipe.transform(id) || id)
       .join(", ");

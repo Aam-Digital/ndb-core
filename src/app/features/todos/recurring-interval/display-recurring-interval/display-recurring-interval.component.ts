@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewDirective } from "../../../../core/entity/default-datatype/view.directive";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
@@ -7,18 +7,12 @@ import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-recurring-interval",
-  template: "{{ label }}",
+  template: "{{ label() }}",
   standalone: true,
 })
-export class DisplayRecurringIntervalComponent
-  extends ViewDirective<TimeInterval>
-  implements OnInit
-{
-  label: string;
-
-  ngOnInit() {
-    if (this.value) {
-      this.label = generateLabelFromInterval(this.value);
-    }
-  }
+export class DisplayRecurringIntervalComponent extends ViewDirective<TimeInterval> {
+  readonly label = computed(() => {
+    const value = this.value();
+    return value ? generateLabelFromInterval(value) : "";
+  });
 }

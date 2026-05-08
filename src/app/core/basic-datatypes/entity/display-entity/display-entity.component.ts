@@ -20,6 +20,6 @@ export class DisplayEntityComponent
   entityIds: string[];
 
   async ngOnInit() {
-    this.entityIds = this.value ? asArray(this.value) : [];
+    this.entityIds = this.value() ? asArray(this.value()) : [];
   }
 }

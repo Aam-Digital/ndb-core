@@ -37,7 +37,7 @@ describe("DisplayParticipantsCountComponent", () => {
 
     fixture = TestBed.createComponent(DisplayParticipantsCountComponent);
     component = fixture.componentInstance;
-    component.entity = createEntityOfType("School", "s-1");
+    fixture.componentRef.setInput("entity", createEntityOfType("School", "s-1"));
     fixture.detectChanges();
   });
 
@@ -46,24 +46,24 @@ describe("DisplayParticipantsCountComponent", () => {
   });
 
   it("should count correct number of active students for school", async () => {
-    expect(component.participantRelationsCount()).toBeNull();
-    await component.ngOnChanges();
-    expect(component.participantRelationsCount()).toBeDefined();
+    await fixture.whenStable();
     expect(component.participantRelationsCount()).toBe(3);
   });
 
   it("should handle empty response from ChildrenService", async () => {
     mockChildrenService.queryActiveRelationsOf.mockResolvedValue([]);
-    expect(component.participantRelationsCount()).toBeNull();
-    await component.ngOnChanges();
-    expect(component.participantRelationsCount()).toBeDefined();
+    fixture.componentRef.setInput("entity", createEntityOfType("School", "s-2"));
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.participantRelationsCount()).toBe(0);
   });
 
   it("should handle error response from ChildrenService", async () => {
     mockChildrenService.queryActiveRelationsOf.mockRejectedValue(new Error());
-    expect(component.participantRelationsCount()).toBeNull();
-    await component.ngOnChanges();
+    component.participantRelationsCount.set(null);
+    fixture.componentRef.setInput("entity", createEntityOfType("School", "s-3"));
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.participantRelationsCount()).toBeNull();
   });
 });

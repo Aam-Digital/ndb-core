@@ -1,7 +1,7 @@
-@if (config?.calculation === "percentage") {
+@if (config()?.calculation === "percentage") {
   <app-display-percentage
     [value]="calculateValue()"
-    [config]="config"
+    [config]="config()"
   ></app-display-percentage>
 } @else {
   <span [ngStyle]="{ background: color ?? 'inherit' }" class="value-box">{{

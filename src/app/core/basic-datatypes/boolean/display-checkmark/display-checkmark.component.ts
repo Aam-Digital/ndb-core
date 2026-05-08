@@ -10,7 +10,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-tick",
-  template: `{{ value ? "✓" : "" }}`,
+  template: `{{ value() ? "✓" : "" }}`,
   standalone: true,
 })
 export class DisplayCheckmarkComponent extends ViewDirective<boolean> {}

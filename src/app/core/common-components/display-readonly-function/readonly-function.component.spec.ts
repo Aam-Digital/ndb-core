@@ -20,8 +20,8 @@ describe("ReadonlyFunctionComponent", () => {
     const formGroup = new UntypedFormGroup({});
     const formControl = new UntypedFormControl();
     formGroup.registerControl("name", formControl);
-    component.entity = TestEntity.create("nameBefore");
-    component.config = (entity) => entity.toString();
+    fixture.componentRef.setInput("entity", TestEntity.create("nameBefore"));
+    fixture.componentRef.setInput("config", (entity) => entity.toString());
     fixture.detectChanges();
   });
 

@@ -31,8 +31,9 @@ export class DisplayTodoCompletionComponent
   completedBy: Entity;
 
   ngOnInit() {
-    if (this.value?.completedBy) {
-      const entityId = this.value.completedBy;
+    const value = this.value();
+    if (value?.completedBy) {
+      const entityId = value.completedBy;
       const entityType = Entity.extractTypeFromId(entityId);
       this.entityMapper.load(entityType, entityId).then((res) => {
         this.completedBy = res;

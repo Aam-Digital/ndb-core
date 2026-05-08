@@ -1,6 +1,6 @@
 import {
   Component,
-  OnChanges,
+  effect,
   signal,
   WritableSignal,
   inject,
@@ -18,27 +18,27 @@ import { Logging } from "../../../core/logging/logging.service";
   selector: "app-display-participants-count",
   templateUrl: "./display-participants-count.component.html",
 })
-export class DisplayParticipantsCountComponent
-  extends ViewDirective<any>
-  implements OnChanges
-{
+export class DisplayParticipantsCountComponent extends ViewDirective<any> {
   private _childrenService = inject(ChildrenService);
 
   participantRelationsCount: WritableSignal<number> = signal(null);
 
-  override async ngOnChanges(): Promise<void> {
-    super.ngOnChanges();
-
-    return this._childrenService
-      .queryActiveRelationsOf(this.entity.getId())
-      .then((relations: ChildSchoolRelation[]) => {
-        this.participantRelationsCount.set(relations.length);
-      })
-      .catch((reason) => {
-        Logging.error(
-          "Could not calculate participantRelationsCount, error response from ChildrenService." +
-            reason,
-        );
-      });
+  constructor() {
+    super();
+    effect(() => {
+      const entity = this.entity();
+      if (!entity) return;
+      this._childrenService
+        .queryActiveRelationsOf(entity.getId())
+        .then((relations: ChildSchoolRelation[]) => {
+          this.participantRelationsCount.set(relations.length);
+        })
+        .catch((reason) => {
+          Logging.error(
+            "Could not calculate participantRelationsCount, error response from ChildrenService." +
+              reason,
+          );
+        });
+    });
   }
 }

@@ -11,7 +11,7 @@ import { MarkdownPageModule } from "app/features/markdown-page/markdown-page.mod
 @DynamicComponent("DisplayDescriptionOnly")
 @Component({
   selector: "app-display-description-only",
-  template: ` <markdown>{{ formFieldConfig?.label }}</markdown> `,
+  template: ` <markdown>{{ formFieldConfig()?.label }}</markdown> `,
   styleUrls: ["./display-description-only.component.scss"],
   imports: [MarkdownPageModule],
   changeDetection: ChangeDetectionStrategy.OnPush,

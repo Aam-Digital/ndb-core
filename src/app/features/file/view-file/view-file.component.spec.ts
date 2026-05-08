@@ -25,9 +25,9 @@ describe("ViewFileComponent", () => {
     fixture = TestBed.createComponent(ViewFileComponent);
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
-    component.value = "test.file";
-    component.entity = new Entity();
-    component.id = "fileProp";
+    fixture.componentRef.setInput("value", "test.file");
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("id", "fileProp");
     fixture.detectChanges();
   });
 
@@ -43,8 +43,8 @@ describe("ViewFileComponent", () => {
     await button.click();
 
     expect(mockFileService.showFile).toHaveBeenCalledWith(
-      component.entity,
-      component.id,
+      component.entity(),
+      component.id(),
     );
   });
 

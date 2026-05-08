@@ -48,7 +48,7 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
   calculateValue() {
     if (!this.calculationType) {
       this.calculationType =
-        this.config.calculation ?? CalculationType.Percentage;
+        this.config()?.calculation ?? CalculationType.Percentage;
     }
 
     let value: number;
@@ -66,10 +66,12 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
   }
 
   private _percentage(): number {
+    const config = this.config();
+    const entity = this.entity();
     const actual: number =
-      this.entity[this.config.valueFields?.[0] ?? this.config.actual];
+      entity?.[config?.valueFields?.[0] ?? config?.actual];
     const total: number =
-      this.entity[this.config.valueFields?.[1] ?? this.config.total];
+      entity?.[config?.valueFields?.[1] ?? config?.total];
 
     if (Number.isFinite(actual) && Number.isFinite(total) && total != 0) {
       return (actual / total) * 100;
@@ -77,8 +79,10 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
   }
 
   private _bmi(): number {
-    const weight: number = this.entity[this.config.valueFields[0]];
-    const height: number = this.entity[this.config.valueFields[1]];
+    const entity = this.entity();
+    const config = this.config();
+    const weight: number = entity?.[config?.valueFields[0]];
+    const height: number = entity?.[config?.valueFields[1]];
 
     const bmi = weight / ((height / 100) * (height / 100));
     return Math.round(bmi * 100) / 100;

@@ -1,4 +1,4 @@
-@if (value) {
+@if (value()) {
   <div class="completed-wrapper">
     <div>
       <fa-icon icon="check" class="margin-right-small"></fa-icon>
@@ -6,7 +6,7 @@
     </div>
     <div class="completed-details" i18n>
       by {{ completedBy?.toString() }} on
-      {{ value.completedAt | customDate: "shortDate" }}
+      {{ value().completedAt | customDate: "shortDate" }}
     </div>
   </div>
 }

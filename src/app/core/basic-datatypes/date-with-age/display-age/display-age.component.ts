@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { DateWithAge } from "../dateWithAge";
@@ -20,16 +20,11 @@ import { DateWithAge } from "../dateWithAge";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-age",
-  template: "{{ date?.age }}",
+  template: "{{ date()?.age }}",
   standalone: true,
 })
-export class DisplayAgeComponent
-  extends ViewDirective<any, string>
-  implements OnInit
-{
-  date: DateWithAge;
-
-  ngOnInit() {
-    this.date = this.entity[this.config];
-  }
+export class DisplayAgeComponent extends ViewDirective<any, string> {
+  readonly date = computed<DateWithAge>(
+    () => this.entity()?.[this.config() as string],
+  );
 }

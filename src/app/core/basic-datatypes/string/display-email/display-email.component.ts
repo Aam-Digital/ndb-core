@@ -6,6 +6,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-email",
-  template: `<a class="clickable" [href]="'mailto:' + value">{{ value }}</a>`,
+  template: `<a class="clickable" [href]="'mailto:' + value()">{{ value() }}</a>`,
 })
 export class DisplayEmailComponent extends ViewDirective<string> {}

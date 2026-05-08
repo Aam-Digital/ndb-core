@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { DatePipe } from "@angular/common";
@@ -17,8 +17,5 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   imports: [CustomDatePipe, DatePipe, FontAwesomeModule, MatTooltipModule],
 })
 export class DisplayDateComponent extends ViewDirective<Date, string> {
-  @Input() displayAsAnonymized: boolean;
-
-  /** formatting string for date pipe */
-  @Input() declare config: string;
+  displayAsAnonymized = input<boolean>();
 }

@@ -6,7 +6,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-unit",
-  template: '{{ value !== undefined ? value + " " + config : "" }}',
+  template: '{{ value() !== undefined ? value() + " " + config() : "" }}',
   standalone: true,
 })
 export class DisplayUnitComponent extends ViewDirective<string, string> {}

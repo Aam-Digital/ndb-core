@@ -8,7 +8,7 @@ import { EntityFunctionPipe } from "./entity-function.pipe";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-readonly-function",
-  template: `{{ entity | entityFunction: config }}`,
+  template: `{{ entity() | entityFunction: config() }}`,
   imports: [EntityFunctionPipe],
 })
 export class ReadonlyFunctionComponent extends ViewDirective<

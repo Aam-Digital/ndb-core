@@ -6,9 +6,9 @@ import { DisplayDateComponent } from "../../date/display-date/display-date.compo
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-month",
   template: `<app-display-date
-    [value]="value"
+    [value]="value()"
     config="MMM y"
-    [displayAsAnonymized]="isPartiallyAnonymized"
+    [displayAsAnonymized]="isPartiallyAnonymized()"
   ></app-display-date>`,
   imports: [DisplayDateComponent],
 })
