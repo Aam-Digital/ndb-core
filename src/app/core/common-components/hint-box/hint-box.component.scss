@@ -8,7 +8,7 @@
   @include mat-elevation.elevation(1);
 }
 
-:host([type="warning"]) .hint-banner {
+.warning {
   background: #fff3e0;
   border-left: 4px solid #f57c00;
 }

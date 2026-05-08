@@ -31,7 +31,7 @@ describe("EntityCreateButtonComponent", () => {
     fixture = TestBed.createComponent(EntityCreateButtonComponent);
     component = fixture.componentInstance;
 
-    component.entityType = Entity;
+    fixture.componentRef.setInput("entityType", Entity);
 
     fixture.detectChanges();
   });
