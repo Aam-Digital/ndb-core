@@ -1,5 +1,5 @@
 import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
-import { ViewDirective } from "../../../entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { DateWithAge } from "../dateWithAge";
 

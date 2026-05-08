@@ -394,6 +394,10 @@ test("Complete a task that is related to a child", async ({ page }) => {
   // The completed task appears in the list with the "completed" column visible
   await expect(page.getByRole("cell", { name: TASK_SUBJECT })).toBeVisible();
 
+  // The "completed by" user is shown in the list row
+  const taskRow = page.getByRole("row").filter({ hasText: TASK_SUBJECT });
+  await expect(taskRow.getByText(/by demo-admin on/)).toBeVisible();
+
   // [screenshot] table view showing the completed column
   await argosScreenshot(page, "task-completed-table");
 
@@ -407,6 +411,9 @@ test("Complete a task that is related to a child", async ({ page }) => {
   await completedDialog
     .locator("#entity-field__completed")
     .scrollIntoViewIfNeeded();
+
+  // The "completed by" user is shown in the dialog
+  await expect(completedDialog.getByText(/by demo-admin on/)).toBeVisible();
 
   // [screenshot] details dialog showing the completed field
   await argosScreenshot(page, "task-completed-dialog");

@@ -9,7 +9,7 @@ import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-dat
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
-import { ViewDirective } from "../../../../core/entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("DisplayTodoCompletion")
@@ -23,10 +23,15 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
 export class DisplayTodoCompletionComponent extends ViewDirective<TodoCompletion> {
   private readonly entityMapper = inject(EntityMapperService);
 
-  completedBy = resource({
+  readonly completedBy = resource({
     params: () => this.value()?.completedBy,
-    loader: async ({ params: entityId }) => {
-      if (!entityId) return undefined;
+    // Must NOT use `async` here: when this class field initializer is compiled,
+    // an async arrow gets transformed into a helper that hoists `var _this = this`
+    // above the implicit `super(...arguments)` call in the constructor, causing
+    // "Must call super constructor in derived class before accessing 'this'".
+    // Return a Promise explicitly instead.
+    loader: ({ params: entityId }) => {
+      if (!entityId) return Promise.resolve(undefined);
       const entityType = Entity.extractTypeFromId(entityId);
       return this.entityMapper.load(entityType, entityId);
     },

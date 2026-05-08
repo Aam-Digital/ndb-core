@@ -1,6 +1,6 @@
 import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ViewDirective } from "../../../entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 import { ConfigurableEnumValue } from "../configurable-enum.types";

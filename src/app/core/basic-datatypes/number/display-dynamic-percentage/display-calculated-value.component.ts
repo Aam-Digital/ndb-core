@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, computed } from "@angular/core";
-import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 import { DisplayPercentageComponent } from "../display-percentage/display-percentage.component";
 import { NgStyle } from "@angular/common";
