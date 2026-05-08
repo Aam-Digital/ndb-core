@@ -302,7 +302,7 @@ refer to the <a href="./template-tooltip.directive.ts">Template Tooltip Directiv
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:69</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:63</a></div>
                             </td>
                         </tr>
 
@@ -328,19 +328,9 @@ refer to the <a href="./template-tooltip.directive.ts">Template Tooltip Directiv
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:65</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:59</a></div>
                             </td>
                         </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>This provides finer control on the content to be visible on the tooltip
-This template will be injected in ToolTipRenderer directive in the consumer template
-&lt;ng-template #template&gt;
- content.....
-</ng-template></p>
-</div>
-                    </td>
-                </tr>
             </tbody>
         </table>
 </section>
@@ -362,7 +352,7 @@ This template will be injected in ToolTipRenderer directive in the consumer temp
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:67</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:61</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -383,7 +373,7 @@ This template will be injected in ToolTipRenderer directive in the consumer temp
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:69</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:63</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -414,7 +404,7 @@ This template will be injected in ToolTipRenderer directive in the consumer temp
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:81</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -464,7 +454,7 @@ This template will be injected in ToolTipRenderer directive in the consumer temp
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:81</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.component.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -567,13 +557,7 @@ import { NgTemplateOutlet } from &quot;@angular/common&quot;;
 })
 export class TemplateTooltipComponent {
   static readonly SELECTOR &#x3D; &quot;app-template-tooltip&quot;;
-  /**
-   * This provides finer control on the content to be visible on the tooltip
-   * This template will be injected in ToolTipRenderer directive in the consumer template
-   * &lt;ng-template #template&gt;
-   *  content.....
-   * &lt;/ng-template&gt;
-   */
+
   @Input() contentTemplate: TemplateRef&lt;any&gt;;
 
   @Output() hide &#x3D; new EventEmitter&lt;void&gt;();
@@ -586,7 +570,7 @@ export class TemplateTooltipComponent {
 
     zone.runOutsideAngular(() &#x3D;&gt; {
       el.nativeElement.addEventListener(&quot;mouseenter&quot;, () &#x3D;&gt; this.show.emit());
-      el.nativeElement.addEventListener(&quot;mouseleave&quot;, (ev) &#x3D;&gt; this.hide.emit());
+      el.nativeElement.addEventListener(&quot;mouseleave&quot;, () &#x3D;&gt; this.hide.emit());
     });
   }
 

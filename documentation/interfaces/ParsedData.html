@@ -324,10 +324,9 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  EventEmitter,
-  Input,
-  Output,
   inject,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { readFile } from &quot;../../../utils/utils&quot;;
@@ -359,9 +358,9 @@ export class InputFileComponent&lt;T &#x3D; any&gt; {
   private papa &#x3D; inject(Papa);
 
   /** returns parsed data as an object on completing load after user selects a file */
-  @Output() fileLoad &#x3D; new EventEmitter&lt;ParsedData&lt;T&gt;&gt;();
+  fileLoad &#x3D; output&lt;ParsedData&lt;T&gt;&gt;();
 
-  @Input() fileType: &quot;csv&quot; | &quot;json&quot;;
+  fileType &#x3D; input&lt;&quot;csv&quot; | &quot;json&quot;&gt;();
 
   parsedData: ParsedData&lt;T&gt;;
   formControl &#x3D; new FormControl();
@@ -370,7 +369,7 @@ export class InputFileComponent&lt;T &#x3D; any&gt; {
     this.formControl.reset();
 
     try {
-      const file &#x3D; this.getFileFromInputEvent($event, this.fileType);
+      const file &#x3D; this.getFileFromInputEvent($event, this.fileType());
       this.formControl.setValue(file.name);
 
       const fileContent &#x3D; await readFile(file);
@@ -394,7 +393,7 @@ export class InputFileComponent&lt;T &#x3D; any&gt; {
       allowedFileType &amp;&amp;
       !file.name.toLowerCase().endsWith(&quot;.&quot; + allowedFileType)
     ) {
-      throw { fileInvalid: &#x60;Only ${this.fileType} files are supported&#x60; };
+      throw { fileInvalid: &#x60;Only ${this.fileType()} files are supported&#x60; };
     }
 
     return file;
@@ -403,14 +402,14 @@ export class InputFileComponent&lt;T &#x3D; any&gt; {
   private parseContent(fileContent: string, filename?: string) {
     let result;
 
-    if (this.fileType &#x3D;&#x3D;&#x3D; &quot;csv&quot;) {
+    if (this.fileType() &#x3D;&#x3D;&#x3D; &quot;csv&quot;) {
       const papaParsed &#x3D; this.papa.parse(fileContent, {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
       });
       result &#x3D; { data: papaParsed.data, fields: papaParsed.meta.fields };
-    } else if (this.fileType &#x3D;&#x3D;&#x3D; &quot;json&quot;) {
+    } else if (this.fileType() &#x3D;&#x3D;&#x3D; &quot;json&quot;) {
       result &#x3D; { data: JSON.parse(fileContent) };
     }
 
