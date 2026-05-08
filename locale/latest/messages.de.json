@@ -1405,5 +1405,8 @@
   "5830500205758990228": " Configure value mapping\n",
   "5901674250370539358": " Match by {$INTERPOLATION} property ",
   "5758462877753736339": "Large import: address lookups may be slow or fail. Consider skipping lookups below.",
-  "1759705639664777658": " Skip address lookup\n"
+  "1759705639664777658": " Skip address lookup\n",
+  "9023640098177902376": " no date defined ",
+  "8386976308507652568": " All ",
+  "7810810299906483082": "Clear date filter"
 }
