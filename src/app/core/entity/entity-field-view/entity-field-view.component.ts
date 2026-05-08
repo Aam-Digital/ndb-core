@@ -1,9 +1,8 @@
 import {
   Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  computed,
   inject,
+  input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import {
@@ -29,35 +28,24 @@ import { Entity } from "../model/entity";
   styleUrls: ["./entity-field-view.component.scss"],
   imports: [DynamicComponentDirective],
 })
-export class EntityFieldViewComponent<
-  E extends Entity = Entity,
-> implements OnChanges {
+export class EntityFieldViewComponent<E extends Entity = Entity> {
   private entityFormService = inject(EntityFormService);
 
-  @Input() entity: E;
+  entity = input<E>();
 
   /** field id or full config */
-  @Input() field: ColumnConfig;
-  /** full field config extended from schema (used internally and for template) */
-  _field: FormFieldConfig;
+  field = input<ColumnConfig>();
 
-  @Input() showLabel: "inline" | "above" | "none" = "none";
+  showLabel = input<"inline" | "above" | "none">("none");
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.field || changes.entity) {
-      this.updateField();
-    }
-  }
-
-  private updateField() {
-    if (!this.entity?.getConstructor()) {
-      this._field = undefined;
-      return;
-    }
-
-    this._field = this.entityFormService.extendFormFieldConfig(
-      this.field,
-      this.entity.getConstructor(),
+  /** full field config extended from schema */
+  readonly _field = computed<FormFieldConfig | undefined>(() => {
+    const entity = this.entity();
+    const field = this.field();
+    if (!entity?.getConstructor()) return undefined;
+    return this.entityFormService.extendFormFieldConfig(
+      field,
+      entity.getConstructor(),
     );
-  }
+  });
 }
