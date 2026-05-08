@@ -9,13 +9,12 @@
   ],
   "timezone": "Etc/UTC",
   "schedule": [
-    "after 06:00 and before 10:00 on Monday"
+    "after 00:00 and before 09:00 on Monday"
   ],
   "dependencyDashboard": true,
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
   "labels": [
-    "dependencies",
     "Final Review"
   ],
   "vulnerabilityAlerts": {
@@ -23,8 +22,6 @@
       "at any time"
     ],
     "labels": [
-      "dependencies",
-      "security",
       "Final Review"
     ]
   },
@@ -57,8 +54,6 @@
       "draftPR": true,
       "dependencyDashboardApproval": true,
       "labels": [
-        "dependencies",
-        "major-update",
         "Final Review"
       ]
     },
