@@ -18,9 +18,10 @@
         [class.selected-option]="
           filter.selectedOptionValues[0] === emptyFilterOptionKey
         "
-        i18n="Filter option label"
       >
-        <span class="not-defined-label">no date defined</span>
+        <span class="not-defined-label" i18n="Filter option label">
+          no date defined
+        </span>
       </button>
       <button
         class="button"
@@ -30,6 +31,7 @@
         (mouseleave)="unselectRange()"
         (click)="selectRangeAndClose('all')"
         [class.selected-option]="filter.selectedOptionValues.length === 0"
+        i18n
       >
         All
       </button>

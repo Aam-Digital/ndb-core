@@ -15,7 +15,6 @@ import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-ra
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatButtonModule } from "@angular/material/button";
-import { MatChipsModule } from "@angular/material/chips";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "../../../../utils/utils";
@@ -34,7 +33,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatFormFieldModule,
     MatDatepickerModule,
     MatButtonModule,
-    MatChipsModule,
     MatTooltipModule,
     FormsModule,
     FaIconComponent,

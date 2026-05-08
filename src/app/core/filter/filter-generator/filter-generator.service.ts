@@ -5,7 +5,6 @@ import {
   EMPTY_FILTER_OPTION_KEY,
   Filter,
   FilterSelectionOption,
-  getNotDefinedFilterLabel,
   SelectableFilter,
 } from "../filters/filters";
 import {
@@ -80,7 +79,7 @@ export class FilterGeneratorService {
   ): FilterSelectionOption<T> {
     return {
       key: EMPTY_FILTER_OPTION_KEY,
-      label: getNotDefinedFilterLabel(),
+      label: $localize`:filter option:not defined`,
       isEmpty: true,
       filter: createEmptyValueFilter(
         fieldName,

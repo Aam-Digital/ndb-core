@@ -30,10 +30,6 @@ export type DataFilter<T> = MongoQuery<T> | {};
 
 export const EMPTY_FILTER_OPTION_KEY = "__empty__";
 
-export function getNotDefinedFilterLabel(): string {
-  return $localize`:filter option:not defined`;
-}
-
 export function createEmptyValueFilter<T extends Entity>(
   fieldName: string,
   includeNestedId = false,
