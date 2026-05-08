@@ -1,9 +1,4 @@
-import {
-  Component,
-  HostBinding,
-  computed,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { CommonModule } from "@angular/common";
@@ -14,7 +9,11 @@ import { CommonModule } from "@angular/common";
   selector: "app-display-percentage",
   template:
     "{{ value() !== undefined ? (value() | number : numberFormat()) + '%' : '-' }}",
+  styleUrl: "./display-percentage.component.scss",
   imports: [CommonModule],
+  host: {
+    "[style.background-color]": "_computedBackground()",
+  },
 })
 export class DisplayPercentageComponent extends ViewDirective<
   number,
@@ -38,14 +37,7 @@ export class DisplayPercentageComponent extends ViewDirective<
     );
   });
 
-  private readonly _computedStyle = computed(() => ({
-    "background-color": DisplayPercentageComponent.fromPercent(this.value()),
-    "border-radius": "5%",
-    padding: "5px",
-    width: "min-content",
-  }));
-
-  @HostBinding("style") get style() {
-    return this._computedStyle();
-  }
+  readonly _computedBackground = computed(() =>
+    DisplayPercentageComponent.fromPercent(this.value()),
+  );
 }

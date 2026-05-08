@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, computed } from "@angular/core";
 import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 import { DisplayPercentageComponent } from "../display-percentage/display-percentage.component";
@@ -34,36 +34,28 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
     actual?: string;
   }
 > {
-  calculationType: CalculationType;
+  readonly calculatedValue = computed(() => {
+    const calculationType =
+      this.config()?.calculation ?? CalculationType.Percentage;
 
-  /**
-   * "calculated" color for special calculation types
-   */
-  color: string;
-
-  /**
-   * dynamically calculate the value based on configured entity fields.
-   * This is defined as a function to re-calculate on every change detection cycle as the value remains outdated otherwise.
-   */
-  calculateValue() {
-    if (!this.calculationType) {
-      this.calculationType =
-        this.config()?.calculation ?? CalculationType.Percentage;
-    }
-
-    let value: number;
-    switch (this.calculationType) {
+    switch (calculationType) {
       case CalculationType.Percentage:
-        value = this._percentage();
-        break;
+        return this._percentage();
       case CalculationType.BMI:
-        value = this._bmi();
-        this.color = this._bmiColor(value);
-        break;
+        return this._bmi();
+      default:
+        return undefined;
     }
+  });
 
-    return value;
-  }
+  readonly color = computed(() => {
+    const calculationType =
+      this.config()?.calculation ?? CalculationType.Percentage;
+    if (calculationType === CalculationType.BMI) {
+      return this._bmiColor(this.calculatedValue());
+    }
+    return undefined;
+  });
 
   private _percentage(): number {
     const config = this.config();

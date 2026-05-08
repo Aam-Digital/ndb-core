@@ -33,17 +33,29 @@ describe("DisplayCalculatedValueComponent", () => {
   it("should display the correct percentage value", () => {
     entity["totalValue"] = 200;
     entity["actualValue"] = 50;
-    expect(component.calculateValue()).toEqual(25);
+    fixture.componentRef.setInput(
+      "entity",
+      Object.assign(new Entity(), entity),
+    );
+    expect(component.calculatedValue()).toEqual(25);
   });
 
   it("should not display a value if one of the two values is not a number", () => {
     entity["totalValue"] = 15;
-    expect(component.calculateValue()).toBe(undefined);
+    fixture.componentRef.setInput(
+      "entity",
+      Object.assign(new Entity(), entity),
+    );
+    expect(component.calculatedValue()).toBe(undefined);
   });
 
   it("should not display a value if totalValue is 0", () => {
     entity["totalValue"] = 0;
     entity["actualValue"] = 15;
-    expect(component.calculateValue()).toBe(undefined);
+    fixture.componentRef.setInput(
+      "entity",
+      Object.assign(new Entity(), entity),
+    );
+    expect(component.calculatedValue()).toBe(undefined);
   });
 });
