@@ -45,6 +45,7 @@ describe("EntityInlineEditActionsComponent", () => {
       EntityInlineEditActionsComponent<InlineEditEntity>
     >(EntityInlineEditActionsComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("row", { record: new InlineEditEntity() });
     fixture.detectChanges();
   });
 
@@ -56,11 +57,11 @@ describe("EntityInlineEditActionsComponent", () => {
     const child = new InlineEditEntity();
     child.name = "Child Name";
     child.projectNumber = "01";
-    component.row = { record: child };
+    fixture.componentRef.setInput("row", { record: child });
 
     await component.edit();
 
-    const formGroup = component.row.formGroup;
+    const formGroup = component.row().formGroup;
     expect(formGroup.get("name").value).toEqual("Child Name");
     expect(formGroup.get("projectNumber").value).toEqual("01");
     expect(formGroup.enabled).toBe(true);
@@ -90,15 +91,15 @@ describe("EntityInlineEditActionsComponent", () => {
       entityForm.formGroup = formGroup;
 
       component.form = entityForm;
-      component.row = { record: child, formGroup: formGroup };
+      fixture.componentRef.setInput("row", { record: child, formGroup });
 
       component.save();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(entityMapper.save).toHaveBeenCalledWith(component.row.record);
-      expect(component.row.record.name).toBe("New Name");
-      expect(component.row.record.gender).toBe(genders[2]);
-      expect(component.row.formGroup).toBeUndefined();
+      expect(entityMapper.save).toHaveBeenCalledWith(component.row().record);
+      expect(component.row().record.name).toBe("New Name");
+      expect(component.row().record.gender).toBe(genders[2]);
+      expect(component.row().formGroup).toBeUndefined();
     } finally {
       vi.useRealTimers();
     }
@@ -112,21 +113,24 @@ describe("EntityInlineEditActionsComponent", () => {
     const alertService = TestBed.inject(AlertService);
     vi.spyOn(alertService, "addDanger");
 
-    component.row = { formGroup: null, record: new InlineEditEntity() };
+    fixture.componentRef.setInput("row", {
+      formGroup: null,
+      record: new InlineEditEntity(),
+    });
     await component.save();
 
     expect(alertService.addDanger).toHaveBeenCalledWith("Form invalid");
   });
 
   it("should clear the form group when resetting", () => {
-    component.row = {
+    fixture.componentRef.setInput("row", {
       record: new InlineEditEntity(),
       formGroup: new UntypedFormGroup({}),
-    };
+    });
 
     component.resetChanges();
 
-    expect(component.row.formGroup).toBeFalsy();
+    expect(component.row().formGroup).toBeFalsy();
   });
 });
 
