@@ -1,11 +1,6 @@
-import {
-  Component,
-  OnChanges,
-  SimpleChanges,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ViewDirective } from "../../../entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 import { ConfigurableEnumValue } from "../configurable-enum.types";
@@ -22,31 +17,17 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
   styleUrls: ["./display-configurable-enum.component.scss"],
   imports: [MatTooltipModule],
 })
-export class DisplayConfigurableEnumComponent
-  extends ViewDirective<ConfigurableEnumValue | ConfigurableEnumValue[]>
-  implements OnChanges
-{
-  iterableValue: ConfigurableEnumValue[] = [];
-
-  override ngOnChanges(changes?: SimpleChanges) {
-    super.ngOnChanges(changes);
-    this.initValue();
-  }
-
-  private initValue() {
-    if (!this.value) {
-      return;
-    }
-
-    if (Array.isArray(this.value)) {
-      this.iterableValue = this.value;
-    } else if (this.value) {
-      this.iterableValue = [this.value];
-    }
-  }
+export class DisplayConfigurableEnumComponent extends ViewDirective<
+  ConfigurableEnumValue | ConfigurableEnumValue[]
+> {
+  readonly iterableValue = computed<ConfigurableEnumValue[]>(() => {
+    const value = this.value();
+    if (!value) return [];
+    return Array.isArray(value) ? value : [value];
+  });
 
   get extraLabels(): string {
-    return this.iterableValue
+    return this.iterableValue()
       .slice(3)
       .map((v) => v.label)
       .join(", ");

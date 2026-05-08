@@ -1,40 +1,30 @@
+import { computed, Directive, input } from "@angular/core";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { Entity } from "../model/entity";
-import { Directive, Input, OnChanges, SimpleChanges } from "@angular/core";
 
 @Directive()
-export abstract class ViewDirective<T, C = any> implements OnChanges {
-  @Input() entity: Entity;
-  @Input() id: string;
-  @Input() tooltip: string;
-  @Input() value: T;
+export abstract class ViewDirective<T, C = any> {
+  entity = input<Entity>();
+  id = input<string>();
+  tooltip = input<string>();
+  value = input<T>();
 
-  @Input() set formFieldConfig(value: FormFieldConfig) {
-    this._formFieldConfig = value;
-    this.config = value?.additional as C;
-  }
-  get formFieldConfig(): FormFieldConfig {
-    return this._formFieldConfig;
-  }
-  private _formFieldConfig: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
+  // eslint-disable-next-line @angular-eslint/no-input-rename -- alias required: "config" is already the name of the computed that merges formFieldConfig.additional with the direct input
+  readonly _directConfig = input<C>(undefined, { alias: "config" });
 
-  /**
-   * The "additional" context config of the field.
-   */
-  @Input() config: C;
+  readonly config = computed<C>(() => {
+    const ffc = this.formFieldConfig();
+    return ffc !== undefined ? (ffc.additional as C) : this._directConfig();
+  });
 
-  /** indicating that the value is not in its original state, so that components can explain this to the user */
-  isPartiallyAnonymized: boolean;
-
-  /**
-   * Attention:
-   * When content is loaded async in your child component, you need to manually trigger the change detection
-   * See: https://angularindepth.com/posts/1054/here-is-what-you-need-to-know-about-dynamic-components-in-angular#ngonchanges
-   *
-   */
-  ngOnChanges(changes?: SimpleChanges) {
-    this.isPartiallyAnonymized =
-      this.entity?.anonymized &&
-      this.entity?.getSchema()?.get(this.id)?.anonymize === "retain-anonymized";
-  }
+  readonly isPartiallyAnonymized = computed<boolean>(() => {
+    const entity = this.entity();
+    const id = this.id();
+    return (
+      (entity?.anonymized &&
+        entity?.getSchema()?.get(id)?.anonymize === "retain-anonymized") ??
+      false
+    );
+  });
 }

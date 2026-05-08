@@ -1,5 +1,5 @@
 <span class="bubble-list">
-  @for (val of iterableValue.slice(0, 3); track val.id) {
+  @for (val of iterableValue().slice(0, 3); track val.id) {
     <span
       class="colored-bubble"
       [style.background-color]="val.color"
@@ -8,14 +8,14 @@
       {{ val.label }}
     </span>
   }
-  @if (iterableValue.length > 3) {
+  @if (iterableValue().length > 3) {
     <span
       class="colored-bubble"
       style="background: #eee; color: #333"
       [matTooltip]="extraLabels"
       i18n
     >
-      +{{ iterableValue.length - 3 }} more
+      +{{ iterableValue().length - 3 }} more
     </span>
   }
 </span>

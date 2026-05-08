@@ -13,9 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayCalculatedValueComponent> = (
-  args: DisplayCalculatedValueComponent,
-) => ({
+const Template: StoryFn<DisplayCalculatedValueComponent> = (args) => ({
   props: args,
 });
 

@@ -13,7 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayUrlComponent> = (args: DisplayUrlComponent) => ({
+const Template: StoryFn<DisplayUrlComponent> = (args) => ({
   props: args,
 });
 

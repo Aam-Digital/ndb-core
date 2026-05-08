@@ -1,5 +1,5 @@
 import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
-import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,8 +20,7 @@ export class ViewFileComponent extends ViewDirective<string> {
   fileService = inject(FileService);
 
   showFile(event: Event) {
-    // Prevent event bubbling
     event.stopPropagation();
-    this.fileService.showFile(this.entity, this.id);
+    this.fileService.showFile(this.entity(), this.id());
   }
 }

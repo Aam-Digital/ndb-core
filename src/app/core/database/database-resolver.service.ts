@@ -24,6 +24,7 @@ import { SessionType } from "../session/session-type";
 export class DatabaseResolverService {
   private readonly databaseFactory = inject(DatabaseFactoryService);
   private readonly migrationService = inject(IndexeddbMigrationService);
+  private sessionType: SessionType = environment.session_type;
 
   private databases: Map<string, Database> = new Map();
 
@@ -95,7 +96,7 @@ export class DatabaseResolverService {
    * (especially for local and remote database modes)
    */
   async initDatabasesForSession(session: SessionInfo) {
-    if (environment.session_type === SessionType.online) {
+    if (this.sessionType === SessionType.online) {
       this.initializeOnlineDatabaseForCurrentUser();
       return;
     }

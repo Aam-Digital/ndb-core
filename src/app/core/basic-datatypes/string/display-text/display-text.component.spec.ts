@@ -15,7 +15,7 @@ describe("DisplayTextComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayTextComponent);
     component = fixture.componentInstance;
-    component.value = "text";
+    fixture.componentRef.setInput("value", "text");
     fixture.detectChanges();
   });
 
