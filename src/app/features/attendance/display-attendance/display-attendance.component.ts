@@ -30,7 +30,6 @@ export class DisplayAttendanceComponent extends ViewDirective<
   AttendanceItem[],
   any
 > {
-  // Resolves the TODO that was left when ViewDirective still used @Input()
   items = computed(() => (this.value()?.length ? this.value() : []));
 
   percentage = computed(() => {
