@@ -284,13 +284,8 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  Component,
-  Input,
-  OnInit,
-  ChangeDetectionStrategy,
-} from &quot;@angular/core&quot;;
-import { ViewDirective } from &quot;app/core/entity/default-datatype/view.directive&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, computed, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
+import { ViewDirective } from &quot;#src/app/core/entity/default-datatype/view.directive&quot;;
 import { DynamicComponent } from &quot;app/core/config/dynamic-components/dynamic-component.decorator&quot;;
 
 /**
@@ -309,35 +304,29 @@ export interface LongTextFieldConfig {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-display-long-text&quot;,
-  template: &#x60;&lt;div [innerHTML]&#x3D;&quot;formattedValue&quot;&gt;&lt;/div&gt;&#x60;,
+  template: &#x60;&lt;div [innerHTML]&#x3D;&quot;formattedValue()&quot;&gt;&lt;/div&gt;&#x60;,
   standalone: true,
 })
-export class DisplayLongTextComponent
-  extends ViewDirective&lt;string, LongTextFieldConfig&gt;
-  implements OnInit
-{
-  @Input() declare config: LongTextFieldConfig;
+export class DisplayLongTextComponent extends ViewDirective&lt;
+  string,
+  LongTextFieldConfig
+&gt; {
+  readonly formattedValue &#x3D; computed(() &#x3D;&gt; {
+    const value &#x3D; this.value();
+    if (value &#x3D;&#x3D;&#x3D; undefined) return &quot;&quot;;
 
-  formattedValue: string &#x3D; &quot;&quot;;
-
-  ngOnInit(): void {
-    if (this.value &#x3D;&#x3D;&#x3D; undefined) {
-      this.formattedValue &#x3D; &quot;&quot;;
-      return;
-    }
-
-    const maxLines &#x3D; this.config?.maxLines ?? 3;
-    const maxCharacters &#x3D; this.config?.maxCharacters ?? 250;
+    const config &#x3D; this.config();
+    const maxLines &#x3D; config?.maxLines ?? 3;
+    const maxCharacters &#x3D; config?.maxCharacters ?? 250;
     const text &#x3D;
-      this.value.length &gt; maxCharacters
-        ? this.value.slice(0, maxCharacters) + &quot;...&quot;
-        : this.value;
+      value.length &gt; maxCharacters
+        ? value.slice(0, maxCharacters) + &quot;...&quot;
+        : value;
     const lines &#x3D; text.split(&quot;\n&quot;);
-    this.formattedValue &#x3D;
-      lines.length &gt; maxLines
-        ? lines.slice(0, maxLines).join(&quot;&lt;br&gt;&quot;) + &quot;...&quot;
-        : lines.join(&quot;&lt;br&gt;&quot;);
-  }
+    return lines.length &gt; maxLines
+      ? lines.slice(0, maxLines).join(&quot;&lt;br&gt;&quot;) + &quot;...&quot;
+      : lines.join(&quot;&lt;br&gt;&quot;);
+  });
 }
 </code></pre>
     </div>

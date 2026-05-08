@@ -244,8 +244,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="64"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:64</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="65"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -281,8 +281,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="49"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:49</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="50"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -352,8 +352,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="154"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:154</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="155"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:155</a></div>
                         </td>
                     </tr>
 
@@ -391,8 +391,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="97"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:97</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="98"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:98</a></div>
                         </td>
                     </tr>
 
@@ -464,8 +464,8 @@ i.e. configuring the access for that account after login
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="130"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:130</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="131"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:131</a></div>
                         </td>
                     </tr>
 
@@ -535,8 +535,8 @@ to avoid flooding to console with errors.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="76"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:76</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -579,8 +579,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -618,8 +618,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="84"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:84</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -660,7 +660,7 @@ forcing a full re-check on the next sync without deleting any data.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/database/database-resolver.service.ts:37</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/database/database-resolver.service.ts:38</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -709,6 +709,7 @@ import { SessionType } from &quot;../session/session-type&quot;;
 export class DatabaseResolverService {
   private readonly databaseFactory &#x3D; inject(DatabaseFactoryService);
   private readonly migrationService &#x3D; inject(IndexeddbMigrationService);
+  private sessionType: SessionType &#x3D; environment.session_type;
 
   private databases: Map&lt;string, Database&gt; &#x3D; new Map();
 
@@ -780,7 +781,7 @@ export class DatabaseResolverService {
    * (especially for local and remote database modes)
    */
   async initDatabasesForSession(session: SessionInfo) {
-    if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
+    if (this.sessionType &#x3D;&#x3D;&#x3D; SessionType.online) {
       this.initializeOnlineDatabaseForCurrentUser();
       return;
     }

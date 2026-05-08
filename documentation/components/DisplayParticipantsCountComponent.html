@@ -146,12 +146,6 @@
                     <code><a href="../directives/ViewDirective.html" target="_self" >ViewDirective</a></code>
     </p>
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.io/api/core/OnChanges" target="_blank" >OnChanges</a></code>
-    </p>
 
 
 <section data-compodoc="block-metadata">
@@ -216,6 +210,11 @@
                                 <a href="#participantRelationsCount" >participantRelationsCount</a>
                             </li>
                             <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#config" >config</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
                                 <a href="#isPartiallyAnonymized" >isPartiallyAnonymized</a>
                             </li>
                         </ul>
@@ -232,7 +231,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#config" >config</a>
+                                <a href="#_directConfig" >_directConfig</a>
                             </li>
                             <li>
                                 <a href="#entity" >entity</a>
@@ -267,14 +266,19 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="config"></a>
-                        <b>config</b>
+                        <a name="_directConfig"></a>
+                        <b>_directConfig</b>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
                         <i>Type : </i>    <code>C</code>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>undefined, { alias: &quot;config&quot; }</code>
                     </td>
                 </tr>
                             <tr>
@@ -285,16 +289,10 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/ViewDirective.html#source" target="_self" >ViewDirective:24</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/ViewDirective.html#source" target="_self" >ViewDirective:14</a></code>
 </div>
                             </td>
                         </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>The &quot;additional&quot; context config of the field.</p>
-</div>
-                    </td>
-                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
@@ -460,13 +458,16 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>WritableSignal&lt;number&gt;</code>
+                        <i>Type : </i>    <code>unknown</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal(null)</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    if (this.relationsResource.error()) return null;
+    return this.relationsResource.value()?.length ?? null;
+  })</code>
                     </td>
                 </tr>
                     <tr>
@@ -482,17 +483,26 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="isPartiallyAnonymized"></a>
+                    <a name="config"></a>
                     <span class="name">
-                        <span ><b>isPartiallyAnonymized</b></span>
-                        <a href="#isPartiallyAnonymized"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>config</b></span>
+                        <a href="#config"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed&lt;C&gt;(() &#x3D;&gt; {
+    const ffc &#x3D; this.formFieldConfig();
+    return ffc !&#x3D;&#x3D; undefined ? (ffc.additional as C) : this._directConfig();
+  })</code>
                     </td>
                 </tr>
                         <tr>
@@ -503,17 +513,58 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/ViewDirective.html#source" target="_self" >ViewDirective:27</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/ViewDirective.html#source" target="_self" >ViewDirective:16</a></code>
 </div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>indicating that the value is not in its original state, so that components can explain this to the user</p>
-</div>
+                    <a name="isPartiallyAnonymized"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>isPartiallyAnonymized</b></span>
+                        <a href="#isPartiallyAnonymized"><span class="icon ion-ios-link"></span></a>
+                    </span>
                 </td>
             </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed&lt;boolean&gt;(() &#x3D;&gt; {
+    const entity &#x3D; this.entity();
+    const id &#x3D; this.id();
+    return (
+      (entity?.anonymized &amp;&amp;
+        entity?.getSchema()?.get(id)?.anonymize &#x3D;&#x3D;&#x3D; &quot;retain-anonymized&quot;) ??
+      false
+    );
+  })</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/ViewDirective.html" target="_self" >ViewDirective</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/ViewDirective.html#source" target="_self" >ViewDirective:21</a></code>
+</div>
+                        </td>
+                    </tr>
+
 
         </tbody>
     </table>
@@ -525,17 +576,14 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  OnChanges,
-  signal,
-  WritableSignal,
+  computed,
   inject,
+  resource,
   ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { ChildrenService } from &quot;../children.service&quot;;
-import { ViewDirective } from &quot;../../../core/entity/default-datatype/view.directive&quot;;
+import { ViewDirective } from &quot;#src/app/core/entity/default-datatype/view.directive&quot;;
 import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
-import { ChildSchoolRelation } from &quot;../model/childSchoolRelation&quot;;
-import { Logging } from &quot;../../../core/logging/logging.service&quot;;
 
 @DynamicComponent(&quot;DisplayParticipantsCount&quot;)
 @Component({
@@ -543,29 +591,19 @@ import { Logging } from &quot;../../../core/logging/logging.service&quot;;
   selector: &quot;app-display-participants-count&quot;,
   templateUrl: &quot;./display-participants-count.component.html&quot;,
 })
-export class DisplayParticipantsCountComponent
-  extends ViewDirective&lt;any&gt;
-  implements OnChanges
-{
-  private _childrenService &#x3D; inject(ChildrenService);
+export class DisplayParticipantsCountComponent extends ViewDirective&lt;any&gt; {
+  private readonly _childrenService &#x3D; inject(ChildrenService);
 
-  participantRelationsCount: WritableSignal&lt;number&gt; &#x3D; signal(null);
+  private readonly relationsResource &#x3D; resource({
+    params: () &#x3D;&gt; this.entity()?.getId(),
+    loader: ({ params: entityId }) &#x3D;&gt;
+      this._childrenService.queryActiveRelationsOf(entityId),
+  });
 
-  override async ngOnChanges(): Promise&lt;void&gt; {
-    super.ngOnChanges();
-
-    return this._childrenService
-      .queryActiveRelationsOf(this.entity.getId())
-      .then((relations: ChildSchoolRelation[]) &#x3D;&gt; {
-        this.participantRelationsCount.set(relations.length);
-      })
-      .catch((reason) &#x3D;&gt; {
-        Logging.error(
-          &quot;Could not calculate participantRelationsCount, error response from ChildrenService.&quot; +
-            reason,
-        );
-      });
-  }
+  participantRelationsCount &#x3D; computed(() &#x3D;&gt; {
+    if (this.relationsResource.error()) return null;
+    return this.relationsResource.value()?.length ?? null;
+  });
 }
 </code></pre>
     </div>
