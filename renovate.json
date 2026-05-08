@@ -9,14 +9,22 @@
   ],
   "timezone": "Etc/UTC",
   "schedule": [
-    "after 00:00 and before 04:00 on Wednesday"
+    "after 00:00 and before 09:00 on Monday"
   ],
   "dependencyDashboard": true,
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
   "labels": [
-    "dependencies"
+    "Final Review"
   ],
+  "vulnerabilityAlerts": {
+    "schedule": [
+      "at any time"
+    ],
+    "labels": [
+      "Final Review"
+    ]
+  },
   "reviewers": [
     "sleidig",
     "Abhinegi2"
@@ -46,8 +54,7 @@
       "draftPR": true,
       "dependencyDashboardApproval": true,
       "labels": [
-        "dependencies",
-        "major-update"
+        "Final Review"
       ]
     },
     {
