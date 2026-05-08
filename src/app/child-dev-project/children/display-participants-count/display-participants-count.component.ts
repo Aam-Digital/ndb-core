@@ -24,7 +24,8 @@ export class DisplayParticipantsCountComponent extends ViewDirective<any> {
       this._childrenService.queryActiveRelationsOf(entityId),
   });
 
-  participantRelationsCount = computed(
-    () => this.relationsResource.value()?.length ?? null,
-  );
+  participantRelationsCount = computed(() => {
+    if (this.relationsResource.error()) return null;
+    return this.relationsResource.value()?.length ?? null;
+  });
 }
