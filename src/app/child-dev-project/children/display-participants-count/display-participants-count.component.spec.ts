@@ -66,7 +66,6 @@ describe("DisplayParticipantsCountComponent", () => {
 
   it("should handle error response from ChildrenService", async () => {
     mockChildrenService.queryActiveRelationsOf.mockRejectedValue(new Error());
-    component.participantRelationsCount.set(null);
     fixture.componentRef.setInput(
       "entity",
       createEntityOfType("School", "s-3"),
