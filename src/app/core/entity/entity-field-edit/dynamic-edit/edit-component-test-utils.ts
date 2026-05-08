@@ -36,12 +36,9 @@ export function setupCustomFormControlEditComponent<T>(
         id: propertyName,
         ...schema,
       });
-    } else {
-      try {
-        (component as any).formFieldConfig = { id: propertyName, ...schema };
-      } catch {
-        // signal input() — pass fixture parameter to use setInput() instead
-      }
+    } else if (typeof (component as any).formFieldConfig !== "function") {
+      // Skip signal inputs (functions) — they cannot be overwritten; pass fixture to use setInput() instead
+      (component as any).formFieldConfig = { id: propertyName, ...schema };
     }
   }
 
