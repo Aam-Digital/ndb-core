@@ -13,9 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayDateComponent> = (
-  args: DisplayDateComponent,
-) => ({
+const Template: StoryFn<DisplayDateComponent> = (args) => ({
   props: args,
 });
 
