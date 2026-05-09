@@ -123,6 +123,39 @@ describe("EntityDetailsComponent", () => {
     }
   });
 
+  it("updates panel entity reference in configs when entity is saved externally (e.g. after anonymize)", async () => {
+    vi.useFakeTimers();
+    try {
+      const testChild = new TestEntity("Entity-Update-Test");
+      testChild["_rev"] = "1";
+      const entityMapper = TestBed.inject(EntityMapperService);
+      await entityMapper.save(testChild);
+      await vi.advanceTimersByTimeAsync(0);
+
+      component.id = testChild.getId(true);
+      component.panels = [
+        {
+          title: "Test Panel",
+          components: [{ title: "", component: "Form", config: {} }],
+        },
+      ];
+      component.ngOnChanges(simpleChangesFor(component, "id", "panels"));
+      await vi.advanceTimersByTimeAsync(0);
+
+      const updatedChild = new TestEntity(testChild.getId(true));
+      updatedChild.anonymized = true;
+      updatedChild["_rev"] = "2";
+      await entityMapper.save(updatedChild);
+      await vi.advanceTimersByTimeAsync(0);
+
+      const panelConfig = component.panels[0].components[0]
+        .config as PanelConfig;
+      expect(panelConfig.entity.anonymized).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("filters out panels not permitted for the current user role", async () => {
     vi.useFakeTimers();
     try {

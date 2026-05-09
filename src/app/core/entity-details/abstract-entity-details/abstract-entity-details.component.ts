@@ -52,6 +52,12 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
     }
   }
 
+  /**
+   * Hook called whenever the entity is updated via the live subscription (e.g. after save or anonymize).
+   * Subclasses can override this to react to entity changes beyond what markForCheck() provides.
+   */
+  protected onEntityUpdated() {}
+
   protected subscribeToEntityChanges() {
     const fullId = Entity.createPrefixedId(this.entityType, this.id);
     this.changesSubscription?.unsubscribe();
@@ -64,6 +70,7 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
       )
       .subscribe(({ entity }) => {
         this.entity = entity;
+        this.onEntityUpdated();
         this.cdr.markForCheck();
       });
   }
