@@ -1,7 +1,7 @@
 <mat-form-field appearance="fill" floatLabel="always" class="full-width">
   <mat-label>{{ filterConfig()?.label || filterConfig()?.name }}</mat-label>
 
-  <mat-date-range-input>
+  <mat-date-range-input [class.hidden]="isNoDateFilterActive()">
     <input
       matStartDate
       (dateChange)="dateChangedManually()"
@@ -18,8 +18,26 @@
     />
   </mat-date-range-input>
 
+  @if (isNoDateFilterActive()) {
+    <span i18n>not defined</span>
+  }
+
   <mat-datepicker-toggle
     matSuffix
     (click)="openDialog($event)"
   ></mat-datepicker-toggle>
+  @if (isAnyDateFilterActive()) {
+    <button
+      matSuffix
+      mat-icon-button
+      type="button"
+      class="date-reset-button"
+      aria-label="Reset date filter"
+      matTooltip="Clear date filter"
+      i18n-matTooltip="Tooltip: clears the date filter"
+      (click)="resetNoDateFilter()"
+    >
+      <fa-icon icon="xmark"></fa-icon>
+    </button>
+  }
 </mat-form-field>

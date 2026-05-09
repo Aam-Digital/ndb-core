@@ -21,9 +21,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayPercentageComponent> = (
-  args: DisplayPercentageComponent,
-) => ({
+const Template: StoryFn<DisplayPercentageComponent> = (args) => ({
   props: args,
 });
 

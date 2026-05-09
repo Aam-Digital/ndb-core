@@ -15,7 +15,7 @@ describe("DisplayPercentageComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayPercentageComponent);
     component = fixture.componentInstance;
-    component.value = 10;
+    fixture.componentRef.setInput("value", 10);
     fixture.detectChanges();
   });
 

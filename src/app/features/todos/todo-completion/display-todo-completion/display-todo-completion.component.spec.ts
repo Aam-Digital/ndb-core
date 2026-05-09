@@ -55,14 +55,13 @@ describe("DisplayTodoCompletionComponent", () => {
       const otherChild = new TestEntity("2");
       entityMapper.addAll([completingChild, otherChild]);
 
-      component.value = {
+      fixture.componentRef.setInput("value", {
         completedBy: completingChild.getId(),
         completedAt: new Date(),
-      };
-      component.ngOnInit();
+      });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.completedBy).toEqual(completingChild);
+      expect(component.completedBy.value()).toEqual(completingChild);
     } finally {
       vi.useRealTimers();
     }

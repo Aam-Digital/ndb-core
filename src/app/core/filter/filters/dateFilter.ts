@@ -3,7 +3,12 @@ import moment from "moment";
 import { calculateDateRange } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { isValidDate } from "../../../utils/utils";
 import { Entity } from "../../entity/model/entity";
-import { DataFilter, Filter } from "./filters";
+import {
+  createEmptyValueFilter,
+  DataFilter,
+  EMPTY_FILTER_OPTION_KEY,
+  Filter,
+} from "./filters";
 import { DateRangeFilterConfigOption } from "../../entity-list/EntityListConfig";
 import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
 
@@ -39,6 +44,10 @@ export class DateFilter<T extends Entity> extends Filter<T> {
   }
 
   getFilter(): DataFilter<T> {
+    if (this.selectedOptionValues[0] === EMPTY_FILTER_OPTION_KEY) {
+      return createEmptyValueFilter(this.name, false);
+    }
+
     const range = this.getDateRange();
     const filterObject: { $gte?: string; $lte?: string } = {};
     if (range.start) {

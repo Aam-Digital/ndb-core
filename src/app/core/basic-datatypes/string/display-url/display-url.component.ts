@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { ViewDirective } from "../../../entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 /**
@@ -10,8 +10,14 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-url",
   template: `
-    @if (value) {
-      <a [href]="value" target="_blank" class="clickable">{{ value }}</a>
+    @if (value()) {
+      <a
+        [href]="value()"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="clickable"
+        >{{ value() }}</a
+      >
     } @else {
       <span>-</span>
     }

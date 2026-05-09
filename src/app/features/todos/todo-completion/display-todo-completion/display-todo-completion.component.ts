@@ -1,8 +1,7 @@
 import {
-  ChangeDetectorRef,
   Component,
-  OnInit,
   inject,
+  resource,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
@@ -10,7 +9,7 @@ import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-dat
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
-import { ViewDirective } from "../../../../core/entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("DisplayTodoCompletion")
@@ -21,23 +20,20 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
   styleUrls: ["./display-todo-completion.component.scss"],
   imports: [FontAwesomeModule, CustomDatePipe],
 })
-export class DisplayTodoCompletionComponent
-  extends ViewDirective<TodoCompletion>
-  implements OnInit
-{
-  private entityMapper = inject(EntityMapperService);
-  private readonly cdr = inject(ChangeDetectorRef);
+export class DisplayTodoCompletionComponent extends ViewDirective<TodoCompletion> {
+  private readonly entityMapper = inject(EntityMapperService);
 
-  completedBy: Entity;
-
-  ngOnInit() {
-    if (this.value?.completedBy) {
-      const entityId = this.value.completedBy;
+  readonly completedBy = resource({
+    params: () => this.value()?.completedBy,
+    // Must NOT use `async` here: when this class field initializer is compiled,
+    // an async arrow gets transformed into a helper that hoists `var _this = this`
+    // above the implicit `super(...arguments)` call in the constructor, causing
+    // "Must call super constructor in derived class before accessing 'this'".
+    // Return a Promise explicitly instead.
+    loader: ({ params: entityId }) => {
+      if (!entityId) return Promise.resolve(undefined);
       const entityType = Entity.extractTypeFromId(entityId);
-      this.entityMapper.load(entityType, entityId).then((res) => {
-        this.completedBy = res;
-        this.cdr.markForCheck();
-      });
-    }
-  }
+      return this.entityMapper.load(entityType, entityId);
+    },
+  });
 }

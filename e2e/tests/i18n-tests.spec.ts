@@ -8,7 +8,12 @@ import {
 test("Translated and localized app versions (i18n)", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByRole("combobox", { name: "language" }).click();
+  // Wait for dialog to be fully interactive before clicking mat-select
+  await expect(
+    page.getByRole("heading", { name: "Welcome to Aam Digital!" }),
+  ).toBeVisible();
+
+  await page.getByText("Choose your language").click();
   await page.getByRole("option", { name: "Deutsch / German (de)" }).click();
 
   await expect(
