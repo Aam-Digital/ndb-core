@@ -1,10 +1,5 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  ChangeDetectionStrategy,
-} from "@angular/core";
-import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
+import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 
 /**
@@ -23,33 +18,27 @@ export interface LongTextFieldConfig {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-long-text",
-  template: `<div [innerHTML]="formattedValue"></div>`,
+  template: `<div [innerHTML]="formattedValue()"></div>`,
   standalone: true,
 })
-export class DisplayLongTextComponent
-  extends ViewDirective<string, LongTextFieldConfig>
-  implements OnInit
-{
-  @Input() declare config: LongTextFieldConfig;
+export class DisplayLongTextComponent extends ViewDirective<
+  string,
+  LongTextFieldConfig
+> {
+  readonly formattedValue = computed(() => {
+    const value = this.value();
+    if (value === undefined) return "";
 
-  formattedValue: string = "";
-
-  ngOnInit(): void {
-    if (this.value === undefined) {
-      this.formattedValue = "";
-      return;
-    }
-
-    const maxLines = this.config?.maxLines ?? 3;
-    const maxCharacters = this.config?.maxCharacters ?? 250;
+    const config = this.config();
+    const maxLines = config?.maxLines ?? 3;
+    const maxCharacters = config?.maxCharacters ?? 250;
     const text =
-      this.value.length > maxCharacters
-        ? this.value.slice(0, maxCharacters) + "..."
-        : this.value;
+      value.length > maxCharacters
+        ? value.slice(0, maxCharacters) + "..."
+        : value;
     const lines = text.split("\n");
-    this.formattedValue =
-      lines.length > maxLines
-        ? lines.slice(0, maxLines).join("<br>") + "..."
-        : lines.join("<br>");
-  }
+    return lines.length > maxLines
+      ? lines.slice(0, maxLines).join("<br>") + "..."
+      : lines.join("<br>");
+  });
 }

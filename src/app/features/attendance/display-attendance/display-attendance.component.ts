@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  OnChanges,
-  signal,
-  SimpleChanges,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed } from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { AttendanceItem } from "../model/attendance-item";
@@ -33,11 +26,11 @@ const THRESHOLD_WARNING = 0.8;
     AttendanceDayBlockComponent,
   ],
 })
-export class DisplayAttendanceComponent
-  extends ViewDirective<AttendanceItem[], any>
-  implements OnChanges
-{
-  items = signal<AttendanceItem[]>([]);
+export class DisplayAttendanceComponent extends ViewDirective<
+  AttendanceItem[],
+  any
+> {
+  items = computed(() => (this.value()?.length ? this.value() : []));
 
   percentage = computed(() => {
     let present = 0;
@@ -71,11 +64,4 @@ export class DisplayAttendanceComponent
       return "w-" + WarningLevel.OK;
     }
   });
-
-  // TODO: Remove ngOnChanges once ViewDirective migrates to signal inputs.
-  //  Then replace with: items = computed(() => this.value()?.length ? this.value() : []);
-  override ngOnChanges(changes?: SimpleChanges) {
-    super.ngOnChanges(changes);
-    this.items.set(this.value?.length ? this.value : []);
-  }
 }

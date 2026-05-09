@@ -40,9 +40,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayEntityComponent> = (
-  args: DisplayEntityComponent,
-) => ({
+const Template: StoryFn<DisplayEntityComponent> = (args) => ({
   component: DisplayEntityComponent,
   props: args,
 });

@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
+import { Component, ChangeDetectionStrategy, computed } from "@angular/core";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 import { DisplayPercentageComponent } from "../display-percentage/display-percentage.component";
 import { NgStyle } from "@angular/common";
@@ -34,57 +34,52 @@ export class DisplayCalculatedValueComponent extends ViewDirective<
     actual?: string;
   }
 > {
-  calculationType: CalculationType;
+  readonly calculatedValue = computed(() => {
+    const calculationType =
+      this.config()?.calculation ?? CalculationType.Percentage;
 
-  /**
-   * "calculated" color for special calculation types
-   */
-  color: string;
-
-  /**
-   * dynamically calculate the value based on configured entity fields.
-   * This is defined as a function to re-calculate on every change detection cycle as the value remains outdated otherwise.
-   */
-  calculateValue() {
-    if (!this.calculationType) {
-      this.calculationType =
-        this.config.calculation ?? CalculationType.Percentage;
-    }
-
-    let value: number;
-    switch (this.calculationType) {
+    switch (calculationType) {
       case CalculationType.Percentage:
-        value = this._percentage();
-        break;
+        return this._percentage();
       case CalculationType.BMI:
-        value = this._bmi();
-        this.color = this._bmiColor(value);
-        break;
+        return this._bmi();
+      default:
+        return undefined;
     }
+  });
 
-    return value;
-  }
+  readonly color = computed(() => {
+    const calculationType =
+      this.config()?.calculation ?? CalculationType.Percentage;
+    if (calculationType === CalculationType.BMI) {
+      return this._bmiColor(this.calculatedValue());
+    }
+    return undefined;
+  });
 
-  private _percentage(): number {
-    const actual: number =
-      this.entity[this.config.valueFields?.[0] ?? this.config.actual];
-    const total: number =
-      this.entity[this.config.valueFields?.[1] ?? this.config.total];
+  private _percentage(): number | undefined {
+    const config = this.config();
+    const entity = this.entity();
+    const actual: number = entity?.[config?.valueFields?.[0] ?? config?.actual];
+    const total: number = entity?.[config?.valueFields?.[1] ?? config?.total];
 
     if (Number.isFinite(actual) && Number.isFinite(total) && total != 0) {
       return (actual / total) * 100;
     }
+    return undefined;
   }
 
   private _bmi(): number {
-    const weight: number = this.entity[this.config.valueFields[0]];
-    const height: number = this.entity[this.config.valueFields[1]];
+    const entity = this.entity();
+    const config = this.config();
+    const weight: number = entity?.[config?.valueFields?.[0]];
+    const height: number = entity?.[config?.valueFields?.[1]];
 
     const bmi = weight / ((height / 100) * (height / 100));
     return Math.round(bmi * 100) / 100;
   }
-  private _bmiColor(bmi: number) {
-    if (Number.isNaN(bmi) || !Number.isFinite(bmi)) {
+  private _bmiColor(bmi: number | undefined) {
+    if (bmi == undefined || Number.isNaN(bmi) || !Number.isFinite(bmi)) {
       return "#DEDEDE";
     }
     if (bmi <= 16 || bmi >= 30) {

@@ -1,4 +1,4 @@
-@if (featureEnabled === undefined) {
+@if (featureEnabled() === undefined) {
   <div class="feature-disabled-box">
     <mat-progress-bar
       mode="indeterminate"
@@ -9,7 +9,7 @@
       seconds...
     </p>
   </div>
-} @else if (featureEnabled === false) {
+} @else if (featureEnabled() === false) {
   <div class="feature-disabled-box">
     @if (!navigator.onLine) {
       <h2 i18n>You are currently offline.</h2>
@@ -17,7 +17,7 @@
         Please reconnect to the internet to activate. We could not check if this
         feature is enabled for your system.
       </p>
-    } @else if (compactView) {
+    } @else if (compactView()) {
       <p i18n class="color-error">
         This feature is currently not enabled for your system. Please contact
         your system administrator to enable it.
@@ -26,7 +26,7 @@
       <h2 i18n>This feature is currently not enabled for your system.</h2>
       <p i18n>Please contact your system administrator to enable it.</p>
       <p i18n>
-        If {{ featureName }} has been enabled and you are still seeing this
+        If {{ featureName() }} has been enabled and you are still seeing this
         message, there may be an issue with your internet connection or a
         temporary technical issue on the server. If this persists, please also
         contact your administrator.

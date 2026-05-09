@@ -13,9 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayCheckmarkComponent> = (
-  args: DisplayCheckmarkComponent,
-) => ({
+const Template: StoryFn<DisplayCheckmarkComponent> = (args) => ({
   props: args,
 });
 

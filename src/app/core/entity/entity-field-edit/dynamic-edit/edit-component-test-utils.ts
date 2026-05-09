@@ -25,8 +25,11 @@ export function setupCustomFormControlEditComponent<T>(
     control: formControl,
   } as any;
 
-  // Set formFieldConfig if the component has it
-  if ("formFieldConfig" in component) {
+  // Set formFieldConfig if the component has it (skip signal inputs — they are functions and cannot be overwritten)
+  if (
+    "formFieldConfig" in component &&
+    typeof (component as any).formFieldConfig !== "function"
+  ) {
     (component as any).formFieldConfig = { id: propertyName, ...schema };
   }
 

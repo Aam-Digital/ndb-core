@@ -15,7 +15,7 @@ describe("DisplayCheckmarkComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayCheckmarkComponent);
     component = fixture.componentInstance;
-    component.value = true;
+    fixture.componentRef.setInput("value", true);
     fixture.detectChanges();
   });
 

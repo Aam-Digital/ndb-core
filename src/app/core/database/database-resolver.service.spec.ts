@@ -4,7 +4,7 @@ import { DatabaseResolverService } from "./database-resolver.service";
 import { SessionInfo } from "../session/auth/session-info";
 import { MemoryPouchDatabase } from "./pouchdb/memory-pouch-database";
 import { DatabaseFactoryService } from "./database-factory.service";
-import { SyncStateSubject } from "../session/session-type";
+import { SessionType, SyncStateSubject } from "../session/session-type";
 import {
   IndexeddbMigrationService,
   DbConfig,
@@ -48,6 +48,9 @@ describe("DatabaseResolverService", () => {
       ],
     });
     service = TestBed.inject(DatabaseResolverService);
+
+    // @ts-ignore - forcing this for stable test conditions
+    service["sessionType"] = SessionType.mock;
   });
 
   it("should be created", () => {
