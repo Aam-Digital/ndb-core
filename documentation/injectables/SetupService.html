@@ -253,8 +253,8 @@ that users can select to start with setting up their system.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">src/app/core/setup/setup.service.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="93"
+                                    class="link-to-prism">src/app/core/setup/setup.service.ts:93</a></div>
                         </td>
                     </tr>
 
@@ -326,8 +326,8 @@ saving all given base-config entities to the database.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="146"
-                                    class="link-to-prism">src/app/core/setup/setup.service.ts:146</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="149"
+                                    class="link-to-prism">src/app/core/setup/setup.service.ts:149</a></div>
                         </td>
                     </tr>
 
@@ -413,7 +413,7 @@ import { Logging } from &quot;../logging/logging.service&quot;;
 import { SyncStateSubject } from &quot;../session/session-type&quot;;
 import { ConfigService } from &quot;../config/config.service&quot;;
 import { SyncState } from &quot;../session/session-states/sync-state.enum&quot;;
-import { catchError, switchMap } from &quot;rxjs/operators&quot;;
+import { catchError, retry, switchMap } from &quot;rxjs/operators&quot;;
 import { asArray } from &quot;../../utils/asArray&quot;;
 
 /**
@@ -476,7 +476,10 @@ export class SetupService {
     const entries &#x3D; await firstValueFrom(
       this.httpClient
         .get&lt;BaseConfig | BaseConfig[]&gt;(url, { responseType: &quot;json&quot; })
-        .pipe(catchError(() &#x3D;&gt; of(null))),
+        .pipe(
+          retry(2),
+          catchError(() &#x3D;&gt; of(null)),
+        ),
     );
     if (!entries) {
       Logging.warn(&quot;Failed to load config descriptor: &quot; + url);

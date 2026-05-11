@@ -537,7 +537,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="363" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:363</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="365" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:365</a></div>
                         </td>
                     </tr>
 
@@ -898,8 +898,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="340"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:340</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="342"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:342</a></div>
                         </td>
                     </tr>
 
@@ -1080,8 +1080,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="365"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:365</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="367"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:367</a></div>
                         </td>
                     </tr>
 
@@ -1126,7 +1126,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:263</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:265</a></code>
 </div>
                         </td>
                     </tr>
@@ -1219,7 +1219,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:275</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:277</a></code>
 </div>
                         </td>
                     </tr>
@@ -1300,8 +1300,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="325"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:325</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="327"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:327</a></div>
                         </td>
                     </tr>
 
@@ -2838,7 +2838,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return {};
     }
 
-    const localInfo &#x3D; await this.getPouchDB().info();
+    const localDb &#x3D; await this.getPouchDBOnceReady();
+
+    const localInfo &#x3D; await localDb.info();
     const isFirstSync &#x3D; localInfo.doc_count &#x3D;&#x3D;&#x3D; 0;
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking &amp; purge
@@ -2857,7 +2859,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     //    ErrorHandler / Sentry. Outer .then/.catch below still handle them
     //    explicitly and re-enter the zone for state updates.
     const createSyncHandler &#x3D; () &#x3D;&gt;
-      this.getPouchDB().sync(this.remoteDatabase.getPouchDB(), {
+      localDb.sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
       });
