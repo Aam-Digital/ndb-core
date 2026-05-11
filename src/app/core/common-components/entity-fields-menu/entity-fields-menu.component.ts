@@ -1,12 +1,11 @@
 import {
   Component,
-  EventEmitter,
+  computed,
+  effect,
   inject,
-  Input,
-  OnChanges,
+  input,
   OnInit,
-  Output,
-  SimpleChanges,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityConstructor } from "../../entity/model/entity";
@@ -31,19 +30,22 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
 })
-export class EntityFieldsMenuComponent implements OnChanges, OnInit {
+export class EntityFieldsMenuComponent implements OnInit {
   private entityFormService = inject(EntityFormService, { optional: true });
 
-  @Input() entityType: EntityConstructor;
-  @Input() set availableFields(value: ColumnConfig[]) {
-    const fieldsConfig: FormFieldConfig[] = value
+  entityType = input<EntityConstructor>();
+  availableFields = input<ColumnConfig[]>([]);
+  activeFields = input<ColumnConfig[]>([]);
+  activeFieldsChange = output<ColumnConfig[]>();
+  selectedFieldsControl = new FormControl<string[]>([]);
+
+  readonly _availableFields = computed<FormFieldConfig[]>(() => {
+    const entityType = this.entityType();
+    const fieldsConfig: FormFieldConfig[] = this.availableFields()
       .map((field) => {
         const mappedField =
-          this.entityFormService && this.entityType
-            ? this.entityFormService.extendFormFieldConfig(
-                field,
-                this.entityType,
-              )
+          this.entityFormService && entityType
+            ? this.entityFormService.extendFormFieldConfig(field, entityType)
             : toFormFieldConfig(field);
 
         if (typeof field === "object") {
@@ -60,18 +62,24 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
         deduplicatedFieldsById[field.id] = field;
       }
     }
-    this._availableFields = Object.values(deduplicatedFieldsById);
-  }
-  _availableFields: FormFieldConfig[] = [];
+    return Object.values(deduplicatedFieldsById);
+  });
 
-  @Input() activeFields: ColumnConfig[] = [];
-  @Output() activeFieldsChange = new EventEmitter<ColumnConfig[]>();
-  selectedFieldsControl = new FormControl<string[]>([]);
+  constructor() {
+    effect(() => {
+      const selectedFields = this.activeFields()?.map((field) =>
+        typeof field === "string" ? field : field.id,
+      );
+      this.selectedFieldsControl.setValue(selectedFields, {
+        emitEvent: false,
+      });
+    });
+  }
 
   ngOnInit() {
     this.selectedFieldsControl.valueChanges.subscribe((value: string[]) => {
       const mappedFields: ColumnConfig[] = value.map((v) => {
-        const availableField = this._availableFields.find((f) => f.id === v);
+        const availableField = this._availableFields().find((f) => f.id === v);
 
         if (availableField?.["_customField"]) {
           const result = { ...availableField };
@@ -82,16 +90,5 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
       this.activeFieldsChange.emit(mappedFields);
     });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.activeFields) {
-      const selectedFields = this.activeFields?.map((field) =>
-        typeof field === "string" ? field : field.id,
-      );
-      this.selectedFieldsControl.setValue(selectedFields, {
-        emitEvent: false,
-      });
-    }
   }
 }

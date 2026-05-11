@@ -47,12 +47,12 @@ describe("EditTextWithAutocompleteComponent", () => {
       control: nameControl,
     } as any;
 
-    component.formFieldConfig = {
+    fixture.componentRef.setInput("formFieldConfig", {
       id: "name",
       additional: {
         entityType: "TestEntity",
       },
-    };
+    });
 
     fixture.detectChanges();
   });

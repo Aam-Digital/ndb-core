@@ -18,7 +18,7 @@ describe("ListPaginatorComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ListPaginatorComponent);
     component = fixture.componentInstance;
-    component.dataSource = new MatTableDataSource<any>();
+    fixture.componentRef.setInput("dataSource", new MatTableDataSource<any>());
     fixture.detectChanges();
   });
 
@@ -29,7 +29,8 @@ describe("ListPaginatorComponent", () => {
   });
 
   it("should save pagination settings in the local storage", () => {
-    component.idForSavingPagination = "table-id";
+    fixture.componentRef.setInput("idForSavingPagination", "table-id");
+    fixture.detectChanges();
 
     component.onPaginateChange({ pageSize: 20, pageIndex: 1 } as PageEvent);
 

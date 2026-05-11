@@ -1,16 +1,16 @@
-@if (isLoading) {
+@if (isLoading()) {
   <div class="process-spinner">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 }
 
-<div [hidden]="isLoading" class="table-container">
+<div [hidden]="isLoading()" class="table-container">
   <table
     mat-table
     [dataSource]="recordsDataSource"
     matSort
-    [matSortActive]="_sortBy?.active"
-    [matSortDirection]="_sortBy?.direction"
+    [matSortActive]="_sortBy()?.active"
+    [matSortDirection]="_sortBy()?.direction"
     class="full-width table"
   >
     @for (col of _columns; track col.id) {
@@ -23,7 +23,7 @@
         >
           <app-entity-field-label
             [field]="col"
-            [entityType]="_entityType"
+            [entityType]="entityType()"
           ></app-entity-field-label>
         </th>
         <td mat-cell *matCellDef="let row">
@@ -59,7 +59,7 @@
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
           (change)="onRowSelect($event, row)"
-          [checked]="selectedRecords?.includes(row.record)"
+          [checked]="selectedRecords()?.includes(row.record)"
           (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
@@ -71,8 +71,8 @@
     <ng-container [matColumnDef]="ACTIONCOLUMN_EDIT">
       <th mat-header-cell *matHeaderCellDef class="remove-padding-left">
         <app-entity-create-button
-          [entityType]="_entityType"
-          [newRecordFactory]="newRecordFactory"
+          [entityType]="entityType()"
+          [newRecordFactory]="newRecordFactory()"
           (entityCreate)="showEntity($event); entityClick.emit($event)"
           [iconOnly]="true"
         ></app-entity-create-button>
@@ -87,12 +87,12 @@
     <!-- custom columns via content projection -->
     <ng-content></ng-content>
 
-    <tr mat-header-row *matHeaderRowDef="_columnsToDisplay"></tr>
+    <tr mat-header-row *matHeaderRowDef="_columnsToDisplay()"></tr>
     <tr
       mat-row
-      *matRowDef="let row; columns: _columnsToDisplay"
+      *matRowDef="let row; columns: _columnsToDisplay()"
       [class.inactive-row]="!row.record.isActive"
-      [style.background-color]="getBackgroundColor?.(row.record)"
+      [style.background-color]="effectiveBackgroundColor()(row.record)"
       class="table-row"
       (mousedown)="onRowMouseDown($event, row)"
       style="cursor: pointer"
@@ -113,8 +113,8 @@
   -->
   <div class="table-footer filter-inactive-toggle">
     <mat-slide-toggle
-      [checked]="_showInactive"
-      (change)="showInactive = $event.checked"
+      [checked]="showInactive()"
+      (change)="showInactive.set($event.checked)"
       i18n="slider|also show entries that are archived"
     >
       Include archived records

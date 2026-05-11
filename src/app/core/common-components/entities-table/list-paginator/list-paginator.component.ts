@@ -1,11 +1,10 @@
 import {
   Component,
-  Input,
-  OnChanges,
   OnInit,
-  SimpleChanges,
   ViewChild,
   ChangeDetectionStrategy,
+  effect,
+  input,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -21,25 +20,27 @@ import { MatTableDataSource } from "@angular/material/table";
   styleUrls: ["./list-paginator.component.scss"],
   imports: [MatPaginatorModule],
 })
-export class ListPaginatorComponent<E> implements OnChanges, OnInit {
+export class ListPaginatorComponent<E> implements OnInit {
   readonly LOCAL_STORAGE_KEY = "PAGINATION-";
   readonly pageSizeOptions = [10, 20, 50, 100];
 
-  @Input() dataSource: MatTableDataSource<E>;
-  @Input() idForSavingPagination: string;
+  dataSource = input<MatTableDataSource<E>>();
+  idForSavingPagination = input<string>();
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   pageSize = 10;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("idForSavingPagination")) {
-      this.applyUserPaginationSettings();
-    }
+  constructor() {
+    effect(() => {
+      if (this.idForSavingPagination() !== undefined) {
+        this.applyUserPaginationSettings();
+      }
+    });
   }
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
+    this.dataSource().paginator = this.paginator;
   }
 
   onPaginateChange(event: PageEvent) {
@@ -54,13 +55,15 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
 
   private getSavedPageSize(): number {
     return Number.parseInt(
-      localStorage.getItem(this.LOCAL_STORAGE_KEY + this.idForSavingPagination),
+      localStorage.getItem(
+        this.LOCAL_STORAGE_KEY + this.idForSavingPagination(),
+      ),
     );
   }
 
   private savePageSize(size: number) {
     localStorage.setItem(
-      this.LOCAL_STORAGE_KEY + this.idForSavingPagination,
+      this.LOCAL_STORAGE_KEY + this.idForSavingPagination(),
       size?.toString(),
     );
   }

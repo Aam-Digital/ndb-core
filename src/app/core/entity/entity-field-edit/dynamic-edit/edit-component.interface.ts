@@ -1,3 +1,4 @@
+import { InputSignal } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 
@@ -6,6 +7,6 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
  * The inputs are passed on by the DynamicEditComponent.
  */
 export interface EditComponent {
-  formFieldConfig?: FormFieldConfig;
-  entity?: Entity;
+  formFieldConfig?: FormFieldConfig | InputSignal<FormFieldConfig | undefined>;
+  entity?: Entity | InputSignal<Entity | undefined>;
 }

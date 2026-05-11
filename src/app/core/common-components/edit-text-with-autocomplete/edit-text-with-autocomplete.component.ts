@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
@@ -71,7 +71,7 @@ export class EditTextWithAutocompleteComponent
   private entityMapperService = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   get parent(): FormGroup {
     return this.formControl.parent as FormGroup;
@@ -129,7 +129,7 @@ export class EditTextWithAutocompleteComponent
     let val = this.formControl.value;
     if (
       !this.autocompleteDisabled &&
-      val !== this.currentValues[this.formFieldConfig.id]
+      val !== this.currentValues[this.formFieldConfig().id]
     ) {
       let filteredEntities = this.entities;
       if (val) {
@@ -145,7 +145,7 @@ export class EditTextWithAutocompleteComponent
 
   async ngOnInit() {
     // Initialize additional configuration from formFieldConfig
-    this.additional = this.formFieldConfig?.additional;
+    this.additional = this.formFieldConfig()?.additional;
 
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete
@@ -185,7 +185,7 @@ export class EditTextWithAutocompleteComponent
   private valuesChanged() {
     return Object.entries(this.currentValues).some(
       ([prop, value]) =>
-        prop !== this.formFieldConfig.id &&
+        prop !== this.formFieldConfig().id &&
         value !== this.parent.controls[prop].value,
     );
   }

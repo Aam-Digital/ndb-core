@@ -1,11 +1,10 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
+  effect,
+  input,
   OnInit,
-  Output,
-  SimpleChanges,
+  output,
+  untracked,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -43,23 +42,35 @@ import { resolveIconDefinition } from "../fa-dynamic-icon/fa-icon-utils";
   templateUrl: "./icon-input.component.html",
   styleUrl: "./icon-input.component.scss",
 })
-export class IconComponent implements OnInit, OnChanges {
+export class IconComponent implements OnInit {
   private readonly iconLibrary = inject(FaIconLibrary);
 
-  @Input() icon: string;
-  @Input() control?: FormControl<string | null>;
-  @Output() iconChange = new EventEmitter<string>();
+  icon = input<string>();
+  control = input<FormControl<string | null>>();
+  iconChange = output<string>();
 
   iconControl: FormControl<string | null>;
 
+  constructor() {
+    effect(() => {
+      const iconValue = this.icon();
+      untracked(() => {
+        if (this.iconControl && !this.control()) {
+          this.iconControl.setValue(iconValue || "", { emitEvent: false });
+        }
+      });
+    });
+  }
+
   ngOnInit(): void {
     const iconValidator = this.createIconValidator();
-    if (this.control) {
-      this.control.addValidators(iconValidator);
-      this.control.updateValueAndValidity({ emitEvent: false });
-      this.iconControl = this.control;
+    const ctrl = this.control();
+    if (ctrl) {
+      ctrl.addValidators(iconValidator);
+      ctrl.updateValueAndValidity({ emitEvent: false });
+      this.iconControl = ctrl;
     } else {
-      this.iconControl = new FormControl<string | null>(this.icon || "", {
+      this.iconControl = new FormControl<string | null>(this.icon() || "", {
         validators: [iconValidator],
       });
     }
@@ -67,12 +78,6 @@ export class IconComponent implements OnInit, OnChanges {
     this.iconControl.valueChanges.subscribe((value) =>
       this.iconChange.emit(value || ""),
     );
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["icon"] && this.iconControl && !this.control) {
-      this.iconControl.setValue(this.icon || "", { emitEvent: false });
-    }
   }
 
   private createIconValidator(): ValidatorFn {

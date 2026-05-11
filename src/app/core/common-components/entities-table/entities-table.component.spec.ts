@@ -74,7 +74,7 @@ describe("EntitiesTableComponent", () => {
 
     fixture = TestBed.createComponent(EntitiesTableComponent);
     component = fixture.componentInstance;
-    component.editable = false;
+    fixture.componentRef.setInput("editable", false);
     fixture.detectChanges();
   });
 
@@ -83,16 +83,16 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should apply default sort on first column and order dates descending", () => {
-    component.entityType = Note;
-    component.customColumns = [
+    fixture.componentRef.setInput("entityType", Note);
+    fixture.componentRef.setInput("customColumns", [
       { id: "date", dataType: DateDatatype.dataType },
       "subject",
-    ];
-    component.columnsToDisplay = ["date", "subject"];
+    ]);
+    fixture.componentRef.setInput("columnsToDisplay", ["date", "subject"]);
 
     const oldNote = Note.create(moment().subtract(1, "day").toDate());
     const newNote = Note.create(new Date());
-    component.records = [oldNote, newNote];
+    fixture.componentRef.setInput("records", [oldNote, newNote]);
     fixture.detectChanges();
 
     expect(component.recordsDataSource.sort.direction).toBe("desc");
@@ -100,15 +100,17 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should use input defaultSort if defined", () => {
-    component.customColumns = ["date", "subject"];
-    component.columnsToDisplay = ["date", "subject"];
+    fixture.componentRef.setInput("customColumns", ["date", "subject"]);
+    fixture.componentRef.setInput("columnsToDisplay", ["date", "subject"]);
     const n1 = Note.create(new Date(), "1");
     const n2 = Note.create(new Date(), "2");
     const n3 = Note.create(new Date(), "3");
 
-    component.records = [n3, n1, n2];
-
-    component.sortBy = { active: "subject", direction: "asc" };
+    fixture.componentRef.setInput("records", [n3, n1, n2]);
+    fixture.componentRef.setInput("sortBy", {
+      active: "subject",
+      direction: "asc",
+    });
     fixture.detectChanges();
 
     expect(component.recordsDataSource.sort.direction).toBe("asc");
@@ -116,12 +118,12 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should skip non-sortable columns when inferring default sort", () => {
-    component.entityType = Note;
-    component.columnsToDisplay = ["children", "subject"];
+    fixture.componentRef.setInput("entityType", Note);
+    fixture.componentRef.setInput("columnsToDisplay", ["children", "subject"]);
 
     const n1 = Note.create(new Date(), "B");
     const n2 = Note.create(new Date(), "A");
-    component.records = [n1, n2];
+    fixture.componentRef.setInput("records", [n1, n2]);
     fixture.detectChanges();
 
     expect(component.recordsDataSource.sort.active).toBe("subject");
@@ -139,9 +141,11 @@ describe("EntitiesTableComponent", () => {
     notes[1].category = { id: "3", label: "C", _ordinal: 1 };
     notes[2].category = { id: "2", label: "Z", _ordinal: 0 };
     notes[3].category = { id: "1", label: "AB", _ordinal: 2 };
-    component.records = notes;
-
-    component.sortBy = { active: "category", direction: "asc" };
+    fixture.componentRef.setInput("records", notes);
+    fixture.componentRef.setInput("sortBy", {
+      active: "category",
+      direction: "asc",
+    });
     fixture.detectChanges();
 
     const sortedIds = component.recordsDataSource
@@ -167,32 +171,32 @@ describe("EntitiesTableComponent", () => {
     c2.dateOfBirth = new DateWithAge(moment().subtract(2, "years").toDate());
     const c3 = TestEntity.create("Matching");
     c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
-    // get type-safety for filters
-    const childComponent =
-      component as any as EntitiesTableComponent<TestEntity>;
-    childComponent.records = [c1, c2, c3];
 
-    childComponent.filter = { name: "Matching" };
+    fixture.componentRef.setInput("records", [c1, c2, c3]);
+    fixture.componentRef.setInput("filter", { name: "Matching" });
+    fixture.detectChanges();
 
-    expect(childComponent.recordsDataSource.data).toEqual([
+    expect(component.recordsDataSource.data).toEqual([
       { record: c1 },
       { record: c3 },
     ]);
 
-    childComponent.filter = {
+    fixture.componentRef.setInput("filter", {
       name: "Matching",
       "dateOfBirth.age": { $gte: 2 },
-    } as any;
+    });
+    fixture.detectChanges();
 
-    expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
+    expect(component.recordsDataSource.data).toEqual([{ record: c3 }]);
 
     const c4 = TestEntity.create("Matching");
     c4.dateOfBirth = new DateWithAge(moment().subtract(4, "years").toDate());
     const c5 = TestEntity.create("Not Matching");
 
-    childComponent.records = [c1, c2, c3, c4, c5];
+    fixture.componentRef.setInput("records", [c1, c2, c3, c4, c5]);
+    fixture.detectChanges();
 
-    expect(childComponent.recordsDataSource.data).toEqual([
+    expect(component.recordsDataSource.data).toEqual([
       { record: c3 },
       { record: c4 },
     ]);
@@ -201,13 +205,17 @@ describe("EntitiesTableComponent", () => {
   it("should remove an entity if it does not pass the filter anymore", async () => {
     const child = new TestEntity();
     child.category = genders[1];
-    component.records = [child];
-    component.filter = { "category.id": genders[1].id } as any;
+    fixture.componentRef.setInput("records", [child]);
+    fixture.componentRef.setInput("filter", {
+      "category.id": genders[1].id,
+    } as any);
+    fixture.detectChanges();
 
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 
     child.category = genders[2];
-    component.records = [child]; // parent component has to update the records Input array
+    fixture.componentRef.setInput("records", [child]); // parent component has to update the records Input array
+    fixture.detectChanges();
 
     expect(component.recordsDataSource.data).toEqual([]);
   });
@@ -218,18 +226,20 @@ describe("EntitiesTableComponent", () => {
     const inactive = new Entity();
     inactive.inactive = true;
 
-    component.records = [active1, inactive];
+    fixture.componentRef.setInput("records", [active1, inactive]);
+    fixture.detectChanges();
 
     expect(component.recordsDataSource.data).toEqual([{ record: active1 }]);
   });
 
   it("should overwrite entity schema fields with customColumn config", async () => {
-    component.entityType = TestEntity;
+    fixture.componentRef.setInput("entityType", TestEntity);
     const customField = {
       id: "name",
       label: "Custom Name Label",
     };
-    component.customColumns = [customField];
+    fixture.componentRef.setInput("customColumns", [customField]);
+    fixture.detectChanges();
 
     expect(component._columns.find((c) => c.id === customField.id).label).toBe(
       customField.label,
@@ -237,7 +247,8 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should set noSorting if dataType cannot be sorted properly", () => {
-    component.entityType = Note;
+    fixture.componentRef.setInput("entityType", Note);
+    fixture.detectChanges();
 
     expect(component._columns.find((c) => c.id === "children").noSorting).toBe(
       true,
@@ -246,7 +257,8 @@ describe("EntitiesTableComponent", () => {
 
   it("should navigate to '/new' route on newly created entities", () => {
     const navigateSpy = TestBed.inject(Router).navigate;
-    component.clickMode = "navigate";
+    fixture.componentRef.setInput("clickMode", "navigate");
+    fixture.detectChanges();
 
     const child = new TestEntity();
     expect(child.isNew).toBe(true);
