@@ -67,12 +67,21 @@ export class EntityFieldsMenuComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      const selectedFields = this.activeFields()?.map((field) =>
+      const selectedFields = (this.activeFields() ?? []).map((field) =>
         typeof field === "string" ? field : field.id,
       );
-      this.selectedFieldsControl.setValue(selectedFields, {
-        emitEvent: false,
-      });
+      const currentSelection = this.selectedFieldsControl.value ?? [];
+
+      if (
+        currentSelection.length === selectedFields.length &&
+        currentSelection.every(
+          (value, index) => value === selectedFields[index],
+        )
+      ) {
+        return;
+      }
+
+      this.selectedFieldsControl.setValue(selectedFields, { emitEvent: false });
     });
   }
 
