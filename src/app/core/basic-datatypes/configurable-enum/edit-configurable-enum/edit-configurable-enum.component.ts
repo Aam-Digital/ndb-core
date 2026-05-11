@@ -85,9 +85,9 @@ export class EditConfigurableEnumComponent
   options: ConfigurableEnumValue[] = [];
   canEdit = false;
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
-  createNewOption?:
-    | ((input: string) => Promise<ConfigurableEnumValue | undefined>)
-    | undefined;
+  createNewOption?: (
+    input: string,
+  ) => Promise<ConfigurableEnumValue | undefined>;
 
   constructor() {
     super();

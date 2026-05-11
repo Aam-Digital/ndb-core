@@ -121,8 +121,8 @@ describe("DateRangeFilterComponent", () => {
       "filterConfig",
       new DateFilter("test", "test", []),
     );
-    component.fromDate = moment("2021-10-28").toDate();
-    component.toDate = moment("2024-02-12").toDate();
+    component.fromDate.set(moment("2021-10-28").toDate());
+    component.toDate.set(moment("2024-02-12").toDate());
 
     component.dateChangedManually();
 

@@ -5,14 +5,16 @@
     <input
       matStartDate
       (dateChange)="dateChangedManually()"
-      [(ngModel)]="fromDate"
+      [ngModel]="fromDate()"
+      (ngModelChange)="setFromDate($event)"
       i18n-placeholder="Date selection"
       placeholder="Start date"
     />
     <input
       matEndDate
       (dateChange)="dateChangedManually()"
-      [(ngModel)]="toDate"
+      [ngModel]="toDate()"
+      (ngModelChange)="setToDate($event)"
       i18n-placeholder="Date selection"
       placeholder="End date"
     />
