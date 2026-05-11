@@ -1,13 +1,15 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
   OnInit,
   output,
-  ChangeDetectionStrategy,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -32,6 +34,7 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
 })
 export class EntityFieldsMenuComponent implements OnInit {
   private entityFormService = inject(EntityFormService, { optional: true });
+  private readonly destroyRef = inject(DestroyRef);
 
   entityType = input<EntityConstructor>();
   availableFields = input<ColumnConfig[]>([]);
@@ -86,18 +89,22 @@ export class EntityFieldsMenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.selectedFieldsControl.valueChanges.subscribe((value: string[]) => {
-      const mappedFields: ColumnConfig[] = value.map((v) => {
-        const availableField = this._availableFields().find((f) => f.id === v);
+    this.selectedFieldsControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value: string[]) => {
+        const mappedFields: ColumnConfig[] = value.map((v) => {
+          const availableField = this._availableFields().find(
+            (f) => f.id === v,
+          );
 
-        if (availableField?.["_customField"]) {
-          const result = { ...availableField };
-          delete result["_customField"];
-          return result;
-        } else return v;
+          if (availableField?.["_customField"]) {
+            const result = { ...availableField };
+            delete result["_customField"];
+            return result;
+          } else return v;
+        });
+
+        this.activeFieldsChange.emit(mappedFields);
       });
-
-      this.activeFieldsChange.emit(mappedFields);
-    });
   }
 }

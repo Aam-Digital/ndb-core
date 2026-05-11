@@ -1,13 +1,15 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   effect,
+  inject,
   input,
   OnInit,
   output,
   untracked,
-  inject,
-  ChangeDetectionStrategy,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   AbstractControl,
   FormControl,
@@ -44,6 +46,7 @@ import { resolveIconDefinition } from "../fa-dynamic-icon/fa-icon-utils";
 })
 export class IconComponent implements OnInit {
   private readonly iconLibrary = inject(FaIconLibrary);
+  private readonly destroyRef = inject(DestroyRef);
 
   icon = input<string>();
   control = input<FormControl<string | null>>();
@@ -75,9 +78,9 @@ export class IconComponent implements OnInit {
       });
     }
 
-    this.iconControl.valueChanges.subscribe((value) =>
-      this.iconChange.emit(value || ""),
-    );
+    this.iconControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.iconChange.emit(value || ""));
   }
 
   private createIconValidator(): ValidatorFn {

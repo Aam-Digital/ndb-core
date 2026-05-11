@@ -55,4 +55,13 @@ describe("ListPaginatorComponent", () => {
     expect(component.pageSize).toBe(12);
     expect(component.paginator.pageSize).toBe(12);
   });
+
+  it("should bind paginator to a replaced dataSource instance", () => {
+    const newDataSource = new MatTableDataSource<any>();
+
+    fixture.componentRef.setInput("dataSource", newDataSource);
+    fixture.detectChanges();
+
+    expect(newDataSource.paginator).toBe(component.paginator);
+  });
 });

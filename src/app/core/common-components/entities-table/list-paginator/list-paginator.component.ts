@@ -37,10 +37,16 @@ export class ListPaginatorComponent<E> implements OnInit {
         this.applyUserPaginationSettings();
       }
     });
+
+    effect(() => {
+      if (this.paginator) {
+        this.bindPaginator(this.dataSource());
+      }
+    });
   }
 
   ngOnInit() {
-    this.dataSource().paginator = this.paginator;
+    this.bindPaginator(this.dataSource());
   }
 
   onPaginateChange(event: PageEvent) {
@@ -66,5 +72,10 @@ export class ListPaginatorComponent<E> implements OnInit {
       this.LOCAL_STORAGE_KEY + this.idForSavingPagination(),
       size?.toString(),
     );
+  }
+
+  private bindPaginator(dataSource: MatTableDataSource<E> | undefined) {
+    if (!dataSource || !this.paginator) return;
+    dataSource.paginator = this.paginator;
   }
 }

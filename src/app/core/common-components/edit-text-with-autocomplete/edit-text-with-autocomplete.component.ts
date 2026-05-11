@@ -71,7 +71,7 @@ export class EditTextWithAutocompleteComponent
   private entityMapperService = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  formFieldConfig = input<FormFieldConfig>();
+  formFieldConfig = input.required<FormFieldConfig>();
 
   get parent(): FormGroup {
     return this.formControl.parent as FormGroup;
@@ -145,7 +145,7 @@ export class EditTextWithAutocompleteComponent
 
   async ngOnInit() {
     // Initialize additional configuration from formFieldConfig
-    this.additional = this.formFieldConfig()?.additional;
+    this.additional = this.formFieldConfig().additional;
 
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete

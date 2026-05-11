@@ -244,7 +244,7 @@ export class EntitiesTableComponent<
       this.showInactive(); // track — consumed inside updateFilteredData via addActiveInactiveFilter
       if (records === undefined || records === null) return;
       this._records = records;
-      this._filter = this.filter() ?? {};
+      this._filter = { ...(this.filter() ?? {}) };
       this.updateFilteredData();
       this.isLoading.set(false);
     });
