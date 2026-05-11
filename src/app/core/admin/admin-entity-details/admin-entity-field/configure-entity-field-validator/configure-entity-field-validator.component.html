@@ -10,56 +10,27 @@
     </mat-form-field>
   }
 
-  @if (
-    entitySchemaField.dataType === "date-only" ||
-    entitySchemaField.dataType === "date-with-age"
-  ) {
-    <mat-form-field class="number-field">
+  @if (entitySchemaField.dataType === "date-with-age") {
+    <mat-form-field>
       <mat-label i18n>Minimum Date</mat-label>
-      <input
-        matInput
-        formControlName="minDate"
-        [matDatepicker]="minDatePicker"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="minDatePicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #minDatePicker></mat-datepicker>
+      <app-edit-age formControlName="minDate"></app-edit-age>
     </mat-form-field>
-    <mat-form-field class="number-field">
+
+    <mat-form-field>
       <mat-label i18n>Maximum Date</mat-label>
-      <input
-        matInput
-        formControlName="maxDate"
-        [matDatepicker]="maxDatePicker"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="maxDatePicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #maxDatePicker></mat-datepicker>
+      <app-edit-age formControlName="maxDate"></app-edit-age>
     </mat-form-field>
   }
 
-  @if (entitySchemaField.dataType === "date-with-age") {
-    <mat-form-field class="number-field">
-      <mat-label i18n>Minimum Age (Calculated)</mat-label>
-      <input formControlName="minAge" matInput type="number" readonly />
-      <app-help-button
-        matSuffix
-        text="Automatically calculated from the minimum date. This field is read-only."
-        i18n-text
-      ></app-help-button>
+  @if (entitySchemaField.dataType === "date-only") {
+    <mat-form-field>
+      <mat-label i18n>Minimum Date</mat-label>
+      <app-edit-date formControlName="minDate"></app-edit-date>
     </mat-form-field>
-    <mat-form-field class="number-field">
-      <mat-label i18n>Maximum Age (Calculated)</mat-label>
-      <input formControlName="maxAge" matInput type="number" readonly />
-      <app-help-button
-        matSuffix
-        text="Automatically calculated from the maximum date. This field is read-only."
-        i18n-text
-      ></app-help-button>
+
+    <mat-form-field>
+      <mat-label i18n>Maximum Date</mat-label>
+      <app-edit-date formControlName="maxDate"></app-edit-date>
     </mat-form-field>
   }
 
