@@ -85,7 +85,9 @@ export class EditConfigurableEnumComponent
   options: ConfigurableEnumValue[] = [];
   canEdit = false;
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
-  createNewOption: (input: string) => Promise<ConfigurableEnumValue>;
+  createNewOption?:
+    | ((input: string) => Promise<ConfigurableEnumValue | undefined>)
+    | undefined;
 
   constructor() {
     super();
@@ -125,9 +127,9 @@ export class EditConfigurableEnumComponent
   private updateEnumData(): void {
     this.enumEntity = this.enumService.getEnum(this.enumId);
     this.canEdit = this.ability.can("update", this.enumEntity);
-    if (this.canEdit) {
-      this.createNewOption = this.addNewOption.bind(this);
-    }
+    this.createNewOption = this.canEdit
+      ? this.addNewOption.bind(this)
+      : undefined;
   }
 
   private prepareInvalidOptions(): ConfigurableEnumValue[] {

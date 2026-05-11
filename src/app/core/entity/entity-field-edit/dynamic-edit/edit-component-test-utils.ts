@@ -39,6 +39,10 @@ export function setupCustomFormControlEditComponent<T>(
     } else if (typeof (component as any).formFieldConfig !== "function") {
       // Skip signal inputs (functions) — they cannot be overwritten; pass fixture to use setInput() instead
       (component as any).formFieldConfig = { id: propertyName, ...schema };
+    } else {
+      throw new Error(
+        `setupCustomFormControlEditComponent requires a fixture for "${propertyName}" because formFieldConfig is a signal input. Use fixture.componentRef.setInput("formFieldConfig", value).`,
+      );
     }
   }
 

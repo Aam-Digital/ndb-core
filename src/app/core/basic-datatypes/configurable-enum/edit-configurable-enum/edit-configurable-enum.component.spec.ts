@@ -72,6 +72,20 @@ describe("EditConfigurableEnumComponent", () => {
     expect(component.multi).toBe(true);
   });
 
+  it("should clear createNewOption when enum is not editable", () => {
+    expect(component.createNewOption).toBeDefined();
+
+    mockAbility.can.mockReturnValue(false);
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "test",
+      additional: "some-other-id",
+    });
+    fixture.detectChanges();
+
+    expect(component.canEdit).toBe(false);
+    expect(component.createNewOption).toBeUndefined();
+  });
+
   it("should add [invalid option] option from entity if given", () => {
     const invalidOption = {
       id: "INVALID",
