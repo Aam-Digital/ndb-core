@@ -12,6 +12,7 @@ import {
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { calculateAge } from "../../../../utils/utils";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -132,6 +133,65 @@ describe("DynamicValidatorsService", () => {
     expect(validationErrors.uniqueProperty).toBeUndefined();
 
     expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
+  });
+
+  it("maps minDate to minAge validation for date-with-age fields", () => {
+    const entity = new TestEntity();
+    const validators = service.buildValidators(
+      { minDate: "2021-01-12" },
+      entity,
+      "dateOfBirth",
+    ).validators;
+
+    expect(validators).toHaveLength(1);
+
+    const tooYoungDate = new Date(2023, 0, 1);
+    const result = validators[0](new UntypedFormControl(tooYoungDate));
+
+    const expectedMinAge = calculateAge(new Date(2021, 0, 12));
+    expect(result?.minAge?.minAge).toBe(expectedMinAge);
+    expect(result?.minAge?.errorMessage).toContain("Age must be at least");
+    expect(result?.minDate).toBeUndefined();
+  });
+
+  it("maps maxDate to maxAge validation for date-with-age fields", () => {
+    const entity = new TestEntity();
+    const validators = service.buildValidators(
+      { maxDate: "2010-01-01" },
+      entity,
+      "dateOfBirth",
+    ).validators;
+
+    expect(validators).toHaveLength(1);
+
+    const tooOldDate = new Date(1990, 2, 14);
+    const result = validators[0](new UntypedFormControl(tooOldDate));
+
+    const expectedMaxAge = calculateAge(new Date(2010, 0, 1));
+    expect(result?.maxAge?.maxAge).toBe(expectedMaxAge);
+    expect(result?.maxAge?.errorMessage).toContain("Age must be at most");
+    expect(result?.maxDate).toBeUndefined();
+  });
+
+  it("shows a between message when both age bounds are configured", () => {
+    const entity = new TestEntity();
+    const validators = service.buildValidators(
+      {
+        minDate: "2021-01-12",
+        maxDate: "2010-01-01",
+      },
+      entity,
+      "dateOfBirth",
+    ).validators;
+
+    const tooOldDate = new Date(1990, 2, 14);
+    const result = validators[1](new UntypedFormControl(tooOldDate));
+
+    expect(result?.maxAge?.errorMessage).toContain(
+      "Age must be between",
+    );
+    expect(result?.maxAge?.errorMessage).toContain("and");
+    expect(result?.maxAge?.errorMessage).toContain("years");
   });
 });
 

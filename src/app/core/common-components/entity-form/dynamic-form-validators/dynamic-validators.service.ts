@@ -14,6 +14,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
+import { calculateAge } from "../../../../utils/utils";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -48,6 +49,198 @@ export function patternWithMessage(
   };
 }
 
+/**
+ * Parses a value to a Date object
+ * Handles Date objects, date strings (YYYY-MM-DD), timestamps, and special value "$now"
+ */
+function parseToDate(value: unknown): Date | undefined {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    // Handle special placeholder "$now"
+    if (value === "$now") {
+      return new Date();
+    }
+
+    // Handle date-only format (YYYY-MM-DD)
+    const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
+    const dateMatch = dateRegex.exec(value);
+    if (dateMatch) {
+      const localDate = new Date(
+        Number(dateMatch[1]),
+        Number(dateMatch[2]) - 1,
+        Number(dateMatch[3]),
+      );
+      if (!Number.isNaN(localDate.getTime())) {
+        return localDate;
+      }
+    }
+
+    // Try generic date parsing
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+
+  if (typeof value === "number") {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Normalizes a date to just the date portion (no time)
+ */
+function normalizeDateOnly(value: Date): Date {
+  return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+}
+
+function formatDateAsDayMonthYear(value: Date): string {
+  return `${value.getDate().toString().padStart(2, "0")}.${(value.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}.${value.getFullYear()}`;
+}
+
+/**
+ * Creates a date range validator (min or max)
+ */
+function createDateComparisonValidator(
+  dateParamValue: unknown,
+  comparator: (controlDate: Date, paramDate: Date) => boolean,
+  errorKey: string,
+  paramName: "minDate" | "maxDate",
+): ValidatorFn {
+  const parsedParam = parseToDate(dateParamValue);
+  if (!parsedParam) {
+    return () => null;
+  }
+
+  const paramDate = normalizeDateOnly(parsedParam);
+  return (control: AbstractControl) => {
+    const controlDate = parseToDate(control.value);
+    if (!controlDate) {
+      return null;
+    }
+
+    const normalizedControlDate = normalizeDateOnly(controlDate);
+    if (comparator(normalizedControlDate, paramDate)) {
+      return null;
+    }
+
+    return {
+      [errorKey]: {
+        [paramName]: paramDate,
+        currentDate: normalizedControlDate,
+      },
+    };
+  };
+}
+
+/**
+ * Validator for minimum date
+ */
+function minDateValidator(minDateValue: unknown): ValidatorFn {
+  return createDateComparisonValidator(
+    minDateValue,
+    (control, param) => control >= param,
+    "minDate",
+    "minDate",
+  );
+}
+
+/**
+ * Validator for maximum date
+ */
+function maxDateValidator(maxDateValue: unknown): ValidatorFn {
+  return createDateComparisonValidator(
+    maxDateValue,
+    (control, param) => control <= param,
+    "maxDate",
+    "maxDate",
+  );
+}
+
+/**
+ * Creates an age range validator (min or max age)
+ */
+function createAgeComparisonValidator(
+  ageParamValue: unknown,
+  comparator: (age: number, param: number) => boolean,
+  errorKey: string,
+  paramName: "minAge" | "maxAge",
+  rangeConfig?: { minAge?: unknown; maxAge?: unknown },
+): ValidatorFn {
+  const paramNum = Number(ageParamValue);
+  if (!Number.isFinite(paramNum)) {
+    return () => null;
+  }
+
+  const configuredMinAge = Number(rangeConfig?.minAge);
+  const configuredMaxAge = Number(rangeConfig?.maxAge);
+  const hasMin = Number.isFinite(configuredMinAge);
+  const hasMax = Number.isFinite(configuredMaxAge);
+
+  return (control: AbstractControl) => {
+    const controlDate = parseToDate(control.value);
+    if (!controlDate) {
+      return null;
+    }
+
+    const age = calculateAge(controlDate);
+    if (comparator(age, paramNum)) {
+      return null;
+    }
+
+    return {
+      [errorKey]: {
+        [paramName]: paramNum,
+        currentAge: age,
+        ...(hasMin ? { minAge: configuredMinAge } : {}),
+        ...(hasMax ? { maxAge: configuredMaxAge } : {}),
+      },
+    };
+  };
+}
+
+/**
+ * Validator for minimum age
+ */
+function minAgeValidator(
+  minAgeValue: unknown,
+  maxAgeValue?: unknown,
+): ValidatorFn {
+  return createAgeComparisonValidator(
+    minAgeValue,
+    (age, param) => age >= param,
+    "minAge",
+    "minAge",
+    { minAge: minAgeValue, maxAge: maxAgeValue },
+  );
+}
+
+/**
+ * Validator for maximum age
+ */
+function maxAgeValidator(
+  maxAgeValue: unknown,
+  minAgeValue?: unknown,
+): ValidatorFn {
+  return createAgeComparisonValidator(
+    maxAgeValue,
+    (age, param) => age <= param,
+    "maxAge",
+    "maxAge",
+    { minAge: minAgeValue, maxAge: maxAgeValue },
+  );
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -64,11 +257,13 @@ export class DynamicValidatorsService {
     value: any,
     entity: Entity,
     fieldId?: string,
+    config?: FormValidatorConfig,
   ):
-    | { async?: false; fn: ValidatorFn }
+    | { async?: false; fn: ValidatorFn; errorName?: string }
     | {
         async: true;
         fn: AsyncPromiseValidatorFn;
+        errorName?: string;
       }
     | null {
     switch (key) {
@@ -76,6 +271,43 @@ export class DynamicValidatorsService {
         return { fn: Validators.min(value as number) };
       case "max":
         return { fn: Validators.max(value as number) };
+      case "minDate": {
+        // For date-with-age fields, treat configured date as minimum age
+        const field = fieldId ? entity.getSchema().get(fieldId) : undefined;
+        if (field?.dataType === "date-with-age") {
+          const parsed = parseToDate(value);
+          const ageParam = parsed ? calculateAge(parsed) : Number(value);
+          const maxParsed = parseToDate(config?.maxDate);
+          const maxAgeParam = maxParsed
+            ? calculateAge(maxParsed)
+            : config?.maxAge;
+          return {
+            fn: minAgeValidator(ageParam, maxAgeParam),
+            errorName: "minAge",
+          };
+        }
+        return { fn: minDateValidator(value) };
+      }
+      case "maxDate": {
+        const field = fieldId ? entity.getSchema().get(fieldId) : undefined;
+        if (field?.dataType === "date-with-age") {
+          const parsed = parseToDate(value);
+          const ageParam = parsed ? calculateAge(parsed) : Number(value);
+          const minParsed = parseToDate(config?.minDate);
+          const minAgeParam = minParsed
+            ? calculateAge(minParsed)
+            : config?.minAge;
+          return {
+            fn: maxAgeValidator(ageParam, minAgeParam),
+            errorName: "maxAge",
+          };
+        }
+        return { fn: maxDateValidator(value) };
+      }
+      case "minAge":
+        return { fn: minAgeValidator(value, config?.maxAge) };
+      case "maxAge":
+        return { fn: maxAgeValidator(value, config?.minAge) };
       case "pattern":
         if (typeof value === "object") {
           return { fn: patternWithMessage(value.pattern, value.message) };
@@ -135,17 +367,20 @@ export class DynamicValidatorsService {
         config[key],
         entity,
         fieldId,
+        config,
       );
 
       if (validatorFn?.async) {
+        const effectiveName = validatorFn.errorName || key;
         const validatorFnWithReadableErrors = (control) =>
           validatorFn
             .fn(control)
-            .then((res) => this.addHumanReadableError(key, res));
+            .then((res) => this.addHumanReadableError(effectiveName, res));
         formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
       } else if (validatorFn) {
+        const effectiveName = validatorFn.errorName || key;
         const validatorFnWithReadableErrors = (control: FormControl) =>
-          this.addHumanReadableError(key, validatorFn.fn(control));
+          this.addHumanReadableError(effectiveName, validatorFn.fn(control));
         formControlOptions.validators.push(validatorFnWithReadableErrors);
       }
 
@@ -206,6 +441,26 @@ export class DynamicValidatorsService {
         return $localize`Must be greater than ${validationValue.min}`;
       case "max":
         return $localize`Cannot be greater than ${validationValue.max}`;
+      case "minDate":
+        return $localize`Date must be on or after ${formatDateAsDayMonthYear(validationValue.minDate)}`;
+      case "maxDate":
+        return $localize`Date must be on or before ${formatDateAsDayMonthYear(validationValue.maxDate)}`;
+      case "minAge":
+        if (
+          Number.isFinite(validationValue?.minAge) &&
+          Number.isFinite(validationValue?.maxAge)
+        ) {
+          return $localize`Age must be between ${validationValue.minAge} and ${validationValue.maxAge} years`;
+        }
+        return $localize`Age must be at least ${validationValue.minAge} years`;
+      case "maxAge":
+        if (
+          Number.isFinite(validationValue?.minAge) &&
+          Number.isFinite(validationValue?.maxAge)
+        ) {
+          return $localize`Age must be between ${validationValue.minAge} and ${validationValue.maxAge} years`;
+        }
+        return $localize`Age must be at most ${validationValue.maxAge} years`;
       case "pattern":
         if (validationValue.message) {
           return validationValue.message;
