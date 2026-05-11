@@ -85,7 +85,8 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
   /**
    * Returns the attendance percentage (0–1) for use as the sort key in list columns.
    * Calculated as present / (present + absent), ignoring participants with IGNORE status (e.g. Excused).
-   * Returns 0 if no participants have a countable status.
+   * Returns -1 if no participants have a countable status so empty attendance ("-")
+   * sorts before a real 0% value.
    */
   override sortValue(fieldValue: AttendanceItem[]): number {
     const items = Array.isArray(fieldValue) ? fieldValue : [];
@@ -100,7 +101,7 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
         counted++;
       }
     }
-    return counted > 0 ? present / counted : 0;
+    return counted > 0 ? present / counted : -1;
   }
 
   private async toParticipationDetails(

@@ -37,12 +37,17 @@ describe("AttendanceDatatype", () => {
     expect(datatype.sortValue(items)).toBe(0.5);
   });
 
-  it("sortValue returns 0 for empty array", () => {
-    expect(datatype.sortValue([])).toBe(0);
+  it("sortValue returns -1 for empty array", () => {
+    expect(datatype.sortValue([])).toBe(-1);
   });
 
-  it("sortValue returns 0 for undefined", () => {
-    expect(datatype.sortValue(undefined)).toBe(0);
+  it("sortValue returns -1 for undefined", () => {
+    expect(datatype.sortValue(undefined)).toBe(-1);
+  });
+
+  it("sortValue returns 0 when all counted participants are absent", () => {
+    const items = [new AttendanceItem(absent), new AttendanceItem(absent)];
+    expect(datatype.sortValue(items)).toBe(0);
   });
 
   it("sortValue excludes IGNORE status items from percentage calculation", () => {
@@ -51,5 +56,13 @@ describe("AttendanceDatatype", () => {
     );
     const items = [new AttendanceItem(present), new AttendanceItem(excused)];
     expect(datatype.sortValue(items)).toBe(1);
+  });
+
+  it("sortValue returns -1 when only IGNORE status items exist", () => {
+    const excused = defaultAttendanceStatusTypes.find(
+      (s) => s.countAs === AttendanceLogicalStatus.IGNORE,
+    );
+    const items = [new AttendanceItem(excused)];
+    expect(datatype.sortValue(items)).toBe(-1);
   });
 });
