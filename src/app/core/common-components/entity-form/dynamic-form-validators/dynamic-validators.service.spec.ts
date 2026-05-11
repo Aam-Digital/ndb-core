@@ -252,9 +252,7 @@ describe("DynamicValidatorsService", () => {
     const tooOldDate = new Date(1990, 2, 14);
     const result = validators[1](new UntypedFormControl(tooOldDate));
 
-    expect(result?.maxAge?.errorMessage).toContain(
-      "Age must be between",
-    );
+    expect(result?.maxAge?.errorMessage).toContain("Age must be between");
     expect(result?.maxAge?.errorMessage).toContain("and");
     expect(result?.maxAge?.errorMessage).toContain("years");
   });
