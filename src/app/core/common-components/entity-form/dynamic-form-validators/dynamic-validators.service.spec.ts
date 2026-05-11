@@ -170,7 +170,8 @@ describe("DynamicValidatorsService", () => {
       const invalidAgeControl = new UntypedFormControl(new Date(1990, 3, 24));
       invalidAgeControl.markAsDirty();
       const validationErrors = validators[1](invalidAgeControl);
-      expect(validationErrors.maxAge.errorMessage).toContain("at most");
+      expect(validationErrors.maxAge.errorMessage).toContain("between");
+      expect(validationErrors.maxAge.errorMessage).toContain("9 and 25");
     } finally {
       vi.useRealTimers();
     }
