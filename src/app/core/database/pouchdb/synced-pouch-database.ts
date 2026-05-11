@@ -183,7 +183,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return {};
     }
 
-    const localInfo = await this.getPouchDB().info();
+    const localDb = await this.getPouchDBOnceReady();
+
+    const localInfo = await localDb.info();
     const isFirstSync = localInfo.doc_count === 0;
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
@@ -202,7 +204,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     //    ErrorHandler / Sentry. Outer .then/.catch below still handle them
     //    explicitly and re-enter the zone for state updates.
     const createSyncHandler = () =>
-      this.getPouchDB().sync(this.remoteDatabase.getPouchDB(), {
+      localDb.sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
       });

@@ -92,6 +92,16 @@ describe("SetupService", () => {
     httpTesting
       .expectOne("assets/base-configs/available-configs.json")
       .flush(null, { status: 404, statusText: "Not Found" });
+    await Promise.resolve();
+    // retry 1
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush(null, { status: 404, statusText: "Not Found" });
+    await Promise.resolve();
+    // retry 2
+    httpTesting
+      .expectOne("assets/base-configs/available-configs.json")
+      .flush(null, { status: 404, statusText: "Not Found" });
 
     expect(await baseConfigsPromise).toEqual([]);
   });
@@ -148,6 +158,16 @@ describe("SetupService", () => {
     httpTesting
       .expectOne("assets/base-configs/available-configs.json")
       .flush([localConfig]);
+    httpTesting
+      .expectOne(externalUrl)
+      .flush(null, { status: 500, statusText: "Server Error" });
+    await Promise.resolve();
+    // retry 1
+    httpTesting
+      .expectOne(externalUrl)
+      .flush(null, { status: 500, statusText: "Server Error" });
+    await Promise.resolve();
+    // retry 2
     httpTesting
       .expectOne(externalUrl)
       .flush(null, { status: 500, statusText: "Server Error" });
