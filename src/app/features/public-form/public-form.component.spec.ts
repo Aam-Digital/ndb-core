@@ -391,6 +391,47 @@ describe("PublicFormComponent", () => {
     }
   });
 
+  it("should default public form fields to full labels and keep explicit overrides", async () => {
+    vi.useFakeTimers();
+    try {
+      const config = new PublicFormConfig();
+      config.entity = TestEntity.ENTITY_TYPE;
+      config.columns = [
+        {
+          fields: [
+            "name",
+            {
+              id: "category",
+              displayFullLengthLabel: false,
+              displayFullLengthOptionLabel: false,
+            },
+          ],
+        },
+      ];
+
+      initComponent(config);
+      await vi.advanceTimersByTimeAsync(0);
+
+      const fields = component.entityFormEntries()[0].config.columns[0].fields;
+      expect(fields[0]).toEqual(
+        expect.objectContaining({
+          id: "name",
+          displayFullLengthLabel: true,
+          displayFullLengthOptionLabel: true,
+        }),
+      );
+      expect(fields[1]).toEqual(
+        expect.objectContaining({
+          id: "category",
+          displayFullLengthLabel: false,
+          displayFullLengthOptionLabel: false,
+        }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should migrate linkedEntities from old FormFieldConfig[] format to string[] format", () => {
     const { migratePublicFormConfig } = require("./public-form.component");
 
