@@ -9,6 +9,7 @@ import { setupCustomFormControlEditComponent } from "../../../entity/entity-fiel
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { ConfigurableEnum } from "../configurable-enum";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
 
 describe("EditConfigurableEnumComponent", () => {
@@ -16,6 +17,8 @@ describe("EditConfigurableEnumComponent", () => {
   let fixture: ComponentFixture<EditConfigurableEnumComponent>;
   let mockDialog: any;
   let mockAbility: any;
+  let enumEntity: ConfigurableEnum;
+  let enumService: ConfigurableEnumService;
 
   beforeEach(async () => {
     mockDialog = {
@@ -40,9 +43,23 @@ describe("EditConfigurableEnumComponent", () => {
 
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component, "test", {
-      additional: "some-id",
-    });
+    const enumById: Record<string, ConfigurableEnum> = {
+      "some-id": new ConfigurableEnum("some-id"),
+      "some-other-id": new ConfigurableEnum("some-other-id"),
+    };
+    enumEntity = enumById["some-id"];
+    enumService = TestBed.inject(ConfigurableEnumService);
+    vi.spyOn(enumService, "getEnum").mockImplementation(
+      (id: string) => enumById[id] ?? enumEntity,
+    );
+    setupCustomFormControlEditComponent(
+      component,
+      "test",
+      {
+        additional: "some-id",
+      },
+      fixture,
+    );
     fixture.detectChanges();
   });
 
@@ -51,23 +68,34 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should extract the enum ID", () => {
-    component.formFieldConfig = { id: "test", additional: "some-id" };
-    component.ngOnInit();
-    expect(component.enumId).toBe("some-id");
+    expect(component.enumId()).toBe("some-id");
   });
 
-  it("should detect multi selection mode", () => {
-    component.formFieldConfig = { id: "test", additional: "some-id" };
-    component.ngOnInit();
-    expect(component.multi).toBeFalsy();
+  it("should detect multi selection mode", async () => {
+    expect(component.multi()).toBeFalsy();
 
-    component.formFieldConfig = {
+    fixture.componentRef.setInput("formFieldConfig", {
       id: "test",
       additional: "some-id",
       isArray: true,
-    };
-    component.ngOnInit();
-    expect(component.multi).toBe(true);
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.multi()).toBe(true);
+  });
+
+  it("should clear createNewOption when enum is not editable", () => {
+    expect(component.createNewOption()).toBeDefined();
+
+    mockAbility.can.mockReturnValue(false);
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "test",
+      additional: "some-other-id",
+    });
+    fixture.detectChanges();
+
+    expect(component.canEdit()).toBe(false);
+    expect(component.createNewOption()).toBeUndefined();
   });
 
   it("should add [invalid option] option from entity if given", () => {
@@ -83,13 +111,18 @@ describe("EditConfigurableEnumComponent", () => {
     };
 
     component.ngControl.control.setValue(invalidOption);
-    component.ngOnChanges();
-    expect(component.invalidOptions).toEqual([invalidOption]);
+    expect(component.invalidOptions()).toEqual([invalidOption]);
+
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "test",
+      additional: "some-id",
+      isArray: true,
+    });
+    fixture.detectChanges();
 
     component.ngControl.control.setValue([invalidOption, invalid2]);
-    component.multi = true;
-    component.ngOnChanges();
-    expect(component.invalidOptions).toEqual([invalidOption, invalid2]);
+    component.ngControl.control.setValue([invalidOption, invalid2]);
+    expect(component.invalidOptions()).toEqual([invalidOption, invalid2]);
   });
 
   it("should extend the existing enum with the new option", async () => {
@@ -99,9 +132,7 @@ describe("EditConfigurableEnumComponent", () => {
     );
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
 
-    const enumEntity = new ConfigurableEnum();
     enumEntity.values = [{ id: "1", label: "first" }];
-    component.enumEntity = enumEntity;
 
     // abort if confirmation dialog declined
     confirmationSpy.mockResolvedValue(false);
@@ -124,29 +155,28 @@ describe("EditConfigurableEnumComponent", () => {
     expect(saveSpy).toHaveBeenCalledWith(enumEntity);
   });
 
-  it("should open the configure enum dialog and re-initialize the available options afterwards", () => {
-    component.enumEntity = new ConfigurableEnum();
-    component.enumEntity.values = [{ id: "1", label: "1" }];
+  it("should open the configure enum dialog and re-initialize the available options afterwards", async () => {
+    enumEntity.values = [{ id: "1", label: "1" }];
     component.ngControl.control.setValue({
       id: "a",
       label: "a",
       isInvalidOption: true,
     });
 
-    component.ngOnChanges();
-
-    expect(component.options).toEqual([
+    expect(component.options()).toEqual([
       { id: "1", label: "1" },
       { id: "a", label: "a", isInvalidOption: true },
     ]);
 
     mockDialog.open.mockReturnValue({ afterClosed: () => of({}) } as any);
-    component.enumEntity.values.push({ id: "2", label: "2" });
+    enumEntity.values.push({ id: "2", label: "2" });
 
     component.openSettings({ stopPropagation: () => {} } as any);
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(component.options).toEqual([
+    expect(component.options()).toEqual([
       { id: "1", label: "1" },
       { id: "2", label: "2" },
       { id: "a", label: "a", isInvalidOption: true },
@@ -154,27 +184,24 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should delete the selected value if the option was deleted in the settings dialog", () => {
-    component.enumEntity = new ConfigurableEnum();
     const option1 = { id: "1", label: "1" };
     const option2 = { id: "2", label: "2" };
-    component.enumEntity.values = [option1, option2];
+    enumEntity.values = [option1, option2];
     component.ngControl.control.setValue(option1);
-
-    component.ngOnChanges();
 
     // simulate removing option "2"
     mockDialog.open.mockReturnValue({ afterClosed: () => of({}) } as any);
-    component.enumEntity.values.pop();
+    enumEntity.values.pop();
     component.openSettings({ stopPropagation: () => {} } as any);
 
-    expect(component.options).toEqual([option1]);
+    expect(component.options()).toEqual([option1]);
     expect(component.formControl.value).toEqual(option1);
 
     // simulate removing option "1"
-    component.enumEntity.values.pop();
+    enumEntity.values.pop();
     component.openSettings({ stopPropagation: () => {} } as any);
 
-    expect(component.options).toEqual([]);
+    expect(component.options()).toEqual([]);
     expect(component.formControl.value).toEqual(undefined);
   });
 });

@@ -4,12 +4,12 @@
     class="flex-grow enum-container"
     #autocomplete
     [formControl]="formControl"
-    [multi]="multi"
-    [options]="options"
+    [multi]="multi()"
+    [options]="options()"
     [optionToString]="enumValueToString"
-    [createOption]="createNewOption"
+    [createOption]="createNewOption()"
     [displayFullLengthOptionLabel]="
-      formFieldConfig?.displayFullLengthOptionLabel
+      formFieldConfig()?.displayFullLengthOptionLabel
     "
     display="chips"
   >
@@ -29,7 +29,7 @@
   }
 </div>
 
-@if (formControl.enabled && !!createNewOption && canEdit) {
+@if (formControl.enabled && !!createNewOption() && canEdit()) {
   <fa-icon
     class="form-field-icon-suffix settings-icon"
     (click)="openSettings($event)"

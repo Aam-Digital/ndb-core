@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -22,7 +22,7 @@ export class EditLongTextComponent
   extends CustomFormControlDirective<string>
   implements EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   get formControl(): FormControl<string> {
     return this.ngControl.control as FormControl<string>;

@@ -1,13 +1,12 @@
 import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
@@ -17,13 +16,11 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormsModule } from "@angular/forms";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { dateToString, isValidDate } from "../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-range-filter",
@@ -38,68 +35,71 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     FaIconComponent,
   ],
 })
-export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
+export class DateRangeFilterComponent<T extends Entity> {
   private dialog = inject(MatDialog);
-  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly selectedOptionVersion = signal(0);
 
-  fromDate: Date | null = null;
-  toDate: Date | null = null;
+  readonly fromDate = signal<Date | null>(null);
+  readonly toDate = signal<Date | null>(null);
 
-  @Input() filterConfig: DateFilter<T>;
-  @Output() dateRangeChange = new EventEmitter<{
-    from: Date | null;
-    to: Date | null;
-  }>();
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.filterConfig) {
-      this.filterConfig.selectedOptionChange
-        .pipe(untilDestroyed(this))
-        .subscribe(() => this.initDates());
-      this.initDates();
+  filterConfig = input<DateFilter<T>>();
+  dateRangeChange = output<{ from: Date | null; to: Date | null }>();
+  readonly isNoDateFilterActive = computed(() => {
+    this.selectedOptionVersion();
+    return (
+      this.filterConfig()?.selectedOptionValues?.[0] === EMPTY_FILTER_OPTION_KEY
+    );
+  });
+  readonly isAnyDateFilterActive = computed(() => {
+    this.selectedOptionVersion();
+    return (this.filterConfig()?.selectedOptionValues?.length ?? 0) > 0;
+  });
+  private readonly selectedRange = computed(() => {
+    this.selectedOptionVersion();
+    const filterConfig = this.filterConfig();
+    if (!filterConfig) {
+      return { from: null as Date | null, to: null as Date | null };
     }
-  }
+    const range = filterConfig.getDateRange();
+    return { from: range.start ?? null, to: range.end ?? null };
+  });
 
-  private initDates() {
-    const range = this.filterConfig.getDateRange();
-    if (range.start !== this.fromDate || range.end !== this.toDate) {
-      this.fromDate = range.start ?? null;
-      this.toDate = range.end ?? null;
-      this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
-      this.changeDetectorRef.markForCheck();
-    }
+  constructor() {
+    effect((onCleanup) => {
+      const filterConfig = this.filterConfig();
+      if (!filterConfig) return;
+
+      const sub = filterConfig.selectedOptionChange.subscribe(() => {
+        this.selectedOptionVersion.update((version) => version + 1);
+      });
+      onCleanup(() => sub.unsubscribe());
+    });
+
+    effect(() => {
+      const range = this.selectedRange();
+      this.fromDate.set(range.from);
+      this.toDate.set(range.to);
+      this.dateRangeChange.emit({ from: range.from, to: range.to });
+    });
   }
 
   dateChangedManually() {
-    this.filterConfig.selectedOptionValues = [
-      isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
-      isValidDate(this.toDate) ? dateToString(this.toDate) : "",
+    const filterConfig = this.filterConfig();
+    if (!filterConfig) return;
+    const from = this.fromDate();
+    const to = this.toDate();
+    filterConfig.selectedOptionValues = [
+      isValidDate(from) ? dateToString(from) : "",
+      isValidDate(to) ? dateToString(to) : "",
     ];
-    this.filterConfig.selectedOptionChange.emit(
-      this.filterConfig.selectedOptionValues,
-    );
-    this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
-  }
-
-  isNoDateFilterActive(): boolean {
-    return (
-      this.filterConfig?.selectedOptionValues?.[0] === EMPTY_FILTER_OPTION_KEY
-    );
-  }
-
-  isAnyDateFilterActive(): boolean {
-    return this.filterConfig?.selectedOptionValues?.length > 0;
+    filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
   }
 
   resetNoDateFilter(): void {
-    this.filterConfig.selectedOptionValues = [];
-    this.filterConfig.selectedOptionChange.emit(
-      this.filterConfig.selectedOptionValues,
-    );
-    this.fromDate = null;
-    this.toDate = null;
-    this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
-    this.changeDetectorRef.markForCheck();
+    const filterConfig = this.filterConfig();
+    if (!filterConfig) return;
+    filterConfig.selectedOptionValues = [];
+    filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
   }
 
   openDialog(e: Event) {
@@ -108,9 +108,11 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
-        data: this.filterConfig,
+        data: this.filterConfig(),
       })
       .afterClosed()
-      .subscribe(() => this.initDates());
+      .subscribe(() => {
+        this.selectedOptionVersion.update((version) => version + 1);
+      });
   }
 }
