@@ -16,7 +16,12 @@ describe("EditNumberComponent", () => {
 
     fixture = TestBed.createComponent(EditNumberComponent);
     component = fixture.componentInstance;
-    formGroup = setupCustomFormControlEditComponent(component);
+    formGroup = setupCustomFormControlEditComponent(
+      component,
+      "testProperty",
+      {},
+      fixture,
+    );
     fixture.detectChanges();
   });
 

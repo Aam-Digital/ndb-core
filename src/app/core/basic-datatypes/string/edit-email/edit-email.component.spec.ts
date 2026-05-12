@@ -16,7 +16,7 @@ describe("EditEmailComponent", () => {
     fixture = TestBed.createComponent(EditEmailComponent);
     component = fixture.componentInstance;
 
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
 
     fixture.detectChanges();
   });

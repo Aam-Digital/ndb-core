@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   ViewEncapsulation,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -28,7 +28,7 @@ export class EditBooleanComponent
   extends CustomFormControlDirective<boolean>
   implements EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   get formControl(): FormControl<boolean> {
     return this.ngControl.control as FormControl<boolean>;
