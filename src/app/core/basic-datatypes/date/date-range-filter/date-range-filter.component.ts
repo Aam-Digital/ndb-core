@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   computed,
   effect,
@@ -38,7 +37,6 @@ import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 })
 export class DateRangeFilterComponent<T extends Entity> {
   private dialog = inject(MatDialog);
-  private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly selectedOptionVersion = signal(0);
 
   readonly fromDate = signal<Date | null>(null);
@@ -46,14 +44,16 @@ export class DateRangeFilterComponent<T extends Entity> {
 
   filterConfig = input<DateFilter<T>>();
   dateRangeChange = output<{ from: Date | null; to: Date | null }>();
-  readonly isNoDateFilterActive = computed(
-    () =>
-      this.filterConfig()?.selectedOptionValues?.[0] ===
-      EMPTY_FILTER_OPTION_KEY,
-  );
-  readonly isAnyDateFilterActive = computed(
-    () => (this.filterConfig()?.selectedOptionValues?.length ?? 0) > 0,
-  );
+  readonly isNoDateFilterActive = computed(() => {
+    this.selectedOptionVersion();
+    return (
+      this.filterConfig()?.selectedOptionValues?.[0] === EMPTY_FILTER_OPTION_KEY
+    );
+  });
+  readonly isAnyDateFilterActive = computed(() => {
+    this.selectedOptionVersion();
+    return (this.filterConfig()?.selectedOptionValues?.length ?? 0) > 0;
+  });
   private readonly selectedRange = computed(() => {
     this.selectedOptionVersion();
     const filterConfig = this.filterConfig();
@@ -77,12 +77,9 @@ export class DateRangeFilterComponent<T extends Entity> {
 
     effect(() => {
       const range = this.selectedRange();
-      if (range.from !== this.fromDate() || range.to !== this.toDate()) {
-        this.fromDate.set(range.from);
-        this.toDate.set(range.to);
-        this.dateRangeChange.emit({ from: range.from, to: range.to });
-        this.changeDetectorRef.markForCheck();
-      }
+      this.fromDate.set(range.from);
+      this.toDate.set(range.to);
+      this.dateRangeChange.emit({ from: range.from, to: range.to });
     });
   }
 
@@ -96,18 +93,13 @@ export class DateRangeFilterComponent<T extends Entity> {
       isValidDate(to) ? dateToString(to) : "",
     ];
     filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
-    this.dateRangeChange.emit({ from, to });
   }
 
   resetNoDateFilter(): void {
     const filterConfig = this.filterConfig();
     if (!filterConfig) return;
-    this.fromDate.set(null);
-    this.toDate.set(null);
     filterConfig.selectedOptionValues = [];
     filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
-    this.dateRangeChange.emit({ from: this.fromDate(), to: this.toDate() });
-    this.changeDetectorRef.markForCheck();
   }
 
   openDialog(e: Event) {

@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
-  effect,
   inject,
   input,
   OnInit,
@@ -75,29 +75,48 @@ export class EditConfigurableEnumComponent
   private readonly dialog = inject(MatDialog);
   private readonly confirmation = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
-
-  enumId: string;
-  multi = signal(false);
-
-  enumEntity: ConfigurableEnum;
-  invalidOptions: ConfigurableEnumValue[] = [];
-  options = signal<ConfigurableEnumValue[]>([]);
-  canEdit = signal(false);
-  enumValueToString = (v: ConfigurableEnumValue) => v?.label;
-  createNewOption = signal<
-    ((input: string) => Promise<ConfigurableEnumValue | undefined>) | undefined
+  private readonly enumRefreshTick = signal(0);
+  private readonly formControlValue = signal<
+    ConfigurableEnumValue | ConfigurableEnumValue[] | undefined
   >(undefined);
 
-  constructor() {
-    super();
-    effect(() => {
-      const config = this.formFieldConfig();
-      this.multi.set(config?.isArray ?? false);
-      this.enumId = config?.additional;
-      this.updateEnumData();
-      this.updateInvalidOptions();
-    });
-  }
+  readonly multi = computed(() => this.formFieldConfig()?.isArray ?? false);
+  readonly enumId = computed(() => this.formFieldConfig()?.additional);
+  readonly enumEntity = computed<ConfigurableEnum | undefined>(() => {
+    this.enumRefreshTick();
+    const enumId = this.enumId();
+    return enumId ? this.enumService.getEnum(enumId) : undefined;
+  });
+  readonly canEdit = computed(() => {
+    this.enumId();
+    const enumEntity = this.enumEntity();
+    return !!enumEntity && this.ability.can("update", enumEntity);
+  });
+  enumValueToString = (v: ConfigurableEnumValue) => v?.label;
+  readonly createNewOption = computed<
+    ((input: string) => Promise<ConfigurableEnumValue | undefined>) | undefined
+  >(() => (this.canEdit() ? this.addNewOption.bind(this) : undefined));
+  readonly invalidOptions = computed<ConfigurableEnumValue[]>(() => {
+    const value = this.formControlValue();
+    if (!value) {
+      return [];
+    }
+    if (
+      !this.multi() &&
+      !Array.isArray(value) &&
+      (value as any).isInvalidOption
+    ) {
+      return [value];
+    }
+    if (this.multi() && Array.isArray(value)) {
+      return value.filter((option) => (option as any).isInvalidOption);
+    }
+    return [];
+  });
+  readonly options = computed<ConfigurableEnumValue[]>(() => {
+    this.enumRefreshTick();
+    return [...(this.enumEntity()?.values ?? []), ...this.invalidOptions()];
+  });
 
   get formControl(): FormControl<
     ConfigurableEnumValue | ConfigurableEnumValue[]
@@ -109,58 +128,24 @@ export class EditConfigurableEnumComponent
 
   ngOnInit() {
     if (this.formControl) {
+      this.formControlValue.set(this.formControl.value);
       this.formControl.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-          this.updateInvalidOptions();
-        });
+        .subscribe((value) => this.formControlValue.set(value));
     }
-  }
-
-  private updateInvalidOptions(): void {
-    this.invalidOptions = this.prepareInvalidOptions();
-    this.options.set([
-      ...(this.enumEntity?.values ?? []),
-      ...this.invalidOptions,
-    ]);
-  }
-
-  private updateEnumData(): void {
-    this.enumEntity = this.enumService.getEnum(this.enumId);
-    this.canEdit.set(this.ability.can("update", this.enumEntity));
-    this.createNewOption.set(
-      this.canEdit() ? this.addNewOption.bind(this) : undefined,
-    );
-  }
-
-  private prepareInvalidOptions(): ConfigurableEnumValue[] {
-    if (!this.formControl) {
-      return [];
-    }
-
-    let additionalOptions: ConfigurableEnumValue[] | undefined;
-    const value = this.formControl.value;
-
-    if (
-      !this.multi() &&
-      value &&
-      !Array.isArray(value) &&
-      (value as any).isInvalidOption
-    ) {
-      additionalOptions = [value];
-    }
-    if (this.multi() && Array.isArray(value)) {
-      additionalOptions = value?.filter((o) => (o as any).isInvalidOption);
-    }
-    return additionalOptions ?? [];
   }
 
   async addNewOption(name: string) {
-    const prevValues = JSON.stringify(this.enumEntity.values);
+    const enumEntity = this.enumEntity();
+    if (!enumEntity) {
+      return undefined;
+    }
+
+    const prevValues = JSON.stringify(enumEntity.values);
     let addedOption: ConfigurableEnumValue;
 
     try {
-      addedOption = this.enumEntity.addOption(name);
+      addedOption = enumEntity.addOption(name);
     } catch (error) {
       await this.confirmation.getConfirmation(
         $localize`Failed to create new option`,
@@ -179,44 +164,49 @@ export class EditConfigurableEnumComponent
       $localize`Do you want to create the new option "${addedOption.label}"?`,
     );
     if (!userConfirmed) {
-      this.enumEntity.values = JSON.parse(prevValues);
+      enumEntity.values = JSON.parse(prevValues);
       return undefined;
     }
 
-    await this.entityMapper.save(this.enumEntity);
+    await this.entityMapper.save(enumEntity);
+    this.enumRefreshTick.update((version) => version + 1);
     return addedOption;
   }
 
   openSettings(event: Event) {
     event.stopPropagation();
-
-    this.dialog
-      .open(ConfigureEnumPopupComponent, { data: this.enumEntity })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.updateOptions());
-  }
-
-  private updateOptions() {
-    const value = this.formControl.value;
-
-    if (
-      value &&
-      !this.multi() &&
-      !Array.isArray(value) &&
-      !(value as any).isInvalidOption &&
-      // value not in options anymore
-      !this.enumEntity.values.some((v) => v.id === value.id) &&
-      // but was in options previously
-      this.options().some((v) => v.id === value.id)
-    ) {
-      this.formControl.setValue(undefined);
+    const enumEntity = this.enumEntity();
+    if (!enumEntity) {
+      return;
     }
 
-    this.options.set([
-      ...(this.enumEntity?.values ?? []),
-      ...this.invalidOptions,
-    ]);
+    this.dialog
+      .open(ConfigureEnumPopupComponent, { data: enumEntity })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.enumRefreshTick.update((version) => version + 1);
+        this.reconcileSingleSelectedValue();
+      });
+  }
+
+  private reconcileSingleSelectedValue() {
+    const value = this.formControl.value;
+    const enumEntity = this.enumEntity();
+
+    if (
+      this.multi() ||
+      !value ||
+      Array.isArray(value) ||
+      (value as any).isInvalidOption ||
+      !enumEntity
+    ) {
+      return;
+    }
+
+    if (!enumEntity.values.some((enumValue) => enumValue.id === value.id)) {
+      this.formControl.setValue(undefined);
+    }
   }
 
   override onContainerClick(event: MouseEvent) {
