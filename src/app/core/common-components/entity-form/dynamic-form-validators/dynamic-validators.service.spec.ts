@@ -12,7 +12,6 @@ import {
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
-import { calculateAge } from "../../../../utils/utils";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
