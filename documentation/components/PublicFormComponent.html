@@ -834,17 +834,39 @@ export class PublicFormComponent&lt;E extends Entity&gt; implements OnInit {
   private getEntityFormEntriesConfig(): PublicFormEntityFormConfig[] {
     const config &#x3D; this.formConfig()!;
     if (Array.isArray(config.forms) &amp;&amp; config.forms.length) {
-      return config.forms;
+      return config.forms.map((form) &#x3D;&gt;
+        this.applyDefaultPublicFormFieldDisplaySettings(form),
+      );
     }
 
     return [
-      {
+      this.applyDefaultPublicFormFieldDisplaySettings({
         entity: config.entity,
         columns: config.columns,
         prefilled: config.prefilled,
         linkedEntities: config.linkedEntities,
-      },
+      }),
     ];
+  }
+
+  private applyDefaultPublicFormFieldDisplaySettings(
+    formConfig: PublicFormEntityFormConfig,
+  ): PublicFormEntityFormConfig {
+    formConfig.columns &#x3D; (formConfig.columns ?? []).map((group) &#x3D;&gt; {
+      group.fields &#x3D; group.fields.map((field) &#x3D;&gt; {
+        const fieldConfig &#x3D; toFormFieldConfig(field);
+
+        return {
+          ...fieldConfig,
+          displayFullLengthLabel: fieldConfig.displayFullLengthLabel ?? true,
+          displayFullLengthOptionLabel:
+            fieldConfig.displayFullLengthOptionLabel ?? true,
+        };
+      });
+      return group;
+    });
+
+    return formConfig;
   }
 }
 
