@@ -69,7 +69,7 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entities).toEqual([e1, e2, e3]);
+    expect(component.entities()).toEqual([e1, e2, e3]);
   });
 
   it("should filter entities when searching", async () => {
@@ -82,7 +82,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     component.formControl.setValue("Second");
     component.updateAutocomplete();
 
-    expect(component.autocompleteEntities.value).toEqual([e2]);
+    expect(component.autocompleteEntities()).toEqual([e2]);
   });
 
   it("should correctly set the form controls to the selected entity's values", async () => {
@@ -195,6 +195,6 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     await component.selectEntity(e2);
 
-    expect(component.selectedEntity).toEqual(e2);
+    expect(component.selectedEntity()).toEqual(e2);
   });
 });

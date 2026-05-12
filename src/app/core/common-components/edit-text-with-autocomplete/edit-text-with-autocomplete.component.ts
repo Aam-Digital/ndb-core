@@ -1,11 +1,11 @@
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { AsyncPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
   OnInit,
+  signal,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -13,7 +13,6 @@ import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { BehaviorSubject } from "rxjs";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
@@ -52,7 +51,6 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
     ReactiveFormsModule,
     MatInputModule,
     MatAutocompleteModule,
-    AsyncPipe,
     EntityBlockComponent,
     FontAwesomeModule,
     MatTooltipModule,
@@ -107,12 +105,12 @@ export class EditTextWithAutocompleteComponent
     relatedEntitiesParent?: Entity;
   };
 
-  entities: Entity[] = [];
-  autocompleteEntities = new BehaviorSubject(this.entities);
-  selectedEntity?: Entity;
+  entities = signal<Entity[]>([]);
+  autocompleteEntities = signal<Entity[]>([]);
+  selectedEntity = signal<Entity | null>(null);
   currentValues;
   originalValues;
-  autocompleteDisabled = true;
+  autocompleteDisabled = signal(true);
   lastValue = "";
   addedFormControls = [];
 
@@ -128,18 +126,18 @@ export class EditTextWithAutocompleteComponent
   updateAutocomplete() {
     let val = this.formControl.value;
     if (
-      !this.autocompleteDisabled &&
+      !this.autocompleteDisabled() &&
       val !== this.currentValues[this.formFieldConfig().id]
     ) {
-      let filteredEntities = this.entities;
+      let filteredEntities = this.entities();
       if (val) {
-        filteredEntities = this.entities.filter(
+        filteredEntities = this.entities().filter(
           (entity) =>
-            entity !== this.selectedEntity &&
+            entity !== this.selectedEntity() &&
             entity.toString().toLowerCase().includes(val.toLowerCase()),
         );
       }
-      this.autocompleteEntities.next(filteredEntities);
+      this.autocompleteEntities.set(filteredEntities);
     }
   }
 
@@ -150,11 +148,13 @@ export class EditTextWithAutocompleteComponent
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete
       const entityType = this.additional.entityType;
-      this.entities = await this.entityMapperService.loadType(entityType);
-      this.entities.sort((e1, e2) =>
+      const entities = await this.entityMapperService.loadType(entityType);
+      const sortedEntities = [...entities].sort((e1, e2) =>
         e1.toString().localeCompare(e2.toString()),
       );
-      this.autocompleteDisabled = false;
+      this.entities.set(sortedEntities);
+      this.autocompleteEntities.set(sortedEntities);
+      this.autocompleteDisabled.set(false);
       this.currentValues = this.parent.getRawValue();
       this.originalValues = this.currentValues;
     }
@@ -162,11 +162,11 @@ export class EditTextWithAutocompleteComponent
 
   async selectEntity(selected: Entity) {
     if (await this.userConfirmsOverwriteIfNecessary(selected)) {
-      this.selectedEntity = selected;
-      this.addRelevantValueToRelevantProperty(this.selectedEntity);
-      this.setAllFormValues(this.selectedEntity);
+      this.selectedEntity.set(selected);
+      this.addRelevantValueToRelevantProperty(selected);
+      this.setAllFormValues(selected);
       this.currentValues = this.parent.getRawValue();
-      this.autocompleteEntities.next([]);
+      this.autocompleteEntities.set([]);
     } else {
       this.formControl.setValue(this.lastValue);
     }
@@ -213,7 +213,7 @@ export class EditTextWithAutocompleteComponent
       .filter((key) => selected.getSchema().has(key))
       .forEach((key) => {
         if (this.parent.controls.hasOwnProperty(key)) {
-          this.parent.controls[key].setValue(this.selectedEntity[key]);
+          this.parent.controls[key].setValue(selected[key]);
         } else {
           // adding missing controls so saving does not lose any data
           this.parent.addControl(key, new FormControl(selected[key]));
@@ -223,14 +223,16 @@ export class EditTextWithAutocompleteComponent
   }
 
   async resetForm() {
-    if (await this.userConfirmsOverwriteIfNecessary(this.selectedEntity)) {
+    const selectedEntity = this.selectedEntity();
+    if (!selectedEntity) return;
+    if (await this.userConfirmsOverwriteIfNecessary(selectedEntity)) {
       this.addedFormControls.forEach((control) =>
         this.parent.removeControl(control),
       );
       this.addedFormControls = [];
       this.formControl.reset();
       this.parent.patchValue(this.originalValues);
-      this.selectedEntity = null;
+      this.selectedEntity.set(null);
       this.currentValues = this.originalValues;
     }
   }
