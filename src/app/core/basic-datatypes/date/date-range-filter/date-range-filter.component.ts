@@ -86,14 +86,6 @@ export class DateRangeFilterComponent<T extends Entity> {
     });
   }
 
-  setFromDate(date: Date | null) {
-    this.fromDate.set(date);
-  }
-
-  setToDate(date: Date | null) {
-    this.toDate.set(date);
-  }
-
   dateChangedManually() {
     const filterConfig = this.filterConfig();
     if (!filterConfig) return;

@@ -60,7 +60,7 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should detect multi selection mode", async () => {
-    expect(component.multi).toBeFalsy();
+    expect(component.multi()).toBeFalsy();
 
     fixture.componentRef.setInput("formFieldConfig", {
       id: "test",
@@ -69,11 +69,11 @@ describe("EditConfigurableEnumComponent", () => {
     });
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.multi).toBe(true);
+    expect(component.multi()).toBe(true);
   });
 
   it("should clear createNewOption when enum is not editable", () => {
-    expect(component.createNewOption).toBeDefined();
+    expect(component.createNewOption()).toBeDefined();
 
     mockAbility.can.mockReturnValue(false);
     fixture.componentRef.setInput("formFieldConfig", {
@@ -82,8 +82,8 @@ describe("EditConfigurableEnumComponent", () => {
     });
     fixture.detectChanges();
 
-    expect(component.canEdit).toBe(false);
-    expect(component.createNewOption).toBeUndefined();
+    expect(component.canEdit()).toBe(false);
+    expect(component.createNewOption()).toBeUndefined();
   });
 
   it("should add [invalid option] option from entity if given", () => {
@@ -102,7 +102,7 @@ describe("EditConfigurableEnumComponent", () => {
     expect(component.invalidOptions).toEqual([invalidOption]);
 
     component.ngControl.control.setValue([invalidOption, invalid2]);
-    component.multi = true;
+    component.multi.set(true);
     component.ngControl.control.setValue([invalidOption, invalid2]);
     expect(component.invalidOptions).toEqual([invalidOption, invalid2]);
   });
@@ -148,7 +148,7 @@ describe("EditConfigurableEnumComponent", () => {
       isInvalidOption: true,
     });
 
-    expect(component.options).toEqual([
+    expect(component.options()).toEqual([
       { id: "1", label: "1" },
       { id: "a", label: "a", isInvalidOption: true },
     ]);
@@ -159,7 +159,7 @@ describe("EditConfigurableEnumComponent", () => {
     component.openSettings({ stopPropagation: () => {} } as any);
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(component.options).toEqual([
+    expect(component.options()).toEqual([
       { id: "1", label: "1" },
       { id: "2", label: "2" },
       { id: "a", label: "a", isInvalidOption: true },
@@ -178,14 +178,14 @@ describe("EditConfigurableEnumComponent", () => {
     component.enumEntity.values.pop();
     component.openSettings({ stopPropagation: () => {} } as any);
 
-    expect(component.options).toEqual([option1]);
+    expect(component.options()).toEqual([option1]);
     expect(component.formControl.value).toEqual(option1);
 
     // simulate removing option "1"
     component.enumEntity.values.pop();
     component.openSettings({ stopPropagation: () => {} } as any);
 
-    expect(component.options).toEqual([]);
+    expect(component.options()).toEqual([]);
     expect(component.formControl.value).toEqual(undefined);
   });
 });

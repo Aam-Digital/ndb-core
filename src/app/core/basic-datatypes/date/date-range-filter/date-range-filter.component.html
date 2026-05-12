@@ -6,7 +6,7 @@
       matStartDate
       (dateChange)="dateChangedManually()"
       [ngModel]="fromDate()"
-      (ngModelChange)="setFromDate($event)"
+      (ngModelChange)="fromDate.set($event)"
       i18n-placeholder="Date selection"
       placeholder="Start date"
     />
@@ -14,7 +14,7 @@
       matEndDate
       (dateChange)="dateChangedManually()"
       [ngModel]="toDate()"
-      (ngModelChange)="setToDate($event)"
+      (ngModelChange)="toDate.set($event)"
       i18n-placeholder="Date selection"
       placeholder="End date"
     />

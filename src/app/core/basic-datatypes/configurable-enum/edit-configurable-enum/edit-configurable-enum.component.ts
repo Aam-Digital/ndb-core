@@ -1,13 +1,13 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  DestroyRef,
   effect,
   inject,
   input,
   OnInit,
+  signal,
   ViewChild,
-  DestroyRef,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -74,26 +74,25 @@ export class EditConfigurableEnumComponent
   private readonly ability = inject(EntityAbility);
   private readonly dialog = inject(MatDialog);
   private readonly confirmation = inject(ConfirmationDialogService);
-  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
   enumId: string;
-  multi = false;
+  multi = signal(false);
 
   enumEntity: ConfigurableEnum;
   invalidOptions: ConfigurableEnumValue[] = [];
-  options: ConfigurableEnumValue[] = [];
-  canEdit = false;
+  options = signal<ConfigurableEnumValue[]>([]);
+  canEdit = signal(false);
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
-  createNewOption?: (
-    input: string,
-  ) => Promise<ConfigurableEnumValue | undefined>;
+  createNewOption = signal<
+    ((input: string) => Promise<ConfigurableEnumValue | undefined>) | undefined
+  >(undefined);
 
   constructor() {
     super();
     effect(() => {
       const config = this.formFieldConfig();
-      this.multi = config?.isArray ?? false;
+      this.multi.set(config?.isArray ?? false);
       this.enumId = config?.additional;
       this.updateEnumData();
       this.updateInvalidOptions();
@@ -120,16 +119,18 @@ export class EditConfigurableEnumComponent
 
   private updateInvalidOptions(): void {
     this.invalidOptions = this.prepareInvalidOptions();
-    this.options = [...(this.enumEntity?.values ?? []), ...this.invalidOptions];
-    this.changeDetector.markForCheck();
+    this.options.set([
+      ...(this.enumEntity?.values ?? []),
+      ...this.invalidOptions,
+    ]);
   }
 
   private updateEnumData(): void {
     this.enumEntity = this.enumService.getEnum(this.enumId);
-    this.canEdit = this.ability.can("update", this.enumEntity);
-    this.createNewOption = this.canEdit
-      ? this.addNewOption.bind(this)
-      : undefined;
+    this.canEdit.set(this.ability.can("update", this.enumEntity));
+    this.createNewOption.set(
+      this.canEdit() ? this.addNewOption.bind(this) : undefined,
+    );
   }
 
   private prepareInvalidOptions(): ConfigurableEnumValue[] {
@@ -141,14 +142,14 @@ export class EditConfigurableEnumComponent
     const value = this.formControl.value;
 
     if (
-      !this.multi &&
+      !this.multi() &&
       value &&
       !Array.isArray(value) &&
       (value as any).isInvalidOption
     ) {
       additionalOptions = [value];
     }
-    if (this.multi && Array.isArray(value)) {
+    if (this.multi() && Array.isArray(value)) {
       additionalOptions = value?.filter((o) => (o as any).isInvalidOption);
     }
     return additionalOptions ?? [];
@@ -201,18 +202,21 @@ export class EditConfigurableEnumComponent
 
     if (
       value &&
+      !this.multi() &&
       !Array.isArray(value) &&
       !(value as any).isInvalidOption &&
       // value not in options anymore
       !this.enumEntity.values.some((v) => v.id === value.id) &&
       // but was in options previously
-      this.options.some((v) => v.id === value.id)
+      this.options().some((v) => v.id === value.id)
     ) {
       this.formControl.setValue(undefined);
     }
 
-    this.options = [...(this.enumEntity?.values ?? []), ...this.invalidOptions];
-    this.changeDetector.markForCheck();
+    this.options.set([
+      ...(this.enumEntity?.values ?? []),
+      ...this.invalidOptions,
+    ]);
   }
 
   override onContainerClick(event: MouseEvent) {
