@@ -20,7 +20,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
-import { EditAgeComponent } from "../../../../basic-datatypes/date-with-age/edit-age/edit-age.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -34,7 +33,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     MatCheckboxModule,
     ReactiveFormsModule,
     HelpButtonComponent,
-    EditAgeComponent,
     EditDateComponent,
   ],
   templateUrl: "./configure-entity-field-validator.component.html",
@@ -77,6 +75,8 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
         required: [this.entitySchemaField.validators.required],
         min: [this.entitySchemaField.validators.min],
         max: [this.entitySchemaField.validators.max],
+        minAge: [this.entitySchemaField.validators.minAge],
+        maxAge: [this.entitySchemaField.validators.maxAge],
         minDate: [this.entitySchemaField.validators.minDate],
         maxDate: [this.entitySchemaField.validators.maxDate],
         regex: [this.entitySchemaField.validators.pattern],
@@ -88,6 +88,8 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
         required: [false],
         min: [null],
         max: [null],
+        minAge: [null],
+        maxAge: [null],
         minDate: [null],
         maxDate: [null],
         regex: [""],
@@ -96,7 +98,7 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
       });
     }
 
-    // Normalize any string/timestamp date values to Date objects so EditAge component receives a Date
+    // Normalize any string/timestamp date values to Date objects so EditDate component receives a Date
     this.normalizeDateControl("minDate");
     this.normalizeDateControl("maxDate");
 

@@ -274,36 +274,9 @@ export class DynamicValidatorsService {
       case "max":
         return { fn: Validators.max(value as number) };
       case "minDate": {
-        // For date-with-age fields, treat configured date as minimum age
-        const field = fieldId ? entity.getSchema().get(fieldId) : undefined;
-        if (field?.dataType === "date-with-age") {
-          const parsed = parseToDate(value);
-          const ageParam = parsed ? calculateAge(parsed) : Number(value);
-          const maxParsed = parseToDate(config?.maxDate);
-          const maxAgeParam = maxParsed
-            ? calculateAge(maxParsed)
-            : config?.maxAge;
-          return {
-            fn: minAgeValidator(ageParam, maxAgeParam),
-            errorName: "minAge",
-          };
-        }
         return { fn: minDateValidator(value) };
       }
       case "maxDate": {
-        const field = fieldId ? entity.getSchema().get(fieldId) : undefined;
-        if (field?.dataType === "date-with-age") {
-          const parsed = parseToDate(value);
-          const ageParam = parsed ? calculateAge(parsed) : Number(value);
-          const minParsed = parseToDate(config?.minDate);
-          const minAgeParam = minParsed
-            ? calculateAge(minParsed)
-            : config?.minAge;
-          return {
-            fn: maxAgeValidator(ageParam, minAgeParam),
-            errorName: "maxAge",
-          };
-        }
         return { fn: maxDateValidator(value) };
       }
       case "minAge":

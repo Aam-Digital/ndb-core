@@ -1,5 +1,8 @@
 .validator-form-cell {
+  width: 100%;
+  gap: 1rem;
+
   mat-form-field {
-    width: 80%;
+    width: 100%;
   }
 }

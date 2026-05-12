@@ -12,13 +12,43 @@
 
   @if (entitySchemaField.dataType === "date-with-age") {
     <mat-form-field floatLabel="always">
-      <mat-label i18n>Minimum Date</mat-label>
-      <app-edit-age formControlName="minDate"></app-edit-age>
+      <mat-label i18n>Minimum Age (Years)</mat-label>
+      <input formControlName="minAge" matInput type="number" />
+      <app-help-button
+        matSuffix
+        text="Enter the minimum allowed age in years. This is independent from the date of birth limits."
+        i18n-text
+      ></app-help-button>
     </mat-form-field>
 
     <mat-form-field floatLabel="always">
-      <mat-label i18n>Maximum Date</mat-label>
-      <app-edit-age formControlName="maxDate"></app-edit-age>
+      <mat-label i18n>Maximum Age (Years)</mat-label>
+      <input formControlName="maxAge" matInput type="number" />
+      <app-help-button
+        matSuffix
+        text="Enter the maximum allowed age in years. This is independent from the date of birth limits."
+        i18n-text
+      ></app-help-button>
+    </mat-form-field>
+
+    <mat-form-field floatLabel="always">
+      <mat-label i18n>Earliest Date of Birth</mat-label>
+      <app-edit-date formControlName="minDate"></app-edit-date>
+      <app-help-button
+        matSuffix
+        text="Choose the earliest allowed date of birth. This does not change the age limits."
+        i18n-text
+      ></app-help-button>
+    </mat-form-field>
+
+    <mat-form-field floatLabel="always">
+      <mat-label i18n>Latest Date of Birth</mat-label>
+      <app-edit-date formControlName="maxDate"></app-edit-date>
+      <app-help-button
+        matSuffix
+        text="Choose the latest allowed date of birth. This does not change the age limits."
+        i18n-text
+      ></app-help-button>
     </mat-form-field>
   }
 

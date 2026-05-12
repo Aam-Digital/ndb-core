@@ -201,7 +201,7 @@ describe("DynamicValidatorsService", () => {
     expect(mockedEntityMapper.loadType).toHaveBeenCalledWith("TestEntity");
   });
 
-  it("maps minDate to minAge validation for date-with-age fields", () => {
+  it("keeps minDate as a date validator for date-with-age fields", () => {
     const entity = new TestEntity();
     const validators = service.buildValidators(
       { minDate: "2021-01-12" },
@@ -211,16 +211,15 @@ describe("DynamicValidatorsService", () => {
 
     expect(validators).toHaveLength(1);
 
-    const tooYoungDate = new Date(2023, 0, 1);
-    const result = validators[0](new UntypedFormControl(tooYoungDate));
+    const tooEarlyDate = new Date(2020, 0, 1);
+    const result = validators[0](new UntypedFormControl(tooEarlyDate));
 
-    const expectedMinAge = calculateAge(new Date(2021, 0, 12));
-    expect(result?.minAge?.minAge).toBe(expectedMinAge);
-    expect(result?.minAge?.errorMessage).toContain("Age must be at least");
-    expect(result?.minDate).toBeUndefined();
+    expect(result?.minDate?.minDate).toEqual(new Date(2021, 0, 12));
+    expect(result?.minDate?.errorMessage).toContain("Date must be on or after");
+    expect(result?.minAge).toBeUndefined();
   });
 
-  it("maps maxDate to maxAge validation for date-with-age fields", () => {
+  it("keeps maxDate as a date validator for date-with-age fields", () => {
     const entity = new TestEntity();
     const validators = service.buildValidators(
       { maxDate: "2010-01-01" },
@@ -230,32 +229,47 @@ describe("DynamicValidatorsService", () => {
 
     expect(validators).toHaveLength(1);
 
-    const tooOldDate = new Date(1990, 2, 14);
-    const result = validators[0](new UntypedFormControl(tooOldDate));
+    const tooLateDate = new Date(2011, 0, 1);
+    const result = validators[0](new UntypedFormControl(tooLateDate));
 
-    const expectedMaxAge = calculateAge(new Date(2010, 0, 1));
-    expect(result?.maxAge?.maxAge).toBe(expectedMaxAge);
-    expect(result?.maxAge?.errorMessage).toContain("Age must be at most");
-    expect(result?.maxDate).toBeUndefined();
+    expect(result?.maxDate?.maxDate).toEqual(new Date(2010, 0, 1));
+    expect(result?.maxDate?.errorMessage).toContain(
+      "Date must be on or before",
+    );
+    expect(result?.maxAge).toBeUndefined();
   });
 
   it("shows a between message when both age bounds are configured", () => {
     const entity = new TestEntity();
     const validators = service.buildValidators(
       {
-        minDate: "2021-01-12",
-        maxDate: "2010-01-01",
+        minAge: 10,
+        maxAge: 15,
       },
       entity,
       "dateOfBirth",
     ).validators;
 
-    const tooOldDate = new Date(1990, 2, 14);
+    const tooOldDate = new Date(2000, 2, 14);
     const result = validators[1](new UntypedFormControl(tooOldDate));
 
     expect(result?.maxAge?.errorMessage).toContain("Age must be between");
     expect(result?.maxAge?.errorMessage).toContain("and");
     expect(result?.maxAge?.errorMessage).toContain("years");
+  });
+
+  it("does not convert date validators into age validators for date-with-age fields", () => {
+    const entity = new TestEntity();
+    const validators = service.buildValidators(
+      { minDate: "2021-01-12", maxDate: "2010-01-01" },
+      entity,
+      "dateOfBirth",
+    ).validators;
+
+    expect(validators).toHaveLength(2);
+    const result = validators[0](new UntypedFormControl(new Date(2020, 0, 1)));
+    expect(result?.minDate).toBeDefined();
+    expect(result?.minAge).toBeUndefined();
   });
 });
 
