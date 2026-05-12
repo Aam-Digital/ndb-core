@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -28,7 +28,7 @@ export class EditNumberComponent
   extends CustomFormControlDirective<number>
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   get formControl(): FormControl<number> {
     return this.ngControl.control as FormControl<number>;

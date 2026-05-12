@@ -2,7 +2,7 @@ import { CustomFormControlDirective } from "#src/app/core/common-components/basi
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -27,7 +27,7 @@ export class EditEmailComponent
   extends CustomFormControlDirective<string>
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   get formControl(): FormControl<string> {
     return this.ngControl.control as FormControl<string>;

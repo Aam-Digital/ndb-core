@@ -45,7 +45,7 @@ describe("EditAgeComponent", () => {
     dateAdapter = TestBed.inject(DateAdapter);
     dateFormats = TestBed.inject(MAT_DATE_FORMATS);
 
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
     fixture.detectChanges();
   });
 

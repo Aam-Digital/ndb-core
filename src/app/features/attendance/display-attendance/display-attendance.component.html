@@ -1,8 +1,10 @@
-@if (items().length && percentage() !== undefined) {
+@if (items().length) {
   <span [appTemplateTooltip]="tooltip">
-    <span class="mat-elevation-z1 attendance-block {{ warningClass() }}">
-      {{ percentage() | percent: "1.0-0" }}
-    </span>
+    @if (percentage() !== undefined) {
+      <span class="mat-elevation-z1 attendance-block {{ warningClass() }}">
+        {{ percentage() | percent: "1.0-0" }}
+      </span>
+    }
     ({{ items().length }} <span i18n>participants</span>)
   </span>
 

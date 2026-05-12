@@ -15,7 +15,7 @@ describe("EditTextComponent", () => {
 
     fixture = TestBed.createComponent(EditTextComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
     fixture.detectChanges();
   });
 

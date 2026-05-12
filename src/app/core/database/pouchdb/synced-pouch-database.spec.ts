@@ -95,6 +95,7 @@ describe("SyncedPouchDatabase", () => {
 
     const db = service;
     vi.spyOn(db, "getPouchDB").mockReturnValue(mockLocalDb as any);
+    vi.spyOn(db, "getPouchDBOnceReady").mockResolvedValue(mockLocalDb as any);
     return { mockLocalDb, db };
   }
 
@@ -220,6 +221,9 @@ describe("SyncedPouchDatabase", () => {
       info: vi.fn().mockResolvedValue({ doc_count: 5 }),
     };
     vi.spyOn(serviceWithCallback, "getPouchDB").mockReturnValue(
+      mockLocalDb as any,
+    );
+    vi.spyOn(serviceWithCallback, "getPouchDBOnceReady").mockResolvedValue(
       mockLocalDb as any,
     );
 
@@ -435,6 +439,9 @@ describe("SyncedPouchDatabase", () => {
       };
       service["pouchDB"] = mockLocalDb as any;
       vi.spyOn(service, "getPouchDB").mockReturnValue(mockLocalDb as any);
+      vi.spyOn(service, "getPouchDBOnceReady").mockResolvedValue(
+        mockLocalDb as any,
+      );
       purgeSpy = vi.spyOn(service, "purge").mockResolvedValue(true);
     });
 
@@ -489,10 +496,14 @@ describe("SyncedPouchDatabase", () => {
     });
 
     it("should skip purge and lost-permission tracking on first sync", async () => {
-      vi.spyOn(service, "getPouchDB").mockReturnValue({
+      const firstSyncDb = {
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
         info: vi.fn().mockResolvedValue({ doc_count: 0 }),
-      } as any);
+      };
+      vi.spyOn(service, "getPouchDB").mockReturnValue(firstSyncDb as any);
+      vi.spyOn(service, "getPouchDBOnceReady").mockResolvedValue(
+        firstSyncDb as any,
+      );
       const collectSpy = vi.spyOn(
         service["remoteDatabase"],
         "collectAndClearLostPermissions",
