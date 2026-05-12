@@ -486,10 +486,10 @@ export class EntitiesTableComponent<
   }
 
   /**
-   * Builds a map of column id → sort value extractor for columns whose datatype
-   * defines custom sort logic (via {@link DefaultDatatype.sortValue}).
-   * Passed to {@link tableSort} so complex field types (e.g. attendance arrays)
-   * are sorted by a meaningful value rather than the raw object.
+   * Builds a map of column id → sort value extractor.
+   * Every datatype participates through {@link DefaultDatatype.sortValue};
+   * datatypes that don't override it return `undefined` and fall back to
+   * default sorting behavior in {@link tableSort}.
    */
   private buildSortValueFns(): Record<
     string,
@@ -504,9 +504,7 @@ export class EntitiesTableComponent<
         col.dataType,
         true,
       );
-      if (datatype?.sortValue !== DefaultDatatype.prototype.sortValue) {
-        sortValueByColumnId[col.id] = (v) => datatype.sortValue(v);
-      }
+      sortValueByColumnId[col.id] = (v) => datatype.sortValue(v);
     }
     return sortValueByColumnId;
   }
