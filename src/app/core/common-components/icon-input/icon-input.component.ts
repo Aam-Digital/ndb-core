@@ -7,7 +7,6 @@ import {
   input,
   OnInit,
   output,
-  untracked,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
@@ -57,11 +56,11 @@ export class IconComponent implements OnInit {
   constructor() {
     effect(() => {
       const iconValue = this.icon();
-      untracked(() => {
-        if (this.iconControl && !this.control()) {
-          this.iconControl.setValue(iconValue || "", { emitEvent: false });
-        }
-      });
+      const externalControl = this.control();
+      if (this.iconControl && !externalControl) {
+        // Imperative FormControl sync is a side effect; keep this in effect (not computed).
+        this.iconControl.setValue(iconValue || "", { emitEvent: false });
+      }
     });
   }
 
