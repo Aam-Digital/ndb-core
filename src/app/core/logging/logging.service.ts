@@ -197,18 +197,32 @@ export class LoggingService {
     ...context: any[]
   ) {
     if (logLevel === LogLevel.ERROR) {
+      // Prefer a real Error from context (e.g. Logging.error("message", err))
+      const errFromContext = context.find((c) => c instanceof Error);
       if (message instanceof Error) {
-        Sentry.captureException(message);
+        Sentry.captureException(message, {
+          extra: context.length > 0 ? { context } : undefined,
+        });
+      } else if (errFromContext) {
+        Sentry.captureException(errFromContext, {
+          extra: { message, context },
+        });
       } else {
         Sentry.captureException(
-          new Error(message?.message ?? message?.error ?? message),
+          new Error(message?.message ?? message?.error ?? String(message)),
+          { extra: context.length > 0 ? { context } : undefined },
         );
       }
     } else {
-      Sentry.captureMessage(message, {
-        level: this.translateLogLevel(logLevel),
-        extra: context.length > 0 ? { context } : undefined,
-      });
+      Sentry.captureMessage(
+        typeof message === "string"
+          ? message
+          : String(message?.message ?? message),
+        {
+          level: this.translateLogLevel(logLevel),
+          extra: context.length > 0 ? { context } : undefined,
+        },
+      );
     }
   }
 
