@@ -73,6 +73,10 @@ export class EntityDetailsComponent
 
   private session = inject(SessionSubject);
 
+  protected override onEntityUpdated() {
+    this.initPanels();
+  }
+
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 

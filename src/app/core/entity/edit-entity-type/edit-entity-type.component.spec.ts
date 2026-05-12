@@ -18,7 +18,7 @@ describe("EditEntityTypeComponent", () => {
     fixture = TestBed.createComponent(EditEntityTypeComponent);
     component = fixture.componentInstance;
 
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
 
     fixture.detectChanges();
   });
