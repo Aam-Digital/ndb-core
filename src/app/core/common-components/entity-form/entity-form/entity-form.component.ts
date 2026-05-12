@@ -104,9 +104,10 @@ export class EntityFormComponent<T extends Entity = Entity> {
 
     effect((onCleanup) => {
       const form = this.form();
+      const entity = this.entity();
       if (!form) return;
       this.initialFormValues = form.formGroup.getRawValue();
-      untracked(() => this.disableForLockedEntity());
+      untracked(() => this.disableForLockedEntity(entity, form));
 
       const sub = form.onFormStateChange
         .pipe(
@@ -175,16 +176,16 @@ export class EntityFormComponent<T extends Entity = Entity> {
     const action = entity.isNew ? "create" : "read";
 
     return fieldGroups
-      .map((group) => {
-        group.fields = group.fields.filter((field) =>
+      .map((group) => ({
+        ...group,
+        fields: group.fields.filter((field) =>
           this.ability.can(
             action,
             entity,
             typeof field === "string" ? field : field.id,
           ),
-        );
-        return group;
-      })
+        ),
+      }))
       .filter((group) => group.fields.length > 0);
   }
 
@@ -202,9 +203,12 @@ export class EntityFormComponent<T extends Entity = Entity> {
    * Disable the form for certain states of the entity, like it being already anonymized.
    * @private
    */
-  private disableForLockedEntity() {
-    if (this.entity()?.anonymized) {
-      this.form()?.formGroup.disable();
+  private disableForLockedEntity(
+    entity: Entity | undefined,
+    form: EntityForm<T>,
+  ) {
+    if (entity?.anonymized) {
+      form.formGroup.disable();
     }
   }
 }

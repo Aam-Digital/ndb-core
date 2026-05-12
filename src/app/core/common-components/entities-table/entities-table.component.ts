@@ -32,7 +32,7 @@ import {
   MatTableModule,
 } from "@angular/material/table";
 import { Router } from "@angular/router";
-import { UntilDestroy } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntityFieldEditComponent } from "../../entity/entity-field-edit/entity-field-edit.component";
@@ -160,21 +160,26 @@ export class EntitiesTableComponent<
         sort.direction = urlSortOrder || "asc";
       }
       // Listen for sort changes to persist to URL
-      sort.sortChange.subscribe(({ active, direction }) => {
-        if (!direction) {
-          this.tableStateUrl.updateUrlParams({ sortBy: null, sortOrder: null });
-        } else if (direction === "desc") {
-          this.tableStateUrl.updateUrlParams({
-            sortBy: active,
-            sortOrder: "desc",
-          });
-        } else {
-          this.tableStateUrl.updateUrlParams({
-            sortBy: active,
-            sortOrder: null,
-          });
-        }
-      });
+      sort.sortChange
+        .pipe(untilDestroyed(this))
+        .subscribe(({ active, direction }) => {
+          if (!direction) {
+            this.tableStateUrl.updateUrlParams({
+              sortBy: null,
+              sortOrder: null,
+            });
+          } else if (direction === "desc") {
+            this.tableStateUrl.updateUrlParams({
+              sortBy: active,
+              sortOrder: "desc",
+            });
+          } else {
+            this.tableStateUrl.updateUrlParams({
+              sortBy: active,
+              sortOrder: null,
+            });
+          }
+        });
     }
   }
 

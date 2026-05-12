@@ -4,7 +4,10 @@
       @if (group.header) {
         <h2>{{ group.header }}</h2>
       }
-      @for (field of group.fields; track $index) {
+      @for (
+        field of group.fields;
+        track typeof field === "string" ? field : field.id
+      ) {
         <div [class.full-width]="fullWidth()">
           <app-entity-field-edit
             [field]="field"
