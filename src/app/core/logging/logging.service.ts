@@ -36,10 +36,11 @@ export class LoggingService {
       return;
     }
 
-    const defaultOptions = {
+    const defaultOptions: Sentry.BrowserOptions = {
       release: "ndb-core@" + environment.appVersion,
       transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
+      beforeSend: enrichSentryEvent,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -282,3 +283,29 @@ interface SentryBreadcrumbHint {
 }
 
 export const Logging = new LoggingService();
+
+/**
+ * Sentry `beforeSend` hook that enriches events with structured extra data
+ * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
+ */
+function enrichSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent | null {
+  // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
+  // so that details like entityId, status, reason are visible in Sentry's "Additional Data"
+  const err = hint.originalException;
+  if (err && typeof err === "object") {
+    const extras: Record<string, unknown> = {};
+    for (const key of ["entityId", "status", "reason", "name"]) {
+      if (key in err && (err as any)[key] !== undefined) {
+        extras[key] = (err as any)[key];
+      }
+    }
+    if (Object.keys(extras).length > 0) {
+      event.extra = { ...event.extra, ...extras };
+    }
+  }
+
+  return event;
+}
