@@ -302,6 +302,11 @@ The subcomponents will be provided with the Entity object and the creating new s
                         <ul class="index-list">
                             <li>
                                     <span class="modifier">Protected</span>
+                                    <span class="modifier"></span>
+                                <a href="#onEntityUpdated" >onEntityUpdated</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
                                     <span class="modifier">Async</span>
                                 <a href="#loadEntity" >loadEntity</a>
                             </li>
@@ -476,6 +481,52 @@ The subcomponents will be provided with the Entity object and the creating new s
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="onEntityUpdated"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier"></span>
+                        <span ><b>onEntityUpdated</b></span>
+                        <a href="#onEntityUpdated"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onEntityUpdated()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../directives/AbstractEntityDetailsComponent.html" target="_self" >AbstractEntityDetailsComponent</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:76</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="loadEntity"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -501,7 +552,7 @@ The subcomponents will be provided with the Entity object and the creating new s
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:71</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:78</a></code>
 </div>
                         </td>
                     </tr>
@@ -546,7 +597,7 @@ The subcomponents will be provided with the Entity object and the creating new s
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:55</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:61</a></code>
 </div>
                         </td>
                     </tr>
@@ -955,6 +1006,10 @@ export class EntityDetailsComponent
   @Input() panels: Panel[] &#x3D; [];
 
   private session &#x3D; inject(SessionSubject);
+
+  protected override onEntityUpdated() {
+    this.initPanels();
+  }
 
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);

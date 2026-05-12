@@ -1787,7 +1787,7 @@ that links the form control value to the component value</p>
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   OnInit,
 } from &quot;@angular/core&quot;;
 import { FormControl, ReactiveFormsModule, Validators } from &quot;@angular/forms&quot;;
@@ -1812,7 +1812,7 @@ export class EditEmailComponent
   extends CustomFormControlDirective&lt;string&gt;
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
 
   get formControl(): FormControl&lt;string&gt; {
     return this.ngControl.control as FormControl&lt;string&gt;;

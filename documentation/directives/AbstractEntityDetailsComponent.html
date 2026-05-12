@@ -223,6 +223,10 @@ and leaves the UI and special functionality to components that extend this class
                             </li>
                             <li>
                                     <span class="modifier">Protected</span>
+                                <a href="#onEntityUpdated" >onEntityUpdated</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
                                 <a href="#subscribeToEntityChanges" >subscribeToEntityChanges</a>
                             </li>
                         </ul>
@@ -355,8 +359,8 @@ and leaves the UI and special functionality to components that extend this class
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="71"
-                                    class="link-to-prism">src/app/core/entity-details/abstract-entity-details/abstract-entity-details.component.ts:71</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">src/app/core/entity-details/abstract-entity-details/abstract-entity-details.component.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -366,6 +370,48 @@ and leaves the UI and special functionality to components that extend this class
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onEntityUpdated"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>onEntityUpdated</b></span>
+                        <a href="#onEntityUpdated"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onEntityUpdated()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/entity-details/abstract-entity-details/abstract-entity-details.component.ts:59</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Hook called whenever the entity is updated via the live subscription (e.g. after save or anonymize).
+Subclasses can override this to react to entity changes beyond what markForCheck() provides.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                 </td>
@@ -394,8 +440,8 @@ and leaves the UI and special functionality to components that extend this class
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/core/entity-details/abstract-entity-details/abstract-entity-details.component.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/core/entity-details/abstract-entity-details/abstract-entity-details.component.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -728,6 +774,12 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
     }
   }
 
+  /**
+   * Hook called whenever the entity is updated via the live subscription (e.g. after save or anonymize).
+   * Subclasses can override this to react to entity changes beyond what markForCheck() provides.
+   */
+  protected onEntityUpdated() {}
+
   protected subscribeToEntityChanges() {
     const fullId &#x3D; Entity.createPrefixedId(this.entityType, this.id);
     this.changesSubscription?.unsubscribe();
@@ -740,6 +792,7 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
       )
       .subscribe(({ entity }) &#x3D;&gt; {
         this.entity &#x3D; entity;
+        this.onEntityUpdated();
         this.cdr.markForCheck();
       });
   }

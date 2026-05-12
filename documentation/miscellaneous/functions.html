@@ -9727,7 +9727,7 @@ will start a new operation.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>setupCustomFormControlEditComponent(component: <a href="../directives/CustomFormControlDirective.html" target="_self">CustomFormControlDirective</a>, propertyName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schema: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+<code>setupCustomFormControlEditComponent(component: <a href="../directives/CustomFormControlDirective.html" target="_self">CustomFormControlDirective</a>, propertyName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schema: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, fixture?: <a href="https://angular.io/api/core/testing/ComponentFixture" target="_blank">ComponentFixture</a>)</code>
                 </td>
             </tr>
 
@@ -9737,7 +9737,8 @@ will start a new operation.</p>
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Helper function for modern Angular components that extend CustomFormControlDirective.</p>
-<p>WARNING: This doesn&#39;t seem to always assign and trigger change detection for properties like <code>formFieldConfig</code> correctly.</p>
+<p>Pass the <code>fixture</code> parameter for components that use signal <code>input()</code> for formFieldConfig,
+as direct property assignment does not work with signal inputs.</p>
 </div>
 
                             <div class="io-description">
@@ -9807,6 +9808,24 @@ will start a new operation.</p>
 
                                             <td>
                                                     <p>(optional) additional schema information for the entity field</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>fixture</td>
+                                            <td>
+                                                            <code><a href="https://angular.io/api/core/testing/ComponentFixture" target="_blank" >ComponentFixture</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>(optional) required for components using signal input() for formFieldConfig</p>
 
                                             </td>
                                         </tr>

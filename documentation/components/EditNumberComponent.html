@@ -1779,7 +1779,7 @@ that links the form control value to the component value</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   OnInit,
 } from &quot;@angular/core&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
@@ -1806,7 +1806,7 @@ export class EditNumberComponent
   extends CustomFormControlDirective&lt;number&gt;
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
 
   get formControl(): FormControl&lt;number&gt; {
     return this.ngControl.control as FormControl&lt;number&gt;;

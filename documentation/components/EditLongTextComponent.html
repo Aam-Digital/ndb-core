@@ -1775,7 +1775,7 @@ that links the form control value to the component value</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ChangeDetectionStrategy, Component, Input } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ChangeDetectionStrategy, Component, input } from &quot;@angular/core&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
 import { MatInputModule } from &quot;@angular/material/input&quot;;
@@ -1799,7 +1799,7 @@ export class EditLongTextComponent
   extends CustomFormControlDirective&lt;string&gt;
   implements EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
 
   get formControl(): FormControl&lt;string&gt; {
     return this.ngControl.control as FormControl&lt;string&gt;;

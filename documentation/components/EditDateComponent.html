@@ -1785,7 +1785,7 @@ that links the form control value to the component value</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CustomFormControlDirective } from &quot;#src/app/core/common-components/basic-autocomplete/custom-form-control.directive&quot;;
-import { Component, Input, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
+import { Component, input, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatDatepickerModule } from &quot;@angular/material/datepicker&quot;;
 import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
@@ -1815,7 +1815,7 @@ export class EditDateComponent
   extends CustomFormControlDirective&lt;Date&gt;
   implements EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
 
   get formControl(): FormControl&lt;Date&gt; {
     return this.ngControl.control as FormControl&lt;Date&gt;;
