@@ -506,15 +506,17 @@ export class PouchDatabase extends Database {
  * This overwrites PouchDB's error class which only logs limited information
  */
 export class DatabaseException extends Error {
+  entityId?: string;
+
   constructor(
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    super(error?.message);
+    super(error?.message || "Database error");
 
-    if (entityId) {
-      error["entityId"] = entityId;
-    }
+    this.entityId = entityId;
     Object.assign(this, error);
+    // Restore class name after Object.assign overwrites it with PouchDB's name (e.g. "not_found")
+    this.name = "DatabaseException";
   }
 }
