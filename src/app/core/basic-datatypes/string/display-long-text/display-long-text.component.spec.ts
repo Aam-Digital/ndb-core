@@ -16,9 +16,12 @@ describe("DisplayLongTextComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayLongTextComponent);
     component = fixture.componentInstance;
-    component.entity = new Entity();
-    component.id = "text";
-    component.value = "this is some long text abcde\nefgh";
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("id", "text");
+    fixture.componentRef.setInput(
+      "value",
+      "this is some long text abcde\nefgh",
+    );
     fixture.detectChanges();
   });
 

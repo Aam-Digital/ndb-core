@@ -16,10 +16,10 @@ describe("DisplayUnitComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayUnitComponent);
     component = fixture.componentInstance;
-    component.entity = new Entity();
-    component.id = "height";
-    component.value = "120";
-    component.config = "cm";
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("id", "height");
+    fixture.componentRef.setInput("value", "120");
+    fixture.componentRef.setInput("config", "cm");
     fixture.detectChanges();
   });
 

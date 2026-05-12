@@ -14,7 +14,10 @@ describe("DisplayConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayConfigurableEnumComponent);
     component = fixture.componentInstance;
-    component.value = { id: "testCategory", label: "Test Category" };
+    fixture.componentRef.setInput("value", {
+      id: "testCategory",
+      label: "Test Category",
+    });
     fixture.detectChanges();
   });
 

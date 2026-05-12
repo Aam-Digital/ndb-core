@@ -21,13 +21,13 @@ describe("ViewDistanceComponent", () => {
     entity["address"] = { geoLookup: { lat: 52, lon: 13 } } as GeoLocation;
     compareCoordinates = new Subject();
     component = fixture.componentInstance;
-    component.id = "distance";
-    component.entity = entity;
-    component.value = undefined;
-    component.config = {
+    fixture.componentRef.setInput("id", "distance");
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("value", undefined);
+    fixture.componentRef.setInput("config", {
       compareCoordinates,
       coordinatesProperties: ["address", "otherAddress"],
-    };
+    });
 
     fixture.detectChanges();
   });

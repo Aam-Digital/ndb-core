@@ -10,7 +10,7 @@ import { Logging } from "../logging/logging.service";
 import { SyncStateSubject } from "../session/session-type";
 import { ConfigService } from "../config/config.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import { catchError, switchMap } from "rxjs/operators";
+import { catchError, retry, switchMap } from "rxjs/operators";
 import { asArray } from "../../utils/asArray";
 
 /**
@@ -73,7 +73,10 @@ export class SetupService {
     const entries = await firstValueFrom(
       this.httpClient
         .get<BaseConfig | BaseConfig[]>(url, { responseType: "json" })
-        .pipe(catchError(() => of(null))),
+        .pipe(
+          retry(2),
+          catchError(() => of(null)),
+        ),
     );
     if (!entries) {
       Logging.warn("Failed to load config descriptor: " + url);

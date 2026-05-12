@@ -14,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayAgeComponent> = (args: DisplayAgeComponent) => ({
+const Template: StoryFn<DisplayAgeComponent> = (args) => ({
   props: args,
 });
 
