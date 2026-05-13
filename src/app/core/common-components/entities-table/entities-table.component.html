@@ -51,15 +51,15 @@
       <th mat-header-cell *matHeaderCellDef style="width: 0">
         <mat-checkbox
           (change)="selectAllRows($event)"
-          [checked]="isAllSelected()"
-          [indeterminate]="isIndeterminate()"
+          [checked]="allRowsSelected()"
+          [indeterminate]="selectionIndeterminate()"
         ></mat-checkbox>
       </th>
 
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
           (change)="onRowSelect($event, row)"
-          [checked]="selectedRecords()?.includes(row.record)"
+          [checked]="selectedRecords().includes(row.record)"
           (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
