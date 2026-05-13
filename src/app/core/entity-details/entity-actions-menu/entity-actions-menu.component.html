@@ -14,10 +14,10 @@
         [angularticsAction]="'entity_' + a.action"
         [matTooltip]="a.tooltip"
       >
-        <fa-icon
+        <app-fa-dynamic-icon
           class="standard-icon-with-text color-accent"
           [icon]="a.icon"
-        ></fa-icon>
+        ></app-fa-dynamic-icon>
         <span>{{ a.label }}</span>
       </button>
     }
@@ -51,10 +51,10 @@
           [matTooltip]="a.tooltip"
           matTooltipPosition="before"
         >
-          <fa-icon
+          <app-fa-dynamic-icon
             class="standard-icon-with-text color-accent"
             [icon]="a.icon"
-          ></fa-icon>
+          ></app-fa-dynamic-icon>
           <span>{{ a.label }}</span>
         </button>
       }

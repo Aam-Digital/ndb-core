@@ -1,10 +1,10 @@
 <!-- Header: title + actions -->
 <app-view-title>
   @if (entityConstructor?.icon) {
-    <fa-icon
+    <app-fa-dynamic-icon
       [icon]="entityConstructor.icon"
       class="standard-icon-with-text margin-left-regular"
-    ></fa-icon>
+    ></app-fa-dynamic-icon>
   }
   @if (!entity?.isNew) {
     {{ entity?.toString() }}

@@ -11,6 +11,7 @@ import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { Angulartics2OnModule } from "angulartics2";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
@@ -56,6 +57,7 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
     DynamicComponentDirective,
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
+    FaDynamicIconComponent,
     RouterLink,
     CommonModule,
     ViewActionsComponent,

@@ -18,7 +18,7 @@ import {
   MatTable,
 } from "@angular/material/table";
 import { MatButton } from "@angular/material/button";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { EntityConstructor } from "../../entity/model/entity";
 import { RouterLink } from "@angular/router";
 import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
@@ -53,7 +53,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
     MatButton,
     MatCellDef,
     MatHeaderCellDef,
-    FaIconComponent,
+    FaDynamicIconComponent,
     RouterLink,
   ],
   templateUrl: "./admin-entity-types.component.html",

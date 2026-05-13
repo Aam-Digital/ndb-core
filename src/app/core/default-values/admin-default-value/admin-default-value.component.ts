@@ -31,6 +31,7 @@ import {
 } from "../default-value-strategy.interface";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatIconButton } from "@angular/material/button";
 import { EntityConstructor } from "../../entity/model/entity";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
@@ -55,6 +56,7 @@ import { AdminInheritedFieldComponent } from "../../../features/inherited-field/
     MatButtonToggleGroup,
     MatButtonToggle,
     MatTooltip,
+    FaDynamicIconComponent,
     FaIconComponent,
     MatSuffix,
     MatIconButton,
