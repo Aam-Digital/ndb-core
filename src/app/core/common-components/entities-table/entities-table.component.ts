@@ -80,7 +80,9 @@ export class EntitiesTableComponent<
   private readonly router = inject(Router);
   private readonly filterService = inject(FilterService);
   private readonly entityFormService = inject(EntityFormService);
-  protected readonly sortStore = inject(EntitiesTableSortStore);
+  protected readonly sortStore = inject(
+    EntitiesTableSortStore,
+  ) as EntitiesTableSortStore<T>;
   protected readonly selectionStore = inject(
     EntitiesTableSelectionStore,
   ) as EntitiesTableSelectionStore<T>;
@@ -161,7 +163,7 @@ export class EntitiesTableComponent<
     return nextFilter;
   });
 
-  private readonly filteredRecords = computed<T[]>(() => {
+  readonly filteredRecords = computed<T[]>(() => {
     const records = this.records() ?? [];
     const predicate = this.filterService.getFilterPredicate(
       this.effectiveFilter(),
@@ -175,22 +177,6 @@ export class EntitiesTableComponent<
     return domainFiltered.filter((record) =>
       entityFilterPredicate(record, freetext),
     );
-  });
-
-  // --- Sorted rows ---
-  readonly sortedRows = computed<TableRow<T>[]>(() => {
-    const rows = this.filteredRecords().map((record) => ({ record }));
-    const sort = this.sortStore.effectiveSort();
-
-    if (!sort?.active || !sort.direction) {
-      return rows;
-    }
-
-    return tableSort<T, keyof T>(rows, {
-      active: sort.active as keyof T,
-      direction: sort.direction,
-      sortValueFns: this.sortStore.sortValueFns(),
-    });
   });
 
   // --- Background color ---
@@ -237,18 +223,19 @@ export class EntitiesTableComponent<
         ];
       }),
       externalSort: this.sortBy,
+      filteredRecords: this.filteredRecords,
     });
 
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      sortedRows: this.sortedRows,
+      sortedRows: this.sortStore.sortedRows,
       getCurrentPageRows: () => this.getCurrentPageRows(),
     });
 
     // Sync sorted rows to Material DataSource
     effect(() => {
-      this.recordsDataSource.data = this.sortedRows();
+      this.recordsDataSource.data = this.sortStore.sortedRows();
     });
 
     // Track loading state
@@ -262,7 +249,7 @@ export class EntitiesTableComponent<
     // Emit filtered records changes
     effect(() => {
       this.filteredRecordsChange.emit(
-        this.sortedRows().map((row) => row.record),
+        this.sortStore.sortedRows().map((row) => row.record),
       );
     });
   }
@@ -317,7 +304,7 @@ export class EntitiesTableComponent<
   }
 
   getCurrentPageRows(): TableRow<T>[] {
-    const rows = this.sortedRows();
+    const rows = this.sortStore.sortedRows();
     const paginator = this.recordsDataSource.paginator;
     if (!paginator) {
       return rows;
