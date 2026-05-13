@@ -243,8 +243,8 @@ that allows developers to monitor and analyse problems.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="101"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:101</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="102"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:102</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +360,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="127"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:127</a></div>
                         </td>
                     </tr>
 
@@ -450,8 +450,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="152"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:152</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="153"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:153</a></div>
                         </td>
                     </tr>
 
@@ -531,8 +531,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="71"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:71</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -573,8 +573,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="134"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:134</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="135"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -642,8 +642,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -795,8 +795,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="162"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:162</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="163"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:163</a></div>
                         </td>
                     </tr>
 
@@ -909,8 +909,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="117"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:117</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="118"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -981,8 +981,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="143"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:143</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:144</a></div>
                         </td>
                     </tr>
 
@@ -1090,10 +1090,11 @@ export class LoggingService {
       return;
     }
 
-    const defaultOptions &#x3D; {
+    const defaultOptions: Sentry.BrowserOptions &#x3D; {
       release: &quot;ndb-core@&quot; + environment.appVersion,
       transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
+      beforeSend: enrichSentryEvent,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -1251,18 +1252,32 @@ export class LoggingService {
     ...context: any[]
   ) {
     if (logLevel &#x3D;&#x3D;&#x3D; LogLevel.ERROR) {
+      // Prefer a real Error from context (e.g. Logging.error(&quot;message&quot;, err))
+      const errFromContext &#x3D; context.find((c) &#x3D;&gt; c instanceof Error);
       if (message instanceof Error) {
-        Sentry.captureException(message);
+        Sentry.captureException(message, {
+          extra: context.length &gt; 0 ? { context } : undefined,
+        });
+      } else if (errFromContext) {
+        Sentry.captureException(errFromContext, {
+          extra: { message, context },
+        });
       } else {
         Sentry.captureException(
-          new Error(message?.message ?? message?.error ?? message),
+          new Error(message?.message ?? message?.error ?? String(message)),
+          { extra: context.length &gt; 0 ? { context } : undefined },
         );
       }
     } else {
-      Sentry.captureMessage(message, {
-        level: this.translateLogLevel(logLevel),
-        extra: context.length &gt; 0 ? { context } : undefined,
-      });
+      Sentry.captureMessage(
+        typeof message &#x3D;&#x3D;&#x3D; &quot;string&quot;
+          ? message
+          : String(message?.message ?? message),
+        {
+          level: this.translateLogLevel(logLevel),
+          extra: context.length &gt; 0 ? { context } : undefined,
+        },
+      );
     }
   }
 
@@ -1322,6 +1337,32 @@ interface SentryBreadcrumbHint {
 }
 
 export const Logging &#x3D; new LoggingService();
+
+/**
+ * Sentry &#x60;beforeSend&#x60; hook that enriches events with structured extra data
+ * from custom Error properties (e.g. DatabaseException&#x27;s entityId, status, reason).
+ */
+function enrichSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent | null {
+  // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
+  // so that details like entityId, status, reason are visible in Sentry&#x27;s &quot;Additional Data&quot;
+  const err &#x3D; hint.originalException;
+  if (err &amp;&amp; typeof err &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    const extras: Record&lt;string, unknown&gt; &#x3D; {};
+    for (const key of [&quot;entityId&quot;, &quot;status&quot;, &quot;reason&quot;, &quot;name&quot;]) {
+      if (key in err &amp;&amp; (err as any)[key] !&#x3D;&#x3D; undefined) {
+        extras[key] &#x3D; (err as any)[key];
+      }
+    }
+    if (Object.keys(extras).length &gt; 0) {
+      event.extra &#x3D; { ...event.extra, ...extras };
+    }
+  }
+
+  return event;
+}
 </code></pre>
     </div>
 </div>

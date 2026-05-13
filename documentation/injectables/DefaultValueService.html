@@ -205,8 +205,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="100"
+                                    class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:100</a></div>
                         </td>
                     </tr>
 
@@ -422,7 +422,8 @@ export class DefaultValueService {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {
         Logging.warn(
-          &#x60;DefaultValue strategy &quot;${fieldConfig.defaultValue?.mode}&quot; not found&#x60;,
+          &quot;DefaultValue strategy not found&quot;,
+          fieldConfig.defaultValue?.mode,
         );
       }
     }

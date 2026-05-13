@@ -905,8 +905,8 @@ if a conflict occurs without the forceUpdate flag being set, the save will fail,
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="255"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:255</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="256"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:256</a></div>
                         </td>
                     </tr>
 
@@ -1181,7 +1181,8 @@ export class EntityMapperService {
     }
     if (!this.ability.initialized) {
       Logging.warn(
-        &#x60;Permission check skipped for &quot;${entity.getId()}&quot;: ability not yet initialized&#x60;,
+        &quot;Permission check skipped: ability not yet initialized&quot;,
+        entity.getId(),
       );
       return;
     }

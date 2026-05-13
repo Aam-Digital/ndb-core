@@ -235,6 +235,9 @@
                             <a href="#enhanceSentryBreadcrumb" title="src/app/core/logging/logging.service.ts" ><b>enhanceSentryBreadcrumb</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
                         </li>
                         <li>
+                            <a href="#enrichSentryEvent" title="src/app/core/logging/logging.service.ts" ><b>enrichSentryEvent</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#entityFilterPredicate" title="src/app/core/filter/filter-generator/filter-predicate.ts" ><b>entityFilterPredicate</b>&nbsp;&nbsp;&nbsp;(src/.../filter-predicate.ts)</a>
                         </li>
                         <li>
@@ -407,6 +410,9 @@
                         </li>
                         <li>
                             <a href="#isConfigurableEnum" title="src/app/core/common-components/entities-table/value-accessor/value-accessor.ts" ><b>isConfigurableEnum</b>&nbsp;&nbsp;&nbsp;(src/.../value-accessor.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isConnectivityError" title="src/app/utils/connectivity-error.ts" ><b>isConnectivityError</b>&nbsp;&nbsp;&nbsp;(src/.../connectivity-error.ts)</a>
                         </li>
                         <li>
                             <a href="#isDuplicate" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" ><b>isDuplicate</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</a>
@@ -4910,6 +4916,75 @@ The entity should also be added to the <a href="databaseEntities">databaseEntiti
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="enrichSentryEvent"></a>
+                    <span class="name">
+                        <span ><b>enrichSentryEvent</b></span>
+                        <a href="#enrichSentryEvent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>enrichSentryEvent(event, hint)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sentry <code>beforeSend</code> hook that enriches events with structured extra data
+from custom Error properties (e.g. DatabaseException&#39;s entityId, status, reason).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>hint</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Sentry.ErrorEvent | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>    <h3>src/app/core/filter/filter-generator/filter-predicate.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -8537,6 +8612,73 @@ This is true for both &quot;synced&quot; (local+remote) and &quot;online&quot; (
             </tr>
         </tbody>
     </table>
+</section>    <h3>src/app/utils/connectivity-error.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isConnectivityError"></a>
+                    <span class="name">
+                        <span ><b>isConnectivityError</b></span>
+                        <a href="#isConnectivityError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isConnectivityError(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Check whether an error represents a transient network/connectivity failure.</p>
+<p>Matches common browser fetch errors, timeout errors, and HTTP 5xx gateway
+errors. Callers can layer additional domain-specific checks on top.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>    <h3>src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -8773,6 +8915,9 @@ Can be configured to validate different properties (id, label, etc.) with option
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Check whether an error is a retryable network/connectivity error,
+including keycloak-specific transient failures.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>

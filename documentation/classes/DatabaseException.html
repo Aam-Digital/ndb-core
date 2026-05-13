@@ -158,6 +158,34 @@
 
 
 
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#entityId" >entityId</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
 
             <section data-compodoc="block-constructor">
     <h3 id="constructor">Constructor</h3>
@@ -170,7 +198,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="508" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:508</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="509" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:509</a></div>
                             </td>
                         </tr>
 
@@ -220,6 +248,39 @@
         </table>
 </section>
 
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityId"></a>
+                    <span class="name">
+                            <span class="modifier">Optional</span>
+                        <span ><b>entityId</b></span>
+                        <a href="#entityId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="509" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:509</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
 
 
 
@@ -739,16 +800,18 @@ export class PouchDatabase extends Database {
  * This overwrites PouchDB&#x27;s error class which only logs limited information
  */
 export class DatabaseException extends Error {
+  entityId?: string;
+
   constructor(
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    super(error?.message);
+    super(error?.message || &quot;Database error&quot;);
 
-    if (entityId) {
-      error[&quot;entityId&quot;] &#x3D; entityId;
-    }
+    this.entityId &#x3D; entityId;
     Object.assign(this, error);
+    // Restore class name after Object.assign overwrites it with PouchDB&#x27;s name (e.g. &quot;not_found&quot;)
+    this.name &#x3D; &quot;DatabaseException&quot;;
   }
 }
 </code></pre>

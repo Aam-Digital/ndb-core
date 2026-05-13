@@ -945,7 +945,7 @@ export class EntitySchemaService {
       this.schemaTypes.set(datatypeName, dataType);
       return dataType;
     } else if (!failSilently) {
-      throw new Error(&#x60;Data type &quot;${datatypeName}&quot; does not exist&#x60;);
+      throw new Error(&#x60;Data type does not exist: ${datatypeName}&#x60;);
     }
   }
 

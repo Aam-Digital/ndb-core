@@ -308,7 +308,8 @@ for example through the config.</p>
     if (!definition) {
       definition &#x3D; FaDynamicIconComponent.fallbackIcon;
       Logging.warn(
-        &#x60;Tried to set icon &quot;${icon}&quot; but it does not exist as a font awesome regular item nor is it registered as an alias.&#x60;,
+        &quot;Tried to set icon but it does not exist as a font awesome regular item nor is it registered as an alias.&quot;,
+        icon,
       );
     }
     return definition;
@@ -412,7 +413,8 @@ export class FaDynamicIconComponent {
     if (!definition) {
       definition &#x3D; FaDynamicIconComponent.fallbackIcon;
       Logging.warn(
-        &#x60;Tried to set icon &quot;${icon}&quot; but it does not exist as a font awesome regular item nor is it registered as an alias.&#x60;,
+        &quot;Tried to set icon but it does not exist as a font awesome regular item nor is it registered as an alias.&quot;,
+        icon,
       );
     }
     return definition;
