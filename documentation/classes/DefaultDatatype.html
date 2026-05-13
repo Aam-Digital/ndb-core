@@ -225,6 +225,9 @@ This type is automatically used whenever no fitting Datatype can be found for th
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
                             </li>
                             <li>
+                                <a href="#sortValue" >sortValue</a>
+                            </li>
+                            <li>
                                 <a href="#transformToDatabaseFormat" >transformToDatabaseFormat</a>
                             </li>
                             <li>
@@ -519,8 +522,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="251"
-                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:251</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="261"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:261</a></div>
                         </td>
                     </tr>
 
@@ -1075,6 +1078,78 @@ allowing the datatype to normalize or fill in required settings.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="sortValue"></a>
+                    <span class="name">
+                        <span ><b>sortValue</b></span>
+                        <a href="#sortValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>sortValue(_fieldValue: <a href="../classes/Entity.html" target="_self">EntityType</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="253"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:253</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Return a comparable primitive for sorting this field&#39;s value in a list column.
+Return <code>undefined</code> to fall through to the default sort logic.
+Override this in datatypes that store arrays or complex objects where the
+raw value cannot be sorted meaningfully.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>_fieldValue</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>number | string | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="transformToDatabaseFormat"></a>
                     <span class="name">
                         <span ><b>transformToDatabaseFormat</b></span>
@@ -1573,6 +1648,16 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
         resolveValue: (value) &#x3D;&gt; value,
       },
     ];
+  }
+
+  /**
+   * Return a comparable primitive for sorting this field&#x27;s value in a list column.
+   * Return &#x60;undefined&#x60; to fall through to the default sort logic.
+   * Override this in datatypes that store arrays or complex objects where the
+   * raw value cannot be sorted meaningfully.
+   */
+  sortValue(_fieldValue: EntityType): number | string | undefined {
+    return undefined;
   }
 
   /**

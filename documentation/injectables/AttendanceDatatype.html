@@ -243,6 +243,10 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                             </li>
                             <li>
                                     <span class="modifier"></span>
+                                <a href="#sortValue" >sortValue</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
                                 <a href="#transformToDatabaseFormat" >transformToDatabaseFormat</a>
                             </li>
                             <li>
@@ -304,7 +308,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:165</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:188</a></code>
 </div>
                         </td>
                     </tr>
@@ -382,7 +386,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:155</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:178</a></code>
 </div>
                         </td>
                     </tr>
@@ -457,7 +461,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:51</a></code>
 </div>
                         </td>
                     </tr>
@@ -532,7 +536,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:43</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:44</a></code>
 </div>
                         </td>
                     </tr>
@@ -570,6 +574,86 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortValue"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>sortValue</b></span>
+                        <a href="#sortValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sortValue(fieldValue: <a href="../classes/AttendanceItem.html" target="_self">AttendanceItem[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:91</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Returns the attendance percentage (0–1) for use as the sort key in list columns.
+Calculated as present / (present + absent), ignoring participants with IGNORE status (e.g. Excused).
+Returns -1 if no participants have a countable status so empty attendance (&quot;-&quot;)
+sorts before a real 0% value.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldValue</td>
+                                            <td>
+                                                            <code><a href="../classes/AttendanceItem.html" target="_self" >AttendanceItem[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
 
                         </div>
                             <div class="io-description">
@@ -781,7 +865,7 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:251</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:261</a></code>
 </div>
                         </td>
                     </tr>
@@ -1034,7 +1118,7 @@ to share information across processing of multiple columns and rows.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:35</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:36</a></code>
 </div>
                         </td>
                     </tr>
@@ -1073,7 +1157,7 @@ to share information across processing of multiple columns and rows.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:40</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:41</a></code>
 </div>
                         </td>
                     </tr>
@@ -1112,7 +1196,7 @@ to share information across processing of multiple columns and rows.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:38</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:39</a></code>
 </div>
                         </td>
                     </tr>
@@ -1152,7 +1236,7 @@ to share information across processing of multiple columns and rows.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:36</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:37</a></code>
 </div>
                         </td>
                     </tr>
@@ -1191,7 +1275,7 @@ to share information across processing of multiple columns and rows.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:41</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:42</a></code>
 </div>
                         </td>
                     </tr>
@@ -1337,6 +1421,7 @@ during import.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { SchemaEmbedDatatype } from &quot;#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype&quot;;
 import { AttendanceItem } from &quot;./attendance-item&quot;;
+import { AttendanceLogicalStatus } from &quot;./attendance-status&quot;;
 import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
 import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
 import { EventAttendanceMapDatatype } from &quot;../deprecated/event-attendance-map.datatype&quot;;
@@ -1415,6 +1500,28 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
         },
       },
     ];
+  }
+
+  /**
+   * Returns the attendance percentage (0–1) for use as the sort key in list columns.
+   * Calculated as present / (present + absent), ignoring participants with IGNORE status (e.g. Excused).
+   * Returns -1 if no participants have a countable status so empty attendance (&quot;-&quot;)
+   * sorts before a real 0% value.
+   */
+  override sortValue(fieldValue: AttendanceItem[]): number {
+    const items &#x3D; Array.isArray(fieldValue) ? fieldValue : [];
+    let present &#x3D; 0;
+    let counted &#x3D; 0;
+    for (const item of items) {
+      const countAs &#x3D; item.status?.countAs;
+      if (countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.PRESENT) {
+        present++;
+        counted++;
+      } else if (countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.ABSENT) {
+        counted++;
+      }
+    }
+    return counted &gt; 0 ? present / counted : -1;
   }
 
   private async toParticipationDetails(

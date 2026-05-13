@@ -549,6 +549,16 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
   }
 
   /**
+   * Return a comparable primitive for sorting this field&#x27;s value in a list column.
+   * Return &#x60;undefined&#x60; to fall through to the default sort logic.
+   * Override this in datatypes that store arrays or complex objects where the
+   * raw value cannot be sorted meaningfully.
+   */
+  sortValue(_fieldValue: EntityType): number | string | undefined {
+    return undefined;
+  }
+
+  /**
    * (Partially) anonymize to &quot;retain-anonymized&quot; for reporting purposes without personal identifiable information.
    * @param value The original value to be anonymized
    */

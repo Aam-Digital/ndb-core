@@ -3648,7 +3648,7 @@ Used for filter evaluation and conditional color matching.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getComparableValue(obj: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/OBJECT" target="_blank">OBJECT</a>, key: PROPERTY)</code>
+<code>getComparableValue(obj: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/OBJECT" target="_blank">OBJECT</a>, key: PROPERTY, sortValueFns?: Record)</code>
                 </td>
             </tr>
 
@@ -3694,6 +3694,18 @@ Used for filter evaluation and conditional color matching.</p>
 
 
                                         </tr>
+                                        <tr>
+                                                <td>sortValueFns</td>
+                                            <td>
+                                                        <code>Record</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -3721,7 +3733,7 @@ Used for filter evaluation and conditional color matching.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>tableSort(data, __namedParameters: {direction: "asc" | "desc" | string, active: PROPERTY | string})</code>
+<code>tableSort(data, __namedParameters: {direction: "asc" | "desc" | string, active: PROPERTY | string, sortValueFns: Record<string | number | string | undefined>})</code>
                 </td>
             </tr>
 
@@ -3791,6 +3803,20 @@ Used for filter evaluation and conditional color matching.</p>
                                             <td>
                                                     <p>the property of T for which it should be sorted</p>
 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sortValueFns</td>
+                                            <td>
+                                                        <code>Record&lt;string | number | string | undefined&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
                                             </td>
                                         </tr>
                                     </tbody>
