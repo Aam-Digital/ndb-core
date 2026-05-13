@@ -9,8 +9,8 @@
     mat-table
     [dataSource]="recordsDataSource"
     matSort
-    [matSortActive]="_sortBy()?.active"
-    [matSortDirection]="_sortBy()?.direction"
+    [matSortActive]="sortStore.effectiveSort()?.active"
+    [matSortDirection]="sortStore.effectiveSort()?.direction"
     class="full-width table"
   >
     @for (col of _columns(); track col.id) {
@@ -50,16 +50,16 @@
     <ng-container [matColumnDef]="ACTIONCOLUMN_SELECT">
       <th mat-header-cell *matHeaderCellDef style="width: 0">
         <mat-checkbox
-          (change)="selectAllRows($event)"
-          [checked]="isAllSelected()"
-          [indeterminate]="isIndeterminate()"
+          (change)="selectionStore.selectAllRows($event.checked)"
+          [checked]="selectionStore.allRowsSelected()"
+          [indeterminate]="selectionStore.selectionIndeterminate()"
         ></mat-checkbox>
       </th>
 
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
-          (change)="onRowSelect($event, row)"
-          [checked]="selectedRecords()?.includes(row.record)"
+          (change)="selectionStore.selectRow(row, $event.checked)"
+          [checked]="selectedRecords().includes(row.record)"
           (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
