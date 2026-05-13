@@ -35,26 +35,3 @@
   pointer-events: auto !important;
   flex-shrink: 0;
 }
-
-@media screen and (min-width: breakpoints.$md) {
-  .form-link-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0;
-  }
-
-  .input-button-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .readonly-prefix {
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-}
