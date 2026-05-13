@@ -238,7 +238,8 @@ export class EntityMapperService {
     }
     if (!this.ability.initialized) {
       Logging.warn(
-        `Permission check skipped for "${entity.getId()}": ability not yet initialized`,
+        "Permission check skipped: ability not yet initialized",
+        entity.getId(),
       );
       return;
     }
