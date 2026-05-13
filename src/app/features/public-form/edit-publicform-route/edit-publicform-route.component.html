@@ -1,4 +1,4 @@
-<div class="flex-row align-center">
+<div class="form-link-container">
   <div
     class="readonly-prefix"
     matTooltip="The identifier that is part of the link (URL) through which users can access this form"
@@ -6,20 +6,22 @@
   >
     {{ prefixValue }}
   </div>
-  <input
-    matInput
-    [formControl]="formControl"
-    placeholder="Enter Form Link ID"
-    i18n-placeholder
-    class="editable-input"
-  />
-  <button
-    mat-icon-button
-    matTooltip="Copy the link to share or paste it somewhere else"
-    i18n-matTooltip
-    (click)="copyToClipboard()"
-    class="copy-button"
-  >
-    <fa-icon [icon]="['far', 'copy']"></fa-icon>
-  </button>
+  <div class="input-button-row">
+    <input
+      matInput
+      [formControl]="formControl"
+      placeholder="Enter Form Link ID"
+      i18n-placeholder
+      class="editable-input"
+    />
+    <button
+      mat-icon-button
+      matTooltip="Copy the link to share or paste it somewhere else"
+      i18n-matTooltip
+      (click)="copyToClipboard()"
+      class="copy-button"
+    >
+      <fa-icon [icon]="['far', 'copy']"></fa-icon>
+    </button>
+  </div>
 </div>

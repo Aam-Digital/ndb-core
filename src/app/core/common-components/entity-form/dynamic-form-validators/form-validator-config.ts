@@ -7,6 +7,14 @@ export type DynamicValidator =
   | "min"
   /** type: number */
   | "max"
+  /** type: string/date */
+  | "minDate"
+  /** type: string/date */
+  | "maxDate"
+  /** type: number */
+  | "minAge"
+  /** type: number */
+  | "maxAge"
   /** type: boolean */
   | "required"
   /** type: boolean; validate field value is unique among entities of same type */

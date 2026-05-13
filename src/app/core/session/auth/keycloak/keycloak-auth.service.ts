@@ -10,6 +10,7 @@ import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-
 import { ActivatedRoute } from "@angular/router";
 import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
 import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import {
   defer,
   firstValueFrom,
@@ -46,26 +47,16 @@ const TOKEN_REFRESH_RETRY_DELAYS_MS = [2_000, 5_000];
 const TOKEN_MIN_VALIDITY_SECONDS = 30;
 
 /**
- * Browser/keycloak-js error messages that indicate a transient network
- * failure rather than a real authentication problem. Matched against both
- * `err.message` and `err.toString()` since some thrown values (e.g. plain
- * strings from keycloak-js) only expose the text via `toString()`.
+ * Check whether an error is a retryable network/connectivity error,
+ * including keycloak-specific transient failures.
  */
-const NETWORK_ERROR_PATTERNS = [
-  "Failed to fetch",
-  "NetworkError",
-  "Load failed",
-  "Network request failed",
-  "Timeout when waiting for 3rd party check iframe message.",
-];
-
 function isRetryableNetworkError(err: any): boolean {
-  if (!err) return false;
+  if (isConnectivityError(err)) return true;
   if (err instanceof TimeoutError) return true;
-  if (["AbortError", "TimeoutError"].includes(err?.name)) return true;
-  if ([502, 503, 504].includes(err?.status)) return true;
   const message = `${err?.message ?? ""} ${err?.toString?.() ?? ""}`;
-  return NETWORK_ERROR_PATTERNS.some((pattern) => message.includes(pattern));
+  return message.includes(
+    "Timeout when waiting for 3rd party check iframe message.",
+  );
 }
 
 /**

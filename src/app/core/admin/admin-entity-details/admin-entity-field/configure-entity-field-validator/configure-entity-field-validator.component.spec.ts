@@ -55,6 +55,10 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       required: true,
       min: null,
       max: 100,
+      minAge: null,
+      maxAge: 12,
+      minDate: null,
+      maxDate: new Date(2010, 0, 1),
       regex: "abc",
       uniqueId: "",
     };
@@ -67,6 +71,8 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     const expectedResult = {
       required: true,
       max: 100,
+      maxAge: 12,
+      maxDate: new Date(2010, 0, 1),
       regex: "abc",
     };
     expect(actualResult).toEqual(expectedResult);
