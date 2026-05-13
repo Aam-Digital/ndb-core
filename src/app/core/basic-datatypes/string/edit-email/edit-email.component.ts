@@ -6,8 +6,10 @@ import {
   OnInit,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
-import { MatFormFieldControl } from "@angular/material/form-field";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import {
+  MatFormFieldControl,
+  MatFormFieldModule,
+} from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
