@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
-import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceItem } from "../../model/attendance-item";
@@ -71,14 +70,11 @@ describe("AttendanceCalendarComponent", () => {
   });
 
   it("sets min and max selectable date based on time range of given records", () => {
-    component.records = [
+    fixture.componentRef.setInput("records", [
       TestEventEntity.generateEventWithAttendance([], new Date("2020-01-05")),
       TestEventEntity.generateEventWithAttendance([], new Date("2020-01-20")),
-    ];
-
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, component.records, true),
-    });
+    ]);
+    fixture.detectChanges();
 
     expect(moment(component.minDate).isSame(moment("2020-01-01"), "day")).toBe(
       true,
@@ -110,7 +106,7 @@ describe("AttendanceCalendarComponent", () => {
         ),
       ],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -119,7 +115,7 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
+    ]);
 
     component.selectDay(new Date());
 
@@ -132,7 +128,7 @@ describe("AttendanceCalendarComponent", () => {
     const testDate = new Date("2020-06-15");
     const childWithNoStatus = new TestEntity("child_no_status");
     const event = TestEventEntity.create(testDate);
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -141,8 +137,11 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
-    component.highlightForChild = childWithNoStatus.getId();
+    ]);
+    fixture.componentRef.setInput(
+      "highlightForChild",
+      childWithNoStatus.getId(),
+    );
 
     const classes = component.highlightDate(testDate);
 
@@ -160,7 +159,7 @@ describe("AttendanceCalendarComponent", () => {
     const event = Object.assign(TestEventEntity.create(testDate), {
       attendance: [new AttendanceItem(presentStatus, "", child.getId())],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -169,8 +168,8 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
-    component.highlightForChild = child.getId();
+    ]);
+    fixture.componentRef.setInput("highlightForChild", child.getId());
 
     const classes = component.highlightDate(testDate);
 
@@ -188,7 +187,7 @@ describe("AttendanceCalendarComponent", () => {
         new AttendanceItem(NullAttendanceStatusType, "", "child2"),
       ],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -197,7 +196,7 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
+    ]);
 
     const classes = component.highlightDate(testDate);
 
@@ -215,7 +214,7 @@ describe("AttendanceCalendarComponent", () => {
         new AttendanceItem(NullAttendanceStatusType, "", "child2"),
       ],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -224,7 +223,7 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
+    ]);
 
     const classes = component.highlightDate(testDate);
 
@@ -236,7 +235,7 @@ describe("AttendanceCalendarComponent", () => {
     const testDate = new Date();
     const excludedChild = new TestEntity("excluded_child");
     const event = TestEventEntity.create(testDate);
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -245,8 +244,8 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
-    component.highlightForChild = excludedChild.getId();
+    ]);
+    fixture.componentRef.setInput("highlightForChild", excludedChild.getId());
 
     component.selectDay(testDate);
 

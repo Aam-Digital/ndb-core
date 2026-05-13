@@ -140,10 +140,6 @@ describe("TemplateExportSelectionDialogComponent", () => {
   it("should trigger download with API response when requesting file", async () => {
     vi.useFakeTimers();
     try {
-      const entity = new TestEntity();
-      entity.name = "test entity";
-      component.entity = entity;
-
       const mockResponse: TemplateExportResult = {
         filename: "test.pdf",
         file: new ArrayBuffer(10),

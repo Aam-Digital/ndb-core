@@ -1,12 +1,11 @@
 import {
   Component,
   inject,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
 } from "@angular/core";
 import { SqlReport } from "../../report-config";
-import { JsonPipe } from "@angular/common";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import {
@@ -22,33 +21,28 @@ import { Logging } from "../../../../core/logging/logging.service";
   templateUrl: "./sql-v2-table.component.html",
   styleUrl: "./sql-v2-table.component.scss",
 })
-export class SqlV2TableComponent implements OnInit {
+export class SqlV2TableComponent {
   sqlReportService = inject(SqlReportService);
 
-  @Input() report: SqlReport;
-
-  @Input() set reportData(value: any[]) {
-    this.data = this.formatData(value);
-  }
-
+  report = input<SqlReport>();
+  reportData = input<any[]>([]);
   isError = false;
 
   dataSource = new MatTableDataSource();
   columns: string[] = ["Name", "Count"];
 
-  data: SqlReportRow[] = [];
-
-  ngOnInit(): void {
-    this.dataSource.data = this.data;
-  }
-
-  private formatData(value: any[]) {
-    this.isError = false;
-    try {
-      return this.sqlReportService.flattenData(value);
-    } catch (error) {
-      Logging.error(error);
-      this.isError = true;
-    }
+  constructor() {
+    effect(() => {
+      try {
+        this.dataSource.data = this.sqlReportService.flattenData(
+          this.reportData(),
+        );
+        this.isError = false;
+      } catch (error) {
+        Logging.error(error);
+        this.isError = true;
+        this.dataSource.data = [];
+      }
+    });
   }
 }

@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -58,12 +58,12 @@ export class EditLocationComponent
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly dialog = inject(MatDialog);
 
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   /**
    * Automatically run an address lookup when the user leaves the input field.
    */
-  @Input() autoLookup = true;
+  autoLookup = input<boolean>(true);
 
   /**
    * The location value

@@ -1,12 +1,13 @@
 <span
-  class="mat-elevation-z1 attendance-block w-{{
-    attendanceData.getWarningLevel(forChild)
-  }}"
+  class="mat-elevation-z1 attendance-block w-{{ warningLevel() }}"
   [appTemplateTooltip]="tooltip"
 >
-  @if (attendanceData.getAttendancePercentage(forChild)) {
+  @if (attendanceData()?.getAttendancePercentage(forChild() || "")) {
     <span>
-      {{ attendanceData.getAttendancePercentage(forChild) | percent: "1.0-0" }}
+      {{
+        attendanceData()?.getAttendancePercentage(forChild() || "")
+          | percent: "1.0-0"
+      }}
     </span>
   } @else {
     <span> - </span>
@@ -16,9 +17,9 @@
 <ng-template #tooltip>
   <div class="attendance-tooltip-container">
     <strong>
-      {{ attendanceData.periodFrom | customDate: "shortDate" }} -
-      {{ attendanceData.periodTo | customDate: "shortDate" }}
-      {{ attendanceData.activity.title }}
+      {{ attendanceData()?.periodFrom | customDate: "shortDate" }} -
+      {{ attendanceData()?.periodTo | customDate: "shortDate" }}
+      {{ attendanceData()?.activity?.title }}
     </strong>
 
     <div
@@ -27,18 +28,19 @@
         were absent
       "
     >
-      attended {{ attendanceDescription }} events
+      attended {{ attendanceDescription() }} events
     </div>
 
-    @if (logicalCount[LStatus.IGNORE] > 0) {
+    @if (logicalCount()[LStatus.IGNORE] > 0) {
       <em i18n="Attended Tooltip|How many events were excluded">
-        (excluding {{ logicalCount[LStatus.IGNORE] }} events excused or unknown)
+        (excluding {{ logicalCount()[LStatus.IGNORE] }} events excused or
+        unknown)
       </em>
     }
     <app-attendance-calendar
-      [records]="attendanceData.events"
-      [highlightForChild]="forChild"
-      [activity]="attendanceData.activity"
+      [records]="attendanceData()?.events"
+      [highlightForChild]="forChild()"
+      [activity]="attendanceData()?.activity"
     >
     </app-attendance-calendar>
   </div>

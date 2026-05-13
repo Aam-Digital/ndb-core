@@ -4,7 +4,7 @@
   matTooltip="To accurately log your current address, please allow GPS access."
   i18n-matTooltip
 >
-  @if (!gpsLoading) {
+  @if (!gpsLoading()) {
     <fa-icon icon="location-crosshairs"></fa-icon>
   } @else {
     <mat-spinner diameter="24"></mat-spinner>

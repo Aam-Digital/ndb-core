@@ -6,7 +6,7 @@ import { TemplateExportApiService } from "#src/app/features/template-export/temp
 import {
   Component,
   inject,
-  Input,
+  input,
   OnInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -49,8 +49,8 @@ export class EditTemplateExportFileComponent
 {
   private readonly templateExportService = inject(TemplateExportService);
 
-  @Input() entity: Entity;
-  @Input() formFieldConfig: FormFieldConfig;
+  entity = input<Entity>();
+  formFieldConfig = input<FormFieldConfig>();
 
   get formControl(): FormControl<string> {
     return this.ngControl.control as FormControl<string>;

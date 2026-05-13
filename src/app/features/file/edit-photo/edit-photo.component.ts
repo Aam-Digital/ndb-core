@@ -43,17 +43,17 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
 
   override ngOnInit() {
     super.ngOnInit();
+    const formFieldConfig = this.formFieldConfig();
+    const entity = this.entity();
     this.compression =
-      this.formFieldConfig.additional?.imageCompression ?? this.compression;
+      formFieldConfig?.additional?.imageCompression ?? this.compression;
     this.acceptedFileTypes =
-      this.formFieldConfig.additional?.acceptedFileTypes ?? "image/*";
-    if (this.formControl.value) {
-      this.fileService
-        .loadFile(this.entity, this.formFieldConfig.id)
-        .subscribe((res) => {
-          this.imgPath = res;
-          this.initialImg = res;
-        });
+      formFieldConfig?.additional?.acceptedFileTypes ?? "image/*";
+    if (this.formControl.value && entity && formFieldConfig) {
+      this.fileService.loadFile(entity, formFieldConfig.id).subscribe((res) => {
+        this.imgPath = res;
+        this.initialImg = res;
+      });
     }
   }
 

@@ -1,11 +1,9 @@
 import {
   Component,
-  EventEmitter,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
@@ -75,19 +73,19 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
     DateRangeFilterComponent,
   ],
 })
-export class SelectReportComponent implements OnChanges {
+export class SelectReportComponent {
   private readonly dialog = inject(MatDialog);
 
-  @Input() reports: ReportEntity[];
-  @Input() loading: boolean;
-  @Input() exportableData: any;
+  reports = input<ReportEntity[]>();
+  loading = input<boolean>(false);
+  exportableData = input<any>();
 
   /** Optionally overwrite the default time periods shown to users for quick selection */
-  @Input() dateRangeOptions?: DateRangeFilterConfigOption[];
+  dateRangeOptions = input<DateRangeFilterConfigOption[]>();
 
-  @Output() calculateClick = new EventEmitter<CalculateReportOptions>();
-  @Output() selectedReportChange = new EventEmitter<ReportEntity>();
-  @Output() reportFiltersChange = new EventEmitter<void>();
+  calculateClick = output<CalculateReportOptions>();
+  selectedReportChange = output<ReportEntity>();
+  reportFiltersChange = output<void>();
 
   selectedReport: ReportEntity;
   fromDate: Date;
@@ -97,18 +95,19 @@ export class SelectReportComponent implements OnChanges {
 
   dateRangeFilterConfig: DateFilter<any>;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("reports")) {
-      if (this.reports?.length === 1) {
-        this.selectedReport = this.reports[0];
+  constructor() {
+    effect(() => {
+      const reports = this.reports();
+      if (reports?.length === 1) {
+        this.selectedReport = reports[0];
         this.checkDateRangeReport();
         this.setupDateRangeFilter();
       }
-    }
-
-    if (changes.hasOwnProperty("dateRangeOptions")) {
+    });
+    effect(() => {
+      this.dateRangeOptions();
       this.setupDateRangeFilter();
-    }
+    });
   }
 
   calculate(): void {
@@ -137,6 +136,10 @@ export class SelectReportComponent implements OnChanges {
   }
 
   private checkDateRangeReport(): void {
+    if (!this.selectedReport) {
+      this.isDateRangeReport = false;
+      return;
+    }
     if (this.selectedReport.mode !== "sql") {
       this.isDateRangeReport = true;
     } else if (
@@ -158,8 +161,8 @@ export class SelectReportComponent implements OnChanges {
   private setupDateRangeFilter(): void {
     if (this.isDateRangeReport) {
       const options =
-        this.dateRangeOptions && this.dateRangeOptions.length > 0
-          ? this.dateRangeOptions
+        this.dateRangeOptions() && this.dateRangeOptions().length > 0
+          ? this.dateRangeOptions()
           : defaultReportDateFilters;
       this.dateRangeFilterConfig = new DateFilter<any>(
         "reportPeriod",
@@ -174,7 +177,7 @@ export class SelectReportComponent implements OnChanges {
   openExportDialog() {
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.exportableData,
+        allEntities: this.exportableData(),
         filename: this.baseExportFileName,
       },
     });

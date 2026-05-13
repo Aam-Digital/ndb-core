@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -49,7 +49,7 @@ export class EditRecurringIntervalComponent
 {
   private matDialog = inject(MatDialog);
 
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   predefinedIntervals: { label: string; interval: TimeInterval }[] = [
     {
@@ -71,7 +71,7 @@ export class EditRecurringIntervalComponent
 
   ngOnInit(): void {
     this.predefinedIntervals =
-      this.formFieldConfig.additional ?? this.predefinedIntervals;
+      this.formFieldConfig()?.additional ?? this.predefinedIntervals;
 
     // re-create active custom interval if necessary
     this.addCustomInterval(this.formControl.value);

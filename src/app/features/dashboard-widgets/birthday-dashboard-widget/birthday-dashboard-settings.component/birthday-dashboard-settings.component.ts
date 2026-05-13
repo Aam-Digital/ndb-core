@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   OnInit,
   inject,
   ChangeDetectionStrategy,
@@ -57,7 +57,7 @@ interface EntityPropertyPair {
   styleUrls: ["./birthday-dashboard-settings.component.scss"],
 })
 export class BirthdayDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl<BirthdayDashboardSettingsConfig>;
+  formControl = input.required<FormControl<BirthdayDashboardSettingsConfig>>();
 
   availableEntityTypes: EntityConstructor[] = [];
   /** Map of entity types to their available date-with-age fields */
@@ -92,7 +92,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
     this.buildAvailablePropertiesMap();
 
     // Initialize pairs from config or create a single default pair
-    const entities = this.formControl.value?.entities;
+    const entities = this.formControl().value?.entities;
 
     if (entities && Object.keys(entities).length > 0) {
       // Use existing valid entities, filtering out invalid ones
@@ -144,7 +144,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
       // The form validation will handle this case
     }
 
-    this.localConfig.threshold = this.formControl.value?.threshold ?? 32;
+    this.localConfig.threshold = this.formControl().value?.threshold ?? 32;
     this.updateLocalConfig();
     this.updateEntityTypeOptionsPerRow();
   }
@@ -310,10 +310,10 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
   emitConfigChange() {
     // Set form control validity based on whether all pairs are complete
     if (this.isFormValid) {
-      this.formControl.setValue({ ...this.localConfig });
-      this.formControl.setErrors(null);
+      this.formControl().setValue({ ...this.localConfig });
+      this.formControl().setErrors(null);
     } else {
-      this.formControl.setErrors({ invalidPairs: true });
+      this.formControl().setErrors({ invalidPairs: true });
     }
   }
 }

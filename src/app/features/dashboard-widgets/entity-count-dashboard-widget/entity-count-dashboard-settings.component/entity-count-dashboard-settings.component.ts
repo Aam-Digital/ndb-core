@@ -1,8 +1,8 @@
 import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
 } from "@angular/core";
 import { FormsModule, FormControl } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -41,16 +41,22 @@ export interface EntityCountDashboardConfig {
   templateUrl: "./entity-count-dashboard-settings.component.html",
   styleUrls: ["./entity-count-dashboard-settings.component.scss"],
 })
-export class EntityCountDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl<EntityCountDashboardConfig>;
+export class EntityCountDashboardSettingsComponent {
+  formControl = input.required<FormControl<EntityCountDashboardConfig>>();
 
-  localConfig: EntityCountDashboardConfig;
+  localConfig: EntityCountDashboardConfig = {
+    entityType: undefined,
+    groupBy: [],
+  };
 
-  ngOnInit() {
-    this.localConfig = {
-      entityType: this.formControl.value?.entityType,
-      groupBy: [...(this.formControl.value?.groupBy ?? [])],
-    };
+  constructor() {
+    effect(() => {
+      const formControl = this.formControl();
+      this.localConfig = {
+        entityType: formControl.value?.entityType,
+        groupBy: [...(formControl.value?.groupBy ?? [])],
+      };
+    });
   }
 
   onEntityTypeChange() {
@@ -62,6 +68,6 @@ export class EntityCountDashboardSettingsComponent implements OnInit {
   }
 
   private emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+    this.formControl().setValue({ ...this.localConfig });
   }
 }

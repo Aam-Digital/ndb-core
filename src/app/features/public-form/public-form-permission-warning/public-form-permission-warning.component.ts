@@ -1,10 +1,9 @@
 import {
   Component,
-  Input,
+  computed,
+  effect,
+  input,
   inject,
-  OnInit,
-  OnChanges,
-  SimpleChanges,
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -22,14 +21,14 @@ import { Logging } from "#src/app/core/logging/logging.service";
   templateUrl: "./public-form-permission-warning.component.html",
   imports: [HintBoxComponent, MatButtonModule],
 })
-export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
+export class PublicFormPermissionWarningComponent {
   private readonly permissionService = inject(PublicFormPermissionService);
   private readonly alertService = inject(AlertService);
 
   /**
    * The entity being edited (PublicFormConfig)
    */
-  @Input() entity?: Entity;
+  entity = input<Entity>();
 
   /**
    * Whether public users have create permission for this entity type
@@ -46,36 +45,31 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
    */
   canAddPermissions = signal<boolean>(false);
 
-  /**
-   * Store the entity type for template use (avoids method calls in template)
-   */
-  entityType: string = "";
+  readonly entityType = computed(() => {
+    const formConfig = this.entity() as PublicFormConfig | undefined;
+    return formConfig?.entity || "";
+  });
 
-  private updateEntityType() {
-    const formConfig = this.entity as PublicFormConfig;
-    this.entityType = formConfig?.entity || "";
-  }
-
-  async ngOnInit(): Promise<void> {
+  constructor() {
     this.canAddPermissions.set(this.permissionService.hasAdminPermission());
-    this.updateEntityType();
-    await this.checkPermissions();
-  }
-
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (changes["entity"]) {
-      this.updateEntityType();
-      await this.checkPermissions();
-    }
+    effect((onCleanup) => {
+      const entityType = this.entityType();
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.checkPermissions(entityType, () => cancelled);
+    });
   }
 
   /**
    * Check if public users have create permission for this entity type
    */
-  private async checkPermissions(): Promise<void> {
-    const formConfig = this.entity as PublicFormConfig;
-
-    if (!formConfig?.entity) {
+  private async checkPermissions(
+    entityType: string,
+    isCancelled: () => boolean = () => false,
+  ): Promise<void> {
+    if (!entityType) {
       this.hasPublicCreatePermission.set(true);
       return;
     }
@@ -84,15 +78,21 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
 
     try {
       const hasPermission =
-        await this.permissionService.hasPublicCreatePermission(
-          formConfig.entity,
-        );
+        await this.permissionService.hasPublicCreatePermission(entityType);
+      if (isCancelled()) {
+        return;
+      }
       this.hasPublicCreatePermission.set(hasPermission);
     } catch (error) {
+      if (isCancelled()) {
+        return;
+      }
       Logging.error("Failed to check public permissions:", error);
       this.hasPublicCreatePermission.set(false);
     } finally {
-      this.isCheckingPermissions.set(false);
+      if (!isCancelled()) {
+        this.isCheckingPermissions.set(false);
+      }
     }
   }
 
@@ -100,15 +100,15 @@ export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
    * Automatically add the missing public create permission
    */
   async addPermissionAutomatically(): Promise<void> {
-    const formConfig = this.entity as PublicFormConfig;
-    if (!formConfig?.entity) return;
+    const entityType = this.entityType();
+    if (!entityType) return;
 
     try {
-      await this.permissionService.addPublicCreatePermission(formConfig.entity);
+      await this.permissionService.addPublicCreatePermission(entityType);
       this.alertService.addInfo(
         $localize`Permission added successfully! The public form should now work correctly.`,
       );
-      await this.checkPermissions();
+      await this.checkPermissions(entityType);
     } catch (error) {
       Logging.error("Failed to add permission:", error);
       this.alertService.addDanger(

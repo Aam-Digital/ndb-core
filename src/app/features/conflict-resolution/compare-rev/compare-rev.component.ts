@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -39,10 +39,10 @@ export class CompareRevComponent {
   private conflictResolver = inject(AutoResolutionService);
 
   /** revision key (_rev) of the confliction version to be displayed */
-  @Input() rev: string;
+  rev = input<string>();
 
   /** document from the database in the current version */
-  @Input() doc: any;
+  doc = input<any>();
 
   /** used in the template for a tooltip displaying the full document */
   docString: string;
@@ -78,19 +78,20 @@ export class CompareRevComponent {
    * Load the document version (revision) to be displayed and generate the diffs to be visualized.
    */
   public async loadRev() {
-    this.revDoc = await this.db.get(this.doc._id, { rev: this.rev });
-    const diffObject = diff(this.doc, this.revDoc);
+    const doc = this.doc();
+    if (!doc) {
+      return;
+    }
+    this.revDoc = await this.db.get(doc._id, { rev: this.rev() });
+    const diffObject = diff(doc, this.revDoc);
     this.diffs = this.stringify(diffObject);
 
-    const diffReverseObject = diff(this.revDoc, this.doc);
+    const diffReverseObject = diff(this.revDoc, doc);
     this.diffsReverse = this.stringify(diffReverseObject);
     this.diffsCustom = this.stringify(diffReverseObject);
 
     const isIrrelevantConflictingDoc =
-      this.conflictResolver.shouldDeleteConflictingRevision(
-        this.doc,
-        this.revDoc,
-      );
+      this.conflictResolver.shouldDeleteConflictingRevision(doc, this.revDoc);
     if (isIrrelevantConflictingDoc) {
       const success = await this.deleteDoc(this.revDoc);
       if (success) {
@@ -167,11 +168,15 @@ export class CompareRevComponent {
    * @param diffStringToApply The (user-edited) diff to be applied to the current doc
    */
   public async resolveByManualEdit(diffStringToApply: string) {
-    const originalDoc = merge({}, this.doc);
+    const doc = this.doc();
+    if (!doc) {
+      return;
+    }
+    const originalDoc = merge({}, doc);
     const diffToApply = JSON.parse(diffStringToApply);
-    merge(this.doc, diffToApply);
+    merge(doc, diffToApply);
 
-    const newChanges = diff(originalDoc, this.doc);
+    const newChanges = diff(originalDoc, doc);
 
     const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Save Changes for Conflict Resolution?`,
@@ -180,7 +185,7 @@ export class CompareRevComponent {
       )}`,
     );
     if (confirmed) {
-      const successSave = await this.saveDoc(this.doc);
+      const successSave = await this.saveDoc(doc);
       const successDel = await this.deleteDoc(this.revDoc);
       if (successSave && successDel) {
         if (diffStringToApply === this.diffs) {

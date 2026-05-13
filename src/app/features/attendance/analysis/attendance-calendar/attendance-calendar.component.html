@@ -20,7 +20,7 @@
       <fa-icon icon="times"></fa-icon>
     </button>
     @if (selectedEvent) {
-      @if (highlightForChild) {
+      @if (highlightForChild()) {
         <div>
           <div>
             <mat-form-field>

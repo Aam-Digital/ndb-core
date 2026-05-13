@@ -19,10 +19,13 @@ describe("EntityCountDashboardSettingsComponent", () => {
     fixture = TestBed.createComponent(EntityCountDashboardSettingsComponent);
     component = fixture.componentInstance;
 
-    component.formControl = new FormControl({
-      entityType: TestEntity.ENTITY_TYPE,
-      groupBy: ["center", "gender"],
-    });
+    fixture.componentRef.setInput(
+      "formControl",
+      new FormControl({
+        entityType: TestEntity.ENTITY_TYPE,
+        groupBy: ["center", "gender"],
+      }),
+    );
 
     fixture.detectChanges();
   });

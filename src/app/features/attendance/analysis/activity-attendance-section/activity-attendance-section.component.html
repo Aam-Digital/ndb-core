@@ -7,12 +7,12 @@
     <app-attendance-calendar
       class="flex-grow"
       [records]="combinedAttendance?.events || []"
-      [highlightForChild]="forChild"
-      [activity]="entity"
+      [highlightForChild]="forChild()"
+      [activity]="entity()"
     ></app-attendance-calendar>
     <app-attendance-summary
       [attendance]="combinedAttendance"
-      [forChild]="forChild"
+      [forChild]="forChild()"
       [columns]="columns"
       class="margin-top-regular flex-grow"
     ></app-attendance-summary>

@@ -1,11 +1,10 @@
 import {
+  effect,
   Component,
   ChangeDetectorRef,
-  Input,
+  input,
   LOCALE_ID,
-  OnChanges,
   OnInit,
-  SimpleChanges,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -49,15 +48,15 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
   ],
 })
 @UntilDestroy()
-export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
+export class ActivityAttendanceSectionComponent implements OnInit {
   private attendanceService = inject(AttendanceService);
   private entityMapper = inject(EntityMapperService);
   private locale = inject(LOCALE_ID);
   private dialog = inject(MatDialog);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() entity: Entity;
-  @Input() forChild?: string;
+  entity = input<Entity>();
+  forChild = input<string>();
 
   loading: boolean = true;
   records: ActivityAttendance[] = [];
@@ -76,8 +75,8 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
       label: $localize`:How many children are present at a meeting|Title of table column:Present`,
       viewComponent: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
-        this.forChild
-          ? e.countEventsPresent(this.forChild)
+        this.forChild()
+          ? e.countEventsPresent(this.forChild())
           : e.countTotalPresent(),
     },
     {
@@ -91,8 +90,8 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
       label: $localize`:Percentage of people that attended an event:Attended`,
       viewComponent: "ReadonlyFunction",
       additional: (e: ActivityAttendance) => {
-        const pct = this.forChild
-          ? e.getAttendancePercentage(this.forChild)
+        const pct = this.forChild()
+          ? e.getAttendancePercentage(this.forChild())
           : e.getAttendancePercentageAverage();
         return pct !== undefined
           ? formatPercent(pct, this.locale, "1.0-0")
@@ -101,9 +100,15 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
     },
   ];
 
+  constructor() {
+    effect(() => {
+      this.entity();
+      this.init();
+    });
+  }
+
   ngOnInit() {
     this.subscribeToEventUpdates();
-    return this.init();
   }
 
   private subscribeToEventUpdates() {
@@ -115,28 +120,27 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
       .pipe(debounceTime(500), untilDestroyed(this))
       .subscribe((update) => {
         const wrapped = this.attendanceService.wrapEventEntity(update.entity);
-        if (wrapped.activityId === this.entity?.getId()) {
+        if (wrapped.activityId === this.entity()?.getId()) {
           this.init();
         }
       });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entity) {
-      this.init();
-    }
-  }
-
   async init(loadAll: boolean = false) {
+    const entity = this.entity();
+    if (!entity) {
+      this.loading = false;
+      this.cdr.markForCheck();
+      return;
+    }
     this.loading = true;
     this.cdr.markForCheck();
     if (loadAll) {
-      this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.entity,
-      );
+      this.allRecords =
+        await this.attendanceService.getActivityAttendances(entity);
     } else {
       this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.entity,
+        entity,
         moment().startOf("month").subtract(6, "months").toDate(),
       );
     }
@@ -148,7 +152,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
 
   private createCombinedAttendance() {
     this.combinedAttendance = new ActivityAttendance();
-    this.combinedAttendance.activity = this.entity;
+    this.combinedAttendance.activity = this.entity();
     this.allRecords.forEach((record) => {
       this.combinedAttendance.events.push(...record.events);
       if (
@@ -171,13 +175,13 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   }
 
   updateDisplayedRecords(includeRecordsWithoutParticipation: boolean) {
-    if (includeRecordsWithoutParticipation || !this.forChild) {
+    if (includeRecordsWithoutParticipation || !this.forChild()) {
       this.records = this.allRecords;
     } else {
       this.records = this.allRecords.filter(
         (r) =>
-          r.countEventsAbsent(this.forChild) +
-            r.countEventsPresent(this.forChild) >
+          r.countEventsAbsent(this.forChild()) +
+            r.countEventsPresent(this.forChild()) >
           0,
       );
     }
@@ -192,7 +196,7 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   showDetails(activity: ActivityAttendance) {
     this.dialog.open(AttendanceDetailsComponent, {
       data: {
-        forChild: this.forChild,
+        forChild: this.forChild(),
         attendance: activity,
       },
     });
@@ -200,5 +204,5 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
 
   getBackgroundColor?: (rec: ActivityAttendance) => string = (
     rec: ActivityAttendance,
-  ) => rec.getColor(this.forChild);
+  ) => rec.getColor(this.forChild());
 }

@@ -1,8 +1,9 @@
 import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
+  signal,
 } from "@angular/core";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormControl } from "@angular/forms";
@@ -20,31 +21,30 @@ import { MenuItemForAdminUi } from "../../../../core/admin/admin-menu/menu-item-
   templateUrl: "./shortcut-dashboard-settings.component.html",
   styleUrls: ["./shortcut-dashboard-settings.component.scss"],
 })
-export class ShortcutDashboardSettingsComponent
-  implements OnInit, DynamicFormControlComponent<ShortcutDashboardConfig>
-{
-  @Input() formControl: FormControl<ShortcutDashboardConfig>;
+export class ShortcutDashboardSettingsComponent implements DynamicFormControlComponent<ShortcutDashboardConfig> {
+  formControl = input.required<FormControl<ShortcutDashboardConfig>>();
 
-  menuItems: MenuItemForAdminUi[] = [];
+  menuItems = signal<MenuItemForAdminUi[]>([]);
 
-  ngOnInit() {
-    const shortcuts = this.formControl.value.shortcuts || [];
-    this.menuItems = MenuItemListEditorComponent.fromPlainMenuItems(
-      shortcuts,
-      false,
-    );
+  constructor() {
+    effect(() => {
+      const shortcuts = this.formControl().value?.shortcuts || [];
+      this.menuItems.set(
+        MenuItemListEditorComponent.fromPlainMenuItems(shortcuts, false),
+      );
+    });
   }
 
   onMenuItemsChange(updatedItems: MenuItemForAdminUi[]) {
-    this.menuItems = updatedItems;
+    this.menuItems.set(updatedItems);
     const plainMenuItems = MenuItemListEditorComponent.toPlainMenuItems(
       updatedItems,
       { forceLinkOnly: true },
     );
-    this.formControl.setValue({
-      ...(this.formControl.value ?? ({} as ShortcutDashboardConfig)),
+    this.formControl().setValue({
+      ...(this.formControl().value ?? ({} as ShortcutDashboardConfig)),
       shortcuts: plainMenuItems,
     });
-    this.formControl.markAsDirty();
+    this.formControl().markAsDirty();
   }
 }

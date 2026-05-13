@@ -2,11 +2,10 @@ import { EntityForm } from "../../../core/common-components/entity-form/entity-f
 import {
   Component,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
+  effect,
+  input,
+  signal,
 } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -36,43 +35,52 @@ import { debounceTime } from "rxjs/operators";
   templateUrl: "./inherited-value-button.component.html",
   styleUrl: "./inherited-value-button.component.scss",
 })
-export class InheritedValueButtonComponent implements OnChanges {
+export class InheritedValueButtonComponent {
   private readonly defaultValueService = inject(DefaultValueService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() form: EntityForm<any>;
-  @Input() field: FormFieldConfig;
-  @Input() entity: Entity;
+  form = input<EntityForm<any>>();
+  field = input<FormFieldConfig>();
+  entity = input<Entity>();
 
-  defaultValueHint: DefaultValueHint | undefined;
+  defaultValueHint = signal<DefaultValueHint | undefined>(undefined);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (
-      this.field.defaultValue?.mode == "inherited-field" &&
-      !this.field.defaultValue?.config?.sourceReferenceField
-    ) {
-      this.defaultValueHint = undefined;
-      this.cdr.markForCheck();
-      return;
-    }
-    this.defaultValueHint = this.defaultValueService.getDefaultValueUiHint(
-      this.form,
-      this.field?.id,
-    );
-    this.cdr.markForCheck();
+  constructor() {
+    effect((onCleanup) => {
+      const form = this.form();
+      const field = this.field();
+      if (!form || !field) {
+        this.defaultValueHint.set(undefined);
+        return;
+      }
 
-    if (changes.form?.firstChange) {
-      this.form?.formGroup.valueChanges.pipe(debounceTime(50)).subscribe(() =>
-        // ensure this is only called after the other changes handler
-        setTimeout(() => {
-          this.defaultValueHint =
-            this.defaultValueService.getDefaultValueUiHint(
-              this.form,
-              this.field?.id,
-            );
-          this.cdr.markForCheck();
-        }),
-      );
-    }
+      if (
+        field.defaultValue?.mode == "inherited-field" &&
+        !field.defaultValue?.config?.sourceReferenceField
+      ) {
+        this.defaultValueHint.set(undefined);
+        return;
+      }
+
+      const updateHint = () => {
+        this.defaultValueHint.set(
+          this.defaultValueService.getDefaultValueUiHint(form, field.id),
+        );
+      };
+      updateHint();
+
+      let pendingTimeout: ReturnType<typeof setTimeout> | undefined;
+      const sub = form.formGroup.valueChanges
+        .pipe(debounceTime(50))
+        .subscribe(() => {
+          // ensure this is only called after the other changes handlers
+          pendingTimeout = setTimeout(updateHint);
+        });
+      onCleanup(() => {
+        sub.unsubscribe();
+        if (pendingTimeout) {
+          clearTimeout(pendingTimeout);
+        }
+      });
+    });
   }
 }

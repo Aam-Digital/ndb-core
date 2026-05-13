@@ -1,11 +1,11 @@
 import {
-  ChangeDetectorRef,
   Component,
-  Input,
-  OnInit,
   ViewEncapsulation,
   inject,
   ChangeDetectionStrategy,
+  effect,
+  input,
+  signal,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceService } from "../../attendance.service";
@@ -35,37 +35,56 @@ import { MatSelectModule } from "@angular/material/select";
     MatSelectModule,
   ],
 })
-export class GroupedChildAttendanceComponent implements OnInit {
+export class GroupedChildAttendanceComponent {
   private attendanceService = inject(AttendanceService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() entity: Entity;
+  entity = input<Entity>();
 
-  loading: boolean = true;
-  selectedActivity: Entity;
-  activities: Entity[] = [];
-  archivedActivities: Entity[] = [];
+  loading = signal<boolean>(true);
+  selectedActivity = signal<Entity | undefined>(undefined);
+  activities = signal<Entity[]>([]);
+  archivedActivities = signal<Entity[]>([]);
 
-  ngOnInit() {
-    return this.loadActivities();
+  constructor() {
+    effect((onCleanup) => {
+      const entity = this.entity();
+      if (!entity) {
+        this.loading.set(false);
+        this.selectedActivity.set(undefined);
+        this.activities.set([]);
+        this.archivedActivities.set([]);
+        return;
+      }
+
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+
+      void this.loadActivities(entity, () => cancelled);
+    });
   }
 
-  private async loadActivities() {
-    this.loading = true;
-    this.cdr.markForCheck();
+  private async loadActivities(
+    entity: Entity,
+    isCancelled: () => boolean,
+  ): Promise<void> {
+    this.loading.set(true);
     const allActivities =
-      await this.attendanceService.getActivitiesForParticipant(
-        this.entity.getId(),
-      );
+      await this.attendanceService.getActivitiesForParticipant(entity.getId());
+    if (isCancelled()) {
+      return;
+    }
 
-    this.activities = allActivities.filter((a) => a.isActive == true);
-    this.archivedActivities = allActivities.filter((a) => a.isActive == false);
+    this.activities.set(allActivities.filter((a) => a.isActive == true));
+    this.archivedActivities.set(
+      allActivities.filter((a) => a.isActive == false),
+    );
 
-    this.loading = false;
-    this.cdr.markForCheck();
+    this.loading.set(false);
   }
 
   onActivityChange(selectedArchivedActivity: Entity) {
-    this.selectedActivity = selectedArchivedActivity;
+    this.selectedActivity.set(selectedArchivedActivity);
   }
 }

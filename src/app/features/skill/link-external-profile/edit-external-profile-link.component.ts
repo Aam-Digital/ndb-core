@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
   signal,
   WritableSignal,
@@ -61,15 +61,15 @@ export class EditExternalProfileLinkComponent
   extends CustomFormControlDirective<string>
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   /**
    * The configuration details for this external profile link,
    * defined in the config field's `additional` property.
    */
   get additional(): ExternalProfileLinkConfig {
-    return this.formFieldConfig?.additional as ExternalProfileLinkConfig;
+    return this.formFieldConfig()?.additional as ExternalProfileLinkConfig;
   }
 
   isLoading: WritableSignal<boolean> = signal(false);
@@ -110,7 +110,7 @@ export class EditExternalProfileLinkComponent
   async searchMatchingProfiles() {
     const currentEntity = Object.assign(
       {},
-      this.entity,
+      this.entity(),
       this.formControl.parent?.getRawValue(),
     );
 

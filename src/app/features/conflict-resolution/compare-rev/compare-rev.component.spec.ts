@@ -67,8 +67,8 @@ describe("CompareRevComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CompareRevComponent);
     component = fixture.componentInstance;
-    component.doc = testDoc; // @Input
-    component.rev = testConflictDoc._rev; // @Input
+    fixture.componentRef.setInput("doc", testDoc);
+    fixture.componentRef.setInput("rev", testConflictDoc._rev);
     fixture.detectChanges();
   });
 

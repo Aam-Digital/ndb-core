@@ -1,10 +1,10 @@
 import {
   Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
   inject,
   ChangeDetectionStrategy,
+  effect,
+  input,
+  signal,
 } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { FileService } from "../file.service";
@@ -17,35 +17,42 @@ import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynam
   styleUrls: ["./display-img.component.scss"],
   imports: [FaDynamicIconComponent],
 })
-export class DisplayImgComponent implements OnChanges {
+export class DisplayImgComponent {
   private fileService = inject(FileService);
 
-  @Input() defaultImage: string;
-  @Input() defaultIcon: string;
-  @Input() entity: Entity;
-  @Input() imgProperty: string;
-  imgSrc: string;
+  defaultImage = input<string>();
+  defaultIcon = input<string>();
+  entity = input<Entity>();
+  imgProperty = input<string>();
+  imgSrc = signal<string | undefined>(undefined);
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes.hasOwnProperty("entity") ||
-      changes.hasOwnProperty("property")
-    ) {
-      delete this.imgSrc;
-      const value = this.entity[this.imgProperty];
-      if (value) {
-        if (this.isRemoteUrl(value)) {
-          this.imgSrc = value;
-        } else {
-          this.fileService
-            .loadFile(this.entity, this.imgProperty)
-            .subscribe((res) => {
-              // doesn't work with safeUrl
-              this.imgSrc = Object.values(res)[0];
-            });
-        }
+  constructor() {
+    effect((onCleanup) => {
+      const entity = this.entity();
+      const imgProperty = this.imgProperty();
+      this.imgSrc.set(undefined);
+      if (!entity || !imgProperty) {
+        return;
       }
-    }
+
+      const value = entity[imgProperty];
+      if (!value) {
+        return;
+      }
+
+      if (this.isRemoteUrl(value)) {
+        this.imgSrc.set(value);
+        return;
+      }
+
+      const sub = this.fileService
+        .loadFile(entity, imgProperty)
+        .subscribe((res) => {
+          // doesn't work with safeUrl
+          this.imgSrc.set(Object.values(res)[0] as string);
+        });
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   private isRemoteUrl(value: string): boolean {

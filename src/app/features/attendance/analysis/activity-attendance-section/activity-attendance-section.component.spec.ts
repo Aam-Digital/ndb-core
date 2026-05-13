@@ -52,7 +52,7 @@ describe("ActivityAttendanceSectionComponent", () => {
     fixture = TestBed.createComponent(ActivityAttendanceSectionComponent);
     component = fixture.componentInstance;
 
-    component.entity = testActivity;
+    fixture.componentRef.setInput("entity", testActivity);
 
     fixture.detectChanges();
   });
@@ -82,7 +82,7 @@ describe("ActivityAttendanceSectionComponent", () => {
 
   it("should also display records without participation if toggled", () => {
     const testChildId = "testChild";
-    component.forChild = testChildId;
+    fixture.componentRef.setInput("forChild", testChildId);
 
     const eventParticipatingIn = TestEventEntity.generateEventWithAttendance([
       [testChildId, AttendanceLogicalStatus.PRESENT],

@@ -1,11 +1,10 @@
 import {
   ChangeDetectorRef,
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
+  input,
   OnInit,
-  SimpleChanges,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -60,10 +59,10 @@ interface InheritanceOption {
 })
 export class AdminInheritedFieldComponent
   extends CustomFormControlDirective<DefaultValueConfigInheritedField>
-  implements OnInit, OnChanges
+  implements OnInit
 {
-  @Input() entityType: EntityConstructor;
-  @Input() entitySchemaField: EntitySchemaField;
+  entityType = input<EntityConstructor>();
+  entitySchemaField = input<EntitySchemaField>();
 
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly entityRelationsService = inject(EntityRelationsService);
@@ -72,6 +71,16 @@ export class AdminInheritedFieldComponent
 
   availableOptions: InheritanceOption[] = [];
   selectedOption: InheritanceOption | null = null;
+
+  constructor() {
+    super();
+    effect(() => {
+      this.entityType();
+      this.updateAvailableOptions();
+      this.initSelectedOption();
+      this.cdr.markForCheck();
+    });
+  }
 
   ngOnInit() {
     if (!this.value) {
@@ -83,22 +92,15 @@ export class AdminInheritedFieldComponent
     this.cdr.markForCheck();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entityType) {
-      this.updateAvailableOptions();
-      this.initSelectedOption();
-      this.cdr.markForCheck();
-    }
-  }
-
   updateAvailableOptions() {
-    if (!this.entityType) return;
+    const entityType = this.entityType();
+    if (!entityType) return;
 
     this.availableOptions = [];
 
-    const inheritanceAttributes = this.getInheritanceAttributes();
+    const inheritanceAttributes = this.getInheritanceAttributes(entityType);
     inheritanceAttributes.forEach((attr) => {
-      const fieldConfig = this.entityType.schema.get(attr);
+      const fieldConfig = entityType.schema.get(attr);
 
       if (fieldConfig?.additional) {
         const referencedTypeIds = asArray(fieldConfig.additional);
@@ -107,7 +109,7 @@ export class AdminInheritedFieldComponent
           const referencedEntityType = this.entityRegistry.get(typeId);
           if (!referencedEntityType) continue;
 
-          const refFieldLabel = this.getFieldLabel(attr, this.entityType);
+          const refFieldLabel = this.getFieldLabel(attr, entityType);
 
           const option: InheritanceOption = {
             type: "inherit" as const,
@@ -192,8 +194,8 @@ export class AdminInheritedFieldComponent
       DefaultValueConfigInheritedField
     >(AutomatedFieldMappingComponent, {
       data: {
-        currentEntityType: this.entityType,
-        currentField: this.entitySchemaField,
+        currentEntityType: this.entityType(),
+        currentField: this.entitySchemaField(),
         sourceValueEntityType: option.referencedEntityType,
         value: {
           ...this.value,
@@ -215,10 +217,10 @@ export class AdminInheritedFieldComponent
     }
   }
 
-  private getInheritanceAttributes(): string[] {
-    if (!this.entityType?.schema) return [];
+  private getInheritanceAttributes(entityType: EntityConstructor): string[] {
+    if (!entityType?.schema) return [];
 
-    const inheritanceAttrs = Array.from(this.entityType.schema.entries())
+    const inheritanceAttrs = Array.from(entityType.schema.entries())
       .filter(
         ([, fieldConfig]) => fieldConfig.dataType === EntityDatatype.dataType,
       )
@@ -232,9 +234,13 @@ export class AdminInheritedFieldComponent
     entityType: string;
     relatedReferenceFields: string[];
   }[] {
+    const entityType = this.entityType();
+    if (!entityType) {
+      return [];
+    }
     const relatedEntities =
       this.entityRelationsService.getEntityTypesReferencingType(
-        this.entityType.ENTITY_TYPE,
+        entityType.ENTITY_TYPE,
       ) ?? [];
 
     return relatedEntities

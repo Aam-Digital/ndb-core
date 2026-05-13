@@ -1,7 +1,7 @@
-<div class="map-frame" [style.height]="height">
+<div class="map-frame" [style.height]="height()">
   <div id="map" #map>
     <div class="action-elements">
-      @if (expandable) {
+      @if (expandable()) {
         <button mat-mini-fab (click)="openMapInPopup()">
           <fa-icon icon="expand" style="color: black"></fa-icon>
         </button>

@@ -1,39 +1,37 @@
 import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  model,
+  output,
 } from "@angular/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
-import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
   AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { NotificationRule } from "../model/notification-config";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatOption } from "@angular/material/core";
-import { MatSelect } from "@angular/material/select";
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
 } from "@angular/material/expansion";
-import { IconButtonComponent } from "../../../core/common-components/icon-button/icon-button.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSelect } from "@angular/material/select";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
+import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConstructor } from "app/core/entity/model/entity";
+import { IconButtonComponent } from "../../../core/common-components/icon-button/icon-button.component";
+import { NotificationRule } from "../model/notification-config";
 
 /**
  * Configure a single notification rule.
@@ -63,11 +61,9 @@ import { EntityConstructor } from "app/core/entity/model/entity";
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",
 })
-export class NotificationRuleComponent implements OnChanges {
-  @Input() value: NotificationRule;
-  @Output() valueChange = new EventEmitter<NotificationRule>();
-
-  @Output() removeNotificationRule = new EventEmitter<void>();
+export class NotificationRuleComponent {
+  value = model<NotificationRule>();
+  removeNotificationRule = output<void>();
 
   form: FormGroup;
   entityTypeControl: AbstractControl;
@@ -75,28 +71,34 @@ export class NotificationRuleComponent implements OnChanges {
 
   private readonly entityRegistry = inject(EntityRegistry);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.value) {
-      this.initForm();
-    }
+  constructor() {
+    effect(() => {
+      if (this.value()) {
+        this.initForm();
+      }
+    });
   }
 
   initForm() {
+    const value = this.value();
+    if (!value) {
+      return;
+    }
+
     this.form = new FormGroup({
-      label: new FormControl(this.value?.label ?? ""),
+      label: new FormControl(value.label ?? ""),
       entityType: new FormControl({
-        value: this.value?.entityType ?? "",
-        disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
+        value: value.entityType ?? "",
+        disabled: Object.keys(value.conditions ?? {}).length > 0,
       }),
-      changeType: new FormControl(
-        this.value?.changeType ?? ["created", "updated"],
-      ),
-      enabled: new FormControl(this.value?.enabled || false),
-      conditions: new FormControl(this.value?.conditions ?? {}),
+      changeType: new FormControl(value.changeType ?? ["created", "updated"]),
+      enabled: new FormControl(value.enabled || false),
+      conditions: new FormControl(value.conditions ?? {}),
       notificationType: new FormControl(
-        this.value?.notificationType ?? "entity_change",
+        value.notificationType ?? "entity_change",
       ),
     });
+
     this.entityTypeControl = this.form.get("entityType");
     this.updateEntityConstructor(this.entityTypeControl.value);
     this.entityTypeControl.valueChanges.subscribe((entityType) =>
@@ -104,7 +106,7 @@ export class NotificationRuleComponent implements OnChanges {
     );
 
     this.updateEntityTypeControlState();
-    this.form.valueChanges.subscribe((value) => this.updateValue(value));
+    this.form.valueChanges.subscribe((newValue) => this.updateValue(newValue));
   }
 
   /**
@@ -116,6 +118,7 @@ export class NotificationRuleComponent implements OnChanges {
     if (!conditionsControl) {
       return;
     }
+
     conditionsControl.valueChanges.subscribe((v) => {
       if (JSON.stringify(v) !== "{}") {
         this.entityTypeControl.disable();
@@ -131,13 +134,11 @@ export class NotificationRuleComponent implements OnChanges {
       value.entityType = entityTypeControl.value;
     }
 
-    if (JSON.stringify(value) === JSON.stringify(this.value)) {
-      // skip if no actual change
+    if (JSON.stringify(value) === JSON.stringify(this.value())) {
       return;
     }
 
-    this.value = value;
-    this.valueChange.emit(value);
+    this.value.set(value);
   }
 
   /**

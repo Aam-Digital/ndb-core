@@ -64,16 +64,16 @@ describe("BulkLinkExternalProfilesComponent", () => {
     component = fixture.componentInstance;
 
     // default inputs
-    component.entities = [
+    fixture.componentRef.setInput("entities", [
       TestEntity.create({ name: "Test 1", other: "Other", ref: "r1" }),
       TestEntity.create({ name: "Test 2", other: "Other", ref: "r2" }),
-    ];
-    component.config = {
+    ]);
+    fixture.componentRef.setInput("config", {
       id: "externalProfile",
       additional: {
         searchFields: { fullName: ["name", "other"], email: ["ref"] },
       } as ExternalProfileLinkConfig,
-    };
+    });
 
     fixture.detectChanges();
   });
@@ -86,12 +86,12 @@ describe("BulkLinkExternalProfilesComponent", () => {
     vi.useFakeTimers();
     try {
       const expected1 = {
-        entity: component.entities[0],
+        entity: component.entities()[0],
         possibleMatches: [],
         possibleMatchesCount: 0,
       };
       const expected2 = {
-        entity: component.entities[1],
+        entity: component.entities()[1],
         possibleMatches: [{ id: "1" }, { id: "2" }],
         possibleMatchesCount: 2,
       };
@@ -103,7 +103,11 @@ describe("BulkLinkExternalProfilesComponent", () => {
           of(createPaginatedResult(expected2.possibleMatches)),
         );
 
-      component.ngOnChanges({ entities: true as any });
+      mockSkillApi.getExternalProfiles.mockClear();
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockSkillApi.getExternalProfiles).toHaveBeenCalledTimes(2);
@@ -121,7 +125,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
     vi.useFakeTimers();
     try {
       const expected2 = {
-        entity: component.entities[1],
+        entity: component.entities()[1],
         possibleMatches: [{ id: "1" }, { id: "2" }],
         possibleMatchesCount: 2,
       };
@@ -133,13 +137,17 @@ describe("BulkLinkExternalProfilesComponent", () => {
           of(createPaginatedResult(expected2.possibleMatches)),
         );
 
-      component.ngOnChanges({ entities: true as any });
+      mockSkillApi.getExternalProfiles.mockClear();
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockSkillApi.getExternalProfiles).toHaveBeenCalledTimes(2);
       expect(component.records.data).toEqual([
         {
-          entity: component.entities[0],
+          entity: component.entities()[0],
           possibleMatches: [],
           possibleMatchesCount: 0,
           warning: { possibleMatches: expect.any(String) },
@@ -158,7 +166,11 @@ describe("BulkLinkExternalProfilesComponent", () => {
         .mockReturnValueOnce(of(createPaginatedResult([{ id: "1" }])))
         .mockReturnValueOnce(of(createPaginatedResult([{ id: "2" }])));
 
-      component.ngOnChanges({ entities: true as any });
+      mockSkillApi.getExternalProfiles.mockClear();
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockSkillApi.getExternalProfiles).toHaveBeenCalledTimes(2);
@@ -176,16 +188,19 @@ describe("BulkLinkExternalProfilesComponent", () => {
     vi.useFakeTimers();
     try {
       const entity1 = TestEntity.create({ name: "Test 1" });
-      entity1[component.config.id] = "original-1";
+      entity1[component.config()?.id] = "original-1";
       const entity2 = TestEntity.create({ name: "Test 2" });
-      entity2[component.config.id] = "original-2";
-      component.entities = [entity1, entity2];
+      entity2[component.config()?.id] = "original-2";
+      fixture.componentRef.setInput("entities", [entity1, entity2]);
 
       mockSkillApi.getExternalProfiles
         .mockReturnValueOnce(of(createPaginatedResult([])))
         .mockReturnValueOnce(of(createPaginatedResult([{ id: "new-2" }])));
 
-      component.ngOnChanges({ entities: true as any });
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.records.data).toEqual([
@@ -211,12 +226,15 @@ describe("BulkLinkExternalProfilesComponent", () => {
     };
     const mockEntity = TestEntity.create({ name: "Test 1" });
     mockEntity.getSchema().set("externalProfile", externalProfileFieldSchema);
-    component.config = undefined;
-    component.entities = [TestEntity.create("Test 1")];
+    fixture.componentRef.setInput("config", undefined);
+    fixture.componentRef.setInput("entities", [TestEntity.create("Test 1")]);
 
-    component.ngOnChanges({ entities: true as any });
+    fixture.componentRef.setInput("entities", [
+      ...(component.entities() ?? []),
+    ]);
+    fixture.detectChanges();
 
-    expect(component.config).toEqual({
+    expect((component as any).resolvedConfig).toEqual({
       id: "externalProfile",
       ...externalProfileFieldSchema,
     });
@@ -228,13 +246,18 @@ describe("BulkLinkExternalProfilesComponent", () => {
   it("should skip if no config is available", async () => {
     vi.useFakeTimers();
     try {
-      component.config = undefined;
+      const previousRecords = component.records;
+      mockSkillApi.getExternalProfiles.mockClear();
+      fixture.componentRef.setInput("config", undefined);
 
-      component.ngOnChanges({ entities: true as any });
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockSkillApi.getExternalProfiles).not.toHaveBeenCalled();
-      expect(component.records).toBeUndefined();
+      expect(component.records).toBe(previousRecords);
     } finally {
       vi.useRealTimers();
     }
@@ -247,13 +270,19 @@ describe("BulkLinkExternalProfilesComponent", () => {
         name: "Test 1",
         externalProfile: "r1",
       } as any);
-      component.entities = [entity, TestEntity.create("Test 2")];
+      fixture.componentRef.setInput("entities", [
+        entity,
+        TestEntity.create("Test 2"),
+      ]);
 
       mockSkillApi.getExternalProfileById.mockReturnValue(
         throwError(() => "API error"),
       );
 
-      component.ngOnChanges({ entities: true as any });
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.records.data[0].warning.selected).toEqual(
@@ -268,7 +297,10 @@ describe("BulkLinkExternalProfilesComponent", () => {
   it("should select match when user edits via dialog", async () => {
     vi.useFakeTimers();
     try {
-      component.ngOnChanges({ entities: true as any });
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
       const testRecord = component.records.data[0];
       vi.spyOn(TestBed.inject(MatDialog), "open").mockReturnValue({
@@ -290,7 +322,10 @@ describe("BulkLinkExternalProfilesComponent", () => {
   it("should unselect match when user clicks 'x'", async () => {
     vi.useFakeTimers();
     try {
-      component.ngOnChanges({ entities: true as any });
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
       const testRecord = component.records.data[0];
       testRecord.selected = { id: "ext-profile" } as any;
@@ -324,8 +359,16 @@ describe("BulkLinkExternalProfilesComponent", () => {
         externalProfile: "2",
         skills: ["old-skill"],
       } as any);
-      component.entities = [entity1, entity2, entity3, entity4];
-      component.ngOnChanges({ entities: true as any });
+      fixture.componentRef.setInput("entities", [
+        entity1,
+        entity2,
+        entity3,
+        entity4,
+      ]);
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
       mockSkillApi.applyDataFromExternalProfile.mockImplementation(
         async (x, config, target) => {
@@ -387,7 +430,10 @@ describe("BulkLinkExternalProfilesComponent", () => {
         },
       );
 
-      component.ngOnChanges({ entities: true as any });
+      fixture.componentRef.setInput("entities", [
+        ...(component.entities() ?? []),
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
       component.records.data[0].selected = { id: "broken" } as any;
       component.records.data[0].entity["skills"] = ["old-skill"];

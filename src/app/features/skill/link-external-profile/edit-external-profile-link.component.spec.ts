@@ -63,9 +63,14 @@ describe("EditExternalProfileLinkComponent", () => {
 
     fixture = TestBed.createComponent(EditExternalProfileLinkComponent);
     component = fixture.componentInstance;
-    component.entity = entity;
+    fixture.componentRef.setInput("entity", entity);
 
-    formGroup = setupCustomFormControlEditComponent(component);
+    formGroup = setupCustomFormControlEditComponent(
+      component,
+      "testProperty",
+      {},
+      fixture,
+    );
 
     fixture.detectChanges();
   });
@@ -113,10 +118,13 @@ describe("EditExternalProfileLinkComponent", () => {
   it("should pass the current state if edited form/entity to the search dialog", async () => {
     vi.useFakeTimers();
     try {
-      component.entity = TestEntity.create({
-        name: "original name",
-        other: "foo",
-      });
+      fixture.componentRef.setInput(
+        "entity",
+        TestEntity.create({
+          name: "original name",
+          other: "foo",
+        }),
+      );
       (component.formControl.parent as FormGroup).addControl(
         "name",
         new FormControl("name"),

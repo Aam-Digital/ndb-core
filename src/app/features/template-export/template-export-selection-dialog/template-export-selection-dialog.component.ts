@@ -1,8 +1,9 @@
 import {
   Component,
-  Input,
   OnInit,
+  computed,
   inject,
+  input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -56,26 +57,24 @@ import { TemplateExport } from "../template-export.entity";
 export class TemplateExportSelectionDialogComponent implements OnInit {
   private dialogRef =
     inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
+  private dialogData = inject<Entity>(MAT_DIALOG_DATA, { optional: true });
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
   private readonly templateExportService = inject(TemplateExportService);
 
-  @Input() entity: Entity;
+  entity = input<Entity>();
 
   templateSelectionForm: FormControl = new FormControl();
   isFeatureEnabled: boolean;
   TemplateExport = TemplateExport;
+  readonly currentEntity = computed(() => this.entity() ?? this.dialogData);
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
-    e.applicableForEntityTypes.includes(this.entity.getType());
+    e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
 
   loadingRequestedFile: boolean;
 
-  constructor() {
-    const data = inject<Entity>(MAT_DIALOG_DATA);
-
-    this.entity = data;
-  }
+  constructor() {}
 
   async ngOnInit() {
     this.isFeatureEnabled =
@@ -84,10 +83,17 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
 
   requestFile() {
     const templateId = this.templateSelectionForm.value;
+    const entity = this.currentEntity();
+    if (!entity) {
+      this.alertService.addWarning(
+        $localize`Could not determine current record.`,
+      );
+      return;
+    }
 
     this.loadingRequestedFile = true;
     this.templateExportApi
-      .generatePdfFromTemplate(templateId, this.entity)
+      .generatePdfFromTemplate(templateId, entity)
       .subscribe({
         error: (error) => {
           this.alertService.addWarning(
@@ -99,7 +105,7 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
           this.downloadService.triggerDownload(
             templateResult.file,
             "pdf",
-            templateResult.filename ?? this.entity?.toString(),
+            templateResult.filename ?? entity.toString(),
           );
           this.loadingRequestedFile = false;
           this.dialogRef.close(true);

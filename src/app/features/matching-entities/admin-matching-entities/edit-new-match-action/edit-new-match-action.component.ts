@@ -1,12 +1,10 @@
 import {
   Component,
-  EventEmitter,
+  effect,
   inject,
-  Input,
-  OnChanges,
+  input,
+  model,
   OnInit,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -55,17 +53,15 @@ import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-sele
   templateUrl: "./edit-new-match-action.component.html",
   styleUrl: "./edit-new-match-action.component.scss",
 })
-export class EditNewMatchActionComponent implements OnInit, OnChanges {
+export class EditNewMatchActionComponent implements OnInit {
   readonly fb = inject(FormBuilder);
   readonly entityRegistry = inject(EntityRegistry);
   readonly dialog = inject(MatDialog);
   readonly entityRelationsService = inject(EntityRelationsService);
 
-  @Input() value: NewMatchAction;
-  @Output() valueChange = new EventEmitter<NewMatchAction>();
-
-  @Input() leftEntityType: string;
-  @Input() rightEntityType: string;
+  value = model<NewMatchAction>();
+  leftEntityType = input<string>();
+  rightEntityType = input<string>();
 
   form: FormGroup;
 
@@ -92,8 +88,8 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
   set activeFields(fields: ColumnConfig[]) {
     this._activeFields = fields;
     if (this.form?.value) {
-      this.valueChange.emit({
-        ...this.value,
+      this.value.set({
+        ...this.value(),
         ...this.form.value,
         columnsToReview: this._activeFields,
       });
@@ -105,20 +101,26 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
   /** The currently selected entity constructor for generating field options. */
   entityConstructor: EntityConstructor;
 
-  ngOnInit() {
-    if (this.value) {
+  constructor() {
+    effect(() => {
       this.availableRelatedEntities = this.buildAvailableRelatedEntities(
-        this.leftEntityType,
-        this.rightEntityType,
+        this.leftEntityType(),
+        this.rightEntityType(),
       );
+    });
+  }
+
+  ngOnInit() {
+    if (this.value()) {
+      const value = this.value();
 
       this.initForm();
-      this.updateMatchOptions(this.value.newEntityType);
+      this.updateMatchOptions(value.newEntityType);
 
-      this.activeFields = this.value.columnsToReview;
+      this.activeFields = value.columnsToReview;
       this.form.valueChanges.subscribe((formValues) => {
-        this.valueChange.emit({
-          ...this.value,
+        this.value.set({
+          ...this.value(),
           ...formValues,
           columnsToReview: this.activeFields,
         });
@@ -126,24 +128,12 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.leftEntityType || changes.rightEntityType) {
-      this.availableRelatedEntities = this.buildAvailableRelatedEntities(
-        this.leftEntityType,
-        this.rightEntityType,
-      );
-    }
-  }
-
   initForm() {
+    const value = this.value();
     this.form = this.fb.group({
-      newEntityType: [this.value?.newEntityType ?? ""],
-      newEntityMatchPropertyLeft: [
-        this.value?.newEntityMatchPropertyLeft ?? "",
-      ],
-      newEntityMatchPropertyRight: [
-        this.value?.newEntityMatchPropertyRight ?? "",
-      ],
+      newEntityType: [value?.newEntityType ?? ""],
+      newEntityMatchPropertyLeft: [value?.newEntityMatchPropertyLeft ?? ""],
+      newEntityMatchPropertyRight: [value?.newEntityMatchPropertyRight ?? ""],
     });
   }
 
@@ -215,14 +205,17 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
    */
   onEntityTypeChange(newType: string | string[]) {
     const selectedEntityType = newType as string;
-    if (selectedEntityType === this.value?.newEntityType) {
+    if (selectedEntityType === this.value()?.newEntityType) {
       return;
     }
     this.updateMatchOptions(selectedEntityType, true);
-    if (!this.value) {
+    if (!this.value()) {
       return;
     }
-    this.value.newEntityType = selectedEntityType;
+    this.value.set({
+      ...this.value(),
+      newEntityType: selectedEntityType,
+    });
   }
 
   /**
@@ -293,7 +286,7 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
   }
 
   get fieldsAsStrings(): string[] {
-    return this.value?.columnsToReview?.map((field) =>
+    return this.value()?.columnsToReview?.map((field) =>
       typeof field === "string" ? field : field.id,
     );
   }

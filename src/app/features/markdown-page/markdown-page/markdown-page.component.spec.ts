@@ -54,7 +54,7 @@ describe("MarkdownPageComponent", () => {
     entity.content = "# Hello";
     mockEntityMapper.load.mockResolvedValue(entity);
 
-    component.markdownEntityId = "test-entity-1";
+    fixture.componentRef.setInput("markdownEntityId", "test-entity-1");
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();

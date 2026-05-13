@@ -5,7 +5,7 @@
     class="address-search-input"
     type="text"
     matInput
-    [value]="_searchText"
+    [value]="searchText()"
     (keyup)="triggerInputUpdate($event)"
     [matAutocomplete]="auto"
   />

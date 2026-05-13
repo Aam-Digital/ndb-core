@@ -19,11 +19,14 @@ describe("BirthdayDashboardSettingsComponent", () => {
     fixture = TestBed.createComponent(BirthdayDashboardSettingsComponent);
     component = fixture.componentInstance;
 
-    component.formControl = new FormControl({
-      threshold: 32,
-      entityType: "Child",
-      birthdayProperty: "dateOfBirth",
-    });
+    fixture.componentRef.setInput(
+      "formControl",
+      new FormControl({
+        threshold: 32,
+        entityType: "Child",
+        birthdayProperty: "dateOfBirth",
+      }),
+    );
 
     fixture.detectChanges();
   });

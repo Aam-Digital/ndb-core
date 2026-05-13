@@ -4,7 +4,7 @@ import {
   Component,
   DestroyRef,
   inject,
-  Input,
+  input,
   OnInit,
   signal,
   WritableSignal,
@@ -66,7 +66,7 @@ export class EditAttendanceComponent
   extends CustomFormControlDirective<AttendanceItem[]>
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetector = inject(ChangeDetectorRef);
@@ -143,7 +143,7 @@ export class EditAttendanceComponent
     this.resizeObserver.observe(this.elementRef.nativeElement);
 
     // Allow config to override the status enum ID (via additional.status.additional)
-    const statusConfig = this.formFieldConfig?.additional?.status;
+    const statusConfig = this.formFieldConfig()?.additional?.status;
     if (statusConfig?.additional) {
       this.statusEnumId = statusConfig.additional;
     }
@@ -156,7 +156,7 @@ export class EditAttendanceComponent
 
     // Build the config for the participant entity autocomplete
     // from the nested `additional.participant` schema config
-    const participantConfig = this.formFieldConfig?.additional?.participant;
+    const participantConfig = this.formFieldConfig()?.additional?.participant;
     this.participantFieldConfig = {
       id: "participant",
       label: $localize`:Placeholder for adding a participant:Select additional participant`,

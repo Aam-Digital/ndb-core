@@ -7,7 +7,7 @@
 
 <app-edit-file
   [formControl]="formControl"
-  [entity]="entity"
-  [formFieldConfig]="formFieldConfig"
+  [entity]="entity()"
+  [formFieldConfig]="formFieldConfig()"
   [style.display]="exportServerEnabled ? 'initial' : 'none'"
 ></app-edit-file>

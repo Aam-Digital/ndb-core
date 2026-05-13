@@ -63,8 +63,8 @@ describe("EditPhotoComponent", () => {
       control: formControl,
     } as any;
 
-    component.entity = new Entity();
-    component.formFieldConfig = { id: "testProp" };
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("formFieldConfig", { id: "testProp" });
     component.ngOnInit();
     fixture.detectChanges();
   });

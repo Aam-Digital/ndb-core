@@ -1,5 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { provideNativeDateAdapter } from "@angular/material/core";
+import { MatDialog } from "@angular/material/dialog";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { Angulartics2Module } from "angulartics2";
 import { SelectReportComponent } from "./select-report.component";
 import { ReportEntity } from "../../report-config";
 
@@ -9,7 +13,15 @@ describe("SelectReportComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SelectReportComponent],
+      imports: [
+        SelectReportComponent,
+        Angulartics2Module.forRoot(),
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        { provide: MatDialog, useValue: { open: vi.fn() } },
+        provideNativeDateAdapter(),
+      ],
     }).compileComponents();
   });
 
@@ -25,9 +37,8 @@ describe("SelectReportComponent", () => {
 
   it("should select the first report if only one exists", () => {
     const report = new ReportEntity();
-    component.reports = [report];
-
-    component.ngOnChanges({ reports: undefined });
+    fixture.componentRef.setInput("reports", [report]);
+    fixture.detectChanges();
 
     expect(component.selectedReport).toBe(report);
   });
@@ -35,9 +46,8 @@ describe("SelectReportComponent", () => {
   it("should display date range filter when report mode is reporting", () => {
     const report = new ReportEntity();
     report.mode = "reporting";
-    component.reports = [report];
-
-    component.ngOnChanges({ reports: undefined });
+    fixture.componentRef.setInput("reports", [report]);
+    fixture.detectChanges();
 
     expect(component.selectedReport).toBe(report);
     expect(component.isDateRangeReport).toBe(true);
@@ -47,9 +57,8 @@ describe("SelectReportComponent", () => {
     const report = new ReportEntity();
     report.mode = "sql";
     report.neededArgs = ["from", "to"];
-    component.reports = [report];
-
-    component.ngOnChanges({ reports: undefined });
+    fixture.componentRef.setInput("reports", [report]);
+    fixture.detectChanges();
 
     expect(component.selectedReport).toBe(report);
     expect(component.isDateRangeReport).toBe(true);
@@ -58,9 +67,8 @@ describe("SelectReportComponent", () => {
   it("should hide date range filter when sql report does not have these args", () => {
     const report = new ReportEntity();
     report.mode = "sql";
-    component.reports = [report];
-
-    component.ngOnChanges({ reports: undefined });
+    fixture.componentRef.setInput("reports", [report]);
+    fixture.detectChanges();
 
     expect(component.selectedReport).toBe(report);
     expect(component.isDateRangeReport).toBe(false);
@@ -69,9 +77,8 @@ describe("SelectReportComponent", () => {
   it("should reset dates before calculation when sql report is not a DateRangeReport", () => {
     const report = new ReportEntity();
     report.mode = "sql";
-    component.reports = [report];
-
-    component.ngOnChanges({ reports: undefined });
+    fixture.componentRef.setInput("reports", [report]);
+    fixture.detectChanges();
     component.fromDate = new Date();
     component.toDate = new Date();
 
@@ -86,10 +93,9 @@ describe("SelectReportComponent", () => {
   it("should not reset dates before calculation when sql report is a DateRangeReport", () => {
     const report = new ReportEntity();
     report.mode = "sql";
-    component.reports = [report];
+    fixture.componentRef.setInput("reports", [report]);
     report.neededArgs = ["from", "to"];
-
-    component.ngOnChanges({ reports: undefined });
+    fixture.detectChanges();
     component.fromDate = new Date();
     component.toDate = new Date();
 

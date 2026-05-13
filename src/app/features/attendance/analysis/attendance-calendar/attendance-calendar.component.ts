@@ -1,10 +1,9 @@
 import {
   Component,
   DestroyRef,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
   ViewChild,
   ViewEncapsulation,
   ChangeDetectionStrategy,
@@ -72,16 +71,16 @@ import { Logging } from "#src/app/core/logging/logging.service";
     FontAwesomeModule,
   ],
 })
-export class AttendanceCalendarComponent implements OnChanges {
+export class AttendanceCalendarComponent {
   private entityMapper = inject(EntityMapperService);
   private formDialog = inject(FormDialogService);
   private analyticsService = inject(AnalyticsService);
   private attendanceService = inject(AttendanceService);
   private readonly destroyRef = inject(DestroyRef);
 
-  @Input() records: EventWithAttendance[] = [];
-  @Input() highlightForChild: string;
-  @Input() activity: Entity;
+  records = input<EventWithAttendance[]>([]);
+  highlightForChild = input<string>();
+  activity = input<Entity>();
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   minDate: Date;
@@ -101,6 +100,15 @@ export class AttendanceCalendarComponent implements OnChanges {
   };
 
   constructor() {
+    effect(() => {
+      this.records();
+      this.highlightForChild();
+      this.updateDateRange();
+      if (this.selectedDate) {
+        this.selectDay(this.selectedDate.toDate());
+      }
+    });
+
     this.statusControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((status) => {
@@ -144,11 +152,11 @@ export class AttendanceCalendarComponent implements OnChanges {
       );
     }
 
-    const event = this.records.find((e) => cellMoment.isSame(e.date, "day"));
-    if (event && this.highlightForChild) {
+    const event = this.records().find((e) => cellMoment.isSame(e.date, "day"));
+    if (event && this.highlightForChild()) {
       // coloring for individual child
       const eventAttendance = event.getAttendanceForParticipant(
-        this.highlightForChild,
+        this.highlightForChild(),
       );
 
       if (!eventAttendance?.status?.id) {
@@ -163,7 +171,7 @@ export class AttendanceCalendarComponent implements OnChanges {
         eventAttendance?.remarks && eventAttendance?.remarks !== "";
     }
 
-    if (event && !this.highlightForChild) {
+    if (event && !this.highlightForChild()) {
       // coloring based on averages across all children
       const stats = event.getAttendanceStats();
 
@@ -181,21 +189,12 @@ export class AttendanceCalendarComponent implements OnChanges {
     return classes;
   };
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("records")) {
-      this.updateDateRange();
-      if (this.selectedDate) {
-        this.selectDay(this.selectedDate.toDate());
-      }
-    }
-  }
-
   /**
    * restrict period available for user navigation to the months for which events are given
    * @private
    */
   private updateDateRange() {
-    const dates: Moment[] = this.records
+    const dates: Moment[] = this.records()
       .map((e) => e.date)
       .filter((d): d is Date => !!d)
       .map((d) => moment(d));
@@ -227,13 +226,13 @@ export class AttendanceCalendarComponent implements OnChanges {
       this.selectedEventStats = undefined;
     } else {
       this.selectedDate = moment(newDate);
-      this.selectedEvent = this.records.find((e) =>
+      this.selectedEvent = this.records().find((e) =>
         this.selectedDate.isSame(e.date, "day"),
       );
-      if (this.selectedEvent && this.highlightForChild) {
+      if (this.selectedEvent && this.highlightForChild()) {
         this.selectedEventAttendance = this.ensureParticipantInAttendance(
           this.selectedEvent,
-          this.highlightForChild,
+          this.highlightForChild(),
         );
         this.statusControl.setValue(
           this.selectedEventAttendance.status ?? null,
@@ -277,8 +276,12 @@ export class AttendanceCalendarComponent implements OnChanges {
   }
 
   createNewEvent() {
+    const activity = this.activity();
+    if (!activity) {
+      return;
+    }
     this.attendanceService
-      .createEventForActivity(this.activity, this.selectedDate.toDate())
+      .createEventForActivity(activity, this.selectedDate.toDate())
       .then((note) => {
         this.formDialog.openView(note.entity);
       });

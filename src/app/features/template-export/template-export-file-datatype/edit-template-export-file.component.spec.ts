@@ -58,9 +58,14 @@ describe("EditTemplateExportFileComponent", () => {
       id: "test",
       additional: {},
     };
-    component.entity = new Entity();
-    component.formFieldConfig = formFieldConfig; // Set directly first, somehow setup function is not getting things there in time for the child component ...
-    setupCustomFormControlEditComponent(component, "test", formFieldConfig);
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("formFieldConfig", formFieldConfig);
+    setupCustomFormControlEditComponent(
+      component,
+      "test",
+      formFieldConfig,
+      fixture,
+    );
     fixture.detectChanges();
   });
 

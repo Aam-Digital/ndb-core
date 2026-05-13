@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
 } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -41,8 +41,8 @@ export class EditTodoCompletionComponent
   extends CustomFormControlDirective<TodoCompletion>
   implements EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   private readonly entityFormService = inject(EntityFormService);
   private readonly todoService = inject(TodoService);
@@ -53,7 +53,7 @@ export class EditTodoCompletionComponent
   }
 
   get todo(): Todo {
-    return this.entity as Todo;
+    return this.entity() as Todo;
   }
 
   async completeTodo() {

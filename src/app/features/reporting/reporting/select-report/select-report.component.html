@@ -1,4 +1,4 @@
-@if (!reports || reports.length === 0) {
+@if (!reports() || reports()?.length === 0) {
   <div>
     <p i18n>Reports have not been configured for you yet.</p>
     <a
@@ -11,17 +11,17 @@
   </div>
 }
 
-@if (reports?.length > 0) {
+@if (reports()?.length > 0) {
   <div class="work-panel">
     <div class="flex-row flex-wrap gap-regular">
       <mat-form-field class="flex-grow">
         <mat-label i18n>Select Report</mat-label>
         <mat-select
           [(ngModel)]="selectedReport"
-          [disabled]="loading"
+          [disabled]="loading()"
           (ngModelChange)="reportChange()"
         >
-          @for (report of reports; track report.getId()) {
+          @for (report of reports(); track report.getId()) {
             <mat-option [value]="report">
               {{ report.title }}
             </mat-option>
@@ -44,7 +44,7 @@
         [disabled]="
           !selectedReport ||
           (isDateRangeReport && !fromDate && !toDate) ||
-          loading
+          loading()
         "
         (click)="calculate()"
         i18n="Calculate the results for a report"
@@ -63,7 +63,7 @@
         mat-stroked-button
         color="accent"
         class="primary-button"
-        [disabled]="!exportableData"
+        [disabled]="!exportableData()"
         (click)="openExportDialog()"
         style="float: right"
         angulartics2On="click"
@@ -80,7 +80,7 @@
       </button>
     </div>
     <div style="clear: both; padding-bottom: 5px"></div>
-    @if (loading) {
+    @if (loading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
   </div>

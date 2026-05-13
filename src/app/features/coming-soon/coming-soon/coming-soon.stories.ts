@@ -13,7 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ComingSoonComponent> = (args: ComingSoonComponent) => ({
+const Template: StoryFn<ComingSoonComponent> = (args) => ({
   component: ComingSoonComponent,
   props: args,
 });

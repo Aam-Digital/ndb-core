@@ -39,12 +39,12 @@ describe("EditAttendanceComponent", () => {
       control: attendanceForm,
     } as any;
 
-    component.formFieldConfig = {
+    fixture.componentRef.setInput("formFieldConfig", {
       id: "attendance",
       additional: {
         participant: { dataType: "entity", additional: "TestEntity" },
       },
-    };
+    });
     fixture.detectChanges();
   });
 

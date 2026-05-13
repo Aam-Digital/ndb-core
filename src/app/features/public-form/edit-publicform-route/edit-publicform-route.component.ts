@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import {
@@ -64,8 +64,8 @@ export class EditPublicformRouteComponent
 {
   private alertService = inject(AlertService);
 
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   prefixValue: string;
   private fullPrefixUrl: string;

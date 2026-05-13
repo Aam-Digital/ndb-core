@@ -4,8 +4,8 @@
       <mat-panel-title>
         <span
           [matTooltip]="docString"
-          (mouseover)="docString = stringify(doc)"
-          >{{ rev }}</span
+          (mouseover)="docString = stringify(doc())"
+          >{{ rev() }}</span
         >
       </mat-panel-title>
     </mat-expansion-panel-header>

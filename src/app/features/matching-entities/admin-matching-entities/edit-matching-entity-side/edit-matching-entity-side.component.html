@@ -2,7 +2,7 @@
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Select Record Type</mat-label>
     <app-entity-type-select
-      [value]="sideConfig.entityType"
+      [value]="sideConfig().entityType"
       (valueChange)="onEntityTypeChange($event)"
     >
     </app-entity-type-select>
@@ -38,7 +38,7 @@
       the required criteria (e.g. having a required status).
     </p>
     <app-conditions-editor
-      [conditions]="sideConfig.prefilter"
+      [conditions]="sideConfig().prefilter"
       [entityConstructor]="entityConstructor"
       (conditionsChange)="onPrefilterChange($event)"
     ></app-conditions-editor>

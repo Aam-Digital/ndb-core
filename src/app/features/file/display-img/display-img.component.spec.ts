@@ -31,43 +31,39 @@ describe("DisplayImgComponent", () => {
   it("should reset picture if child has none", () => {
     const withPicture = new TestEntity();
     withPicture["photo"] = "some-picture";
-    component.entity = withPicture;
-    component.imgProperty = "photo";
-
-    component.ngOnChanges({ entity: undefined });
+    fixture.componentRef.setInput("entity", withPicture);
+    fixture.componentRef.setInput("imgProperty", "photo");
+    fixture.detectChanges();
 
     expect(mockFileService.loadFile).toHaveBeenCalled();
-    expect(component.imgSrc).toBeDefined();
+    expect(component.imgSrc()).toBeDefined();
 
     mockFileService.loadFile.mockClear();
     // without picture
-    component.entity = new TestEntity();
-
-    component.ngOnChanges({ entity: undefined });
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.detectChanges();
 
     expect(mockFileService.loadFile).not.toHaveBeenCalled();
-    expect(component.imgSrc).toBeUndefined();
+    expect(component.imgSrc()).toBeUndefined();
   });
 
   it("should use remote URL directly without calling FileService", () => {
     const entity = new TestEntity();
     entity["photo"] = "https://example.com/logo.png";
-    component.entity = entity;
-    component.imgProperty = "photo";
-
-    component.ngOnChanges({ entity: undefined });
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("imgProperty", "photo");
+    fixture.detectChanges();
 
     expect(mockFileService.loadFile).not.toHaveBeenCalled();
-    expect(component.imgSrc).toBe("https://example.com/logo.png");
+    expect(component.imgSrc()).toBe("https://example.com/logo.png");
   });
 
   it("should use FileService for plain filename (not a URL)", () => {
     const entity = new TestEntity();
     entity["photo"] = "logo.png";
-    component.entity = entity;
-    component.imgProperty = "photo";
-
-    component.ngOnChanges({ entity: undefined });
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("imgProperty", "photo");
+    fixture.detectChanges();
 
     expect(mockFileService.loadFile).toHaveBeenCalled();
   });

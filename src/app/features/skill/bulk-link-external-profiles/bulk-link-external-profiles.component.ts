@@ -1,9 +1,8 @@
 import {
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
   ViewChild,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -71,7 +70,7 @@ import { MatProgressBar } from "@angular/material/progress-bar";
   templateUrl: "./bulk-link-external-profiles.component.html",
   styleUrl: "./bulk-link-external-profiles.component.scss",
 })
-export class BulkLinkExternalProfilesComponent implements OnChanges {
+export class BulkLinkExternalProfilesComponent {
   private readonly skillApi = inject(SkillApiService);
   private readonly dialog = inject(MatDialog);
   private readonly entityMapper = inject(EntityMapperService);
@@ -79,8 +78,9 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   /**
    * The bulk-selected entities for which to search external profiles.
    */
-  @Input() entities: Entity[];
-  @Input() config: FormFieldConfig;
+  entities = input<Entity[]>();
+  config = input<FormFieldConfig>();
+  private resolvedConfig: FormFieldConfig | undefined;
 
   private MAX_CONCURRENT_REQUESTS = 20;
 
@@ -93,32 +93,38 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entities) {
+  constructor() {
+    effect(() => {
+      this.entities();
+      this.config();
       this.init();
-    }
+    });
   }
 
   private init() {
-    if (!this.config && this.entities?.[0]) {
+    const entities = this.entities();
+    const config = this.config();
+
+    this.resolvedConfig = config;
+    if (!this.resolvedConfig && entities?.[0]) {
       // TODO: handle cases with multiple "external profile" fields (add dropdown to UI here?)
-      this.config = this.inferExternalProfileFieldFromEntitySchema(
-        this.entities[0].getSchema(),
+      this.resolvedConfig = this.inferExternalProfileFieldFromEntitySchema(
+        entities[0].getSchema(),
       );
     }
 
-    if (!this.entities || !this.config) {
+    if (!entities || !this.resolvedConfig) {
       // abort
       Logging.debug(
         "BulkLinkExternalProfilesComponent: aborting init due to missing entities or config",
-        this.entities,
-        this.config,
+        entities,
+        this.resolvedConfig,
       );
       return;
     }
 
     this.records = new MatTableDataSource(
-      this.entities.map((entity) => ({ entity }) as RecordMatching),
+      entities.map((entity) => ({ entity }) as RecordMatching),
     );
     this.matchedRecordsCount = 0;
 
@@ -141,6 +147,9 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   private async updateRecordWithMatches(
     record: RecordMatching,
   ): Promise<RecordMatching> {
+    if (!this.resolvedConfig) {
+      return record;
+    }
     await this.updateRecordWithCurrentlySelected(record);
 
     try {
@@ -148,7 +157,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
         this.skillApi.getExternalProfiles(
           this.skillApi.generateDefaultSearchParams(
             record.entity,
-            this.config.additional,
+            this.resolvedConfig.additional,
           ),
         ),
       );
@@ -191,7 +200,10 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
    * @private
    */
   private async updateRecordWithCurrentlySelected(record: RecordMatching) {
-    const existingExtProfileId = record.entity[this.config.id];
+    if (!this.resolvedConfig) {
+      return;
+    }
+    const existingExtProfileId = record.entity[this.resolvedConfig.id];
     if (!existingExtProfileId) {
       return;
     }
@@ -226,7 +238,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       .open(LinkExternalProfileDialogComponent, {
         data: {
           entity: record.entity,
-          config: this.config.additional,
+          config: this.resolvedConfig?.additional,
           possibleMatches: record.possibleMatches,
         } as LinkExternalProfileDialogData,
       })
@@ -240,19 +252,22 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   }
 
   async save() {
+    if (!this.records || !this.resolvedConfig) {
+      return;
+    }
     const newlyLinkedRecords = this.records.data.filter(
-      (r) => r.entity[this.config.id] !== r.selected?.id,
+      (r) => r.entity[this.resolvedConfig.id] !== r.selected?.id,
     );
 
     for (const record of newlyLinkedRecords) {
       const updatedEntity: Entity = record.entity;
-      updatedEntity[this.config.id] = record.selected?.id;
+      updatedEntity[this.resolvedConfig.id] = record.selected?.id;
 
       try {
         if (record.selected) {
           await this.skillApi.applyDataFromExternalProfile(
             record.selected, // if passed in as undefined, will reset the target values
-            this.config.additional,
+            this.resolvedConfig.additional,
             updatedEntity,
           );
         }

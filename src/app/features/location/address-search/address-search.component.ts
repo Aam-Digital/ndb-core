@@ -1,9 +1,8 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  output,
   ViewChild,
   OnInit,
   inject,
@@ -65,23 +64,13 @@ export class AddressSearchComponent implements OnInit {
   private location = inject(GeoService);
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  /**
-   * The search text, for which locations are looked up (as initial input to prefill the field).
-   */
-  @Input() set searchText(value: string) {
-    if (!(typeof value === "string")) {
-      Logging.debug("Invalid address searchText input", value);
-      return;
-    }
-
-    this._searchText = value;
-  }
-  _searchText: string = "";
+  /** The search text used to prefill the field. */
+  searchText = input<string>("");
 
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
-  @Output() locationSelected = new EventEmitter<{
+  locationSelected = output<{
     location: GeoLocation;
     userInput: string;
   }>();

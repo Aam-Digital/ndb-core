@@ -1,8 +1,8 @@
 import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -23,8 +23,9 @@ export interface AttendanceWeekDashboardSettingsConfig {
   templateUrl: "./attendance-week-dashboard-settings.component.html",
   styleUrls: ["./attendance-week-dashboard-settings.component.scss"],
 })
-export class AttendanceWeekDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl<AttendanceWeekDashboardSettingsConfig>;
+export class AttendanceWeekDashboardSettingsComponent {
+  formControl =
+    input.required<FormControl<AttendanceWeekDashboardSettingsConfig>>();
 
   localConfig: AttendanceWeekDashboardSettingsConfig = {
     daysOffset: 0,
@@ -33,16 +34,19 @@ export class AttendanceWeekDashboardSettingsComponent implements OnInit {
     attendanceStatusType: "",
   };
 
-  ngOnInit() {
-    this.localConfig = {
-      daysOffset: this.formControl.value?.daysOffset ?? 0,
-      periodLabel: this.formControl.value?.periodLabel ?? "",
-      label: this.formControl.value?.label ?? "",
-      attendanceStatusType: this.formControl.value?.attendanceStatusType ?? "",
-    };
+  constructor() {
+    effect(() => {
+      const formControl = this.formControl();
+      this.localConfig = {
+        daysOffset: formControl.value?.daysOffset ?? 0,
+        periodLabel: formControl.value?.periodLabel ?? "",
+        label: formControl.value?.label ?? "",
+        attendanceStatusType: formControl.value?.attendanceStatusType ?? "",
+      };
+    });
   }
 
   emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+    this.formControl().setValue({ ...this.localConfig });
   }
 }

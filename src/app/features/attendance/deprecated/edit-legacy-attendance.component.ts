@@ -1,7 +1,7 @@
 import {
   Component,
   inject,
-  Input,
+  input,
   OnInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -62,8 +62,8 @@ export class EditLegacyAttendanceComponent
   extends CustomFormControlDirective<string[]>
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Note;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Note>();
 
   showAttendance = false;
   mobile = false;
@@ -125,7 +125,7 @@ export class EditLegacyAttendanceComponent
           this.showAttendance = !!val?.isMeeting;
           if (this.showAttendance) {
             let childrenAttendanceForm = new FormControl(
-              this.entity.copy()["childrenAttendance"],
+              this.entity()?.copy()["childrenAttendance"],
             );
             this.parent.addControl(
               "childrenAttendance",

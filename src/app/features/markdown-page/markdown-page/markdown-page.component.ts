@@ -18,9 +18,9 @@
 import {
   Component,
   inject,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
   signal,
 } from "@angular/core";
 import { MarkdownPageModule } from "../markdown-page.module";
@@ -38,26 +38,43 @@ import { MarkdownContent } from "../markdown-content";
   templateUrl: "./markdown-page.component.html",
   imports: [MarkdownPageModule],
 })
-export class MarkdownPageComponent implements OnInit {
+export class MarkdownPageComponent {
   /** filepath to be loaded as markdown */
-  @Input() markdownFile?: string;
+  markdownFile = input<string>();
   /** markdown entity content to be displayed */
-  @Input() markdownEntityId?: string;
+  markdownEntityId = input<string>();
 
   markdownContent = signal<string>("");
 
   private entityMapper = inject(EntityMapperService);
 
-  async ngOnInit(): Promise<void> {
-    if (this.markdownEntityId) {
-      const markdownEntity = await this.entityMapper.load(
-        MarkdownContent,
-        this.markdownEntityId,
-      );
-
-      if (markdownEntity) {
-        this.markdownContent.set(markdownEntity.content);
+  constructor() {
+    effect((onCleanup) => {
+      const markdownEntityId = this.markdownEntityId();
+      if (!markdownEntityId) {
+        this.markdownContent.set("");
+        return;
       }
+
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.loadEntityContent(markdownEntityId, () => cancelled);
+    });
+  }
+
+  private async loadEntityContent(
+    entityId: string,
+    isCancelled: () => boolean,
+  ): Promise<void> {
+    const markdownEntity = await this.entityMapper.load(
+      MarkdownContent,
+      entityId,
+    );
+    if (isCancelled()) {
+      return;
     }
+    this.markdownContent.set(markdownEntity?.content ?? "");
   }
 }

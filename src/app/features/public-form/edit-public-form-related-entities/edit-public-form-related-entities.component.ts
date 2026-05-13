@@ -2,9 +2,9 @@ import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-ed
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
-  Input,
-  OnInit,
+  input,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -43,12 +43,10 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 })
 export class EditPublicFormRelatedEntitiesComponent
   extends CustomFormControlDirective<string[]>
-  implements OnInit, EditComponent
+  implements EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
-  entityConstructor: EntityConstructor;
-  relatedRefFields: FormFieldConfig[] = [];
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   private entities = inject(EntityRegistry);
 
@@ -60,19 +58,20 @@ export class EditPublicFormRelatedEntitiesComponent
     return this.formControl.value || [];
   }
 
-  ngOnInit(): void {
-    if (!this.entity) return;
+  readonly relatedRefFields = computed<FormFieldConfig[]>(() => {
+    const entity = this.entity();
+    if (!entity) return [];
+    const entityConstructor = this.entities.get(entity["entity"]);
+    if (!entityConstructor) return [];
 
-    this.entityConstructor = this.entities.get(this.entity["entity"]);
-
-    this.relatedRefFields = Array.from(this.entityConstructor.schema.entries())
+    return Array.from(entityConstructor.schema.entries())
       .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
       .map(([id, schema]) => ({
         id,
         label: schema.label,
         additional: schema.additional,
       }));
-  }
+  });
 
   onSelectionChange(selectedIds: string[]): void {
     this.formControl.patchValue(selectedIds);

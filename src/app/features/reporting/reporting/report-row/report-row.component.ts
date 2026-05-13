@@ -1,4 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  effect,
+  input,
+} from "@angular/core";
 import { getGroupingInformationString, ReportRow } from "../../report-row";
 import { FlatTreeControl } from "@angular/cdk/tree";
 import {
@@ -22,9 +27,7 @@ interface FlattenedReportRow extends ReportRow {
   imports: [MatTableModule, MatButtonModule, FontAwesomeModule],
 })
 export class ReportRowComponent {
-  @Input() set rows(rows: ReportRow[]) {
-    this.dataSource.data = rows;
-  }
+  rows = input<ReportRow[]>([]);
 
   displayedColumns: string[] = ["name", "count"];
 
@@ -44,4 +47,10 @@ export class ReportRowComponent {
     (row) => row.isExpandable,
   );
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  constructor() {
+    effect(() => {
+      this.dataSource.data = this.rows();
+    });
+  }
 }
