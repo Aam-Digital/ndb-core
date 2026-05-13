@@ -66,6 +66,7 @@ export class SupportComponent implements OnInit {
   dbName: string;
   dbAdapter: string;
   useIndexeddbAdapter: boolean = environment.use_indexeddb_adapter;
+  sessionType: string = environment.session_type;
 
   ngOnInit() {
     this.userAgent = this.window.navigator.userAgent;
@@ -172,6 +173,7 @@ export class SupportComponent implements OnInit {
         dbName: this.dbName,
         dbAdapter: this.dbAdapter,
         useIndexeddbAdapter: this.useIndexeddbAdapter,
+        sessionType: this.sessionType,
         timestamp: new Date().toISOString(),
       },
     };
