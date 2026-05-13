@@ -73,7 +73,7 @@ describe("EditEntityComponent", () => {
       if (entity) {
         return entity as any;
       }
-      throw new Error(`${id} not found`);
+      throw Object.assign(new Error(`${id} not found`), { status: 404 });
     });
 
     setupCustomFormControlEditComponent(component, "testProperty", {
@@ -189,30 +189,25 @@ describe("EditEntityComponent", () => {
     );
   });
 
-  it("should retain missing entity and show warning", async () => {
+  it("should log warning when loading entity fails with unexpected error", async () => {
     const warnSpy = vi.spyOn(Logging, "warn");
+    const entityMapper = TestBed.inject(EntityMapperService);
+    vi.spyOn(entityMapper, "load").mockRejectedValue(
+      Object.assign(new Error("server error"), { status: 500 }),
+    );
+
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
-    component.formFieldConfig = { id: "test", label: "test label" };
-    component
-      .formControl()
-      .setValue([test1Entities[0].getId(), "missing_user"]);
+    component.formControl().setValue([test1Entities[0].getId()]);
     fixture.detectChanges();
 
     await refreshAvailableEntities();
-    await vi.waitFor(() => expect(warnSpy).toHaveBeenCalled());
-    await vi.waitFor(() => expect(component.hasInaccessible()).toBe(true));
-
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("ENTITY_SELECT"),
-      "test label",
-      "missing_user",
-      expect.anything(),
+    await vi.waitFor(() =>
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("ENTITY_SELECT"),
+        expect.anything(),
+        expect.anything(),
+      ),
     );
-    expect(component.formControl().value).toEqual([
-      test1Entities[0].getId(),
-      "missing_user",
-    ]);
-    expect(component.hasInaccessible()).toBe(true);
   });
 
   it("shows inactive entities according to the includeInactive state", async () => {

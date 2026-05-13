@@ -53,7 +53,8 @@ export class DefaultValueService {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {
         Logging.warn(
-          `DefaultValue strategy "${fieldConfig.defaultValue?.mode}" not found`,
+          "DefaultValue strategy not found",
+          fieldConfig.defaultValue?.mode,
         );
       }
     }

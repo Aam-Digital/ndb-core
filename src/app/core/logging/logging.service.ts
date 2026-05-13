@@ -36,10 +36,11 @@ export class LoggingService {
       return;
     }
 
-    const defaultOptions = {
+    const defaultOptions: Sentry.BrowserOptions = {
       release: "ndb-core@" + environment.appVersion,
       transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
+      beforeSend: enrichSentryEvent,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -197,18 +198,32 @@ export class LoggingService {
     ...context: any[]
   ) {
     if (logLevel === LogLevel.ERROR) {
+      // Prefer a real Error from context (e.g. Logging.error("message", err))
+      const errFromContext = context.find((c) => c instanceof Error);
       if (message instanceof Error) {
-        Sentry.captureException(message);
+        Sentry.captureException(message, {
+          extra: context.length > 0 ? { context } : undefined,
+        });
+      } else if (errFromContext) {
+        Sentry.captureException(errFromContext, {
+          extra: { message, context },
+        });
       } else {
         Sentry.captureException(
-          new Error(message?.message ?? message?.error ?? message),
+          new Error(message?.message ?? message?.error ?? String(message)),
+          { extra: context.length > 0 ? { context } : undefined },
         );
       }
     } else {
-      Sentry.captureMessage(message, {
-        level: this.translateLogLevel(logLevel),
-        extra: context.length > 0 ? { context } : undefined,
-      });
+      Sentry.captureMessage(
+        typeof message === "string"
+          ? message
+          : String(message?.message ?? message),
+        {
+          level: this.translateLogLevel(logLevel),
+          extra: context.length > 0 ? { context } : undefined,
+        },
+      );
     }
   }
 
@@ -268,3 +283,29 @@ interface SentryBreadcrumbHint {
 }
 
 export const Logging = new LoggingService();
+
+/**
+ * Sentry `beforeSend` hook that enriches events with structured extra data
+ * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
+ */
+function enrichSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent | null {
+  // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
+  // so that details like entityId, status, reason are visible in Sentry's "Additional Data"
+  const err = hint.originalException;
+  if (err && typeof err === "object") {
+    const extras: Record<string, unknown> = {};
+    for (const key of ["entityId", "status", "reason", "name"]) {
+      if (key in err && (err as any)[key] !== undefined) {
+        extras[key] = (err as any)[key];
+      }
+    }
+    if (Object.keys(extras).length > 0) {
+      event.extra = { ...event.extra, ...extras };
+    }
+  }
+
+  return event;
+}

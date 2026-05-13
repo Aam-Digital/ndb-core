@@ -1,6 +1,9 @@
 <div class="flex-row align-center gap-small">
   @if (
-    !(entity?.anonymized && formFieldConfig?.anonymize === "retain-anonymized")
+    !(
+      entity()?.anonymized &&
+      formFieldConfig()?.anonymize === "retain-anonymized"
+    )
   ) {
     <input
       matInput
