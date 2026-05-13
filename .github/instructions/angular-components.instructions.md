@@ -23,9 +23,9 @@ Use `input()` and `output()` functions — **not** `@Input()` / `@Output()` deco
 
 ```typescript
 export class ExampleComponent {
-  title = input<string>();           // optional input
-  entity = input.required<Child>();  // required input
-  saved = output<Child>();           // output event
+  title = input<string>(); // optional input
+  entity = input.required<Child>(); // required input
+  saved = output<Child>(); // output event
 }
 ```
 
@@ -62,25 +62,26 @@ Use native control flow — **not** structural directives (`*ngIf`, `*ngFor`, `*
 
 ```html
 @if (entity(); as entity) {
-  <app-entity-details [entity]="entity" />
-}
-
-@for (item of items(); track item.getId()) {
-  <app-item-card [item]="item" />
+<app-entity-details [entity]="entity" />
+} @for (item of items(); track item.getId()) {
+<app-item-card [item]="item" />
 } @empty {
-  <p i18n>No items found.</p>
-}
-
-@switch (status()) {
-  @case ("active") { <span i18n>Active</span> }
-  @case ("inactive") { <span i18n>Inactive</span> }
-}
+<p i18n>No items found.</p>
+} @switch (status()) { @case ("active") { <span i18n>Active</span> } @case
+("inactive") { <span i18n>Inactive</span> } }
 ```
 
 ## Canonical Component Structure
 
 ```typescript
-import { Component, ChangeDetectionStrategy, computed, inject, input, output } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  computed,
+  inject,
+  input,
+  output,
+} from "@angular/core";
 
 @Component({
   selector: "app-example",
@@ -114,6 +115,7 @@ export class ExampleComponent {
 - Use `$localize` or i18n markers for all user-facing strings
   - Do not add context labels unless the purpose of the i18n string is truly ambiguous without it
 - Use `Logging` (from `#src/app/core/logging/logging.service`) — never `console.log`
+- Use `<app-fa-dynamic-icon>` for icons — never `<fa-icon>` directly
 
 ## SCSS Styling
 
