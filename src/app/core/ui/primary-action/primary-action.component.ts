@@ -11,6 +11,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "../../admin/admin-primary-action/primary-action-config";
@@ -32,6 +33,7 @@ import { PrimaryActionService } from "../../admin/admin-primary-action/primary-a
     Angulartics2Module,
     DisableEntityOperationDirective,
     FontAwesomeModule,
+    FaDynamicIconComponent,
   ],
 })
 export class PrimaryActionComponent implements OnDestroy {
