@@ -13,7 +13,7 @@
     [matSortDirection]="_sortBy()?.direction"
     class="full-width table"
   >
-    @for (col of _columns; track col.id) {
+    @for (col of _columns(); track col.id) {
       <ng-container [matColumnDef]="col.id">
         <th
           mat-header-cell
@@ -105,7 +105,7 @@
   <app-list-paginator
     class="table-footer"
     [dataSource]="recordsDataSource"
-    [idForSavingPagination]="idForSavingPagination"
+    [idForSavingPagination]="idForSavingPagination()"
   ></app-list-paginator>
 
   <!--

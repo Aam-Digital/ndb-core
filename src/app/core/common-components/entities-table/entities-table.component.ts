@@ -92,11 +92,18 @@ export class EntitiesTableComponent<
   private readonly tableStateUrl = inject(TableStateUrlService);
 
   records = input<T[]>();
-  customColumns = input<ColumnConfig[]>([]);
+  customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
+    transform: (value) => value ?? [],
+  });
   columnsToDisplay = input<string[]>();
   entityType = input<EntityConstructor<T>>();
   sortBy = input<Sort>();
-  filter = input<DataFilter<T>>();
+  filter = input<DataFilter<T>, DataFilter<T> | undefined>(
+    {},
+    {
+      transform: (value) => value ?? {},
+    },
+  );
   filterFreetext = input<string>();
   showEntityColor = input<boolean>(false);
   getBackgroundColor = input<(rec: T) => string>();
@@ -118,11 +125,13 @@ export class EntitiesTableComponent<
 
   private lastSelectedRow: TableRow<T> | null = null;
   private lastSelection: boolean = null;
-  _records: T[] = [];
-  _customColumns: FormFieldConfig[] = [];
-  _columns: FormFieldConfig[] = [];
-  _filter: DataFilter<T> = {};
-  idForSavingPagination: string;
+  readonly _customColumns = signal<FormFieldConfig[]>([]);
+  readonly _columns = signal<FormFieldConfig[]>([]);
+  readonly idForSavingPagination = computed(() =>
+    this._customColumns()
+      .map((col) => col.id)
+      .join(""),
+  );
 
   readonly isLoading = signal<boolean>(true);
   readonly _columnsToDisplay = signal<string[]>([]);
@@ -197,11 +206,12 @@ export class EntitiesTableComponent<
       const selectable = this.selectable();
       const editable = this.editable();
 
-      this._customColumns = (rawCustomColumns ?? []).map((c) =>
+      const mappedCustomColumns = rawCustomColumns.map((c) =>
         entityType
           ? this.entityFormService.extendFormFieldConfig(c, entityType)
           : toFormFieldConfig(c),
       );
+      this._customColumns.set(mappedCustomColumns);
 
       const entityColumns = entityType?.schema
         ? [...entityType.schema.entries()].map(
@@ -209,24 +219,21 @@ export class EntitiesTableComponent<
           )
         : [];
 
-      this._columns = [
+      const mergedColumns = [
         ...entityColumns.filter(
           (c) =>
-            !this._customColumns.some((customCol) => customCol.id === c.id),
+            !mappedCustomColumns.some((customCol) => customCol.id === c.id),
         ),
-        ...this._customColumns,
+        ...mappedCustomColumns,
       ];
-      this._columns.forEach((c) =>
+      mergedColumns.forEach((c) =>
         this.disableSortingHeaderForAdvancedFields(c),
       );
-
-      this.idForSavingPagination = this._customColumns
-        .map((col) => col.id)
-        .join("");
+      this._columns.set(mergedColumns);
 
       let colsToDisplay = rawColumnsToDisplay;
       if (!colsToDisplay || colsToDisplay.length === 0) {
-        colsToDisplay = this._customColumns
+        colsToDisplay = mappedCustomColumns
           .filter((c) => !c.hideFromTable)
           .map((c) => c.id);
       }
@@ -248,9 +255,8 @@ export class EntitiesTableComponent<
       const records = this.records();
       this.showInactive(); // track — consumed inside updateFilteredData via addActiveInactiveFilter
       if (records === undefined || records === null) return;
-      this._records = records;
-      this._filter = { ...(this.filter() ?? {}) };
-      this.updateFilteredData();
+      const effectiveFilter = { ...this.filter() };
+      this.updateFilteredData(records, effectiveFilter);
       this.isLoading.set(false);
     });
 
@@ -275,10 +281,10 @@ export class EntitiesTableComponent<
     });
   }
 
-  private updateFilteredData() {
-    this.addActiveInactiveFilter(this._filter);
-    const filterPredicate = this.filterService.getFilterPredicate(this._filter);
-    const filteredData = this._records.filter(filterPredicate);
+  private updateFilteredData(records: T[], filter: DataFilter<T>) {
+    this.addActiveInactiveFilter(filter);
+    const filterPredicate = this.filterService.getFilterPredicate(filter);
+    const filteredData = records.filter(filterPredicate);
     this.recordsDataSource.data = filteredData.map((record) => ({ record }));
     this.emitFilteredRecordsFromDataSource();
   }
@@ -410,7 +416,7 @@ export class EntitiesTableComponent<
   showEntity(entity: T) {
     switch (this.clickMode()) {
       case "popup":
-        this.formDialog.openFormPopup(entity, this._customColumns);
+        this.formDialog.openFormPopup(entity, this._customColumns());
         break;
       case "popup-details":
         this.formDialog.openView(entity, "EntityDetails");
@@ -450,10 +456,10 @@ export class EntitiesTableComponent<
     const sortBy = colsToDisplay
       .filter((columnId) => !columnId.startsWith("__"))
       .find((columnId) => {
-        const column = this._columns.find((c) => c.id === columnId);
+        const column = this._columns().find((c) => c.id === columnId);
         return !column?.noSorting;
       });
-    const sortByColumn = this._columns.find((c) => c.id === sortBy);
+    const sortByColumn = this._columns().find((c) => c.id === sortBy);
 
     let sortDirection: SortDirection = "asc";
     if (

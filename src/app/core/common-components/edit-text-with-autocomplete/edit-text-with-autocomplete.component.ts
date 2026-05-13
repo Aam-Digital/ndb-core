@@ -2,9 +2,9 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   inject,
   input,
-  OnInit,
   signal,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
@@ -64,7 +64,7 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
 })
 export class EditTextWithAutocompleteComponent
   extends CustomFormControlDirective<string>
-  implements OnInit, EditComponent
+  implements EditComponent
 {
   private entityMapperService = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
@@ -118,6 +118,16 @@ export class EditTextWithAutocompleteComponent
     return this.ngControl.control as FormControl<string>;
   }
 
+  constructor() {
+    super();
+    effect(() => {
+      this.additional = this.formFieldConfig().additional;
+      if (!this.formControl.value) {
+        void this.initAutocomplete();
+      }
+    });
+  }
+
   keyup() {
     this.lastValue = this.formControl.value;
     this.updateAutocomplete();
@@ -141,23 +151,17 @@ export class EditTextWithAutocompleteComponent
     }
   }
 
-  async ngOnInit() {
-    // Initialize additional configuration from formFieldConfig
-    this.additional = this.formFieldConfig().additional;
-
-    if (!this.formControl.value) {
-      // adding new entry - enable autocomplete
-      const entityType = this.additional.entityType;
-      const entities = await this.entityMapperService.loadType(entityType);
-      const sortedEntities = [...entities].sort((e1, e2) =>
-        e1.toString().localeCompare(e2.toString()),
-      );
-      this.entities.set(sortedEntities);
-      this.autocompleteEntities.set(sortedEntities);
-      this.autocompleteDisabled.set(false);
-      this.currentValues = this.parent.getRawValue();
-      this.originalValues = this.currentValues;
-    }
+  async initAutocomplete() {
+    const entityType = this.additional.entityType;
+    const entities = await this.entityMapperService.loadType(entityType);
+    const sortedEntities = [...entities].sort((e1, e2) =>
+      e1.toString().localeCompare(e2.toString()),
+    );
+    this.entities.set(sortedEntities);
+    this.autocompleteEntities.set(sortedEntities);
+    this.autocompleteDisabled.set(false);
+    this.currentValues = this.parent.getRawValue();
+    this.originalValues = this.currentValues;
   }
 
   async selectEntity(selected: Entity) {

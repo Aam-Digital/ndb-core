@@ -49,19 +49,15 @@ export class ViewTitleComponent implements AfterViewInit {
   /**
    * whether instead of a basic back to previous page navigation the back button should navigate to logical parent page
    */
-  navigateToParentBehaviour: boolean = false;
+  navigateToParentBehaviour = input<boolean>(false);
 
-  readonly parentUrl: string;
+  readonly parentUrl = computed(() => this.findParentUrl());
 
   protected readonly isBackButtonDisabled = computed(
     () => this.disableBackButton() || !!this.viewContext?.isDialog,
   );
 
   displayInPlace = input<boolean>(false);
-
-  constructor() {
-    this.parentUrl = this.findParentUrl();
-  }
 
   ngAfterViewInit(): void {
     if (this.viewContext && !this.displayInPlace()) {
@@ -81,8 +77,9 @@ export class ViewTitleComponent implements AfterViewInit {
   }
 
   async navigateBack() {
-    if (this.navigateToParentBehaviour && this.parentUrl) {
-      await this.router.navigate([this.parentUrl]);
+    const parentUrl = this.parentUrl();
+    if (this.navigateToParentBehaviour() && parentUrl) {
+      await this.router.navigate([parentUrl]);
     } else {
       this.location.back();
     }

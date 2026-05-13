@@ -9,7 +9,7 @@ import {
   effect,
   inject,
   input,
-  untracked,
+  signal,
   ViewEncapsulation,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -75,10 +75,13 @@ export class EntityFormComponent<T extends Entity = Entity> {
    */
   fullWidth = input<boolean>(false);
 
+  readonly entityState = signal<T | undefined>(undefined);
+  readonly isEntityLocked = computed(() => !!this.entityState()?.anonymized);
+
   /** Field groups filtered by the current user's permissions */
   readonly filteredFieldGroups = computed<FieldGroup[]>(() => {
     const groups = this.fieldGroups();
-    const entity = this.entity();
+    const entity = this.entityState();
     if (!groups || !entity) return groups ?? [];
     return this.filterFieldGroupsByPermissions(groups, entity);
   });
@@ -87,8 +90,12 @@ export class EntityFormComponent<T extends Entity = Entity> {
   private changesSubscription: Subscription;
 
   constructor() {
+    effect(() => {
+      this.entityState.set(this.entity());
+    });
+
     effect((onCleanup) => {
-      const entity = this.entity();
+      const entity = this.entityState();
       if (!entity) return;
       this.changesSubscription?.unsubscribe();
       const sub = this.entityMapper
@@ -99,15 +106,17 @@ export class EntityFormComponent<T extends Entity = Entity> {
           untilDestroyed(this),
         )
         .subscribe(({ entity: updated }) => this.applyChanges(updated as T));
+      this.changesSubscription = sub;
       onCleanup(() => sub.unsubscribe());
     });
 
     effect((onCleanup) => {
       const form = this.form();
-      const entity = this.entity();
       if (!form) return;
       this.initialFormValues = form.formGroup.getRawValue();
-      untracked(() => this.disableForLockedEntity(entity, form));
+      if (this.isEntityLocked()) {
+        form.formGroup.disable();
+      }
 
       const sub = form.onFormStateChange
         .pipe(
@@ -125,8 +134,13 @@ export class EntityFormComponent<T extends Entity = Entity> {
   }
 
   private async applyChanges(externallyUpdatedEntity: T) {
+    const inputEntity = this.entity();
+
     if (this.formIsUpToDate(externallyUpdatedEntity)) {
-      Object.assign(this.entity(), externallyUpdatedEntity);
+      if (inputEntity) {
+        Object.assign(inputEntity, externallyUpdatedEntity);
+      }
+      this.entityState.set(externallyUpdatedEntity);
       return;
     }
 
@@ -152,7 +166,10 @@ export class EntityFormComponent<T extends Entity = Entity> {
     }
 
     // apply update to all pristine (not user-edited) fields and update base entity (to avoid conflicts when saving)
-    Object.assign(this.entity(), externallyUpdatedEntity);
+    if (inputEntity) {
+      Object.assign(inputEntity, externallyUpdatedEntity);
+    }
+    this.entityState.set(externallyUpdatedEntity);
     Object.assign(this.initialFormValues, externallyUpdatedEntity);
     this.form().formGroup.reset(externallyUpdatedEntity as any);
 
@@ -197,18 +214,5 @@ export class EntityFormComponent<T extends Entity = Entity> {
       entityValue === formValue ||
       JSON.stringify(entityValue) === JSON.stringify(formValue)
     );
-  }
-
-  /**
-   * Disable the form for certain states of the entity, like it being already anonymized.
-   * @private
-   */
-  private disableForLockedEntity(
-    entity: Entity | undefined,
-    form: EntityForm<T>,
-  ) {
-    if (entity?.anonymized) {
-      form.formGroup.disable();
-    }
   }
 }

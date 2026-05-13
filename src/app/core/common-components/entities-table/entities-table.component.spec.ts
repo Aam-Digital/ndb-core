@@ -241,18 +241,18 @@ describe("EntitiesTableComponent", () => {
     fixture.componentRef.setInput("customColumns", [customField]);
     fixture.detectChanges();
 
-    expect(component._columns.find((c) => c.id === customField.id).label).toBe(
-      customField.label,
-    );
+    expect(
+      component._columns().find((c) => c.id === customField.id).label,
+    ).toBe(customField.label);
   });
 
   it("should set noSorting if dataType cannot be sorted properly", () => {
     fixture.componentRef.setInput("entityType", Note);
     fixture.detectChanges();
 
-    expect(component._columns.find((c) => c.id === "children").noSorting).toBe(
-      true,
-    );
+    expect(
+      component._columns().find((c) => c.id === "children").noSorting,
+    ).toBe(true);
   });
 
   it("should navigate to '/new' route on newly created entities", () => {

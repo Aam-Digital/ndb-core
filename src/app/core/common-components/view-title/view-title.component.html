@@ -1,6 +1,8 @@
 <ng-template #template>
   <div class="container flex-row">
-    @if ((parentUrl || !navigateToParentBehaviour) && !isBackButtonDisabled()) {
+    @if (
+      (parentUrl() || !navigateToParentBehaviour()) && !isBackButtonDisabled()
+    ) {
       <button
         mat-icon-button
         (click)="navigateBack()"

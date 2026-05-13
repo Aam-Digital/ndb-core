@@ -1,10 +1,10 @@
 import {
   Component,
-  OnInit,
   ViewChild,
   ChangeDetectionStrategy,
   effect,
   input,
+  signal,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -20,16 +20,22 @@ import { MatTableDataSource } from "@angular/material/table";
   styleUrls: ["./list-paginator.component.scss"],
   imports: [MatPaginatorModule],
 })
-export class ListPaginatorComponent<E> implements OnInit {
+export class ListPaginatorComponent<E> {
   readonly LOCAL_STORAGE_KEY = "PAGINATION-";
   readonly pageSizeOptions = [10, 20, 50, 100];
 
   dataSource = input<MatTableDataSource<E>>();
   idForSavingPagination = input<string>();
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  private readonly paginatorReady = signal(false);
+  @ViewChild(MatPaginator, { static: true })
+  set paginatorRef(paginator: MatPaginator) {
+    this.paginator = paginator;
+    this.paginatorReady.set(!!paginator);
+  }
+  paginator: MatPaginator;
 
-  pageSize = 10;
+  readonly pageSize = signal(10);
 
   constructor() {
     effect(() => {
@@ -39,24 +45,21 @@ export class ListPaginatorComponent<E> implements OnInit {
     });
 
     effect(() => {
-      if (this.paginator) {
-        this.bindPaginator(this.dataSource());
-      }
+      this.paginatorReady();
+      this.bindPaginator(this.dataSource());
     });
   }
 
-  ngOnInit() {
-    this.bindPaginator(this.dataSource());
-  }
-
   onPaginateChange(event: PageEvent) {
-    this.pageSize = event.pageSize;
-    this.savePageSize(this.pageSize);
+    this.pageSize.set(event.pageSize);
+    this.savePageSize(this.pageSize());
   }
 
   private applyUserPaginationSettings() {
     const savedSize = this.getSavedPageSize();
-    this.pageSize = savedSize && savedSize !== -1 ? savedSize : this.pageSize;
+    this.pageSize.set(
+      savedSize && savedSize !== -1 ? savedSize : this.pageSize(),
+    );
   }
 
   private getSavedPageSize(): number {

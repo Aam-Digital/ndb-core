@@ -46,13 +46,13 @@ describe("ListPaginatorComponent", () => {
     fixture.componentRef.setInput("idForSavingPagination", "c1");
     fixture.detectChanges();
 
-    expect(component.pageSize).toBe(11);
+    expect(component.pageSize()).toBe(11);
     expect(component.paginator.pageSize).toBe(11);
 
     fixture.componentRef.setInput("idForSavingPagination", "c2");
     fixture.detectChanges();
 
-    expect(component.pageSize).toBe(12);
+    expect(component.pageSize()).toBe(12);
     expect(component.paginator.pageSize).toBe(12);
   });
 
