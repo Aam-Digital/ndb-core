@@ -195,6 +195,7 @@
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
                             <code>MatInputModule</code>
+                            <code>MatFormFieldModule</code>
                                 <code><a href="https://angular.io/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
                 </td>
             </tr>
@@ -407,7 +408,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:30</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:39</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -1772,7 +1773,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts:41</a></div>
                                 </td>
                             </tr>
 
@@ -1790,8 +1791,17 @@ import {
   input,
   OnInit,
 } from &quot;@angular/core&quot;;
-import { FormControl, ReactiveFormsModule, Validators } from &quot;@angular/forms&quot;;
-import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
+import {
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from &quot;@angular/forms&quot;;
+import {
+  MatFormFieldControl,
+  MatFormFieldModule,
+} from &quot;@angular/material/form-field&quot;;
 import { MatInputModule } from &quot;@angular/material/input&quot;;
 import { FormFieldConfig } from &quot;../../../common-components/entity-form/FormConfig&quot;;
 import { DynamicComponent } from &quot;../../../config/dynamic-components/dynamic-component.decorator&quot;;
@@ -1803,7 +1813,7 @@ import { EditComponent } from &quot;../../../entity/entity-field-edit/dynamic-ed
   templateUrl: &quot;./edit-email.component.html&quot;,
   styleUrls: [&quot;./edit-email.component.scss&quot;],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatInputModule, ReactiveFormsModule],
+  imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditEmailComponent },
   ],
@@ -1819,8 +1829,22 @@ export class EditEmailComponent
   }
 
   ngOnInit() {
-    this.formControl.addValidators([Validators.email]);
+    this.formControl.addValidators([emailValidatorWithMessage]);
   }
+}
+
+function emailValidatorWithMessage(
+  control: AbstractControl,
+): ValidationErrors | null {
+  const emailError &#x3D; Validators.email(control);
+  if (emailError) {
+    return {
+      email: {
+        errorMessage: $localize&#x60;:form field validation error:Please enter a valid email&#x60;,
+      },
+    };
+  }
+  return null;
 }
 </code></pre>
     </div>
