@@ -1,4 +1,3 @@
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -50,7 +49,7 @@ export function buildColumnState<T extends Entity>(
       )
     : [];
 
-  const mergedColumns = normalizeSortingRules([
+  const mergedColumns = [
     ...entityColumns.filter(
       (column) =>
         !mappedCustomColumns.some(
@@ -58,7 +57,7 @@ export function buildColumnState<T extends Entity>(
         ),
     ),
     ...mappedCustomColumns,
-  ]);
+  ];
 
   const columnsToDisplay = buildColumnsToDisplay({
     explicitColumnsToDisplay: params.columnsToDisplay,
@@ -116,22 +115,4 @@ function mapCustomColumns<T extends Entity>(
       ? params.extendFormFieldConfig(column, params.entityType)
       : toFormFieldConfig(column),
   );
-}
-
-function normalizeSortingRules(columns: FormFieldConfig[]): FormFieldConfig[] {
-  return columns.map((column) => {
-    if (column.viewComponent === "DisplayAge") {
-      return column;
-    }
-
-    if (
-      column.isArray ||
-      column.dataType === EntityDatatype.dataType ||
-      !column.dataType
-    ) {
-      return { ...column, noSorting: true };
-    }
-
-    return column;
-  });
 }

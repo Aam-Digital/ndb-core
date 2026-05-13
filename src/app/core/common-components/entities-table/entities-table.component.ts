@@ -132,9 +132,8 @@ export class EntitiesTableComponent<
   readonly _customColumns = computed<FormFieldConfig[]>(
     () => this.columnState().customColumns,
   );
-  readonly _columns = computed<FormFieldConfig[]>(
-    () => this.columnState().columns,
-  );
+  /** Columns with sorting rules applied (managed by the sort store). */
+  readonly _columns = this.sortStore.columns;
   readonly _columnsToDisplay = computed<string[]>(
     () => this.columnState().columnsToDisplay,
   );
@@ -181,6 +180,7 @@ export class EntitiesTableComponent<
     return tableSort<T, keyof T>(rows, {
       active: sort.active as keyof T,
       direction: sort.direction,
+      sortValueFns: this.sortStore.sortValueFns(),
     });
   });
 
@@ -211,7 +211,7 @@ export class EntitiesTableComponent<
     // Connect sort store
     this.sortStore.connect({
       columnsToDisplay: this._columnsToDisplay,
-      columns: this._columns,
+      columns: computed(() => this.columnState().columns),
       externalSort: this.sortBy,
     });
 
@@ -309,6 +309,7 @@ export class EntitiesTableComponent<
       tableSort<T, keyof T>(data, {
         active: (sort.active as keyof T) ?? "",
         direction: sort.direction,
+        sortValueFns: this.sortStore.sortValueFns(),
       });
     dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);

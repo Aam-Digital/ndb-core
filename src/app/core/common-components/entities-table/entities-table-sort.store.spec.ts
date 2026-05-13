@@ -1,9 +1,37 @@
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { toFormFieldConfig } from "../entity-form/FormConfig";
 import { buildColumnState } from "./entities-table-state.util";
-import { inferDefaultSort } from "./entities-table-sort.store";
+import {
+  applySortingRules,
+  inferDefaultSort,
+} from "./entities-table-sort.store";
+
+describe("applySortingRules", () => {
+  it("marks non-sortable field types", () => {
+    const columns = applySortingRules(
+      [
+        toFormFieldConfig({
+          id: "children",
+          dataType: EntityDatatype.dataType,
+        }),
+        toFormFieldConfig({ id: "tags", isArray: true, dataType: "string" }),
+        toFormFieldConfig({
+          id: "age",
+          viewComponent: "DisplayAge",
+          dataType: "number",
+        }),
+      ],
+      () => new DefaultDatatype(),
+    );
+
+    expect(columns.find((c) => c.id === "children")?.noSorting).toBe(true);
+    expect(columns.find((c) => c.id === "tags")?.noSorting).toBe(true);
+    expect(columns.find((c) => c.id === "age")?.noSorting).toBe(undefined);
+  });
+});
 
 describe("inferDefaultSort", () => {
   it("infers default sort from first sortable column", () => {
@@ -21,9 +49,13 @@ describe("inferDefaultSort", () => {
       extendFormFieldConfig: (config) => toFormFieldConfig(config),
     });
 
+    const columns = applySortingRules(
+      state.columns,
+      () => new DefaultDatatype(),
+    );
     const sort = inferDefaultSort(
       state.columnsToDisplay,
-      state.columns,
+      columns,
       () => undefined,
     );
     expect(sort).toEqual({ active: "name", direction: "asc" });

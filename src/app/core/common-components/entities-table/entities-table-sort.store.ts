@@ -1,14 +1,16 @@
 import {
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  Injectable,
-  signal,
+    computed,
+    DestroyRef,
+    effect,
+    inject,
+    Injectable,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSort, Sort, SortDirection } from "@angular/material/sort";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../entity-form/FormConfig";
 import { TableStateUrlService } from "./table-state-url.service";
@@ -45,6 +47,18 @@ export class EntitiesTableSortStore {
   readonly sortState = signal<Sort>(undefined);
 
   /**
+   * Columns with sorting rules applied.
+   * Disables sorting for entity references, untyped columns, and arrays
+   * (unless the array's datatype provides custom sort logic).
+   */
+  readonly columns = computed<FormFieldConfig[]>(() => {
+    if (!this.context) return [];
+    return applySortingRules(this.context.columns(), (dataType) =>
+      this.schemaService.getDatatypeOrDefault(dataType, true),
+    );
+  });
+
+  /**
    * Default sort inferred from visible sortable columns.
    * Recomputed whenever columns or columnsToDisplay change.
    */
@@ -52,7 +66,7 @@ export class EntitiesTableSortStore {
     if (!this.context) return undefined;
     return inferDefaultSort(
       this.context.columnsToDisplay(),
-      this.context.columns(),
+      this.columns(),
       (dataType) => this.schemaService.getDatatypeOrDefault(dataType),
     );
   });
@@ -64,6 +78,26 @@ export class EntitiesTableSortStore {
   readonly effectiveSort = computed<Sort | undefined>(
     () => this.sortState() ?? this.defaultSort(),
   );
+
+  /**
+   * Map of column id → sort value extractor built from datatype metadata.
+   * Datatypes that override `sortValue` provide custom sort logic;
+   * others return `undefined` and fall back to default sorting in `tableSort`.
+   */
+  readonly sortValueFns = computed<
+    Record<string, (v: any) => number | string | undefined>
+  >(() => {
+    if (!this.context) return {};
+    const fns: Record<string, (v: any) => number | string | undefined> = {};
+    for (const col of this.context.columns()) {
+      const datatype = this.schemaService.getDatatypeOrDefault(
+        col.dataType,
+        true,
+      );
+      fns[col.id] = (v) => datatype.sortValue(v);
+    }
+    return fns;
+  });
 
   constructor() {
     // Sync default sort when no manual override and no URL state
@@ -174,4 +208,36 @@ export function inferDefaultSort(
   }
 
   return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
+}
+
+/**
+ * Applies sorting rules to columns: disables sorting for entity references,
+ * untyped columns, and arrays (unless the datatype provides custom sort logic).
+ */
+export function applySortingRules(
+  columns: FormFieldConfig[],
+  getDatatypeOrDefault: (dataType?: string) => DefaultDatatype,
+): FormFieldConfig[] {
+  return columns.map((column) => {
+    if (column.viewComponent === "DisplayAge") {
+      return column;
+    }
+
+    if (column.isArray) {
+      const datatype = getDatatypeOrDefault(column.dataType);
+      if (datatype?.sortValue !== DefaultDatatype.prototype.sortValue) {
+        return column;
+      }
+    }
+
+    if (
+      column.isArray ||
+      column.dataType === EntityDatatype.dataType ||
+      !column.dataType
+    ) {
+      return { ...column, noSorting: true };
+    }
+
+    return column;
+  });
 }
