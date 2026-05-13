@@ -5,7 +5,13 @@ import {
   input,
   OnInit,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
+import {
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from "@angular/forms";
 import {
   MatFormFieldControl,
   MatFormFieldModule,
@@ -41,7 +47,9 @@ export class EditEmailComponent
   }
 }
 
-function emailValidatorWithMessage(control: any) {
+function emailValidatorWithMessage(
+  control: AbstractControl,
+): ValidationErrors | null {
   const emailError = Validators.email(control);
   if (emailError) {
     return {
