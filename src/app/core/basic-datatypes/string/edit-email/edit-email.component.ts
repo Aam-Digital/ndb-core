@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -18,7 +19,7 @@ import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/ed
   templateUrl: "./edit-email.component.html",
   styleUrls: ["./edit-email.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatInputModule, ReactiveFormsModule],
+  imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditEmailComponent },
   ],
@@ -34,6 +35,18 @@ export class EditEmailComponent
   }
 
   ngOnInit() {
-    this.formControl.addValidators([Validators.email]);
+    this.formControl.addValidators([emailValidatorWithMessage]);
   }
+}
+
+function emailValidatorWithMessage(control: any) {
+  const emailError = Validators.email(control);
+  if (emailError) {
+    return {
+      email: {
+        errorMessage: $localize`:form field validation error:Please enter a valid email`,
+      },
+    };
+  }
+  return null;
 }
