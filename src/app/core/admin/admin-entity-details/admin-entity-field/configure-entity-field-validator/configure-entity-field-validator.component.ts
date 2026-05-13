@@ -21,6 +21,7 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
+import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
@@ -34,6 +35,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     ReactiveFormsModule,
     HelpButtonComponent,
     EditDateComponent,
+    EditMonthComponent,
   ],
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
@@ -56,6 +58,20 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
 
   ngOnInit() {
     this.init();
+  }
+
+  get isDateLikeValidatorType(): boolean {
+    return ["date", "date-only", "date-with-age", "month"].includes(
+      this.entitySchemaField?.dataType,
+    );
+  }
+
+  get isDateWithAgeType(): boolean {
+    return this.entitySchemaField?.dataType === "date-with-age";
+  }
+
+  get isMonthType(): boolean {
+    return this.entitySchemaField?.dataType === "month";
   }
 
   private normalizeDateControl(controlName: string): void {
