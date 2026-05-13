@@ -34,9 +34,12 @@ import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
-import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { buildColumnState, ColumnState } from "./entities-table-state.util";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
@@ -114,31 +117,37 @@ export class EntitiesTableComponent<
   readonly ACTIONCOLUMN_SELECT = "__select";
   readonly ACTIONCOLUMN_EDIT = "__edit";
 
-  // --- Column state (pure derivation via util) ---
-  private readonly columnState = computed<ColumnState>(() =>
-    buildColumnState({
-      entityType: this.entityType(),
-      customColumns: this.customColumns(),
-      columnsToDisplay: this.columnsToDisplay(),
-      selectable: this.selectable(),
-      editable: this.editable(),
-      actionColumnSelect: this.ACTIONCOLUMN_SELECT,
-      actionColumnEdit: this.ACTIONCOLUMN_EDIT,
-      extendFormFieldConfig: (config, entityType) =>
-        this.entityFormService.extendFormFieldConfig(config, entityType),
+  // --- Column state ---
+  readonly _customColumns = computed<FormFieldConfig[]>(() =>
+    this.customColumns().map((column) => {
+      const entityType = this.entityType();
+      return entityType
+        ? this.entityFormService.extendFormFieldConfig(column, entityType)
+        : toFormFieldConfig(column);
     }),
   );
-
-  readonly _customColumns = computed<FormFieldConfig[]>(
-    () => this.columnState().customColumns,
-  );
+  readonly _columnsToDisplay = computed<string[]>(() => {
+    let colsToDisplay = this.columnsToDisplay();
+    if (!colsToDisplay || colsToDisplay.length === 0) {
+      colsToDisplay = this._customColumns()
+        .filter((column) => !column.hideFromTable)
+        .map((column) => column.id);
+    }
+    const columns = colsToDisplay.filter((col) => !col.startsWith("__"));
+    if (this.selectable()) {
+      columns.unshift(this.ACTIONCOLUMN_SELECT);
+    }
+    if (this.editable()) {
+      columns.splice(this.selectable() ? 1 : 0, 0, this.ACTIONCOLUMN_EDIT);
+    }
+    return columns;
+  });
   /** Columns with sorting rules applied (managed by the sort store). */
   readonly _columns = this.sortStore.columns;
-  readonly _columnsToDisplay = computed<string[]>(
-    () => this.columnState().columnsToDisplay,
-  );
-  readonly idForSavingPagination = computed(
-    () => this.columnState().idForSavingPagination,
+  readonly idForSavingPagination = computed(() =>
+    this._customColumns()
+      .map((column) => column.id)
+      .join(""),
   );
 
   // --- Filtering (stateless derivation) ---
@@ -211,7 +220,22 @@ export class EntitiesTableComponent<
     // Connect sort store
     this.sortStore.connect({
       columnsToDisplay: this._columnsToDisplay,
-      columns: computed(() => this.columnState().columns),
+      columns: computed(() => {
+        const mappedCustomColumns = this._customColumns();
+        const entityType = this.entityType();
+        const entityColumns = entityType?.schema
+          ? [...entityType.schema.entries()].map(
+              ([id, field]) => ({ ...field, id }) as FormFieldConfig,
+            )
+          : [];
+        return [
+          ...entityColumns.filter(
+            (col) =>
+              !mappedCustomColumns.some((custom) => custom.id === col.id),
+          ),
+          ...mappedCustomColumns,
+        ];
+      }),
       externalSort: this.sortBy,
     });
 
