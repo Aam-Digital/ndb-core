@@ -1,12 +1,12 @@
 import {
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
   inject,
   signal,
   ChangeDetectionStrategy,
+  input,
+  output,
+  model,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -45,17 +45,17 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 export class MenuItemFormComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
-  @Input() item!: MenuItem;
-  @Input() hideLabel = false;
-  @Input() hideLink = false;
-  @Input() isNew = false;
-  @Input() showLinkError = false;
+  item = model.required<MenuItem>();
+  hideLabel = input<boolean>(false);
+  hideLink = input<boolean>(false);
+  isNew = input<boolean>(false);
+  showLinkError = input<boolean>(false);
 
   /**
    * Available routes that are offered to the user for selection.
    */
-  @Input() linkOptions: { value: string; label: string }[] = [];
-  @Output() itemChange = new EventEmitter<MenuItem>();
+  linkOptions = input<{ value: string; label: string }[]>([]);
+  itemChange = output<MenuItem>();
 
   /**
    * If true: show free-text input. If false: show dropdown with linkOptions.
@@ -69,34 +69,34 @@ export class MenuItemFormComponent implements OnInit {
 
   linkErrorStateMatcher: ErrorStateMatcher = {
     isErrorState: (_control: FormControl | null): boolean => {
-      return this.showLinkError && !this.item?.link?.trim();
+      return this.showLinkError() && !this.item()?.link?.trim();
     },
   };
 
   ngOnInit() {
     // For existing manual items with no link, default the toggle to ON.
-    if (!this.isNew && !this.item?.link?.trim()) {
+    if (!this.isNew() && !this.item()?.link?.trim()) {
       this.noLinkMode.set(true);
     }
 
     // If no options are available, always start in custom link mode
-    if (!this.linkOptions || this.linkOptions.length === 0) {
+    if (!this.linkOptions() || this.linkOptions().length === 0) {
       this.customLinkMode.set(true);
       return;
     }
 
     // If there's a link value but it's not in the available options, switch to custom mode
-    if (this.item?.link && !this.isLinkInOptions(this.item.link)) {
+    if (this.item()?.link && !this.isLinkInOptions(this.item().link)) {
       this.customLinkMode.set(true);
     }
   }
 
   private isLinkInOptions(link: string): boolean {
-    return this.linkOptions?.some((option) => option.value === link) ?? false;
+    return this.linkOptions()?.some((option) => option.value === link) ?? false;
   }
 
   onChange() {
-    this.itemChange.emit({ ...this.item });
+    this.itemChange.emit({ ...this.item() });
   }
 
   toggleCustomLinkMode() {
@@ -108,7 +108,7 @@ export class MenuItemFormComponent implements OnInit {
   }
 
   async toggleNoLinkMode(event: MatSlideToggleChange) {
-    if (event.checked && this.item.link?.trim()) {
+    if (event.checked && this.item()?.link?.trim()) {
       // Warn before removing an existing link.
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`:Confirmation title for removing link from menu item:Remove link?`,
@@ -120,10 +120,37 @@ export class MenuItemFormComponent implements OnInit {
         return;
       }
 
-      delete this.item.link;
+      const newItem = { ...this.item() };
+      delete newItem.link;
+      this.item.set(newItem);
       this.onChange();
     }
 
     this.noLinkMode.set(event.checked);
+  }
+
+  // Getter/setter proxies for template two-way bindings
+  get itemLabel(): string {
+    return this.item()?.label ?? "";
+  }
+  set itemLabel(v: string) {
+    this.item.set({ ...this.item(), label: v });
+    this.onChange();
+  }
+
+  get itemLink(): string {
+    return this.item()?.link ?? "";
+  }
+  set itemLink(v: string) {
+    this.item.set({ ...this.item(), link: v });
+    this.onChange();
+  }
+
+  get itemIcon(): string {
+    return this.item()?.icon ?? "";
+  }
+  set itemIcon(v: string) {
+    this.item.set({ ...this.item(), icon: v });
+    this.onChange();
   }
 }

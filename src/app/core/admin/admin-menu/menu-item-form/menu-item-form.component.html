@@ -1,12 +1,12 @@
 <div class="menu-item-form">
-  @if (!hideLabel) {
+  @if (!hideLabel()) {
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Label</mat-label>
-      <input matInput [(ngModel)]="item.label" (ngModelChange)="onChange()" />
+      <input matInput [(ngModel)]="itemLabel" (ngModelChange)="onChange()" />
     </mat-form-field>
   }
 
-  @if (!hideLink) {
+  @if (!hideLink()) {
     <mat-slide-toggle
       [checked]="noLinkMode()"
       (change)="toggleNoLinkMode($event)"
@@ -15,18 +15,18 @@
     >
   }
 
-  @if (!hideLink && !noLinkMode()) {
+  @if (!hideLink() && !noLinkMode()) {
     <div class="flex-row align-center gap-small">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label i18n>Link</mat-label>
 
-        @if (linkOptions?.length && !customLinkMode()) {
+        @if (linkOptions()?.length && !customLinkMode()) {
           <mat-select
-            [(ngModel)]="item.link"
+            [(ngModel)]="itemLink"
             (ngModelChange)="onChange()"
             [errorStateMatcher]="linkErrorStateMatcher"
           >
-            @for (option of linkOptions; track option.value) {
+            @for (option of linkOptions(); track option.value) {
               <mat-option [value]="option.value">
                 {{ option.label }}
               </mat-option>
@@ -35,7 +35,7 @@
         } @else {
           <input
             matInput
-            [(ngModel)]="item.link"
+            [(ngModel)]="itemLink"
             (ngModelChange)="onChange()"
             [errorStateMatcher]="linkErrorStateMatcher"
           />
@@ -77,5 +77,5 @@
     </div>
   }
 
-  <app-icon-input [(icon)]="item.icon"></app-icon-input>
+  <app-icon-input [(icon)]="itemIcon"></app-icon-input>
 </div>

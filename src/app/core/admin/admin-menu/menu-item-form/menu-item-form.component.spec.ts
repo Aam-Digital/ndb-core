@@ -24,24 +24,24 @@ describe("MenuItemFormComponent", () => {
   });
 
   it("should create", () => {
-    component.item = {
+    fixture.componentRef.setInput("item", {
       label: "Test",
       icon: "test-icon",
       link: "/test",
-    } as MenuItem;
+    } as MenuItem);
 
-    fixture.detectChanges();
+    component.ngOnInit();
     expect(component).toBeTruthy();
   });
 
   it("should automatically switch to manual mode when link value is not in dropdown options (e.g. child/new, public form IDs)", () => {
     // Test with child/new type link
-    component.item = {
+    fixture.componentRef.setInput("item", {
       label: "Add New Child",
       icon: "plus",
       link: "/child/new",
-    } as MenuItem;
-    component.linkOptions = mockLinkOptions;
+    } as MenuItem);
+    fixture.componentRef.setInput("linkOptions", mockLinkOptions);
 
     component.ngOnInit();
 
@@ -49,26 +49,26 @@ describe("MenuItemFormComponent", () => {
 
     // Test with public form ID type link
     component.customLinkMode.set(false); // reset
-    component.item = {
+    fixture.componentRef.setInput("item", {
       label: "Registration Form",
       icon: "form",
       link: "/public-form/registration-abc123",
-    } as MenuItem;
+    } as MenuItem);
 
-    component.ngOnInit();
+    fixture.detectChanges();
 
     expect(component.customLinkMode()).toBe(true);
   });
 
   it("should stay in dropdown mode when link value exists in options", () => {
-    component.item = {
+    fixture.componentRef.setInput("item", {
       label: "Dashboard",
       icon: "dashboard",
       link: "/dashboard",
-    } as MenuItem;
-    component.linkOptions = mockLinkOptions;
+    } as MenuItem);
+    fixture.componentRef.setInput("linkOptions", mockLinkOptions);
 
-    component.ngOnInit();
+    fixture.detectChanges();
 
     expect(component.customLinkMode()).toBe(false);
   });
