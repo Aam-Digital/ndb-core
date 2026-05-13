@@ -197,8 +197,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="122"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:122</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:144</a></div>
                         </td>
                     </tr>
 
@@ -308,6 +308,16 @@ import { EntityMapperService } from &quot;../../../entity/entity-mapper/entity-m
 import { buildReadonlyValidator } from &quot;./readonly-after-set.validator&quot;;
 import { Entity } from &quot;../../../entity/model/entity&quot;;
 import { AsyncPromiseValidatorFn } from &quot;./validator-types&quot;;
+import {
+  descriptionForDateValidator,
+  maxDateValidator,
+  minDateValidator,
+} from &quot;./date-validators&quot;;
+import {
+  descriptionForAgeValidator,
+  maxAgeValidator,
+  minAgeValidator,
+} from &quot;./age-validators&quot;;
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -358,11 +368,13 @@ export class DynamicValidatorsService {
     value: any,
     entity: Entity,
     fieldId?: string,
+    config?: FormValidatorConfig,
   ):
-    | { async?: false; fn: ValidatorFn }
+    | { async?: false; fn: ValidatorFn; errorName?: string }
     | {
         async: true;
         fn: AsyncPromiseValidatorFn;
+        errorName?: string;
       }
     | null {
     switch (key) {
@@ -370,6 +382,16 @@ export class DynamicValidatorsService {
         return { fn: Validators.min(value as number) };
       case &quot;max&quot;:
         return { fn: Validators.max(value as number) };
+      case &quot;minDate&quot;: {
+        return { fn: minDateValidator(value) };
+      }
+      case &quot;maxDate&quot;: {
+        return { fn: maxDateValidator(value) };
+      }
+      case &quot;minAge&quot;:
+        return { fn: minAgeValidator(value, config?.maxAge) };
+      case &quot;maxAge&quot;:
+        return { fn: maxAgeValidator(value, config?.minAge) };
       case &quot;pattern&quot;:
         if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
           return { fn: patternWithMessage(value.pattern, value.message) };
@@ -429,17 +451,20 @@ export class DynamicValidatorsService {
         config[key],
         entity,
         fieldId,
+        config,
       );
 
       if (validatorFn?.async) {
+        const effectiveName &#x3D; validatorFn.errorName || key;
         const validatorFnWithReadableErrors &#x3D; (control) &#x3D;&gt;
           validatorFn
             .fn(control)
-            .then((res) &#x3D;&gt; this.addHumanReadableError(key, res));
+            .then((res) &#x3D;&gt; this.addHumanReadableError(effectiveName, res));
         formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
       } else if (validatorFn) {
+        const effectiveName &#x3D; validatorFn.errorName || key;
         const validatorFnWithReadableErrors &#x3D; (control: FormControl) &#x3D;&gt;
-          this.addHumanReadableError(key, validatorFn.fn(control));
+          this.addHumanReadableError(effectiveName, validatorFn.fn(control));
         formControlOptions.validators.push(validatorFnWithReadableErrors);
       }
 
@@ -500,6 +525,14 @@ export class DynamicValidatorsService {
         return $localize&#x60;Must be greater than ${validationValue.min}&#x60;;
       case &quot;max&quot;:
         return $localize&#x60;Cannot be greater than ${validationValue.max}&#x60;;
+      case &quot;minDate&quot;:
+        return descriptionForDateValidator(&quot;minDate&quot;, validationValue);
+      case &quot;maxDate&quot;:
+        return descriptionForDateValidator(&quot;maxDate&quot;, validationValue);
+      case &quot;minAge&quot;:
+        return descriptionForAgeValidator(&quot;minAge&quot;, validationValue);
+      case &quot;maxAge&quot;:
+        return descriptionForAgeValidator(&quot;maxAge&quot;, validationValue);
       case &quot;pattern&quot;:
         if (validationValue.message) {
           return validationValue.message;
