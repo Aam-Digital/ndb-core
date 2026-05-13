@@ -283,7 +283,11 @@ export class EntitiesTableStore<T extends Entity> {
   /** Selects or unselects all currently sorted rows. */
   selectAllRows(checked: boolean) {
     const context = this.getContextOrThrow();
-    context.selectedRecords.set(selectAllRecords(this.sortedRows(), checked));
+    if (checked) {
+      context.selectedRecords.set(selectAllRecords(this.sortedRows()));
+      return;
+    }
+    context.selectedRecords.set([]);
   }
 
   /**
@@ -293,14 +297,14 @@ export class EntitiesTableStore<T extends Entity> {
   handleSelectableRowMouseDown(event: MouseEvent, row: TableRow<T>): boolean {
     const context = this.getContextOrThrow();
     const selectedRows = this.getCurrentPageRows();
-    const nextState = updateSelectionFromMouseDown(
-      context.selectedRecords(),
+    const nextState = updateSelectionFromMouseDown({
+      selectedRecords: context.selectedRecords(),
       selectedRows,
       row,
-      event.shiftKey,
-      this.lastSelectedRow(),
-      this.lastSelection(),
-    );
+      shiftKey: event.shiftKey,
+      lastSelectedRow: this.lastSelectedRow(),
+      lastSelection: this.lastSelection(),
+    });
     context.selectedRecords.set(nextState.selectedRecords);
     this.lastSelectedRow.set(nextState.lastSelectedRow);
     this.lastSelection.set(nextState.lastSelection);

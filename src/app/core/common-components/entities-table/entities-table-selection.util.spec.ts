@@ -55,8 +55,7 @@ describe("entities-table-selection util", () => {
     const recordB = TestEntity.create("B");
     const rows = [{ record: recordA }, { record: recordB }];
 
-    expect(selectAllRecords(rows, true)).toEqual([recordA, recordB]);
-    expect(selectAllRecords(rows, false)).toEqual([]);
+    expect(selectAllRecords(rows)).toEqual([recordA, recordB]);
   });
 
   it("calculates selected state flags", () => {
@@ -104,26 +103,26 @@ describe("entities-table-selection util", () => {
       { record: recordC },
     ];
 
-    const firstClick = updateSelectionFromMouseDown(
-      [],
-      rows,
-      rows[0],
-      false,
-      null,
-      null,
-    );
+    const firstClick = updateSelectionFromMouseDown({
+      selectedRecords: [],
+      selectedRows: rows,
+      row: rows[0],
+      shiftKey: false,
+      lastSelectedRow: null,
+      lastSelection: null,
+    });
     expect(firstClick.selectedRecords).toEqual([recordA]);
     expect(firstClick.lastSelection).toBe(false);
     expect(firstClick.lastSelectedRow).toBe(rows[0]);
 
-    const shiftClick = updateSelectionFromMouseDown(
-      firstClick.selectedRecords,
-      rows,
-      rows[2],
-      true,
-      firstClick.lastSelectedRow,
-      firstClick.lastSelection,
-    );
+    const shiftClick = updateSelectionFromMouseDown({
+      selectedRecords: firstClick.selectedRecords,
+      selectedRows: rows,
+      row: rows[2],
+      shiftKey: true,
+      lastSelectedRow: firstClick.lastSelectedRow,
+      lastSelection: firstClick.lastSelection,
+    });
     expect(shiftClick.selectedRecords).toEqual([recordA, recordB, recordC]);
   });
 });

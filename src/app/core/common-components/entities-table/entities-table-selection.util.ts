@@ -15,6 +15,18 @@ export interface MouseSelectionUpdate<T extends Entity> {
 }
 
 /**
+ * Input values required to calculate mouse-based row selection updates.
+ */
+export interface MouseSelectionInput<T extends Entity> {
+  selectedRecords: T[];
+  selectedRows: TableRow<T>[];
+  row: TableRow<T>;
+  shiftKey: boolean;
+  lastSelectedRow: TableRow<T> | null;
+  lastSelection: boolean | null;
+}
+
+/**
  * Detects whether the click target is inside an element marked as `.clickable`.
  */
 export function isClickableTarget(target: EventTarget | null): boolean {
@@ -87,13 +99,16 @@ export function applyRangeSelection<T extends Entity>(
  * Computes the next selection state for a row `mousedown`, including shift-range behavior.
  */
 export function updateSelectionFromMouseDown<T extends Entity>(
-  selectedRecords: T[],
-  selectedRows: TableRow<T>[],
-  row: TableRow<T>,
-  shiftKey: boolean,
-  lastSelectedRow: TableRow<T> | null,
-  lastSelection: boolean | null,
+  input: MouseSelectionInput<T>,
 ): MouseSelectionUpdate<T> {
+  const {
+    selectedRecords,
+    selectedRows,
+    row,
+    shiftKey,
+    lastSelectedRow,
+    lastSelection,
+  } = input;
   const currentIndex = selectedRows.indexOf(row);
   const anchorIndex = lastSelectedRow
     ? selectedRows.indexOf(lastSelectedRow)
@@ -134,13 +149,10 @@ export function updateSelectionFromMouseDown<T extends Entity>(
 }
 
 /**
- * Selects or clears all currently visible rows.
+ * Selects all currently visible rows.
  */
-export function selectAllRecords<T extends Entity>(
-  rows: TableRow<T>[],
-  checked: boolean,
-): T[] {
-  return checked ? rows.map((row) => row.record) : [];
+export function selectAllRecords<T extends Entity>(rows: TableRow<T>[]): T[] {
+  return rows.map((row) => row.record);
 }
 
 /**
