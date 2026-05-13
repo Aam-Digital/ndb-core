@@ -297,17 +297,39 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private getEntityFormEntriesConfig(): PublicFormEntityFormConfig[] {
     const config = this.formConfig()!;
     if (Array.isArray(config.forms) && config.forms.length) {
-      return config.forms;
+      return config.forms.map((form) =>
+        this.applyDefaultPublicFormFieldDisplaySettings(form),
+      );
     }
 
     return [
-      {
+      this.applyDefaultPublicFormFieldDisplaySettings({
         entity: config.entity,
         columns: config.columns,
         prefilled: config.prefilled,
         linkedEntities: config.linkedEntities,
-      },
+      }),
     ];
+  }
+
+  private applyDefaultPublicFormFieldDisplaySettings(
+    formConfig: PublicFormEntityFormConfig,
+  ): PublicFormEntityFormConfig {
+    formConfig.columns = (formConfig.columns ?? []).map((group) => {
+      group.fields = group.fields.map((field) => {
+        const fieldConfig = toFormFieldConfig(field);
+
+        return {
+          ...fieldConfig,
+          displayFullLengthLabel: fieldConfig.displayFullLengthLabel ?? true,
+          displayFullLengthOptionLabel:
+            fieldConfig.displayFullLengthOptionLabel ?? true,
+        };
+      });
+      return group;
+    });
+
+    return formConfig;
   }
 }
 
