@@ -1,10 +1,10 @@
 import {
-    computed,
-    DestroyRef,
-    effect,
-    inject,
-    Injectable,
-    signal,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSort, Sort, SortDirection } from "@angular/material/sort";
