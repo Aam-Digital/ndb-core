@@ -1423,5 +1423,6 @@
   "5702739109759776860": "Age must be at least {$PH} years",
   "7398595580858143195": "Age must be at most {$PH} years",
   "303031625814234366": "Date must be on or after {$PH}",
-  "8633762438039370064": "Date must be on or before {$PH}"
+  "8633762438039370064": "Date must be on or before {$PH}",
+  "8134695558272106554": "Please enter a valid email"
 }
