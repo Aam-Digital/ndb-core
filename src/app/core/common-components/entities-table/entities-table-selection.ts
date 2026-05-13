@@ -1,8 +1,11 @@
+import { computed, Injectable, signal } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { TableRow } from "./table-row";
 
 /**
- * Pure selection helpers for entities-table row interaction and checkbox state.
+ * Pure selection helpers for entities-table row interaction
+ * and checkbox state.
+ * And EntitiesTableSelectionStore for holding selection state and coordinating updates.
  */
 
 /**
@@ -148,31 +151,87 @@ export function updateSelectionFromMouseDown<T extends Entity>(
   };
 }
 
+// ---------------------------------------------------------------------------
+// Selection Store
+// ---------------------------------------------------------------------------
+
+type ReadSignal<T> = () => T;
+type ModelSignal<T> = ReadSignal<T> & { set(value: T): void };
+
 /**
- * Selects all currently visible rows.
+ * Input signals consumed by `EntitiesTableSelectionStore`.
  */
-export function selectAllRecords<T extends Entity>(rows: TableRow<T>[]): T[] {
-  return rows.map((row) => row.record);
+export interface EntitiesTableSelectionContext<T extends Entity> {
+  selectedRecords: ModelSignal<T[]>;
+  sortedRows: ReadSignal<TableRow<T>[]>;
+  getCurrentPageRows: () => TableRow<T>[];
 }
 
 /**
- * Returns true when selected records count matches row count.
+ * Component-scoped signal store for entities-table selection state and interaction logic.
+ *
+ * Uses the pure helpers above for all stateless computations;
+ * this store is responsible only for holding the mutable state
+ * (lastSelectedRow, lastSelection) and coordinating updates.
  */
-export function areAllRowsSelected<T extends Entity>(
-  selectedRecords: T[],
-  rowCount: number,
-): boolean {
-  return selectedRecords.length === rowCount;
-}
+@Injectable()
+export class EntitiesTableSelectionStore<T extends Entity> {
+  private context: EntitiesTableSelectionContext<T>;
+  private readonly lastSelectedRow = signal<TableRow<T> | null>(null);
+  private readonly lastSelection = signal<boolean | null>(null);
 
-/**
- * Returns true when at least one row is selected but not all rows are selected.
- */
-export function isSelectionIndeterminate<T extends Entity>(
-  selectedRecords: T[],
-  rowCount: number,
-): boolean {
-  return (
-    selectedRecords.length > 0 && !areAllRowsSelected(selectedRecords, rowCount)
-  );
+  readonly allRowsSelected = computed(() => {
+    const selected = this.context?.selectedRecords() ?? [];
+    const total = this.context?.sortedRows().length ?? 0;
+    return selected.length > 0 && selected.length === total;
+  });
+
+  readonly selectionIndeterminate = computed(() => {
+    const selected = this.context?.selectedRecords() ?? [];
+    const total = this.context?.sortedRows().length ?? 0;
+    return selected.length > 0 && selected.length < total;
+  });
+
+  /** Connects component input/model signals to this store. Must be called once from component constructor. */
+  connect(context: EntitiesTableSelectionContext<T>) {
+    this.context = context;
+  }
+
+  /** Selects or unselects a single row record. */
+  selectRow(row: TableRow<T>, checked: boolean) {
+    this.context.selectedRecords.set(
+      toggleRecordSelection(
+        this.context.selectedRecords(),
+        row.record,
+        checked,
+      ),
+    );
+  }
+
+  /** Selects or unselects all currently sorted rows. */
+  selectAllRows(checked: boolean) {
+    this.context.selectedRecords.set(
+      checked ? this.context.sortedRows().map((r) => r.record) : [],
+    );
+  }
+
+  /**
+   * Applies row selection interaction for mouse-down in selectable mode.
+   * Returns whether the event came from a checkbox target.
+   */
+  handleSelectableRowMouseDown(event: MouseEvent, row: TableRow<T>): boolean {
+    const selectedRows = this.context.getCurrentPageRows();
+    const nextState = updateSelectionFromMouseDown({
+      selectedRecords: this.context.selectedRecords(),
+      selectedRows,
+      row,
+      shiftKey: event.shiftKey,
+      lastSelectedRow: this.lastSelectedRow(),
+      lastSelection: this.lastSelection(),
+    });
+    this.context.selectedRecords.set(nextState.selectedRecords);
+    this.lastSelectedRow.set(nextState.lastSelectedRow);
+    this.lastSelection.set(nextState.lastSelection);
+    return isCheckboxTarget(event.target);
+  }
 }

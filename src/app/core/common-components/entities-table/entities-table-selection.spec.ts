@@ -1,15 +1,12 @@
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import {
   applyRangeSelection,
-  areAllRowsSelected,
   isCheckboxTarget,
   isClickableTarget,
-  isSelectionIndeterminate,
-  selectAllRecords,
   shouldSkipRowInteraction,
   toggleRecordSelection,
   updateSelectionFromMouseDown,
-} from "./entities-table-selection.util";
+} from "./entities-table-selection";
 
 describe("entities-table-selection util", () => {
   it("adds and removes a selected record", () => {
@@ -48,22 +45,6 @@ describe("entities-table-selection util", () => {
       false,
     );
     expect(rangeUnselected).toEqual([recordA]);
-  });
-
-  it("selects all and clears all records", () => {
-    const recordA = TestEntity.create("A");
-    const recordB = TestEntity.create("B");
-    const rows = [{ record: recordA }, { record: recordB }];
-
-    expect(selectAllRecords(rows)).toEqual([recordA, recordB]);
-  });
-
-  it("calculates selected state flags", () => {
-    const recordA = TestEntity.create("A");
-
-    expect(areAllRowsSelected([recordA], 1)).toBe(true);
-    expect(isSelectionIndeterminate([recordA], 2)).toBe(true);
-    expect(isSelectionIndeterminate([], 2)).toBe(false);
   });
 
   it("detects clickable and checkbox targets", () => {

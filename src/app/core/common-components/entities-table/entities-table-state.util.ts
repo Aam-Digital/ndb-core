@@ -1,4 +1,3 @@
-import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
@@ -6,10 +5,9 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
-import { Sort, SortDirection } from "@angular/material/sort";
 
 /**
- * Pure helpers for deriving entities-table column structure and default sort state.
+ * Pure helpers for deriving entities-table column structure.
  */
 
 /**
@@ -136,33 +134,4 @@ function normalizeSortingRules(columns: FormFieldConfig[]): FormFieldConfig[] {
 
     return column;
   });
-}
-
-/**
- * Infers a stable default sort from visible sortable columns.
- * Date-like columns default to descending order.
- */
-export function inferDefaultSort(
-  colsToDisplay: string[],
-  columns: FormFieldConfig[],
-  getDatatypeOrDefault: (dataType?: string) => unknown,
-): Sort | undefined {
-  const sortBy = colsToDisplay
-    .filter((columnId) => !columnId.startsWith("__"))
-    .find((columnId) => {
-      const column = columns.find((c) => c.id === columnId);
-      return !column?.noSorting;
-    });
-  const sortByColumn = columns.find((c) => c.id === sortBy);
-
-  let sortDirection: SortDirection = "asc";
-  if (
-    sortByColumn?.viewComponent === "DisplayDate" ||
-    sortByColumn?.viewComponent === "DisplayMonth" ||
-    getDatatypeOrDefault(sortByColumn?.dataType) instanceof DateDatatype
-  ) {
-    sortDirection = "desc";
-  }
-
-  return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
 }

@@ -2,6 +2,7 @@ import {
   AfterContentInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   ContentChildren,
   effect,
   inject,
@@ -9,18 +10,17 @@ import {
   model,
   output,
   QueryList,
+  signal,
   ViewChild,
 } from "@angular/core";
-import {
-  MatCheckboxChange,
-  MatCheckboxModule,
-} from "@angular/material/checkbox";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
 import {
   MatColumnDef,
   MatTable,
+  MatTableDataSource,
   MatTableModule,
 } from "@angular/material/table";
 import { Router } from "@angular/router";
@@ -29,23 +29,31 @@ import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entit
 import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
+import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
-import { ColumnConfig } from "../entity-form/FormConfig";
+import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
+import { EntityFormService } from "../entity-form/entity-form.service";
+import { buildColumnState, ColumnState } from "./entities-table-state.util";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
-import { shouldSkipRowInteraction } from "./entities-table-selection.util";
-import { EntitiesTableStore } from "./entities-table.store";
+import { tableSort } from "./table-sort/table-sort";
+import {
+  EntitiesTableSelectionStore,
+  shouldSkipRowInteraction,
+} from "./entities-table-selection";
+import { EntitiesTableSortStore } from "./entities-table-sort.store";
 
 /**
- * A simple display component (no logic and transformations) to display a table of entities.
+ * A reusable table component for displaying, sorting, filtering, and selecting entities.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entities-table",
-  providers: [EntitiesTableStore],
+  providers: [EntitiesTableSortStore, EntitiesTableSelectionStore],
   imports: [
     EntityFieldEditComponent,
     EntityFieldLabelComponent,
@@ -67,10 +75,14 @@ export class EntitiesTableComponent<
 > implements AfterContentInit {
   private readonly formDialog = inject(FormDialogService);
   private readonly router = inject(Router);
-  private readonly tableStore = inject(
-    EntitiesTableStore,
-  ) as EntitiesTableStore<T>;
+  private readonly filterService = inject(FilterService);
+  private readonly entityFormService = inject(EntityFormService);
+  protected readonly sortStore = inject(EntitiesTableSortStore);
+  protected readonly selectionStore = inject(
+    EntitiesTableSelectionStore,
+  ) as EntitiesTableSelectionStore<T>;
 
+  // --- Inputs ---
   records = input<T[]>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
@@ -92,65 +104,149 @@ export class EntitiesTableComponent<
   editable = input<boolean>(true);
   selectable = input<boolean>(false);
 
+  // --- Outputs & Models ---
   filteredRecordsChange = output<T[]>();
   entityClick = output<T>();
   selectedRecords = model<T[]>([]);
   showInactive = model<boolean>(false);
 
-  readonly recordsDataSource = this.tableStore.recordsDataSource;
-  readonly effectiveBackgroundColor = this.tableStore.effectiveBackgroundColor;
-  readonly _customColumns = this.tableStore.customColumns;
-  readonly _columns = this.tableStore.columns;
-  readonly _columnsToDisplay = this.tableStore.columnsToDisplay;
-  readonly idForSavingPagination = this.tableStore.idForSavingPagination;
-  readonly isLoading = this.tableStore.isLoading;
-  readonly _sortBy = this.tableStore.sortState;
-  readonly allRowsSelected = this.tableStore.allRowsSelected;
-  readonly selectionIndeterminate = this.tableStore.selectionIndeterminate;
+  // --- Internal constants ---
+  readonly ACTIONCOLUMN_SELECT = "__select";
+  readonly ACTIONCOLUMN_EDIT = "__edit";
+
+  // --- Column state (pure derivation via util) ---
+  private readonly columnState = computed<ColumnState>(() =>
+    buildColumnState({
+      entityType: this.entityType(),
+      customColumns: this.customColumns(),
+      columnsToDisplay: this.columnsToDisplay(),
+      selectable: this.selectable(),
+      editable: this.editable(),
+      actionColumnSelect: this.ACTIONCOLUMN_SELECT,
+      actionColumnEdit: this.ACTIONCOLUMN_EDIT,
+      extendFormFieldConfig: (config, entityType) =>
+        this.entityFormService.extendFormFieldConfig(config, entityType),
+    }),
+  );
+
+  readonly _customColumns = computed<FormFieldConfig[]>(
+    () => this.columnState().customColumns,
+  );
+  readonly _columns = computed<FormFieldConfig[]>(
+    () => this.columnState().columns,
+  );
+  readonly _columnsToDisplay = computed<string[]>(
+    () => this.columnState().columnsToDisplay,
+  );
+  readonly idForSavingPagination = computed(
+    () => this.columnState().idForSavingPagination,
+  );
+
+  // --- Filtering (stateless derivation) ---
+  readonly effectiveFilter = computed<DataFilter<T>>(() => {
+    const nextFilter = { ...this.filter() };
+    if (this.showInactive()) {
+      delete nextFilter["isActive"];
+    } else {
+      nextFilter["isActive"] = true;
+    }
+    return nextFilter;
+  });
+
+  private readonly filteredRecords = computed<T[]>(() => {
+    const records = this.records() ?? [];
+    const predicate = this.filterService.getFilterPredicate(
+      this.effectiveFilter(),
+    );
+    const domainFiltered = records.filter(predicate);
+
+    const freetext = this.filterFreetext() ?? "";
+    if (!freetext) {
+      return domainFiltered;
+    }
+    return domainFiltered.filter((record) =>
+      entityFilterPredicate(record, freetext),
+    );
+  });
+
+  // --- Sorted rows ---
+  readonly sortedRows = computed<TableRow<T>[]>(() => {
+    const rows = this.filteredRecords().map((record) => ({ record }));
+    const sort = this.sortStore.effectiveSort();
+
+    if (!sort?.active || !sort.direction) {
+      return rows;
+    }
+
+    return tableSort<T, keyof T>(rows, {
+      active: sort.active as keyof T,
+      direction: sort.direction,
+    });
+  });
+
+  // --- Background color ---
+  readonly effectiveBackgroundColor = computed<(rec: T) => string>(() => {
+    const custom = this.getBackgroundColor();
+    const useEntityColor = this.showEntityColor();
+    return custom ?? ((rec: T) => (useEntityColor ? rec.getColor() : ""));
+  });
+
+  // --- Loading state ---
+  readonly isLoading = signal(true);
+
+  // --- Material DataSource (for paginator interop) ---
+  readonly recordsDataSource = this.createDataSource();
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
 
+  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
+    this.sortStore.attachSort(sort);
+    if (sort) {
+      this.recordsDataSource.sort = sort;
+    }
+  }
+
+  constructor() {
+    // Connect sort store
+    this.sortStore.connect({
+      columnsToDisplay: this._columnsToDisplay,
+      columns: this._columns,
+      externalSort: this.sortBy,
+    });
+
+    // Connect selection store
+    this.selectionStore.connect({
+      selectedRecords: this.selectedRecords,
+      sortedRows: this.sortedRows,
+      getCurrentPageRows: () => this.getCurrentPageRows(),
+    });
+
+    // Sync sorted rows to Material DataSource
+    effect(() => {
+      this.recordsDataSource.data = this.sortedRows();
+    });
+
+    // Track loading state
+    effect(() => {
+      const records = this.records();
+      if (records !== undefined && records !== null) {
+        this.isLoading.set(false);
+      }
+    });
+
+    // Emit filtered records changes
+    effect(() => {
+      this.filteredRecordsChange.emit(
+        this.sortedRows().map((row) => row.record),
+      );
+    });
+  }
+
   ngAfterContentInit() {
-    // dynamically add columns from content-projection (https://stackoverflow.com/a/58017564/1473411)
     this.projectedColumns.forEach((columnDef) =>
       this.table.addColumnDef(columnDef),
     );
-  }
-
-  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
-    this.tableStore.attachSort(sort);
-  }
-
-  readonly ACTIONCOLUMN_SELECT = "__select";
-  readonly ACTIONCOLUMN_EDIT = "__edit";
-
-  constructor() {
-    this.tableStore.connect({
-      records: this.records,
-      customColumns: this.customColumns,
-      columnsToDisplay: this.columnsToDisplay,
-      entityType: this.entityType,
-      sortBy: this.sortBy,
-      filter: this.filter,
-      filterFreetext: this.filterFreetext,
-      showEntityColor: this.showEntityColor,
-      getBackgroundColor: this.getBackgroundColor,
-      selectable: this.selectable,
-      editable: this.editable,
-      selectedRecords: this.selectedRecords,
-      showInactive: this.showInactive,
-      actionColumnSelect: this.ACTIONCOLUMN_SELECT,
-      actionColumnEdit: this.ACTIONCOLUMN_EDIT,
-    });
-
-    effect(() => {
-      this.filteredRecordsChange.emit(this.tableStore.getFilteredEntities());
-    });
-  }
-
-  selectRow(row: TableRow<T>, checked: boolean) {
-    this.tableStore.selectRow(row, checked);
   }
 
   onRowClick(row: TableRow<T>, event: MouseEvent) {
@@ -158,7 +254,10 @@ export class EntitiesTableComponent<
       return;
     }
     if (this.selectable()) {
-      this.selectRow(row, !this.selectedRecords()?.includes(row.record));
+      this.selectionStore.selectRow(
+        row,
+        !this.selectedRecords()?.includes(row.record),
+      );
       return;
     }
     this.showEntity(row.record);
@@ -171,17 +270,9 @@ export class EntitiesTableComponent<
       return;
     }
 
-    if (this.tableStore.handleSelectableRowMouseDown(event, row)) {
+    if (this.selectionStore.handleSelectableRowMouseDown(event, row)) {
       this.onRowClick(row, event);
     }
-  }
-
-  onRowSelect(event: MatCheckboxChange, row: TableRow<T>) {
-    this.selectRow(row, event.checked);
-  }
-
-  selectAllRows(event: MatCheckboxChange) {
-    this.tableStore.selectAllRows(event.checked);
   }
 
   showEntity(entity: T) {
@@ -193,15 +284,34 @@ export class EntitiesTableComponent<
         this.formDialog.openView(entity, "EntityDetails");
         break;
       case "navigate":
-        this.router.navigate(this.buildEntityNavigationCommands(entity));
+        this.router.navigate([
+          getEntityRuntimeRoute(entity.getConstructor()),
+          entity.isNew ? "new" : entity.getId(true),
+        ]);
         break;
     }
   }
 
-  private buildEntityNavigationCommands(entity: T): string[] {
-    return [
-      getEntityRuntimeRoute(entity.getConstructor()),
-      entity.isNew ? "new" : entity.getId(true),
-    ];
+  getCurrentPageRows(): TableRow<T>[] {
+    const rows = this.sortedRows();
+    const paginator = this.recordsDataSource.paginator;
+    if (!paginator) {
+      return rows;
+    }
+
+    const startIndex = paginator.pageIndex * paginator.pageSize;
+    return rows.slice(startIndex, startIndex + paginator.pageSize);
+  }
+
+  private createDataSource() {
+    const dataSource = new MatTableDataSource<TableRow<T>>();
+    dataSource.sortData = (data, sort) =>
+      tableSort<T, keyof T>(data, {
+        active: (sort.active as keyof T) ?? "",
+        direction: sort.direction,
+      });
+    dataSource.filterPredicate = (data, filter) =>
+      entityFilterPredicate(data.record, filter);
+    return dataSource;
   }
 }
