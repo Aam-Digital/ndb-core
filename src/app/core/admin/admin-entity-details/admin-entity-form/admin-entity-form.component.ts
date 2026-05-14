@@ -8,14 +8,12 @@ import {
 import {
   Component,
   computed,
-  EventEmitter,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  Output,
+  input,
+  output,
   signal,
   WritableSignal,
-  SimpleChanges,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -75,60 +73,34 @@ import {
     AdminSectionHeaderComponent,
   ],
 })
-export class AdminEntityFormComponent implements OnChanges {
+export class AdminEntityFormComponent {
   private entityFormService = inject(EntityFormService);
   private matDialog = inject(MatDialog);
   private adminEntityService = inject(AdminEntityService);
 
-  @Input() entityType: EntityConstructor;
+  // migrate inputs to Angular `input()` signals
+  readonly entityType = input<EntityConstructor>();
+  readonly uniqueAreaId = input<string>();
 
-  /**
-   * Unique identifier for the drag-and-drop area to ensure correct drag&drop behavior.
-   * (e.g. a combination of tabindex and section index)
-   */
-  @Input() uniqueAreaId: string;
+  // `config` as an Input signal. Call `this.config()` to access the value.
+  readonly config = input<FormConfig>();
 
-  @Input() set config(value: FormConfig) {
-    if (value === this._config) {
-      // may be caused by two-way binding re-inputting the recently emitted change
-      // skip in this case
-      return;
-    }
-
-    // assign default value and make a deep copy to avoid side effects
-    if (!value) {
-      value = { fieldGroups: [] };
-    }
-    value = JSON.parse(JSON.stringify(value));
-    if (!value.fieldGroups) {
-      value.fieldGroups = [];
-    }
-
-    this._config = value;
-  }
-
-  get config(): FormConfig {
-    return this._config;
-  }
-
-  private _config: FormConfig;
-
-  @Output() configChange = new EventEmitter<FormConfig>();
+  readonly configChange = output<FormConfig>();
 
   /**
    * Whether the UI is readonly, not allowing the user to drag or edit things.
    */
-  @Input() isDisabled: boolean = false;
+  readonly isDisabled = input<boolean>();
 
   /**
    * Also update any changes to fields to the global entity type schema.
    */
-  @Input() updateEntitySchema?: boolean = true;
+  readonly updateEntitySchema = input<boolean>();
 
   /** Whether to only show fields in a compact layout.
    * If false, the full admin layout with section headers and drag&drop areas is shown.
    */
-  @Input() fieldsOnlyMode?: boolean = false;
+  readonly fieldsOnlyMode = input<boolean>();
 
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
@@ -156,6 +128,17 @@ export class AdminEntityFormComponent implements OnChanges {
   constructor() {
     const adminEntityService = inject(AdminEntityService);
 
+    effect(() => {
+      const config = this.config();
+      const entityType = this.entityType();
+
+      if (!config || !entityType) {
+        return;
+      }
+
+      void this.initForm();
+    });
+
     adminEntityService.entitySchemaUpdated
       .pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -164,18 +147,12 @@ export class AdminEntityFormComponent implements OnChanges {
       });
   }
 
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (Object.hasOwn(changes, "config")) {
-      await this.initForm();
-    }
-  }
-
   private async initForm() {
     this.initAvailableFields();
 
-    this.dummyEntity = new this.entityType();
+    this.dummyEntity = new (this.entityType() as any)();
     this.dummyForm = await this.entityFormService.createEntityForm(
-      [...this.getUsedFields(this.config), ...this.availableFields()],
+      [...this.getUsedFields(this.config()), ...this.availableFields()],
       this.dummyEntity,
     );
     this.dummyForm.formGroup.disable();
@@ -191,10 +168,10 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   getConnectedGroups(): string[] {
     return [
-      ...this.config.fieldGroups.map(
-        (_, groupIndex) => `${this.uniqueAreaId}-group${groupIndex}`,
+      ...this.config().fieldGroups.map(
+        (_, groupIndex) => `${this.uniqueAreaId()}-group${groupIndex}`,
       ),
-      `newGroupDropArea-${this.uniqueAreaId}`,
+      `newGroupDropArea-${this.uniqueAreaId()}`,
     ];
   }
 
@@ -204,10 +181,10 @@ export class AdminEntityFormComponent implements OnChanges {
    * @private
    */
   private initAvailableFields() {
-    const usedFields = this.getUsedFields(this.config).map((x) =>
+    const usedFields = this.getUsedFields(this.config()).map((x) =>
       toFormFieldConfig(x),
     );
-    const unusedFields = Array.from(this.entityType.schema.entries())
+    const unusedFields = Array.from(this.entityType().schema.entries())
       .filter(([key]) => !usedFields.some((x) => x.id === key))
       .filter(([key, value]) => !value.isInternalField && value.label) // no technical, internal fields and must have label
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
@@ -221,7 +198,7 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   protected emitUpdatedConfig() {
-    this.configChange.emit(this.config);
+    this.configChange.emit(this.config());
   }
 
   /**
@@ -232,7 +209,7 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   async openFieldConfig(field: ColumnConfig): Promise<EntitySchemaField> {
     const entitySchemaField = {
-      ...this.entityType.schema.get(toFormFieldConfig(field).id),
+      ...this.entityType().schema.get(toFormFieldConfig(field).id),
     } as EntitySchemaField;
     if (field instanceof Object) {
       Object.assign(entitySchemaField, field);
@@ -252,8 +229,8 @@ export class AdminEntityFormComponent implements OnChanges {
       maxHeight: "90vh",
       data: {
         entitySchemaField: entitySchemaField,
-        entityType: this.entityType,
-        overwriteLocally: !this.updateEntitySchema,
+        entityType: this.entityType(),
+        overwriteLocally: !this.updateEntitySchema?.(),
       } as AdminEntityFieldData,
     });
 
@@ -366,7 +343,7 @@ export class AdminEntityFormComponent implements OnChanges {
     let fieldIdToEdit = toFormFieldConfig(field).id;
     const configDetails = Object.assign(
       {},
-      this.entityType.schema.get(fieldIdToEdit) ?? {},
+      this.entityType().schema.get(fieldIdToEdit) ?? {},
       field,
     ) as FormFieldConfig;
 
@@ -385,7 +362,7 @@ export class AdminEntityFormComponent implements OnChanges {
     }
 
     if (
-      !this.updateEntitySchema ||
+      !this.updateEntitySchema?.() ||
       configDetails.viewComponent === "DisplayDescriptionOnly"
     ) {
       this.applySchemaOverride(
@@ -396,7 +373,7 @@ export class AdminEntityFormComponent implements OnChanges {
     } else {
       // save to entity type's global schema
       this.adminEntityService.updateSchemaField(
-        this.entityType,
+        this.entityType(),
         updatedField.id,
         updatedField,
       );
@@ -408,7 +385,7 @@ export class AdminEntityFormComponent implements OnChanges {
     fieldId: string,
     updatedField: string | FormFieldConfig,
   ): void {
-    for (const group of this.config.fieldGroups) {
+    for (const group of this.config().fieldGroups) {
       const index = group.fields.findIndex((f) =>
         f instanceof String
           ? f === fieldId
@@ -440,9 +417,9 @@ export class AdminEntityFormComponent implements OnChanges {
 
     const newFieldId = newField.id;
 
-    if (this.updateEntitySchema) {
+    if (this.updateEntitySchema?.()) {
       this.adminEntityService.updateSchemaField(
-        this.entityType,
+        this.entityType(),
         newField.id,
         newField,
       );
@@ -452,7 +429,7 @@ export class AdminEntityFormComponent implements OnChanges {
       this.availableFields.set(updatedFields);
     } else {
       // For local-only updates (e.g., public forms), manually update schema
-      this.entityType.schema.set(newField.id, newField);
+      this.entityType().schema.set(newField.id, newField);
       const updatedFields = [...this.availableFields()];
       const fieldIndex = updatedFields.indexOf(newFieldId);
       if (fieldIndex !== -1) {
@@ -500,13 +477,13 @@ export class AdminEntityFormComponent implements OnChanges {
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
     const newCol = { fields: [] };
-    this.config.fieldGroups.push(newCol);
+    this.config().fieldGroups.push(newCol);
     event.container.data = newCol.fields;
     this.drop(event);
   }
 
   removeGroup(i: number) {
-    this.config.fieldGroups.splice(i, 1);
+    this.config().fieldGroups.splice(i, 1);
     this.initAvailableFields();
 
     this.emitUpdatedConfig();
@@ -538,8 +515,10 @@ export class AdminEntityFormComponent implements OnChanges {
       }
 
       const fieldConfig =
-        this.entityFormService?.extendFormFieldConfig(field, this.entityType) ||
-        toFormFieldConfig(field);
+        this.entityFormService?.extendFormFieldConfig(
+          field,
+          this.entityType(),
+        ) || toFormFieldConfig(field);
 
       const fieldId = fieldConfig.id?.toLowerCase() || "";
       const fieldLabel = fieldConfig.label?.toLowerCase() || "";

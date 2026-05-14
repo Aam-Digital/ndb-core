@@ -89,11 +89,11 @@ describe("AdminEntityFormComponent", () => {
     fixture = TestBed.createComponent(AdminEntityFormComponent);
     component = fixture.componentInstance;
 
-    component.config = testConfig;
-    component.entityType = TestEntity;
+    fixture.componentRef.setInput("config", testConfig);
+    fixture.componentRef.setInput("entityType", TestEntity);
 
-    await component.ngOnChanges({ config: true as any });
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create and init a form", () => {
@@ -105,11 +105,12 @@ describe("AdminEntityFormComponent", () => {
 
   it("should load all fields from schema that are not already in form as available fields", async () => {
     const fieldsInView = ["date"];
-    component.config = {
+    fixture.componentRef.setInput("config", {
       fieldGroups: [{ fields: fieldsInView }],
-    };
+    });
 
-    await component.ngOnChanges({ config: true as any });
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const noteUserFacingFields = Array.from(TestEntity.schema.entries())
       .filter(([key, value]) => !value.isInternalField)
@@ -152,7 +153,7 @@ describe("AdminEntityFormComponent", () => {
         afterClosed: () => of(newField),
       } as any);
 
-      const targetContainer = component.config.fieldGroups[0].fields;
+      const targetContainer = component.config().fieldGroups[0].fields;
       component.drop(mockDropNewFieldEvent(targetContainer));
       await vi.advanceTimersByTimeAsync(0);
 
@@ -171,7 +172,7 @@ describe("AdminEntityFormComponent", () => {
     try {
       mockDialog.open.mockReturnValue({ afterClosed: () => of("") } as any);
 
-      const targetContainer = component.config.fieldGroups[0].fields;
+      const targetContainer = component.config().fieldGroups[0].fields;
       component.drop(mockDropNewFieldEvent(targetContainer));
       await vi.advanceTimersByTimeAsync(0);
 
@@ -200,16 +201,16 @@ describe("AdminEntityFormComponent", () => {
   it("should create a new fieldGroup in config on dropping field in new-group drop area", async () => {
     vi.useFakeTimers();
     try {
-      const field = component.config.fieldGroups[0].fields[0];
+      const field = component.config().fieldGroups[0].fields[0];
       const dropEvent = mockDropNewFieldEvent(
         null,
-        component.config.fieldGroups[0].fields,
+        component.config().fieldGroups[0].fields,
         0,
       );
       component.dropNewGroup(dropEvent);
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.config.fieldGroups[2]).toEqual({ fields: [field] });
+      expect(component.config().fieldGroups[2]).toEqual({ fields: [field] });
     } finally {
       vi.useRealTimers();
     }
@@ -218,7 +219,7 @@ describe("AdminEntityFormComponent", () => {
   it("should move all fields from removed group to availableFields toolbar", async () => {
     vi.useFakeTimers();
     try {
-      const removedFields = component.config.fieldGroups[0].fields;
+      const removedFields = component.config().fieldGroups[0].fields;
       expect(
         removedFields.some((x) => component.availableFields().includes(x)),
       ).not.toBe(true);
@@ -226,7 +227,9 @@ describe("AdminEntityFormComponent", () => {
       component.removeGroup(0);
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.config.fieldGroups).toEqual([{ fields: ["category"] }]);
+      expect(component.config().fieldGroups).toEqual([
+        { fields: ["category"] },
+      ]);
       expect(component.availableFields()).toEqual(
         expect.arrayContaining(removedFields),
       );
@@ -237,16 +240,16 @@ describe("AdminEntityFormComponent", () => {
 
   it("should hide a single field", async () => {
     const field = "subject";
-    const group = component.config.fieldGroups[0];
+    const group = component.config().fieldGroups[0];
     component.hideField(field, group);
 
-    expect(component.config.fieldGroups[0].fields).not.toContain(field);
+    expect(component.config().fieldGroups[0].fields).not.toContain(field);
   });
 
   it("should update the global schema when updateEntitySchema is true", async () => {
     vi.useFakeTimers();
     try {
-      component.updateEntitySchema = true;
+      fixture.componentRef.setInput("updateEntitySchema", true);
       const field = { id: "test", label: "Test Field" } as any;
       vi.spyOn(component, "openFieldConfig").mockReturnValue(
         Promise.resolve(field),
@@ -277,11 +280,12 @@ describe("AdminEntityFormComponent", () => {
     });
 
     try {
-      component.config = {
+      fixture.componentRef.setInput("config", {
         fieldGroups: [{ fields: ["other"] }],
-      };
+      });
 
-      await component.ngOnChanges({ config: true as any });
+      fixture.detectChanges();
+      await fixture.whenStable();
 
       // Test filtering by field ID
       component.searchFilter.setValue("uniqueTest");

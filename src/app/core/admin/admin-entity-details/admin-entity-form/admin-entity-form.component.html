@@ -1,17 +1,17 @@
-<div class="overall-container flex-row" [class.disabled]="isDisabled">
+<div class="overall-container flex-row" [class.disabled]="isDisabled()">
   <!-- FORM PREVIEW -->
   <div
     cdkDropList
-    (cdkDropListDropped)="dropfieldGroups($event, config.fieldGroups)"
+    (cdkDropListDropped)="dropfieldGroups($event, config().fieldGroups)"
     cdkDropListOrientation="mixed"
     class="flex-grow padding-right-regular drop-list"
-    [class.admin-grid-layout]="!fieldsOnlyMode"
-    [class.fieldsOnlyMode]="fieldsOnlyMode"
+    [class.admin-grid-layout]="!fieldsOnlyMode()"
+    [class.fieldsOnlyMode]="fieldsOnlyMode()"
   >
     <!-- FIELD GROUPS -->
-    @for (group of config.fieldGroups; track group; let i = $index) {
+    @for (group of config().fieldGroups; track group; let i = $index) {
       <div class="entity-form-cell admin-form-column section-container" cdkDrag>
-        @if (!fieldsOnlyMode) {
+        @if (!fieldsOnlyMode()) {
           <div class="flex-row align-center">
             <fa-icon
               icon="grip-vertical"
@@ -29,11 +29,11 @@
         }
         <div
           cdkDropList
-          [id]="uniqueAreaId + '-group' + i"
+          [id]="uniqueAreaId() + '-group' + i"
           [cdkDropListData]="group.fields"
           (cdkDropListDropped)="drop($event)"
           [cdkDropListConnectedTo]="getConnectedGroups()"
-          [cdkDropListDisabled]="isDisabled"
+          [cdkDropListDisabled]="isDisabled()"
           cdkDropListOrientation="mixed"
           class="fields-group-list drop-list"
         >
@@ -85,10 +85,10 @@
     }
 
     <!-- DROP AREA: NEW FIELD GROUP -->
-    @if (!fieldsOnlyMode) {
+    @if (!fieldsOnlyMode()) {
       <div class="entity-form-cell admin-form-column">
         <div
-          [id]="'newGroupDropArea-' + uniqueAreaId"
+          [id]="'newGroupDropArea-' + uniqueAreaId()"
           cdkDropList
           [cdkDropListConnectedTo]="getConnectedGroups()"
           (cdkDropListDropped)="dropNewGroup($event)"
@@ -171,7 +171,7 @@
             <div>
               <app-entity-field-label
                 [field]="field"
-                [entityType]="entityType"
+                [entityType]="entityType()"
               ></app-entity-field-label>
               @if (
                 field !== createNewFieldPlaceholder &&
