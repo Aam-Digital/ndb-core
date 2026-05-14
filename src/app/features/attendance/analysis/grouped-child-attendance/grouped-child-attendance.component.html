@@ -24,7 +24,7 @@
         <mat-label i18n>Select activity</mat-label>
         <mat-select (selectionChange)="onActivityChange($event.value)">
           @for (
-            archivedActivity of archivedActivities;
+            archivedActivity of archivedActivities();
             track archivedActivity
           ) {
             <mat-option [value]="archivedActivity">
