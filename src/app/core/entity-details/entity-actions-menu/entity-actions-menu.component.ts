@@ -12,6 +12,7 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
@@ -33,6 +34,7 @@ import { MatDialogRef } from "@angular/material/dialog";
     Angulartics2Module,
     DisableEntityOperationDirective,
     MatTooltipModule,
+    FaDynamicIconComponent,
   ],
 })
 export class EntityActionsMenuComponent implements OnChanges {

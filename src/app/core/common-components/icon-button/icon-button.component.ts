@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * A reusable button component that combines an icon with text,
@@ -15,7 +15,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   templateUrl: "./icon-button.component.html",
   styleUrl: "./icon-button.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, FaIconComponent],
+  imports: [MatButtonModule, FaDynamicIconComponent],
 })
 export class IconButtonComponent {
   icon = input.required<string>();
