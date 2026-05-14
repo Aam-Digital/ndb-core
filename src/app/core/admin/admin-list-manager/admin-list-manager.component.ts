@@ -77,7 +77,9 @@ export class AdminListManagerComponent implements OnInit, OnDestroy {
 
   private loadAvailableItems(): void {
     if (!this.entityType()) return;
-    const targetEntitySchemaFields = Array.from(this.entityType().schema.keys());
+    const targetEntitySchemaFields = Array.from(
+      this.entityType().schema.keys(),
+    );
     this.availableItems = Array.from(
       new Set([
         ...(this.activeFields() ?? []),

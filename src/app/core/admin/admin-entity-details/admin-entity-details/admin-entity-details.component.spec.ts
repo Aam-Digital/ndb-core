@@ -61,8 +61,11 @@ describe("AdminEntityDetailsComponent", () => {
     fixture = TestBed.createComponent(AdminEntityDetailsComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('entityConstructor', AdminDetailsTestEntity);
-    fixture.componentRef.setInput('config', JSON.parse(JSON.stringify(viewConfig)));
+    fixture.componentRef.setInput("entityConstructor", AdminDetailsTestEntity);
+    fixture.componentRef.setInput(
+      "config",
+      JSON.parse(JSON.stringify(viewConfig)),
+    );
 
     fixture.detectChanges();
   });
