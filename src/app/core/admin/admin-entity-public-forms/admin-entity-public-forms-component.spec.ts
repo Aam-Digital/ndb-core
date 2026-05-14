@@ -18,8 +18,7 @@ describe("AdminEntityPublicFormsComponent", () => {
     fixture = TestBed.createComponent(AdminEntityPublicFormsComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput("entityConstructor", TestEntity);
-    fixture.detectChanges();
+    component.entityConstructor = TestEntity;
   });
 
   it("should create the component", () => {
