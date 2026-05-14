@@ -37,9 +37,7 @@ test("Edit existing Name field to set and reset default value", async ({
 
   await argosScreenshot(page, "admin-details-edit-field");
 
-  await dialog
-    .getByRole("tab", { name: "Advanced Options & Validation" })
-    .click();
+  await dialog.getByRole("tab", { name: "Advanced Options" }).click();
 
   const defaultValueSection = dialog.locator("app-admin-default-value");
   const staticModeToggle = defaultValueSection
@@ -67,9 +65,7 @@ test("Edit existing Name field to set and reset default value", async ({
   await editFieldButton.click();
 
   await expect(dialog).toBeVisible();
-  await dialog
-    .getByRole("tab", { name: "Advanced Options & Validation" })
-    .click();
+  await dialog.getByRole("tab", { name: "Advanced Options" }).click();
   await expect(defaultValueControl).toHaveValue(newDefaultValue);
 
   const clearDefaultButton = defaultValueSection.locator(
@@ -118,9 +114,7 @@ test("Configure automated status update and verify UI", async ({ page }) => {
   await expect(dialog).toBeVisible();
 
   // Navigate to Advanced Options tab
-  await dialog
-    .getByRole("tab", { name: "Advanced Options & Validation" })
-    .click();
+  await dialog.getByRole("tab", { name: "Advanced Options" }).click();
 
   // Look for default value configuration
   const defaultValueSection = dialog.locator("app-admin-default-value");

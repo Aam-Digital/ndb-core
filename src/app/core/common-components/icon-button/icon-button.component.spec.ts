@@ -27,7 +27,9 @@ describe("IconButtonComponent", () => {
     fixture.componentRef.setInput("icon", "edit");
     fixture.detectChanges();
 
-    const iconElement = fixture.nativeElement.querySelector("fa-icon");
+    const iconElement = fixture.nativeElement.querySelector(
+      "app-fa-dynamic-icon",
+    );
     expect(iconElement).toBeTruthy();
     expect(iconElement.classList.contains("standard-icon-with-text")).toBe(
       true,
