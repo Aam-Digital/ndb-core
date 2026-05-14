@@ -47,12 +47,12 @@ describe("EditTextWithAutocompleteComponent", () => {
       control: nameControl,
     } as any;
 
-    component.formFieldConfig = {
+    fixture.componentRef.setInput("formFieldConfig", {
       id: "name",
       additional: {
         entityType: "TestEntity",
       },
-    };
+    });
 
     fixture.detectChanges();
   });
@@ -67,9 +67,9 @@ describe("EditTextWithAutocompleteComponent", () => {
     const e3 = TestEntity.create("Third Entity");
     loadTypeSpy.mockResolvedValue([e1, e2, e3]);
 
-    await component.ngOnInit();
+    await component.initAutocomplete();
 
-    expect(component.entities).toEqual([e1, e2, e3]);
+    expect(component.entities()).toEqual([e1, e2, e3]);
   });
 
   it("should filter entities when searching", async () => {
@@ -78,11 +78,11 @@ describe("EditTextWithAutocompleteComponent", () => {
     const e3 = TestEntity.create("Third Entity");
     loadTypeSpy.mockResolvedValue([e1, e2, e3]);
 
-    await component.ngOnInit();
+    await component.initAutocomplete();
     component.formControl.setValue("Second");
     component.updateAutocomplete();
 
-    expect(component.autocompleteEntities.value).toEqual([e2]);
+    expect(component.autocompleteEntities()).toEqual([e2]);
   });
 
   it("should correctly set the form controls to the selected entity's values", async () => {
@@ -93,7 +93,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       refMixed: ["group1", "group2"],
     });
     loadTypeSpy.mockResolvedValue([e1]);
-    await component.ngOnInit();
+    await component.initAutocomplete();
 
     await component.selectEntity(e1);
 
@@ -113,7 +113,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     });
     loadTypeSpy.mockResolvedValue([e1]);
     component.parent.get("refMixed").setValue(["testgroup1"]);
-    await component.ngOnInit();
+    await component.initAutocomplete();
     await component.selectEntity(e1);
 
     await component.resetForm();
@@ -135,7 +135,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     loadTypeSpy.mockResolvedValue([e1]);
     component.additional.relevantProperty = "refMixed";
     component.additional.relatedEntitiesParent = parentEntity;
-    await component.ngOnInit();
+    await component.initAutocomplete();
 
     await component.selectEntity(e1);
 
@@ -152,7 +152,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     loadTypeSpy.mockResolvedValue([e1]);
     component.additional.relevantProperty = "refMixed";
     component.additional.relatedEntitiesParent = parentEntity;
-    await component.ngOnInit();
+    await component.initAutocomplete();
 
     await component.selectEntity(e1);
 
@@ -168,7 +168,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     component.formControl.setValue(e1.name);
     loadTypeSpy.mockResolvedValue([e1, e2]);
 
-    await component.ngOnInit();
+    await component.initAutocomplete();
 
     fixture.detectChanges();
     const input: HTMLInputElement = fixture.debugElement.query(
@@ -189,12 +189,12 @@ describe("EditTextWithAutocompleteComponent", () => {
     loadTypeSpy.mockResolvedValue([e1, e2]);
     mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
 
-    await component.ngOnInit();
+    await component.initAutocomplete();
     component.formControl.setValue("test1");
     component.parent.get("ref").setValue("user3");
 
     await component.selectEntity(e2);
 
-    expect(component.selectedEntity).toEqual(e2);
+    expect(component.selectedEntity()).toEqual(e2);
   });
 });
