@@ -1,12 +1,12 @@
 import {
   Directive,
   ElementRef,
-  Input,
   NgZone,
   OnDestroy,
   OnInit,
   TemplateRef,
   inject,
+  input,
 } from "@angular/core";
 import {
   Overlay,
@@ -15,7 +15,6 @@ import {
 } from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
 import { TemplateTooltipComponent } from "./template-tooltip.component";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A directive that can be used to render a custom tooltip that may contain HTML code.
@@ -33,7 +32,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
  *
  * @see contentTemplate
  */
-@UntilDestroy()
 @Directive({
   selector: "[appTemplateTooltip]",
   standalone: true,
@@ -47,19 +45,19 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
   /**
    * Whether to disable the tooltip, so it won't ever be shown
    */
-  @Input() tooltipDisabled: boolean = false;
+  tooltipDisabled = input(false);
 
   /**
    * The amount of time in milliseconds that the user has to hover over the element before the tooltip
    * is shown
    */
-  @Input() delayShow: number = 150;
+  delayShow = input(150);
 
   /**
    * The amount of time in milliseconds that the user's mouse has to leave the tooltip before it will
    * be hidden
    */
-  @Input() delayHide: number = 150;
+  delayHide = input(150);
 
   /**
    * The template that is shown in the tooltip.
@@ -73,7 +71,9 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    *   Custom tooltip <i>with</i> HTML-Elements
    * </ng-template>
    */
-  @Input("appTemplateTooltip") contentTemplate!: TemplateRef<any>;
+  contentTemplate = input.required<TemplateRef<any>>({
+    alias: "appTemplateTooltip",
+  });
 
   /**
    * Reference to the overlay (the Tooltip) to control the visibility of the tooltip
@@ -88,6 +88,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    * @private
    */
   private timeoutRef?: ReturnType<typeof setTimeout>;
+  private tooltipRefSubscriptions: Array<{ unsubscribe: () => void }> = [];
 
   ngOnInit(): void {
     // Create a position strategy that determines where the overlay is positioned.
@@ -117,6 +118,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.hide();
+    this.unsubscribeTooltipRefOutputs();
     this.overlayRef.dispose();
   }
 
@@ -127,7 +129,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    * @private
    */
   private show() {
-    if (this.tooltipDisabled) {
+    if (this.tooltipDisabled()) {
       return;
     }
     // clear the timeout so that when the user hovers twice the last hover action is used.
@@ -143,16 +145,15 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
           const tooltipRef = this.overlayRef.attach(
             new ComponentPortal(TemplateTooltipComponent),
           );
-          tooltipRef.instance.contentTemplate = this.contentTemplate;
-          tooltipRef.instance.hide
-            .pipe(untilDestroyed(this))
-            .subscribe(() => this.hide());
-          tooltipRef.instance.show
-            .pipe(untilDestroyed(this))
-            .subscribe(() => this.show());
+          tooltipRef.setInput("contentTemplate", this.contentTemplate());
+          this.unsubscribeTooltipRefOutputs();
+          this.tooltipRefSubscriptions = [
+            tooltipRef.instance.hide.subscribe(() => this.hide()),
+            tooltipRef.instance.show.subscribe(() => this.show()),
+          ];
         });
       }
-    }, this.delayShow);
+    }, this.delayShow());
   }
 
   /**
@@ -175,8 +176,16 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
     }
     this.timeoutRef = setTimeout(() => {
       if (this.overlayRef.hasAttached()) {
+        this.unsubscribeTooltipRefOutputs();
         this.zone.run(() => this.overlayRef.detach());
       }
-    }, this.delayHide);
+    }, this.delayHide());
+  }
+
+  private unsubscribeTooltipRefOutputs() {
+    this.tooltipRefSubscriptions.forEach((subscription) =>
+      subscription.unsubscribe(),
+    );
+    this.tooltipRefSubscriptions = [];
   }
 }

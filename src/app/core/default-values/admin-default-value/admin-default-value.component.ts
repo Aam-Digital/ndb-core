@@ -1,10 +1,10 @@
 import {
   Component,
   inject,
-  Input,
   OnInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  input,
 } from "@angular/core";
 import { DefaultValueConfig } from "../default-value-config";
 import {
@@ -74,8 +74,8 @@ export class AdminDefaultValueComponent
   extends CustomFormControlDirective<DefaultValueConfig>
   implements OnInit
 {
-  @Input() entityType: EntityConstructor;
-  @Input() entitySchemaField: EntitySchemaField;
+  entityType = input<EntityConstructor>();
+  entitySchemaField = input<EntitySchemaField>();
   form: FormGroup;
 
   private defaultValueStrategies = inject(

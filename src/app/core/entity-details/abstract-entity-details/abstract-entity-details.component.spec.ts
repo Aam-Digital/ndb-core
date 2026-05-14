@@ -6,7 +6,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Component, SimpleChange } from "@angular/core";
+import { Component } from "@angular/core";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
@@ -65,10 +65,7 @@ describe("AbstractEntityDetailsComponent", () => {
     fixture = TestBed.createComponent(TestEntityDetailsComponent);
     component = fixture.componentInstance;
 
-    Object.assign(component, routeConfig);
-    component.ngOnChanges(
-      simpleChangesFor(component, ...Object.keys(routeConfig)),
-    );
+    fixture.componentRef.setInput("entityType", routeConfig.entityType);
 
     fixture.detectChanges();
   });
@@ -87,8 +84,8 @@ describe("AbstractEntityDetailsComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
       vi.spyOn(entityMapper, "load");
 
-      component.id = testChild.getId(true);
-      component.ngOnChanges(simpleChangesFor(component, "id"));
+      fixture.componentRef.setInput("id", testChild.getId(true));
+      fixture.detectChanges();
       expect(component.isLoading).toBe(true);
       await vi.advanceTimersByTimeAsync(0);
 
@@ -96,7 +93,7 @@ describe("AbstractEntityDetailsComponent", () => {
         TestEntity,
         testChild.getId(true),
       );
-      expect(component.entity).toBe(testChild);
+      expect(component.entity()).toBe(testChild);
       expect(component.isLoading).toBe(false);
     } finally {
       vi.useRealTimers();
@@ -112,12 +109,12 @@ describe("AbstractEntityDetailsComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
       vi.spyOn(entityMapper, "load");
 
-      component.id = child.getId();
-      component.ngOnChanges(simpleChangesFor(component, "id"));
+      fixture.componentRef.setInput("id", child.getId());
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(entityMapper.load).toHaveBeenCalledWith(TestEntity, child.getId());
-      expect(component.entity).toEqual(child);
+      expect(component.entity()).toEqual(child);
 
       // entity is updated
       const childUpdate = child.copy();
@@ -125,26 +122,24 @@ describe("AbstractEntityDetailsComponent", () => {
       entityMapper.save(childUpdate);
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.entity).toEqual(childUpdate);
+      expect(component.entity()).toEqual(childUpdate);
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("should call router when user is not permitted to create entities", () => {
-    mockAbility.cannot.mockReturnValue(true);
-    const router = fixture.debugElement.injector.get(Router);
-    vi.spyOn(router, "navigate");
-    component.id = "new";
-    component.ngOnChanges(simpleChangesFor(component, "id"));
-    expect(router.navigate).toHaveBeenCalled();
+  it("should call router when user is not permitted to create entities", async () => {
+    vi.useFakeTimers();
+    try {
+      mockAbility.cannot.mockReturnValue(true);
+      const router = fixture.debugElement.injector.get(Router);
+      vi.spyOn(router, "navigate");
+      fixture.componentRef.setInput("id", "new");
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(router.navigate).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
-
-function simpleChangesFor(component, ...properties: string[]) {
-  const changes = {};
-  for (const p of properties) {
-    changes[p] = new SimpleChange(null, component[p], true);
-  }
-  return changes;
-}

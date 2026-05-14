@@ -2,18 +2,16 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
+  effect,
   inject,
-  Input,
-  OnChanges,
+  input,
+  model,
   OnInit,
-  Output,
-  SimpleChanges,
+  output,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
-  EntityListConfig,
   FilterConfig,
   GroupConfig,
 } from "../EntityListConfig";
@@ -105,9 +103,7 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
   ],
 })
 @UntilDestroy()
-export class EntityListComponent<T extends Entity>
-  implements EntityListConfig, OnChanges, OnInit
-{
+export class EntityListComponent<T extends Entity> implements OnInit {
   private screenWidthObserver = inject(ScreenWidthObserver);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
@@ -124,46 +120,47 @@ export class EntityListComponent<T extends Entity>
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
 
-  @Input() allEntities: T[];
+  allEntities = model<T[] | undefined>(undefined);
 
-  @Input() entityType: string;
-  @Input() entityConstructor: EntityConstructor<T>;
-  @Input() defaultSort: Sort;
-  @Input() exportConfig: ExportColumnConfig[];
+  entityType = input<string>();
+  entityConstructor = model<EntityConstructor<T>>();
+  defaultSort = input<Sort>();
+  exportConfig = input<ExportColumnConfig[]>();
 
   /**
    * The special service or method to load data via an index or other special method.
    */
-  @Input() loaderMethod: LoaderMethod;
+  loaderMethod = input<LoaderMethod>();
 
-  @Input() clickMode: "navigate" | "popup" | "popup-details" | "none" =
-    "navigate";
+  clickMode = input<"navigate" | "popup" | "popup-details" | "none">(
+    "navigate",
+  );
 
   /** initial / default state whether to include archived records in the list */
-  @Input() showInactive: boolean;
+  showInactive = input<boolean>();
 
-  @Output() elementClick = new EventEmitter<T>();
-  @Output() addNewClick = new EventEmitter();
-  selectedRows: T[];
+  elementClick = output<T>();
+  addNewClick = output<void>();
+  selectedRows = model<T[] | undefined>(undefined);
 
   isDesktop: boolean;
 
-  @Input() title = "";
-  @Input() columns: (FormFieldConfig | string)[] = [];
-  @Input() columnGroups: ColumnGroupsConfig;
+  title = model<string>("");
+  columns = input<(FormFieldConfig | string)[]>([]);
+  columnGroups = input<ColumnGroupsConfig>();
   groups: GroupConfig[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
-  @Input() filters: FilterConfig[] = [];
+  filters = input<FilterConfig[]>([]);
 
   /**
    * Whether the list's default row coloring should reflect each entity's color.
    */
-  @Input() showEntityColor: boolean = false;
+  showEntityColor = input<boolean>(false);
 
   columnsToDisplay: string[];
 
-  filterObj: DataFilter<T>;
+  filterObj = model<DataFilter<T>>({});
   filterString = "";
   filteredData = [];
   filterFreetext: string;
@@ -193,6 +190,14 @@ export class EntityListComponent<T extends Entity>
   }
 
   constructor() {
+    effect(() => {
+      this.entityType();
+      this.columns();
+      this.columnGroups();
+      this.loaderMethod();
+      void this.buildComponentFromConfig();
+    });
+
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))
@@ -221,7 +226,7 @@ export class EntityListComponent<T extends Entity>
       (config) =>
         config.entity &&
         config.entity.toLowerCase() ===
-          this.entityConstructor?.ENTITY_TYPE?.toLowerCase(),
+          this.entityConstructor()?.ENTITY_TYPE?.toLowerCase(),
     );
     this.cdr.markForCheck();
   }
@@ -230,35 +235,34 @@ export class EntityListComponent<T extends Entity>
     await this.publicFormsService.copyPublicFormLinkFromConfig(config);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    return this.buildComponentFromConfig();
-  }
-
   private async buildComponentFromConfig() {
-    if (this.entityType) {
-      this.entityConstructor = this.entities.get(
-        this.entityType,
-      ) as EntityConstructor<T>;
+    const entityType = this.entityType();
+    if (entityType) {
+      this.entityConstructor.set(
+        this.entities.get(entityType) as EntityConstructor<T>,
+      );
     }
 
-    if (!this.allEntities) {
-      // if no entities are passed as input, by default load all entities of the type
-      await this.loadEntities();
-    }
-
-    this.title = this.title || this.entityConstructor?.labelPlural;
-
-    this.initColumnGroups(this.columnGroups);
+    this.initColumnGroups(this.columnGroups());
 
     this.displayColumnGroupByName(
       this.screenWidthObserver.isDesktop()
         ? this.defaultColumnGroup
         : this.mobileColumnGroup,
     );
+
+    if (!this.title()) {
+      this.title.set(this.entityConstructor()?.labelPlural);
+    }
+
+    if (!this.allEntities()) {
+      // if no entities are passed as input, by default load all entities of the type
+      await this.loadEntities();
+    }
   }
 
   protected async loadEntities() {
-    this.allEntities = await this.getEntities();
+    this.allEntities.set(await this.getEntities());
     this.cdr.markForCheck();
     this.listenToEntityUpdates();
   }
@@ -268,22 +272,28 @@ export class EntityListComponent<T extends Entity>
    * @protected
    */
   protected getEntities(): Promise<T[]> {
-    if (this.loaderMethod && this.entitySpecialLoader) {
-      return this.entitySpecialLoader.loadData(this.loaderMethod);
+    const loaderMethod = this.loaderMethod();
+    if (loaderMethod && this.entitySpecialLoader) {
+      return this.entitySpecialLoader.loadData(loaderMethod);
     }
 
-    return this.entityMapperService.loadType(this.entityConstructor);
+    const entityConstructor = this.entityConstructor();
+    if (!entityConstructor) {
+      return Promise.resolve([]);
+    }
+    return this.entityMapperService.loadType(entityConstructor);
   }
 
   private updateSubscription: Subscription;
 
   private listenToEntityUpdates() {
-    if (this.updateSubscription || !this.entityConstructor) {
+    const entityConstructor = this.entityConstructor();
+    if (this.updateSubscription || !entityConstructor) {
       return;
     }
 
     this.updateSubscription = this.entityMapperService
-      .receiveUpdates(this.entityConstructor)
+      .receiveUpdates(entityConstructor)
       .pipe(untilDestroyed(this))
       .subscribe(async (updatedEntity: UpdatedEntity<T>) => {
         if (this.bulkOperationState.isBulkOperationInProgress()) {
@@ -295,7 +305,7 @@ export class EntityListComponent<T extends Entity>
             );
           if (!inProgress) {
             // reload the list once
-            this.allEntities = await this.getEntities();
+            this.allEntities.set(await this.getEntities());
             this.cdr.markForCheck();
             // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
             setTimeout(() => {
@@ -308,13 +318,16 @@ export class EntityListComponent<T extends Entity>
         }
 
         //get specially enhanced entity if necessary
-        if (this.loaderMethod && this.entitySpecialLoader) {
+        const loaderMethod = this.loaderMethod();
+        if (loaderMethod && this.entitySpecialLoader) {
           updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
-            this.loaderMethod,
+            loaderMethod,
             updatedEntity,
           );
         }
-        this.allEntities = applyUpdate(this.allEntities, updatedEntity);
+        this.allEntities.set(
+          applyUpdate(this.allEntities() ?? [], updatedEntity),
+        );
         this.cdr.markForCheck();
       });
   }
@@ -335,7 +348,9 @@ export class EntityListComponent<T extends Entity>
       this.groups = [
         {
           name: "default",
-          columns: this.columns.map((c) => (typeof c === "string" ? c : c.id)),
+          columns: this.columns().map((c) =>
+            typeof c === "string" ? c : c.id,
+          ),
         },
       ];
       this.defaultColumnGroup = "default";
@@ -370,26 +385,30 @@ export class EntityListComponent<T extends Entity>
   openFilterOverlay() {
     this.dialog.open(FilterOverlayComponent, {
       data: {
-        filterConfig: this.filters,
-        entityType: this.entityConstructor,
-        entities: this.allEntities,
+        filterConfig: this.filters(),
+        entityType: this.entityConstructor(),
+        entities: this.allEntities(),
         useUrlQueryParams: true,
-        filterObjChange: (filter: DataFilter<T>) => (this.filterObj = filter),
+        filterObjChange: (filter: DataFilter<T>) => this.filterObj.set(filter),
       },
     });
   }
 
   addNew(newEntity?: T) {
+    const entityConstructor = this.entityConstructor();
+    if (!entityConstructor) {
+      return;
+    }
     if (!newEntity) {
-      newEntity = new this.entityConstructor();
+      newEntity = new entityConstructor();
     }
 
-    switch (this.clickMode) {
+    switch (this.clickMode()) {
       case "navigate":
         this.router.navigate(["new"], { relativeTo: this.activatedRoute });
         break;
       case "popup":
-        this.formDialog.openFormPopup(newEntity, this.columns);
+        this.formDialog.openFormPopup(newEntity, this.columns());
         break;
       case "popup-details":
         this.formDialog.openView(newEntity);
@@ -406,10 +425,10 @@ export class EntityListComponent<T extends Entity>
   openExportDialog() {
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.allEntities,
+        allEntities: this.allEntities(),
         filteredData: this.filteredData,
-        exportConfig: this.exportConfig,
-        filename: this.title.replaceAll(" ", ""),
+        exportConfig: this.exportConfig(),
+        filename: (this.title() ?? "").replaceAll(" ", ""),
       },
     });
   }

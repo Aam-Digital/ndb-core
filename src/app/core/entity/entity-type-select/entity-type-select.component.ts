@@ -1,9 +1,9 @@
 import {
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
   OnInit,
+  input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import {
@@ -26,19 +26,25 @@ import { MatFormFieldControl } from "@angular/material/form-field";
 })
 export class EntityTypeSelectComponent
   extends BasicAutocompleteComponent<EntityConstructor, string>
-  implements OnInit, OnChanges
+  implements OnInit
 {
-  @Input() override multi = false;
-  @Input() override placeholder =
-    $localize`:EntityTypeSelect placeholder:Select Record Type`;
+  override multi = false;
+  override placeholder = $localize`:EntityTypeSelect placeholder:Select Record Type`;
 
   /**
    * whether to include record types without a human-readable label
    * (usually only used internally for technical purposes)
    */
-  @Input() showInternalTypes: boolean = false;
+  showInternalTypes = input(false);
 
   private entityRegistry = inject(EntityRegistry);
+
+  constructor() {
+    super();
+    effect(() => {
+      this.initOptions();
+    });
+  }
 
   override optionToString = (option: EntityConstructor) =>
     option.label ?? option.ENTITY_TYPE;
@@ -51,15 +57,7 @@ export class EntityTypeSelectComponent
 
   private initOptions() {
     this.options = this.entityRegistry
-      .getEntityTypes(!this.showInternalTypes)
+      .getEntityTypes(!this.showInternalTypes())
       .map(({ value }) => value);
-  }
-
-  override ngOnChanges(changes: { [key in keyof this]?: any }) {
-    if (changes.showInternalTypes) {
-      this.initOptions();
-    }
-
-    super.ngOnChanges(changes);
   }
 }

@@ -49,8 +49,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     );
     component = fixture.componentInstance;
 
-    component.entity = mainEntity;
-    component.entityType = entityType;
+    fixture.componentRef.setInput("entity", mainEntity);
+    fixture.componentRef.setInput("entityType", entityType);
 
     fixture.detectChanges();
   }));
@@ -66,13 +66,13 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   });
 
   it("should change columns to be displayed via config", async () => {
-    component.entity = new TestEntity();
-    component.single = true;
-    component.columns = [
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("single", true);
+    fixture.componentRef.setInput("columns", [
       { id: "schoolId", label: "Team", viewComponent: "school" },
       { id: "start", label: "From", viewComponent: "date" },
       { id: "end", label: "To", viewComponent: "date" },
-    ];
+    ]);
     await component.ngOnInit();
 
     let columnNames = component._columns.map((column) => column.label);
@@ -91,13 +91,14 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
     columnNames = component._columns.map((column) => column.label);
     expect(columnNames).toEqual(
-      expect.arrayContaining(["Team", "From", "To", "Class", "Result"]),
+      expect.arrayContaining(["Team", "From", "To", "Currently"]),
     );
   });
 
   it("should create a new entity with the main entity's id linked", async () => {
     const child = new TestEntity();
-    component.entity = child;
+    fixture.componentRef.setInput("entity", child);
+    fixture.componentRef.setInput("property", "childId");
     await component.ngOnInit();
 
     const newRelation = component.createNewRecordFactory()();
@@ -114,7 +115,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     const loadType = vi.spyOn(entityMapper, "loadType");
     loadType.mockResolvedValue([existingRelation]);
 
-    component.entity = child;
+    fixture.componentRef.setInput("entity", child);
     await component.ngOnInit();
 
     const newRelation = component.createNewRecordFactory()();
@@ -132,7 +133,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
       const loadType = vi.spyOn(entityMapper, "loadType");
       loadType.mockResolvedValue([active1, active2, inactive]);
 
-      component.showInactive = true;
+      component.showInactive.set(true);
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 

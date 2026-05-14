@@ -1,7 +1,7 @@
 <div
   class="form-buttons-wrapper padding-bottom-small flex-row gap-small align-self-end"
 >
-  @if (form?.formGroup.enabled) {
+  @if (form()?.formGroup.enabled) {
     <button
       mat-raised-button
       color="accent"
@@ -20,12 +20,12 @@
     </button>
   }
 
-  @if (form?.formGroup.disabled && !entity?.anonymized) {
+  @if (form()?.formGroup.disabled && !entity()?.anonymized) {
     <button
       mat-raised-button
-      (click)="form?.formGroup.enable()"
+      (click)="form()?.formGroup.enable()"
       *appDisabledEntityOperation="{
-        entity: entity,
+        entity: entity(),
         operation: 'update',
       }"
       i18n="Edit button for forms"
@@ -35,10 +35,10 @@
   }
 </div>
 
-@if (form) {
+@if (form()) {
   <app-entity-form
-    [entity]="entity"
-    [fieldGroups]="fieldGroups"
-    [form]="form"
+    [entity]="entity()"
+    [fieldGroups]="fieldGroups()"
+    [form]="form()"
   ></app-entity-form>
 }

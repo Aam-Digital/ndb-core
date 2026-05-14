@@ -46,26 +46,26 @@ describe("RelatedEntitiesComponent", () => {
   it("should create a filter for the passed entity", async () => {
     const entity = new TestEntity();
     const columns = ["name"];
-    component.entity = entity;
-    component.entityType = TestEntity.ENTITY_TYPE;
-    component.property = "ref";
-    component.columns = columns;
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("property", "ref");
+    fixture.componentRef.setInput("columns", columns);
     await initComponent();
 
-    expect(component.filter).toEqual({ ref: entity.getId() });
+    expect(component.filterObj).toEqual({ ref: entity.getId() });
   });
 
   it("should also include the provided filter", async () => {
     const entity = new TestEntity();
     const filter = { start: { $exists: true } };
 
-    component.entity = entity;
-    component.entityType = TestEntity.ENTITY_TYPE;
-    component.property = "ref";
-    component.filter = { ...filter };
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("property", "ref");
+    fixture.componentRef.setInput("filter", { ...filter });
     await initComponent();
 
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       ...filter,
       ref: entity.getId(),
     });
@@ -73,10 +73,10 @@ describe("RelatedEntitiesComponent", () => {
 
   it("should create a new entity that references the related one", async () => {
     const related = new TestEntity();
-    component.entity = related;
-    component.entityType = TestEntity.ENTITY_TYPE;
-    component.property = "ref";
-    component.columns = [];
+    fixture.componentRef.setInput("entity", related);
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("property", "ref");
+    fixture.componentRef.setInput("columns", []);
     await initComponent();
 
     const newEntity = component.createNewRecordFactory()();
@@ -89,9 +89,9 @@ describe("RelatedEntitiesComponent", () => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
     vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
-    component.entity = new TestEntity();
-    component.entityType = TestEntity.ENTITY_TYPE;
-    component.property = "ref";
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("property", "ref");
     await initComponent();
 
     const entity = new TestEntity();
@@ -106,9 +106,9 @@ describe("RelatedEntitiesComponent", () => {
     vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
 
     const entity = new TestEntity();
-    component.entity = new TestEntity();
-    component.entityType = entity.getType();
-    component.property = "ref";
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("entityType", entity.getType());
+    fixture.componentRef.setInput("property", "ref");
     component.data = [entity];
     await initComponent();
 
@@ -132,14 +132,14 @@ describe("RelatedEntitiesComponent", () => {
     });
 
     const entity = new TestEntity();
-    component.entity = entity;
-    component.entityType = MultiPropTest.ENTITY_TYPE;
-    component.filter = {};
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("entityType", MultiPropTest.ENTITY_TYPE);
+    fixture.componentRef.setInput("filter", {});
 
     await initComponent();
 
     // filter matching relations at any of the available props
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       $or: [
         { singleChild: entity.getId() },
         { multiEntities: { $elemMatch: { $eq: entity.getId() } } },
@@ -154,18 +154,18 @@ describe("RelatedEntitiesComponent", () => {
   it("should align the filter with the related properties", async () => {
     @DatabaseEntity("PropTest")
     class PropTest extends Entity {}
-    component.entityType = PropTest.ENTITY_TYPE;
+    fixture.componentRef.setInput("entityType", PropTest.ENTITY_TYPE);
 
     PropTest.schema.set("singleRelation", {
       dataType: EntityDatatype.dataType,
       additional: TestEntity.ENTITY_TYPE,
     });
-    component.entity = new TestEntity();
-    component.filter = undefined;
-    component.property = undefined;
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
     await component.ngOnInit();
-    expect(component.filter).toEqual({
-      singleRelation: component.entity.getId(),
+    expect(component.filterObj).toEqual({
+      singleRelation: component.entity().getId(),
     });
 
     PropTest.schema.set("arrayRelation", {
@@ -173,14 +173,14 @@ describe("RelatedEntitiesComponent", () => {
       isArray: true,
       additional: TestEntity.ENTITY_TYPE,
     });
-    component.entity = new TestEntity();
-    component.filter = undefined;
-    component.property = undefined;
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
     await component.ngOnInit();
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       $or: [
-        { singleRelation: component.entity.getId() },
-        { arrayRelation: { $elemMatch: { $eq: component.entity.getId() } } },
+        { singleRelation: component.entity().getId() },
+        { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
       ],
     });
 
@@ -189,36 +189,38 @@ describe("RelatedEntitiesComponent", () => {
       isArray: true,
       additional: [Entity.ENTITY_TYPE, TestEntity.ENTITY_TYPE],
     });
-    component.entity = new Entity();
-    component.filter = undefined;
-    component.property = undefined;
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
     await component.ngOnInit();
-    expect(component.filter).toEqual({
-      multiTypeRelation: { $elemMatch: { $eq: component.entity.getId() } },
+    expect(component.filterObj).toEqual({
+      multiTypeRelation: { $elemMatch: { $eq: component.entity().getId() } },
     });
 
     // Now with 2 relations ("singleRelation" and "multiTypeRelation")
-    component.entity = new TestEntity();
-    component.filter = undefined;
-    component.property = undefined;
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
     await component.ngOnInit();
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       $or: [
-        { singleRelation: component.entity.getId() },
-        { arrayRelation: { $elemMatch: { $eq: component.entity.getId() } } },
+        { singleRelation: component.entity().getId() },
+        { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
         {
-          multiTypeRelation: { $elemMatch: { $eq: component.entity.getId() } },
+          multiTypeRelation: {
+            $elemMatch: { $eq: component.entity().getId() },
+          },
         },
       ],
     });
 
     // preselected property should not be changed
-    component.entity = new TestEntity();
-    component.filter = undefined;
-    component.property = "singleRelation";
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", "singleRelation");
     await component.ngOnInit();
-    expect(component.filter).toEqual({
-      singleRelation: component.entity.getId(),
+    expect(component.filterObj).toEqual({
+      singleRelation: component.entity().getId(),
     });
   });
 
@@ -237,15 +239,15 @@ describe("RelatedEntitiesComponent", () => {
       },
     });
 
-    component.entityType = EmbedTest.ENTITY_TYPE;
-    component.entity = new TestEntity();
-    component.filter = undefined;
-    component.property = undefined;
+    fixture.componentRef.setInput("entityType", EmbedTest.ENTITY_TYPE);
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
     await component.ngOnInit();
 
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       attendance: {
-        $elemMatch: { participant: component.entity.getId() },
+        $elemMatch: { participant: component.entity().getId() },
       },
     });
   });
@@ -270,18 +272,18 @@ describe("RelatedEntitiesComponent", () => {
       },
     });
 
-    component.entityType = MixedEmbedTest.ENTITY_TYPE;
-    component.entity = new TestEntity();
-    component.filter = undefined;
-    component.property = undefined;
+    fixture.componentRef.setInput("entityType", MixedEmbedTest.ENTITY_TYPE);
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
     await component.ngOnInit();
 
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       $or: [
-        { authors: { $elemMatch: { $eq: component.entity.getId() } } },
+        { authors: { $elemMatch: { $eq: component.entity().getId() } } },
         {
           attendance: {
-            $elemMatch: { participant: component.entity.getId() },
+            $elemMatch: { participant: component.entity().getId() },
           },
         },
       ],
@@ -308,16 +310,16 @@ describe("RelatedEntitiesComponent", () => {
       },
     });
 
-    component.entityType = ManualPropTest.ENTITY_TYPE;
-    component.entity = new TestEntity();
-    component.filter = undefined;
-    component.property = "attendance";
+    fixture.componentRef.setInput("entityType", ManualPropTest.ENTITY_TYPE);
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", "attendance");
     await component.ngOnInit();
 
     // should only filter by attendance, not authors
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       attendance: {
-        $elemMatch: { participant: component.entity.getId() },
+        $elemMatch: { participant: component.entity().getId() },
       },
     });
   });
@@ -326,10 +328,13 @@ describe("RelatedEntitiesComponent", () => {
     const child = createEntityOfType("Child");
     mockLoaderService.loadDataFor.mockResolvedValue([]);
 
-    component.entity = child;
-    component.entityType = "ChildSchoolRelation";
-    component.columns = [];
-    component.loaderMethod = LoaderMethod.ChildrenServiceQueryRelations;
+    fixture.componentRef.setInput("entity", child);
+    fixture.componentRef.setInput("entityType", "ChildSchoolRelation");
+    fixture.componentRef.setInput("columns", []);
+    fixture.componentRef.setInput(
+      "loaderMethod",
+      LoaderMethod.ChildrenServiceQueryRelations,
+    );
     await initComponent();
 
     expect(mockLoaderService.loadDataFor).toHaveBeenCalledWith(

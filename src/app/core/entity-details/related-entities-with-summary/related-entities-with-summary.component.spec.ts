@@ -53,15 +53,18 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RelatedEntitiesWithSummaryComponent);
     component = fixture.componentInstance;
-    component.entity = primaryEntity;
-    component.entityType = TestEntityWithAmount.ENTITY_TYPE;
+    fixture.componentRef.setInput("entity", primaryEntity);
+    fixture.componentRef.setInput(
+      "entityType",
+      TestEntityWithAmount.ENTITY_TYPE,
+    );
 
-    component.summaries = {
+    fixture.componentRef.setInput("summaries", {
       countProperty: "amount",
       groupBy: "category",
       total: true,
       average: true,
-    };
+    });
 
     fixture.detectChanges();
   });
@@ -102,8 +105,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   it("produces a singly summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
     component.data = [{ amount: 1 }, { amount: 5 }] as any[];
-    delete component.summaries.groupBy;
-    component.summaries.countProperty = "amount";
+    const summaries = component.summaries();
+    delete summaries.groupBy;
+    summaries.countProperty = "amount";
     component.updateSummary(component.data);
 
     expect(component.summarySum).toEqual(`6`);
@@ -122,8 +126,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   });
 
   it("produces summary of all records when average is false and total is true", () => {
-    component.summaries.total = true;
-    component.summaries.average = false;
+    const summaries = component.summaries();
+    summaries.total = true;
+    summaries.average = false;
     setRecordsAndGenerateSummary(
       { category: "PENCIL", amount: 1 },
       { category: "PAPER", amount: 1 },
@@ -135,8 +140,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   });
 
   it("produces summary of all records when average is true and total is false", () => {
-    component.summaries.total = false;
-    component.summaries.average = true;
+    const summaries = component.summaries();
+    summaries.total = false;
+    summaries.average = true;
     setRecordsAndGenerateSummary(
       { category: "PENCIL", amount: 1 },
       { category: "PAPER", amount: 1 },
@@ -148,8 +154,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   });
 
   it("does not produces summary of all records when both average and total are false", () => {
-    component.summaries.total = false;
-    component.summaries.average = false;
+    const summaries = component.summaries();
+    summaries.total = false;
+    summaries.average = false;
     setRecordsAndGenerateSummary(
       { category: "PENCIL", amount: 1 },
       { category: "PAPER", amount: 1 },
@@ -183,7 +190,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
         "loadType",
       ).mockResolvedValue(data);
 
-      component.entity = new TestEntity("22");
+      fixture.componentRef.setInput("entity", new TestEntity("22"));
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
       fixture.detectChanges();

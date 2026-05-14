@@ -1,9 +1,8 @@
 import {
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
@@ -64,32 +63,40 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
     EntityLoadPipe,
   ],
 })
-export class EntityDetailsComponent
-  extends AbstractEntityDetailsComponent
-  implements OnChanges
-{
+export class EntityDetailsComponent extends AbstractEntityDetailsComponent {
   /**
    * The configuration for the panels on this details page.
    */
-  @Input() panels: Panel[] = [];
+  panels = input<Panel[]>([]);
+  panelsState: Panel[] = [];
 
   private session = inject(SessionSubject);
+
+  constructor() {
+    super();
+    effect(() => {
+      this.panels();
+      this.initPanels();
+      this.cdr.markForCheck();
+    });
+    effect(() => {
+      this.entity();
+      this.initPanels();
+      this.cdr.markForCheck();
+    });
+  }
 
   protected override onEntityUpdated() {
     this.initPanels();
   }
 
-  override async ngOnChanges(changes: SimpleChanges) {
-    await super.ngOnChanges(changes);
-
-    if (changes.id || changes.entity || changes.panels) {
-      this.initPanels();
-      this.cdr.markForCheck();
-    }
-  }
-
   private initPanels() {
-    let filteredPanels = this.panels
+    const entity = this.entity();
+    if (!entity) {
+      this.panelsState = [];
+      return;
+    }
+    let filteredPanels = this.panels()
       .filter((p) =>
         this.hasRequiredRole({ permittedUserRoles: p?.permittedUserRoles }),
       )
@@ -119,7 +126,7 @@ export class EntityDetailsComponent
       });
     }
 
-    this.panels = filteredPanels;
+    this.panelsState = filteredPanels;
   }
 
   /**
@@ -138,9 +145,10 @@ export class EntityDetailsComponent
   }
 
   private getPanelConfig(c: PanelComponent): PanelConfig {
+    const entity = this.entity();
     let panelConfig: PanelConfig = {
-      entity: this.entity,
-      creatingNew: this.entity?.isNew,
+      entity,
+      creatingNew: entity?.isNew,
     };
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
       panelConfig = { ...c.config, ...panelConfig };

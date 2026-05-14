@@ -1,13 +1,11 @@
 import {
   ChangeDetectorRef,
   Component,
-  EventEmitter,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  input,
+  output,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -37,21 +35,21 @@ import { MatDialogRef } from "@angular/material/dialog";
     FaDynamicIconComponent,
   ],
 })
-export class EntityActionsMenuComponent implements OnChanges {
+export class EntityActionsMenuComponent {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
   private readonly dialogRef = inject(MatDialogRef, { optional: true });
   private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() entity: Entity;
+  entity = input<Entity>();
 
   /**
    * whether the "delete" action will trigger a navigation back to the parent list.
    * This is useful when the entity is deleted from a fullscreen detail view but not for an overlay.
    */
-  @Input() navigateOnDelete: boolean = false;
+  navigateOnDelete = input<boolean>(false);
 
-  @Output() actionTriggered = new EventEmitter<string>();
+  actionTriggered = output<string>();
 
   /**
    * The actions being displayed as menu items.
@@ -61,32 +59,46 @@ export class EntityActionsMenuComponent implements OnChanges {
   /**
    * Whether some buttons should be displayed directly, outside the three-dot menu in dialog views.
    */
-  @Input() showExpanded?: boolean;
+  showExpanded = input<boolean | undefined>();
 
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (changes.entity) {
-      await this.filterAvailableActions();
-    }
+  constructor() {
+    effect((onCleanup) => {
+      const entity = this.entity();
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.filterAvailableActions(entity, () => cancelled);
+    });
   }
 
-  private async filterAvailableActions() {
-    if (!this.entity) {
+  private async filterAvailableActions(
+    entity: Entity | undefined,
+    isCancelled: () => boolean,
+  ) {
+    if (!entity) {
       this.actions = [];
       this.cdr.markForCheck();
       return;
     }
 
-    const allActions = await this.entityActionsMenuService.getActionsForSingle(
-      this.entity,
-    );
+    const allActions =
+      await this.entityActionsMenuService.getActionsForSingle(entity);
+    if (isCancelled()) {
+      return;
+    }
     this.actions = allActions;
     this.cdr.markForCheck();
   }
 
   async executeAction(action: EntityAction) {
+    const entity = this.entity();
+    if (!entity) {
+      return;
+    }
     const result = await action.execute(
-      this.entity,
-      this.navigateOnDelete && !this.viewContext?.isDialog,
+      entity,
+      this.navigateOnDelete() && !this.viewContext?.isDialog,
     );
     if (result) {
       this.actionTriggered.emit(action.action);
@@ -100,6 +112,9 @@ export class EntityActionsMenuComponent implements OnChanges {
         this.dialogRef.close();
       }
     }
-    setTimeout(() => this.filterAvailableActions());
+    setTimeout(() => {
+      const currentEntity = this.entity();
+      void this.filterAvailableActions(currentEntity, () => false);
+    });
   }
 }

@@ -24,8 +24,10 @@ describe("FormComponent", () => {
     try {
       fixture = TestBed.createComponent(FormComponent<TestEntity>);
       component = fixture.componentInstance;
-      component.entity = new TestEntity();
-      component.fieldGroups = [{ fields: [{ id: "name" }] }];
+      fixture.componentRef.setInput("entity", new TestEntity());
+      fixture.componentRef.setInput("fieldGroups", [
+        { fields: [{ id: "name" }] },
+      ]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
     } finally {
@@ -38,13 +40,13 @@ describe("FormComponent", () => {
   });
 
   it("should change the creating state", () => {
-    expect(component.creatingNew).toBe(false);
+    expect(component.creatingNew()).toBe(false);
 
-    component.entity = new TestEntity();
-    component.fieldGroups = [];
-    component.creatingNew = true;
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("fieldGroups", []);
+    fixture.componentRef.setInput("creatingNew", true);
 
-    expect(component.creatingNew).toBe(true);
+    expect(component.creatingNew()).toBe(true);
   });
 
   it("calls router once a new child is saved", async () => {
@@ -55,8 +57,8 @@ describe("FormComponent", () => {
     const router = fixture.debugElement.injector.get(Router);
     vi.spyOn(router, "navigate");
 
-    component.creatingNew = true;
-    component.entity = testChild;
+    fixture.componentRef.setInput("creatingNew", true);
+    fixture.componentRef.setInput("entity", testChild);
     await component.saveClicked();
 
     expect(entityFormService.saveChanges).toHaveBeenCalled();
@@ -79,24 +81,24 @@ describe("FormComponent", () => {
   it("should align form with entity if canceled", () => {
     const child = new TestEntity();
     child.name = "test child";
-    component.entity = child;
-    component.form.formGroup.enable();
-    component.form.formGroup.get("name").setValue("other name");
+    fixture.componentRef.setInput("entity", child);
+    component.form()?.formGroup.enable();
+    component.form()?.formGroup.get("name").setValue("other name");
 
     component.cancelClicked();
 
-    expect(component.form.formGroup.disabled).toBe(true);
-    expect(component.form.formGroup.get("name").value).toEqual("test child");
+    expect(component.form()?.formGroup.disabled).toBe(true);
+    expect(component.form()?.formGroup.get("name").value).toEqual("test child");
   });
 
   it("should also reset form values which where not set before", () => {
-    component.entity = new TestEntity();
-    component.ngOnInit();
-    component.form.formGroup.enable();
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.detectChanges();
+    component.form()?.formGroup.enable();
 
-    component.form.formGroup.get("name").setValue("my name");
+    component.form()?.formGroup.get("name").setValue("my name");
     component.cancelClicked();
 
-    expect(component.form.formGroup.get("name").value).toBeUndefined();
+    expect(component.form()?.formGroup.get("name").value).toBeUndefined();
   });
 });

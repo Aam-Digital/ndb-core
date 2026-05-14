@@ -1,7 +1,7 @@
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, input } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
@@ -23,14 +23,14 @@ export class DynamicEditComponent
 {
   private static readonly TODO_COMPLETION_EDIT_COMPONENT = "EditTodoCompletion";
 
-  @Input() formFieldConfig: FormFieldConfig;
-  @Input() entity: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   override get disabled(): boolean {
     const control = this.ngControl?.control;
 
     if (
-      this.formFieldConfig?.editComponent ===
+      this.formFieldConfig()?.editComponent ===
         DynamicEditComponent.TODO_COMPLETION_EDIT_COMPONENT &&
       control?.disabled &&
       !control.value

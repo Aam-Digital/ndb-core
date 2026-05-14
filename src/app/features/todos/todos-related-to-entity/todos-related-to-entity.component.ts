@@ -31,8 +31,6 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   override _columns: FormFieldConfig[] =
     RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
 
-  // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
-  override filter: DataFilter<Todo> = { isActive: true };
   backgroundColorFn = (r: Todo) => {
     if (!r.isActive) {
       return "#e0e0e0";
@@ -42,21 +40,25 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   };
 
   override getData() {
-    if (Array.isArray(this.property)) {
+    if (Array.isArray(this.relationProperty)) {
       return super.getData();
     }
 
     // TODO: move this generic index creation into schema
+    const relationProperty = this.relationProperty as keyof Todo;
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
       Todo,
-      this.property as keyof Todo,
+      relationProperty,
       "deadline",
     );
-    const entityId = this.entity.getId();
+    const entityId = this.entity()?.getId();
+    if (!entityId) {
+      return Promise.resolve([]);
+    }
     return this.dbIndexingService.queryIndexDocs(
       Todo,
-      "todo_index/by_" + this.property,
+      "todo_index/by_" + relationProperty,
       {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],
@@ -68,9 +70,14 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   public getNewEntryFunction(): () => Todo {
     return () => {
       const newEntry = new Todo();
-      newEntry.relatedEntities = [this.entity.getId()];
+      const entityId = this.entity()?.getId();
+      newEntry.relatedEntities = entityId ? [entityId] : [];
       return newEntry;
     };
+  }
+
+  protected override initFilter(): DataFilter<Todo> {
+    return { isActive: true, ...super.initFilter() };
   }
 
   showDetails(entity: Todo) {

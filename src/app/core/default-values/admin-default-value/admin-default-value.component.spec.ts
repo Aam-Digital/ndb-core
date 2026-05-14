@@ -63,7 +63,7 @@ describe("AdminDefaultValueComponent", () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
 
-    component.entityType = Entity;
+    fixture.componentRef.setInput("entityType", Entity);
   });
 
   it("should create", () => {

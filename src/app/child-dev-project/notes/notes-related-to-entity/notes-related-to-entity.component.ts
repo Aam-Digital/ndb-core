@@ -47,28 +47,37 @@ export class NotesRelatedToEntityComponent
   newRecordFactory = this.createNewRecordFactory();
 
   override ngOnInit() {
-    if (this.entity.getType() === "Child") {
+    if (this.entity()?.getType() === "Child") {
       // When displaying notes for a child, use attendance color highlighting
-      this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
+      this.getColor = (note: Note) =>
+        note?.getColorForId(this.entity()?.getId());
     }
     return super.ngOnInit();
   }
 
   override getData() {
-    return this.childrenService.getNotesRelatedTo(this.entity.getId());
+    const entityId = this.entity()?.getId();
+    if (!entityId) {
+      return Promise.resolve([]);
+    }
+    return this.childrenService.getNotesRelatedTo(entityId);
   }
 
   override createNewRecordFactory() {
     return () => {
       const newNote = super.createNewRecordFactory()();
 
-      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+      const entity = this.entity();
+      if (!entity) {
+        return newNote;
+      }
+      if (entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
         this.specialLinkingForChildSchoolRelation(newNote);
       }
 
       for (const e of [
-        this.entity.getId(),
-        ...this.getIndirectlyRelatedEntityIds(this.entity),
+        entity.getId(),
+        ...this.getIndirectlyRelatedEntityIds(entity),
       ]) {
         if (!this.isAlreadyLinked(newNote, e)) {
           newNote.relatedEntities.push(e);
@@ -82,7 +91,7 @@ export class NotesRelatedToEntityComponent
   private specialLinkingForChildSchoolRelation(newNote: Note) {
     //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
     for (const childId of asArray(
-      (this.entity as ChildSchoolRelation).childId,
+      (this.entity() as ChildSchoolRelation).childId,
     )) {
       if (childId) {
         newNote.children.push(childId);
@@ -90,7 +99,7 @@ export class NotesRelatedToEntityComponent
     }
 
     for (const schooldId of asArray(
-      (this.entity as ChildSchoolRelation).schoolId,
+      (this.entity() as ChildSchoolRelation).schoolId,
     )) {
       if (schooldId) {
         newNote.schools.push(schooldId);

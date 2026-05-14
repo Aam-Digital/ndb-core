@@ -1,10 +1,9 @@
 import {
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
+  input,
   signal,
-  SimpleChanges,
   ViewEncapsulation,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -30,7 +29,6 @@ import { ViewTitleComponent } from "../../../core/common-components/view-title/v
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
-import { NoteDetailsConfig } from "./note-details-config.interface";
 import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
 
 /**
@@ -58,24 +56,20 @@ import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteDetailsComponent
-  extends AbstractEntityDetailsComponent
-  implements OnChanges, NoteDetailsConfig
-{
+export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
   private readonly dialog = inject(MatDialog);
 
-  @Input() declare entity: Note;
   override entityConstructor = Note;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
   private readonly defaultFormConfig = getDefaultNoteDetailsConfig();
-  @Input() topForm = this.defaultFormConfig.topForm;
-  @Input() middleForm = this.defaultFormConfig.middleForm;
-  @Input() bottomForm = this.defaultFormConfig.bottomForm;
+  topForm = input(this.defaultFormConfig.topForm);
+  middleForm = input(this.defaultFormConfig.middleForm);
+  bottomForm = input(this.defaultFormConfig.bottomForm);
 
   topFieldGroups: FieldGroup[];
   middleFieldGroups: FieldGroup[];
@@ -84,24 +78,27 @@ export class NoteDetailsComponent
   form: EntityForm<Note>;
   tmpEntity = signal<Note | undefined>(undefined);
 
-  override async ngOnChanges(changes: SimpleChanges) {
+  constructor() {
+    super();
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
-
-    await super.ngOnChanges(changes);
-
-    await this.initForm();
+    effect(() => {
+      this.entity();
+      this.topForm();
+      this.middleForm();
+      this.bottomForm();
+      void this.initForm();
+    });
   }
 
   openExportDialog() {
-    const dateStr = this.entity.date
-      ? this.entity.date.toISOString().split("T")[0]
-      : "";
-    const filename = `event_${this.entity.toString()?.replaceAll(" ", "-")}_${dateStr}`;
+    const entity = this.entity() as Note;
+    const dateStr = entity?.date ? entity.date.toISOString().split("T")[0] : "";
+    const filename = `event_${entity?.toString()?.replaceAll(" ", "-")}_${dateStr}`;
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: [this.entity],
+        allEntities: entity ? [entity] : [],
         exportConfig: this.exportConfig,
         filename,
       },
@@ -109,23 +106,24 @@ export class NoteDetailsComponent
   }
 
   private async initForm() {
-    if (!this.entity) return;
+    const entity = this.entity() as Note;
+    if (!entity) return;
 
-    this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
-    this.middleFieldGroups = [{ fields: this.middleForm }];
-    this.bottomFieldGroups = [{ fields: this.bottomForm }];
+    this.topFieldGroups = this.topForm().map((f) => ({ fields: [f] }));
+    this.middleFieldGroups = [{ fields: this.middleForm() }];
+    this.bottomFieldGroups = [{ fields: this.bottomForm() }];
 
     this.form = await this.entityFormService.createEntityForm(
-      this.middleForm.concat(this.topForm, this.bottomForm),
-      this.entity,
+      this.middleForm().concat(this.topForm(), this.bottomForm()),
+      entity,
     );
 
     // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
-    this.tmpEntity.set(this.entity.copy());
+    this.tmpEntity.set(entity.copy());
     this.form.formGroup.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
-        this.tmpEntity.set(Object.assign(this.entity.copy(), value));
+        this.tmpEntity.set(Object.assign(entity.copy(), value));
       });
   }
 }

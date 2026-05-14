@@ -2,8 +2,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
+  input,
+  model,
   OnInit,
+  signal,
   inject,
 } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
@@ -31,7 +33,6 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
-import { RelatedEntitiesComponentConfig } from "../related-entity-config";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -44,9 +45,7 @@ import { RelatedEntitiesComponentConfig } from "../related-entity-config";
   templateUrl: "./related-entities.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
-export class RelatedEntitiesComponent<E extends Entity>
-  implements RelatedEntitiesComponentConfig, OnInit
-{
+export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   protected entityMapper = inject(EntityMapperService);
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
@@ -57,12 +56,10 @@ export class RelatedEntitiesComponent<E extends Entity>
   });
 
   /** currently viewed/main entity for which related entities are displayed in this component */
-  @Input() entity: Entity;
+  entity = input<Entity>();
 
   /** entity type of the related entities to be displayed */
-  @Input() set entityType(value: string) {
-    this.entityCtr = this.entityRegistry.get(value) as EntityConstructor<E>;
-  }
+  entityType = input<string>();
 
   /**
    * Property name of the related entities (type given in this.entityType) that holds the entity id
@@ -74,69 +71,84 @@ export class RelatedEntitiesComponent<E extends Entity>
    * For example: if you set `entityType = "Project"` (to display a list of projects here) and the Project entities have a properties "participants" and "supervisors" both storing references to User entities,
    * you can set `property = "supervisors"` to only list those projects where the current User is supervisors, not participant.
    */
-  @Input() property: string | string[];
+  property = input<string | string[]>();
 
   /**
    * The special service or method to load data via an index or other special method.
    */
-  @Input() loaderMethod: LoaderMethod;
+  loaderMethod = input<LoaderMethod>();
 
   /**
    * Columns to be displayed in the table
    * @param value
    */
-  @Input()
-  public set columns(value: ColumnConfig[]) {
-    if (!Array.isArray(value)) {
-      return;
-    }
-
-    this._columns = value.map((c) => toFormFieldConfig(c));
-    this.updateColumnsToDisplayForScreenSize();
-  }
-
-  protected _columns: FormFieldConfig[];
+  columns = input<ColumnConfig[]>([]);
+  _columns: FormFieldConfig[] = [];
 
   columnsToDisplay: string[];
 
   /**
    * This filter is applied before displaying the data.
    */
-  @Input() filter?: DataFilter<E>;
+  filter = input<DataFilter<E>>();
 
   /**
    * Whether inactive/archived records should be shown.
    */
-  @Input() showInactive: boolean;
+  showInactive = model<boolean | undefined>(undefined);
 
-  @Input() clickMode: "popup" | "navigate" | "popup-details" = "popup";
-  @Input() editable: boolean = true;
+  clickMode = input<"popup" | "navigate" | "popup-details">("popup");
+  editable = input<boolean>(true);
 
   data: E[];
   protected entityCtr: EntityConstructor<E>;
+  protected relationProperty: string | string[];
+  filterObj: DataFilter<E> = {};
+  private readonly currentScreenSize = signal(
+    this.screenWidthObserver.currentScreenSize(),
+  );
 
   constructor() {
     this.screenWidthObserver
       .shared()
       .pipe(untilDestroyed(this))
       .subscribe(() => {
+        this.currentScreenSize.set(
+          this.screenWidthObserver.currentScreenSize(),
+        );
         this.updateColumnsToDisplayForScreenSize();
         this.cdr.markForCheck();
       });
   }
 
   async ngOnInit() {
-    this.property = this.property ?? this.getProperty();
-    this.property =
-      typeof this.property === "string"
-        ? this.resolvePropertyPath(this.property)
-        : this.property.map((p) => this.resolvePropertyPath(p));
-    this.data = await this.getData();
-    this.filter = this.initFilter();
+    const entityType = this.entityType();
+    if (entityType) {
+      this.entityCtr = this.entityRegistry.get(
+        entityType,
+      ) as EntityConstructor<E>;
+    }
+    const configuredColumns = this.columns();
+    if (Array.isArray(configuredColumns) && configuredColumns.length > 0) {
+      this._columns = this.getColumns(configuredColumns);
+    }
+    this.updateColumnsToDisplayForScreenSize();
 
-    if (this.showInactive === undefined) {
+    const entity = this.entity();
+    if (!entity || !this.entityCtr) {
+      return;
+    }
+    const property = this.property() ?? this.getProperty();
+    this.relationProperty =
+      typeof property === "string"
+        ? this.resolvePropertyPath(property)
+        : property.map((p) => this.resolvePropertyPath(p));
+    this.data = await this.getData();
+    this.filterObj = this.initFilter();
+
+    if (this.showInactive() === undefined) {
       // show all related docs when visiting an archived entity
-      this.showInactive = this.entity.anonymized;
+      this.showInactive.set(entity.anonymized);
     }
 
     this.listenToEntityUpdates();
@@ -144,7 +156,7 @@ export class RelatedEntitiesComponent<E extends Entity>
     // added relatedEntitiesParent (e.g., current RecurringActivity or School) to each column with additional config
     this._columns?.forEach((column) => {
       if (typeof column.additional === "object" && column.additional !== null) {
-        column.additional.relatedEntitiesParent = this.entity;
+        column.additional.relatedEntitiesParent = entity;
       }
     });
 
@@ -152,11 +164,13 @@ export class RelatedEntitiesComponent<E extends Entity>
   }
 
   protected getData(): Promise<E[]> {
-    if (this.loaderMethod && this.entitySpecialLoader) {
-      return this.entitySpecialLoader.loadDataFor(
-        this.loaderMethod,
-        this.entity,
-      );
+    const entity = this.entity();
+    if (!entity) {
+      return Promise.resolve([]);
+    }
+    const loaderMethod = this.loaderMethod();
+    if (loaderMethod && this.entitySpecialLoader) {
+      return this.entitySpecialLoader.loadDataFor(loaderMethod, entity);
     }
 
     return this.entityMapper.loadType(this.entityCtr);
@@ -167,7 +181,11 @@ export class RelatedEntitiesComponent<E extends Entity>
    * Returns dot-paths for nested references (e.g. "attendance.participant").
    */
   protected getProperty(): string | string[] {
-    const relType = this.entity.getType();
+    const entity = this.entity();
+    if (!entity) {
+      return [];
+    }
+    const relType = entity.getType();
     const found: string[] = [];
 
     for (const [key, field] of this.entityCtr.schema) {
@@ -196,19 +214,22 @@ export class RelatedEntitiesComponent<E extends Entity>
     if (!field) {
       return property;
     }
-    const refs = this.findEmbeddedEntityRefs(field, this.entity.getType());
+    const entity = this.entity();
+    if (!entity) {
+      return property;
+    }
+    const refs = this.findEmbeddedEntityRefs(field, entity.getType());
     return refs.length === 1 ? `${property}.${refs[0]}` : property;
   }
 
   protected initFilter(): DataFilter<E> {
-    const filter: DataFilter<E> = { ...this.filter };
-
-    if (this.property) {
+    const filter: DataFilter<E> = { ...(this.filter() ?? {}) };
+    if (this.relationProperty) {
       // only show related entities
-      if (typeof this.property === "string") {
-        Object.assign(filter, this.getFilterForProperty(this.property));
-      } else if (this.property.length > 0) {
-        filter["$or"] = this.property.map((prop) =>
+      if (typeof this.relationProperty === "string") {
+        Object.assign(filter, this.getFilterForProperty(this.relationProperty));
+      } else if (this.relationProperty.length > 0) {
+        filter["$or"] = this.relationProperty.map((prop) =>
           this.getFilterForProperty(prop),
         );
       }
@@ -218,21 +239,25 @@ export class RelatedEntitiesComponent<E extends Entity>
   }
 
   private getFilterForProperty(property: string) {
+    const relatedEntityId = this.entity()?.getId();
+    if (!relatedEntityId) {
+      return {};
+    }
     if (property.includes(".")) {
       const [outerProp, innerProp] = property.split(".", 2);
       const outerIsArray = this.entityCtr.schema.get(outerProp)?.isArray;
       return outerIsArray
         ? {
-            [outerProp]: { $elemMatch: { [innerProp]: this.entity.getId() } },
+            [outerProp]: { $elemMatch: { [innerProp]: relatedEntityId } },
           }
-        : { [`${outerProp}.${innerProp}`]: this.entity.getId() };
+        : { [`${outerProp}.${innerProp}`]: relatedEntityId };
     }
 
     const isArray = this.entityCtr.schema.get(property)?.isArray;
     return {
       [property]: isArray
-        ? { $elemMatch: { $eq: this.entity.getId() } }
-        : this.entity.getId(),
+        ? { $elemMatch: { $eq: relatedEntityId } }
+        : relatedEntityId,
     };
   }
 
@@ -287,9 +312,16 @@ export class RelatedEntitiesComponent<E extends Entity>
   createNewRecordFactory() {
     return () => {
       const rec = new this.entityCtr();
-      this.filterService.alignEntityWithFilter(rec, this.filter);
+      this.filterService.alignEntityWithFilter(rec, this.filterObj);
       return rec;
     };
+  }
+
+  protected getColumns(value: ColumnConfig[] | undefined): FormFieldConfig[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    return value.map((column) => toFormFieldConfig(column));
   }
 
   private updateColumnsToDisplayForScreenSize() {
@@ -307,7 +339,7 @@ export class RelatedEntitiesComponent<E extends Entity>
         if (numericValue === undefined) {
           return true;
         }
-        return this.screenWidthObserver.currentScreenSize() >= numericValue;
+        return this.currentScreenSize() >= numericValue;
       })
       .map((c) => c.id);
   }

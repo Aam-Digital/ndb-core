@@ -1,10 +1,10 @@
 import {
   ChangeDetectorRef,
   Directive,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
+  model,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -24,7 +24,7 @@ import { Logging } from "../../logging/logging.service";
  */
 @UntilDestroy()
 @Directive()
-export abstract class AbstractEntityDetailsComponent implements OnChanges {
+export abstract class AbstractEntityDetailsComponent {
   protected readonly entityMapperService = inject(EntityMapperService);
   protected readonly entities = inject(EntityRegistry);
   protected readonly ability = inject(EntityAbility);
@@ -35,21 +35,22 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
   isLoading: boolean;
   private changesSubscription: Subscription;
 
-  @Input() entityType: string;
+  entityType = input<string>();
   entityConstructor: EntityConstructor;
 
-  @Input() id: string;
-  @Input() entity: Entity;
+  id = input<string>();
+  entity = model<Entity | null>(null);
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.entityType) {
-      this.entityConstructor = this.entities.get(this.entityType);
-    }
-
-    if (changes.id) {
-      await this.loadEntity();
-      this.subscribeToEntityChanges();
-    }
+  constructor() {
+    effect(() => {
+      const entityType = this.entityType();
+      const id = this.id();
+      if (!entityType || !id) {
+        return;
+      }
+      this.entityConstructor = this.entities.get(entityType);
+      void this.loadEntity(id).then(() => this.subscribeToEntityChanges());
+    });
   }
 
   /**
@@ -59,7 +60,12 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
   protected onEntityUpdated() {}
 
   protected subscribeToEntityChanges() {
-    const fullId = Entity.createPrefixedId(this.entityType, this.id);
+    const entityType = this.entityType();
+    const id = this.id();
+    if (!entityType || !id || !this.entityConstructor) {
+      return;
+    }
+    const fullId = Entity.createPrefixedId(entityType, id);
     this.changesSubscription?.unsubscribe();
     this.changesSubscription = this.entityMapperService
       .receiveUpdates(this.entityConstructor)
@@ -69,38 +75,37 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
         untilDestroyed(this),
       )
       .subscribe(({ entity }) => {
-        this.entity = entity;
+        this.entity.set(entity);
         this.onEntityUpdated();
         this.cdr.markForCheck();
       });
   }
 
-  protected async loadEntity() {
+  protected async loadEntity(id: string) {
     this.isLoading = true;
 
-    if (this.id === "new") {
+    if (id === "new") {
       if (this.ability.cannot("create", this.entityConstructor)) {
         this.router.navigate([""]);
         return;
       }
-      this.entity = new this.entityConstructor();
+      this.entity.set(new this.entityConstructor());
       this.isLoading = false;
       return;
     }
 
     try {
-      this.entity = await this.entityMapperService.load(
-        this.entityConstructor,
-        this.id,
+      this.entity.set(
+        await this.entityMapperService.load(this.entityConstructor, id),
       );
     } catch (error) {
       if (error?.status !== 404) {
         Logging.warn("Error loading record", error);
       }
-      this.entity = null;
+      this.entity.set(null);
     }
 
-    if (!this.entity) {
+    if (!this.entity()) {
       await this.router.navigate(["/404"]);
     }
     this.isLoading = false;

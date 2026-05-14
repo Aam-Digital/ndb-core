@@ -4,7 +4,6 @@ import {
   effect,
   inject,
   input,
-  Input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -35,15 +34,14 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   FormFieldConfig,
   string
 > {
-  @Input() override placeholder: string =
-    $localize`:EntityFieldSelect placeholder:Select Record Field`;
+  override placeholder: string = $localize`:EntityFieldSelect placeholder:Select Record Field`;
 
   override optionToString = (option: FormFieldConfig) => option.label;
   override valueMapper = (option: FormFieldConfig) => option.id;
 
-  @Input() override multi?: boolean;
+  override multi?: boolean;
 
-  @Input() override hideOption: (option: FormFieldConfig) => boolean;
+  override hideOption: (option: FormFieldConfig) => boolean = () => false;
 
   /**
    * Whether to show the internal _id field in the dropdown.

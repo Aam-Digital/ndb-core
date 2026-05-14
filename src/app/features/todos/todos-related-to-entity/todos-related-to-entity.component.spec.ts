@@ -24,7 +24,7 @@ describe("TodosRelatedToEntityComponent", () => {
     fixture = TestBed.createComponent(TodosRelatedToEntityComponent);
     component = fixture.componentInstance;
 
-    component.entity = new TestEntity();
+    fixture.componentRef.setInput("entity", new TestEntity());
 
     fixture.detectChanges();
   }));
@@ -50,14 +50,15 @@ describe("TodosRelatedToEntityComponent", () => {
       "queryIndexDocs",
     );
 
-    component.entity = child;
-    component.property = undefined;
-    component.filter = undefined;
+    fixture.componentRef.setInput("entity", child);
+    fixture.componentRef.setInput("property", undefined);
+    fixture.componentRef.setInput("filter", undefined);
     await component.ngOnInit();
 
     expect(indexSpy).toHaveBeenCalled();
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       relatedEntities: { $elemMatch: { $eq: child.getId() } },
+      isActive: true,
     });
     expect(component.data).toEqual([relatedTodo]);
   });
@@ -82,9 +83,9 @@ describe("TodosRelatedToEntityComponent", () => {
     await entityMapper.saveAll([relatedTodo, relatedTodo2, unrelatedTodo]);
     const loadTypeSpy = vi.spyOn(entityMapper, "loadType");
 
-    component.entity = user;
-    component.property = undefined;
-    component.filter = undefined;
+    fixture.componentRef.setInput("entity", user);
+    fixture.componentRef.setInput("property", undefined);
+    fixture.componentRef.setInput("filter", undefined);
     await component.ngOnInit();
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
@@ -93,7 +94,7 @@ describe("TodosRelatedToEntityComponent", () => {
       relatedTodo2,
       unrelatedTodo,
     ]);
-    expect(component.filter).toEqual({
+    expect(component.filterObj).toEqual({
       $or: [
         {
           assignedTo: { $elemMatch: { $eq: user.getId() } },
@@ -102,6 +103,7 @@ describe("TodosRelatedToEntityComponent", () => {
           relatedEntities: { $elemMatch: { $eq: user.getId() } },
         },
       ],
+      isActive: true,
     });
 
     relatedEntitiesSchema.additional = originalRelatedEntitiesAdditional;

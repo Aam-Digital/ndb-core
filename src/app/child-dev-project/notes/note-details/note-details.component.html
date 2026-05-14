@@ -9,11 +9,11 @@
   </app-view-title>
 
   <div class="flex-column gap-regular">
-    <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
+    <app-entity-archived-info [entity]="entity()"></app-entity-archived-info>
 
     <app-entity-form
       [fieldGroups]="topFieldGroups"
-      [entity]="entity"
+      [entity]="entity()"
       [form]="form"
     >
     </app-entity-form>
@@ -21,21 +21,21 @@
     <!-- Primary information of Note -->
     <app-entity-form
       [fieldGroups]="middleFieldGroups"
-      [entity]="entity"
+      [entity]="entity()"
       [form]="form"
       [fullWidth]="true"
     ></app-entity-form>
 
     <app-entity-form
       [fieldGroups]="bottomFieldGroups"
-      [entity]="entity"
+      [entity]="entity()"
       [form]="form"
       style="margin-top: 10px"
     ></app-entity-form>
   </div>
 
   <app-view-actions>
-    <app-dialog-buttons [form]="form" [entity]="entity">
+    <app-dialog-buttons [form]="form" [entity]="entity()">
       <button mat-menu-item (click)="openExportDialog()">
         <fa-icon
           class="color-accent standard-icon-with-text"

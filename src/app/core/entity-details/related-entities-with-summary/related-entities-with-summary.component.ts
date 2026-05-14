@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   OnInit,
   ViewChild,
   ChangeDetectionStrategy,
@@ -31,12 +31,12 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   /**
    * Configuration of what numbers should be summarized below the table.
    */
-  @Input() summaries?: {
+  summaries = input<{
     countProperty: string;
     groupBy?: string;
     total?: boolean;
     average?: boolean;
-  };
+  }>();
 
   summarySum = "";
   summaryAvg = "";
@@ -54,7 +54,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
    * human-readable format
    */
   updateSummary(filteredData: E[]) {
-    if (!this.summaries) {
+    if (!this.summaries()) {
       this.summarySum = "";
       this.summaryAvg = "";
       return;
@@ -62,13 +62,16 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
 
     const summary = new Map<string, { count: number; sum: number }>();
     const average = new Map<string, number>();
+    const summaries = this.summaries();
+    if (!summaries) {
+      return;
+    }
 
     filteredData.forEach((m) => {
-      const amount = m[this.summaries.countProperty];
+      const amount = m[summaries.countProperty];
       let groupLabel;
-      if (this.summaries.groupBy) {
-        groupLabel =
-          m[this.summaries.groupBy]?.label ?? m[this.summaries.groupBy];
+      if (summaries.groupBy) {
+        groupLabel = m[summaries.groupBy]?.label ?? m[summaries.groupBy];
       }
 
       summary.set(groupLabel, summary.get(groupLabel) || { count: 0, sum: 0 });
@@ -76,7 +79,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
       summary.get(groupLabel).sum += amount;
     });
 
-    if (this.summaries.total) {
+    if (summaries.total) {
       const summarySumArray = Array.from(
         summary.entries(),
         ([label, { sum }]) => `${label}: ${sum}`,
@@ -84,7 +87,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
       this.summarySum = summarySumArray.join(", ");
     }
 
-    if (this.summaries.average) {
+    if (summaries.average) {
       const summaryAvgArray = Array.from(
         summary.entries(),
         ([label, { count, sum }]) => {

@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  effect,
   inject,
-  Input,
-  OnInit,
+  input,
+  signal,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
@@ -39,52 +39,73 @@ import { PublicFormPermissionService } from "../../../features/public-form/publi
     DisableEntityOperationDirective,
   ],
 })
-export class FormComponent<E extends Entity> implements FormConfig, OnInit {
+export class FormComponent<E extends Entity> {
   private router = inject(Router);
   private location = inject(Location);
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
   private viewContext = inject(ViewComponentContext, { optional: true });
   private readonly permissionService = inject(PublicFormPermissionService);
-  private readonly cdr = inject(ChangeDetectorRef);
+  entity = input<E>();
+  creatingNew = input<boolean>(false);
+  fieldGroups = input<FieldGroup[]>();
+  form = signal<EntityForm<E> | undefined>(undefined);
 
-  @Input() entity: E;
-  @Input() creatingNew = false;
+  constructor() {
+    effect((onCleanup) => {
+      const entity = this.entity();
+      const fieldGroups = this.fieldGroups();
+      if (!entity || !fieldGroups) {
+        this.form.set(undefined);
+        return;
+      }
 
-  @Input() fieldGroups: FieldGroup[];
-  form: EntityForm<E> | undefined;
-
-  ngOnInit() {
-    this.entityFormService
-      .createEntityForm(
-        [].concat(...this.fieldGroups.map((group) => group.fields)),
-        this.entity,
-      )
-      .then((value) => {
-        this.form = value;
-        if (!this.creatingNew) {
-          this.form.formGroup.disable();
-        }
-        this.cdr.markForCheck();
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
       });
+
+      void this.initializeForm(entity, fieldGroups, () => cancelled);
+    });
+  }
+
+  private async initializeForm(
+    entity: E,
+    fieldGroups: FieldGroup[],
+    isCancelled: () => boolean,
+  ) {
+    const form = await this.entityFormService.createEntityForm(
+      [].concat(...fieldGroups.map((group) => group.fields)),
+      entity,
+    );
+    if (isCancelled()) {
+      return;
+    }
+    this.form.set(form);
+    if (!this.creatingNew()) {
+      form.formGroup.disable();
+    }
   }
 
   async saveClicked() {
+    const entity = this.entity();
+    const form = this.form();
+    if (!entity || !form) {
+      return;
+    }
     try {
       // Check if this is a PublicFormConfig and needs permission checking
-      if (this.entity.getType() === PublicFormConfig.ENTITY_TYPE) {
-        const entityType = this.form.formGroup.getRawValue()[
-          "entity"
-        ] as string;
+      if (entity.getType() === PublicFormConfig.ENTITY_TYPE) {
+        const entityType = form.formGroup.getRawValue()["entity"] as string;
         if (!(await this.permissionService.checkOnSave(entityType))) return;
       }
 
-      await this.entityFormService.saveChanges(this.form, this.entity);
+      await this.entityFormService.saveChanges(form, entity);
 
-      if (this.creatingNew && !this.viewContext?.isDialog) {
+      if (this.creatingNew() && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
-          this.entity.getId(true),
+          entity.getId(true),
         ]);
       }
     } catch (err) {
@@ -95,11 +116,17 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   }
 
   cancelClicked() {
-    if (this.creatingNew) {
+    const entity = this.entity();
+    const form = this.form();
+    if (!entity || !form) {
+      return;
+    }
+
+    if (this.creatingNew()) {
       this.location.back();
     }
-    this.entityFormService.resetForm(this.form, this.entity);
-    this.form.formGroup.disable();
+    this.entityFormService.resetForm(form, entity);
+    form.formGroup.disable();
   }
 }
 

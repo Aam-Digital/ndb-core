@@ -1,7 +1,7 @@
 <app-entities-table
-  [entityType]="entityCtr"
+  [entityType]="entityCtr!"
   [records]="data"
-  [filter]="filter"
+  [filter]="filterObj"
   [customColumns]="_columns"
   [newRecordFactory]="createNewRecordFactory()"
 ></app-entities-table>
@@ -16,7 +16,7 @@
 </div>
 
 <app-custom-form-link-button
-  [linkedEntity]="entity"
-  [formEntityType]="entityCtr"
+  [linkedEntity]="entity()"
+  [formEntityType]="entityCtr!"
 >
 </app-custom-form-link-button>

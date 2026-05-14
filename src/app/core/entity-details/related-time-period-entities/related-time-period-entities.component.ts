@@ -1,10 +1,14 @@
 import {
   Component,
-  Input,
   OnInit,
   ChangeDetectionStrategy,
+  input,
 } from "@angular/core";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../../common-components/entity-form/FormConfig";
 import moment from "moment";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -48,28 +52,18 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
 {
   // also see super class for Inputs
 
-  @Input() single = true;
-  @Input() override showInactive = false;
-
-  @Input() override set columns(value: FormFieldConfig[]) {
-    this._columns = [...value, isActiveIndicator];
-  }
-  override get columns(): FormFieldConfig[] {
-    return this._columns;
-  }
-
-  override _columns: FormFieldConfig[] = [
-    { id: "start", visibleFrom: "md" },
-    { id: "end", visibleFrom: "md" },
-    isActiveIndicator,
-  ];
+  single = input(true);
 
   backgroundColorFn = (r: E) => r.getColor();
   hasCurrentlyActiveEntry: boolean;
 
   override async ngOnInit() {
+    if (this.showInactive() === undefined) {
+      this.showInactive.set(false);
+    }
     await super.ngOnInit();
-    this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
+    this.hasCurrentlyActiveEntry =
+      this.data?.some((record) => record.isActive) ?? false;
   }
 
   override createNewRecordFactory() {
@@ -83,6 +77,22 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
 
       return newRelation;
     };
+  }
+
+  protected override getColumns(
+    value: ColumnConfig[] | undefined,
+  ): FormFieldConfig[] {
+    if (!Array.isArray(value) || value.length === 0) {
+      return [
+        { id: "start", visibleFrom: "md" },
+        { id: "end", visibleFrom: "md" },
+        isActiveIndicator,
+      ];
+    }
+    return [
+      ...value.map((column) => toFormFieldConfig(column)),
+      isActiveIndicator,
+    ];
   }
 }
 

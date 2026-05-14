@@ -6,8 +6,8 @@
       class="standard-icon-with-text margin-left-regular"
     ></app-fa-dynamic-icon>
   }
-  @if (!entity?.isNew) {
-    {{ entity?.toString() }}
+  @if (!entity()?.isNew) {
+    {{ entity()?.toString() }}
   } @else {
     <span i18n="Title when adding a new entity">
       Adding new {{ this.entityConstructor?.label }}
@@ -17,18 +17,18 @@
 
 <app-view-actions>
   <app-entity-actions-menu
-    [entity]="entity"
+    [entity]="entity()"
     [navigateOnDelete]="true"
     [showExpanded]="true"
   >
     @if (
       ("update"
         | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
-        | async) && !entityConstructor.isInternalEntity
+        | async) && !entityConstructor?.isInternalEntity
     ) {
       <button
         mat-menu-item
-        [routerLink]="['/admin/entity', entity?.getType()]"
+        [routerLink]="['/admin/entity', entity()?.getType()]"
         [queryParams]="{ mode: 'details' }"
         queryParamsHandling="merge"
       >
@@ -42,15 +42,15 @@
   </app-entity-actions-menu>
 </app-view-actions>
 
-<app-entity-archived-info [entity]="entity"></app-entity-archived-info>
+<app-entity-archived-info [entity]="entity()"></app-entity-archived-info>
 
 <!-- Content: tabbed components -->
 <mat-tab-group appTabStateMemo [preserveContent]="true">
-  @for (panelConfig of panels; track panelConfig.title) {
-    <mat-tab [disabled]="entity?.isNew || unsavedChanges.pending">
+  @for (panelConfig of panelsState; track panelConfig.title) {
+    <mat-tab [disabled]="entity()?.isNew || unsavedChanges.pending">
       <ng-template mat-tab-label>
         <span
-          [matTooltipDisabled]="!entity?.isNew"
+          [matTooltipDisabled]="!entity()?.isNew"
           matTooltip="Save the new record to create it before accessing other details"
           i18n-matTooltip="
             Tooltip explaining disabled sections when creating new entity
