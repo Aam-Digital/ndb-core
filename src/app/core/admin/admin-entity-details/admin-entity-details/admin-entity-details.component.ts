@@ -1,5 +1,6 @@
 import {
   Component,
+  ChangeDetectorRef,
   inject,
   input,
   output,
@@ -58,6 +59,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 })
 export class AdminEntityDetailsComponent {
   private dialog = inject(MatDialog);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityDetailsConfig>();
@@ -80,7 +82,8 @@ export class AdminEntityDetailsComponent {
       .afterClosed()
       .subscribe((sectionConfig: PanelComponent) => {
         if (sectionConfig) {
-          panel.components.push(sectionConfig);
+          panel.components = [...panel.components, sectionConfig];
+          this.cdr.markForCheck();
         }
       });
   }
