@@ -124,7 +124,9 @@ export class ConditionalColorConfigComponent extends CustomFormControlDirective<
   onConditionChange(section: ColorMapping, updatedConditions: any): void {
     if (!Array.isArray(this.value)) return;
 
-    const sectionIndex = this.value.findIndex((candidate) => candidate === section);
+    const sectionIndex = this.value.findIndex(
+      (candidate) => candidate === section,
+    );
     if (sectionIndex < 0) return;
 
     this.value = this.value.map((candidate, index) =>
