@@ -6,7 +6,7 @@ import {
 } from "@angular/core";
 import { diff } from "deep-object-diff";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { Database } from "../../../core/database/database";
+import { Database, DatabaseDocChange } from "../../../core/database/database";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 import { merge } from "lodash-es";
@@ -16,7 +16,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
-import { DatabaseDocChange } from "../../../core/database/database";
 
 /**
  * Visualize one specific conflicting document revision and offer resolution options.
