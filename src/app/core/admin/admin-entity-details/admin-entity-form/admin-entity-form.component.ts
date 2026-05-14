@@ -158,8 +158,11 @@ export class AdminEntityFormComponent {
     this.dummyForm.formGroup.disable();
   }
 
-  private getUsedFields(config: FormConfig): ColumnConfig[] {
-    return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
+  private getUsedFields(config: FormConfig | null | undefined): ColumnConfig[] {
+    return (config?.fieldGroups ?? []).reduce(
+      (p, c) => p.concat(c.fields ?? []),
+      [],
+    );
   }
 
   /**
@@ -174,7 +177,7 @@ export class AdminEntityFormComponent {
     }
 
     return [
-      ...config.fieldGroups.map(
+      ...((config.fieldGroups ?? []) as FieldGroup[]).map(
         (_, groupIndex) => `${this.uniqueAreaId()}-group${groupIndex}`,
       ),
       `newGroupDropArea-${this.uniqueAreaId()}`,
