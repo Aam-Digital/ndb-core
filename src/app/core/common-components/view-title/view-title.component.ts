@@ -1,8 +1,9 @@
 import {
   AfterViewInit,
   Component,
+  computed,
   HostBinding,
-  Input,
+  input,
   TemplateRef,
   ViewChild,
   inject,
@@ -40,28 +41,26 @@ export class ViewTitleComponent implements AfterViewInit {
   @ViewChild("template") template: TemplateRef<any>;
 
   /** The page title to be displayed */
-  @Input() title: string;
+  title = input<string>();
 
   /** (Optional) do not show button to navigate back to the parent page */
-  @Input() disableBackButton: boolean = false;
+  disableBackButton = input<boolean>(false);
 
   /**
    * whether instead of a basic back to previous page navigation the back button should navigate to logical parent page
    */
-  navigateToParentBehaviour: boolean = false;
+  navigateToParentBehaviour = input<boolean>(false);
 
-  readonly parentUrl: string;
+  readonly parentUrl = computed(() => this.findParentUrl());
 
-  constructor() {
-    this.parentUrl = this.findParentUrl();
+  protected readonly isBackButtonDisabled = computed(
+    () => this.disableBackButton() || !!this.viewContext?.isDialog,
+  );
 
-    if (this.viewContext?.isDialog) {
-      this.disableBackButton = true;
-    }
-  }
+  displayInPlace = input<boolean>(false);
 
   ngAfterViewInit(): void {
-    if (this.viewContext && !this.displayInPlace) {
+    if (this.viewContext && !this.displayInPlace()) {
       setTimeout(() => this.viewContext.setTitle(this));
     }
   }
@@ -78,13 +77,13 @@ export class ViewTitleComponent implements AfterViewInit {
   }
 
   async navigateBack() {
-    if (this.navigateToParentBehaviour && this.parentUrl) {
-      await this.router.navigate([this.parentUrl]);
+    const parentUrl = this.parentUrl();
+    if (this.navigateToParentBehaviour() && parentUrl) {
+      await this.router.navigate([parentUrl]);
     } else {
       this.location.back();
     }
   }
 
   @HostBinding("class") extraClasses = "mat-title";
-  @Input() displayInPlace!: boolean;
 }

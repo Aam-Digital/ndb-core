@@ -80,7 +80,7 @@ describe("ColorInputComponent (EditComponent mode)", () => {
 
     fixture = TestBed.createComponent(ColorInputComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
     fixture.detectChanges();
   });
 

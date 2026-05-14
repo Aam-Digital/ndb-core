@@ -30,14 +30,14 @@
     class="color-text-input"
   />
   <ng-container *ngTemplateOutlet="colorPickerButton"></ng-container>
-} @else if (compact) {
+} @else if (compact()) {
   <!-- Compact standalone mode: just the color picker button -->
   <ng-container *ngTemplateOutlet="colorPickerButton"></ng-container>
 } @else {
   <!-- Full standalone mode: own mat-form-field with label and error -->
   <mat-form-field class="full-width" floatLabel="always">
     <mat-label>
-      <span>{{ label }}</span>
+      <span>{{ label() }}</span>
       &nbsp;
       <fa-icon
         icon="question-circle"

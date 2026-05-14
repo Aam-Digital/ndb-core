@@ -1,14 +1,15 @@
 import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  OnInit,
+  output,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -31,19 +32,23 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
 })
-export class EntityFieldsMenuComponent implements OnChanges, OnInit {
+export class EntityFieldsMenuComponent implements OnInit {
   private entityFormService = inject(EntityFormService, { optional: true });
+  private readonly destroyRef = inject(DestroyRef);
 
-  @Input() entityType: EntityConstructor;
-  @Input() set availableFields(value: ColumnConfig[]) {
-    const fieldsConfig: FormFieldConfig[] = value
+  entityType = input<EntityConstructor>();
+  availableFields = input<ColumnConfig[]>([]);
+  activeFields = input<ColumnConfig[]>([]);
+  activeFieldsChange = output<ColumnConfig[]>();
+  selectedFieldsControl = new FormControl<string[]>([]);
+
+  readonly _availableFields = computed<FormFieldConfig[]>(() => {
+    const entityType = this.entityType();
+    const fieldsConfig: FormFieldConfig[] = this.availableFields()
       .map((field) => {
         const mappedField =
-          this.entityFormService && this.entityType
-            ? this.entityFormService.extendFormFieldConfig(
-                field,
-                this.entityType,
-              )
+          this.entityFormService && entityType
+            ? this.entityFormService.extendFormFieldConfig(field, entityType)
             : toFormFieldConfig(field);
 
         if (typeof field === "object") {
@@ -60,38 +65,46 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
         deduplicatedFieldsById[field.id] = field;
       }
     }
-    this._availableFields = Object.values(deduplicatedFieldsById);
-  }
-  _availableFields: FormFieldConfig[] = [];
+    return Object.values(deduplicatedFieldsById);
+  });
 
-  @Input() activeFields: ColumnConfig[] = [];
-  @Output() activeFieldsChange = new EventEmitter<ColumnConfig[]>();
-  selectedFieldsControl = new FormControl<string[]>([]);
+  constructor() {
+    effect(() => {
+      const selectedFields = (this.activeFields() ?? []).map((field) =>
+        typeof field === "string" ? field : field.id,
+      );
+      const currentSelection = this.selectedFieldsControl.value ?? [];
 
-  ngOnInit() {
-    this.selectedFieldsControl.valueChanges.subscribe((value: string[]) => {
-      const mappedFields: ColumnConfig[] = value.map((v) => {
-        const availableField = this._availableFields.find((f) => f.id === v);
+      if (
+        currentSelection.length === selectedFields.length &&
+        currentSelection.every(
+          (value, index) => value === selectedFields[index],
+        )
+      ) {
+        return;
+      }
 
-        if (availableField?.["_customField"]) {
-          const result = { ...availableField };
-          delete result["_customField"];
-          return result;
-        } else return v;
-      });
-
-      this.activeFieldsChange.emit(mappedFields);
+      this.selectedFieldsControl.setValue(selectedFields, { emitEvent: false });
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.activeFields) {
-      const selectedFields = this.activeFields?.map((field) =>
-        typeof field === "string" ? field : field.id,
-      );
-      this.selectedFieldsControl.setValue(selectedFields, {
-        emitEvent: false,
+  ngOnInit() {
+    this.selectedFieldsControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value: string[]) => {
+        const mappedFields: ColumnConfig[] = value.map((v) => {
+          const availableField = this._availableFields().find(
+            (f) => f.id === v,
+          );
+
+          if (availableField?.["_customField"]) {
+            const result = { ...availableField };
+            delete result["_customField"];
+            return result;
+          } else return v;
+        });
+
+        this.activeFieldsChange.emit(mappedFields);
       });
-    }
   }
 }

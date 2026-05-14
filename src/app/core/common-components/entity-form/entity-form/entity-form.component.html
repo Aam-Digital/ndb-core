@@ -1,15 +1,18 @@
-<form [class.grid-layout]="gridLayout">
-  @for (group of fieldGroups; track $index) {
+<form [class.grid-layout]="gridLayout()">
+  @for (group of filteredFieldGroups(); track $index) {
     <div class="entity-form-cell">
       @if (group.header) {
         <h2>{{ group.header }}</h2>
       }
-      @for (field of group.fields; track $index) {
-        <div [class.full-width]="fullWidth">
+      @for (
+        field of group.fields;
+        track typeof field === "string" ? field : field.id
+      ) {
+        <div [class.full-width]="fullWidth()">
           <app-entity-field-edit
             [field]="field"
-            [entity]="entity"
-            [form]="form"
+            [entity]="entityState()"
+            [form]="form()"
           ></app-entity-field-edit>
         </div>
       }

@@ -38,13 +38,16 @@ describe("EntityFormComponent", () => {
   });
 
   async function setupInitialForm(entity, columns) {
-    component.entity = entity;
-    component.fieldGroups = columns.map((c) => ({ fields: c }));
-    component.form = await TestBed.inject(EntityFormService).createEntityForm(
+    const form = await TestBed.inject(EntityFormService).createEntityForm(
       columns[0],
-      component.entity,
+      entity,
     );
-    component.ngOnChanges({ entity: true, form: true } as any);
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput(
+      "fieldGroups",
+      columns.map((c) => ({ fields: c })),
+    );
+    fixture.componentRef.setInput("form", form);
     fixture.detectChanges();
   }
 
@@ -53,11 +56,14 @@ describe("EntityFormComponent", () => {
   });
 
   it("should remove fields without read permissions when entity is not new", async () => {
-    component.fieldGroups = [
+    const existingEntity = new TestEntity();
+    existingEntity._rev = "foo";
+    fixture.componentRef.setInput("entity", existingEntity);
+    fixture.componentRef.setInput("fieldGroups", [
       { fields: ["foo", "bar"] },
       { fields: ["name"] },
       { fields: ["birthday"] },
-    ];
+    ]);
 
     TestBed.inject(EntityAbility).update([
       {
@@ -67,22 +73,20 @@ describe("EntityFormComponent", () => {
       },
     ]);
 
-    component.entity._rev = "foo";
+    fixture.detectChanges();
 
-    component.ngOnChanges({ entity: true, form: true } as any);
-
-    expect(component.fieldGroups).toEqual([
+    expect(component.filteredFieldGroups()).toEqual([
       { fields: ["foo"] },
       { fields: ["name"] },
     ]);
   });
 
   it("should remove fields without create permissions when entity is new", async () => {
-    component.fieldGroups = [
+    fixture.componentRef.setInput("fieldGroups", [
       { fields: ["foo", "bar"] },
       { fields: ["name"] },
       { fields: ["birthday"] },
-    ];
+    ]);
 
     TestBed.inject(EntityAbility).update([
       {
@@ -92,20 +96,20 @@ describe("EntityFormComponent", () => {
       },
     ]);
 
-    component.ngOnChanges({ entity: true, form: true } as any);
+    fixture.detectChanges();
 
-    expect(component.fieldGroups).toEqual([
+    expect(component.filteredFieldGroups()).toEqual([
       { fields: ["foo"] },
       { fields: ["name"] },
     ]);
   });
 
   it("should not remove fields when creating new and conditions are not met yet", async () => {
-    component.fieldGroups = [
+    fixture.componentRef.setInput("fieldGroups", [
       { fields: ["foo", "bar"] },
       { fields: ["name"] },
       { fields: ["birthday"] },
-    ];
+    ]);
 
     TestBed.inject(EntityAbility).update([
       {
@@ -116,9 +120,9 @@ describe("EntityFormComponent", () => {
       },
     ]);
 
-    component.ngOnChanges({ entity: true, form: true } as any);
+    fixture.detectChanges();
 
-    expect(component.fieldGroups).toEqual([
+    expect(component.filteredFieldGroups()).toEqual([
       { fields: ["foo"] },
       { fields: ["name"] },
     ]);
@@ -220,10 +224,10 @@ describe("EntityFormComponent", () => {
 
     mockConfirmation.getConfirmation.mockResolvedValue(popupAction === "yes");
     for (const c in formChanges) {
-      component.form.formGroup.get(c).setValue(formChanges[c]);
-      component.form.formGroup.get(c).markAsDirty();
+      component.form().formGroup.get(c).setValue(formChanges[c]);
+      component.form().formGroup.get(c).markAsDirty();
     }
-    const updatedChild = new TestEntity(component.entity.getId());
+    const updatedChild = new TestEntity(component.entity().getId());
     Object.assign(updatedChild, remoteChanges);
 
     const entityMapper = TestBed.inject(EntityMapperService);
@@ -231,11 +235,11 @@ describe("EntityFormComponent", () => {
 
     const entityAfterSave = Object.assign(
       {},
-      component.entity,
-      component.form.formGroup.getRawValue(),
+      component.entity(),
+      component.form().formGroup.getRawValue(),
     );
     for (const [key, value] of Object.entries(expectedFormValues)) {
-      const form = component.form.formGroup.get(key);
+      const form = component.form().formGroup.get(key);
       if (form) {
         expect(form.value).toEqual(value);
       }
