@@ -1,6 +1,6 @@
-@if (!exportServerEnabled === true) {
+@if (exportServerEnabled() !== true) {
   <app-feature-disabled-info
-    [featureEnabled]="exportServerEnabled"
+    [featureEnabled]="exportServerEnabled()"
     [compactView]="true"
   ></app-feature-disabled-info>
 }
@@ -9,5 +9,5 @@
   [formControl]="formControl"
   [entity]="entity()"
   [formFieldConfig]="formFieldConfig()"
-  [style.display]="exportServerEnabled ? 'initial' : 'none'"
+  [style.display]="exportServerEnabled() ? 'initial' : 'none'"
 ></app-edit-file>

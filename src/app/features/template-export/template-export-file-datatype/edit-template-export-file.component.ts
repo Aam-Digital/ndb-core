@@ -9,6 +9,7 @@ import {
   input,
   OnInit,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -56,13 +57,13 @@ export class EditTemplateExportFileComponent
     return this.ngControl.control as FormControl<string>;
   }
 
-  exportServerEnabled: boolean;
+  exportServerEnabled = signal<boolean | undefined>(undefined);
 
   ngOnInit(): void {
     // Check if export server is enabled
     this.templateExportService
       .isExportServerEnabled()
-      .then((enabled) => (this.exportServerEnabled = enabled))
-      .catch(() => (this.exportServerEnabled = false));
+      .then((enabled) => this.exportServerEnabled.set(enabled))
+      .catch(() => this.exportServerEnabled.set(false));
   }
 }

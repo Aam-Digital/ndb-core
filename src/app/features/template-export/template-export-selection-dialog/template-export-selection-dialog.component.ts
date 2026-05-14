@@ -5,6 +5,7 @@ import {
   inject,
   input,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
@@ -66,19 +67,20 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
   entity = input<Entity>();
 
   templateSelectionForm: FormControl = new FormControl();
-  isFeatureEnabled: boolean;
+  isFeatureEnabled = signal<boolean | undefined>(undefined);
   TemplateExport = TemplateExport;
   readonly currentEntity = computed(() => this.entity() ?? this.dialogData);
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
     e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
 
-  loadingRequestedFile: boolean;
+  loadingRequestedFile = signal<boolean>(false);
 
   constructor() {}
 
   async ngOnInit() {
-    this.isFeatureEnabled =
-      await this.templateExportService.isExportServerEnabled();
+    this.isFeatureEnabled.set(
+      await this.templateExportService.isExportServerEnabled(),
+    );
   }
 
   requestFile() {
@@ -91,7 +93,7 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
       return;
     }
 
-    this.loadingRequestedFile = true;
+    this.loadingRequestedFile.set(true);
     this.templateExportApi
       .generatePdfFromTemplate(templateId, entity)
       .subscribe({
@@ -99,7 +101,7 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
           this.alertService.addWarning(
             $localize`Failed to generate document [${error}]`,
           );
-          this.loadingRequestedFile = false;
+          this.loadingRequestedFile.set(false);
         },
         next: (templateResult: TemplateExportResult) => {
           this.downloadService.triggerDownload(
@@ -107,7 +109,7 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
             "pdf",
             templateResult.filename ?? entity.toString(),
           );
-          this.loadingRequestedFile = false;
+          this.loadingRequestedFile.set(false);
           this.dialogRef.close(true);
         },
       });
