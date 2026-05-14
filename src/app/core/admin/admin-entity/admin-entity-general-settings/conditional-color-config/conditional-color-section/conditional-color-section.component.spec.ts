@@ -32,7 +32,9 @@ describe("ConditionalColorSectionComponent", () => {
 
     fixture = TestBed.createComponent(ConditionalColorSectionComponent);
     component = fixture.componentInstance;
-    component.section = mockSection;
+
+    fixture.componentRef.setInput("section", mockSection);
+    fixture.componentRef.setInput("entityConstructor", {});
 
     fixture.detectChanges();
   });

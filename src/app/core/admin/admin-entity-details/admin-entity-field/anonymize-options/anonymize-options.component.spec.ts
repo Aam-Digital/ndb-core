@@ -14,7 +14,7 @@ describe("AnonymizeOptionsComponent", () => {
     fixture = TestBed.createComponent(AnonymizeOptionsComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('value', '');
+    fixture.componentRef.setInput("value", "");
 
     fixture.detectChanges();
   });

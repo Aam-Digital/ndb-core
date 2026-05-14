@@ -1,11 +1,11 @@
 import {
   Component,
-  EventEmitter,
   inject,
-  Input,
-  OnInit,
-  Output,
+  input,
+  output,
+  effect,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -44,6 +44,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 import { MatExpansionModule } from "@angular/material/expansion";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,16 +73,17 @@ import { ConditionalColorConfigComponent } from "./conditional-color-config/cond
     EntityFieldSelectComponent,
   ],
 })
-export class AdminEntityGeneralSettingsComponent implements OnInit {
+export class AdminEntityGeneralSettingsComponent {
   private fb = inject(FormBuilder);
   private adminEntityService = inject(AdminEntityService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  @Input() entityConstructor: EntityConstructor;
-  @Output() generalSettingsChange: EventEmitter<EntityConfig> =
-    new EventEmitter<EntityConfig>();
-  @Input() generalSettings: EntityConfig;
+  entityConstructor = input.required<EntityConstructor>();
+  generalSettings = input.required<EntityConfig>();
+  showPIIDetailsInput = input<boolean>(false);
 
-  @Input() showPIIDetails: boolean;
+  generalSettingsChange = output<EntityConfig>();
+
   fieldAnonymizationDataSource: MatTableDataSource<{
     key: string;
     label: string;
@@ -93,10 +95,15 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   hasImageFields: boolean = false;
   showTooltipDetails: boolean = false;
   isConditionalColor: boolean = false;
+  showPIIDetails: boolean = false;
   iconControl: FormControl<string | null>;
 
-  ngOnInit(): void {
-    this.init();
+  constructor() {
+    effect(() => {
+      this.entityConstructor(); // Track inputs
+      this.generalSettings();
+      this.init();
+    });
   }
 
   private init() {
@@ -104,30 +111,30 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.initToStringAttributesOptions();
     // Determine if any photo fields exist (for image selector)
     this.hasImageFields = Array.from(
-      this.entityConstructor.schema.values(),
+      this.entityConstructor().schema.values(),
     ).some((field) => field.dataType === PhotoDatatype.dataType);
 
     // Check if tooltip configuration should be enabled by default
-    this.showTooltipDetails = !!this.generalSettings.toBlockDetailsAttributes;
+    this.showTooltipDetails = !!this.generalSettings().toBlockDetailsAttributes;
 
     this.basicSettingsForm = this.fb.group({
-      label: [this.generalSettings.label, Validators.required],
-      labelPlural: [this.generalSettings.labelPlural],
-      icon: [this.generalSettings.icon],
-      color: [this.generalSettings.color],
-      toStringAttributes: [this.generalSettings.toStringAttributes],
-      hasPII: [this.generalSettings.hasPII],
-      enableUserAccounts: [this.generalSettings?.enableUserAccounts],
+      label: [this.generalSettings().label, Validators.required],
+      labelPlural: [this.generalSettings().labelPlural],
+      icon: [this.generalSettings().icon],
+      color: [this.generalSettings().color],
+      toStringAttributes: [this.generalSettings().toStringAttributes],
+      hasPII: [this.generalSettings().hasPII],
+      enableUserAccounts: [this.generalSettings()?.enableUserAccounts],
 
       toBlockDetailsAttributes: this.fb.group({
-        title: [this.generalSettings.toBlockDetailsAttributes?.title],
+        title: [this.generalSettings().toBlockDetailsAttributes?.title],
         image: [
           {
-            value: this.generalSettings.toBlockDetailsAttributes?.image,
+            value: this.generalSettings().toBlockDetailsAttributes?.image,
             disabled: !this.hasImageFields,
           },
         ],
-        fields: [this.generalSettings.toBlockDetailsAttributes?.fields || []],
+        fields: [this.generalSettings().toBlockDetailsAttributes?.fields || []],
       }),
     });
 
@@ -141,10 +148,12 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.initToBlockAttributes();
     this.initColorMode();
 
-    this.basicSettingsForm.valueChanges.subscribe((value) => {
-      this.reorderedStringAttributesOptions();
-      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
-    });
+    this.basicSettingsForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.reorderedStringAttributesOptions();
+        this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
+      });
   }
 
   private reorderedStringAttributesOptions() {
@@ -161,7 +170,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   fetchAnonymizationTableData() {
     if (this.showPIIDetails) {
-      const fields = Array.from(this.entityConstructor.schema.entries())
+      const fields = Array.from(this.entityConstructor().schema.entries())
         .filter(([key, field]) => !field.isInternalField)
         .map(([key, field]) => ({
           key: key,
@@ -180,7 +189,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   private initToBlockAttributes() {
     // Patch tooltip values after options are initialized for proper display
-    const block = this.generalSettings.toBlockDetailsAttributes || {
+    const block = this.generalSettings().toBlockDetailsAttributes || {
       title: null,
       image: null,
       fields: [],
@@ -214,7 +223,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     fieldSchema.anonymize = newAnonymizationValue;
 
     this.adminEntityService.updateSchemaField(
-      this.entityConstructor,
+      this.entityConstructor(),
       this.fieldAnonymizationDataSource.data.find(
         (v) => v.field === fieldSchema,
       ).key,
@@ -223,13 +232,13 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   private initToStringAttributesOptions() {
-    if (!this.generalSettings.toStringAttributes) {
+    if (!this.generalSettings().toStringAttributes) {
       return;
     }
 
-    const selectedOptions = this.generalSettings.toStringAttributes;
+    const selectedOptions = this.generalSettings().toStringAttributes;
     const unselectedOptions = Array.from(
-      this.entityConstructor.schema.entries(),
+      this.entityConstructor().schema.entries(),
     )
       .filter(
         ([key, field]) =>
@@ -246,7 +255,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.toStringAttributesOptions = [
       ...selectedOptions.map((value) => ({
         value: value,
-        label: this.entityConstructor.schema.get(value)?.label,
+        label: this.entityConstructor().schema.get(value)?.label,
       })),
       ...unselectedOptions,
     ];

@@ -100,7 +100,9 @@ export class AdminTabsComponent<
   }
 
   removeTab(index: number) {
-    this.tabs.update((tabs) => tabs.filter((_, tabIndex) => tabIndex !== index));
+    this.tabs.update((tabs) =>
+      tabs.filter((_, tabIndex) => tabIndex !== index),
+    );
     this.tabGroup.selectedIndex = index - 1;
   }
 

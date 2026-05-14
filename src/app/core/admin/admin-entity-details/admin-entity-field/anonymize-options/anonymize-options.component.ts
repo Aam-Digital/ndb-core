@@ -1,8 +1,4 @@
-import {
-  Component,
-  model,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, model, ChangeDetectionStrategy } from "@angular/core";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";

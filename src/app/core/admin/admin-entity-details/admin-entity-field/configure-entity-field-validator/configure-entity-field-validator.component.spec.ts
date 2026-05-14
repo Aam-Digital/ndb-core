@@ -31,17 +31,11 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
 
     fixture = TestBed.createComponent(ConfigureEntityFieldValidatorComponent);
     component = fixture.componentInstance;
-    component.entitySchemaField = {
-      // Mock EntitySchemaField data
-      validators: {
-        required: true,
-        min: 0,
-        max: 10,
-        pattern: "^[a-zA-Z0-9]+$",
-        uniqueId: "guid",
-      },
-    };
-    component.entitySchemaField.validators = { required: false };
+
+    fixture.componentRef.setInput("entitySchemaField", {
+      validators: { required: false },
+    });
+
     fixture.detectChanges();
   });
 

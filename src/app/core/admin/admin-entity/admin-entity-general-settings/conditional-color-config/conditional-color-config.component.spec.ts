@@ -15,7 +15,9 @@ describe("ConditionalColorConfigComponent", () => {
 
     fixture = TestBed.createComponent(ConditionalColorConfigComponent);
     component = fixture.componentInstance;
-    component.entityConstructor = TestEntity;
+
+    fixture.componentRef.setInput("entityConstructor", TestEntity);
+
     fixture.detectChanges();
   });
 

@@ -3,10 +3,7 @@
     <ng-content></ng-content>
   </mat-label>
 
-  <mat-select
-    [value]="value()"
-    (valueChange)="value.set($event)"
-  >
+  <mat-select [value]="value()" (valueChange)="value.set($event)">
     <mat-option
       value=""
       matTooltip="Completely remove the value from the record during anonymization."

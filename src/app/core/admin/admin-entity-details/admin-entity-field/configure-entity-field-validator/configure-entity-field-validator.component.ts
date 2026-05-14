@@ -1,12 +1,11 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
   inject,
+  input,
+  output,
   ChangeDetectionStrategy,
   DestroyRef,
+  effect,
 } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
@@ -40,7 +39,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
 })
-export class ConfigureEntityFieldValidatorComponent implements OnInit {
+export class ConfigureEntityFieldValidatorComponent {
   private fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -49,29 +48,32 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
   /**
    * the field definition with the currently existing validator settings to be edited
    */
-  @Input() entitySchemaField: EntitySchemaField;
+  entitySchemaField = input.required<EntitySchemaField>();
 
   /**
    * Emit the latest state of the validators config whenever the user changed it in the displayed form.
    */
-  @Output() entityValidatorChanges = new EventEmitter<FormValidatorConfig>();
+  entityValidatorChanges = output<FormValidatorConfig>();
 
-  ngOnInit() {
-    this.init();
+  constructor() {
+    effect(() => {
+      this.entitySchemaField(); // Track changes
+      this.init();
+    });
   }
 
   get isDateLikeValidatorType(): boolean {
     return ["date", "date-only", "date-with-age", "month"].includes(
-      this.entitySchemaField?.dataType,
+      this.entitySchemaField()?.dataType,
     );
   }
 
   get isDateWithAgeType(): boolean {
-    return this.entitySchemaField?.dataType === "date-with-age";
+    return this.entitySchemaField()?.dataType === "date-with-age";
   }
 
   get isMonthType(): boolean {
-    return this.entitySchemaField?.dataType === "month";
+    return this.entitySchemaField()?.dataType === "month";
   }
 
   private normalizeDateControl(controlName: string): void {
@@ -86,18 +88,20 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
   }
 
   private init() {
-    if (this.entitySchemaField.validators) {
+    if (this.entitySchemaField().validators) {
       this.validatorForm = this.fb.group({
-        required: [this.entitySchemaField.validators.required],
-        min: [this.entitySchemaField.validators.min],
-        max: [this.entitySchemaField.validators.max],
-        minAge: [this.entitySchemaField.validators.minAge],
-        maxAge: [this.entitySchemaField.validators.maxAge],
-        minDate: [this.entitySchemaField.validators.minDate],
-        maxDate: [this.entitySchemaField.validators.maxDate],
-        regex: [this.entitySchemaField.validators.pattern],
-        uniqueId: [this.entitySchemaField.validators.uniqueId],
-        readonlyAfterSet: [this.entitySchemaField.validators.readonlyAfterSet],
+        required: [this.entitySchemaField().validators.required],
+        min: [this.entitySchemaField().validators.min],
+        max: [this.entitySchemaField().validators.max],
+        minAge: [this.entitySchemaField().validators.minAge],
+        maxAge: [this.entitySchemaField().validators.maxAge],
+        minDate: [this.entitySchemaField().validators.minDate],
+        maxDate: [this.entitySchemaField().validators.maxDate],
+        regex: [this.entitySchemaField().validators.pattern],
+        uniqueId: [this.entitySchemaField().validators.uniqueId],
+        readonlyAfterSet: [
+          this.entitySchemaField().validators.readonlyAfterSet,
+        ],
       });
     } else {
       this.validatorForm = this.fb.group({

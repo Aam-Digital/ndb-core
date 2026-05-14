@@ -1,5 +1,5 @@
 <form class="validator-form-cell flex-column" [formGroup]="validatorForm">
-  @if (entitySchemaField.dataType === "number") {
+  @if (entitySchemaField().dataType === "number") {
     <mat-form-field class="number-field">
       <mat-label i18n>Minimum Value</mat-label>
       <input formControlName="min" matInput type="number" />

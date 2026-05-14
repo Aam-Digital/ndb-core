@@ -1,8 +1,7 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
@@ -29,18 +28,18 @@ import { ConditionsEditorComponent } from "app/core/common-components/conditions
   ],
 })
 export class ConditionalColorSectionComponent {
-  @Input() section: ColorMapping;
-  @Input() entityConstructor: EntityConstructor;
+  section = input.required<ColorMapping>();
+  entityConstructor = input.required<EntityConstructor>();
 
-  @Output() colorChange = new EventEmitter<string>();
-  @Output() deleteSection = new EventEmitter<void>();
-  @Output() conditionChange = new EventEmitter<void>();
+  colorChange = output<string>();
+  deleteSection = output<void>();
+  conditionChange = output<void>();
 
   /**
    * Handle conditions change from the conditions editor
    */
   onConditionsChange(updatedConditions: any): void {
-    this.section.condition = updatedConditions;
+    this.section().condition = updatedConditions;
     this.conditionChange.emit();
   }
 }

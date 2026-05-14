@@ -38,7 +38,8 @@ export class AdminEntityListComponent implements OnInit {
   filters: string[];
 
   ngOnInit(): void {
-    this.config().entityType = this.config().entityType ?? this.entityConstructor().ENTITY_TYPE;
+    this.config().entityType =
+      this.config().entityType ?? this.entityConstructor().ENTITY_TYPE;
     this.config().filters = this.config().filters ?? [];
 
     this.initColumnGroupsIfNecessary();
