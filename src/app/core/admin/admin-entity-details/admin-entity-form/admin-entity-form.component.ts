@@ -167,8 +167,14 @@ export class AdminEntityFormComponent {
    * This is used to determine which groups are connected to the drag&drop area.
    */
   getConnectedGroups(): string[] {
+    const config = this.config();
+
+    if (!config) {
+      return [`newGroupDropArea-${this.uniqueAreaId()}`];
+    }
+
     return [
-      ...this.config().fieldGroups.map(
+      ...config.fieldGroups.map(
         (_, groupIndex) => `${this.uniqueAreaId()}-group${groupIndex}`,
       ),
       `newGroupDropArea-${this.uniqueAreaId()}`,

@@ -22,6 +22,7 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Subscription } from "rxjs";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +43,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 export class ConfigureEntityFieldValidatorComponent {
   private fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private formValueChangesSubscription?: Subscription;
 
   validatorForm: FormGroup;
 
@@ -88,6 +90,8 @@ export class ConfigureEntityFieldValidatorComponent {
   }
 
   private init() {
+    this.formValueChangesSubscription?.unsubscribe();
+
     if (this.entitySchemaField().validators) {
       this.validatorForm = this.fb.group({
         required: [this.entitySchemaField().validators.required],
@@ -123,7 +127,7 @@ export class ConfigureEntityFieldValidatorComponent {
     this.normalizeDateControl("maxDate");
 
     // Emit validator changes when form values change
-    this.validatorForm.valueChanges
+    this.formValueChangesSubscription = this.validatorForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         const rawValues = this.validatorForm.getRawValue();

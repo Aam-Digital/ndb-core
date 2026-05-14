@@ -1,12 +1,12 @@
 import {
   Component,
-  OnInit,
   inject,
   signal,
   ChangeDetectionStrategy,
   input,
   output,
   model,
+  effect,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -42,7 +42,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
   templateUrl: "./menu-item-form.component.html",
   styleUrls: ["./menu-item-form.component.scss"],
 })
-export class MenuItemFormComponent implements OnInit {
+export class MenuItemFormComponent {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   item = model.required<MenuItem>();
@@ -73,22 +73,27 @@ export class MenuItemFormComponent implements OnInit {
     },
   };
 
-  ngOnInit() {
-    // For existing manual items with no link, default the toggle to ON.
-    if (!this.isNew() && !this.item()?.link?.trim()) {
-      this.noLinkMode.set(true);
-    }
+  constructor() {
+    effect(() => {
+      const item = this.item();
+      const linkOptions = this.linkOptions();
 
-    // If no options are available, always start in custom link mode
-    if (!this.linkOptions() || this.linkOptions().length === 0) {
-      this.customLinkMode.set(true);
-      return;
-    }
+      // For existing manual items with no link, default the toggle to ON.
+      if (!this.isNew() && !item?.link?.trim()) {
+        this.noLinkMode.set(true);
+      }
 
-    // If there's a link value but it's not in the available options, switch to custom mode
-    if (this.item()?.link && !this.isLinkInOptions(this.item().link)) {
-      this.customLinkMode.set(true);
-    }
+      // If no options are available, always start in custom link mode
+      if (!linkOptions || linkOptions.length === 0) {
+        this.customLinkMode.set(true);
+        return;
+      }
+
+      // If there's a link value but it's not in the available options, switch to custom mode
+      if (item?.link && !this.isLinkInOptions(item.link)) {
+        this.customLinkMode.set(true);
+      }
+    });
   }
 
   private isLinkInOptions(link: string): boolean {

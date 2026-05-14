@@ -2,7 +2,7 @@
   @if (!hideLabel()) {
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Label</mat-label>
-      <input matInput [(ngModel)]="itemLabel" (ngModelChange)="onChange()" />
+      <input matInput [(ngModel)]="itemLabel" />
     </mat-form-field>
   }
 
@@ -23,7 +23,6 @@
         @if (linkOptions()?.length && !customLinkMode()) {
           <mat-select
             [(ngModel)]="itemLink"
-            (ngModelChange)="onChange()"
             [errorStateMatcher]="linkErrorStateMatcher"
           >
             @for (option of linkOptions(); track option.value) {
@@ -36,7 +35,6 @@
           <input
             matInput
             [(ngModel)]="itemLink"
-            (ngModelChange)="onChange()"
             [errorStateMatcher]="linkErrorStateMatcher"
           />
         }

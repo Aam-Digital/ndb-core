@@ -142,7 +142,8 @@ export class AdminEntityGeneralSettingsComponent {
       string | null
     >;
 
-    this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
+    this.showPIIDetails =
+      this.showPIIDetailsInput() || this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
     this.initToStringAttributesOptions();
     this.initToBlockAttributes();
@@ -157,7 +158,8 @@ export class AdminEntityGeneralSettingsComponent {
   }
 
   private reorderedStringAttributesOptions() {
-    const selectedKeys = this.basicSettingsForm.get("toStringAttributes").value;
+    const selectedKeys =
+      this.basicSettingsForm.get("toStringAttributes").value ?? [];
     const allOptions = [...this.toStringAttributesOptions];
 
     this.toStringAttributesOptions = [

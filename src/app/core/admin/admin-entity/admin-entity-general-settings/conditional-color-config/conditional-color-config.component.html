@@ -25,7 +25,7 @@
           [entityConstructor]="entityConstructor()"
           (colorChange)="updateConditionalSectionColor($index, $event)"
           (deleteSection)="deleteConditionalColorSection($index)"
-          (conditionChange)="onConditionChange()"
+          (conditionChange)="onConditionChange(section, $event)"
         ></app-conditional-color-section>
       }
     </div>

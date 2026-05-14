@@ -30,7 +30,7 @@ describe("MenuItemFormComponent", () => {
       link: "/test",
     } as MenuItem);
 
-    component.ngOnInit();
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
@@ -43,7 +43,7 @@ describe("MenuItemFormComponent", () => {
     } as MenuItem);
     fixture.componentRef.setInput("linkOptions", mockLinkOptions);
 
-    component.ngOnInit();
+    fixture.detectChanges();
 
     expect(component.customLinkMode()).toBe(true);
 

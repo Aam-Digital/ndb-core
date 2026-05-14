@@ -33,13 +33,12 @@ export class ConditionalColorSectionComponent {
 
   colorChange = output<string>();
   deleteSection = output<void>();
-  conditionChange = output<void>();
+  conditionChange = output<any>();
 
   /**
    * Handle conditions change from the conditions editor
    */
   onConditionsChange(updatedConditions: any): void {
-    this.section().condition = updatedConditions;
-    this.conditionChange.emit();
+    this.conditionChange.emit(updatedConditions);
   }
 }

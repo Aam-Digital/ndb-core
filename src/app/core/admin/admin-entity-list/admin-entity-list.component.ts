@@ -1,7 +1,7 @@
 import {
   Component,
   input,
-  OnInit,
+  effect,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityConstructor } from "../../entity/model/entity";
@@ -31,20 +31,24 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: ["./admin-entity-list.component.scss"],
 })
-export class AdminEntityListComponent implements OnInit {
+export class AdminEntityListComponent {
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityListConfig>();
 
   filters: string[];
 
-  ngOnInit(): void {
-    this.config().entityType =
-      this.config().entityType ?? this.entityConstructor().ENTITY_TYPE;
-    this.config().filters = this.config().filters ?? [];
+  constructor() {
+    effect(() => {
+      const entityConstructor = this.entityConstructor();
+      const config = this.config();
 
-    this.initColumnGroupsIfNecessary();
+      config.entityType = config.entityType ?? entityConstructor.ENTITY_TYPE;
+      config.filters = config.filters ?? [];
 
-    this.filters = (this.config().filters ?? []).map((f) => f.id);
+      this.initColumnGroupsIfNecessary(config);
+
+      this.filters = config.filters.map((f) => f.id);
+    });
   }
 
   /**
@@ -52,13 +56,13 @@ export class AdminEntityListComponent implements OnInit {
    * create an initial columnGroup in this case to allow full editing.
    * @private
    */
-  private initColumnGroupsIfNecessary() {
-    if (!this.config().columnGroups) {
-      this.config().columnGroups = {
+  private initColumnGroupsIfNecessary(config: EntityListConfig) {
+    if (!config.columnGroups) {
+      config.columnGroups = {
         groups: [
           {
             name: "",
-            columns: (this.config().columns ?? []).map((c) =>
+            columns: (config.columns ?? []).map((c) =>
               typeof c === "string" ? c : c.id,
             ),
           },
