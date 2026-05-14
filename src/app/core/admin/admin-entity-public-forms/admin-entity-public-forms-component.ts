@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { EntityConstructor } from "app/core/entity/model/entity";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { RelatedEntitiesComponent } from "../../entity-details/related-entities/related-entities.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
