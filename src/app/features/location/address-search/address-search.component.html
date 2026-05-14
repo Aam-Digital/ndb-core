@@ -19,30 +19,30 @@
     (optionSelected)="selectLocation($event.option.value)"
     [displayWith]="displayFn"
   >
-    @if (loading) {
+    @if (loading()) {
       <mat-option disabled i18n>Loading results...</mat-option>
     }
 
-    @if (networkError) {
+    @if (networkError()) {
       <mat-option disabled i18n>
         Internet connection required for map location lookup. Enter address
         manually
       </mat-option>
     }
-    @if (otherTypeError) {
+    @if (otherTypeError()) {
       <mat-option disabled i18n>
         Service for map location lookup temporarily unavailable. Enter address
         manually
       </mat-option>
     }
-    @if (nothingFound && !networkError && !otherTypeError) {
+    @if (nothingFound() && !networkError() && !otherTypeError()) {
       <mat-option disabled i18n>Location not found</mat-option>
     }
 
     <!-- Only show fallback after waiting and loading are both false -->
     @if (
-      !waiting &&
-      !loading &&
+      !waiting() &&
+      !loading() &&
       inputElement.value?.length > 2 &&
       !isInputInOptions(inputElement.value)
     ) {

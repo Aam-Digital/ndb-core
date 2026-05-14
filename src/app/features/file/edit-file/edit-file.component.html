@@ -8,7 +8,7 @@
 
 <div
   class="flex-row gap-regular"
-  [class.clickable]="formControl.value"
+  [class.clickable]="hasControlValue()"
   (click)="navigator.onLine ? formClicked() : null"
 >
   <input
@@ -23,7 +23,7 @@
     [matTooltipDisabled]="!(initialValue && formControl.value === initialValue)"
   />
 
-  @if (formControl.value && formControl.enabled) {
+  @if (hasControlValue() && isControlEnabled()) {
     <button
       type="button"
       mat-icon-button
@@ -36,7 +36,7 @@
       <fa-icon icon="xmark"></fa-icon>
     </button>
   }
-  @if (formControl.enabled) {
+  @if (isControlEnabled()) {
     <button
       type="button"
       mat-icon-button
@@ -51,6 +51,6 @@
   }
 </div>
 
-@if (!navigator.onLine && formControl.enabled) {
+@if (!navigator.onLine && isControlEnabled()) {
   <div class="hint-text" i18n>Changes to files are not possible offline.</div>
 }

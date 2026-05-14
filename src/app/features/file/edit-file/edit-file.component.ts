@@ -7,6 +7,7 @@ import {
   inject,
   input,
   OnInit,
+  signal,
   ViewChild,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -15,7 +16,7 @@ import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { distinctUntilChanged, filter } from "rxjs/operators";
+import { distinctUntilChanged, startWith } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -67,6 +68,8 @@ export class EditFileComponent
   private selectedFile: File;
   private removeClicked = false;
   initialValue: string;
+  readonly isControlEnabled = signal<boolean>(false);
+  readonly hasControlValue = signal<boolean>(false);
 
   /**
    * The accepted file types for file selection dialog.
@@ -80,6 +83,8 @@ export class EditFileComponent
 
   ngOnInit() {
     this.initialValue = this.formControl.value;
+    this.isControlEnabled.set(this.formControl.enabled);
+    this.hasControlValue.set(!!this.formControl.value);
 
     this.acceptedFileTypes =
       this.formFieldConfig()?.additional?.acceptedFileTypes ??
@@ -87,11 +92,16 @@ export class EditFileComponent
 
     this.formControl.statusChanges
       .pipe(
+        startWith(this.formControl.status),
         distinctUntilChanged(),
-        filter((change) => change === "DISABLED"),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => {
+      .subscribe((status) => {
+        this.isControlEnabled.set(this.formControl.enabled);
+        if (status !== "DISABLED") {
+          return;
+        }
+
         if (
           this.selectedFile &&
           this.selectedFile.name === this.formControl.value
@@ -106,6 +116,15 @@ export class EditFileComponent
         } else {
           this.resetFile();
         }
+      });
+
+    this.formControl.valueChanges
+      .pipe(
+        startWith(this.formControl.value),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((value) => {
+        this.hasControlValue.set(!!value);
       });
   }
 

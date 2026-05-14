@@ -3,11 +3,11 @@
 
   <div
     class="img-controls"
-    [matTooltipDisabled]="!(formControl.enabled && !navigator.onLine)"
+    [matTooltipDisabled]="!(isControlEnabled() && !navigator.onLine)"
     matTooltip="Changes to files are not possible offline."
     i18n-matTooltip
   >
-    @if (formControl.value && formControl.enabled) {
+    @if (hasControlValue() && isControlEnabled()) {
       <button
         type="button"
         mat-icon-button
@@ -19,7 +19,7 @@
         <fa-icon icon="xmark"></fa-icon>
       </button>
     }
-    @if (formControl.enabled) {
+    @if (isControlEnabled()) {
       <button
         type="button"
         mat-icon-button
