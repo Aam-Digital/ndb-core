@@ -2,7 +2,10 @@
   class="mat-elevation-z1 attendance-block w-{{ warningLevel() }}"
   [appTemplateTooltip]="tooltip"
 >
-  @if (attendanceData()?.getAttendancePercentage(forChild() || "")) {
+  @if (
+    attendanceData()?.getAttendancePercentage(forChild() || "") !== null &&
+    attendanceData()?.getAttendancePercentage(forChild() || "") !== undefined
+  ) {
     <span>
       {{
         attendanceData()?.getAttendancePercentage(forChild() || "")

@@ -8,10 +8,7 @@ import {
 import { SqlReport } from "../../report-config";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
-import {
-  SqlReportRow,
-  SqlReportService,
-} from "../../sql-report/sql-report.service";
+import { SqlReportService } from "../../sql-report/sql-report.service";
 import { Logging } from "../../../../core/logging/logging.service";
 
 @Component({
@@ -25,7 +22,7 @@ export class SqlV2TableComponent {
   sqlReportService = inject(SqlReportService);
 
   report = input<SqlReport>();
-  reportData = input<any[]>([]);
+  reportData = input<unknown[]>([]);
   isError = false;
 
   dataSource = new MatTableDataSource();

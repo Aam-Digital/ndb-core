@@ -103,6 +103,7 @@ export class ActivityAttendanceSectionComponent implements OnInit {
   constructor() {
     effect(() => {
       this.entity();
+      this.forChild();
       this.init();
     });
   }

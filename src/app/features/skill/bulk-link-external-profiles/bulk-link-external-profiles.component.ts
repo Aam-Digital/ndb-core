@@ -84,8 +84,8 @@ export class BulkLinkExternalProfilesComponent {
 
   private MAX_CONCURRENT_REQUESTS = 20;
 
-  records: MatTableDataSource<RecordMatching>;
-  matchedRecordsCount: number;
+  records = new MatTableDataSource<RecordMatching>([]);
+  matchedRecordsCount = 0;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     if (this.records) {
@@ -104,6 +104,8 @@ export class BulkLinkExternalProfilesComponent {
   private init() {
     const entities = this.entities();
     const config = this.config();
+    this.records = new MatTableDataSource<RecordMatching>([]);
+    this.matchedRecordsCount = 0;
 
     this.resolvedConfig = config;
     if (!this.resolvedConfig && entities?.[0]) {
@@ -126,7 +128,6 @@ export class BulkLinkExternalProfilesComponent {
     this.records = new MatTableDataSource(
       entities.map((entity) => ({ entity }) as RecordMatching),
     );
-    this.matchedRecordsCount = 0;
 
     from(this.records.data)
       .pipe(

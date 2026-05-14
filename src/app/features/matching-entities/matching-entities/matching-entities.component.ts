@@ -144,6 +144,7 @@ export class MatchingEntitiesComponent implements OnInit {
     newEntityMatchPropertyLeft: "",
     newEntityMatchPropertyRight: "",
   };
+  private columnsState: [ColumnConfig, ColumnConfig][] = [];
 
   constructor() {
     const config: MatchingEntitiesConfig =
@@ -169,6 +170,7 @@ export class MatchingEntitiesComponent implements OnInit {
   // TODO: fill selection on hover already?
 
   async ngOnInit() {
+    this.columnsState = this.cloneColumns(this.resolvedColumns);
     this.sideDetails = [
       await this.initSideDetails(this.resolvedLeftSide, 0),
       await this.initSideDetails(this.resolvedRightSide, 1),
@@ -194,7 +196,7 @@ export class MatchingEntitiesComponent implements OnInit {
   ): Promise<MatchingSide> {
     const newSide = buildMatchingSideConfig(
       side,
-      this.resolvedColumns,
+      this.columnsState,
       sideIndex,
     ) as MatchingSide;
 
@@ -435,15 +437,14 @@ export class MatchingEntitiesComponent implements OnInit {
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
       this.setDistanceValuesForSide(side);
-      const resolvedColumns = this.resolvedColumns;
-      const colIndex = resolvedColumns.findIndex((row) => {
+      const colIndex = this.columnsState.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
           ? col === "distance"
           : col?.id === "distance";
       });
       if (colIndex !== -1) {
-        resolvedColumns[colIndex][index] = columnConfig;
+        this.columnsState[colIndex][index] = columnConfig;
       }
     }
   }
@@ -566,6 +567,22 @@ export class MatchingEntitiesComponent implements OnInit {
     this.defaultMatchActionLabel =
       clonedConfig.matchActionLabel ?? this.defaultMatchActionLabel;
     this.defaultOnMatch = clonedConfig.onMatch ?? this.defaultOnMatch;
+  }
+
+  private cloneColumns(
+    columns: [ColumnConfig, ColumnConfig][],
+  ): [ColumnConfig, ColumnConfig][] {
+    return (columns ?? []).map(([left, right]) => [
+      this.cloneColumn(left),
+      this.cloneColumn(right),
+    ]);
+  }
+
+  private cloneColumn(column: ColumnConfig): ColumnConfig {
+    if (typeof column === "string" || !column) {
+      return column;
+    }
+    return { ...column };
   }
 }
 

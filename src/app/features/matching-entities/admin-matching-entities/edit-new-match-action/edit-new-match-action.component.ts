@@ -4,7 +4,6 @@ import {
   inject,
   input,
   model,
-  OnInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -53,7 +52,7 @@ import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-sele
   templateUrl: "./edit-new-match-action.component.html",
   styleUrl: "./edit-new-match-action.component.scss",
 })
-export class EditNewMatchActionComponent implements OnInit {
+export class EditNewMatchActionComponent {
   readonly fb = inject(FormBuilder);
   readonly entityRegistry = inject(EntityRegistry);
   readonly dialog = inject(MatDialog);
@@ -107,25 +106,36 @@ export class EditNewMatchActionComponent implements OnInit {
         this.leftEntityType(),
         this.rightEntityType(),
       );
-    });
-  }
 
-  ngOnInit() {
-    if (this.value()) {
       const value = this.value();
+      if (!value) {
+        return;
+      }
 
-      this.initForm();
-      this.updateMatchOptions(value.newEntityType);
-
-      this.activeFields = value.columnsToReview;
-      this.form.valueChanges.subscribe((formValues) => {
-        this.value.set({
-          ...this.value(),
-          ...formValues,
-          columnsToReview: this.activeFields,
+      if (!this.form) {
+        this.initForm();
+        this.form.valueChanges.subscribe((formValues) => {
+          this.value.set({
+            ...this.value(),
+            ...formValues,
+            columnsToReview: this.activeFields,
+          });
         });
-      });
-    }
+      } else {
+        this.form.patchValue(
+          {
+            newEntityType: value.newEntityType ?? "",
+            newEntityMatchPropertyLeft: value.newEntityMatchPropertyLeft ?? "",
+            newEntityMatchPropertyRight:
+              value.newEntityMatchPropertyRight ?? "",
+          },
+          { emitEvent: false },
+        );
+      }
+
+      this._activeFields = value.columnsToReview ?? [];
+      this.updateMatchOptions(value.newEntityType);
+    });
   }
 
   initForm() {

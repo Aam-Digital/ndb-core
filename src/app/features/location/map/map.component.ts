@@ -12,7 +12,6 @@ import {
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import * as L from "leaflet";
 import "leaflet.markercluster";
 import { BehaviorSubject, Subject } from "rxjs";
@@ -27,13 +26,14 @@ import {
   LocationProperties,
   MapPropertiesPopupComponent,
 } from "./map-properties-popup/map-properties-popup.component";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-map",
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
-  imports: [FontAwesomeModule, MatButtonModule],
+  imports: [FaDynamicIconComponent, MatButtonModule],
 })
 export class MapComponent implements AfterViewInit {
   private readonly dialog = inject(MatDialog);
@@ -97,7 +97,8 @@ export class MapComponent implements AfterViewInit {
         this.entitiesState = this.adjustOverlappingCoordinates(entities);
       }
       this.highlightedEntitiesState = highlighted;
-      this.displayedPropertiesState = displayedProperties;
+      this.displayedPropertiesState =
+        this.cloneDisplayedProperties(displayedProperties);
       this.showPropertySelection =
         Object.keys(this.displayedPropertiesState).length > 0;
 
@@ -375,6 +376,17 @@ export class MapComponent implements AfterViewInit {
       });
   }
 
+  private cloneDisplayedProperties(
+    properties: LocationProperties = {},
+  ): LocationProperties {
+    return Object.fromEntries(
+      Object.entries(properties).map(([entityType, fields]) => [
+        entityType,
+        [...(fields ?? [])],
+      ]),
+    ) as LocationProperties;
+  }
+
   async openMapInPopup() {
     const mapComponent = await import("../map-popup/map-popup.component");
     const data: MapPopupConfig = {
@@ -384,7 +396,9 @@ export class MapComponent implements AfterViewInit {
       entityClick: {
         next: (entity: Entity) => this.entityClick.emit(entity),
       } as Subject<Entity>,
-      displayedProperties: this.displayedPropertiesState,
+      displayedProperties: this.cloneDisplayedProperties(
+        this.displayedPropertiesState,
+      ),
       showMapOnly: this.showMapOnly(),
     };
 
@@ -399,7 +413,7 @@ export class MapComponent implements AfterViewInit {
   private updatedDisplayedProperties(
     properties: LocationProperties | undefined,
   ) {
-    const nextProperties = properties ?? {};
+    const nextProperties = this.cloneDisplayedProperties(properties ?? {});
     this.displayedPropertiesState = nextProperties;
     this.displayedProperties.set(nextProperties);
     this.updateMarkers();
@@ -408,7 +422,7 @@ export class MapComponent implements AfterViewInit {
   openMapPropertiesPopup() {
     this.dialog
       .open(MapPropertiesPopupComponent, {
-        data: this.displayedPropertiesState,
+        data: this.cloneDisplayedProperties(this.displayedPropertiesState),
       })
       .afterClosed()
       .subscribe((res: LocationProperties) => {

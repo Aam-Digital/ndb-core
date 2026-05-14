@@ -15,6 +15,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "#src/app/utils/tab-state/tab-state.module";
 import { ActivityAttendanceSectionComponent } from "../activity-attendance-section/activity-attendance-section.component";
 import { MatSelectModule } from "@angular/material/select";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Lists all activities of the given child
@@ -70,16 +71,28 @@ export class GroupedChildAttendanceComponent {
     isCancelled: () => boolean,
   ): Promise<void> {
     this.loading.set(true);
-    const allActivities =
-      await this.attendanceService.getActivitiesForParticipant(entity.getId());
-    if (isCancelled()) {
-      return;
+    try {
+      const allActivities =
+        await this.attendanceService.getActivitiesForParticipant(
+          entity.getId(),
+        );
+      if (isCancelled()) {
+        return;
+      }
+
+      this.activities.set(allActivities.filter((a) => a.isActive));
+      this.archivedActivities.set(allActivities.filter((a) => !a.isActive));
+    } catch (error) {
+      if (!isCancelled()) {
+        this.activities.set([]);
+        this.archivedActivities.set([]);
+      }
+      Logging.warn("Could not load grouped child attendance activities", error);
+    } finally {
+      if (!isCancelled()) {
+        this.loading.set(false);
+      }
     }
-
-    this.activities.set(allActivities.filter((a) => a.isActive));
-    this.archivedActivities.set(allActivities.filter((a) => !a.isActive));
-
-    this.loading.set(false);
   }
 
   onActivityChange(selectedArchivedActivity: Entity) {

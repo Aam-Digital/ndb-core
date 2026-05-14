@@ -73,18 +73,23 @@ export class NotificationRuleComponent {
 
   constructor() {
     effect(() => {
-      if (this.value()) {
-        this.initForm();
+      const value = this.value();
+      if (!value) {
+        return;
       }
+
+      if (!this.form) {
+        this.initForm(value);
+        return;
+      }
+
+      this.form.patchValue(value, { emitEvent: false });
+      this.updateEntityConstructor(this.entityTypeControl.value);
+      this.setEntityTypeControlState(this.form.get("conditions")?.value);
     });
   }
 
-  initForm() {
-    const value = this.value();
-    if (!value) {
-      return;
-    }
-
+  initForm(value: NotificationRule) {
     this.form = new FormGroup({
       label: new FormControl(value.label ?? ""),
       entityType: new FormControl({
@@ -119,26 +124,38 @@ export class NotificationRuleComponent {
       return;
     }
 
-    conditionsControl.valueChanges.subscribe((v) => {
-      if (JSON.stringify(v) !== "{}") {
-        this.entityTypeControl.disable();
-      } else {
-        this.entityTypeControl.enable();
-      }
-    });
+    this.setEntityTypeControlState(conditionsControl.value);
+    conditionsControl.valueChanges.subscribe((v) =>
+      this.setEntityTypeControlState(v),
+    );
   }
 
-  private updateValue(value: any) {
-    const entityTypeControl = this.form.get("entityType");
-    if (entityTypeControl?.disabled) {
-      value.entityType = entityTypeControl.value;
+  private setEntityTypeControlState(conditions: unknown) {
+    const hasConditions =
+      typeof conditions === "object" &&
+      conditions !== null &&
+      Object.keys(conditions).length > 0;
+    if (hasConditions) {
+      this.entityTypeControl.disable({ emitEvent: false });
+    } else {
+      this.entityTypeControl.enable({ emitEvent: false });
     }
+  }
 
-    if (JSON.stringify(value) === JSON.stringify(this.value())) {
+  private updateValue(value: NotificationRule) {
+    const entityTypeControl = this.form.get("entityType");
+    const nextValue = {
+      ...value,
+      entityType: entityTypeControl?.disabled
+        ? entityTypeControl.value
+        : value.entityType,
+    };
+
+    if (JSON.stringify(nextValue) === JSON.stringify(this.value())) {
       return;
     }
 
-    this.value.set(value);
+    this.value.set(nextValue);
   }
 
   /**

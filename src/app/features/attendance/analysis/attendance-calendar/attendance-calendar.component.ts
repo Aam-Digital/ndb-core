@@ -220,12 +220,10 @@ export class AttendanceCalendarComponent {
   selectDay(newDate?: Date) {
     if (!newDate) {
       this.selectedDate = undefined;
-      this.selectedEvent = undefined;
-      this.selectedEventAttendance = undefined;
-      this.selectedEventAttendanceOriginal = undefined;
-      this.selectedEventStats = undefined;
+      this.resetSelectedEventState();
     } else {
       this.selectedDate = moment(newDate);
+      this.resetSelectedEventState();
       this.selectedEvent = this.records().find((e) =>
         this.selectedDate.isSame(e.date, "day"),
       );
@@ -234,16 +232,15 @@ export class AttendanceCalendarComponent {
           this.selectedEvent,
           this.highlightForChild(),
         );
+        this.selectedEventAttendanceOriginal = Object.assign(
+          {},
+          this.selectedEventAttendance,
+        );
         this.statusControl.setValue(
           this.selectedEventAttendance.status ?? null,
           { emitEvent: false },
         );
       }
-      // clone attendance information to allow detecting and reverting changes
-      this.selectedEventAttendanceOriginal = Object.assign(
-        {},
-        this.selectedEventAttendanceOriginal,
-      );
       if (this.selectedEvent) {
         this.selectedEventStats = this.selectedEvent.getAttendanceStats();
       }
@@ -254,7 +251,15 @@ export class AttendanceCalendarComponent {
       });
     }
 
-    this.calendar.updateTodaysDate();
+    this.calendar?.updateTodaysDate();
+  }
+
+  private resetSelectedEventState() {
+    this.selectedEvent = undefined;
+    this.selectedEventAttendance = undefined;
+    this.selectedEventAttendanceOriginal = undefined;
+    this.selectedEventStats = undefined;
+    this.statusControl.setValue(null, { emitEvent: false });
   }
 
   async save() {

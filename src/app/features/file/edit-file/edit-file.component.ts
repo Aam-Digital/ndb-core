@@ -15,10 +15,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { distinctUntilChanged, startWith } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -47,7 +47,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     ReactiveFormsModule,
     MatTooltipModule,
     MatButtonModule,
-    FontAwesomeModule,
+    FaDynamicIconComponent,
   ],
   providers: [{ provide: MatFormFieldControl, useExisting: EditFileComponent }],
 })

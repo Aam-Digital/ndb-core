@@ -366,7 +366,7 @@ describe("MatchingEntitiesComponent", () => {
 
     await stabilizeCurrentFixture();
 
-    const distanceColumn = component.columns()?.[0][1] as FormFieldConfig;
+    const distanceColumn = component.sideDetails[1].columns[0] as FormFieldConfig;
     expect(distanceColumn).toEqual({
       id: "distance",
       label: "Distance",
@@ -377,6 +377,7 @@ describe("MatchingEntitiesComponent", () => {
         compareCoordinates: expect.any(BehaviorSubject),
       },
     });
+    expect(component.columns()?.[0][1]).toBe("distance");
 
     let newCoordinates: Coordinates[];
     distanceColumn.additional.compareCoordinates.subscribe(

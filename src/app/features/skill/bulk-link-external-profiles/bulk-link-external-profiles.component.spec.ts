@@ -246,7 +246,6 @@ describe("BulkLinkExternalProfilesComponent", () => {
   it("should skip if no config is available", async () => {
     vi.useFakeTimers();
     try {
-      const previousRecords = component.records;
       mockSkillApi.getExternalProfiles.mockClear();
       fixture.componentRef.setInput("config", undefined);
 
@@ -257,7 +256,8 @@ describe("BulkLinkExternalProfilesComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockSkillApi.getExternalProfiles).not.toHaveBeenCalled();
-      expect(component.records).toBe(previousRecords);
+      expect(component.records.data).toEqual([]);
+      expect(component.matchedRecordsCount).toBe(0);
     } finally {
       vi.useRealTimers();
     }

@@ -125,7 +125,7 @@ export class EditLegacyAttendanceComponent
           this.showAttendance = !!val?.isMeeting;
           if (this.showAttendance) {
             let childrenAttendanceForm = new FormControl(
-              this.entity()?.copy()["childrenAttendance"],
+              this.entity()?.copy()?.["childrenAttendance"],
             );
             this.parent.addControl(
               "childrenAttendance",
