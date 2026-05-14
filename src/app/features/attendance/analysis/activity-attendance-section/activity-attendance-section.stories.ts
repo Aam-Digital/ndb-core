@@ -98,9 +98,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ActivityAttendanceSectionComponent> = (
-  args: ActivityAttendanceSectionComponent,
-) => ({
+const Template: StoryFn<ActivityAttendanceSectionComponent> = (args) => ({
   component: ActivityAttendanceSectionComponent,
   props: args,
 });
