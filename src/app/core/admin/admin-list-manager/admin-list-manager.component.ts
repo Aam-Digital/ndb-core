@@ -11,7 +11,7 @@ import {
 import {
   Component,
   input,
-  OnInit,
+  effect,
   inject,
   OnDestroy,
   ChangeDetectionStrategy,
@@ -42,7 +42,7 @@ import { Subscription } from "rxjs";
   templateUrl: "./admin-list-manager.component.html",
   styleUrl: "./admin-list-manager.component.scss",
 })
-export class AdminListManagerComponent implements OnInit, OnDestroy {
+export class AdminListManagerComponent implements OnDestroy {
   private readonly adminEntityService = inject(AdminEntityService);
   private schemaUpdateSubscription: Subscription;
   items = input<ColumnConfig[]>([]);
@@ -61,14 +61,20 @@ export class AdminListManagerComponent implements OnInit, OnDestroy {
 
   availableItems: ColumnConfig[] = [];
 
-  ngOnInit(): void {
-    this.loadAvailableItems();
+  constructor() {
+    effect(() => {
+      this.entityType();
+      this.activeFields();
+      this.additionalFields();
+      this.loadAvailableItems();
 
-    // Subscribe to schema updates to refresh available items when fields are added/modified
-    this.schemaUpdateSubscription =
-      this.adminEntityService.entitySchemaUpdated.subscribe(() => {
-        this.loadAvailableItems();
-      });
+      this.schemaUpdateSubscription?.unsubscribe();
+      // Subscribe to schema updates to refresh available items when fields are added/modified
+      this.schemaUpdateSubscription =
+        this.adminEntityService.entitySchemaUpdated.subscribe(() => {
+          this.loadAvailableItems();
+        });
+    });
   }
 
   ngOnDestroy(): void {

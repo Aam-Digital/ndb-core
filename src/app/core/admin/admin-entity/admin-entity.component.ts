@@ -2,9 +2,10 @@ import { Location } from "@angular/common";
 import {
   Component,
   ContentChild,
-  OnInit,
+  effect,
   TemplateRef,
   ViewChild,
+  DestroyRef,
   inject,
   input,
   ChangeDetectionStrategy,
@@ -30,6 +31,7 @@ import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
 import { AdminEntityService } from "../admin-entity.service";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,14 +52,14 @@ import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-sett
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
 })
-export class AdminEntityComponent implements OnInit {
+export class AdminEntityComponent {
   private entities = inject(EntityRegistry);
   private configService = inject(ConfigService);
   private location = inject(Location);
   private adminEntityService = inject(AdminEntityService);
   private entityActionsService = inject(EntityActionsService);
   private routes = inject(ActivatedRoute);
-
+  private readonly destroyRef = inject(DestroyRef);
   entityType = input.required<string>();
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
@@ -79,11 +81,17 @@ export class AdminEntityComponent implements OnInit {
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
-  ngOnInit(): void {
-    this.init();
-    this.routes.queryParams.subscribe((params) => {
-      this.mode = params.mode ?? this.mode;
+  constructor() {
+    effect(() => {
+      this.entityType();
+      this.init();
     });
+
+    this.routes.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.mode = params.mode ?? this.mode;
+      });
   }
 
   private init() {
