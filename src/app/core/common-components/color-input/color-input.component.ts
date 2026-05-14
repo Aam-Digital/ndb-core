@@ -3,7 +3,7 @@ import {
   Component,
   DestroyRef,
   inject,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -52,18 +52,18 @@ export class ColorInputComponent
   extends CustomFormControlDirective<string>
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   /**
    * If true, renders only the compact color picker button (no label, no text field, no form field).
    * Useful for inline/icon-only usage.
    */
-  @Input() compact = false;
+  compact = input<boolean>(false);
 
   /**
    * Label for the color input field (used in standalone full mode).
    */
-  @Input() label: string = $localize`Color`;
+  label = input<string>($localize`Color`);
 
   private readonly destroyRef = inject(DestroyRef);
 

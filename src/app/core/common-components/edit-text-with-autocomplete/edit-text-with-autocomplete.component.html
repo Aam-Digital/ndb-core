@@ -1,17 +1,17 @@
 <input
   matInput
-  [readonly]="!!selectedEntity"
+  [readonly]="!!selectedEntity()"
   [formControl]="formControl"
   [matAutocomplete]="autoSuggestions"
-  [matAutocompleteDisabled]="autocompleteDisabled"
+  [matAutocompleteDisabled]="autocompleteDisabled()"
   (keyup)="keyup()"
   (focusin)="updateAutocomplete()"
 />
 
 <mat-autocomplete #autoSuggestions="matAutocomplete">
-  @for (entity of autocompleteEntities | async; track entity.getId()) {
+  @for (entity of autocompleteEntities(); track entity.getId()) {
     <mat-option
-      [value]="entity[formFieldConfig.id]"
+      [value]="entity[formFieldConfig().id]"
       (onSelectionChange)="$event.source.selected ? selectEntity(entity) : null"
     >
       <app-entity-block
@@ -22,9 +22,9 @@
   }
 </mat-autocomplete>
 
-@if (!autocompleteDisabled) {
+@if (!autocompleteDisabled()) {
   <div style="font-size: 0.75em; color: rgba(0, 0, 0, 0.6); margin-top: 4px">
-    @if (!selectedEntity) {
+    @if (!selectedEntity()) {
       <span i18n>Creating new record.</span>
     } @else {
       <span i18n>Editing existing record.</span>
@@ -32,7 +32,7 @@
   </div>
 }
 
-@if (!autocompleteDisabled && !selectedEntity) {
+@if (!autocompleteDisabled() && !selectedEntity()) {
   <fa-icon
     (click)="tooltipElement.show()"
     #tooltipElement="matTooltip"
@@ -48,7 +48,7 @@
     "
     class="tooltip-suffix"
   ></fa-icon>
-} @else if (!autocompleteDisabled && !!selectedEntity) {
+} @else if (!autocompleteDisabled() && !!selectedEntity()) {
   <fa-icon
     (click)="resetForm()"
     icon="circle-xmark"

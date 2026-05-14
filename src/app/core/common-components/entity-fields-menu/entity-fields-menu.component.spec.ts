@@ -31,7 +31,7 @@ describe("EntityFieldsMenuComponent", () => {
   });
 
   it("should let a custom field override a default field", () => {
-    component.availableFields = [
+    fixture.componentRef.setInput("availableFields", [
       "name",
       {
         id: "name",
@@ -41,13 +41,15 @@ describe("EntityFieldsMenuComponent", () => {
         id: "age",
         label: "Age",
       },
-    ];
-    expect(component._availableFields.length).toBe(2);
+    ]);
+    fixture.detectChanges();
 
-    const name = component._availableFields.find((f) => f.id === "name");
+    expect(component._availableFields().length).toBe(2);
+
+    const name = component._availableFields().find((f) => f.id === "name");
     expect(name.label).toBe("Custom Name");
 
-    const age = component._availableFields.find((f) => f.id === "age");
+    const age = component._availableFields().find((f) => f.id === "age");
     expect(age.label).toBe("Age");
   });
 });
