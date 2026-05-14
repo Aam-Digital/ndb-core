@@ -366,7 +366,8 @@ describe("MatchingEntitiesComponent", () => {
 
     await stabilizeCurrentFixture();
 
-    const distanceColumn = component.sideDetails[1].columns[0] as FormFieldConfig;
+    const distanceColumn = component.sideDetails[1]
+      .columns[0] as FormFieldConfig;
     expect(distanceColumn).toEqual({
       id: "distance",
       label: "Distance",
