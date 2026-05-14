@@ -1956,6 +1956,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/EmailClientService.html" data-type="entity-link" >EmailClientService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/EntitiesTableSelectionStore.html" data-type="entity-link" >EntitiesTableSelectionStore</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/EntitiesTableSortStore.html" data-type="entity-link" >EntitiesTableSortStore</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/EntityActionsMenuService.html" data-type="entity-link" >EntityActionsMenuService</a>
                                 </li>
                                 <li class="link">
@@ -2370,6 +2376,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/EmptyDefaultValueHint.html" data-type="entity-link" >EmptyDefaultValueHint</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/EntitiesTableSelectionContext.html" data-type="entity-link" >EntitiesTableSelectionContext</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EntitiesTableSortContext.html" data-type="entity-link" >EntitiesTableSortContext</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/EntityAction.html" data-type="entity-link" >EntityAction</a>
                             </li>
                             <li class="link">
@@ -2578,6 +2590,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/MenuItemForAdminUi.html" data-type="entity-link" >MenuItemForAdminUi</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/MouseSelectionInput.html" data-type="entity-link" >MouseSelectionInput</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/MouseSelectionUpdate.html" data-type="entity-link" >MouseSelectionUpdate</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/NavigationMenuConfig.html" data-type="entity-link" >NavigationMenuConfig</a>

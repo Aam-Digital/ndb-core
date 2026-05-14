@@ -1,0 +1,924 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >EntitiesTableSelectionStore</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/common-components/entities-table/entities-table-selection.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Component-scoped signal store for entities-table selection state and interaction logic.</p>
+<p>Uses the pure helpers above for all stateless computations;
+this store is responsible only for holding the mutable state
+(lastSelectedRow, lastSelection) and coordinating updates.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#allRowsSelected" >allRowsSelected</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#selectionIndeterminate" >selectionIndeterminate</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#connect" >connect</a>
+                            </li>
+                            <li>
+                                <a href="#handleSelectableRowMouseDown" >handleSelectableRowMouseDown</a>
+                            </li>
+                            <li>
+                                <a href="#selectAllRows" >selectAllRows</a>
+                            </li>
+                            <li>
+                                <a href="#selectRow" >selectRow</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="connect"></a>
+                    <span class="name">
+                        <span ><b>connect</b></span>
+                        <a href="#connect"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>connect(context: <a href="../interfaces/EntitiesTableSelectionContext.html" target="_self">EntitiesTableSelectionContext&lt;T&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:196</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Connects component input/model signals to this store. Must be called once from component constructor.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>context</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitiesTableSelectionContext.html" target="_self" >EntitiesTableSelectionContext&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="handleSelectableRowMouseDown"></a>
+                    <span class="name">
+                        <span ><b>handleSelectableRowMouseDown</b></span>
+                        <a href="#handleSelectableRowMouseDown"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>handleSelectableRowMouseDown(event: MouseEvent, row: <a href="../interfaces/TableRow.html" target="_self">TableRow&lt;T&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:222</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Applies row selection interaction for mouse-down in selectable mode.
+Returns whether the event came from a checkbox target.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                        <code>MouseEvent</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>row</td>
+                                            <td>
+                                                            <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectAllRows"></a>
+                    <span class="name">
+                        <span ><b>selectAllRows</b></span>
+                        <a href="#selectAllRows"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>selectAllRows(checked: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="212"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:212</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Selects or unselects all currently sorted rows.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>checked</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectRow"></a>
+                    <span class="name">
+                        <span ><b>selectRow</b></span>
+                        <a href="#selectRow"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>selectRow(row: <a href="../interfaces/TableRow.html" target="_self">TableRow&lt;T&gt;</a>, checked: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="201"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:201</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Selects or unselects a single row record.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>row</td>
+                                            <td>
+                                                            <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>checked</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allRowsSelected"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>allRowsSelected</b></span>
+                        <a href="#allRowsSelected"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const selected &#x3D; this.context?.selectedRecords() ?? [];
+    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    return selected.length &gt; 0 &amp;&amp; selected.length &#x3D;&#x3D;&#x3D; total;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="183" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:183</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectionIndeterminate"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>selectionIndeterminate</b></span>
+                        <a href="#selectionIndeterminate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const selected &#x3D; this.context?.selectedRecords() ?? [];
+    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    return selected.length &gt; 0 &amp;&amp; selected.length &lt; total;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="189" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:189</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { computed, Injectable, signal } from &quot;@angular/core&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { TableRow } from &quot;./table-row&quot;;
+
+/**
+ * Pure selection helpers for entities-table row interaction
+ * and checkbox state.
+ * And EntitiesTableSelectionStore for holding selection state and coordinating updates.
+ */
+
+/**
+ * Result container for a row selection interaction.
+ */
+export interface MouseSelectionUpdate&lt;T extends Entity&gt; {
+  selectedRecords: T[];
+  lastSelectedRow: TableRow&lt;T&gt; | null;
+  lastSelection: boolean | null;
+}
+
+/**
+ * Input values required to calculate mouse-based row selection updates.
+ */
+export interface MouseSelectionInput&lt;T extends Entity&gt; {
+  selectedRecords: T[];
+  selectedRows: TableRow&lt;T&gt;[];
+  row: TableRow&lt;T&gt;;
+  shiftKey: boolean;
+  lastSelectedRow: TableRow&lt;T&gt; | null;
+  lastSelection: boolean | null;
+}
+
+/**
+ * Detects whether the click target is inside an element marked as &#x60;.clickable&#x60;.
+ */
+export function isClickableTarget(target: EventTarget | null): boolean {
+  const element &#x3D; target as {
+    closest?: (selector: string) &#x3D;&gt; Element | null;
+  } | null;
+  return !!element?.closest?.(&quot;.clickable&quot;);
+}
+
+/**
+ * Detects whether the click originated from a checkbox input.
+ */
+export function isCheckboxTarget(target: EventTarget | null): boolean {
+  return target instanceof HTMLInputElement &amp;&amp; target.type &#x3D;&#x3D;&#x3D; &quot;checkbox&quot;;
+}
+
+/**
+ * Determines whether row-click handling should be skipped for this interaction.
+ */
+export function shouldSkipRowInteraction&lt;T extends Entity&gt;(
+  target: EventTarget | null,
+  row: TableRow&lt;T&gt;,
+): boolean {
+  return isClickableTarget(target) || !!row.formGroup?.enabled;
+}
+
+/**
+ * Adds or removes a single record from the selected records collection.
+ */
+export function toggleRecordSelection&lt;T extends Entity&gt;(
+  selectedRecords: T[],
+  record: T,
+  checked: boolean,
+): T[] {
+  if (checked) {
+    return selectedRecords.includes(record)
+      ? selectedRecords
+      : [...selectedRecords, record];
+  }
+
+  return selectedRecords.includes(record)
+    ? selectedRecords.filter((current) &#x3D;&gt; current !&#x3D;&#x3D; record)
+    : selectedRecords;
+}
+
+/**
+ * Applies a contiguous shift-selection update over a row index range.
+ */
+export function applyRangeSelection&lt;T extends Entity&gt;(
+  selectedRecords: T[],
+  selectedRows: TableRow&lt;T&gt;[],
+  range: { start: number; end: number },
+  shouldCheck: boolean,
+): T[] {
+  const updatedSelection &#x3D; [...selectedRecords];
+  for (let index &#x3D; range.start; index &lt;&#x3D; range.end; index++) {
+    const row &#x3D; selectedRows[index];
+    const isSelected &#x3D; updatedSelection.includes(row.record);
+
+    if (shouldCheck &amp;&amp; !isSelected) {
+      updatedSelection.push(row.record);
+    } else if (!shouldCheck &amp;&amp; isSelected) {
+      updatedSelection.splice(updatedSelection.indexOf(row.record), 1);
+    }
+  }
+  return updatedSelection;
+}
+
+/**
+ * Computes the next selection state for a row &#x60;mousedown&#x60;, including shift-range behavior.
+ */
+export function updateSelectionFromMouseDown&lt;T extends Entity&gt;(
+  input: MouseSelectionInput&lt;T&gt;,
+): MouseSelectionUpdate&lt;T&gt; {
+  const {
+    selectedRecords,
+    selectedRows,
+    row,
+    shiftKey,
+    lastSelectedRow,
+    lastSelection,
+  } &#x3D; input;
+  const currentIndex &#x3D; selectedRows.indexOf(row);
+  const anchorIndex &#x3D; lastSelectedRow
+    ? selectedRows.indexOf(lastSelectedRow)
+    : -1;
+  const canRangeSelect &#x3D;
+    shiftKey &amp;&amp; !!lastSelectedRow &amp;&amp; anchorIndex !&#x3D;&#x3D; -1 &amp;&amp; currentIndex !&#x3D;&#x3D; -1;
+
+  if (canRangeSelect) {
+    const start &#x3D; Math.min(anchorIndex, currentIndex);
+    const end &#x3D; Math.max(anchorIndex, currentIndex);
+    const shouldCheck &#x3D;
+      lastSelection !&#x3D;&#x3D; null
+        ? !lastSelection
+        : !selectedRecords.includes(row.record);
+
+    return {
+      selectedRecords: applyRangeSelection(
+        selectedRecords,
+        selectedRows,
+        { start, end },
+        shouldCheck,
+      ),
+      lastSelectedRow: row,
+      lastSelection,
+    };
+  }
+
+  const wasSelected &#x3D; selectedRecords.includes(row.record);
+  return {
+    selectedRecords: toggleRecordSelection(
+      selectedRecords,
+      row.record,
+      !wasSelected,
+    ),
+    lastSelectedRow: currentIndex !&#x3D;&#x3D; -1 ? row : null,
+    lastSelection: wasSelected,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Selection Store
+// ---------------------------------------------------------------------------
+
+type ReadSignal&lt;T&gt; &#x3D; () &#x3D;&gt; T;
+type ModelSignal&lt;T&gt; &#x3D; ReadSignal&lt;T&gt; &amp; { set(value: T): void };
+
+/**
+ * Input signals consumed by &#x60;EntitiesTableSelectionStore&#x60;.
+ */
+export interface EntitiesTableSelectionContext&lt;T extends Entity&gt; {
+  selectedRecords: ModelSignal&lt;T[]&gt;;
+  sortedRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
+  getCurrentPageRows: () &#x3D;&gt; TableRow&lt;T&gt;[];
+}
+
+/**
+ * Component-scoped signal store for entities-table selection state and interaction logic.
+ *
+ * Uses the pure helpers above for all stateless computations;
+ * this store is responsible only for holding the mutable state
+ * (lastSelectedRow, lastSelection) and coordinating updates.
+ */
+@Injectable()
+export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
+  private context: EntitiesTableSelectionContext&lt;T&gt;;
+  private readonly lastSelectedRow &#x3D; signal&lt;TableRow&lt;T&gt; | null&gt;(null);
+  private readonly lastSelection &#x3D; signal&lt;boolean | null&gt;(null);
+
+  readonly allRowsSelected &#x3D; computed(() &#x3D;&gt; {
+    const selected &#x3D; this.context?.selectedRecords() ?? [];
+    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    return selected.length &gt; 0 &amp;&amp; selected.length &#x3D;&#x3D;&#x3D; total;
+  });
+
+  readonly selectionIndeterminate &#x3D; computed(() &#x3D;&gt; {
+    const selected &#x3D; this.context?.selectedRecords() ?? [];
+    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    return selected.length &gt; 0 &amp;&amp; selected.length &lt; total;
+  });
+
+  /** Connects component input/model signals to this store. Must be called once from component constructor. */
+  connect(context: EntitiesTableSelectionContext&lt;T&gt;) {
+    this.context &#x3D; context;
+  }
+
+  /** Selects or unselects a single row record. */
+  selectRow(row: TableRow&lt;T&gt;, checked: boolean) {
+    this.context.selectedRecords.set(
+      toggleRecordSelection(
+        this.context.selectedRecords(),
+        row.record,
+        checked,
+      ),
+    );
+  }
+
+  /** Selects or unselects all currently sorted rows. */
+  selectAllRows(checked: boolean) {
+    this.context.selectedRecords.set(
+      checked ? this.context.sortedRows().map((r) &#x3D;&gt; r.record) : [],
+    );
+  }
+
+  /**
+   * Applies row selection interaction for mouse-down in selectable mode.
+   * Returns whether the event came from a checkbox target.
+   */
+  handleSelectableRowMouseDown(event: MouseEvent, row: TableRow&lt;T&gt;): boolean {
+    const selectedRows &#x3D; this.context.getCurrentPageRows();
+    const nextState &#x3D; updateSelectionFromMouseDown({
+      selectedRecords: this.context.selectedRecords(),
+      selectedRows,
+      row,
+      shiftKey: event.shiftKey,
+      lastSelectedRow: this.lastSelectedRow(),
+      lastSelection: this.lastSelection(),
+    });
+    this.context.selectedRecords.set(nextState.selectedRecords);
+    this.lastSelectedRow.set(nextState.lastSelectedRow);
+    this.lastSelection.set(nextState.lastSelection);
+    return isCheckboxTarget(event.target);
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntitiesTableSelectionStore.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

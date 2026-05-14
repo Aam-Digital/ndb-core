@@ -1,0 +1,710 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  EntitiesTableSortContext</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/common-components/entities-table/entities-table-sort.store.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Input signals consumed by <code>EntitiesTableSortStore</code>.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#columns" 
+>
+                                            columns
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#columnsToDisplay" 
+>
+                                            columnsToDisplay
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#externalSort" 
+>
+                                            externalSort
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#filteredRecords" 
+>
+                                            filteredRecords
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="columns"></a>
+                                        <span class="name "><b>columns</b>
+                                            <a href="#columns">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>columns:         <code><a href="../interfaces/FormFieldConfig.html" target="_self" >ReadSignal&lt;FormFieldConfig[]&gt;</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >ReadSignal&lt;FormFieldConfig[]&gt;</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Full column definitions (updated reactively).</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="columnsToDisplay"></a>
+                                        <span class="name "><b>columnsToDisplay</b>
+                                            <a href="#columnsToDisplay">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>columnsToDisplay:     <code>ReadSignal&lt;string[]&gt;</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>ReadSignal&lt;string[]&gt;</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Visible column IDs (updated reactively).</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="externalSort"></a>
+                                        <span class="name "><b>externalSort</b>
+                                            <a href="#externalSort">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>externalSort:     <code>ReadSignal&lt;Sort | undefined&gt;</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>ReadSignal&lt;Sort | undefined&gt;</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>External sort override from a component input binding.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="filteredRecords"></a>
+                                        <span class="name "><b>filteredRecords</b>
+                                            <a href="#filteredRecords">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>filteredRecords:     <code>ReadSignal&lt;T[]&gt;</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>ReadSignal&lt;T[]&gt;</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Filtered records to be sorted.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  signal,
+} from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { MatSort, Sort, SortDirection } from &quot;@angular/material/sort&quot;;
+import { DateDatatype } from &quot;../../basic-datatypes/date/date.datatype&quot;;
+import { EntityDatatype } from &quot;../../basic-datatypes/entity/entity.datatype&quot;;
+import { DefaultDatatype } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import { FormFieldConfig } from &quot;../entity-form/FormConfig&quot;;
+import { TableRow } from &quot;./table-row&quot;;
+import { tableSort } from &quot;./table-sort/table-sort&quot;;
+import { TableStateUrlService } from &quot;./table-state-url.service&quot;;
+
+type ReadSignal&lt;T&gt; &#x3D; () &#x3D;&gt; T;
+
+/**
+ * Input signals consumed by &#x60;EntitiesTableSortStore&#x60;.
+ */
+export interface EntitiesTableSortContext&lt;T extends Entity &#x3D; Entity&gt; {
+  /** Visible column IDs (updated reactively). */
+  columnsToDisplay: ReadSignal&lt;string[]&gt;;
+  /** Full column definitions (updated reactively). */
+  columns: ReadSignal&lt;FormFieldConfig[]&gt;;
+  /** External sort override from a component input binding. */
+  externalSort: ReadSignal&lt;Sort | undefined&gt;;
+  /** Filtered records to be sorted. */
+  filteredRecords: ReadSignal&lt;T[]&gt;;
+}
+
+/**
+ * Component-scoped store that manages table sort state, MatSort binding,
+ * and URL query-param persistence.
+ */
+@Injectable()
+export class EntitiesTableSortStore&lt;T extends Entity &#x3D; Entity&gt; {
+  private readonly tableStateUrl &#x3D; inject(TableStateUrlService);
+  private readonly schemaService &#x3D; inject(EntitySchemaService);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
+
+  private context: EntitiesTableSortContext&lt;T&gt; | null &#x3D; null;
+  private readonly sortManuallySet &#x3D; signal(false);
+  private attachedSort?: MatSort;
+
+  /** Explicitly set sort (via user interaction, URL state, or external input). */
+  readonly sortState &#x3D; signal&lt;Sort&gt;(undefined);
+
+  /**
+   * Columns with sorting rules applied.
+   * Disables sorting for entity references, untyped columns, and arrays
+   * (unless the array&#x27;s datatype provides custom sort logic).
+   */
+  readonly columns &#x3D; computed&lt;FormFieldConfig[]&gt;(() &#x3D;&gt; {
+    if (!this.context) return [];
+    return applySortingRules(this.context.columns(), (dataType) &#x3D;&gt;
+      this.schemaService.getDatatypeOrDefault(dataType, true),
+    );
+  });
+
+  /**
+   * Default sort inferred from visible sortable columns.
+   * Recomputed whenever columns or columnsToDisplay change.
+   */
+  readonly defaultSort &#x3D; computed&lt;Sort | undefined&gt;(() &#x3D;&gt; {
+    if (!this.context) return undefined;
+    return inferDefaultSort(
+      this.context.columnsToDisplay(),
+      this.columns(),
+      (dataType) &#x3D;&gt; this.schemaService.getDatatypeOrDefault(dataType),
+    );
+  });
+
+  /**
+   * Effective sort used for row ordering — falls back to the default sort
+   * inferred from columns when no explicit sort has been set.
+   */
+  readonly effectiveSort &#x3D; computed&lt;Sort | undefined&gt;(
+    () &#x3D;&gt; this.sortState() ?? this.defaultSort(),
+  );
+
+  /**
+   * Map of column id → sort value extractor built from datatype metadata.
+   * Datatypes that override &#x60;sortValue&#x60; provide custom sort logic;
+   * others return &#x60;undefined&#x60; and fall back to default sorting in &#x60;tableSort&#x60;.
+   */
+  readonly sortValueFns &#x3D; computed&lt;
+    Record&lt;string, (v: any) &#x3D;&gt; number | string | undefined&gt;
+  &gt;(() &#x3D;&gt; {
+    if (!this.context) return {};
+    const fns: Record&lt;string, (v: any) &#x3D;&gt; number | string | undefined&gt; &#x3D; {};
+    for (const col of this.context.columns()) {
+      const datatype &#x3D; this.schemaService.getDatatypeOrDefault(
+        col.dataType,
+        true,
+      );
+      fns[col.id] &#x3D; (v) &#x3D;&gt; datatype.sortValue(v);
+    }
+    return fns;
+  });
+
+  /** Sorted rows derived from filtered records and effective sort. */
+  readonly sortedRows &#x3D; computed&lt;TableRow&lt;T&gt;[]&gt;(() &#x3D;&gt; {
+    if (!this.context) return [];
+    const rows &#x3D; this.context.filteredRecords().map((record) &#x3D;&gt; ({ record }));
+    const sort &#x3D; this.effectiveSort();
+
+    if (!sort?.active || !sort.direction) {
+      return rows;
+    }
+
+    return tableSort&lt;T, keyof T&gt;(rows, {
+      active: sort.active as keyof T,
+      direction: sort.direction,
+      sortValueFns: this.sortValueFns(),
+    });
+  });
+
+  constructor() {
+    // Sync default sort when no manual override and no URL state
+    effect(() &#x3D;&gt; {
+      if (!this.context) return;
+      if (
+        !this.sortManuallySet() &amp;&amp;
+        !this.tableStateUrl.getUrlParam(&quot;sortBy&quot;)
+      ) {
+        this.sortState.set(this.defaultSort());
+      }
+    });
+
+    // Apply external sort input and persist to URL
+    effect(() &#x3D;&gt; {
+      if (!this.context) return;
+      const externalSort &#x3D; this.context.externalSort();
+      if (!externalSort) return;
+      this.sortState.set(externalSort);
+      if (externalSort.active) {
+        this.tableStateUrl.updateUrlParams({
+          sortBy: externalSort.active,
+          sortOrder: externalSort.direction ?? &quot;asc&quot;,
+        });
+      }
+      this.sortManuallySet.set(true);
+    });
+  }
+
+  /** Connects component signals to this store. Must be called once from component constructor. */
+  connect(context: EntitiesTableSortContext&lt;T&gt;) {
+    this.context &#x3D; context;
+  }
+
+  /** Attaches &#x60;MatSort&#x60;, restores URL sort state, and keeps URL in sync with user sort changes. */
+  attachSort(sort: MatSort | undefined) {
+    if (!sort || this.attachedSort &#x3D;&#x3D;&#x3D; sort) return;
+    this.attachedSort &#x3D; sort;
+
+    const urlSortBy &#x3D; this.tableStateUrl.getUrlParam(&quot;sortBy&quot;);
+    const urlSortOrder &#x3D; this.tableStateUrl.getUrlParam(
+      &quot;sortOrder&quot;,
+    ) as SortDirection;
+    if (urlSortBy) {
+      sort.active &#x3D; urlSortBy;
+      sort.direction &#x3D; urlSortOrder || &quot;asc&quot;;
+      this.sortState.set({ active: sort.active, direction: sort.direction });
+      this.sortManuallySet.set(true);
+    }
+
+    sort.sortChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) &#x3D;&gt; {
+        this.sortState.set(value);
+        this.sortManuallySet.set(true);
+        this.updateSortUrlParams(value.active, value.direction);
+      });
+  }
+
+  private updateSortUrlParams(active: string, direction: SortDirection) {
+    if (!direction) {
+      this.tableStateUrl.updateUrlParams({
+        sortBy: null,
+        sortOrder: null,
+      });
+      return;
+    }
+
+    if (direction &#x3D;&#x3D;&#x3D; &quot;desc&quot;) {
+      this.tableStateUrl.updateUrlParams({
+        sortBy: active,
+        sortOrder: &quot;desc&quot;,
+      });
+      return;
+    }
+
+    this.tableStateUrl.updateUrlParams({
+      sortBy: active,
+      sortOrder: null,
+    });
+  }
+}
+
+/**
+ * Infers a stable default sort from visible sortable columns.
+ * Date-like columns default to descending order.
+ */
+export function inferDefaultSort(
+  colsToDisplay: string[],
+  columns: FormFieldConfig[],
+  getDatatypeOrDefault: (dataType?: string) &#x3D;&gt; unknown,
+): Sort | undefined {
+  const sortBy &#x3D; colsToDisplay
+    .filter((columnId) &#x3D;&gt; !columnId.startsWith(&quot;__&quot;))
+    .find((columnId) &#x3D;&gt; {
+      const column &#x3D; columns.find((c) &#x3D;&gt; c.id &#x3D;&#x3D;&#x3D; columnId);
+      return !column?.noSorting;
+    });
+  const sortByColumn &#x3D; columns.find((c) &#x3D;&gt; c.id &#x3D;&#x3D;&#x3D; sortBy);
+
+  let sortDirection: SortDirection &#x3D; &quot;asc&quot;;
+  if (
+    sortByColumn?.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayDate&quot; ||
+    sortByColumn?.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayMonth&quot; ||
+    getDatatypeOrDefault(sortByColumn?.dataType) instanceof DateDatatype
+  ) {
+    sortDirection &#x3D; &quot;desc&quot;;
+  }
+
+  return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
+}
+
+/**
+ * Applies sorting rules to columns: disables sorting for entity references,
+ * untyped columns, and arrays (unless the datatype provides custom sort logic).
+ */
+export function applySortingRules(
+  columns: FormFieldConfig[],
+  getDatatypeOrDefault: (dataType?: string) &#x3D;&gt; DefaultDatatype,
+): FormFieldConfig[] {
+  return columns.map((column) &#x3D;&gt; {
+    if (column.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayAge&quot;) {
+      return column;
+    }
+
+    if (column.isArray) {
+      const datatype &#x3D; getDatatypeOrDefault(column.dataType);
+      if (datatype?.sortValue !&#x3D;&#x3D; DefaultDatatype.prototype.sortValue) {
+        return column;
+      }
+    }
+
+    if (
+      column.isArray ||
+      column.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType ||
+      !column.dataType
+    ) {
+      return { ...column, noSorting: true };
+    }
+
+    return column;
+  });
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntitiesTableSortContext.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
