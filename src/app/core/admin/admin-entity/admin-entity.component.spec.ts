@@ -105,7 +105,7 @@ describe("AdminEntityComponent", () => {
       EntityMapperService,
     ) as MockEntityMapperService;
 
-    component.entityType = AdminTestEntity.ENTITY_TYPE;
+    fixture.componentRef.setInput("entityType", AdminTestEntity.ENTITY_TYPE);
 
     fixture.detectChanges();
   });

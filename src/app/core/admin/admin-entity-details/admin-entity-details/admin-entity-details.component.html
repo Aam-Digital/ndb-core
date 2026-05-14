@@ -9,12 +9,12 @@
 </app-hint-box>
 
 <app-view-title [disableBackButton]="true" [displayInPlace]="true">
-  &lt;Name of displayed {{ this.entityConstructor?.label }}&gt;
+  &lt;Name of displayed {{ entityConstructor()?.label }}&gt;
 </app-view-title>
 
-<app-admin-tabs [tabs]="config?.panels" [newTabFactory]="newPanelFactory">
+<app-admin-tabs [tabs]="config()?.panels" [newTabFactory]="newPanelFactory">
   <ng-template
-    [appAdminTabTemplate]="config?.panels"
+    [appAdminTabTemplate]="config()?.panels"
     let-item
     let-tabIndex="index"
   >
@@ -57,14 +57,14 @@
                 <app-admin-entity-form
                   [config]="componentConfig.config"
                   (configChange)="componentConfig.config = $event"
-                  [entityType]="entityConstructor"
+                  [entityType]="entityConstructor()"
                   uniqueAreaId="{{ tabIndex }}-{{ i }}"
                 >
                 </app-admin-entity-form>
               } @else {
                 <app-admin-entity-panel-component
                   [config]="componentConfig"
-                  [entityType]="entityConstructor"
+                  [entityType]="entityConstructor()"
                   (relatedEntityModified)="relatedEntityModified.emit($event)"
                 ></app-admin-entity-panel-component>
               }

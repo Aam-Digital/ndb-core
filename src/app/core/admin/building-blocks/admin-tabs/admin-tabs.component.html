@@ -1,5 +1,5 @@
 <mat-tab-group [preserveContent]="true" #matTabGroup>
-  @for (tab of tabs; track $index; let tabIndex = $index) {
+  @for (tab of tabs(); track $index; let tabIndex = $index) {
     <mat-tab>
       <ng-template mat-tab-label>
         <div
@@ -23,10 +23,7 @@
             @if (tabIndex === matTabGroup.selectedIndex) {
               <app-admin-section-header
                 [(title)]="tab[tabTitleProperty]"
-                (remove)="
-                  tabs.splice(tabIndex, 1);
-                  matTabGroup.selectedIndex = tabIndex - 1
-                "
+                (remove)="removeTab(tabIndex)"
               ></app-admin-section-header>
             } @else {
               <!-- only current tab can be renamed -->

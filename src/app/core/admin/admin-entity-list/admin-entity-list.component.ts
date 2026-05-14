@@ -1,8 +1,7 @@
 import {
   Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
+  OnInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityConstructor } from "../../entity/model/entity";
@@ -32,23 +31,19 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: ["./admin-entity-list.component.scss"],
 })
-export class AdminEntityListComponent implements OnChanges {
-  @Input() entityConstructor: EntityConstructor;
-  @Input() config: EntityListConfig;
+export class AdminEntityListComponent implements OnInit {
+  entityConstructor = input.required<EntityConstructor>();
+  config = input.required<EntityListConfig>();
 
   filters: string[];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.config) {
-      this.config = this.config ?? {
-        entityType: this.entityConstructor.ENTITY_TYPE,
-      };
-      this.config.filters = this.config.filters ?? [];
+  ngOnInit(): void {
+    this.config().entityType = this.config().entityType ?? this.entityConstructor().ENTITY_TYPE;
+    this.config().filters = this.config().filters ?? [];
 
-      this.initColumnGroupsIfNecessary();
+    this.initColumnGroupsIfNecessary();
 
-      this.filters = (this.config.filters ?? []).map((f) => f.id);
-    }
+    this.filters = (this.config().filters ?? []).map((f) => f.id);
   }
 
   /**
@@ -57,12 +52,12 @@ export class AdminEntityListComponent implements OnChanges {
    * @private
    */
   private initColumnGroupsIfNecessary() {
-    if (!this.config.columnGroups) {
-      this.config.columnGroups = {
+    if (!this.config().columnGroups) {
+      this.config().columnGroups = {
         groups: [
           {
             name: "",
-            columns: (this.config.columns ?? []).map((c) =>
+            columns: (this.config().columns ?? []).map((c) =>
               typeof c === "string" ? c : c.id,
             ),
           },
@@ -80,9 +75,9 @@ export class AdminEntityListComponent implements OnChanges {
     }
 
     this.filters = [...filters];
-    this.config.filters = this.filters.map(
+    this.config().filters = this.filters.map(
       (f) =>
-        this.config.filters.find(
+        this.config().filters.find(
           (existingFilter) => existingFilter.id === f,
         ) ?? { id: f },
     );

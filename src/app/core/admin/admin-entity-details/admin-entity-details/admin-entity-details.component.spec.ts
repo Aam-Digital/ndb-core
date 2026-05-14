@@ -61,8 +61,8 @@ describe("AdminEntityDetailsComponent", () => {
     fixture = TestBed.createComponent(AdminEntityDetailsComponent);
     component = fixture.componentInstance;
 
-    component.entityConstructor = AdminDetailsTestEntity;
-    component.config = JSON.parse(JSON.stringify(viewConfig));
+    fixture.componentRef.setInput('entityConstructor', AdminDetailsTestEntity);
+    fixture.componentRef.setInput('config', JSON.parse(JSON.stringify(viewConfig)));
 
     fixture.detectChanges();
   });
@@ -81,9 +81,9 @@ describe("AdminEntityDetailsComponent", () => {
       afterClosed: () => of(defaultConfig),
     } as any);
 
-    component.addComponent(component.config.panels[0]);
+    component.addComponent(component.config().panels[0]);
 
-    expect(component.config.panels[0].components.length).toBe(1);
-    expect(component.config.panels[0].components[0]).toEqual(defaultConfig);
+    expect(component.config().panels[0].components.length).toBe(1);
+    expect(component.config().panels[0].components[0]).toEqual(defaultConfig);
   });
 });

@@ -25,7 +25,7 @@ describe("AdminTabsComponent", () => {
     fixture = TestBed.createComponent(AdminTabsComponent);
     component = fixture.componentInstance;
 
-    component.tabs = tabs;
+    fixture.componentRef.setInput("tabs", tabs);
 
     fixture.detectChanges();
   });
@@ -37,7 +37,7 @@ describe("AdminTabsComponent", () => {
   it("should add new tab to config", () => {
     component.createTab();
 
-    expect(component.tabs.length).toBe(3);
+    expect(component.tabs().length).toBe(3);
   });
 
   it("should detect whether tab title is 'title' or 'name' property", () => {
@@ -52,8 +52,8 @@ describe("AdminTabsComponent", () => {
     tabs: any[],
     expectedTabTitleProperty: string,
   ) {
-    component.tabs = tabs;
-    component.ngOnChanges({ tabs: new SimpleChange(null, null, null) });
+    fixture.componentRef.setInput("tabs", tabs);
+    fixture.detectChanges();
     expect(component.tabTitleProperty).toBe(expectedTabTitleProperty);
   }
 });

@@ -2,11 +2,11 @@ import { Location } from "@angular/common";
 import {
   Component,
   ContentChild,
-  Input,
   OnInit,
   TemplateRef,
   ViewChild,
   inject,
+  input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButton } from "@angular/material/button";
@@ -58,7 +58,7 @@ export class AdminEntityComponent implements OnInit {
   private entityActionsService = inject(EntityActionsService);
   private routes = inject(ActivatedRoute);
 
-  @Input() entityType: string;
+  entityType = input.required<string>();
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
@@ -87,7 +87,7 @@ export class AdminEntityComponent implements OnInit {
   }
 
   private init() {
-    this.entityConstructor = this.entities.get(this.entityType);
+    this.entityConstructor = this.entities.get(this.entityType());
     this.originalEntitySchemaFields = JSON.parse(
       JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
     );
@@ -146,17 +146,17 @@ export class AdminEntityComponent implements OnInit {
       if (viewType === "details") {
         return {
           component: "EntityDetails",
-          config: { entityType: this.entityType, panels: [] },
+          config: { entityType: this.entityType(), panels: [] },
         };
       } else {
         return {
           component: "EntityList",
-          config: { entityType: this.entityType },
+          config: { entityType: this.entityType() },
         };
       }
     }
 
-    viewConfig.config = viewConfig.config ?? { entityType: this.entityType };
+    viewConfig.config = viewConfig.config ?? { entityType: this.entityType() };
 
     // cleanup note details config, which should not have an entity instance assigned
     if (viewConfig.config.entity && viewConfig.component === "NoteDetails") {

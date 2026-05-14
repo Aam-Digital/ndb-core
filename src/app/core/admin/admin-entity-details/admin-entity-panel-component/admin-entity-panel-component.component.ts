@@ -6,13 +6,12 @@ import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entit
 
 import {
   Component,
-  Input,
+  input,
   OnInit,
   inject,
   computed,
   signal,
-  Output,
-  EventEmitter,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -59,13 +58,13 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private entityRelationsService = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
 
-  @Input() config: PanelComponent;
-  @Input() entityType: EntityConstructor;
+  config = input.required<PanelComponent>();
+  entityType = input.required<EntityConstructor>();
 
   /**
    * emitted when a related entity's schema has been modified.
    */
-  @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
+  relatedEntityModified = output<EntityConstructor>();
 
   entityConstructor: EntityConstructor;
   selectedEntityType = signal<string>("");
@@ -93,16 +92,16 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    if (!this.config.config?.entityType) return;
+    if (!this.config()?.config?.entityType) return;
     this.availableRelatedEntities = this.entityRelationsService
-      .getEntityTypesReferencingType(this.entityType.ENTITY_TYPE)
+      .getEntityTypesReferencingType(this.entityType().ENTITY_TYPE)
       .map((refType) => ({
         label: refType.entityType.label || refType.entityType.ENTITY_TYPE,
         entityType: refType.entityType.ENTITY_TYPE,
       }));
-    this.selectedEntityType.set(this.config.config.entityType);
+    this.selectedEntityType.set(this.config().config.entityType);
     this.entityConstructor = this.entities.get(this.selectedEntityType());
-    this.activeFields = (this.config.config.columns ?? []).map((col) =>
+    this.activeFields = (this.config().config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
     );
   }
@@ -116,14 +115,14 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       activeFields = [];
     }
     // Ensure config.config.columns is initialized for new related entity sections
-    if (!this.config.config.columns) {
-      this.config.config.columns = [];
+    if (!this.config().config.columns) {
+      this.config().config.columns = [];
     }
 
     this.activeFields = [...activeFields];
-    this.config.config.columns = this.activeFields.map(
+    this.config().config.columns = this.activeFields.map(
       (fieldId) =>
-        this.config.config.columns.find(
+        this.config().config.columns.find(
           (existingFields) => existingFields.id === fieldId,
         ) ?? { id: fieldId },
     );
@@ -132,7 +131,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   async onEntityTypeChange(newType: string | string[]) {
     if (
       Array.isArray(newType) ||
-      newType === this.config.config.entityType ||
+      newType === this.config().config.entityType ||
       this.isDialogOpen
     )
       return;
@@ -146,7 +145,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.isDialogOpen = false;
 
     if (!confirmed) {
-      this.selectedEntityType.set(this.config.config.entityType);
+      this.selectedEntityType.set(this.config().config.entityType);
       return;
     }
 
@@ -165,7 +164,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    */
   private updateConfigForNewEntityType(newType: string) {
     this.selectedEntityType.set(newType);
-    this.config.config.entityType = newType;
+    this.config().config.entityType = newType;
     this.entityConstructor = this.entities.get(newType);
 
     const matchingEntry = Object.entries(RELATED_ENTITIES_DEFAULT_CONFIGS).find(
@@ -174,10 +173,10 @@ export class AdminEntityPanelComponentComponent implements OnInit {
 
     if (matchingEntry) {
       const [componentKey, defaults] = matchingEntry;
-      this.config.component = componentKey;
-      this.config.config.columns = [...(defaults.columns ?? [])];
+      this.config().component = componentKey;
+      this.config().config.columns = [...(defaults.columns ?? [])];
     } else {
-      this.config.config.columns = [];
+      this.config().config.columns = [];
     }
   }
 
@@ -188,15 +187,15 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    * @param newType - The new entity type being configured.
    */
   private applyCustomOverrides(newType: string) {
-    delete this.config.config.loaderMethod;
-    delete this.config.config.property;
+    delete this.config().config.loaderMethod;
+    delete this.config().config.property;
     const overrideRelatedConfig: Partial<RelatedEntitiesComponentConfig> =
       RELATED_ENTITY_OVERRIDES[newType];
 
     if (overrideRelatedConfig) {
-      this.config.component = overrideRelatedConfig.component;
-      this.config.config = {
-        ...this.config.config,
+      this.config().component = overrideRelatedConfig.component;
+      this.config().config = {
+        ...this.config().config,
         ...overrideRelatedConfig,
       };
     }
@@ -229,7 +228,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       .afterClosed()
       .subscribe((result: AdminRelatedEntityDetailsResult) => {
         if (result) {
-          this.config.config.columns = result.fieldIds;
+          this.config().config.columns = result.fieldIds;
           this.activeFields = result.fieldIds;
 
           if (result.schemaChanged) {

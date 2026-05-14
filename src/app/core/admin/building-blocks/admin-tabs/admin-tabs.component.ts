@@ -1,12 +1,12 @@
 import {
   Component,
   ContentChild,
-  Input,
-  OnChanges,
-  SimpleChanges,
   TemplateRef,
   ViewChild,
+  effect,
   ChangeDetectionStrategy,
+  input,
+  model,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
@@ -60,10 +60,9 @@ import {
 })
 export class AdminTabsComponent<
   E extends { title: string } | { name: string },
-> implements OnChanges {
-  @Input() tabs: E[];
-  @Input() newTabFactory: () => E = () =>
-    ({ [this.tabTitleProperty]: "" }) as E;
+> {
+  tabs = model<E[]>([]);
+  newTabFactory = input<() => E>(() => ({ [this.tabTitleProperty]: "" }) as E);
 
   tabTitleProperty: "title" | "name" = "title";
 
@@ -72,32 +71,37 @@ export class AdminTabsComponent<
 
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.tabs) {
+  constructor() {
+    effect(() => {
       this.detectTabTitleProperty();
-    }
+    });
   }
 
   private detectTabTitleProperty() {
-    if (!this.tabs || this.tabs.length < 1) {
+    if (!this.tabs() || this.tabs().length < 1) {
       return;
     }
 
-    this.tabTitleProperty = this.tabs[0].hasOwnProperty("name")
+    this.tabTitleProperty = this.tabs()[0].hasOwnProperty("name")
       ? "name"
       : "title";
   }
 
   createTab() {
-    const newTab = this.newTabFactory();
-    this.tabs.push(newTab);
+    const newTab = this.newTabFactory()();
+    this.tabs.update((tabs) => [...tabs, newTab]);
 
     // wait until view has actually added the new tab before we can auto-select it
     setTimeout(() => {
-      const newTabIndex = this.tabs.length - 1;
+      const newTabIndex = this.tabs().length - 1;
       this.tabGroup.selectedIndex = newTabIndex;
       this.tabGroup.focusTab(newTabIndex);
     });
+  }
+
+  removeTab(index: number) {
+    this.tabs.update((tabs) => tabs.filter((_, tabIndex) => tabIndex !== index));
+    this.tabGroup.selectedIndex = index - 1;
   }
 
   /**
@@ -107,7 +111,7 @@ export class AdminTabsComponent<
    */
   getAllTabs(index: number) {
     const allTabs = [];
-    for (let i = 0; i < this.tabs?.length; i++) {
+    for (let i = 0; i < this.tabs()?.length; i++) {
       if (i != index) {
         allTabs.push("tabs-" + i);
       }
@@ -122,17 +126,21 @@ export class AdminTabsComponent<
     );
     const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
 
-    const previouslySelectedTab = this.tabs[this.tabGroup.selectedIndex];
+    const previouslySelectedTab = this.tabs()[this.tabGroup.selectedIndex];
 
-    moveItemInArray(this.tabs, previousIndex, currentIndex);
+    this.tabs.update((tabs) => {
+      const nextTabs = [...tabs];
+      moveItemInArray(nextTabs, previousIndex, currentIndex);
+      return nextTabs;
+    });
 
     // re-select the previously selected tab, even after its index shifted
-    let shiftedSelectedIndex = this.tabs.indexOf(previouslySelectedTab);
+    let shiftedSelectedIndex = this.tabs().indexOf(previouslySelectedTab);
     if (shiftedSelectedIndex !== this.tabGroup.selectedIndex) {
       this.tabGroup.selectedIndex = shiftedSelectedIndex;
       this.tabGroup.focusTab(shiftedSelectedIndex);
     }
 
-    this.tabs = JSON.parse(JSON.stringify(this.tabs)); // Needed to avoid Angular Ivy render bug
+    this.tabs.update((tabs) => JSON.parse(JSON.stringify(tabs))); // Needed to avoid Angular Ivy render bug
   }
 }

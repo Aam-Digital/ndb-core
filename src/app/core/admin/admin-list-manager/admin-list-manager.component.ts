@@ -10,13 +10,12 @@ import {
 
 import {
   Component,
-  EventEmitter,
-  Input,
+  input,
   OnInit,
-  Output,
   inject,
   OnDestroy,
   ChangeDetectionStrategy,
+  output,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -46,19 +45,19 @@ import { Subscription } from "rxjs";
 export class AdminListManagerComponent implements OnInit, OnDestroy {
   private readonly adminEntityService = inject(AdminEntityService);
   private schemaUpdateSubscription: Subscription;
-  @Input() items: ColumnConfig[] = [];
-  @Input() entityType: EntityConstructor;
-  @Input() fieldLabel: string;
-  @Input() templateType: "default" | "filter" = "default";
-  @Input() activeFields: ColumnConfig[] = [];
+  items = input<ColumnConfig[]>([]);
+  entityType = input<EntityConstructor>();
+  fieldLabel = input<string>(undefined);
+  templateType = input<"default" | "filter">("default");
+  activeFields = input<ColumnConfig[]>([]);
 
   /** custom fields that will be added in addition to schema fields for users to select from */
-  @Input() additionalFields: ColumnConfig[] = [];
+  additionalFields = input<ColumnConfig[]>([]);
 
   /** emits changes to the selected fields as field config objects or IDs */
-  @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
+  itemsChange = output<ColumnConfig[]>();
   /** emits changes to the selected fields only as field IDs (custom field configs are mapped to their ID only) */
-  @Output() idsChange = new EventEmitter<string[]>();
+  idsChange = output<string[]>();
 
   availableItems: ColumnConfig[] = [];
 
@@ -77,30 +76,33 @@ export class AdminListManagerComponent implements OnInit, OnDestroy {
   }
 
   private loadAvailableItems(): void {
-    if (!this.entityType) return;
-    const targetEntitySchemaFields = Array.from(this.entityType.schema.keys());
+    if (!this.entityType()) return;
+    const targetEntitySchemaFields = Array.from(this.entityType().schema.keys());
     this.availableItems = Array.from(
       new Set([
-        ...(this.activeFields ?? []),
+        ...(this.activeFields() ?? []),
         ...targetEntitySchemaFields,
-        ...(this.additionalFields ?? []),
+        ...(this.additionalFields() ?? []),
       ]),
     );
   }
 
   drop(event: CdkDragDrop<ColumnConfig[]>) {
-    moveItemInArray(this.items, event.previousIndex, event.currentIndex);
-    this.emitUpdatedConfig();
+    const newItems = [...(this.items() ?? [])];
+    moveItemInArray(newItems, event.previousIndex, event.currentIndex);
+    this.itemsChange.emit(newItems);
+    this.idsChange.emit(newItems.map(this.getFieldId));
   }
 
   remove(item: ColumnConfig) {
-    this.items = this.items.filter((i) => i !== item);
-    this.emitUpdatedConfig();
+    const newItems = (this.items() ?? []).filter((i) => i !== item);
+    this.itemsChange.emit(newItems);
+    this.idsChange.emit(newItems.map(this.getFieldId));
   }
 
   updateItems(updatedItems: (string | ColumnConfig)[]) {
-    this.items = updatedItems;
-    this.emitUpdatedConfig();
+    this.itemsChange.emit(updatedItems as ColumnConfig[]);
+    this.idsChange.emit((updatedItems as ColumnConfig[]).map(this.getFieldId));
   }
 
   /**
@@ -109,8 +111,9 @@ export class AdminListManagerComponent implements OnInit, OnDestroy {
    * `idsChanges`, provides a simplified array of just the IDs
    */
   private emitUpdatedConfig() {
-    this.itemsChange.emit(this.items);
-    this.idsChange.emit(this.items.map(this.getFieldId));
+    const current = this.items() ?? [];
+    this.itemsChange.emit(current);
+    this.idsChange.emit(current.map(this.getFieldId));
   }
 
   getFieldId(field: ColumnConfig): string {
@@ -118,6 +121,6 @@ export class AdminListManagerComponent implements OnInit, OnDestroy {
   }
 
   get itemsAsStrings(): string[] {
-    return this.items?.map(this.getFieldId);
+    return (this.items() ?? []).map(this.getFieldId);
   }
 }

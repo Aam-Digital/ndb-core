@@ -1,9 +1,8 @@
 import {
   Component,
   inject,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import {
@@ -60,14 +59,14 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 export class AdminEntityDetailsComponent {
   private dialog = inject(MatDialog);
 
-  @Input() entityConstructor: EntityConstructor;
-  @Input() config: EntityDetailsConfig;
+  entityConstructor = input.required<EntityConstructor>();
+  config = input.required<EntityDetailsConfig>();
 
   /**
    * Event emitted when a related entity's schema has been modified,
    * to ensure changes are saved centrally by parent component.
    */
-  @Output() relatedEntityModified = new EventEmitter<EntityConstructor>();
+  relatedEntityModified = output<EntityConstructor>();
 
   newPanelFactory(): Panel {
     return { title: "New Tab", components: [] };
@@ -76,7 +75,7 @@ export class AdminEntityDetailsComponent {
   addComponent(panel: Panel) {
     this.dialog
       .open(WidgetComponentSelectComponent, {
-        data: { entityType: this.entityConstructor.ENTITY_TYPE },
+        data: { entityType: this.entityConstructor().ENTITY_TYPE },
       })
       .afterClosed()
       .subscribe((sectionConfig: PanelComponent) => {

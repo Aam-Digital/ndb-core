@@ -4,8 +4,8 @@
   </mat-label>
 
   <mat-select
-    [(value)]="value"
-    (selectionChange)="valueChange.emit($event.value)"
+    [value]="value()"
+    (valueChange)="value.set($event)"
   >
     <mat-option
       value=""

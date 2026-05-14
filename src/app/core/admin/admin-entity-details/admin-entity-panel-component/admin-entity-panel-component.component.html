@@ -48,7 +48,7 @@
       (itemsChange)="updateFields($event)"
     ></app-admin-list-manager>
   } @else {
-    <p>[ {{ config.component }} ]</p>
+    <p>[ {{ config().component }} ]</p>
 
     <p class="hint-text" i18n>
       Editing advanced sub-sections is not supported yet in this preview.
