@@ -76,10 +76,8 @@ export class GroupedChildAttendanceComponent {
       return;
     }
 
-    this.activities.set(allActivities.filter((a) => a.isActive == true));
-    this.archivedActivities.set(
-      allActivities.filter((a) => a.isActive == false),
-    );
+    this.activities.set(allActivities.filter((a) => a.isActive));
+    this.archivedActivities.set(allActivities.filter((a) => !a.isActive));
 
     this.loading.set(false);
   }

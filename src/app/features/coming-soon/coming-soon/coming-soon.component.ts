@@ -51,7 +51,7 @@ export class ComingSoonComponent {
    * the identifier for the specific feature this page serves as a placeholder for
    */
   featureId = input<string>();
-  private currentFeatureId = signal<string | undefined>(undefined);
+  private readonly currentFeatureId = signal<string | undefined>(undefined);
 
   /**
    * whether user has already requested the feature

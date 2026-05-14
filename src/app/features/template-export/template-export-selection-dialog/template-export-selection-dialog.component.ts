@@ -58,7 +58,9 @@ import { TemplateExport } from "../template-export.entity";
 export class TemplateExportSelectionDialogComponent implements OnInit {
   private dialogRef =
     inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
-  private dialogData = inject<Entity>(MAT_DIALOG_DATA, { optional: true });
+  private readonly dialogData = inject<Entity>(MAT_DIALOG_DATA, {
+    optional: true,
+  });
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);

@@ -47,7 +47,17 @@ export class PublicFormPermissionWarningComponent {
 
   readonly entityType = computed(() => {
     const formConfig = this.entity() as PublicFormConfig | undefined;
-    return formConfig?.entity || "";
+    if (!formConfig) {
+      return "";
+    }
+
+    const multiFormEntityType = formConfig.forms?.[0]?.entity;
+    if (multiFormEntityType) {
+      return multiFormEntityType;
+    }
+
+    const legacyEntityType = (formConfig as { entity?: string }).entity;
+    return legacyEntityType ?? "";
   });
 
   constructor() {
