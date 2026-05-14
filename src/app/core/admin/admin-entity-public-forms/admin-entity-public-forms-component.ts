@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, input, computed } from "@angular/core";
 import { EntityConstructor } from "app/core/entity/model/entity";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { RelatedEntitiesComponent } from "../../entity-details/related-entities/related-entities.component";
@@ -14,14 +14,14 @@ export class AdminEntityPublicFormsComponent {
   /**
    * The entity type for which to display public forms for.
    */
-  @Input() entityConstructor: EntityConstructor;
+  readonly entityConstructor = input<EntityConstructor>();
 
   /**
    * Fake entity instance to correctly filter/link related PublicFormConfigs
    * using the standard related-entities component.
    */
-  protected dummyEntity: any = {
-    getId: () => this.entityConstructor.ENTITY_TYPE,
-    getType: () => this.entityConstructor.ENTITY_TYPE,
-  };
+  protected dummyEntity = computed(() => ({
+    getId: () => this.entityConstructor().ENTITY_TYPE,
+    getType: () => this.entityConstructor().ENTITY_TYPE,
+  })) as any;
 }
