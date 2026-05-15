@@ -80,9 +80,10 @@ export class AdminEntityPanelComponentComponent {
    * Automatically derived from selectedEntityType; updates whenever the user selects a different related entity type.
    * Example: When the user selects "EducationalMaterial" or "Note" from the dropdown.
    */
-  entityConstructor = computed(() =>
-    this.entities.get(this.selectedEntityType()),
-  );
+  entityConstructor = computed(() => {
+    const type = this.selectedEntityType();
+    return type ? this.entities.get(type) : undefined;
+  });
 
   isDialogOpen = false;
 

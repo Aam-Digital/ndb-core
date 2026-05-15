@@ -14,6 +14,7 @@ describe("AdminEntityPanelComponentComponent", () => {
     mockEntityRelationsService = {
       getEntityTypesReferencingType: vi
         .fn()
+        .mockReturnValue([])
         .mockName("EntityRelationsService.getEntityTypesReferencingType"),
     };
     await TestBed.configureTestingModule({

@@ -53,6 +53,6 @@ describe("AdminTabsComponent", () => {
   ) {
     fixture.componentRef.setInput("tabs", tabs);
     fixture.detectChanges();
-    expect(component.tabTitleProperty).toBe(expectedTabTitleProperty);
+    expect(component.tabTitleProperty()).toBe(expectedTabTitleProperty);
   }
 });
