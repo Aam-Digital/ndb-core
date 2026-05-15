@@ -1,4 +1,7 @@
-@for (matchingForm of matchingCustomForms; track matchingForm.getId()) {
+@for (
+  matchingForm of matchingCustomForms.value() ?? [];
+  track matchingForm.getId()
+) {
   <button
     class="margin-top-regular"
     mat-flat-button
@@ -6,16 +9,16 @@
     matTooltip="This link to the `{{
       matchingForm?.title
     }}` public form contains an individual ID that links submissions back to this {{
-      linkedEntity.getConstructor().ENTITY_TYPE
+      linkedEntity()?.getConstructor()?.ENTITY_TYPE
     }}."
     i18n-matTooltip
   >
-    <fa-icon
+    <app-fa-dynamic-icon
       color="accent"
       size="xl"
       icon="copy"
       class="standard-icon-with-text"
-    ></fa-icon>
+    ></app-fa-dynamic-icon>
     <span i18n
       >Copy link to individualized public form ({{ matchingForm?.title }})</span
     >

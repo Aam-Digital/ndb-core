@@ -1,13 +1,13 @@
-@if (attendance) {
+@if (attendance()) {
   <h4 class="summary-title" i18n="Attendance summary title">
     Overall Attendance
   </h4>
   <p class="summary-period">
-    {{ attendance.periodFrom | customDate: "shortDate" }} -
-    {{ attendance.periodTo | customDate: "shortDate" }}
+    {{ attendance()?.periodFrom | customDate: "shortDate" }} -
+    {{ attendance()?.periodTo | customDate: "shortDate" }}
   </p>
   <table class="summary-table">
-    @for (col of _columns; track col.id) {
+    @for (col of _columns(); track col.id) {
       <tr class="summary-row">
         <td class="padding-small">{{ col.label }}:</td>
         <td class="summary-cell">
@@ -16,7 +16,7 @@
               component: col.viewComponent,
               config: {
                 id: col.id,
-                entity: attendance,
+                entity: attendance(),
                 config: col.additional,
               },
             }"

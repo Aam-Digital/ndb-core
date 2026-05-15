@@ -1,4 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  computed,
+  input,
+} from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
@@ -15,16 +20,15 @@ import { DynamicComponentDirective } from "#src/app/core/config/dynamic-componen
   imports: [CustomDatePipe, DynamicComponentDirective],
 })
 export class AttendanceSummaryComponent {
-  @Input() attendance: ActivityAttendance;
-  @Input() forChild: string;
+  attendance = input<ActivityAttendance>();
+  forChild = input<string>();
+  columns = input<FormFieldConfig[]>([]);
 
-  @Input() set columns(value: FormFieldConfig[]) {
-    this._columns = value
+  readonly _columns = computed(() =>
+    this.columns()
       // hide periodFrom / periodTo as it is displayed in custom styling directly in the template
       .filter((col) => !["periodFrom", "periodTo"].includes(col.id))
       // start with most summative column, usually displayed right-most in table
-      .reverse();
-  }
-
-  _columns: FormFieldConfig[] = [];
+      .reverse(),
+  );
 }

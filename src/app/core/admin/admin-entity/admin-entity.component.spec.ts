@@ -105,7 +105,7 @@ describe("AdminEntityComponent", () => {
       EntityMapperService,
     ) as MockEntityMapperService;
 
-    component.entityType = AdminTestEntity.ENTITY_TYPE;
+    fixture.componentRef.setInput("entityType", AdminTestEntity.ENTITY_TYPE);
 
     fixture.detectChanges();
   });
@@ -120,7 +120,7 @@ describe("AdminEntityComponent", () => {
     const existingField = AdminTestEntity.schema.get("name");
     const originalLabelOfExisting = existingField.label;
     existingField.label = "Changed existing field";
-    component.configEntitySettings = { label: "new entity label" };
+    component.configEntitySettings.set({ label: "new entity label" });
 
     component.cancel();
 
@@ -144,7 +144,7 @@ describe("AdminEntityComponent", () => {
       title: "New Panel",
       components: [],
     };
-    (component.configDetailsView.config as EntityDetailsConfig).panels.push(
+    (component.configDetailsView().config as EntityDetailsConfig).panels.push(
       newPanel,
     );
 

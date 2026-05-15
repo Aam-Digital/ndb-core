@@ -1,21 +1,21 @@
-@if (loading) {
+@if (activitiesResource.isLoading()) {
   <div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 }
 
 <mat-tab-group appTabStateMemo class="activity-tab-group">
-  @for (activity of activities; track activity) {
+  @for (activity of activities(); track activity) {
     <mat-tab [label]="activity.toString()">
       <app-activity-attendance-section
         [entity]="activity"
-        [forChild]="entity.getId()"
+        [forChild]="entity()?.getId()"
       >
       </app-activity-attendance-section>
     </mat-tab>
   }
 
-  @if (archivedActivities.length > 0) {
+  @if (archivedActivities().length > 0) {
     <mat-tab label="Previous Activities">
       <p i18n>
         This section displays historical activities that have been archived.
@@ -24,7 +24,7 @@
         <mat-label i18n>Select activity</mat-label>
         <mat-select (selectionChange)="onActivityChange($event.value)">
           @for (
-            archivedActivity of archivedActivities;
+            archivedActivity of archivedActivities();
             track archivedActivity
           ) {
             <mat-option [value]="archivedActivity">
@@ -33,11 +33,11 @@
           }
         </mat-select>
       </mat-form-field>
-      @if (selectedActivity) {
+      @if (selectedActivity()) {
         <div>
           <app-activity-attendance-section
-            [entity]="selectedActivity"
-            [forChild]="entity.getId()"
+            [entity]="selectedActivity()"
+            [forChild]="entity()?.getId()"
           >
           </app-activity-attendance-section>
         </div>

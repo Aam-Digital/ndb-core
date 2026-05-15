@@ -27,7 +27,7 @@ describe("EditPublicFormRelatedEntitiesComponent", () => {
 
     fixture = TestBed.createComponent(EditPublicFormRelatedEntitiesComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
     fixture.detectChanges();
   });
 

@@ -1,4 +1,4 @@
-@if (loading) {
+@if (attendanceData.isLoading()) {
   <div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -6,13 +6,13 @@
   <div class="flex-row flex-wrap gap-large">
     <app-attendance-calendar
       class="flex-grow"
-      [records]="combinedAttendance?.events || []"
-      [highlightForChild]="forChild"
-      [activity]="entity"
+      [records]="combinedAttendance()?.events ?? []"
+      [highlightForChild]="forChild()"
+      [activity]="entity()"
     ></app-attendance-calendar>
     <app-attendance-summary
-      [attendance]="combinedAttendance"
-      [forChild]="forChild"
+      [attendance]="combinedAttendance()"
+      [forChild]="forChild()"
       [columns]="columns"
       class="margin-top-regular flex-grow"
     ></app-attendance-summary>
@@ -21,11 +21,11 @@
 
 <app-entities-table
   [entityType]="entityCtr"
-  [records]="records"
+  [records]="records()"
   [customColumns]="columns"
   clickMode="none"
   (entityClick)="showDetails($event)"
-  [getBackgroundColor]="getBackgroundColor"
+  [getBackgroundColor]="getBackgroundColor()"
   [editable]="false"
 >
 </app-entities-table>
@@ -36,7 +36,7 @@
       slider|show unrelated attendance-entries for an activity that are not
       linked to the child of interest
     "
-    (change)="updateDisplayedRecords($event.checked)"
+    (change)="includeWithoutParticipation.set($event.checked)"
     i18n-matTooltip="
       Show unrelated tooltip|Tooltip that will appear when hovered over the
       show-unrelated button
@@ -51,7 +51,7 @@
       load-all button|load all records, not only the ones from the last 6 months
     "
     mat-stroked-button
-    (click)="init(true)"
+    (click)="loadAll.set(true)"
   >
     Load all records
   </button>

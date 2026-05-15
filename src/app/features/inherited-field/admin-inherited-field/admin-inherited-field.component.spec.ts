@@ -48,13 +48,11 @@ describe("AdminInheritedFieldComponent", () => {
   });
 
   it("should create inherit options for entity reference fields with multiple additional types", () => {
-    component.entityType = TestEntity;
+    fixture.componentRef.setInput("entityType", TestEntity);
 
-    component.updateAvailableOptions();
-
-    const relatedEntitiesOptions = component.availableOptions.filter(
-      (option) => option.sourceReferenceField === "refMixed",
-    );
+    const relatedEntitiesOptions = component
+      .availableOptions()
+      .filter((option) => option.sourceReferenceField === "refMixed");
     expect(relatedEntitiesOptions.length).toBeGreaterThan(1);
   });
 });

@@ -5,8 +5,9 @@ import {
   DestroyRef,
   ElementRef,
   inject,
-  Input,
+  input,
   OnInit,
+  signal,
   ViewChild,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -14,10 +15,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { distinctUntilChanged, filter } from "rxjs/operators";
+import { distinctUntilChanged, startWith } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -46,7 +47,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     ReactiveFormsModule,
     MatTooltipModule,
     MatButtonModule,
-    FontAwesomeModule,
+    FaDynamicIconComponent,
   ],
   providers: [{ provide: MatFormFieldControl, useExisting: EditFileComponent }],
 })
@@ -60,13 +61,15 @@ export class EditFileComponent
   protected navigator = inject<Navigator>(NAVIGATOR_TOKEN);
   private destroyRef = inject(DestroyRef);
 
-  @Input() entity: Entity;
-  @Input() formFieldConfig: FormFieldConfig;
+  entity = input<Entity>();
+  formFieldConfig = input<FormFieldConfig>();
 
   @ViewChild("fileUpload") fileUploadInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
   private removeClicked = false;
   initialValue: string;
+  readonly isControlEnabled = signal<boolean>(false);
+  readonly hasControlValue = signal<boolean>(false);
 
   /**
    * The accepted file types for file selection dialog.
@@ -80,18 +83,25 @@ export class EditFileComponent
 
   ngOnInit() {
     this.initialValue = this.formControl.value;
+    this.isControlEnabled.set(this.formControl.enabled);
+    this.hasControlValue.set(!!this.formControl.value);
 
     this.acceptedFileTypes =
-      this.formFieldConfig.additional?.acceptedFileTypes ??
+      this.formFieldConfig()?.additional?.acceptedFileTypes ??
       this.acceptedFileTypes;
 
     this.formControl.statusChanges
       .pipe(
+        startWith(this.formControl.status),
         distinctUntilChanged(),
-        filter((change) => change === "DISABLED"),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => {
+      .subscribe((status) => {
+        this.isControlEnabled.set(this.formControl.enabled);
+        if (status !== "DISABLED") {
+          return;
+        }
+
         if (
           this.selectedFile &&
           this.selectedFile.name === this.formControl.value
@@ -106,6 +116,15 @@ export class EditFileComponent
         } else {
           this.resetFile();
         }
+      });
+
+    this.formControl.valueChanges
+      .pipe(
+        startWith(this.formControl.value),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((value) => {
+        this.hasControlValue.set(!!value);
       });
   }
 
@@ -124,16 +143,19 @@ export class EditFileComponent
   }
 
   protected saveNewFile(file: File) {
+    const entity = this.entity();
+    const formFieldConfig = this.formFieldConfig();
+    if (!entity || !formFieldConfig) {
+      return;
+    }
     // The maximum file size is set to 5 MB
-    this.fileService
-      .uploadFile(file, this.entity, this.formFieldConfig.id)
-      .subscribe({
-        error: (err) => this.handleError(err),
-        complete: () => {
-          this.initialValue = this.formControl.value;
-          this.selectedFile = undefined;
-        },
-      });
+    this.fileService.uploadFile(file, entity, formFieldConfig.id).subscribe({
+      error: (err) => this.handleError(err),
+      complete: () => {
+        this.initialValue = this.formControl.value;
+        this.selectedFile = undefined;
+      },
+    });
   }
 
   private handleError(err) {
@@ -152,17 +174,23 @@ export class EditFileComponent
   }
 
   private async revertEntityChanges() {
+    const entity = this.entity();
+    const formFieldConfig = this.formFieldConfig();
+    if (!entity || !formFieldConfig) {
+      this.resetFile();
+      return;
+    }
     // ensure we have latest _rev of entity
-    this.entity = await this.entityMapper.load(
-      this.entity.getConstructor(),
-      this.entity.getId(),
+    const loadedEntity = await this.entityMapper.load(
+      entity.getConstructor(),
+      entity.getId(),
     );
 
     // Reset entity to how it was before
-    this.entity[this.formFieldConfig.id] = this.initialValue;
+    loadedEntity[formFieldConfig.id] = this.initialValue;
     this.formControl.setValue(this.initialValue);
 
-    await this.entityMapper.save(this.entity);
+    await this.entityMapper.save(loadedEntity);
 
     this.resetFile();
   }
@@ -178,8 +206,13 @@ export class EditFileComponent
   }
 
   showFile() {
+    const entity = this.entity();
+    const formFieldConfig = this.formFieldConfig();
     if (this.initialValue && this.formControl.value === this.initialValue) {
-      this.fileService.showFile(this.entity, this.formFieldConfig.id);
+      if (!entity || !formFieldConfig) {
+        return;
+      }
+      this.fileService.showFile(entity, formFieldConfig.id);
     }
   }
 
@@ -192,18 +225,21 @@ export class EditFileComponent
   }
 
   protected deleteExistingFile() {
-    this.fileService
-      .removeFile(this.entity, this.formFieldConfig.id)
-      .subscribe({
-        error: (err) => this.handleError(err),
-        complete: () => {
-          this.alertService.addInfo(
-            $localize`:Message for user:File "${this.initialValue}" deleted`,
-          );
-          this.initialValue = undefined;
-          this.removeClicked = false;
-        },
-      });
+    const entity = this.entity();
+    const formFieldConfig = this.formFieldConfig();
+    if (!entity || !formFieldConfig) {
+      return;
+    }
+    this.fileService.removeFile(entity, formFieldConfig.id).subscribe({
+      error: (err) => this.handleError(err),
+      complete: () => {
+        this.alertService.addInfo(
+          $localize`:Message for user:File "${this.initialValue}" deleted`,
+        );
+        this.initialValue = undefined;
+        this.removeClicked = false;
+      },
+    });
   }
 
   protected resetFile() {

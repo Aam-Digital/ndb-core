@@ -1,12 +1,11 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
   inject,
-  signal,
+  linkedSignal,
   ChangeDetectionStrategy,
+  input,
+  model,
+  effect,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -42,73 +41,56 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
   templateUrl: "./menu-item-form.component.html",
   styleUrls: ["./menu-item-form.component.scss"],
 })
-export class MenuItemFormComponent implements OnInit {
+export class MenuItemFormComponent {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
-  @Input() item!: MenuItem;
-  @Input() hideLabel = false;
-  @Input() hideLink = false;
-  @Input() isNew = false;
-  @Input() showLinkError = false;
+  item = model.required<MenuItem>();
+  hideLabel = input<boolean>(false);
+  hideLink = input<boolean>(false);
+  isNew = input<boolean>(false);
+  showLinkError = input<boolean>(false);
 
   /**
    * Available routes that are offered to the user for selection.
    */
-  @Input() linkOptions: { value: string; label: string }[] = [];
-  @Output() itemChange = new EventEmitter<MenuItem>();
+  linkOptions = input<{ value: string; label: string }[]>([]);
 
   /**
    * If true: show free-text input. If false: show dropdown with linkOptions.
    */
-  customLinkMode = signal(false);
+  customLinkMode = linkedSignal(() => {
+    const linkOptions = this.linkOptions();
+    const item = this.item();
+
+    // If no options are available, always start in custom link mode
+    if (!linkOptions || linkOptions.length === 0) {
+      return true;
+    }
+
+    // If there's a link value but it's not in the available options, switch to custom mode
+    if (
+      item?.link &&
+      !linkOptions.some((option) => option.value === item.link)
+    ) {
+      return true;
+    }
+
+    return false;
+  });
 
   /**
    * Whether this item is intentionally configured as a parent section without a link.
    */
-  noLinkMode = signal(false);
+  noLinkMode = linkedSignal(() => !this.isNew() && !this.item()?.link?.trim());
 
   linkErrorStateMatcher: ErrorStateMatcher = {
     isErrorState: (_control: FormControl | null): boolean => {
-      return this.showLinkError && !this.item?.link?.trim();
+      return this.showLinkError() && !this.item()?.link?.trim();
     },
   };
 
-  ngOnInit() {
-    // For existing manual items with no link, default the toggle to ON.
-    if (!this.isNew && !this.item?.link?.trim()) {
-      this.noLinkMode.set(true);
-    }
-
-    // If no options are available, always start in custom link mode
-    if (!this.linkOptions || this.linkOptions.length === 0) {
-      this.customLinkMode.set(true);
-      return;
-    }
-
-    // If there's a link value but it's not in the available options, switch to custom mode
-    if (this.item?.link && !this.isLinkInOptions(this.item.link)) {
-      this.customLinkMode.set(true);
-    }
-  }
-
-  private isLinkInOptions(link: string): boolean {
-    return this.linkOptions?.some((option) => option.value === link) ?? false;
-  }
-
-  onChange() {
-    this.itemChange.emit({ ...this.item });
-  }
-
-  toggleCustomLinkMode() {
-    this.customLinkMode.update((v) => !v);
-  }
-
-  isNoLinkModeEnabled(): boolean {
-    return this.noLinkMode();
-  }
-
   async toggleNoLinkMode(event: MatSlideToggleChange) {
-    if (event.checked && this.item.link?.trim()) {
+    if (event.checked && this.item()?.link?.trim()) {
       // Warn before removing an existing link.
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`:Confirmation title for removing link from menu item:Remove link?`,
@@ -120,10 +102,46 @@ export class MenuItemFormComponent implements OnInit {
         return;
       }
 
-      delete this.item.link;
-      this.onChange();
+      const newItem = { ...this.item() };
+      delete newItem.link;
+      this.item.set(newItem);
     }
 
     this.noLinkMode.set(event.checked);
+  }
+
+  isNoLinkModeEnabled(): boolean {
+    return this.noLinkMode();
+  }
+
+  itemLabel = linkedSignal({
+    source: this.item,
+    computation: (item) => item?.label ?? "",
+  });
+
+  itemLink = linkedSignal({
+    source: this.item,
+    computation: (item) => item?.link ?? "",
+  });
+
+  itemIcon = linkedSignal({
+    source: this.item,
+    computation: (item) => item?.icon ?? "",
+  });
+
+  constructor() {
+    effect(() => {
+      const label = this.itemLabel();
+      const link = this.itemLink();
+      const icon = this.itemIcon();
+      const current = this.item();
+      if (
+        label !== (current?.label ?? "") ||
+        link !== (current?.link ?? "") ||
+        icon !== (current?.icon ?? "")
+      ) {
+        this.item.set({ ...current, label, link, icon });
+      }
+    });
   }
 }

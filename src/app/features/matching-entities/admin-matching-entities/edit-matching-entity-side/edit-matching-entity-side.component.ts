@@ -1,10 +1,8 @@
 import {
   Component,
-  EventEmitter,
+  computed,
   inject,
-  Input,
-  OnInit,
-  Output,
+  model,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
@@ -34,94 +32,71 @@ import { ConditionsEditorComponent } from "app/core/common-components/conditions
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
-export class EditMatchingEntitySideComponent implements OnInit {
+export class EditMatchingEntitySideComponent {
   readonly entityRegistry = inject(EntityRegistry);
 
-  @Input() sideConfig: MatchingSideConfig;
-  @Output() sideConfigChange = new EventEmitter<MatchingSideConfig>();
+  sideConfig = model<MatchingSideConfig>({});
 
-  /**
-   * Holds a predefined list of additional column options that can be appended to the entity view.
-   */
-  additionalFields: ColumnConfig[] = [];
+  readonly availableEntityTypes: string[] = this.entityRegistry
+    .getEntityTypes()
+    .map((ctor) => ctor.value.ENTITY_TYPE);
 
-  /**
-   * Holds a list of available entity types for selection in the dropdown.
-   */
-  availableEntityTypes: string[] = [];
-  entityConstructor: EntityConstructor | null;
-  columns: ColumnConfig[] = [];
-  filters: string[] = [];
+  readonly additionalFields = computed<ColumnConfig[]>(() => [
+    { id: "distance", label: "Distance" },
+    {
+      id: "_id",
+      label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,
+      additional: this.sideConfig().entityType,
+      noSorting: true,
+      viewComponent: "DisplayEntity",
+    },
+  ]);
 
-  ngOnInit(): void {
-    this.availableEntityTypes = this.entityRegistry
-      .getEntityTypes()
-      .map((ctor) => ctor.value.ENTITY_TYPE);
+  readonly entityConstructor = computed<EntityConstructor | null>(() =>
+    this.entityRegistry.get(this.sideConfig()?.entityType),
+  );
 
-    this.additionalFields = [
-      { id: "distance", label: "Distance" },
-      {
-        id: "_id",
-        label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,
-        additional: this.sideConfig.entityType,
-        noSorting: true,
-        viewComponent: "DisplayEntity",
-      },
-    ];
+  readonly columns = computed<ColumnConfig[]>(
+    () => this.sideConfig()?.columns ?? [],
+  );
 
-    this.initFormConfig();
-  }
-
-  /**
-   * Initializes the form configuration for columns and filters based on the current sideConfig.
-   * Sets entityConstructor, columns, and filters properties accordingly.
-   */
-  private initFormConfig(): void {
-    const sideEntityType = this.sideConfig?.entityType;
-    this.entityConstructor = this.entityRegistry.get(sideEntityType);
-    this.columns = this.sideConfig?.columns ?? [];
-    this.filters = this.sideConfig?.availableFilters?.map((f) => f.id) ?? [];
-  }
+  readonly filters = computed<string[]>(
+    () => this.sideConfig()?.availableFilters?.map((f) => f.id) ?? [],
+  );
 
   onEntityTypeChange(entityType: string | string[]): void {
     entityType = <string>entityType; // assert this is a string because we don't use multi-select mode
-    if (this.sideConfig.entityType === entityType) return;
+    if (this.sideConfig().entityType === entityType) return;
 
-    const updated: MatchingSideConfig = {
+    this.sideConfig.set({
       entityType,
       columns: [],
       availableFilters: [],
       prefilter: {},
-    };
-    this.sideConfig = updated;
-    this.initFormConfig();
-    this.sideConfigChange.emit(this.sideConfig);
+    });
   }
 
   onColumnsChange(newCols: ColumnConfig[]) {
-    this.sideConfig = {
-      ...this.sideConfig,
+    this.sideConfig.set({
+      ...this.sideConfig(),
       columns: newCols,
-    };
-    this.sideConfigChange.emit(this.sideConfig);
+    });
   }
 
   onFiltersChange(newFilters: ColumnConfig[]) {
     const updatedFilters = newFilters.map((f) =>
       typeof f === "string" ? f : f.id,
     );
-    this.sideConfig = {
-      ...this.sideConfig,
+    this.sideConfig.set({
+      ...this.sideConfig(),
       availableFilters: updatedFilters.map((id) => ({ id })),
-    };
-    this.sideConfigChange.emit(this.sideConfig);
+    });
   }
 
   onPrefilterChange(updatedPrefilter: any) {
-    this.sideConfig = {
-      ...this.sideConfig,
+    this.sideConfig.set({
+      ...this.sideConfig(),
       prefilter: updatedPrefilter ?? {},
-    };
-    this.sideConfigChange.emit(this.sideConfig);
+    });
   }
 }

@@ -1,11 +1,12 @@
 import {
-  ChangeDetectorRef,
   Component,
-  Input,
-  OnInit,
   ViewEncapsulation,
   inject,
   ChangeDetectionStrategy,
+  computed,
+  input,
+  linkedSignal,
+  resource,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceService } from "../../attendance.service";
@@ -15,6 +16,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "#src/app/utils/tab-state/tab-state.module";
 import { ActivityAttendanceSectionComponent } from "../activity-attendance-section/activity-attendance-section.component";
 import { MatSelectModule } from "@angular/material/select";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Lists all activities of the given child
@@ -35,37 +37,45 @@ import { MatSelectModule } from "@angular/material/select";
     MatSelectModule,
   ],
 })
-export class GroupedChildAttendanceComponent implements OnInit {
+export class GroupedChildAttendanceComponent {
   private attendanceService = inject(AttendanceService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() entity: Entity;
+  entity = input<Entity>();
 
-  loading: boolean = true;
-  selectedActivity: Entity;
-  activities: Entity[] = [];
-  archivedActivities: Entity[] = [];
+  protected activitiesResource = resource({
+    params: () => ({ entity: this.entity() }),
+    loader: async ({ params: { entity } }) => {
+      if (!entity) return { active: [], archived: [] };
+      try {
+        const allActivities =
+          await this.attendanceService.getActivitiesForParticipant(
+            entity.getId(),
+          );
+        return {
+          active: allActivities.filter((a) => a.isActive),
+          archived: allActivities.filter((a) => !a.isActive),
+        };
+      } catch (error) {
+        Logging.warn(
+          "Could not load grouped child attendance activities",
+          error,
+        );
+        return { active: [], archived: [] };
+      }
+    },
+  });
 
-  ngOnInit() {
-    return this.loadActivities();
-  }
+  activities = computed(() => this.activitiesResource.value()?.active ?? []);
+  archivedActivities = computed(
+    () => this.activitiesResource.value()?.archived ?? [],
+  );
 
-  private async loadActivities() {
-    this.loading = true;
-    this.cdr.markForCheck();
-    const allActivities =
-      await this.attendanceService.getActivitiesForParticipant(
-        this.entity.getId(),
-      );
-
-    this.activities = allActivities.filter((a) => a.isActive == true);
-    this.archivedActivities = allActivities.filter((a) => a.isActive == false);
-
-    this.loading = false;
-    this.cdr.markForCheck();
-  }
+  selectedActivity = linkedSignal<Entity | undefined>(() => {
+    this.entity();
+    return undefined;
+  });
 
   onActivityChange(selectedArchivedActivity: Entity) {
-    this.selectedActivity = selectedArchivedActivity;
+    this.selectedActivity.set(selectedArchivedActivity);
   }
 }

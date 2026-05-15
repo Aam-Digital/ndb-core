@@ -1,10 +1,9 @@
 import {
   Component,
-  Input,
+  computed,
+  resource,
+  input,
   inject,
-  OnInit,
-  OnChanges,
-  SimpleChanges,
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -22,93 +21,67 @@ import { Logging } from "#src/app/core/logging/logging.service";
   templateUrl: "./public-form-permission-warning.component.html",
   imports: [HintBoxComponent, MatButtonModule],
 })
-export class PublicFormPermissionWarningComponent implements OnInit, OnChanges {
+export class PublicFormPermissionWarningComponent {
   private readonly permissionService = inject(PublicFormPermissionService);
   private readonly alertService = inject(AlertService);
 
   /**
    * The entity being edited (PublicFormConfig)
    */
-  @Input() entity?: Entity;
-
-  /**
-   * Whether public users have create permission for this entity type
-   */
-  hasPublicCreatePermission = signal<boolean>(true);
-
-  /**
-   * Whether we're currently checking permissions
-   */
-  isCheckingPermissions = signal<boolean>(false);
+  entity = input<Entity>();
 
   /**
    * Whether the current user can add permissions (has admin_app role)
    */
   canAddPermissions = signal<boolean>(false);
 
-  /**
-   * Store the entity type for template use (avoids method calls in template)
-   */
-  entityType: string = "";
-
-  private updateEntityType() {
-    const formConfig = this.entity as PublicFormConfig;
-    this.entityType = formConfig?.entity || "";
-  }
-
-  async ngOnInit(): Promise<void> {
-    this.canAddPermissions.set(this.permissionService.hasAdminPermission());
-    this.updateEntityType();
-    await this.checkPermissions();
-  }
-
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (changes["entity"]) {
-      this.updateEntityType();
-      await this.checkPermissions();
-    }
-  }
-
-  /**
-   * Check if public users have create permission for this entity type
-   */
-  private async checkPermissions(): Promise<void> {
-    const formConfig = this.entity as PublicFormConfig;
-
-    if (!formConfig?.entity) {
-      this.hasPublicCreatePermission.set(true);
-      return;
+  readonly entityType = computed(() => {
+    const formConfig = this.entity() as PublicFormConfig | undefined;
+    if (!formConfig) {
+      return "";
     }
 
-    this.isCheckingPermissions.set(true);
+    const multiFormEntityType = formConfig.forms?.[0]?.entity;
+    if (multiFormEntityType) {
+      return multiFormEntityType;
+    }
 
-    try {
-      const hasPermission =
-        await this.permissionService.hasPublicCreatePermission(
-          formConfig.entity,
+    const legacyEntityType = (formConfig as { entity?: string }).entity;
+    return legacyEntityType ?? "";
+  });
+
+  readonly permissionCheck = resource({
+    params: () => ({ entityType: this.entityType() }),
+    loader: async ({ params: { entityType } }) => {
+      if (!entityType) return true;
+      try {
+        return await this.permissionService.hasPublicCreatePermission(
+          entityType,
         );
-      this.hasPublicCreatePermission.set(hasPermission);
-    } catch (error) {
-      Logging.error("Failed to check public permissions:", error);
-      this.hasPublicCreatePermission.set(false);
-    } finally {
-      this.isCheckingPermissions.set(false);
-    }
+      } catch (error) {
+        Logging.error("Failed to check public permissions:", error);
+        return false;
+      }
+    },
+  });
+
+  constructor() {
+    this.canAddPermissions.set(this.permissionService.hasAdminPermission());
   }
 
   /**
    * Automatically add the missing public create permission
    */
   async addPermissionAutomatically(): Promise<void> {
-    const formConfig = this.entity as PublicFormConfig;
-    if (!formConfig?.entity) return;
+    const entityType = this.entityType();
+    if (!entityType) return;
 
     try {
-      await this.permissionService.addPublicCreatePermission(formConfig.entity);
+      await this.permissionService.addPublicCreatePermission(entityType);
       this.alertService.addInfo(
         $localize`Permission added successfully! The public form should now work correctly.`,
       );
-      await this.checkPermissions();
+      this.permissionCheck.reload();
     } catch (error) {
       Logging.error("Failed to add permission:", error);
       this.alertService.addDanger(

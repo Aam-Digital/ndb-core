@@ -1,12 +1,12 @@
 import {
   Component,
-  ChangeDetectorRef,
-  Input,
-  LOCALE_ID,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
+  computed,
   inject,
+  input,
+  LOCALE_ID,
+  linkedSignal,
+  resource,
+  signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
@@ -49,21 +49,77 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
   ],
 })
 @UntilDestroy()
-export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
+export class ActivityAttendanceSectionComponent {
   private attendanceService = inject(AttendanceService);
   private entityMapper = inject(EntityMapperService);
   private locale = inject(LOCALE_ID);
   private dialog = inject(MatDialog);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() entity: Entity;
-  @Input() forChild?: string;
+  entity = input<Entity>();
+  forChild = input<string>();
 
-  loading: boolean = true;
-  records: ActivityAttendance[] = [];
+  /** Resets to false whenever entity changes; set to true by "Load all records" button. */
+  loadAll = linkedSignal({
+    source: () => this.entity()?.getId(),
+    computation: () => false,
+  });
+  includeWithoutParticipation = signal(false);
+
+  attendanceData = resource({
+    params: () => ({ entity: this.entity(), loadAll: this.loadAll() }),
+    loader: async ({ params: { entity, loadAll } }) => {
+      if (!entity) return [];
+      return loadAll
+        ? await this.attendanceService.getActivityAttendances(entity)
+        : await this.attendanceService.getActivityAttendances(
+            entity,
+            moment().startOf("month").subtract(6, "months").toDate(),
+          );
+    },
+  });
+  private readonly allRecords = computed(
+    () => this.attendanceData.value() ?? [],
+  );
+
   entityCtr = ActivityAttendance;
-  allRecords: ActivityAttendance[] = [];
-  combinedAttendance: ActivityAttendance;
+
+  records = computed(() => {
+    const forChild = this.forChild();
+    let records: ActivityAttendance[];
+    if (this.includeWithoutParticipation() || !forChild) {
+      records = [...this.allRecords()];
+    } else {
+      records = this.allRecords().filter(
+        (r) =>
+          r.countEventsAbsent(forChild) + r.countEventsPresent(forChild) > 0,
+      );
+    }
+    if (records?.length > 0) {
+      records.sort((a, b) => b.periodFrom.getTime() - a.periodFrom.getTime());
+    }
+    return records;
+  });
+
+  combinedAttendance = computed(() => {
+    const combined = new ActivityAttendance();
+    combined.activity = this.entity();
+    this.allRecords().forEach((record) => {
+      combined.events.push(...record.events);
+      if (
+        !combined.periodFrom ||
+        moment(record.periodFrom).isBefore(combined.periodFrom, "day")
+      ) {
+        combined.periodFrom = record.periodFrom;
+      }
+      if (
+        !combined.periodTo ||
+        moment(record.periodTo).isAfter(combined.periodTo, "day")
+      ) {
+        combined.periodTo = record.periodTo;
+      }
+    });
+    return combined;
+  });
 
   columns: FormFieldConfig[] = [
     {
@@ -76,8 +132,8 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
       label: $localize`:How many children are present at a meeting|Title of table column:Present`,
       viewComponent: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
-        this.forChild
-          ? e.countEventsPresent(this.forChild)
+        this.forChild()
+          ? e.countEventsPresent(this.forChild())
           : e.countTotalPresent(),
     },
     {
@@ -91,8 +147,8 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
       label: $localize`:Percentage of people that attended an event:Attended`,
       viewComponent: "ReadonlyFunction",
       additional: (e: ActivityAttendance) => {
-        const pct = this.forChild
-          ? e.getAttendancePercentage(this.forChild)
+        const pct = this.forChild()
+          ? e.getAttendancePercentage(this.forChild())
           : e.getAttendancePercentageAverage();
         return pct !== undefined
           ? formatPercent(pct, this.locale, "1.0-0")
@@ -101,9 +157,8 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
     },
   ];
 
-  ngOnInit() {
+  constructor() {
     this.subscribeToEventUpdates();
-    return this.init();
   }
 
   private subscribeToEventUpdates() {
@@ -115,90 +170,22 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
       .pipe(debounceTime(500), untilDestroyed(this))
       .subscribe((update) => {
         const wrapped = this.attendanceService.wrapEventEntity(update.entity);
-        if (wrapped.activityId === this.entity?.getId()) {
-          this.init();
+        if (wrapped.activityId === this.entity()?.getId()) {
+          this.attendanceData.reload();
         }
       });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entity) {
-      this.init();
-    }
-  }
-
-  async init(loadAll: boolean = false) {
-    this.loading = true;
-    this.cdr.markForCheck();
-    if (loadAll) {
-      this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.entity,
-      );
-    } else {
-      this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.entity,
-        moment().startOf("month").subtract(6, "months").toDate(),
-      );
-    }
-    this.updateDisplayedRecords(false);
-    this.createCombinedAttendance();
-    this.loading = false;
-    this.cdr.markForCheck();
-  }
-
-  private createCombinedAttendance() {
-    this.combinedAttendance = new ActivityAttendance();
-    this.combinedAttendance.activity = this.entity;
-    this.allRecords.forEach((record) => {
-      this.combinedAttendance.events.push(...record.events);
-      if (
-        !this.combinedAttendance.periodFrom ||
-        moment(record.periodFrom).isBefore(
-          this.combinedAttendance.periodFrom,
-          "day",
-        )
-      ) {
-        this.combinedAttendance.periodFrom = record.periodFrom;
-      }
-
-      if (
-        !this.combinedAttendance.periodTo ||
-        moment(record.periodTo).isAfter(this.combinedAttendance.periodTo, "day")
-      ) {
-        this.combinedAttendance.periodTo = record.periodTo;
-      }
-    });
-  }
-
-  updateDisplayedRecords(includeRecordsWithoutParticipation: boolean) {
-    if (includeRecordsWithoutParticipation || !this.forChild) {
-      this.records = this.allRecords;
-    } else {
-      this.records = this.allRecords.filter(
-        (r) =>
-          r.countEventsAbsent(this.forChild) +
-            r.countEventsPresent(this.forChild) >
-          0,
-      );
-    }
-
-    if (this.records?.length > 0) {
-      this.records.sort(
-        (a, b) => b.periodFrom.getTime() - a.periodFrom.getTime(),
-      );
-    }
   }
 
   showDetails(activity: ActivityAttendance) {
     this.dialog.open(AttendanceDetailsComponent, {
       data: {
-        forChild: this.forChild,
+        forChild: this.forChild(),
         attendance: activity,
       },
     });
   }
 
-  getBackgroundColor?: (rec: ActivityAttendance) => string = (
-    rec: ActivityAttendance,
-  ) => rec.getColor(this.forChild);
+  getBackgroundColor = computed(
+    () => (rec: ActivityAttendance) => rec.getColor(this.forChild()),
+  );
 }

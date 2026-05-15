@@ -1,12 +1,11 @@
 import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
@@ -58,59 +57,29 @@ interface InheritanceOption {
     },
   ],
 })
-export class AdminInheritedFieldComponent
-  extends CustomFormControlDirective<DefaultValueConfigInheritedField>
-  implements OnInit, OnChanges
-{
-  @Input() entityType: EntityConstructor;
-  @Input() entitySchemaField: EntitySchemaField;
+export class AdminInheritedFieldComponent extends CustomFormControlDirective<DefaultValueConfigInheritedField> {
+  entityType = input<EntityConstructor>();
+  entitySchemaField = input<EntitySchemaField>();
 
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly entityRelationsService = inject(EntityRelationsService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly matDialog = inject(MatDialog);
 
-  availableOptions: InheritanceOption[] = [];
-  selectedOption: InheritanceOption | null = null;
+  availableOptions = computed<InheritanceOption[]>(() => {
+    const entityType = this.entityType();
+    if (!entityType) return [];
 
-  ngOnInit() {
-    if (!this.value) {
-      this.value = {
-        sourceReferenceField: "",
-        sourceValueField: "",
-      };
-    }
-    this.cdr.markForCheck();
-  }
+    const options: InheritanceOption[] = [];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entityType) {
-      this.updateAvailableOptions();
-      this.initSelectedOption();
-      this.cdr.markForCheck();
-    }
-  }
-
-  updateAvailableOptions() {
-    if (!this.entityType) return;
-
-    this.availableOptions = [];
-
-    const inheritanceAttributes = this.getInheritanceAttributes();
-    inheritanceAttributes.forEach((attr) => {
-      const fieldConfig = this.entityType.schema.get(attr);
-
+    this.getInheritanceAttributes(entityType).forEach((attr) => {
+      const fieldConfig = entityType.schema.get(attr);
       if (fieldConfig?.additional) {
-        const referencedTypeIds = asArray(fieldConfig.additional);
-
-        for (const typeId of referencedTypeIds) {
+        for (const typeId of asArray(fieldConfig.additional)) {
           const referencedEntityType = this.entityRegistry.get(typeId);
           if (!referencedEntityType) continue;
-
-          const refFieldLabel = this.getFieldLabel(attr, this.entityType);
-
-          const option: InheritanceOption = {
-            type: "inherit" as const,
+          const refFieldLabel = this.getFieldLabel(attr, entityType);
+          options.push({
+            type: "inherit",
             label: `${refFieldLabel} > ${this.getEntityLabel(referencedEntityType)}`,
             labelParts: {
               entityName: this.getEntityLabel(referencedEntityType),
@@ -120,21 +89,17 @@ export class AdminInheritedFieldComponent
             sourceReferenceField: attr,
             sourceReferenceEntity: undefined,
             referencedEntityType,
-          };
-
-          this.availableOptions.push(option);
+          });
         }
       }
     });
 
-    const automatedOptions = this.getAutomatedOptions();
-    automatedOptions.forEach((option) => {
+    this.getAutomatedOptions().forEach((option) => {
       option.relatedReferenceFields.forEach((refField) => {
         const refFieldLabel = this.getFieldLabel(refField, option.entityType);
         const refEntityType = this.entityRegistry.get(option.entityType);
-
-        const automatedOption: InheritanceOption = {
-          type: "automated" as const,
+        options.push({
+          type: "automated",
           label: `${option.label} > ${refFieldLabel}`,
           labelParts: {
             entityName: option.label,
@@ -144,45 +109,49 @@ export class AdminInheritedFieldComponent
           sourceReferenceEntity: option.entityType,
           sourceReferenceField: refField,
           referencedEntityType: refEntityType,
-        };
-
-        this.availableOptions.push(automatedOption);
+        });
       });
+    });
+
+    return options;
+  });
+
+  selectedOption = linkedSignal<InheritanceOption | null>(
+    () =>
+      this.availableOptions().find(
+        (o) =>
+          o.sourceReferenceField === this.value?.sourceReferenceField &&
+          o.sourceReferenceEntity === this.value?.sourceReferenceEntity,
+      ) ?? null,
+  );
+
+  constructor() {
+    super();
+    effect(() => {
+      this.entityType();
+      if (!this.value) {
+        this.value = {
+          sourceReferenceField: "",
+          sourceValueField: "",
+        };
+      }
     });
   }
 
-  /**
-   * Update the selectedOption to the matching object from availableOptions based on the `value`
-   */
-  private initSelectedOption(): void {
-    if (!this.value) {
-      this.selectedOption = null;
-      return;
-    }
-
-    this.selectedOption = this.availableOptions.find(
-      (o) =>
-        o.sourceReferenceField === this.value.sourceReferenceField &&
-        o.sourceReferenceEntity === this.value.sourceReferenceEntity,
-    );
-  }
-
   onOptionSelected(option: InheritanceOption) {
-    const previousOption = this.selectedOption;
-    this.selectedOption = option;
-    this.cdr.markForCheck();
+    const previousOption = this.selectedOption();
+    this.selectedOption.set(option);
 
-    this.openConfigDetailsDialog().then((confirmed) => {
+    this.openConfigDetailsDialog(option).then((confirmed) => {
       if (!confirmed) {
         // revert selection
-        this.selectedOption = previousOption;
-        this.cdr.markForCheck();
+        this.selectedOption.set(previousOption);
       }
     });
   }
 
   async openConfigDetailsDialog(
-    option: InheritanceOption = this.selectedOption,
+    option: InheritanceOption = this.selectedOption(),
   ): Promise<boolean> {
     if (!option?.sourceReferenceField) return false;
 
@@ -192,8 +161,8 @@ export class AdminInheritedFieldComponent
       DefaultValueConfigInheritedField
     >(AutomatedFieldMappingComponent, {
       data: {
-        currentEntityType: this.entityType,
-        currentField: this.entitySchemaField,
+        currentEntityType: this.entityType(),
+        currentField: this.entitySchemaField(),
         sourceValueEntityType: option.referencedEntityType,
         value: {
           ...this.value,
@@ -207,7 +176,6 @@ export class AdminInheritedFieldComponent
     if (result?.sourceValueField) {
       // successfully confirmed the dialog
       this.value = result;
-      this.cdr.markForCheck();
       return true;
     } else {
       // dialog was cancelled
@@ -215,10 +183,10 @@ export class AdminInheritedFieldComponent
     }
   }
 
-  private getInheritanceAttributes(): string[] {
-    if (!this.entityType?.schema) return [];
+  private getInheritanceAttributes(entityType: EntityConstructor): string[] {
+    if (!entityType?.schema) return [];
 
-    const inheritanceAttrs = Array.from(this.entityType.schema.entries())
+    const inheritanceAttrs = Array.from(entityType.schema.entries())
       .filter(
         ([, fieldConfig]) => fieldConfig.dataType === EntityDatatype.dataType,
       )
@@ -232,9 +200,13 @@ export class AdminInheritedFieldComponent
     entityType: string;
     relatedReferenceFields: string[];
   }[] {
+    const entityType = this.entityType();
+    if (!entityType) {
+      return [];
+    }
     const relatedEntities =
       this.entityRelationsService.getEntityTypesReferencingType(
-        this.entityType.ENTITY_TYPE,
+        entityType.ENTITY_TYPE,
       ) ?? [];
 
     return relatedEntities

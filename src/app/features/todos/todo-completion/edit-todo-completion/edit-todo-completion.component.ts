@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
+  InputSignal,
 } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,6 +21,7 @@ import { Todo } from "../../model/todo";
 import { TodoCompletion } from "../../model/todo-completion";
 import { TodoService } from "../../todo.service";
 import { DisplayTodoCompletionComponent } from "../display-todo-completion/display-todo-completion.component";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("EditTodoCompletion")
 @Component({
@@ -32,6 +34,7 @@ import { DisplayTodoCompletionComponent } from "../display-todo-completion/displ
     FontAwesomeModule,
     DisplayTodoCompletionComponent,
     MatTooltipModule,
+    FaDynamicIconComponent,
   ],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditTodoCompletionComponent },
@@ -41,8 +44,8 @@ export class EditTodoCompletionComponent
   extends CustomFormControlDirective<TodoCompletion>
   implements EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>() as InputSignal<Todo>;
 
   private readonly entityFormService = inject(EntityFormService);
   private readonly todoService = inject(TodoService);
@@ -52,19 +55,15 @@ export class EditTodoCompletionComponent
     return this.ngControl.control as FormControl<TodoCompletion>;
   }
 
-  get todo(): Todo {
-    return this.entity as Todo;
-  }
-
   async completeTodo() {
     if (this.formControl.parent?.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
       await this.entityFormService.saveChanges(
         { formGroup: this.formControl.parent } as any,
-        this.todo,
+        this.entity(),
       );
     }
-    await this.todoService.completeTodo(this.todo);
+    await this.todoService.completeTodo(this.entity());
 
     if (this.dialogRef) {
       this.dialogRef.close();
@@ -72,6 +71,6 @@ export class EditTodoCompletionComponent
   }
 
   async uncompleteTodo() {
-    await this.todoService.uncompleteTodo(this.todo);
+    await this.todoService.uncompleteTodo(this.entity());
   }
 }

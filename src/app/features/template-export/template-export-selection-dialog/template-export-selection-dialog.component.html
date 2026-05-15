@@ -1,10 +1,10 @@
 <mat-dialog-content>
   <h2 i18n>Generate File from Template</h2>
 
-  @if (isFeatureEnabled !== true) {
+  @if (isFeatureEnabled.value()) {
     <app-feature-disabled-info
       featureName="Export API"
-      [featureEnabled]="isFeatureEnabled"
+      [featureEnabled]="isFeatureEnabled.value()"
     ></app-feature-disabled-info>
   } @else {
     <p>
@@ -42,12 +42,12 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="!templateSelectionForm.value || loadingRequestedFile"
+    [disabled]="!templateSelectionForm.value || loadingRequestedFile()"
     (click)="requestFile()"
   >
     <span i18n>Generate File</span>
 
-    @if (loadingRequestedFile) {
+    @if (loadingRequestedFile()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
   </button>

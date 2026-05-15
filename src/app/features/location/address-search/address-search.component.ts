@@ -1,9 +1,9 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  output,
+  signal,
   ViewChild,
   OnInit,
   inject,
@@ -65,33 +65,23 @@ export class AddressSearchComponent implements OnInit {
   private location = inject(GeoService);
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  /**
-   * The search text, for which locations are looked up (as initial input to prefill the field).
-   */
-  @Input() set searchText(value: string) {
-    if (!(typeof value === "string")) {
-      Logging.debug("Invalid address searchText input", value);
-      return;
-    }
-
-    this._searchText = value;
-  }
-  _searchText: string = "";
+  /** The search text used to prefill the field. */
+  searchText = input<string>("");
 
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
-  @Output() locationSelected = new EventEmitter<{
+  locationSelected = output<{
     location: GeoLocation;
     userInput: string;
   }>();
 
   filteredOptions = new BehaviorSubject<GeoResult[]>([]);
-  waiting = false;
-  loading = false;
-  nothingFound = false;
-  networkError = false;
-  otherTypeError = false;
+  waiting = signal<boolean>(false);
+  loading = signal<boolean>(false);
+  nothingFound = signal<boolean>(false);
+  networkError = signal<boolean>(false);
+  otherTypeError = signal<boolean>(false);
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
   private searchClickStream = new Subject<string>();
@@ -115,15 +105,15 @@ export class AddressSearchComponent implements OnInit {
         map((input) => input.trim()),
         filter((input) => this.isRelevantInput(input)),
         tap(() => {
-          this.nothingFound = false;
-          this.waiting = false;
-          this.loading = true;
+          this.nothingFound.set(false);
+          this.waiting.set(false);
+          this.loading.set(true);
         }),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
       .subscribe((res) => {
         this.filteredOptions.next(res);
-        this.loading = false;
+        this.loading.set(false);
       });
   }
 
@@ -131,11 +121,11 @@ export class AddressSearchComponent implements OnInit {
 
   triggerInputUpdate(event?: KeyboardEvent) {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    this.waiting = true;
-    this.loading = false;
+    this.waiting.set(true);
+    this.loading.set(false);
     if (event && event.key === "Enter") {
-      this.waiting = false; // skip waiting if ENTER
-      this.loading = true;
+      this.waiting.set(false); // skip waiting if ENTER
+      this.loading.set(true);
       this.enterKeyStream.next(this.inputElem.nativeElement.value);
     } else {
       this.inputStream.next(this.inputElem.nativeElement.value);
@@ -143,8 +133,8 @@ export class AddressSearchComponent implements OnInit {
   }
   searchClick() {
     this.lastUserInput = this.inputElem.nativeElement.value;
-    this.waiting = false;
-    this.loading = true;
+    this.waiting.set(false);
+    this.loading.set(true);
     this.searchClickStream.next(this.inputElem.nativeElement.value);
   }
 
@@ -181,21 +171,21 @@ export class AddressSearchComponent implements OnInit {
   private getGeoLookupResult(searchTerm: string) {
     return this.location.lookup(searchTerm).pipe(
       tap((res) => {
-        this.networkError = false;
-        this.otherTypeError = false;
+        this.networkError.set(false);
+        this.otherTypeError.set(false);
         this.lastSearch = searchTerm;
-        this.loading = false;
-        this.nothingFound = res.length === 0;
+        this.loading.set(false);
+        this.nothingFound.set(res.length === 0);
       }),
       catchError((error: HttpErrorResponse) => {
-        this.loading = false;
-        this.nothingFound = true;
+        this.loading.set(false);
+        this.nothingFound.set(true);
 
         if (error.status === 0) {
-          this.networkError = true;
+          this.networkError.set(true);
         } else {
           Logging.warn("Address Lookup API error", error);
-          this.otherTypeError = true;
+          this.otherTypeError.set(true);
         }
 
         return of([]);

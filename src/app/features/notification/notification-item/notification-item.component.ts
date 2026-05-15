@@ -1,9 +1,8 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  Output,
   ChangeDetectionStrategy,
+  input,
+  output,
 } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { CommonModule } from "@angular/common";
@@ -40,11 +39,11 @@ import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entit
   styleUrl: "./notification-item.component.scss",
 })
 export class NotificationItemComponent {
-  @Input() notification: NotificationEvent;
+  notification = input.required<NotificationEvent>();
 
-  @Output() readStatusChange = new EventEmitter<boolean>();
-  @Output() deleteClick = new EventEmitter<void>();
-  @Output() notificationClick = new EventEmitter<NotificationEvent>();
+  readStatusChange = output<boolean>();
+  deleteClick = output<void>();
+  notificationClick = output<NotificationEvent>();
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   updateReadStatus(newStatus: boolean) {

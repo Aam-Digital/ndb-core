@@ -49,7 +49,9 @@ describe.skip("EditRecurringIntervalComponent", () => {
     component.ngOnInit();
 
     expect(
-      component.predefinedIntervals.find((o) => o.interval === customInterval),
+      component
+        .predefinedIntervals()
+        .find((o) => o.interval === customInterval),
     ).toBeTruthy();
   });
 
@@ -64,7 +66,7 @@ describe.skip("EditRecurringIntervalComponent", () => {
       isUserInput: true,
     });
 
-    expect(component.predefinedIntervals).toContain({
+    expect(component.predefinedIntervals()).toContain({
       label: expect.any(String),
       interval: customIntervalResult,
     });

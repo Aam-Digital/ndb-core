@@ -1,4 +1,4 @@
-@if (!reports || reports.length === 0) {
+@if (!reports() || reports()?.length === 0) {
   <div>
     <p i18n>Reports have not been configured for you yet.</p>
     <a
@@ -11,26 +11,26 @@
   </div>
 }
 
-@if (reports?.length > 0) {
+@if (reports()?.length > 0) {
   <div class="work-panel">
     <div class="flex-row flex-wrap gap-regular">
       <mat-form-field class="flex-grow">
         <mat-label i18n>Select Report</mat-label>
         <mat-select
-          [(ngModel)]="selectedReport"
-          [disabled]="loading"
-          (ngModelChange)="reportChange()"
+          [ngModel]="selectedReport()"
+          [disabled]="loading()"
+          (ngModelChange)="selectedReport.set($event); reportChange()"
         >
-          @for (report of reports; track report.getId()) {
+          @for (report of reports(); track report.getId()) {
             <mat-option [value]="report">
               {{ report.title }}
             </mat-option>
           }
         </mat-select>
       </mat-form-field>
-      @if (isDateRangeReport) {
+      @if (isDateRangeReport()) {
         <app-date-range-filter
-          [filterConfig]="dateRangeFilterConfig"
+          [filterConfig]="dateRangeFilterConfig()"
           (dateRangeChange)="onDateRangeChange($event)"
         ></app-date-range-filter>
       }
@@ -42,16 +42,16 @@
         color="accent"
         class="primary-button"
         [disabled]="
-          !selectedReport ||
-          (isDateRangeReport && !fromDate && !toDate) ||
-          loading
+          !selectedReport() ||
+          (isDateRangeReport() && !fromDate() && !toDate()) ||
+          loading()
         "
         (click)="calculate()"
         i18n="Calculate the results for a report"
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="calculate"
-        [angularticsLabel]="selectedReport?.title"
+        [angularticsLabel]="selectedReport()?.title"
         matTooltip="Please select a report and a date range"
         i18n-matTooltip
         [matTooltipDisabled]="!calculateButton.disabled"
@@ -63,24 +63,24 @@
         mat-stroked-button
         color="accent"
         class="primary-button"
-        [disabled]="!exportableData"
+        [disabled]="!exportableData()"
         (click)="openExportDialog()"
         style="float: right"
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="export"
-        [angularticsLabel]="selectedReport?.title"
+        [angularticsLabel]="selectedReport()?.title"
       >
-        <fa-icon
+        <app-fa-dynamic-icon
           icon="download"
           class="standard-icon-with-text"
           aria-label="download csv"
-        ></fa-icon>
+        ></app-fa-dynamic-icon>
         <ng-container i18n="Button to download data"> Download</ng-container>
       </button>
     </div>
     <div style="clear: both; padding-bottom: 5px"></div>
-    @if (loading) {
+    @if (loading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
   </div>

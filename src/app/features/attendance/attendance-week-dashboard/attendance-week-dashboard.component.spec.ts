@@ -85,8 +85,10 @@ describe("AttendanceWeekDashboardComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.entries()).toHaveLength(1);
-    expect(component.entries()[0][0].participantId).toBe(absentChild.getId());
+    expect(component.entries.value()).toHaveLength(1);
+    expect(component.entries.value()[0][0].participantId).toBe(
+      absentChild.getId(),
+    );
   });
 
   it("should not display children with sufficient attendance", async () => {
@@ -105,7 +107,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.entries()).toHaveLength(0);
+    expect(component.entries.value()).toHaveLength(0);
   });
 
   it("should treat events without an activity as one group", async () => {
@@ -132,10 +134,12 @@ describe("AttendanceWeekDashboardComponent", () => {
 
     // Both events are grouped together (both under undefined key), so absentChild
     // accumulates 2 absences and crosses the threshold → 1 entry group
-    expect(component.entries()).toHaveLength(1);
-    expect(component.entries()[0][0].participantId).toBe(absentChild.getId());
+    expect(component.entries.value()).toHaveLength(1);
+    expect(component.entries.value()[0][0].participantId).toBe(
+      absentChild.getId(),
+    );
     expect(
-      component.entries()[0][0].attendanceDays.filter(Boolean),
+      component.entries.value()[0][0].attendanceDays.filter(Boolean),
     ).toHaveLength(2);
   });
 

@@ -22,8 +22,8 @@ describe("EditTodoCompletionComponent", () => {
     fixture = TestBed.createComponent(EditTodoCompletionComponent);
     component = fixture.componentInstance;
 
-    component.entity = new Todo();
-    setupCustomFormControlEditComponent(component);
+    fixture.componentRef.setInput("entity", new Todo());
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
 
     fixture.detectChanges();
   });

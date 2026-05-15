@@ -62,11 +62,11 @@ describe("AddressSearchComponent", () => {
 
       await inputElement.sendKeys("input 1");
       expect(mockGeoService.lookup).not.toHaveBeenCalled();
-      expect(component.loading).toBe(false);
+      expect(component.loading()).toBe(false);
 
       await vi.advanceTimersByTimeAsync(2000);
       expect(mockGeoService.lookup).not.toHaveBeenCalled();
-      expect(component.loading).toBe(false);
+      expect(component.loading()).toBe(false);
 
       // change input before debounce --> restarts timeouts
       await inputElement.clear();
@@ -74,13 +74,13 @@ describe("AddressSearchComponent", () => {
 
       await vi.advanceTimersByTimeAsync(700);
       expect(mockGeoService.lookup).not.toHaveBeenCalled();
-      expect(component.loading).toBe(false);
+      expect(component.loading()).toBe(false);
       expect(options).toEqual([]);
 
       await vi.advanceTimersByTimeAsync(2000);
       expect(mockGeoService.lookup).toHaveBeenCalledWith("input 2");
       expect(mockGeoService.lookup).not.toHaveBeenCalledWith("input 1");
-      expect(component.loading).toBe(false);
+      expect(component.loading()).toBe(false);
       expect(options).toEqual([location]);
     } finally {
       vi.useRealTimers();
@@ -135,9 +135,9 @@ describe("AddressSearchComponent", () => {
       await inputElement.setValue("test");
       await vi.advanceTimersByTimeAsync(3000);
 
-      expect(component.networkError).toBe(true);
-      expect(component.otherTypeError).toBe(false);
-      expect(component.nothingFound).toBe(true);
+      expect(component.networkError()).toBe(true);
+      expect(component.otherTypeError()).toBe(false);
+      expect(component.nothingFound()).toBe(true);
     } finally {
       vi.useRealTimers();
     }
@@ -155,9 +155,9 @@ describe("AddressSearchComponent", () => {
       await inputElement.setValue("test");
       await vi.advanceTimersByTimeAsync(3000);
 
-      expect(component.otherTypeError).toBe(true);
-      expect(component.networkError).toBe(false);
-      expect(component.nothingFound).toBe(true);
+      expect(component.otherTypeError()).toBe(true);
+      expect(component.networkError()).toBe(false);
+      expect(component.nothingFound()).toBe(true);
     } finally {
       vi.useRealTimers();
     }

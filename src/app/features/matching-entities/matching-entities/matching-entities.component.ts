@@ -1,12 +1,14 @@
 import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
 import { AsyncPipe } from "@angular/common";
 import {
-  ChangeDetectorRef,
   Component,
   ElementRef,
+  input,
   inject,
-  Input,
   OnInit,
+  signal,
+  computed,
+  WritableSignal,
   ViewChild,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -21,7 +23,8 @@ import {
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "app/features/location/geo-location";
-import { BehaviorSubject } from "rxjs";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { BehaviorSubject, map } from "rxjs";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import {
   ColumnConfig,
@@ -56,7 +59,7 @@ import {
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
-  filterObj?: DataFilter<Entity>;
+  filterObj: WritableSignal<DataFilter<Entity>>;
 
   availableEntities?: Entity[];
   selectMatch?: (e) => void;
@@ -65,10 +68,10 @@ export interface MatchingSide extends MatchingSideConfig {
   /** whether this allows to select more than one selected match */
   multiSelect: boolean;
 
-  selected?: Entity[];
+  selected: WritableSignal<Entity[]>;
 
   /** item of `selected` that is currently highlighted */
-  highlightedSelected: Entity;
+  highlightedSelected: WritableSignal<Entity | null>;
 
   distanceColumn: {
     coordinatesProperties: string[];
@@ -109,68 +112,85 @@ export class MatchingEntitiesComponent implements OnInit {
   private configService = inject(ConfigService);
   private entityRegistry = inject(EntityRegistry);
   private filterService = inject(FilterService);
-  private changeDetector = inject(ChangeDetectorRef);
-
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
-  @Input() entity: Entity;
-  @Input() leftSide: MatchingSideConfig = {};
-  @Input() rightSide: MatchingSideConfig = {};
+  entity = input<Entity>();
+  leftSide = input<MatchingSideConfig>();
+  rightSide = input<MatchingSideConfig>();
   /**
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  @Input() columns: [ColumnConfig, ColumnConfig][] = [];
-  @Input()
-  matchActionLabel: string = $localize`:Matching button label:create matching`;
-  @Input() onMatch: NewMatchAction;
+  columns = input<[ColumnConfig, ColumnConfig][]>();
+  matchActionLabel = input<string>();
+  onMatch = input<NewMatchAction>();
 
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
 
-  columnsToDisplay = [];
-  lockedMatching = false;
-  sideDetails: [MatchingSide, MatchingSide];
+  columnsToDisplay = computed(() =>
+    this.sideDetails() ? ["side-0", "side-1"] : [],
+  );
+  lockedMatching = signal(false);
+  sideDetails = signal<[MatchingSide, MatchingSide] | undefined>(undefined);
 
-  mapVisible = false;
-  filteredMapEntities: Entity[] = [];
-  displayedLocationProperties: LocationProperties = {};
+  mapVisible = computed(() =>
+    (this.sideDetails() ?? ([] as MatchingSide[])).some(
+      (side) =>
+        side.entityType &&
+        getLocationProperties(this.entityRegistry.get(side.entityType)).length >
+          0,
+    ),
+  );
+  filteredMapEntities = computed(() => {
+    const entities: Entity[] = [];
+    this.sideDetails()?.forEach((side) => {
+      const filterObj = side.filterObj();
+      if (Object.keys(filterObj).length > 0) {
+        const predicate = this.filterService.getFilterPredicate(filterObj);
+        entities.push(...(side.availableEntities ?? []).filter(predicate));
+      } else {
+        entities.push(...(side.availableEntities ?? []));
+      }
+    });
+    return entities;
+  });
+  displayedLocationProperties = signal<LocationProperties>({});
 
-  constructor() {
-    const config: MatchingEntitiesConfig =
-      this.configService.getConfig<MatchingEntitiesConfig>(
-        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY,
-      ) ?? {};
-    Object.assign(this, JSON.parse(JSON.stringify(config)));
+  private readonly globalConfig: MatchingEntitiesConfig =
+    this.configService.getConfig<MatchingEntitiesConfig>(
+      MatchingEntitiesComponent.DEFAULT_CONFIG_KEY,
+    ) ?? {};
 
-    this.route.data.subscribe(
-      (data: DynamicComponentConfig<MatchingEntitiesConfig>) => {
-        if (
-          !data?.config?.leftSide &&
-          !data?.config?.rightSide &&
-          !data?.config?.columns
-        ) {
-          return;
-        }
-        Object.assign(this, JSON.parse(JSON.stringify(data.config)));
-      },
-    );
-  }
+  private readonly routeConfig = toSignal(
+    this.route.data.pipe(
+      map(
+        (data: DynamicComponentConfig<MatchingEntitiesConfig>) =>
+          data?.config as MatchingEntitiesConfig | undefined,
+      ),
+    ),
+  );
+
+  private readonly config = computed<MatchingEntitiesConfig>(() => {
+    const routeConf = this.routeConfig();
+    if (!routeConf?.leftSide && !routeConf?.rightSide && !routeConf?.columns) {
+      return this.globalConfig;
+    }
+    return { ...this.globalConfig, ...structuredClone(routeConf) };
+  });
+
+  private columnsState: [ColumnConfig, ColumnConfig][] = [];
 
   // TODO: fill selection on hover already?
 
   async ngOnInit() {
-    this.sideDetails = [
-      await this.initSideDetails(this.leftSide, 0),
-      await this.initSideDetails(this.rightSide, 1),
+    this.columnsState = this.cloneColumns(this.resolvedColumns());
+    const sides: [MatchingSide, MatchingSide] = [
+      await this.initSideDetails(this.resolvedLeftSide(), 0),
+      await this.initSideDetails(this.resolvedRightSide(), 1),
     ];
-    this.sideDetails.forEach((side, index) =>
-      this.initDistanceColumn(side, index),
-    );
-    this.filterMapEntities();
-    this.columnsToDisplay = ["side-0", "side-1"];
-    // needed due to async
-    this.changeDetector.detectChanges();
+    this.sideDetails.set(sides);
+    sides.forEach((side, index) => this.initDistanceColumn(side, index));
   }
 
   /**
@@ -185,21 +205,26 @@ export class MatchingEntitiesComponent implements OnInit {
   ): Promise<MatchingSide> {
     const newSide = buildMatchingSideConfig(
       side,
-      this.columns,
+      this.columnsState,
       sideIndex,
     ) as MatchingSide;
 
     if (!newSide.entityType) {
-      newSide.selected = newSide.selected ?? [this.entity];
-      newSide.highlightedSelected = newSide.selected[0];
-      newSide.entityType = newSide.highlightedSelected?.getType();
+      const entity = this.entity();
+      const initialSelected = entity ? [entity] : [];
+      newSide.selected = signal<Entity[]>(initialSelected);
+      newSide.highlightedSelected = signal<Entity | null>(
+        initialSelected[0] ?? null,
+      );
+      newSide.entityType = newSide.highlightedSelected()?.getType();
     }
 
+    const resolvedOnMatch = this.resolvedOnMatch();
     newSide.multiSelect = this.checkIfMultiSelect(
-      this.onMatch.newEntityType,
+      resolvedOnMatch.newEntityType,
       sideIndex === 0
-        ? this.onMatch.newEntityMatchPropertyLeft
-        : this.onMatch.newEntityMatchPropertyRight,
+        ? resolvedOnMatch.newEntityMatchPropertyLeft
+        : resolvedOnMatch.newEntityMatchPropertyRight,
     );
 
     if (newSide.multiSelect) {
@@ -208,18 +233,18 @@ export class MatchingEntitiesComponent implements OnInit {
       newSide.selectMatch = this.getSingleSelectFunction(newSide);
     }
 
-    if (!newSide.selected && newSide.entityType) {
+    if (!newSide.selected) {
       newSide.availableEntities = await this.entityMapper.loadType(
         newSide.entityType,
       );
       newSide.availableFilters = newSide.availableFilters ?? [];
-      newSide.filterObj = { ...(side.prefilter ?? {}) };
+      newSide.selected = signal<Entity[]>([]);
+      newSide.highlightedSelected = signal<Entity | null>(null);
     }
 
-    this.mapVisible =
-      this.mapVisible ||
-      getLocationProperties(this.entityRegistry.get(newSide.entityType))
-        .length > 0;
+    newSide.filterObj = signal<DataFilter<Entity>>({
+      ...(side.prefilter ?? {}),
+    });
 
     return newSide;
   }
@@ -244,21 +269,19 @@ export class MatchingEntitiesComponent implements OnInit {
 
   private getMultiSelectFunction(newSide: MatchingSide) {
     return (e: Entity) => {
-      if (!newSide.selected) {
-        newSide.selected = [];
-      }
-
-      if (newSide.selected.includes(e)) {
+      const currentSelected = newSide.selected();
+      if (currentSelected.includes(e)) {
         // unselect
         this.highlightSelectedRow(e, true);
-        newSide.selected = newSide.selected.filter((s) => s !== e);
-        if (newSide.highlightedSelected === e) {
-          newSide.highlightedSelected = newSide.selected[0];
+        const newSelected = currentSelected.filter((s) => s !== e);
+        newSide.selected.set(newSelected);
+        if (newSide.highlightedSelected() === e) {
+          newSide.highlightedSelected.set(newSelected[0] ?? null);
         }
       } else {
         this.highlightSelectedRow(e);
-        newSide.selected = [...newSide.selected, e];
-        newSide.highlightedSelected = e;
+        newSide.selected.set([...currentSelected, e]);
+        newSide.highlightedSelected.set(e);
       }
 
       this.matchComparisonElement.nativeElement.scrollIntoView();
@@ -268,18 +291,19 @@ export class MatchingEntitiesComponent implements OnInit {
 
   private getSingleSelectFunction(newSide: MatchingSide) {
     return (e: Entity) => {
-      if (newSide.selected?.[0] === e) {
+      if (newSide.selected()[0] === e) {
         // Deselect if already selected
         this.highlightSelectedRow(e, true);
-        newSide.selected = [];
-        newSide.highlightedSelected = null;
+        newSide.selected.set([]);
+        newSide.highlightedSelected.set(null);
       } else {
         this.highlightSelectedRow(e);
-        if (newSide.highlightedSelected) {
-          this.highlightSelectedRow(newSide.highlightedSelected, true);
+        const prev = newSide.highlightedSelected();
+        if (prev) {
+          this.highlightSelectedRow(prev, true);
         }
-        newSide.selected = [e];
-        newSide.highlightedSelected = e;
+        newSide.selected.set([e]);
+        newSide.highlightedSelected.set(e);
       }
 
       this.matchComparisonElement.nativeElement.scrollIntoView();
@@ -304,8 +328,8 @@ export class MatchingEntitiesComponent implements OnInit {
    * Get background color for entity rows in matching tables.
    */
   getEntityBackgroundColor = (entity: Entity): string => {
-    const isSelected = this.sideDetails?.some((side) =>
-      side.selected?.some((selected) => selected.getId() === entity.getId()),
+    const isSelected = this.sideDetails()?.some((side) =>
+      side.selected().some((selected) => selected.getId() === entity.getId()),
     );
     if (isSelected) {
       const color = Entity.getColorWithConditions(entity);
@@ -316,19 +340,26 @@ export class MatchingEntitiesComponent implements OnInit {
   };
 
   async createMatch() {
+    const onMatch = this.resolvedOnMatch();
+    if (
+      !onMatch?.newEntityType ||
+      !onMatch.newEntityMatchPropertyLeft ||
+      !onMatch.newEntityMatchPropertyRight
+    ) {
+      return;
+    }
     const newMatchEntity = new (this.entityRegistry.get(
-      this.onMatch.newEntityType,
+      onMatch.newEntityType,
     ))();
 
-    const leftMatch = this.sideDetails[0].selected;
-    const rightMatch = this.sideDetails[1].selected;
+    const sides = this.sideDetails();
+    const leftMatch = sides[0].selected();
+    const rightMatch = sides[1].selected();
 
-    newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] = this
-      .sideDetails[0].multiSelect
+    newMatchEntity[onMatch.newEntityMatchPropertyLeft] = sides[0].multiSelect
       ? leftMatch.map((e) => e.getId())
       : leftMatch[0].getId();
-    newMatchEntity[this.onMatch.newEntityMatchPropertyRight] = this
-      .sideDetails[1].multiSelect
+    newMatchEntity[onMatch.newEntityMatchPropertyRight] = sides[1].multiSelect
       ? rightMatch.map((e) => e.getId())
       : rightMatch[0].getId();
 
@@ -342,9 +373,9 @@ export class MatchingEntitiesComponent implements OnInit {
       " - " +
       rightMatch.map((e) => e.toString()).join(", ");
 
-    if (this.onMatch.columnsToReview) {
+    if (onMatch.columnsToReview) {
       this.formDialog
-        .openFormPopup(newMatchEntity, this.onMatch.columnsToReview)
+        .openFormPopup(newMatchEntity, onMatch.columnsToReview)
         .afterClosed()
         .subscribe((result) => {
           if (result instanceof newMatchEntity.getConstructor()) {
@@ -358,42 +389,35 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   private resetMatchingSelection() {
-    this.lockedMatching = false;
+    this.lockedMatching.set(false);
 
-    for (const side of this.sideDetails) {
+    for (const side of this.sideDetails()) {
       if (!side.availableEntities) {
         continue;
       }
 
-      side.selected?.forEach((selectedEntity) =>
-        this.highlightSelectedRow(selectedEntity, true),
-      );
-      side.selected = [];
-      side.highlightedSelected = null;
+      side
+        .selected()
+        .forEach((selectedEntity) =>
+          this.highlightSelectedRow(selectedEntity, true),
+        );
+      side.selected.set([]);
+      side.highlightedSelected.set(null);
       this.updateDistanceColumn(side);
     }
   }
 
-  applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    side.filterObj = { ...side.prefilter, ...filter };
-    this.filterMapEntities();
+  onDisplayedPropertiesChange(value: LocationProperties) {
+    this.displayedLocationProperties.set(value);
+    this.updateMarkersAndDistances();
   }
 
-  private filterMapEntities() {
-    this.filteredMapEntities = [];
-    this.sideDetails.forEach((side) => {
-      if (side.filterObj) {
-        const predicate = this.filterService.getFilterPredicate(side.filterObj);
-        const filtered = side.availableEntities.filter(predicate);
-        this.filteredMapEntities.push(...filtered);
-      } else {
-        this.filteredMapEntities.push(...(side.availableEntities ?? []));
-      }
-    });
+  applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
+    side.filterObj.set({ ...side.prefilter, ...filter });
   }
 
   entityInMapClicked(entity: Entity) {
-    const side = this.sideDetails.find(
+    const side = this.sideDetails()?.find(
       (s) => s.entityType === entity.getType(),
     );
     if (side) {
@@ -417,14 +441,14 @@ export class MatchingEntitiesComponent implements OnInit {
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
       this.setDistanceValuesForSide(side);
-      const colIndex = this.columns.findIndex((row) => {
+      const colIndex = this.columnsState.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
           ? col === "distance"
           : col?.id === "distance";
       });
       if (colIndex !== -1) {
-        this.columns[colIndex][index] = columnConfig;
+        this.columnsState[colIndex][index] = columnConfig;
       }
     }
   }
@@ -440,7 +464,7 @@ export class MatchingEntitiesComponent implements OnInit {
       dataType: "number",
       additional: {
         coordinatesProperties:
-          this.displayedLocationProperties[side.entityType],
+          this.displayedLocationProperties()[side.entityType],
         compareCoordinates: new BehaviorSubject<Coordinates[]>([]),
       },
     };
@@ -487,14 +511,15 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   updateMarkersAndDistances() {
-    this.sideDetails.forEach((side) => {
-      const sideProperties = this.displayedLocationProperties[side.entityType];
+    this.sideDetails()?.forEach((side) => {
+      const sideProperties =
+        this.displayedLocationProperties()[side.entityType];
       if (side.distanceColumn) {
         side.distanceColumn.coordinatesProperties = sideProperties;
         const lastValue = side.distanceColumn.compareCoordinates.value;
         side.distanceColumn.compareCoordinates.next(lastValue);
       }
-      if (side.highlightedSelected) {
+      if (side.highlightedSelected()) {
         this.updateDistanceColumn(side);
       }
       this.setDistanceValuesForSide(side);
@@ -502,18 +527,65 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   private updateDistanceColumn(side: MatchingSide) {
+    const highlighted = side.highlightedSelected();
     const locationProperties =
-      this.displayedLocationProperties[side.highlightedSelected?.getType()];
-    const otherIndex = this.sideDetails[0] === side ? 1 : 0;
-    const distanceColumn = this.sideDetails[otherIndex].distanceColumn;
+      this.displayedLocationProperties()[highlighted?.getType()];
+    const sides = this.sideDetails();
+    const otherIndex = sides[0] === side ? 1 : 0;
+    const distanceColumn = sides[otherIndex].distanceColumn;
     if (locationProperties && distanceColumn) {
       const coordinates: Coordinates[] = locationProperties.map(
-        (prop) => (side.highlightedSelected[prop] as GeoLocation)?.geoLookup,
+        (prop) => (highlighted[prop] as GeoLocation)?.geoLookup,
       );
       distanceColumn.compareCoordinates.next(coordinates);
     }
-    const distanceSide = this.sideDetails[otherIndex];
+    const distanceSide = sides[otherIndex];
     this.setDistanceValuesForSide(distanceSide);
+  }
+
+  resolvedMatchActionLabel = computed(
+    () =>
+      this.matchActionLabel() ??
+      this.config().matchActionLabel ??
+      $localize`:Matching button label:create matching`,
+  );
+
+  private readonly resolvedLeftSide = computed<MatchingSideConfig>(
+    () => this.leftSide() ?? this.config().leftSide ?? {},
+  );
+
+  private readonly resolvedRightSide = computed<MatchingSideConfig>(
+    () => this.rightSide() ?? this.config().rightSide ?? {},
+  );
+
+  readonly resolvedColumns = computed<[ColumnConfig, ColumnConfig][]>(
+    () => this.columns() ?? this.config().columns ?? [],
+  );
+
+  private readonly resolvedOnMatch = computed<NewMatchAction>(
+    () =>
+      this.onMatch() ??
+      this.config().onMatch ?? {
+        newEntityType: "",
+        newEntityMatchPropertyLeft: "",
+        newEntityMatchPropertyRight: "",
+      },
+  );
+
+  private cloneColumns(
+    columns: [ColumnConfig, ColumnConfig][],
+  ): [ColumnConfig, ColumnConfig][] {
+    return (columns ?? []).map(([left, right]) => [
+      this.cloneColumn(left),
+      this.cloneColumn(right),
+    ]);
+  }
+
+  private cloneColumn(column: ColumnConfig): ColumnConfig {
+    if (typeof column === "string" || !column) {
+      return column;
+    }
+    return { ...column };
   }
 }
 
