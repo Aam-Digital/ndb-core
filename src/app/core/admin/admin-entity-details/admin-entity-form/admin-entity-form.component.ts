@@ -94,7 +94,7 @@ export class AdminEntityFormComponent {
   /**
    * Also update any changes to fields to the global entity type schema.
    */
-  readonly updateEntitySchema = input<boolean>();
+  readonly updateEntitySchema = input<boolean>(true);
 
   /** Whether to only show fields in a compact layout.
    * If false, the full admin layout with section headers and drag&drop areas is shown.
@@ -251,7 +251,7 @@ export class AdminEntityFormComponent {
       data: {
         entitySchemaField: entitySchemaField,
         entityType: this.entityType(),
-        overwriteLocally: this.updateEntitySchema?.() === false,
+        overwriteLocally: this.updateEntitySchema() === false,
       } as AdminEntityFieldData,
     });
 
@@ -344,7 +344,7 @@ export class AdminEntityFormComponent {
     }
 
     if (
-      this.updateEntitySchema?.() === false ||
+      this.updateEntitySchema() === false ||
       configDetails.viewComponent === "DisplayDescriptionOnly"
     ) {
       this.applySchemaOverride(
@@ -402,7 +402,7 @@ export class AdminEntityFormComponent {
 
     const newFieldId = newField.id;
 
-    if (this.updateEntitySchema?.()) {
+    if (this.updateEntitySchema()) {
       this.adminEntityService.updateSchemaField(
         this.entityType(),
         newField.id,
