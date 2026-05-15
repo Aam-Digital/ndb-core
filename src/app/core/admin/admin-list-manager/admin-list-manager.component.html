@@ -52,13 +52,13 @@
   </div>
 </div>
 
-@if (availableItems.length > 0) {
+@if (availableItems().length > 0) {
   <div class="table-content-preview">
     <span>{{ fieldLabel() }}</span>
     <app-entity-fields-menu
       class="full-width-field"
       [entityType]="entityType()"
-      [availableFields]="availableItems"
+      [availableFields]="availableItems()"
       [activeFields]="itemsAsStrings"
       (activeFieldsChange)="updateItems($event)"
     ></app-entity-fields-menu>

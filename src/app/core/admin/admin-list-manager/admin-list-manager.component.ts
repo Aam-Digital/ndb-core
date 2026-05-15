@@ -11,18 +11,17 @@ import {
 import {
   Component,
   input,
-  effect,
+  computed,
   inject,
-  OnDestroy,
   ChangeDetectionStrategy,
   output,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 import { AdminEntityService } from "../admin-entity.service";
-import { Subscription } from "rxjs";
 
 /**
  * Component for Admin UI to edit table columns or fields in other contexts like filters.
@@ -42,9 +41,10 @@ import { Subscription } from "rxjs";
   templateUrl: "./admin-list-manager.component.html",
   styleUrl: "./admin-list-manager.component.scss",
 })
-export class AdminListManagerComponent implements OnDestroy {
+export class AdminListManagerComponent {
   private readonly adminEntityService = inject(AdminEntityService);
-  private schemaUpdateSubscription: Subscription;
+  private schemaUpdated = toSignal(this.adminEntityService.entitySchemaUpdated);
+
   items = input<ColumnConfig[]>([]);
   entityType = input<EntityConstructor>();
   fieldLabel = input<string>(undefined);
@@ -59,41 +59,20 @@ export class AdminListManagerComponent implements OnDestroy {
   /** emits changes to the selected fields only as field IDs (custom field configs are mapped to their ID only) */
   idsChange = output<string[]>();
 
-  availableItems: ColumnConfig[] = [];
-
-  constructor() {
-    effect(() => {
-      this.entityType();
-      this.activeFields();
-      this.additionalFields();
-      this.loadAvailableItems();
-
-      this.schemaUpdateSubscription?.unsubscribe();
-      // Subscribe to schema updates to refresh available items when fields are added/modified
-      this.schemaUpdateSubscription =
-        this.adminEntityService.entitySchemaUpdated.subscribe(() => {
-          this.loadAvailableItems();
-        });
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.schemaUpdateSubscription?.unsubscribe();
-  }
-
-  private loadAvailableItems(): void {
-    if (!this.entityType()) return;
+  availableItems = computed(() => {
+    this.schemaUpdated(); // track schema updates
+    if (!this.entityType()) return [];
     const targetEntitySchemaFields = Array.from(
       this.entityType().schema.keys(),
     );
-    this.availableItems = Array.from(
+    return Array.from(
       new Set([
         ...(this.activeFields() ?? []),
         ...targetEntitySchemaFields,
         ...(this.additionalFields() ?? []),
       ]),
     );
-  }
+  });
 
   drop(event: CdkDragDrop<ColumnConfig[]>) {
     const newItems = [...(this.items() ?? [])];
