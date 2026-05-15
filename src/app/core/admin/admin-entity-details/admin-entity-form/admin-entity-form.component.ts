@@ -114,8 +114,8 @@ export class AdminEntityFormComponent {
    * `availableFields` and `connectedGroups` derive from this signal,
    * so all structural changes automatically propagate.
    */
-  fieldGroups = linkedSignal<FieldGroup[]>(
-    () => this.config()?.fieldGroups ?? [],
+  fieldGroups = linkedSignal<FieldGroup[]>(() =>
+    structuredClone(this.config()?.fieldGroups ?? []),
   );
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
@@ -160,7 +160,10 @@ export class AdminEntityFormComponent {
     effect(() => {
       const current = this.fieldGroups();
       const config = this.config();
-      if (config && current !== config.fieldGroups) {
+      if (
+        config &&
+        JSON.stringify(current) !== JSON.stringify(config.fieldGroups)
+      ) {
         this.configChange.emit({ ...config, fieldGroups: current });
       }
     });
@@ -308,12 +311,12 @@ export class AdminEntityFormComponent {
       );
     }
 
-    this.fieldGroups.update((g) => [...g]); // notify signal of in-place array mutations
+    this.fieldGroups.update((g) => [...g]);
   }
 
   dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
     moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
-    this.fieldGroups.update((g) => [...g]); // notify signal of in-place mutation
+    this.fieldGroups.update((g) => [...g]);
   }
 
   /**
@@ -453,9 +456,13 @@ export class AdminEntityFormComponent {
     this.fieldGroups.update((g) => [...g]);
 
     // the schema update has added the new Text field to the available fields already, remove it from there
-    const updatedFields = [...this.availableFields()];
-    updatedFields.splice(updatedFields.indexOf(newTextField), 1);
-    this.availableFields.set(updatedFields);
+    this.availableFields.update((fields) =>
+      fields.filter((f) =>
+        typeof f === "string"
+          ? f !== newTextField.id
+          : f.id !== newTextField.id,
+      ),
+    );
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {

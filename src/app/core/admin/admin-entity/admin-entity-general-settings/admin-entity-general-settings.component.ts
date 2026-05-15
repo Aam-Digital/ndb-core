@@ -106,8 +106,6 @@ export class AdminEntityGeneralSettingsComponent {
   );
 
   toStringAttributesOptions = computed<SimpleDropdownValue[]>(() => {
-    if (!this.generalSettings().toStringAttributes) return [];
-
     const selectedKeys = this.selectedStringAttributes();
     const allSchemaOptions = Array.from(
       this.entityConstructor().schema.entries(),
