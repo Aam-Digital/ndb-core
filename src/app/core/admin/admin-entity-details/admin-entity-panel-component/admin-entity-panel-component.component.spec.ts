@@ -14,6 +14,7 @@ describe("AdminEntityPanelComponentComponent", () => {
     mockEntityRelationsService = {
       getEntityTypesReferencingType: vi
         .fn()
+        .mockReturnValue([])
         .mockName("EntityRelationsService.getEntityTypesReferencingType"),
     };
     await TestBed.configureTestingModule({
@@ -30,9 +31,11 @@ describe("AdminEntityPanelComponentComponent", () => {
     fixture = TestBed.createComponent(AdminEntityPanelComponentComponent);
     component = fixture.componentInstance;
 
-    component.config = {
+    fixture.componentRef.setInput("config", {
       component: "SomeComponent",
-    };
+    } as any);
+
+    fixture.componentRef.setInput("entityType", { ENTITY_TYPE: "Note" } as any);
 
     fixture.detectChanges();
   });
@@ -42,18 +45,18 @@ describe("AdminEntityPanelComponentComponent", () => {
   });
 
   it("should handle undefined columns when creating new related entity section", () => {
-    component.config = {
+    fixture.componentRef.setInput("config", {
       component: "RelatedEntities",
       config: {
         entityType: "Note",
       },
-    };
+    } as any);
 
     const activeFields = ["subject", "note"];
 
     expect(() => component.updateFields(activeFields)).not.toThrow();
 
-    expect(component.config.config.columns).toEqual([
+    expect(component.config().config.columns).toEqual([
       { id: "subject" },
       { id: "note" },
     ]);

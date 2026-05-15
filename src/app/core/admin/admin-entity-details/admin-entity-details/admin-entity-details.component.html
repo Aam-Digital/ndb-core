@@ -9,15 +9,15 @@
 </app-hint-box>
 
 <app-view-title [disableBackButton]="true" [displayInPlace]="true">
-  &lt;Name of displayed {{ this.entityConstructor?.label }}&gt;
+  &lt;Name of displayed {{ entityConstructor()?.label }}&gt;
 </app-view-title>
 
-<app-admin-tabs [tabs]="config?.panels" [newTabFactory]="newPanelFactory">
-  <ng-template
-    [appAdminTabTemplate]="config?.panels"
-    let-item
-    let-tabIndex="index"
-  >
+<app-admin-tabs
+  [tabs]="panels()"
+  (tabsChange)="panels.set($event)"
+  [newTabFactory]="newPanelFactory"
+>
+  <ng-template [appAdminTabTemplate]="panels()" let-item let-tabIndex="index">
     <div class="flex-column gap-large padding-top-large">
       <mat-accordion
         cdkDropList
@@ -46,7 +46,7 @@
                 <div class="section-header-content">
                   <app-admin-section-header
                     [(title)]="componentConfig.title"
-                    (remove)="item.components.splice(i, 1)"
+                    (remove)="removeComponent(item, i)"
                     (keydown)="$event.stopPropagation()"
                   ></app-admin-section-header>
                 </div>
@@ -57,14 +57,14 @@
                 <app-admin-entity-form
                   [config]="componentConfig.config"
                   (configChange)="componentConfig.config = $event"
-                  [entityType]="entityConstructor"
+                  [entityType]="entityConstructor()"
                   uniqueAreaId="{{ tabIndex }}-{{ i }}"
                 >
                 </app-admin-entity-form>
               } @else {
                 <app-admin-entity-panel-component
                   [config]="componentConfig"
-                  [entityType]="entityConstructor"
+                  [entityType]="entityConstructor()"
                   (relatedEntityModified)="relatedEntityModified.emit($event)"
                 ></app-admin-entity-panel-component>
               }

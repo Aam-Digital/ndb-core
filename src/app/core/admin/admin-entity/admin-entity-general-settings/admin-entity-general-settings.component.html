@@ -3,7 +3,7 @@
   the record is displayed, including lists, forms and other views.
 </app-hint-box>
 
-<h2 i18n>General Settings of "{{ entityConstructor.label }}" Records</h2>
+<h2 i18n>General Settings of "{{ entityConstructor().label }}" Records</h2>
 
 <form [formGroup]="basicSettingsForm">
   <mat-tab-group>
@@ -36,7 +36,7 @@
 
           <app-conditional-color-config
             formControlName="color"
-            [entityConstructor]="entityConstructor"
+            [entityConstructor]="entityConstructor()"
             [(isConditionalMode)]="isConditionalColor"
           ></app-conditional-color-config>
 
@@ -65,7 +65,7 @@
             <app-basic-autocomplete
               formControlName="toStringAttributes"
               #formDataType
-              [options]="toStringAttributesOptions"
+              [options]="toStringAttributesOptions()"
               [optionToString]="objectToLabel"
               [valueMapper]="objectToValue"
               [multi]="true"
@@ -105,7 +105,7 @@
               </mat-label>
               <app-entity-field-select
                 formControlName="title"
-                [entityType]="entityConstructor"
+                [entityType]="entityConstructor()"
                 [hideOption]="hideNonTextFields"
               ></app-entity-field-select>
             </mat-form-field>
@@ -125,7 +125,7 @@
               </mat-label>
               <app-entity-field-select
                 formControlName="fields"
-                [entityType]="entityConstructor"
+                [entityType]="entityConstructor()"
                 [multi]="true"
                 [hideOption]="hideNonTextFields"
               ></app-entity-field-select>
@@ -141,7 +141,7 @@
                 <fa-icon
                   icon="question-circle"
                   [matTooltip]="
-                    hasImageFields
+                    hasImageFields()
                       ? 'Optional: Select an image field to display a photo in the tooltip. Only fields that contain images (like profile photos) can be selected here.'
                       : 'No image fields are available for this record type.'
                   "
@@ -150,11 +150,11 @@
               </mat-label>
               <app-entity-field-select
                 formControlName="image"
-                [entityType]="entityConstructor"
+                [entityType]="entityConstructor()"
                 [hideOption]="showOnlyImageFields"
                 placeholder=""
               ></app-entity-field-select>
-              @if (!hasImageFields) {
+              @if (!hasImageFields()) {
                 <mat-hint i18n>
                   This record type has no image fields. Add fields with dataType
                   'file' or 'photo' to enable this option.
@@ -186,7 +186,7 @@
       <div class="margin-top-regular overflow-table">
         <div class="flex-row align-center">
           <mat-checkbox
-            [checked]="showPIIDetails"
+            [checked]="showPIIDetails()"
             (change)="toggleAnonymizationTable($event)"
             i18n
             >Has personal information (PII)</mat-checkbox
@@ -197,7 +197,7 @@
           ></app-help-button>
         </div>
 
-        @if (showPIIDetails) {
+        @if (showPIIDetails()) {
           <div>
             <p i18n>
               Configure how records of this type can be anonymized. Users can
@@ -208,7 +208,7 @@
               which fields have to be removed because they contain personal
               details.
             </p>
-            <mat-table [dataSource]="fieldAnonymizationDataSource">
+            <mat-table [dataSource]="fieldAnonymizationDataSource()">
               <ng-container matColumnDef="label">
                 <mat-cell *matCellDef="let anonymizeData">
                   {{ anonymizeData.label }}

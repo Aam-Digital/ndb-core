@@ -1,17 +1,17 @@
-<div class="overall-container flex-row" [class.disabled]="isDisabled">
+<div class="overall-container flex-row" [class.disabled]="isDisabled()">
   <!-- FORM PREVIEW -->
   <div
     cdkDropList
-    (cdkDropListDropped)="dropfieldGroups($event, config.fieldGroups)"
+    (cdkDropListDropped)="dropfieldGroups($event, fieldGroups())"
     cdkDropListOrientation="mixed"
     class="flex-grow padding-right-regular drop-list"
-    [class.admin-grid-layout]="!fieldsOnlyMode"
-    [class.fieldsOnlyMode]="fieldsOnlyMode"
+    [class.admin-grid-layout]="!fieldsOnlyMode()"
+    [class.fieldsOnlyMode]="fieldsOnlyMode()"
   >
     <!-- FIELD GROUPS -->
-    @for (group of config.fieldGroups; track group; let i = $index) {
+    @for (group of fieldGroups(); track group; let i = $index) {
       <div class="entity-form-cell admin-form-column section-container" cdkDrag>
-        @if (!fieldsOnlyMode) {
+        @if (!fieldsOnlyMode()) {
           <div class="flex-row align-center">
             <fa-icon
               icon="grip-vertical"
@@ -22,18 +22,18 @@
             <app-admin-section-header
               class="flex-grow"
               [title]="group.header"
-              (titleChange)="group.header = $event; emitUpdatedConfig()"
+              (titleChange)="updateGroupHeader(i, $event)"
               (remove)="removeGroup(i)"
             ></app-admin-section-header>
           </div>
         }
         <div
           cdkDropList
-          [id]="uniqueAreaId + '-group' + i"
+          [id]="uniqueAreaId() + '-group' + i"
           [cdkDropListData]="group.fields"
           (cdkDropListDropped)="drop($event)"
-          [cdkDropListConnectedTo]="getConnectedGroups()"
-          [cdkDropListDisabled]="isDisabled"
+          [cdkDropListConnectedTo]="connectedGroups()"
+          [cdkDropListDisabled]="isDisabled()"
           cdkDropListOrientation="mixed"
           class="fields-group-list drop-list"
         >
@@ -85,12 +85,12 @@
     }
 
     <!-- DROP AREA: NEW FIELD GROUP -->
-    @if (!fieldsOnlyMode) {
+    @if (!fieldsOnlyMode()) {
       <div class="entity-form-cell admin-form-column">
         <div
-          [id]="'newGroupDropArea-' + uniqueAreaId"
+          [id]="'newGroupDropArea-' + uniqueAreaId()"
           cdkDropList
-          [cdkDropListConnectedTo]="getConnectedGroups()"
+          [cdkDropListConnectedTo]="connectedGroups()"
           (cdkDropListDropped)="dropNewGroup($event)"
           class="fields-group-list drop-list drop-area-hint"
         >
@@ -114,7 +114,7 @@
         cdkDropList
         (cdkDropListDropped)="drop($event)"
         [cdkDropListData]="filteredFields()"
-        [cdkDropListConnectedTo]="getConnectedGroups()"
+        [cdkDropListConnectedTo]="connectedGroups()"
         class="drop-list"
       >
         <div class="drop-area-hint">
@@ -171,7 +171,7 @@
             <div>
               <app-entity-field-label
                 [field]="field"
-                [entityType]="entityType"
+                [entityType]="entityType()"
               ></app-entity-field-label>
               @if (
                 field !== createNewFieldPlaceholder &&

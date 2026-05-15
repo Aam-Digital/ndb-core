@@ -70,6 +70,7 @@ describe("AdminMenuItemDetailsComponent", () => {
 
   it("should allow saving without a link when noLinkMode is active", () => {
     component.item = { label: "Section", icon: "folder" } as MenuItem;
+    fixture.detectChanges();
     (
       component as unknown as {
         menuItemForm: { isNoLinkModeEnabled: () => boolean };
@@ -87,6 +88,7 @@ describe("AdminMenuItemDetailsComponent", () => {
 
   it("should not save and should show validation error when noLinkMode is inactive and link is empty", () => {
     component.item = { label: "Section", icon: "folder" } as MenuItem;
+    fixture.detectChanges();
     (
       component as unknown as {
         menuItemForm: { isNoLinkModeEnabled: () => boolean };
