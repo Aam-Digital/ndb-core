@@ -6,7 +6,7 @@
         mat-raised-button
         color="primary"
         (click)="saveSettings()"
-        [disabled]="!unsavedChanges.pending"
+        [disabled]="!unsavedChanges.pending()"
         i18n
       >
         Save

@@ -29,7 +29,7 @@ describe("UnsavedChangesService", () => {
     await expect(service.checkUnsavedChanges()).resolves.toEqual(true);
     expect(mockConfirmation.getDiscardConfirmation).not.toHaveBeenCalled();
 
-    service.pending = true;
+    service.pending.set(true);
 
     await expect(service.checkUnsavedChanges()).resolves.toEqual(false);
     expect(mockConfirmation.getDiscardConfirmation).toHaveBeenCalled();
@@ -42,13 +42,13 @@ describe("UnsavedChangesService", () => {
   it("should prevent closing the window if changes are pending", () => {
     const e = { preventDefault: vi.fn(), returnValue: undefined };
 
-    service.pending = false;
+    service.pending.set(false);
     window.onbeforeunload(e as any);
 
     expect(e.preventDefault).not.toHaveBeenCalled();
     expect(e.returnValue).toBeUndefined();
 
-    service.pending = true;
+    service.pending.set(true);
     window.onbeforeunload(e as any);
 
     expect(e.preventDefault).toHaveBeenCalled();

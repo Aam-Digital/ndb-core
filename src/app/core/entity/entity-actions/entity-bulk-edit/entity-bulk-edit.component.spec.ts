@@ -13,6 +13,7 @@ import {
 import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import type { Mock } from "vitest";
 import { Subject } from "rxjs";
+import { signal, WritableSignal } from "@angular/core";
 
 type DialogRefMock = {
   beforeClosed: Mock;
@@ -29,7 +30,7 @@ describe("EntityBulkEditComponent", () => {
   let fixture: ComponentFixture<EntityBulkEditComponent<any>>;
   let mockDialogRef: DialogRefMock;
   let mockEntityFormService: EntityFormServiceMock;
-  let mockUnsavedChanges: { pending: boolean };
+  let mockUnsavedChanges: { pending: WritableSignal<boolean> };
   let beforeClosed$: Subject<unknown>;
 
   const mockEntityConstructor = {
@@ -59,7 +60,7 @@ describe("EntityBulkEditComponent", () => {
         .fn()
         .mockName("EntityFormService.extendFormFieldConfig"),
     };
-    mockUnsavedChanges = { pending: false };
+    mockUnsavedChanges = { pending: signal(false) };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -114,10 +115,10 @@ describe("EntityBulkEditComponent", () => {
   });
 
   it("should reset unsaved changes to previous state when dialog closes without save", () => {
-    mockUnsavedChanges.pending = true;
+    mockUnsavedChanges.pending.set(true);
 
     beforeClosed$.next(undefined);
 
-    expect(mockUnsavedChanges.pending).toBe(false);
+    expect(mockUnsavedChanges.pending()).toBe(false);
   });
 });

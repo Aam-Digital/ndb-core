@@ -22,6 +22,7 @@ import {
   entityRegistry,
 } from "#src/app/core/entity/database-entity.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { signal } from "@angular/core";
 
 const PRESENT = {
   id: "PRESENT",
@@ -104,7 +105,10 @@ describe("RollCallComponent", () => {
               .mockName("ConfirmationDialogService.getDiscardConfirmation"),
           },
         },
-        { provide: UnsavedChangesService, useValue: { pending: false } },
+        {
+          provide: UnsavedChangesService,
+          useValue: { pending: signal(false) },
+        },
         {
           provide: AttendanceService,
           useValue: {

@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
@@ -16,12 +16,12 @@ export class UnsavedChangesService {
    * Set to true if the user has pending changes that are not yet saved.
    * Set to false once the changes have been saved or discarded.
    */
-  pending = false;
+  pending = signal(false);
 
   constructor() {
     // prevent browser navigation if changes are pending
     window.onbeforeunload = (e) => {
-      if (this.pending) {
+      if (this.pending()) {
         e.preventDefault();
         e.returnValue = "onbeforeunload";
       }
@@ -32,10 +32,10 @@ export class UnsavedChangesService {
    * Shows a user confirmation popup if there are unsaved changes which will be discarded.
    */
   async checkUnsavedChanges() {
-    if (this.pending) {
+    if (this.pending()) {
       const confirmed = await this.confirmation.getDiscardConfirmation();
       if (confirmed) {
-        this.pending = false;
+        this.pending.set(false);
         return true;
       } else {
         return false;

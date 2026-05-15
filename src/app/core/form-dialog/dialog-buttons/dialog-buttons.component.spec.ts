@@ -151,10 +151,10 @@ describe("DialogButtonsComponent", () => {
 
   it("should reset pending changes when dialog is closed", () => {
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
-    unsavedChanges.pending = true;
+    unsavedChanges.pending.set(true);
 
     closed.next();
 
-    expect(unsavedChanges.pending).toBe(false);
+    expect(unsavedChanges.pending()).toBe(false);
   });
 });

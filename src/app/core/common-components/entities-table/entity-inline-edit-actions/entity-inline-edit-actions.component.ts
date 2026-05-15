@@ -80,6 +80,6 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
    */
   resetChanges() {
     delete this.row().formGroup;
-    this.unsavedChanges.pending = false;
+    this.unsavedChanges.pending.set(false);
   }
 }

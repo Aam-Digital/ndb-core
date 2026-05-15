@@ -188,7 +188,7 @@ export class NotificationSettingsComponent implements OnInit {
     }
     config.notificationRules = [...config.notificationRules, newRule];
     this.notificationConfig.set(config);
-    this.unsavedChanges.pending = true;
+    this.unsavedChanges.pending.set(true);
   }
 
   updateNotificationRule(
@@ -196,12 +196,12 @@ export class NotificationSettingsComponent implements OnInit {
     updatedRule: NotificationRule,
   ) {
     Object.assign(notificationRule, updatedRule);
-    this.unsavedChanges.pending = true;
+    this.unsavedChanges.pending.set(true);
   }
 
   async saveSettings() {
     await this.saveNotificationConfig(this.notificationConfig());
-    this.unsavedChanges.pending = false;
+    this.unsavedChanges.pending.set(false);
     this.alertService.addInfo($localize`Notification settings saved.`);
   }
 
@@ -217,7 +217,7 @@ export class NotificationSettingsComponent implements OnInit {
       );
       this.notificationConfig.set(config);
       await this.saveNotificationConfig(config);
-      this.unsavedChanges.pending = false;
+      this.unsavedChanges.pending.set(false);
       return true;
     }
     return false;

@@ -84,7 +84,7 @@ export class EntityEditService extends CascadingEntityAction {
       // Use bulk save for performance - progress tracking happens in bulk-operation-state service
       await this.entityMapper.saveAll(newEntities);
 
-      this.unsavedChanges.pending = false;
+      this.unsavedChanges.pending.set(false);
       return {
         success: true,
         originalEntities,

@@ -210,7 +210,7 @@ describe("NotificationSettingComponent", () => {
 
     component.updateNotificationRule(testRule, updatedRule);
 
-    expect(unsavedChanges.pending).toBe(true);
+    expect(unsavedChanges.pending()).toBe(true);
   });
 
   it("should save the config and clear pending flag when saveSettings is called", async () => {
@@ -218,14 +218,14 @@ describe("NotificationSettingComponent", () => {
     component.addNewNotificationRule();
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
-    unsavedChanges.pending = true;
+    unsavedChanges.pending.set(true);
 
     await component.saveSettings();
 
     expect(entityMapper.save).toHaveBeenCalledWith(
       component.notificationConfig(),
     );
-    expect(unsavedChanges.pending).toBe(false);
+    expect(unsavedChanges.pending()).toBe(false);
   });
 
   it("should remove rule when user confirms deletion", async () => {
