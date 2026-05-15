@@ -38,7 +38,6 @@ describe("DialogButtonsComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DialogButtonsComponent);
     component = fixture.componentInstance;
-    component.entity = new Entity();
 
     let mockEntityForm: EntityForm<any> = {
       formGroup: new FormGroup({}),
@@ -48,7 +47,10 @@ describe("DialogButtonsComponent", () => {
       watcher: new Map(),
       inheritedParentValues: new Map(),
     };
-    component.form = mockEntityForm;
+
+    const entity = new Entity();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("form", mockEntityForm);
     fixture.detectChanges();
   });
 
@@ -98,20 +100,22 @@ describe("DialogButtonsComponent", () => {
   });
 
   it("should not disable the form when creating a new entity", () => {
-    expect(component.form.formGroup.disabled).toBeFalsy();
+    expect(component.form().formGroup.disabled).toBeFalsy();
   });
 
   it("should create the details route", () => {
     const child = new TestEntity();
     child._rev = "existing";
-    component.entity = child;
     TestBed.inject(Router).resetConfig([
       { path: "c/test-entity/:id", redirectTo: "/" },
     ]);
 
-    component.ngOnInit();
+    fixture.componentRef.setInput("entity", child);
+    fixture.detectChanges();
 
-    expect(component.detailsRoute).toBe(`/c/test-entity/${child.getId(true)}`);
+    expect(component.detailsRoute()).toBe(
+      `/c/test-entity/${child.getId(true)}`,
+    );
   });
 
   it("should close the dialog if a entity is deleted", async () => {
