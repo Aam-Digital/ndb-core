@@ -12,13 +12,19 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormsService } from "../public-forms.service";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-custom-form-link-button",
   templateUrl: "./custom-form-link-button.component.html",
   standalone: true,
-  imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    FaDynamicIconComponent,
+  ],
 })
 export class CustomFormLinkButtonComponent {
   private entityMapper = inject(EntityMapperService);

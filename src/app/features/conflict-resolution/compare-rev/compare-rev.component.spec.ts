@@ -115,7 +115,7 @@ describe("CompareRevComponent", () => {
 
       expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
       expect(mockDatabase.put).not.toHaveBeenCalled();
-      expect(component.resolution).toBeTruthy();
+      expect(component.resolution()).toBeTruthy();
     } finally {
       vi.useRealTimers();
     }

@@ -7,6 +7,7 @@ import {
   computed,
   linkedSignal,
   resource,
+  effect,
 } from "@angular/core";
 import { diff } from "deep-object-diff";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -69,16 +70,6 @@ export class CompareRevComponent {
       const revDoc = (await this.db.get(doc._id, {
         rev,
       })) as DatabaseDocChange;
-      const isIrrelevantConflictingDoc =
-        this.conflictResolver.shouldDeleteConflictingRevision(doc, revDoc);
-      if (isIrrelevantConflictingDoc) {
-        const success = await this.deleteDoc(revDoc);
-        if (success) {
-          this.resolution.set(
-            $localize`automatically deleted trivial conflict`,
-          );
-        }
-      }
       return revDoc;
     },
   });
@@ -114,6 +105,23 @@ export class CompareRevComponent {
     const dbResolver = inject(DatabaseResolverService);
 
     this.db = dbResolver.getDatabase();
+    // Handle auto-resolution of trivial conflicts after resource loads
+    effect(async () => {
+      const doc = this.doc();
+      const revDoc = this.revDoc();
+      if (!doc || !revDoc) return;
+
+      const isIrrelevantConflictingDoc =
+        this.conflictResolver.shouldDeleteConflictingRevision(doc, revDoc);
+      if (isIrrelevantConflictingDoc) {
+        const success = await this.deleteDoc(revDoc);
+        if (success) {
+          this.resolution.set(
+            $localize`automatically deleted trivial conflict`,
+          );
+        }
+      }
+    });
   }
 
   /**
@@ -211,7 +219,9 @@ export class CompareRevComponent {
     );
     if (confirmed) {
       const successSave = await this.saveDoc(mergedDoc);
-      const successDel = await this.deleteDoc(this.revDoc()!);
+      const conflictingRev = this.revDoc();
+      if (!conflictingRev) return;
+      const successDel = await this.deleteDoc(conflictingRev);
       if (successSave && successDel) {
         if (diffStringToApply === this.diffs()) {
           this.resolution.set($localize`selected conflicting version`);

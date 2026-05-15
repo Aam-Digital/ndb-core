@@ -2,7 +2,10 @@
   <!-- hide while creating new task -->
 } @else if (!formControl.value) {
   <button mat-raised-button color="accent" (click)="completeTodo()">
-    <fa-icon icon="check" class="margin-right-small"></fa-icon>
+    <app-fa-dynamic-icon
+      icon="check"
+      class="margin-right-small"
+    ></app-fa-dynamic-icon>
     <span i18n>Complete Task</span>
   </button>
 } @else {
@@ -18,7 +21,7 @@
       matTooltip="mark as incomplete again"
       i18n-matTooltip="todo uncomplete button tooltip"
     >
-      <fa-icon icon="undo-alt"></fa-icon>
+      <app-fa-dynamic-icon icon="undo-alt"></app-fa-dynamic-icon>
     </button>
   </div>
 }

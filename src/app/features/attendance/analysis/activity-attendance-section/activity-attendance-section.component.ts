@@ -87,7 +87,7 @@ export class ActivityAttendanceSectionComponent {
     const forChild = this.forChild();
     let records: ActivityAttendance[];
     if (this.includeWithoutParticipation() || !forChild) {
-      records = this.allRecords();
+      records = [...this.allRecords()];
     } else {
       records = this.allRecords().filter(
         (r) =>

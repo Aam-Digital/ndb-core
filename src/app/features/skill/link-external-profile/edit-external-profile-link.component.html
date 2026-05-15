@@ -1,10 +1,10 @@
 <div class="margin-bottom-regular flex-column gap-small">
   <!-- Label / Description -->
   <div>
-    <fa-icon
+    <app-fa-dynamic-icon
       icon="person-walking-arrow-right"
       class="standard-icon-with-text"
-    ></fa-icon>
+    ></app-fa-dynamic-icon>
 
     @if (formControl.value) {
       <span
@@ -20,11 +20,11 @@
         }}
       </span>
       @if (externalProfileError()) {
-        <fa-icon
+        <app-fa-dynamic-icon
           icon="exclamation-triangle"
           matTooltip="Could not load external profile."
           i18n-matTooltip
-        ></fa-icon>
+        ></app-fa-dynamic-icon>
       }
     } @else {
       <span

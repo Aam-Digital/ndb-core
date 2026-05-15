@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   computed,
   DestroyRef,
@@ -71,13 +70,18 @@ export class EditAttendanceComponent
   formFieldConfig = input<FormFieldConfig>();
 
   private readonly destroyRef = inject(DestroyRef);
-  private readonly changeDetector = inject(ChangeDetectorRef);
 
   private static readonly COMPACT_BREAKPOINT = 500;
   private resizeObserver: ResizeObserver;
 
   /** Whether the component is rendered in compact (mobile-like) layout based on its own width */
   compact = signal(false);
+
+  /** Signal reflecting the current attendance items from the form control */
+  attendanceItems = signal<AttendanceItem[]>([]);
+
+  /** Signal reflecting whether the form control is currently disabled */
+  isDisabled = signal(false);
 
   /** Internal form control for the entity autocomplete to add new participants */
   addParticipantControl = new FormControl<string>(null);
@@ -181,22 +185,22 @@ export class EditAttendanceComponent
         const currentIds = new Set(
           (items ?? []).map((item) => item.participant),
         );
+        this.attendanceItems.set(items ?? []);
         this.participantFilter.set((e: Entity) => !currentIds.has(e.getId()));
         this.syncStatusControlValues(items ?? []);
-        this.changeDetector.markForCheck();
       });
 
     // Sync enabled/disabled state of per-participant status controls.
     this.formControl.statusChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         const disabled = this.formControl.disabled;
+        this.isDisabled.set(disabled);
         this.statusControls.forEach((ctrl) =>
           disabled
             ? ctrl.disable({ emitEvent: false })
             : ctrl.enable({ emitEvent: false }),
         );
-        this.changeDetector.markForCheck();
       });
   }
 

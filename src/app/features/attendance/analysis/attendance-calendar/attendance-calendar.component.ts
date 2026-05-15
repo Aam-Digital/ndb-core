@@ -8,8 +8,8 @@ import {
   input,
   signal,
   untracked,
-  ViewChild,
   ViewEncapsulation,
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule, FormsModule } from "@angular/forms";
@@ -84,7 +84,7 @@ export class AttendanceCalendarComponent {
   highlightForChild = input<string>();
   activity = input<Entity>();
 
-  @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
+  readonly calendar = viewChild<MatCalendar<Date>>(MatCalendar);
 
   private readonly _recordDates = computed(() =>
     this.records()
@@ -126,8 +126,9 @@ export class AttendanceCalendarComponent {
     // Update calendar's visible month when date range changes
     effect(() => {
       const maxDate = this.maxDate();
-      if (this.calendar) {
-        setTimeout(() => (this.calendar.activeDate = maxDate));
+      const calendar = this.calendar();
+      if (calendar && maxDate) {
+        calendar.activeDate = maxDate;
       }
     });
 
@@ -140,7 +141,7 @@ export class AttendanceCalendarComponent {
           this.ensureParticipantInAttendance(event, childId),
         );
         this.selectedEventAttendance.set(attendance);
-        this.selectedEventAttendanceOriginal = Object.assign({}, attendance);
+        this.selectedEventAttendanceOriginal = attendance.copy();
         this.statusControl.setValue(attendance.status ?? null, {
           emitEvent: false,
         });
@@ -158,7 +159,9 @@ export class AttendanceCalendarComponent {
         if (attendance) {
           const normalizedStatus: AttendanceStatusType =
             (status as AttendanceStatusType) ?? NullAttendanceStatusType;
-          attendance.status = normalizedStatus;
+          const updatedAttendance = attendance.copy();
+          updatedAttendance.status = normalizedStatus;
+          this.selectedEventAttendance.set(updatedAttendance);
           this.save().catch((error) =>
             Logging.warn("Could not save attendance status change", error),
           );
@@ -246,7 +249,7 @@ export class AttendanceCalendarComponent {
       });
     }
 
-    this.calendar?.updateTodaysDate();
+    this.calendar()?.updateTodaysDate();
   }
 
   async save() {
@@ -270,8 +273,9 @@ export class AttendanceCalendarComponent {
   onRemarksChange(remarks: string) {
     const att = this.selectedEventAttendance();
     if (!att) return;
-    att.remarks = remarks; // update the underlying entity data
-    this.selectedEventAttendance.set(Object.assign({}, att) as AttendanceItem);
+    const updatedAttendance = att.copy();
+    updatedAttendance.remarks = remarks;
+    this.selectedEventAttendance.set(updatedAttendance);
   }
 
   createNewEvent() {

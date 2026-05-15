@@ -66,7 +66,7 @@ Use native control flow — **not** structural directives (`*ngIf`, `*ngFor`, `*
 ## Canonical Component Structure
 
 ```typescript
-import { Component, ChangeDetectionStrategy, computed, inject, input, output } from "@angular/core";
+import { Component, ChangeDetectionStrategy, computed, inject, input, output, resource } from "@angular/core";
 
 @Component({
   selector: "app-example",

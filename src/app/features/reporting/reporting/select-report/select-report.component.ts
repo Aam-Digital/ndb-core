@@ -23,6 +23,7 @@ import { ReportEntity } from "../../report-config";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter.component";
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -73,6 +74,7 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
     MatProgressBarModule,
     MatTooltipModule,
     DateRangeFilterComponent,
+    FaDynamicIconComponent,
   ],
 })
 export class SelectReportComponent {

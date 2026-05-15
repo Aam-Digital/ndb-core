@@ -21,6 +21,7 @@ import { Todo } from "../../model/todo";
 import { TodoCompletion } from "../../model/todo-completion";
 import { TodoService } from "../../todo.service";
 import { DisplayTodoCompletionComponent } from "../display-todo-completion/display-todo-completion.component";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("EditTodoCompletion")
 @Component({
@@ -33,6 +34,7 @@ import { DisplayTodoCompletionComponent } from "../display-todo-completion/displ
     FontAwesomeModule,
     DisplayTodoCompletionComponent,
     MatTooltipModule,
+    FaDynamicIconComponent,
   ],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditTodoCompletionComponent },

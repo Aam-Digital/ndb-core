@@ -9,7 +9,7 @@ import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { FormControl } from "@angular/forms";
-import { Entity } from "../../../core/entity/model/entity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { MatDialog } from "@angular/material/dialog";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
@@ -63,7 +63,7 @@ describe("EditPhotoComponent", () => {
       control: formControl,
     } as any;
 
-    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("formFieldConfig", { id: "testProp" });
     component.ngOnInit();
     fixture.detectChanges();

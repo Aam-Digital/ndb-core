@@ -176,7 +176,7 @@ export class MatchingEntitiesComponent implements OnInit {
     if (!routeConf?.leftSide && !routeConf?.rightSide && !routeConf?.columns) {
       return this.globalConfig;
     }
-    return { ...this.globalConfig, ...JSON.parse(JSON.stringify(routeConf)) };
+    return { ...this.globalConfig, ...structuredClone(routeConf) };
   });
 
   private columnsState: [ColumnConfig, ColumnConfig][] = [];

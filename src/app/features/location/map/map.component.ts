@@ -121,7 +121,6 @@ export class MapComponent implements AfterViewInit {
 
       const now = Date.now();
       if (now - this.lastMapClickTimestamp < 400) {
-        this.lastMapClickTimestamp = now;
         return;
       }
 

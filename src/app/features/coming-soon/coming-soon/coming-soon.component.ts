@@ -79,7 +79,9 @@ export class ComingSoonComponent {
     });
 
     effect(() => {
-      this.init(this.featureId());
+      if (this.featureId()) {
+        this.track("visit");
+      }
     });
   }
 

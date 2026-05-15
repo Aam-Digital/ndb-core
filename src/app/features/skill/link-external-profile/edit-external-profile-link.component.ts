@@ -36,6 +36,7 @@ import {
   LinkExternalProfileDialogComponent,
   LinkExternalProfileDialogData,
 } from "./link-external-profile-dialog/link-external-profile-dialog.component";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("EditExternalProfileLink")
 @Component({
@@ -48,6 +49,7 @@ import {
     FormsModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
+    FaDynamicIconComponent,
   ],
   templateUrl: "./edit-external-profile-link.component.html",
   styleUrl: "./edit-external-profile-link.component.scss",

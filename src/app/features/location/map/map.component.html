@@ -2,7 +2,12 @@
   <div id="map" #map>
     <div class="action-elements">
       @if (expandable()) {
-        <button mat-mini-fab (click)="openMapInPopup()">
+        <button
+          mat-mini-fab
+          (click)="openMapInPopup()"
+          aria-label="Open map in popup"
+          i18n-aria-label
+        >
           <app-fa-dynamic-icon
             icon="expand"
             style="color: black"
@@ -10,7 +15,12 @@
         </button>
       }
       @if (showPropertySelection()) {
-        <button mat-mini-fab (click)="openMapPropertiesPopup()">
+        <button
+          mat-mini-fab
+          (click)="openMapPropertiesPopup()"
+          aria-label="Open map properties"
+          i18n-aria-label
+        >
           <app-fa-dynamic-icon
             icon="location-dot"
             style="color: black"
