@@ -2,7 +2,7 @@ import {
   Component,
   effect,
   input,
-  signal,
+  linkedSignal,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -51,12 +51,18 @@ export class ComingSoonComponent {
    * the identifier for the specific feature this page serves as a placeholder for
    */
   featureId = input<string>();
-  private readonly currentFeatureId = signal<string | undefined>(undefined);
+  private readonly currentFeatureId = linkedSignal<string | undefined>(() =>
+    this.featureId(),
+  );
 
   /**
    * whether user has already requested the feature
    */
-  requested = signal(false);
+  requested = linkedSignal<boolean>(
+    () =>
+      !!this.currentFeatureId() &&
+      ComingSoonComponent.featuresRequested.includes(this.currentFeatureId()),
+  );
 
   constructor() {
     const dialogData = inject<{
@@ -82,9 +88,6 @@ export class ComingSoonComponent {
       return;
     }
     this.currentFeatureId.set(newFeatureId);
-    this.requested.set(
-      ComingSoonComponent.featuresRequested.includes(newFeatureId),
-    );
 
     this.track("visit");
   }

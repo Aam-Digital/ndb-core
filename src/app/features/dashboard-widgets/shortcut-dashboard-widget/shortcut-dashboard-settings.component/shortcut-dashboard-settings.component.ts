@@ -1,9 +1,8 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  effect,
   input,
-  signal,
+  linkedSignal,
 } from "@angular/core";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormControl } from "@angular/forms";
@@ -24,16 +23,12 @@ import { MenuItemForAdminUi } from "../../../../core/admin/admin-menu/menu-item-
 export class ShortcutDashboardSettingsComponent implements DynamicFormControlComponent<ShortcutDashboardConfig> {
   formControl = input.required<FormControl<ShortcutDashboardConfig>>();
 
-  menuItems = signal<MenuItemForAdminUi[]>([]);
-
-  constructor() {
-    effect(() => {
-      const shortcuts = this.formControl().value?.shortcuts || [];
-      this.menuItems.set(
-        MenuItemListEditorComponent.fromPlainMenuItems(shortcuts, false),
-      );
-    });
-  }
+  menuItems = linkedSignal<MenuItemForAdminUi[]>(() =>
+    MenuItemListEditorComponent.fromPlainMenuItems(
+      this.formControl().value?.shortcuts ?? [],
+      false,
+    ),
+  );
 
   onMenuItemsChange(updatedItems: MenuItemForAdminUi[]) {
     this.menuItems.set(updatedItems);

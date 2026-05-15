@@ -4,6 +4,7 @@ import {
   input,
   OnInit,
   ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -65,8 +66,8 @@ export class EditLegacyAttendanceComponent
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Note>();
 
-  showAttendance = false;
-  mobile = false;
+  showAttendance = signal(false);
+  mobile = signal(false);
 
   readonly statusFieldConfig: FormFieldConfig = {
     id: "status",
@@ -111,7 +112,7 @@ export class EditLegacyAttendanceComponent
     screenWithObserver
       .platform()
       .pipe(untilDestroyed(this))
-      .subscribe((isDesktop) => (this.mobile = !isDesktop));
+      .subscribe((isDesktop) => this.mobile.set(!isDesktop));
   }
 
   ngOnInit() {
@@ -122,8 +123,8 @@ export class EditLegacyAttendanceComponent
       category.valueChanges
         .pipe(startWith(category.value), untilDestroyed(this))
         .subscribe((val) => {
-          this.showAttendance = !!val?.isMeeting;
-          if (this.showAttendance) {
+          this.showAttendance.set(!!val?.isMeeting);
+          if (this.showAttendance()) {
             let childrenAttendanceForm = new FormControl(
               this.entity()?.copy()?.["childrenAttendance"],
             );

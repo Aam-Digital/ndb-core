@@ -17,9 +17,9 @@
       <mat-form-field class="flex-grow">
         <mat-label i18n>Select Report</mat-label>
         <mat-select
-          [(ngModel)]="selectedReport"
+          [ngModel]="selectedReport()"
           [disabled]="loading()"
-          (ngModelChange)="reportChange()"
+          (ngModelChange)="selectedReport.set($event); reportChange()"
         >
           @for (report of reports(); track report.getId()) {
             <mat-option [value]="report">
@@ -28,9 +28,9 @@
           }
         </mat-select>
       </mat-form-field>
-      @if (isDateRangeReport) {
+      @if (isDateRangeReport()) {
         <app-date-range-filter
-          [filterConfig]="dateRangeFilterConfig"
+          [filterConfig]="dateRangeFilterConfig()"
           (dateRangeChange)="onDateRangeChange($event)"
         ></app-date-range-filter>
       }
@@ -42,8 +42,8 @@
         color="accent"
         class="primary-button"
         [disabled]="
-          !selectedReport ||
-          (isDateRangeReport && !fromDate && !toDate) ||
+          !selectedReport() ||
+          (isDateRangeReport() && !fromDate() && !toDate()) ||
           loading()
         "
         (click)="calculate()"
@@ -51,7 +51,7 @@
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="calculate"
-        [angularticsLabel]="selectedReport?.title"
+        [angularticsLabel]="selectedReport()?.title"
         matTooltip="Please select a report and a date range"
         i18n-matTooltip
         [matTooltipDisabled]="!calculateButton.disabled"
@@ -69,7 +69,7 @@
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="export"
-        [angularticsLabel]="selectedReport?.title"
+        [angularticsLabel]="selectedReport()?.title"
       >
         <fa-icon
           icon="download"

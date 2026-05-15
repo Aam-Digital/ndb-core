@@ -2,10 +2,11 @@ import {
   Component,
   inject,
   ChangeDetectionStrategy,
-  effect,
   input,
-  signal,
+  resource,
 } from "@angular/core";
+import { firstValueFrom } from "rxjs";
+import { map } from "rxjs/operators";
 import { Entity } from "../../../core/entity/model/entity";
 import { FileService } from "../file.service";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -24,36 +25,25 @@ export class DisplayImgComponent {
   defaultIcon = input<string>();
   entity = input<Entity>();
   imgProperty = input<string>();
-  imgSrc = signal<string | undefined>(undefined);
 
-  constructor() {
-    effect((onCleanup) => {
+  imgSrc = resource({
+    params: () => {
       const entity = this.entity();
       const imgProperty = this.imgProperty();
-      this.imgSrc.set(undefined);
-      if (!entity || !imgProperty) {
-        return;
-      }
-
-      const value = entity[imgProperty];
-      if (!value) {
-        return;
-      }
-
-      if (this.isRemoteUrl(value)) {
-        this.imgSrc.set(value);
-        return;
-      }
-
-      const sub = this.fileService
-        .loadFile(entity, imgProperty)
-        .subscribe((res) => {
-          // doesn't work with safeUrl
-          this.imgSrc.set(Object.values(res)[0] as string);
-        });
-      onCleanup(() => sub.unsubscribe());
-    });
-  }
+      const value = entity?.[imgProperty];
+      if (!value) return undefined;
+      return { entity: entity!, imgProperty, value };
+    },
+    loader: async ({ params: { entity, imgProperty, value } }) => {
+      if (this.isRemoteUrl(value)) return value;
+      // doesn't work with safeUrl
+      return firstValueFrom(
+        this.fileService
+          .loadFile(entity, imgProperty)
+          .pipe(map((res) => Object.values(res)[0] as string)),
+      );
+    },
+  });
 
   private isRemoteUrl(value: string): boolean {
     return value.startsWith("https://");

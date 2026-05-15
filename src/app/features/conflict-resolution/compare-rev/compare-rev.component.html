@@ -1,10 +1,10 @@
-@if (!resolution) {
-  <mat-expansion-panel (opened)="loadRev()">
+@if (!resolution()) {
+  <mat-expansion-panel (opened)="onPanelOpen()">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <span
-          [matTooltip]="docString"
-          (mouseover)="docString = stringify(doc())"
+          [matTooltip]="docString()"
+          (mouseover)="docString.set(stringify(doc()))"
           >{{ rev() }}</span
         >
       </mat-panel-title>
@@ -23,12 +23,12 @@
           class="diffText conflicting"
           disabled
         >
-          {{ diffs }}
+          {{ diffs() }}
         </textarea>
         <button
           mat-raised-button
           class="full-width"
-          (click)="resolveByManualEdit(diffs)"
+          (click)="resolveByManualEdit(diffs())"
           i18n
         >
           Choose conflicting version
@@ -40,13 +40,14 @@
           id="customDiff"
           cdkTextareaAutosize
           class="diffText custom"
-          [(ngModel)]="diffsCustom"
+          [ngModel]="diffsCustom()"
+          (ngModelChange)="diffsCustom.set($event)"
         >
         </textarea>
         <button
           mat-raised-button
           class="full-width"
-          (click)="resolveByManualEdit(diffsCustom)"
+          (click)="resolveByManualEdit(diffsCustom())"
           i18n
         >
           Save manually resolved record
@@ -62,12 +63,12 @@
           class="diffText current"
           disabled
         >
-          {{ diffsReverse }}
+          {{ diffsReverse() }}
         </textarea>
         <button
           mat-raised-button
           class="full-width"
-          (click)="resolveByDelete(revDoc)"
+          (click)="resolveByDelete(revDoc())"
           i18n="
             Choose a current version between several conflicting versions of
             database entries
@@ -80,6 +81,6 @@
   </mat-expansion-panel>
 } @else {
   <div>
-    <em>Resolved ({{ resolution }})</em>
+    <em>Resolved ({{ resolution() }})</em>
   </div>
 }

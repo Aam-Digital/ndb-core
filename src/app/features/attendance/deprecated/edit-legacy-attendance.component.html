@@ -1,15 +1,15 @@
 <app-edit-entity
   [formControl]="formControl"
   [formFieldConfig]="formFieldConfig()"
-  [showEntities]="!showAttendance"
+  [showEntities]="!showAttendance()"
 ></app-edit-entity>
 
-@if (showAttendance) {
+@if (showAttendance()) {
   <!-- If feasible, this whole setup should be replaced with a more simple setup that
   automatically adapts to the screen size without having to rely on two different layout techniques for
   small and big screens.
   -->
-  @if (!mobile) {
+  @if (!mobile()) {
     <div>
       <!-- Desktop view: display the information as table -->
       <table class="table">

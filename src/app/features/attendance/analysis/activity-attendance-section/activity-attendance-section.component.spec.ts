@@ -62,33 +62,34 @@ describe("ActivityAttendanceSectionComponent", () => {
   });
 
   it("should init recent records by default", async () => {
-    await component.init();
+    await fixture.whenStable();
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
       expect.any(Date),
     );
-    expect(component.allRecords).toEqual(testRecords);
+    expect(component.records()).toEqual(testRecords);
   });
 
   it("should init all records", async () => {
-    await component.init(true);
+    component.loadAll.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
     );
-    expect(component.allRecords).toEqual(testRecords);
+    expect(component.records()).toEqual(testRecords);
   });
 
-  it("should also display records without participation if toggled", () => {
+  it("should also display records without participation if toggled", async () => {
     const testChildId = "testChild";
     fixture.componentRef.setInput("forChild", testChildId);
 
     const eventParticipatingIn = TestEventEntity.generateEventWithAttendance([
       [testChildId, AttendanceLogicalStatus.PRESENT],
     ]);
-
-    component.allRecords = [
+    const allRecords = [
       ActivityAttendance.create(new Date(), []),
       ActivityAttendance.create(new Date(), [
         TestEventEntity.generateEventWithAttendance([]),
@@ -96,11 +97,15 @@ describe("ActivityAttendanceSectionComponent", () => {
       ActivityAttendance.create(new Date(), [eventParticipatingIn]),
     ];
 
-    component.updateDisplayedRecords(false);
-    expect(component.records).toEqual([component.allRecords[2]]);
+    mockAttendanceService.getActivityAttendances.mockResolvedValue(allRecords);
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    component.updateDisplayedRecords(true);
-    expect(component.records).toEqual(component.allRecords);
+    expect(component.records()).toEqual([allRecords[2]]);
+
+    component.includeWithoutParticipation.set(true);
+    expect(component.records()).toHaveLength(3);
   });
 
   it("should combine all activity attendances to have an all-time overview", async () => {
@@ -141,13 +146,14 @@ describe("ActivityAttendanceSectionComponent", () => {
       middleAttendance,
       latestAttendance,
     ]);
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    await component.init();
-
-    expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
-    expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
+    expect(component.combinedAttendance().periodFrom).toBe(oldestEvent.date);
+    expect(component.combinedAttendance().periodTo).toBe(latestEvent.date);
     expectArrayWithExactContents(
-      component.combinedAttendance.events.map((e) => e.entity),
+      component.combinedAttendance().events.map((e) => e.entity),
       [oldestEvent, someEvent1, someEvent2, latestEvent],
     );
   });

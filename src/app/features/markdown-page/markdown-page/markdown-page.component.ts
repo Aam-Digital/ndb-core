@@ -1,27 +1,10 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import {
   Component,
+  computed,
   inject,
   ChangeDetectionStrategy,
-  effect,
   input,
-  signal,
+  resource,
 } from "@angular/core";
 import { MarkdownPageModule } from "../markdown-page.module";
 import { RouteTarget } from "../../../route-target";
@@ -44,37 +27,22 @@ export class MarkdownPageComponent {
   /** markdown entity content to be displayed */
   markdownEntityId = input<string>();
 
-  markdownContent = signal<string>("");
+  private readonly entityMapper = inject(EntityMapperService);
 
-  private entityMapper = inject(EntityMapperService);
+  readonly markdownContentResource = resource({
+    params: () => this.markdownEntityId(),
+    loader: async ({ params: markdownEntityId }) => {
+      if (!markdownEntityId) return "";
+      const markdownEntity = await this.entityMapper.load(
+        MarkdownContent,
+        markdownEntityId,
+      );
+      return markdownEntity?.content ?? "";
+    },
+  });
 
-  constructor() {
-    effect((onCleanup) => {
-      const markdownEntityId = this.markdownEntityId();
-      if (!markdownEntityId) {
-        this.markdownContent.set("");
-        return;
-      }
-
-      let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
-      });
-      void this.loadEntityContent(markdownEntityId, () => cancelled);
-    });
-  }
-
-  private async loadEntityContent(
-    entityId: string,
-    isCancelled: () => boolean,
-  ): Promise<void> {
-    const markdownEntity = await this.entityMapper.load(
-      MarkdownContent,
-      entityId,
-    );
-    if (isCancelled()) {
-      return;
-    }
-    this.markdownContent.set(markdownEntity?.content ?? "");
-  }
+  /** markdown content string for template use */
+  readonly markdownContent = computed(
+    () => this.markdownContentResource.value() ?? "",
+  );
 }

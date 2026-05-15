@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { CompareRevComponent } from "./compare-rev.component";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { Database } from "../../../core/database/database";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -77,34 +76,38 @@ describe("CompareRevComponent", () => {
   });
 
   it("should load and analyse the given doc revision", async () => {
-    await component.loadRev();
+    component.onPanelOpen();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(mockDatabase.get).toHaveBeenCalledWith(testDoc._id, {
       rev: testConflictDoc._rev,
     });
-    expect(component.revDoc).toBe(testConflictDoc);
-    expect(component.diffs).toBeDefined();
-    expect(component.diffsReverse).toBeDefined();
-    expect(component.diffsCustom).toBeDefined();
+    expect(component.revDoc()).toBe(testConflictDoc);
+    expect(component.diffs()).toBeDefined();
+    expect(component.diffsReverse()).toBeDefined();
+    expect(component.diffsCustom()).toBeDefined();
   });
 
   it("should automatically resolve (delete) trivial conflict", async () => {
     mockDatabase.get.mockReturnValue(Promise.resolve(testConflictDoc));
     mockResolutionService.shouldDeleteConflictingRevision.mockReturnValue(true);
 
-    await component.loadRev();
+    component.onPanelOpen();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(
       mockResolutionService.shouldDeleteConflictingRevision,
     ).toHaveBeenCalled();
     expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
-    expect(component.resolution).toBeTruthy();
+    expect(component.resolution()).toBeTruthy();
   });
 
   it("should resolveByDelete, deleting giving doc", async () => {
     vi.useFakeTimers();
     try {
-      component.loadRev();
+      component.onPanelOpen();
       await vi.advanceTimersByTimeAsync(0);
 
       component.resolveByDelete(testConflictDoc);
@@ -119,19 +122,15 @@ describe("CompareRevComponent", () => {
   });
 
   it("should resolveByManualEdit, saving new version and removing conflict", async () => {
-    vi.useFakeTimers();
-    try {
-      component.loadRev();
-      await vi.advanceTimersByTimeAsync(0);
+    component.onPanelOpen();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-      component.resolveByManualEdit(component.diffsCustom);
-      await vi.advanceTimersByTimeAsync(0);
+    await component.resolveByManualEdit(component.diffsCustom());
+    await fixture.whenStable();
 
-      expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
-      expect(mockDatabase.put).toHaveBeenCalled();
-      expect(component.resolution).toBeTruthy();
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
+    expect(mockDatabase.put).toHaveBeenCalled();
+    expect(component.resolution()).toBeTruthy();
   });
 });

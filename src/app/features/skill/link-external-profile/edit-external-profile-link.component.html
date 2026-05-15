@@ -14,12 +14,12 @@
       >
         Linked to external profile:
         {{
-          externalProfile
-            ? externalProfile.fullName + " (" + externalProfile.email + ")"
+          externalProfile()
+            ? externalProfile().fullName + " (" + externalProfile().email + ")"
             : ""
         }}
       </span>
-      @if (externalProfileError) {
+      @if (externalProfileError()) {
         <fa-icon
           icon="exclamation-triangle"
           matTooltip="Could not load external profile."

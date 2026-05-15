@@ -1,4 +1,4 @@
-@if (!compact) {
+@if (!compact()) {
   <div>
     <!-- Desktop view: display the information as table -->
     <table class="table">
@@ -26,7 +26,7 @@
             <mat-form-field class="margin-small">
               <app-edit-configurable-enum
                 [formControl]="getStatusControl(item.participant)"
-                [formFieldConfig]="statusFieldConfig"
+                [formFieldConfig]="statusFieldConfig()"
               ></app-edit-configurable-enum>
             </mat-form-field>
           </td>
@@ -89,7 +89,7 @@
               <mat-label i18n="Attendance Status field label">Status</mat-label>
               <app-edit-configurable-enum
                 [formControl]="getStatusControl(item.participant)"
-                [formFieldConfig]="statusFieldConfig"
+                [formFieldConfig]="statusFieldConfig()"
               ></app-edit-configurable-enum>
             </mat-form-field>
             <mat-form-field>
@@ -125,7 +125,7 @@
     <mat-label i18n>Add participant</mat-label>
     <app-edit-entity
       [formControl]="addParticipantControl"
-      [formFieldConfig]="participantFieldConfig"
+      [formFieldConfig]="participantFieldConfig()"
       [showEntities]="false"
       [additionalFilter]="participantFilter()"
     ></app-edit-entity>

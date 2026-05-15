@@ -76,12 +76,12 @@ describe("AttendanceCalendarComponent", () => {
     ]);
     fixture.detectChanges();
 
-    expect(moment(component.minDate).isSame(moment("2020-01-01"), "day")).toBe(
-      true,
-    );
-    expect(moment(component.maxDate).isSame(moment("2020-01-31"), "day")).toBe(
-      true,
-    );
+    expect(
+      moment(component.minDate()).isSame(moment("2020-01-01"), "day"),
+    ).toBe(true);
+    expect(
+      moment(component.maxDate()).isSame(moment("2020-01-31"), "day"),
+    ).toBe(true);
   });
 
   it("should correctly compute the average attendance", () => {
@@ -119,9 +119,9 @@ describe("AttendanceCalendarComponent", () => {
 
     component.selectDay(new Date());
 
-    expect(component.selectedEventStats).not.toBeNull();
-    expect(component.selectedEventStats.average).toEqual(0.5);
-    expect(component.selectedEventStats.excludedUnknown).toBe(1);
+    expect(component.selectedEventStats()).not.toBeNull();
+    expect(component.selectedEventStats()!.average).toEqual(0.5);
+    expect(component.selectedEventStats()!.excludedUnknown).toBe(1);
   });
 
   it("should mark day with red triangle when highlighted child has no attendance status for event", () => {
@@ -250,9 +250,9 @@ describe("AttendanceCalendarComponent", () => {
     component.selectDay(testDate);
 
     expect(
-      component.selectedEvent.getAttendanceForParticipant(
-        excludedChild.getId(),
-      ),
+      component
+        .selectedEvent()!
+        .getAttendanceForParticipant(excludedChild.getId()),
     ).toBeDefined();
   });
 });

@@ -36,7 +36,7 @@ describe("DisplayImgComponent", () => {
     fixture.detectChanges();
 
     expect(mockFileService.loadFile).toHaveBeenCalled();
-    expect(component.imgSrc()).toBeDefined();
+    expect(component.imgSrc.value()).toBeDefined();
 
     mockFileService.loadFile.mockClear();
     // without picture
@@ -44,7 +44,7 @@ describe("DisplayImgComponent", () => {
     fixture.detectChanges();
 
     expect(mockFileService.loadFile).not.toHaveBeenCalled();
-    expect(component.imgSrc()).toBeUndefined();
+    expect(component.imgSrc.value()).toBeUndefined();
   });
 
   it("should use remote URL directly without calling FileService", () => {
@@ -55,7 +55,7 @@ describe("DisplayImgComponent", () => {
     fixture.detectChanges();
 
     expect(mockFileService.loadFile).not.toHaveBeenCalled();
-    expect(component.imgSrc()).toBe("https://example.com/logo.png");
+    expect(component.imgSrc.value()).toBe("https://example.com/logo.png");
   });
 
   it("should use FileService for plain filename (not a URL)", () => {

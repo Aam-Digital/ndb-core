@@ -2,15 +2,18 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   DestroyRef,
+  effect,
   inject,
   input,
   OnInit,
   signal,
+  untracked,
   WritableSignal,
 } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -75,19 +78,32 @@ export class EditAttendanceComponent
   private resizeObserver: ResizeObserver;
 
   /** Whether the component is rendered in compact (mobile-like) layout based on its own width */
-  compact = false;
+  compact = signal(false);
 
   /** Internal form control for the entity autocomplete to add new participants */
   addParticipantControl = new FormControl<string>(null);
 
-  /** FormFieldConfig for the internal entity autocomplete */
-  participantFieldConfig: FormFieldConfig;
-
   /** The configurable-enum ID for attendance status options */
-  statusEnumId = ATTENDANCE_STATUS_CONFIG_ID;
+  statusEnumId = computed(
+    () =>
+      this.formFieldConfig()?.additional?.status?.additional ??
+      ATTENDANCE_STATUS_CONFIG_ID,
+  );
 
   /** FormFieldConfig passed to EditConfigurableEnumComponent for status selection */
-  statusFieldConfig: FormFieldConfig;
+  statusFieldConfig = computed<FormFieldConfig>(() => ({
+    id: "status",
+    dataType: "configurable-enum",
+    additional: this.statusEnumId(),
+  }));
+
+  /** FormFieldConfig for the internal entity autocomplete */
+  participantFieldConfig = computed<FormFieldConfig>(() => ({
+    id: "participant",
+    label: $localize`:Placeholder for adding a participant:Select additional participant`,
+    dataType: "entity",
+    additional: this.formFieldConfig()?.additional?.participant?.additional,
+  }));
 
   /** Per-participant FormControls used by EditConfigurableEnumComponent */
   private readonly statusControls = new Map<
@@ -135,56 +151,54 @@ export class EditAttendanceComponent
       const width = entries[0]?.contentRect?.width ?? 0;
       const shouldBeCompact =
         width > 0 && width < EditAttendanceComponent.COMPACT_BREAKPOINT;
-      if (shouldBeCompact !== this.compact) {
-        this.compact = shouldBeCompact;
-        this.changeDetector.detectChanges();
+      if (shouldBeCompact !== this.compact()) {
+        this.compact.set(shouldBeCompact);
       }
     });
     this.resizeObserver.observe(this.elementRef.nativeElement);
 
-    // Allow config to override the status enum ID (via additional.status.additional)
-    const statusConfig = this.formFieldConfig()?.additional?.status;
-    if (statusConfig?.additional) {
-      this.statusEnumId = statusConfig.additional;
-    }
-
-    this.statusFieldConfig = {
-      id: "status",
-      dataType: "configurable-enum",
-      additional: this.statusEnumId,
-    };
-
-    // Build the config for the participant entity autocomplete
-    // from the nested `additional.participant` schema config
-    const participantConfig = this.formFieldConfig()?.additional?.participant;
-    this.participantFieldConfig = {
-      id: "participant",
-      label: $localize`:Placeholder for adding a participant:Select additional participant`,
-      dataType: "entity",
-      additional: participantConfig?.additional,
-    };
-
     // Whenever a new participant is selected in the autocomplete, add them
-    this.addParticipantControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((selectedId) => {
-        if (selectedId) {
-          this.addParticipant(selectedId);
+    const selectedParticipant = toSignal(
+      this.addParticipantControl.valueChanges.pipe(
+        takeUntilDestroyed(this.destroyRef),
+      ),
+      { manualCleanup: true },
+    );
+    effect(() => {
+      const id = selectedParticipant();
+      if (id) {
+        untracked(() => {
+          this.addParticipant(id);
           this.addParticipantControl.setValue(null, { emitEvent: false });
-        }
-      });
+        });
+      }
+    });
 
     // Re-render when the form control value or status changes externally (e.g. loading entity data, switching between view/edit mode)
-    this.formControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((items) => {
-        this.updateParticipantFilter();
-        this.syncStatusControlValues(items ?? []);
+    const attendanceItems = toSignal(
+      this.formControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)),
+      {
+        initialValue: this.formControl.value ?? [],
+        manualCleanup: true,
+      },
+    );
+    effect(() => {
+      const items = attendanceItems() ?? [];
+      untracked(() => {
+        const currentIds = new Set(items.map((item) => item.participant));
+        this.participantFilter.set((e: Entity) => !currentIds.has(e.getId()));
+        this.syncStatusControlValues(items);
         this.changeDetector.markForCheck();
       });
-    this.formControl.statusChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+    });
+
+    const formStatus = toSignal(
+      this.formControl.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)),
+      { manualCleanup: true },
+    );
+    effect(() => {
+      formStatus();
+      untracked(() => {
         const disabled = this.formControl.disabled;
         this.statusControls.forEach((ctrl) =>
           disabled
@@ -193,8 +207,7 @@ export class EditAttendanceComponent
         );
         this.changeDetector.markForCheck();
       });
-
-    this.updateParticipantFilter();
+    });
   }
 
   private syncStatusControlValues(items: AttendanceItem[]) {
@@ -204,13 +217,6 @@ export class EditAttendanceComponent
         ctrl.setValue(item.status, { emitEvent: false });
       }
     }
-  }
-
-  private updateParticipantFilter() {
-    const currentIds = new Set(
-      (this.formControl.value ?? []).map((item) => item.participant),
-    );
-    this.participantFilter.set((e: Entity) => !currentIds.has(e.getId()));
   }
 
   addParticipant(participantId: string) {

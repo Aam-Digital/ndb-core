@@ -3,6 +3,10 @@ import {
   input,
   inject,
   ChangeDetectionStrategy,
+  signal,
+  computed,
+  linkedSignal,
+  resource,
 } from "@angular/core";
 import { diff } from "deep-object-diff";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -45,28 +49,66 @@ export class CompareRevComponent {
   doc = input<DatabaseDocChange>();
 
   /** used in the template for a tooltip displaying the full document */
-  docString: string;
+  docString = signal<string>("");
+
+  /** whether/how this conflict has been resolved */
+  resolution = signal<string | null>(null);
+
+  private readonly db: Database;
+
+  private readonly panelOpened = signal(false);
+
+  private readonly revDocResource = resource({
+    params: () => {
+      if (!this.panelOpened()) return undefined;
+      const doc = this.doc();
+      const rev = this.rev();
+      return doc && rev ? { doc, rev } : undefined;
+    },
+    loader: async ({ params: { doc, rev } }) => {
+      const revDoc = (await this.db.get(doc._id, {
+        rev,
+      })) as DatabaseDocChange;
+      const isIrrelevantConflictingDoc =
+        this.conflictResolver.shouldDeleteConflictingRevision(doc, revDoc);
+      if (isIrrelevantConflictingDoc) {
+        const success = await this.deleteDoc(revDoc);
+        if (success) {
+          this.resolution.set(
+            $localize`automatically deleted trivial conflict`,
+          );
+        }
+      }
+      return revDoc;
+    },
+  });
 
   /** document from the database in the conflicting version */
-  revDoc!: DatabaseDocChange;
+  readonly revDoc = computed(() => this.revDocResource.value() ?? null);
 
   /** changes the conflicting doc has compared to the current doc */
-  diffs: string;
+  readonly diffs = computed(() => {
+    const doc = this.doc();
+    const revDoc = this.revDoc();
+    if (!doc || !revDoc) return "";
+    return this.stringify(diff(doc, revDoc));
+  });
 
-  /** changes the current doc has compared to the conflicting doc.
+  /**
+   * changes the current doc has compared to the conflicting doc.
    *
    * This mirrors `diffs` but shows the things that would be added if the current doc would
    * overwrite the conflicting version instead of the other way round.
    */
-  diffsReverse: string;
+  readonly diffsReverse = computed(() => {
+    const doc = this.doc();
+    const revDoc = this.revDoc();
+    if (!doc || !revDoc) return "";
+    return this.stringify(diff(revDoc, doc));
+  });
 
-  /** the user edited diff that can be applied as an alternative resolution (initialized with same value as `diffs`) */
-  diffsCustom: string;
-
-  /** whether/how this conflict has been resolved */
-  resolution: string | null = null;
-
-  private readonly db: Database;
+  /** the user edited diff that can be applied as an alternative resolution (initialized with same value as `diffsReverse`) */
+  readonly diffsCustom = linkedSignal(() => this.diffsReverse());
 
   constructor() {
     const dbResolver = inject(DatabaseResolverService);
@@ -75,29 +117,10 @@ export class CompareRevComponent {
   }
 
   /**
-   * Load the document version (revision) to be displayed and generate the diffs to be visualized.
+   * Trigger loading of the conflicting revision, called when expansion panel is opened.
    */
-  public async loadRev() {
-    const doc = this.doc();
-    if (!doc) {
-      return;
-    }
-    this.revDoc = await this.db.get(doc._id, { rev: this.rev() });
-    const diffObject = diff(doc, this.revDoc);
-    this.diffs = this.stringify(diffObject);
-
-    const diffReverseObject = diff(this.revDoc, doc);
-    this.diffsReverse = this.stringify(diffReverseObject);
-    this.diffsCustom = this.stringify(diffReverseObject);
-
-    const isIrrelevantConflictingDoc =
-      this.conflictResolver.shouldDeleteConflictingRevision(doc, this.revDoc);
-    if (isIrrelevantConflictingDoc) {
-      const success = await this.deleteDoc(this.revDoc);
-      if (success) {
-        this.resolution = $localize`automatically deleted trivial conflict`;
-      }
-    }
+  onPanelOpen() {
+    this.panelOpened.set(true);
   }
 
   /**
@@ -127,7 +150,7 @@ export class CompareRevComponent {
     if (confirmed) {
       const success = await this.deleteDoc(docToDelete);
       if (success) {
-        this.resolution = $localize`deleted conflicting version`;
+        this.resolution.set($localize`deleted conflicting version`);
       }
     }
   }
@@ -188,12 +211,12 @@ export class CompareRevComponent {
     );
     if (confirmed) {
       const successSave = await this.saveDoc(mergedDoc);
-      const successDel = await this.deleteDoc(this.revDoc);
+      const successDel = await this.deleteDoc(this.revDoc()!);
       if (successSave && successDel) {
-        if (diffStringToApply === this.diffs) {
-          this.resolution = $localize`selected conflicting version`;
+        if (diffStringToApply === this.diffs()) {
+          this.resolution.set($localize`selected conflicting version`);
         } else {
-          this.resolution = $localize`resolved manually`;
+          this.resolution.set($localize`resolved manually`);
         }
       }
     }

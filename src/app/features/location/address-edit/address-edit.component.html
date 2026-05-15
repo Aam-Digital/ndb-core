@@ -23,7 +23,7 @@
         selectedLocation()?.geoLookup?.display_name
       "
       (change)="updateLocationString(manualAddressInput.value)"
-      [disabled]="disabled() || !manualAddressEnabled"
+      [disabled]="disabled() || !manualAddressEnabled()"
       rows="2"
     ></textarea>
 

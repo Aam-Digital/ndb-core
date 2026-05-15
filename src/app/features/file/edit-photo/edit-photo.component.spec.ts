@@ -131,7 +131,7 @@ describe("EditPhotoComponent", () => {
 
       await component.onFileSelected(realFile);
 
-      expect(component.imgPath).toEqual("data:image/png;base64,mocked");
+      expect(component.imgPath()).toEqual("data:image/png;base64,mocked");
     } finally {
       createElementSpy.mockRestore();
       createObjectURLSpy.mockRestore();
@@ -149,15 +149,15 @@ describe("EditPhotoComponent", () => {
 
     component.ngOnInit();
 
-    expect(component.imgPath).toBe("some.path");
+    expect(component.imgPath()).toBe("some.path");
   });
 
   it("should display the default image when clicking delete", () => {
-    component.imgPath = "some.path";
+    component.imgPath.set("some.path");
 
     component.delete();
 
-    expect(component.imgPath).toBe("assets/child.png");
+    expect(component.imgPath()).toBe("assets/child.png");
   });
 
   it("should reset the shown image when pressing cancel", () => {
@@ -165,10 +165,10 @@ describe("EditPhotoComponent", () => {
     component.formControl.setValue("initial.image");
     component.ngOnInit();
 
-    component.imgPath = "new.path";
+    component.imgPath.set("new.path");
     component.formControl.disable();
 
-    expect(component.imgPath).toBe("initial.path");
+    expect(component.imgPath()).toBe("initial.path");
   });
 
   it("should revoke initial image if file is deleted", () => {
@@ -179,11 +179,11 @@ describe("EditPhotoComponent", () => {
     component.delete();
     component.formControl.disable();
 
-    expect(component.imgPath).toBe("assets/child.png");
+    expect(component.imgPath()).toBe("assets/child.png");
   });
 
   it("should open a popup with the image when click on it", () => {
-    component.imgPath = "some.image";
+    component.imgPath.set("some.image");
 
     component.openPopup();
 

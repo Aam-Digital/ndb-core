@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   effect,
   input,
+  linkedSignal,
 } from "@angular/core";
 import { FormsModule, FormControl } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -44,30 +45,15 @@ export interface EntityCountDashboardConfig {
 export class EntityCountDashboardSettingsComponent {
   formControl = input.required<FormControl<EntityCountDashboardConfig>>();
 
-  localConfig: EntityCountDashboardConfig = {
-    entityType: undefined,
-    groupBy: [],
-  };
+  entityType = linkedSignal(() => this.formControl().value?.entityType);
+  groupBy = linkedSignal(() => [...(this.formControl().value?.groupBy ?? [])]);
 
   constructor() {
     effect(() => {
-      const formControl = this.formControl();
-      this.localConfig = {
-        entityType: formControl.value?.entityType,
-        groupBy: [...(formControl.value?.groupBy ?? [])],
-      };
+      this.formControl().setValue({
+        entityType: this.entityType(),
+        groupBy: this.groupBy(),
+      });
     });
-  }
-
-  onEntityTypeChange() {
-    this.emitConfigChange();
-  }
-
-  onGroupByChange() {
-    this.emitConfigChange();
-  }
-
-  private emitConfigChange() {
-    this.formControl().setValue({ ...this.localConfig });
   }
 }

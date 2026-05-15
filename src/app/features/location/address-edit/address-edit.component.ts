@@ -3,6 +3,7 @@ import {
   ElementRef,
   input,
   model,
+  signal,
   viewChild,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -46,19 +47,20 @@ export class AddressEditComponent {
    */
   disabled = input<boolean>(false);
 
-  manualAddressEnabled: boolean;
+  manualAddressEnabled = signal(false);
 
   enableManualAddressEditing() {
-    this.manualAddressEnabled = true;
+    this.manualAddressEnabled.set(true);
     // switch focus only after input has been enabled
     setTimeout(() => this.manualAddressInput()?.nativeElement.focus(), 0);
   }
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation.set(selected);
-    this.manualAddressEnabled =
+    this.manualAddressEnabled.set(
       this.selectedLocation()?.geoLookup?.display_name !==
-      this.selectedLocation()?.locationString;
+        this.selectedLocation()?.locationString,
+    );
   }
 
   clearLocation() {

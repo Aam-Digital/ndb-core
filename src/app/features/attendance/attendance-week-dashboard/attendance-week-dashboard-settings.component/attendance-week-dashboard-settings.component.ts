@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   effect,
   input,
+  linkedSignal,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -27,26 +28,21 @@ export class AttendanceWeekDashboardSettingsComponent {
   formControl =
     input.required<FormControl<AttendanceWeekDashboardSettingsConfig>>();
 
-  localConfig: AttendanceWeekDashboardSettingsConfig = {
-    daysOffset: 0,
-    periodLabel: "",
-    label: "",
-    attendanceStatusType: "",
-  };
+  daysOffset = linkedSignal(() => this.formControl().value?.daysOffset ?? 0);
+  periodLabel = linkedSignal(() => this.formControl().value?.periodLabel ?? "");
+  label = linkedSignal(() => this.formControl().value?.label ?? "");
+  attendanceStatusType = linkedSignal(
+    () => this.formControl().value?.attendanceStatusType ?? "",
+  );
 
   constructor() {
     effect(() => {
-      const formControl = this.formControl();
-      this.localConfig = {
-        daysOffset: formControl.value?.daysOffset ?? 0,
-        periodLabel: formControl.value?.periodLabel ?? "",
-        label: formControl.value?.label ?? "",
-        attendanceStatusType: formControl.value?.attendanceStatusType ?? "",
-      };
+      this.formControl().setValue({
+        daysOffset: this.daysOffset(),
+        periodLabel: this.periodLabel(),
+        label: this.label(),
+        attendanceStatusType: this.attendanceStatusType(),
+      });
     });
-  }
-
-  emitConfigChange() {
-    this.formControl().setValue({ ...this.localConfig });
   }
 }

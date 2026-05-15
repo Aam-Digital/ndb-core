@@ -283,12 +283,20 @@ export class EditNewMatchActionComponent {
    * Auto-selects matchProperty controls when only a single option exists.
    */
   private applySingleOptionDefaults(): void {
-    if (this.matchPropertyLeftOptions.length === 1) {
+    if (
+      this.matchPropertyLeftOptions.length === 1 &&
+      this.form.get("newEntityMatchPropertyLeft")?.value !==
+        this.matchPropertyLeftOptions[0]
+    ) {
       this.form.patchValue({
         newEntityMatchPropertyLeft: this.matchPropertyLeftOptions[0],
       });
     }
-    if (this.matchPropertyRightOptions.length === 1) {
+    if (
+      this.matchPropertyRightOptions.length === 1 &&
+      this.form.get("newEntityMatchPropertyRight")?.value !==
+        this.matchPropertyRightOptions[0]
+    ) {
       this.form.patchValue({
         newEntityMatchPropertyRight: this.matchPropertyRightOptions[0],
       });

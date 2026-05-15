@@ -3,9 +3,10 @@ import {
   ViewEncapsulation,
   inject,
   ChangeDetectionStrategy,
-  effect,
+  computed,
   input,
-  signal,
+  linkedSignal,
+  resource,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceService } from "../../attendance.service";
@@ -41,59 +42,38 @@ export class GroupedChildAttendanceComponent {
 
   entity = input<Entity>();
 
-  loading = signal<boolean>(true);
-  selectedActivity = signal<Entity | undefined>(undefined);
-  activities = signal<Entity[]>([]);
-  archivedActivities = signal<Entity[]>([]);
-
-  constructor() {
-    effect((onCleanup) => {
-      const entity = this.entity();
-      if (!entity) {
-        this.loading.set(false);
-        this.selectedActivity.set(undefined);
-        this.activities.set([]);
-        this.archivedActivities.set([]);
-        return;
-      }
-
-      let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
-      });
-
-      void this.loadActivities(entity, () => cancelled);
-    });
-  }
-
-  private async loadActivities(
-    entity: Entity,
-    isCancelled: () => boolean,
-  ): Promise<void> {
-    this.loading.set(true);
-    try {
-      const allActivities =
-        await this.attendanceService.getActivitiesForParticipant(
-          entity.getId(),
+  protected activitiesResource = resource({
+    params: () => ({ entity: this.entity() }),
+    loader: async ({ params: { entity } }) => {
+      if (!entity) return { active: [], archived: [] };
+      try {
+        const allActivities =
+          await this.attendanceService.getActivitiesForParticipant(
+            entity.getId(),
+          );
+        return {
+          active: allActivities.filter((a) => a.isActive),
+          archived: allActivities.filter((a) => !a.isActive),
+        };
+      } catch (error) {
+        Logging.warn(
+          "Could not load grouped child attendance activities",
+          error,
         );
-      if (isCancelled()) {
-        return;
+        return { active: [], archived: [] };
       }
+    },
+  });
 
-      this.activities.set(allActivities.filter((a) => a.isActive));
-      this.archivedActivities.set(allActivities.filter((a) => !a.isActive));
-    } catch (error) {
-      if (!isCancelled()) {
-        this.activities.set([]);
-        this.archivedActivities.set([]);
-      }
-      Logging.warn("Could not load grouped child attendance activities", error);
-    } finally {
-      if (!isCancelled()) {
-        this.loading.set(false);
-      }
-    }
-  }
+  activities = computed(() => this.activitiesResource.value()?.active ?? []);
+  archivedActivities = computed(
+    () => this.activitiesResource.value()?.archived ?? [],
+  );
+
+  selectedActivity = linkedSignal<Entity | undefined>(() => {
+    this.entity();
+    return undefined;
+  });
 
   onActivityChange(selectedArchivedActivity: Entity) {
     this.selectedActivity.set(selectedArchivedActivity);

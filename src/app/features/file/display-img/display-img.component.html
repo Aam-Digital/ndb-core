@@ -1,7 +1,7 @@
-@if (imgSrc()) {
-  <img [src]="imgSrc()" />
-} @else if (!imgSrc() && defaultImage()) {
+@if (imgSrc.value()) {
+  <img [src]="imgSrc.value()" />
+} @else if (!imgSrc.value() && defaultImage()) {
   <img [src]="defaultImage()" />
-} @else if (!imgSrc() && !defaultImage() && defaultIcon()) {
+} @else if (!imgSrc.value() && !defaultImage() && defaultIcon()) {
   <app-fa-dynamic-icon [icon]="defaultIcon()"></app-fa-dynamic-icon>
 }

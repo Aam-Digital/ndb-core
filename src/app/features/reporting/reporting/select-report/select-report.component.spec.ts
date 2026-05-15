@@ -40,7 +40,7 @@ describe("SelectReportComponent", () => {
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
-    expect(component.selectedReport).toBe(report);
+    expect(component.selectedReport()).toBe(report);
   });
 
   it("should display date range filter when report mode is reporting", () => {
@@ -49,8 +49,8 @@ describe("SelectReportComponent", () => {
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
-    expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBe(true);
+    expect(component.selectedReport()).toBe(report);
+    expect(component.isDateRangeReport()).toBe(true);
   });
 
   it("should display date range filter when sql report supports it", () => {
@@ -60,8 +60,8 @@ describe("SelectReportComponent", () => {
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
-    expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBe(true);
+    expect(component.selectedReport()).toBe(report);
+    expect(component.isDateRangeReport()).toBe(true);
   });
 
   it("should hide date range filter when sql report does not have these args", () => {
@@ -70,8 +70,8 @@ describe("SelectReportComponent", () => {
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
-    expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBe(false);
+    expect(component.selectedReport()).toBe(report);
+    expect(component.isDateRangeReport()).toBe(false);
   });
 
   it("should reset dates before calculation when sql report is not a DateRangeReport", () => {
@@ -79,15 +79,15 @@ describe("SelectReportComponent", () => {
     report.mode = "sql";
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
-    component.fromDate = new Date();
-    component.toDate = new Date();
+    component.fromDate.set(new Date());
+    component.toDate.set(new Date());
 
     component.calculate();
 
-    expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBe(false);
-    expect(component.fromDate).toBeUndefined();
-    expect(component.toDate).toBeUndefined();
+    expect(component.selectedReport()).toBe(report);
+    expect(component.isDateRangeReport()).toBe(false);
+    expect(component.fromDate()).toBeUndefined();
+    expect(component.toDate()).toBeUndefined();
   });
 
   it("should not reset dates before calculation when sql report is a DateRangeReport", () => {
@@ -96,14 +96,14 @@ describe("SelectReportComponent", () => {
     fixture.componentRef.setInput("reports", [report]);
     report.neededArgs = ["from", "to"];
     fixture.detectChanges();
-    component.fromDate = new Date();
-    component.toDate = new Date();
+    component.fromDate.set(new Date());
+    component.toDate.set(new Date());
 
     component.calculate();
 
-    expect(component.selectedReport).toBe(report);
-    expect(component.isDateRangeReport).toBe(true);
-    expect(component.fromDate).toBeDefined();
-    expect(component.toDate).toBeDefined();
+    expect(component.selectedReport()).toBe(report);
+    expect(component.isDateRangeReport()).toBe(true);
+    expect(component.fromDate()).toBeDefined();
+    expect(component.toDate()).toBeDefined();
   });
 });

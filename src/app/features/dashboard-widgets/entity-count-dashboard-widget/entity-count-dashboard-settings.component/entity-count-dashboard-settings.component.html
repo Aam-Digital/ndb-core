@@ -4,8 +4,8 @@
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Select Record Type</mat-label>
       <app-entity-type-select
-        [(ngModel)]="localConfig.entityType"
-        (ngModelChange)="onEntityTypeChange()"
+        [ngModel]="entityType()"
+        (ngModelChange)="entityType.set($event)"
       ></app-entity-type-select>
     </mat-form-field>
     <mat-hint i18n
@@ -26,9 +26,9 @@
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Select Group By Fields</mat-label>
       <app-entity-field-select
-        [entityType]="localConfig.entityType"
-        [(ngModel)]="localConfig.groupBy"
-        (ngModelChange)="onGroupByChange()"
+        [entityType]="entityType()"
+        [ngModel]="groupBy()"
+        (ngModelChange)="groupBy.set($event)"
         [multi]="true"
         [placeholder]="'Select Group By Fields'"
         i18n-placeholder

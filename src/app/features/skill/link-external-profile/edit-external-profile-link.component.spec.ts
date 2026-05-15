@@ -89,7 +89,7 @@ describe("EditExternalProfileLinkComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockDialog.open).toHaveBeenCalled();
-      expect(component.externalProfile).toEqual(mockMatch);
+      expect(component.externalProfile()).toEqual(mockMatch);
       expect(component.formControl.value).toEqual(mockMatch.id);
       expect(component.formControl.dirty).toBe(true);
     } finally {
@@ -173,7 +173,7 @@ describe("EditExternalProfileLinkComponent", () => {
       expect(mockSkillApi.getExternalProfileById).toHaveBeenCalledWith(
         mockProfile.id,
       );
-      expect(component.externalProfile).toEqual(mockProfile);
+      expect(component.externalProfile()).toEqual(mockProfile);
     } finally {
       vi.useRealTimers();
     }
@@ -193,8 +193,8 @@ describe("EditExternalProfileLinkComponent", () => {
       await vi.advanceTimersByTimeAsync(10000);
 
       expect(mockSkillApi.getExternalProfileById).toHaveBeenCalled();
-      expect(component.externalProfile).toBeUndefined();
-      expect(component.externalProfileError).toBe(true);
+      expect(component.externalProfile()).toBeUndefined();
+      expect(component.externalProfileError()).toBe(true);
     } finally {
       vi.useRealTimers();
     }
