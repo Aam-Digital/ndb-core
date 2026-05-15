@@ -1,4 +1,4 @@
-<form class="validator-form-cell flex-column" [formGroup]="validatorForm">
+<form class="validator-form-cell flex-column" [formGroup]="validatorForm()">
   @if (entitySchemaField().dataType === "number") {
     <mat-form-field class="number-field">
       <mat-label i18n>Minimum Value</mat-label>
@@ -10,8 +10,8 @@
     </mat-form-field>
   }
 
-  @if (isDateLikeValidatorType) {
-    @if (isDateWithAgeType) {
+  @if (isDateLikeValidatorType()) {
+    @if (isDateWithAgeType()) {
       <mat-form-field floatLabel="always">
         <mat-label i18n>Minimum Age (Years)</mat-label>
         <input formControlName="minAge" matInput type="number" />
@@ -33,7 +33,7 @@
       </mat-form-field>
     }
 
-    @if (isMonthType) {
+    @if (isMonthType()) {
       <mat-form-field floatLabel="always">
         <mat-label i18n>Minimum Month</mat-label>
         <app-edit-month formControlName="minDate"></app-edit-month>

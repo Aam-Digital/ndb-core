@@ -210,7 +210,7 @@ describe("AdminEntityFormComponent", () => {
       component.dropNewGroup(dropEvent);
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.config().fieldGroups[2]).toEqual({ fields: [field] });
+      expect(component.fieldGroups()[2]).toEqual({ fields: [field] });
     } finally {
       vi.useRealTimers();
     }
@@ -227,9 +227,7 @@ describe("AdminEntityFormComponent", () => {
       component.removeGroup(0);
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.config().fieldGroups).toEqual([
-        { fields: ["category"] },
-      ]);
+      expect(component.fieldGroups()).toEqual([{ fields: ["category"] }]);
       expect(component.availableFields()).toEqual(
         expect.arrayContaining(removedFields),
       );

@@ -7,6 +7,7 @@ import {
   TemplateRef,
   ViewChild,
   computed,
+  effect,
   inject,
   input,
   linkedSignal,
@@ -25,6 +26,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { EntityConstructor } from "../../entity/model/entity";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list.component";
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
@@ -62,11 +64,7 @@ export class AdminEntityComponent {
 
   entityType = input.required<string>();
   entityConstructor = computed(() => this.entities.get(this.entityType()));
-  private readonly originalEntitySchemaFields = computed(() =>
-    JSON.parse(
-      JSON.stringify(Array.from(this.entityConstructor().schema.entries())),
-    ),
-  );
+  private originalEntitySchemaFields: [string, EntitySchemaField][] = [];
 
   /**
    * Track related entity types that have been modified through the panel config dialog.
@@ -92,6 +90,13 @@ export class AdminEntityComponent {
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
   constructor() {
+    // store a copy of the original entity schema immediately (computed signals are lazy)
+    effect(() => {
+      this.originalEntitySchemaFields = JSON.parse(
+        JSON.stringify(Array.from(this.entityConstructor().schema.entries())),
+      );
+    });
+
     this.routes.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
@@ -163,9 +168,7 @@ export class AdminEntityComponent {
   }
 
   cancel() {
-    this.entityConstructor().schema = new Map(
-      this.originalEntitySchemaFields(),
-    );
+    this.entityConstructor().schema = new Map(this.originalEntitySchemaFields);
     this.location.back();
   }
 

@@ -1,10 +1,11 @@
 import {
   Component,
-  ChangeDetectorRef,
+  effect,
   inject,
   input,
   output,
   ChangeDetectionStrategy,
+  linkedSignal,
 } from "@angular/core";
 import {
   EntityDetailsConfig,
@@ -59,10 +60,17 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 })
 export class AdminEntityDetailsComponent {
   private dialog = inject(MatDialog);
-  private readonly cdr = inject(ChangeDetectorRef);
 
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityDetailsConfig>();
+
+  panels = linkedSignal(() => this.config()?.panels ?? []);
+
+  constructor() {
+    effect(() => {
+      this.config().panels = this.panels();
+    });
+  }
 
   /**
    * Event emitted when a related entity's schema has been modified,
@@ -81,11 +89,25 @@ export class AdminEntityDetailsComponent {
       })
       .afterClosed()
       .subscribe((sectionConfig: PanelComponent) => {
-        if (sectionConfig) {
-          panel.components = [...panel.components, sectionConfig];
-          this.cdr.markForCheck();
-        }
+        if (!sectionConfig) return;
+        this.panels.update((panels) =>
+          panels.map((p) =>
+            p === panel
+              ? { ...p, components: [...p.components, sectionConfig] }
+              : p,
+          ),
+        );
       });
+  }
+
+  removeComponent(panel: Panel, index: number) {
+    this.panels.update((panels) =>
+      panels.map((p) =>
+        p === panel
+          ? { ...p, components: p.components.filter((_, i) => i !== index) }
+          : p,
+      ),
+    );
   }
 
   onSectionDrop(panel: Panel, event: CdkDragDrop<PanelComponent[]>) {
@@ -97,6 +119,10 @@ export class AdminEntityDetailsComponent {
       return;
     }
 
-    moveItemInArray(panel.components, event.previousIndex, event.currentIndex);
+    const components = [...panel.components];
+    moveItemInArray(components, event.previousIndex, event.currentIndex);
+    this.panels.update((panels) =>
+      panels.map((p) => (p === panel ? { ...p, components } : p)),
+    );
   }
 }

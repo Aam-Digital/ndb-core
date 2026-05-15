@@ -6,15 +6,14 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
   input,
+  linkedSignal,
   output,
-  signal,
-  WritableSignal,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -105,7 +104,19 @@ export class AdminEntityFormComponent {
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
 
-  availableFields = signal<ColumnConfig[]>([]);
+  availableFields = linkedSignal<ColumnConfig[]>(() =>
+    this.computeAvailableFieldsList(),
+  );
+
+  /**
+   * Writable working copy of the config's fieldGroups.
+   * Derives from the `config` input and can be mutated locally.
+   * `availableFields` and `connectedGroups` derive from this signal,
+   * so all structural changes automatically propagate.
+   */
+  fieldGroups = linkedSignal<FieldGroup[]>(
+    () => this.config()?.fieldGroups ?? [],
+  );
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
     label: $localize`:Label drag and drop item:Create New Field`,
@@ -126,8 +137,6 @@ export class AdminEntityFormComponent {
   );
 
   constructor() {
-    const adminEntityService = inject(AdminEntityService);
-
     effect(() => {
       const config = this.config();
       const entityType = this.entityType();
@@ -139,75 +148,78 @@ export class AdminEntityFormComponent {
       void this.initForm();
     });
 
-    adminEntityService.entitySchemaUpdated
+    this.adminEntityService.entitySchemaUpdated
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.availableFields.set([]); // force re-init of the label components that otherwise do not detect the change
         setTimeout(() => this.initForm());
       });
+
+    // Emit configChange whenever fieldGroups diverges from the input-derived value,
+    // i.e. after user-driven mutations but NOT when the config input resets the signal.
+    effect(() => {
+      const current = this.fieldGroups();
+      const config = this.config();
+      if (config && current !== config.fieldGroups) {
+        this.configChange.emit({ ...config, fieldGroups: current });
+      }
+    });
   }
 
   private async initForm() {
-    this.initAvailableFields();
-
     this.dummyEntity = new (this.entityType() as any)();
     this.dummyForm = await this.entityFormService.createEntityForm(
-      [...this.getUsedFields(this.config()), ...this.availableFields()],
+      [...this.getUsedFields(this.fieldGroups()), ...this.availableFields()],
       this.dummyEntity,
     );
     this.dummyForm.formGroup.disable();
   }
 
-  private getUsedFields(config: FormConfig | null | undefined): ColumnConfig[] {
-    return (config?.fieldGroups ?? []).reduce(
-      (p, c) => p.concat(c.fields ?? []),
-      [],
-    );
+  private getUsedFields(fieldGroups: FieldGroup[]): ColumnConfig[] {
+    return (fieldGroups ?? []).reduce((p, c) => p.concat(c.fields ?? []), []);
   }
 
   /**
-   * Returns a list of group IDs that are connected to the drag&drop area.
-   * This is used to determine which groups are connected to the drag&drop area.
+   * List of group IDs that are connected to the drag&drop area.
    */
-  getConnectedGroups(): string[] {
+  readonly connectedGroups = computed(() => {
     const config = this.config();
+    const areaId = this.uniqueAreaId();
 
     if (!config) {
-      return [`newGroupDropArea-${this.uniqueAreaId()}`];
+      return [`newGroupDropArea-${areaId}`];
     }
 
     return [
-      ...((config.fieldGroups ?? []) as FieldGroup[]).map(
-        (_, groupIndex) => `${this.uniqueAreaId()}-group${groupIndex}`,
+      ...this.fieldGroups().map(
+        (_, groupIndex) => `${areaId}-group${groupIndex}`,
       ),
-      `newGroupDropArea-${this.uniqueAreaId()}`,
+      `newGroupDropArea-${areaId}`,
     ];
-  }
+  });
 
   /**
    * Load any fields from schema that are not already in the form, so that the user can drag them into the form.
-   * @param config
    * @private
    */
-  private initAvailableFields() {
-    const usedFields = this.getUsedFields(this.config()).map((x) =>
+  private computeAvailableFieldsList(): ColumnConfig[] {
+    const entityType = this.entityType();
+    if (!entityType) return [];
+
+    const usedFields = this.getUsedFields(this.fieldGroups()).map((x) =>
       toFormFieldConfig(x),
     );
-    const unusedFields = Array.from(this.entityType().schema.entries())
+    const unusedFields = Array.from(entityType.schema.entries())
       .filter(([key]) => !usedFields.some((x) => x.id === key))
       .filter(([key, value]) => !value.isInternalField && value.label) // no technical, internal fields and must have label
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
 
-    this.availableFields.set([
+    return [
       this.createNewFieldPlaceholder,
       this.createNewTextPlaceholder,
       ...unusedFields,
-    ]);
-  }
-
-  protected emitUpdatedConfig() {
-    this.configChange.emit(this.config());
+    ];
   }
 
   /**
@@ -263,7 +275,6 @@ export class AdminEntityFormComponent {
     );
 
     const result = await lastValueFrom(dialogRef.afterClosed());
-    this.emitUpdatedConfig();
 
     return result;
   }
@@ -289,57 +300,20 @@ export class AdminEntityFormComponent {
     if (event.previousContainer === event.container) {
       moveItemInArray(newFieldsArray, event.previousIndex, event.currentIndex);
     } else {
-      // if transferring from filtered available fields, find the actual field in availableFields and remove it from there
-      if (prevFieldsArray === this.filteredFields()) {
-        const transferredField = prevFieldsArray[event.previousIndex];
-        this.transferArraySignalItem(
-          this.availableFields,
-          newFieldsArray,
-          transferredField,
-          event.currentIndex,
-        );
-      } else {
-        transferArrayItem(
-          prevFieldsArray,
-          newFieldsArray,
-          event.previousIndex,
-          event.currentIndex,
-        );
-      }
+      transferArrayItem(
+        prevFieldsArray,
+        newFieldsArray,
+        event.previousIndex,
+        event.currentIndex,
+      );
     }
 
-    if (newFieldsArray === this.availableFields()) {
-      // ensure available fields have consistent order
-      this.initAvailableFields();
-    }
-
-    this.emitUpdatedConfig();
+    this.fieldGroups.update((g) => [...g]); // notify signal of in-place array mutations
   }
 
   dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
     moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
-
-    this.emitUpdatedConfig();
-  }
-
-  /**
-   * Helper method to transfer an item from a source signal array to a target array
-   */
-  private transferArraySignalItem(
-    sourceSignal: WritableSignal<ColumnConfig[]>,
-    targetArray: ColumnConfig[],
-    transferredField: ColumnConfig,
-    targetIndex: number,
-  ): void {
-    const actualIndex = sourceSignal().findIndex(
-      (field) => field === transferredField,
-    );
-    if (actualIndex !== -1) {
-      sourceSignal.update((fields) =>
-        fields.filter((_, index) => index !== actualIndex),
-      );
-      targetArray.splice(targetIndex, 0, transferredField);
-    }
+    this.fieldGroups.update((g) => [...g]); // notify signal of in-place mutation
   }
 
   /**
@@ -366,7 +340,6 @@ export class AdminEntityFormComponent {
     if (typeof updatedField === "string") {
       this.applySchemaOverride(updatedField, updatedField);
       await this.initForm();
-      this.emitUpdatedConfig();
       return;
     }
 
@@ -386,24 +359,27 @@ export class AdminEntityFormComponent {
         updatedField.id,
         updatedField,
       );
+      this.fieldGroups.update((g) => [...g]); // no structural change, but trigger configChange emit
     }
-    this.emitUpdatedConfig();
   }
 
   private applySchemaOverride(
     fieldId: string,
     updatedField: string | FormFieldConfig,
   ): void {
-    for (const group of this.config().fieldGroups) {
-      const index = group.fields.findIndex((f) =>
-        f instanceof String
-          ? f === fieldId
-          : toFormFieldConfig(f).id === fieldId,
-      );
-      if (index !== -1) {
-        group.fields[index] = updatedField;
-      }
-    }
+    this.fieldGroups.update((groups) =>
+      groups.map((group) => {
+        const index = group.fields.findIndex((f) =>
+          f instanceof String
+            ? f === fieldId
+            : toFormFieldConfig(f).id === fieldId,
+        );
+        if (index === -1) return group;
+        const newFields = [...group.fields];
+        newFields[index] = updatedField;
+        return { ...group, fields: newFields };
+      }),
+    );
   }
 
   /**
@@ -450,8 +426,7 @@ export class AdminEntityFormComponent {
     this.dummyForm.formGroup.addControl(newFieldId, new FormControl());
     this.dummyForm.formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newFieldId);
-
-    this.emitUpdatedConfig();
+    this.fieldGroups.update((g) => [...g]); // notify signal of in-place mutation
   }
 
   /**
@@ -475,35 +450,37 @@ export class AdminEntityFormComponent {
     this.dummyForm.formGroup.addControl(newTextField.id, new FormControl());
     this.dummyForm.formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newTextField);
+    this.fieldGroups.update((g) => [...g]);
 
     // the schema update has added the new Text field to the available fields already, remove it from there
     const updatedFields = [...this.availableFields()];
     updatedFields.splice(updatedFields.indexOf(newTextField), 1);
     this.availableFields.set(updatedFields);
-
-    this.emitUpdatedConfig();
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
-    const newCol = { fields: [] };
-    this.config().fieldGroups.push(newCol);
+    const newCol: FieldGroup = { fields: [] };
+    this.fieldGroups.update((groups) => [...groups, newCol]);
     event.container.data = newCol.fields;
     this.drop(event);
   }
 
   removeGroup(i: number) {
-    this.config().fieldGroups.splice(i, 1);
-    this.initAvailableFields();
-
-    this.emitUpdatedConfig();
+    this.fieldGroups.update((groups) => groups.filter((_, idx) => idx !== i));
   }
 
   hideField(field: ColumnConfig, group: FieldGroup) {
-    const fieldIndex = group.fields.indexOf(field);
-    group.fields.splice(fieldIndex, 1);
-    this.initAvailableFields();
+    this.fieldGroups.update((groups) =>
+      groups.map((g) =>
+        g === group ? { ...g, fields: g.fields.filter((f) => f !== field) } : g,
+      ),
+    );
+  }
 
-    this.emitUpdatedConfig();
+  updateGroupHeader(i: number, header: string) {
+    this.fieldGroups.update((groups) =>
+      groups.map((g, idx) => (idx === i ? { ...g, header } : g)),
+    );
   }
 
   filteredFields = computed(() => {

@@ -12,12 +12,12 @@
   &lt;Name of displayed {{ entityConstructor()?.label }}&gt;
 </app-view-title>
 
-<app-admin-tabs [tabs]="config()?.panels" [newTabFactory]="newPanelFactory">
-  <ng-template
-    [appAdminTabTemplate]="config()?.panels"
-    let-item
-    let-tabIndex="index"
-  >
+<app-admin-tabs
+  [tabs]="panels()"
+  (tabsChange)="panels.set($event)"
+  [newTabFactory]="newPanelFactory"
+>
+  <ng-template [appAdminTabTemplate]="panels()" let-item let-tabIndex="index">
     <div class="flex-column gap-large padding-top-large">
       <mat-accordion
         cdkDropList
@@ -46,7 +46,7 @@
                 <div class="section-header-content">
                   <app-admin-section-header
                     [(title)]="componentConfig.title"
-                    (remove)="item.components.splice(i, 1)"
+                    (remove)="removeComponent(item, i)"
                     (keydown)="$event.stopPropagation()"
                   ></app-admin-section-header>
                 </div>
