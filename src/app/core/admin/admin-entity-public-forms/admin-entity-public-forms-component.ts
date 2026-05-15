@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   input,
-  Signal,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";

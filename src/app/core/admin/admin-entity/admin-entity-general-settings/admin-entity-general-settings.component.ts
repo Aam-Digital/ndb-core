@@ -8,15 +8,15 @@ import {
   computed,
   linkedSignal,
 } from "@angular/core";
-import { EntityConstructor } from "../../../entity/model/entity";
-import { ColorMapping } from "../../../entity/model/entity";
+import { ColorMapping, EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
-  FormControl, FormsModule,
+  FormControl,
+  FormsModule,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from "@angular/forms";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -96,10 +96,10 @@ export class AdminEntityGeneralSettingsComponent {
 
   isConditionalColor = linkedSignal(() => {
     const color = this.generalSettings().color;
-    return Array.isArray(color) && (color as ColorMapping[]).length > 0;
+    return Array.isArray(color) && color.length > 0;
   });
 
-  private selectedStringAttributes = linkedSignal<string[]>(
+  private readonly selectedStringAttributes = linkedSignal<string[]>(
     () => this.generalSettings().toStringAttributes ?? [],
   );
 

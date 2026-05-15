@@ -13,7 +13,14 @@
     >
       Save
     </button>
-    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+    <button
+      mat-stroked-button
+      (click)="cancel()"
+      [disabled]="!hasChanges()"
+      i18n
+    >
+      Cancel
+    </button>
   </div>
 </div>
 

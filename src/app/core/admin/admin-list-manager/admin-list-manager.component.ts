@@ -43,7 +43,9 @@ import { AdminEntityService } from "../admin-entity.service";
 })
 export class AdminListManagerComponent {
   private readonly adminEntityService = inject(AdminEntityService);
-  private schemaUpdated = toSignal(this.adminEntityService.entitySchemaUpdated);
+  private readonly schemaUpdated = toSignal(
+    this.adminEntityService.entitySchemaUpdated,
+  );
 
   items = input<ColumnConfig[]>([]);
   entityType = input<EntityConstructor>();

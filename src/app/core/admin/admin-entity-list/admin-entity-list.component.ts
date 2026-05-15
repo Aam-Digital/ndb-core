@@ -90,4 +90,8 @@ export class AdminEntityListComponent {
   newColumnGroupFactory(): GroupConfig {
     return { name: "", columns: [] };
   }
+
+  updateGroups(groups: GroupConfig[]) {
+    this.columnGroups.update((cg) => ({ ...cg, groups }));
+  }
 }

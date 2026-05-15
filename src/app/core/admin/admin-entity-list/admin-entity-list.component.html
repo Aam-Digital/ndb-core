@@ -24,6 +24,7 @@
   <div class="mat-elevation-z1">
     <app-admin-tabs
       [tabs]="columnGroups().groups"
+      (tabsChange)="updateGroups($event)"
       [newTabFactory]="newColumnGroupFactory"
     >
       <ng-template [appAdminTabTemplate]="columnGroups().groups" let-item>
