@@ -1,12 +1,11 @@
 import {
-  Component,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-  input,
-  output,
-  model,
-  effect,
+    Component,
+    inject,
+    linkedSignal,
+    ChangeDetectionStrategy,
+    input,
+    model,
+    effect,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -18,8 +17,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconButton } from "@angular/material/button";
 import {
-  MatSlideToggleChange,
-  MatSlideToggleModule,
+    MatSlideToggleChange,
+    MatSlideToggleModule,
 } from "@angular/material/slide-toggle";
 import { IconComponent } from "#src/app/core/common-components/icon-input/icon-input.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -55,62 +54,40 @@ export class MenuItemFormComponent {
    * Available routes that are offered to the user for selection.
    */
   linkOptions = input<{ value: string; label: string }[]>([]);
-  itemChange = output<MenuItem>();
 
   /**
    * If true: show free-text input. If false: show dropdown with linkOptions.
    */
-  customLinkMode = signal(false);
+  customLinkMode = linkedSignal(() => {
+    const linkOptions = this.linkOptions();
+    const item = this.item();
+
+    // If no options are available, always start in custom link mode
+    if (!linkOptions || linkOptions.length === 0) {
+      return true;
+    }
+
+    // If there's a link value but it's not in the available options, switch to custom mode
+    if (
+      item?.link &&
+      !linkOptions.some((option) => option.value === item.link)
+    ) {
+      return true;
+    }
+
+    return false;
+  });
 
   /**
    * Whether this item is intentionally configured as a parent section without a link.
    */
-  noLinkMode = signal(false);
+  noLinkMode = linkedSignal(() => !this.isNew() && !this.item()?.link?.trim());
 
   linkErrorStateMatcher: ErrorStateMatcher = {
     isErrorState: (_control: FormControl | null): boolean => {
       return this.showLinkError() && !this.item()?.link?.trim();
     },
   };
-
-  constructor() {
-    effect(() => {
-      const item = this.item();
-      const linkOptions = this.linkOptions();
-
-      // For existing manual items with no link, default the toggle to ON.
-      if (!this.isNew() && !item?.link?.trim()) {
-        this.noLinkMode.set(true);
-      }
-
-      // If no options are available, always start in custom link mode
-      if (!linkOptions || linkOptions.length === 0) {
-        this.customLinkMode.set(true);
-        return;
-      }
-
-      // If there's a link value but it's not in the available options, switch to custom mode
-      if (item?.link && !this.isLinkInOptions(item.link)) {
-        this.customLinkMode.set(true);
-      }
-    });
-  }
-
-  private isLinkInOptions(link: string): boolean {
-    return this.linkOptions()?.some((option) => option.value === link) ?? false;
-  }
-
-  onChange() {
-    this.itemChange.emit({ ...this.item() });
-  }
-
-  toggleCustomLinkMode() {
-    this.customLinkMode.update((v) => !v);
-  }
-
-  isNoLinkModeEnabled(): boolean {
-    return this.noLinkMode();
-  }
 
   async toggleNoLinkMode(event: MatSlideToggleChange) {
     if (event.checked && this.item()?.link?.trim()) {
@@ -128,34 +105,43 @@ export class MenuItemFormComponent {
       const newItem = { ...this.item() };
       delete newItem.link;
       this.item.set(newItem);
-      this.onChange();
     }
 
     this.noLinkMode.set(event.checked);
   }
 
-  // Getter/setter proxies for template two-way bindings
-  get itemLabel(): string {
-    return this.item()?.label ?? "";
-  }
-  set itemLabel(v: string) {
-    this.item.set({ ...this.item(), label: v });
-    this.onChange();
+  isNoLinkModeEnabled(): boolean {
+    return this.noLinkMode();
   }
 
-  get itemLink(): string {
-    return this.item()?.link ?? "";
-  }
-  set itemLink(v: string) {
-    this.item.set({ ...this.item(), link: v });
-    this.onChange();
-  }
+  itemLabel = linkedSignal({
+    source: this.item,
+    computation: (item) => item?.label ?? "",
+  });
 
-  get itemIcon(): string {
-    return this.item()?.icon ?? "";
-  }
-  set itemIcon(v: string) {
-    this.item.set({ ...this.item(), icon: v });
-    this.onChange();
+  itemLink = linkedSignal({
+    source: this.item,
+    computation: (item) => item?.link ?? "",
+  });
+
+  itemIcon = linkedSignal({
+    source: this.item,
+    computation: (item) => item?.icon ?? "",
+  });
+
+  constructor() {
+    effect(() => {
+      const label = this.itemLabel();
+      const link = this.itemLink();
+      const icon = this.itemIcon();
+      const current = this.item();
+      if (
+        label !== (current?.label ?? "") ||
+        link !== (current?.link ?? "") ||
+        icon !== (current?.icon ?? "")
+      ) {
+        this.item.set({ ...current, label, link, icon });
+      }
+    });
   }
 }

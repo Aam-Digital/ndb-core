@@ -2,7 +2,11 @@
   @if (!hideLabel()) {
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Label</mat-label>
-      <input matInput [(ngModel)]="itemLabel" />
+      <input
+        matInput
+        [ngModel]="itemLabel()"
+        (ngModelChange)="itemLabel.set($event)"
+      />
     </mat-form-field>
   }
 
@@ -22,7 +26,8 @@
 
         @if (linkOptions()?.length && !customLinkMode()) {
           <mat-select
-            [(ngModel)]="itemLink"
+            [ngModel]="itemLink()"
+            (ngModelChange)="itemLink.set($event)"
             [errorStateMatcher]="linkErrorStateMatcher"
           >
             @for (option of linkOptions(); track option.value) {
@@ -34,7 +39,8 @@
         } @else {
           <input
             matInput
-            [(ngModel)]="itemLink"
+            [ngModel]="itemLink()"
+            (ngModelChange)="itemLink.set($event)"
             [errorStateMatcher]="linkErrorStateMatcher"
           />
         }
@@ -54,7 +60,7 @@
       @if (customLinkMode()) {
         <button
           mat-icon-button
-          (click)="toggleCustomLinkMode()"
+          (click)="customLinkMode.update((v) => !v)"
           class="margin-left-small"
           matTooltip="Switch to select mode"
           i18n-matTooltip
@@ -64,7 +70,7 @@
       } @else {
         <button
           mat-icon-button
-          (click)="toggleCustomLinkMode()"
+          (click)="customLinkMode.update((v) => !v)"
           class="margin-left-small"
           matTooltip="Switch to custom link mode"
           i18n-matTooltip
@@ -75,5 +81,8 @@
     </div>
   }
 
-  <app-icon-input [(icon)]="itemIcon"></app-icon-input>
+  <app-icon-input
+    [icon]="itemIcon()"
+    (iconChange)="itemIcon.set($event)"
+  ></app-icon-input>
 </div>
