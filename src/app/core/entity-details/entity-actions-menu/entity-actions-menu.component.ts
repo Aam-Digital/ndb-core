@@ -1,8 +1,8 @@
 import {
-  ChangeDetectorRef,
   Component,
   effect,
   inject,
+  signal,
   ChangeDetectionStrategy,
   input,
   output,
@@ -39,8 +39,6 @@ export class EntityActionsMenuComponent {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
   private readonly dialogRef = inject(MatDialogRef, { optional: true });
-  private readonly cdr = inject(ChangeDetectorRef);
-
   entity = input<Entity>();
 
   /**
@@ -54,7 +52,7 @@ export class EntityActionsMenuComponent {
   /**
    * The actions being displayed as menu items.
    */
-  actions: EntityAction[];
+  readonly actions = signal<EntityAction[]>([]);
 
   /**
    * Whether some buttons should be displayed directly, outside the three-dot menu in dialog views.
@@ -77,8 +75,7 @@ export class EntityActionsMenuComponent {
     isCancelled: () => boolean,
   ) {
     if (!entity) {
-      this.actions = [];
-      this.cdr.markForCheck();
+      this.actions.set([]);
       return;
     }
 
@@ -87,8 +84,7 @@ export class EntityActionsMenuComponent {
     if (isCancelled()) {
       return;
     }
-    this.actions = allActions;
-    this.cdr.markForCheck();
+    this.actions.set(allActions);
   }
 
   async executeAction(action: EntityAction) {

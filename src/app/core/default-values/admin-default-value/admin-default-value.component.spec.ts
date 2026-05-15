@@ -61,9 +61,8 @@ describe("AdminDefaultValueComponent", () => {
 
     fixture = TestBed.createComponent(AdminDefaultValueComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-
     fixture.componentRef.setInput("entityType", Entity);
+    fixture.detectChanges();
   });
 
   it("should create", () => {

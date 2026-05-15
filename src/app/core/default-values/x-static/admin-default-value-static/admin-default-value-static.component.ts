@@ -63,7 +63,9 @@ export class AdminDefaultValueStaticComponent
     this.formControl.valueChanges.subscribe((v) => this.emitNewValue(v));
     const targetFieldConfig = this.targetFieldConfig();
     if (!targetFieldConfig) {
-      return;
+      throw new Error(
+        "AdminDefaultValueStaticComponent requires entitySchemaField input",
+      );
     }
 
     const formGroup = new FormGroup({

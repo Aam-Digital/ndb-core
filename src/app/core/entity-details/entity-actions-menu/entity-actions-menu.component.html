@@ -1,6 +1,6 @@
 @if (!entity()?.isNew) {
   <!-- inline display of primary actions -->
-  @for (a of actions; track a.action) {
+  @for (a of actions(); track a.action) {
     @if (showExpanded() && viewContext?.isDialog && a.primaryAction) {
       <button
         mat-stroked-button
@@ -36,7 +36,7 @@
   <!-- context menu -->
   <mat-menu #additional>
     <!-- standard actions -->
-    @for (a of actions; track a.action) {
+    @for (a of actions(); track a.action) {
       @if (!a.primaryAction || !showExpanded() || !viewContext?.isDialog) {
         <button
           mat-menu-item
