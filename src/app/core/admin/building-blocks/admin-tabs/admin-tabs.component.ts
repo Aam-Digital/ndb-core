@@ -3,7 +3,7 @@ import {
   ContentChild,
   TemplateRef,
   ViewChild,
-  effect,
+  computed,
   ChangeDetectionStrategy,
   input,
   model,
@@ -62,30 +62,22 @@ export class AdminTabsComponent<
   E extends { title: string } | { name: string },
 > {
   tabs = model<E[]>([]);
-  newTabFactory = input<() => E>(() => ({ [this.tabTitleProperty]: "" }) as E);
+  newTabFactory = input<() => E>(
+    () => ({ [this.tabTitleProperty()]: "" }) as E,
+  );
 
-  tabTitleProperty: "title" | "name" = "title";
+  tabTitleProperty = computed<"title" | "name">(() => {
+    const tabs = this.tabs();
+    if (!tabs || tabs.length < 1) {
+      return "title";
+    }
+    return tabs[0].hasOwnProperty("name") ? "name" : "title";
+  });
 
   @ContentChild(AdminTabTemplateDirective<E>, { read: TemplateRef })
   tabTemplate: TemplateRef<any>;
 
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
-
-  constructor() {
-    effect(() => {
-      this.detectTabTitleProperty();
-    });
-  }
-
-  private detectTabTitleProperty() {
-    if (!this.tabs() || this.tabs().length < 1) {
-      return;
-    }
-
-    this.tabTitleProperty = this.tabs()[0].hasOwnProperty("name")
-      ? "name"
-      : "title";
-  }
 
   createTab() {
     const newTab = this.newTabFactory()();
@@ -107,20 +99,14 @@ export class AdminTabsComponent<
   }
 
   /**
-   * A list of tab element ids required for linking drag&drop targets
+   * For each tab, the list of other tab element ids required for linking drag&drop targets
    * due to the complex template of tab headers.
-   * @param index
    */
-  getAllTabs(index: number) {
-    const allTabs = [];
-    for (let i = 0; i < this.tabs()?.length; i++) {
-      if (i != index) {
-        allTabs.push("tabs-" + i);
-      }
-    }
-
-    return allTabs;
-  }
+  allTabIds = computed<string[][]>(() =>
+    this.tabs().map((_, index, tabs) =>
+      tabs.map((__, i) => "tabs-" + i).filter((_, i) => i !== index),
+    ),
+  );
 
   drop(event: CdkDragDrop<string[]>) {
     const previousIndex = parseInt(

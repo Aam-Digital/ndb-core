@@ -8,7 +8,7 @@
           cdkDropList
           cdkDropListOrientation="horizontal"
           (cdkDropListDropped)="drop($event)"
-          [cdkDropListConnectedTo]="getAllTabs(tabIndex)"
+          [cdkDropListConnectedTo]="allTabIds()[tabIndex]"
         >
           <div
             cdkDrag
@@ -22,12 +22,12 @@
             ></fa-icon>
             @if (tabIndex === matTabGroup.selectedIndex) {
               <app-admin-section-header
-                [(title)]="tab[tabTitleProperty]"
+                [(title)]="tab[tabTitleProperty()]"
                 (remove)="removeTab(tabIndex)"
               ></app-admin-section-header>
             } @else {
               <!-- only current tab can be renamed -->
-              {{ tab[tabTitleProperty] }}
+              {{ tab[tabTitleProperty()] }}
             }
           </div>
         </div>

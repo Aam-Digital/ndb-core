@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminTabsComponent } from "./admin-tabs.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { SimpleChange } from "@angular/core";
 
 describe("AdminTabsComponent", () => {
   let component: AdminTabsComponent<any>;
