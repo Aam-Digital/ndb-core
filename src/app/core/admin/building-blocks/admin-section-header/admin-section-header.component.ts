@@ -1,9 +1,9 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  Output,
   inject,
+  input,
+  model,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -39,22 +39,21 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 export class AdminSectionHeaderComponent {
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  @Input() title: string;
+  title = model<string>("");
 
   /** supports two-way data binding for the editable title: `<app-admin-section-header [(title)]="section.title"` */
-  @Output() titleChange = new EventEmitter<string>();
-
-  @Output() remove = new EventEmitter();
+  remove = output();
 
   /** disable the confirmation dialog displayed before a remove output is emitted */
-  @Input() disableConfirmation = false;
+  disableConfirmation = input<boolean>(false);
 
   /** overwrite the label (default: "title") displayed for the form field */
-  @Input()
-  label = $localize`:Admin UI - Config Section Header form field label:Title`;
+  label = input<string>(
+    $localize`:Admin UI - Config Section Header form field label:Title`,
+  );
 
   async removeSection() {
-    if (this.disableConfirmation) {
+    if (this.disableConfirmation()) {
       this.remove.emit();
       return;
     }

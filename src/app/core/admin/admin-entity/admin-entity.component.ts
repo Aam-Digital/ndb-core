@@ -1,13 +1,15 @@
 import { Location } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
   Component,
   ContentChild,
-  Input,
-  OnInit,
   TemplateRef,
   ViewChild,
+  computed,
+  effect,
   inject,
-  ChangeDetectionStrategy,
+  input,
+  linkedSignal,
 } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatListItem, MatNavList } from "@angular/material/list";
@@ -18,7 +20,6 @@ import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/e
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityConfig } from "../../entity/entity-config";
@@ -30,6 +31,7 @@ import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
 import { AdminEntityService } from "../admin-entity.service";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,17 +52,20 @@ import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-sett
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
 })
-export class AdminEntityComponent implements OnInit {
+export class AdminEntityComponent {
   private entities = inject(EntityRegistry);
   private configService = inject(ConfigService);
   private location = inject(Location);
   private adminEntityService = inject(AdminEntityService);
   private entityActionsService = inject(EntityActionsService);
   private routes = inject(ActivatedRoute);
+  private readonly queryParams = toSignal(this.routes.queryParams, {
+    initialValue: {},
+  });
 
-  @Input() entityType: string;
-  entityConstructor: EntityConstructor;
-  private originalEntitySchemaFields: [string, EntitySchemaField][];
+  entityType = input.required<string>();
+  entityConstructor = computed(() => this.entities.get(this.entityType()));
+  private originalEntitySchemaFields: [string, EntitySchemaField][] = [];
 
   /**
    * Track related entity types that have been modified through the panel config dialog.
@@ -68,39 +73,32 @@ export class AdminEntityComponent implements OnInit {
    */
   private readonly modifiedRelatedEntities = new Set<EntityConstructor>();
 
-  configDetailsView: DynamicComponentConfig<any>; // typed any to avoid type issues with different detail components
-  configListView: DynamicComponentConfig<EntityListConfig>;
-  configEntitySettings: EntityConfig;
+  configDetailsView = linkedSignal(() =>
+    this.loadViewConfig(this.entityConstructor(), "details"),
+  );
+  configListView = linkedSignal(() =>
+    this.loadViewConfig(this.entityConstructor(), "list"),
+  );
+  configEntitySettings = linkedSignal(() =>
+    this.getEntitySettingsFromConstructor(this.entityConstructor()),
+  );
 
-  protected mode: "details" | "list" | "general" | "publicForm" = "details";
+  protected mode = linkedSignal<"details" | "list" | "general" | "publicForm">(
+    () => this.queryParams()["mode"] ?? "details",
+  );
 
   @ViewChild(AdminEntityGeneralSettingsComponent)
   generalSettingsComponent?: AdminEntityGeneralSettingsComponent;
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
-  ngOnInit(): void {
-    this.init();
-    this.routes.queryParams.subscribe((params) => {
-      this.mode = params.mode ?? this.mode;
+  constructor() {
+    // store a copy of the original entity schema immediately (computed signals are lazy)
+    effect(() => {
+      this.originalEntitySchemaFields = JSON.parse(
+        JSON.stringify(Array.from(this.entityConstructor().schema.entries())),
+      );
     });
-  }
-
-  private init() {
-    this.entityConstructor = this.entities.get(this.entityType);
-    this.originalEntitySchemaFields = JSON.parse(
-      JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
-    );
-
-    this.configDetailsView = this.loadViewConfig(
-      this.entityConstructor,
-      "details",
-    );
-    this.configListView = this.loadViewConfig(this.entityConstructor, "list");
-
-    this.configEntitySettings = this.getEntitySettingsFromConstructor(
-      this.entityConstructor,
-    );
   }
 
   private getEntitySettingsFromConstructor(
@@ -146,17 +144,17 @@ export class AdminEntityComponent implements OnInit {
       if (viewType === "details") {
         return {
           component: "EntityDetails",
-          config: { entityType: this.entityType, panels: [] },
+          config: { entityType: this.entityType(), panels: [] },
         };
       } else {
         return {
           component: "EntityList",
-          config: { entityType: this.entityType },
+          config: { entityType: this.entityType() },
         };
       }
     }
 
-    viewConfig.config = viewConfig.config ?? { entityType: this.entityType };
+    viewConfig.config = viewConfig.config ?? { entityType: this.entityType() };
 
     // cleanup note details config, which should not have an entity instance assigned
     if (viewConfig.config.entity && viewConfig.component === "NoteDetails") {
@@ -167,7 +165,7 @@ export class AdminEntityComponent implements OnInit {
   }
 
   cancel() {
-    this.entityConstructor.schema = new Map(this.originalEntitySchemaFields);
+    this.entityConstructor().schema = new Map(this.originalEntitySchemaFields);
     this.location.back();
   }
 
@@ -181,10 +179,10 @@ export class AdminEntityComponent implements OnInit {
 
     // Save the main entity configuration along with all related entities in a single transaction
     const result = await this.adminEntityService.setAndSaveEntityConfig(
-      this.entityConstructor,
-      this.configEntitySettings,
-      this.configListView,
-      this.configDetailsView,
+      this.entityConstructor(),
+      this.configEntitySettings(),
+      this.configListView(),
+      this.configDetailsView(),
       Array.from(this.modifiedRelatedEntities),
     );
 

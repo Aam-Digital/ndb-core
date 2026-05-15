@@ -48,7 +48,12 @@ describe("AdminEntityListComponent", () => {
     fixture = TestBed.createComponent(AdminEntityListComponent);
     component = fixture.componentInstance;
 
-    component.entityConstructor = Entity;
+    fixture.componentRef.setInput("entityConstructor", Entity);
+    fixture.componentRef.setInput("config", {
+      entityType: Entity.ENTITY_TYPE,
+      filters: [],
+      columns: [],
+    } as any);
 
     fixture.detectChanges();
   });
