@@ -4040,6 +4040,11 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent&lt;
     super();
     effect(() &#x3D;&gt; {
       this.options &#x3D; this.fieldOptions();
+      // Manually trigger ngOnChanges so that any already-set value is re-applied
+      // to mark the correct options as selected.
+      // (Setting &#x60;this.options&#x60; directly doesn&#x27;t go through Angular&#x27;s @Input binding,
+      // so ngOnChanges would not be called automatically.)
+      this.ngOnChanges({ options: true } as any);
     });
   }
 
