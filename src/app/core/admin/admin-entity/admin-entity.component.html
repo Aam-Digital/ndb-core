@@ -21,29 +21,29 @@
   <div class="main-container flex-row">
     <mat-nav-list class="config-nav">
       <mat-list-item
-        (click)="mode = 'details'"
-        [activated]="mode === 'details'"
+        (click)="mode.set('details')"
+        [activated]="mode() === 'details'"
         i18n="admin entity: nav item"
       >
         Details View & Fields
       </mat-list-item>
       <mat-list-item
-        (click)="mode = 'list'"
-        [activated]="mode === 'list'"
+        (click)="mode.set('list')"
+        [activated]="mode() === 'list'"
         i18n="admin entity: nav item"
       >
         List View
       </mat-list-item>
       <mat-list-item
-        (click)="mode = 'general'"
-        [activated]="mode === 'general'"
+        (click)="mode.set('general')"
+        [activated]="mode() === 'general'"
         i18n="admin entity: nav item"
       >
         General Settings
       </mat-list-item>
       <mat-list-item
-        (click)="mode = 'publicForm'"
-        [activated]="mode === 'publicForm'"
+        (click)="mode.set('publicForm')"
+        [activated]="mode() === 'publicForm'"
         i18n="admin entity: nav item"
       >
         Public Forms
@@ -52,7 +52,7 @@
     </mat-nav-list>
 
     <div class="config-component flex-grow mat-elevation-z1">
-      @switch (mode) {
+      @switch (mode()) {
         @case ("details") {
           @switch (configDetailsView().component) {
             @case ("EntityDetails") {

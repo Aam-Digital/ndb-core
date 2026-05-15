@@ -95,7 +95,23 @@ export class AdminTabsComponent<
     this.tabs.update((tabs) =>
       tabs.filter((_, tabIndex) => tabIndex !== index),
     );
-    this.tabGroup.selectedIndex = index - 1;
+    this.tabGroup.selectedIndex = this.computeSelectedIndexAfterRemove(
+      index,
+      this.tabGroup.selectedIndex ?? 0,
+    );
+  }
+
+  private computeSelectedIndexAfterRemove(
+    removedIndex: number,
+    activeIndex: number,
+  ): number {
+    if (removedIndex < activeIndex) {
+      return activeIndex - 1;
+    } else if (removedIndex === activeIndex) {
+      return Math.max(0, activeIndex - 1);
+    } else {
+      return activeIndex;
+    }
   }
 
   /**

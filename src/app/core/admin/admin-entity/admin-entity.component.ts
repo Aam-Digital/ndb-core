@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   ContentChild,
-  DestroyRef,
   TemplateRef,
   ViewChild,
   computed,
@@ -32,7 +31,7 @@ import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
 import { AdminEntityService } from "../admin-entity.service";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,7 +59,9 @@ export class AdminEntityComponent {
   private adminEntityService = inject(AdminEntityService);
   private entityActionsService = inject(EntityActionsService);
   private routes = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly queryParams = toSignal(this.routes.queryParams, {
+    initialValue: {},
+  });
 
   entityType = input.required<string>();
   entityConstructor = computed(() => this.entities.get(this.entityType()));
@@ -82,7 +83,9 @@ export class AdminEntityComponent {
     this.getEntitySettingsFromConstructor(this.entityConstructor()),
   );
 
-  protected mode: "details" | "list" | "general" | "publicForm" = "details";
+  protected mode = linkedSignal<"details" | "list" | "general" | "publicForm">(
+    () => this.queryParams()["mode"] ?? "details",
+  );
 
   @ViewChild(AdminEntityGeneralSettingsComponent)
   generalSettingsComponent?: AdminEntityGeneralSettingsComponent;
@@ -96,12 +99,6 @@ export class AdminEntityComponent {
         JSON.stringify(Array.from(this.entityConstructor().schema.entries())),
       );
     });
-
-    this.routes.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        this.mode = params.mode ?? this.mode;
-      });
   }
 
   private getEntitySettingsFromConstructor(

@@ -92,7 +92,9 @@ export class AdminEntityGeneralSettingsComponent {
     () => !!this.generalSettings().toBlockDetailsAttributes,
   );
 
-  showPIIDetails = linkedSignal(() => this.showPIIDetailsInput());
+  showPIIDetails = linkedSignal(
+    () => this.showPIIDetailsInput() || !!this.generalSettings()?.hasPII,
+  );
 
   isConditionalColor = linkedSignal(() => {
     const color = this.generalSettings().color;

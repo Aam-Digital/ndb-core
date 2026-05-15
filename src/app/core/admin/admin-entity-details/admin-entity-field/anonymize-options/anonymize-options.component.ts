@@ -1,4 +1,9 @@
-import { Component, model, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -15,5 +20,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   styleUrl: "./anonymize-options.component.scss",
 })
 export class AnonymizeOptionsComponent {
-  value = model<string>("");
+  value = input("", { transform: (v: string | undefined) => v ?? "" });
+  valueChange = output<string>();
 }
