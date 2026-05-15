@@ -2,7 +2,7 @@
   [entityType]="entityCtr"
   [records]="data"
   [customColumns]="_columns"
-  [filter]="filter"
+  [filter]="filterObj"
   [newRecordFactory]="newRecordFactory"
   clickMode="none"
   (entityClick)="showNoteDetails($event)"
@@ -11,7 +11,7 @@
 </app-entities-table>
 
 <app-custom-form-link-button
-  [linkedEntity]="entity"
+  [linkedEntity]="entity()"
   [formEntityType]="entityCtr"
 >
 </app-custom-form-link-button>
