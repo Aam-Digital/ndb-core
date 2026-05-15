@@ -254,10 +254,12 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  Input,
-  OnInit,
-  inject,
   ChangeDetectionStrategy,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
 } from &quot;@angular/core&quot;;
 import { FormControl, FormsModule } from &quot;@angular/forms&quot;;
 
@@ -296,7 +298,6 @@ interface EntityPropertyPair {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-birthday-dashboard-settings&quot;,
-  standalone: true,
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -310,144 +311,88 @@ interface EntityPropertyPair {
   templateUrl: &quot;./birthday-dashboard-settings.component.html&quot;,
   styleUrls: [&quot;./birthday-dashboard-settings.component.scss&quot;],
 })
-export class BirthdayDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl&lt;BirthdayDashboardSettingsConfig&gt;;
-
-  availableEntityTypes: EntityConstructor[] &#x3D; [];
-  /** Map of entity types to their available date-with-age fields */
-  dateFieldsByEntityType: { [entityType: string]: string[] } &#x3D; {};
-  /** Available entity type options for each row, filtered to prevent duplicates */
-  entityTypeOptionsPerRow: EntityConstructor[][] &#x3D; [];
-
-  entityPropertyPairs: EntityPropertyPair[] &#x3D; [];
-
-  localConfig: BirthdayDashboardSettingsConfig &#x3D; {
-    threshold: 32,
-    entities: { Child: &quot;dateOfBirth&quot; },
-  };
+export class BirthdayDashboardSettingsComponent {
+  formControl &#x3D; input.required&lt;FormControl&lt;BirthdayDashboardSettingsConfig&gt;&gt;();
 
   private entityRegistry &#x3D; inject(EntityRegistry);
 
-  ngOnInit() {
-    // Get all entity types and filter for those with a date-with-age field
-    const allEntityTypes &#x3D; this.entityRegistry
-      .getEntityTypes(true)
-      .map(({ value }) &#x3D;&gt; value);
+  availableEntityTypes: EntityConstructor[] &#x3D; this.entityRegistry
+    .getEntityTypes(true)
+    .map(({ value }) &#x3D;&gt; value)
+    .filter((ctor: EntityConstructor) &#x3D;&gt; {
+      const schema &#x3D; getEntitySchema(ctor);
+      return Array.from(schema.values()).some(
+        (field: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;,
+      );
+    });
 
-    this.availableEntityTypes &#x3D; allEntityTypes.filter(
-      (ctor: EntityConstructor) &#x3D;&gt; {
-        const schema &#x3D; getEntitySchema(ctor);
-        return Array.from(schema.values()).some(
-          (field: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;,
-        );
-      },
+  /** Map of entity types to their available date-with-age fields */
+  dateFieldsByEntityType: { [entityType: string]: string[] } &#x3D;
+    Object.fromEntries(
+      this.availableEntityTypes.map((ctor) &#x3D;&gt; [
+        ctor.ENTITY_TYPE,
+        Array.from(getEntitySchema(ctor).entries())
+          .filter(([_, field]: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;)
+          .map(([key]) &#x3D;&gt; key),
+      ]),
     );
 
-    this.buildAvailablePropertiesMap();
+  threshold &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.threshold ?? 32);
 
-    // Initialize pairs from config or create a single default pair
-    const entities &#x3D; this.formControl.value?.entities;
+  entityPropertyPairs &#x3D; linkedSignal&lt;EntityPropertyPair[]&gt;(() &#x3D;&gt; {
+    const entities &#x3D; this.formControl().value?.entities;
+    const pairs: EntityPropertyPair[] &#x3D; [];
 
-    if (entities &amp;&amp; Object.keys(entities).length &gt; 0) {
-      // Use existing valid entities, filtering out invalid ones
-      this.entityPropertyPairs &#x3D; [];
-
-      Object.entries(entities).forEach(([entityType, properties]) &#x3D;&gt; {
-        const isValidEntityType &#x3D; this.availableEntityTypes.some(
-          (ctor) &#x3D;&gt; ctor.ENTITY_TYPE &#x3D;&#x3D;&#x3D; entityType,
-        );
-
-        if (!isValidEntityType) return;
-
-        // Handle both string and array properties
+    if (entities) {
+      for (const [entityType, properties] of Object.entries(entities)) {
+        if (
+          !this.availableEntityTypes.some(
+            (ctor) &#x3D;&gt; ctor.ENTITY_TYPE &#x3D;&#x3D;&#x3D; entityType,
+          )
+        )
+          continue;
         const propertyList &#x3D; Array.isArray(properties)
           ? properties
           : [properties];
-
-        propertyList.forEach((property) &#x3D;&gt; {
-          const isValidProperty &#x3D;
-            this.dateFieldsByEntityType[entityType]?.includes(property);
-          if (isValidProperty) {
-            this.entityPropertyPairs.push({
-              entityType,
-              property,
-            });
+        for (const property of propertyList) {
+          if (this.dateFieldsByEntityType[entityType]?.includes(property)) {
+            pairs.push({ entityType, property });
           }
-        });
-      });
-    } else {
-      this.entityPropertyPairs &#x3D; [];
+        }
+      }
     }
 
-    // If no valid pairs exist, create one default pair
-    if (this.entityPropertyPairs.length &#x3D;&#x3D;&#x3D; 0) {
+    if (pairs.length &#x3D;&#x3D;&#x3D; 0) {
       const defaultEntityType &#x3D; this.availableEntityTypes[0]?.ENTITY_TYPE;
       const defaultProperty &#x3D; defaultEntityType
         ? this.dateFieldsByEntityType[defaultEntityType]?.[0]
-        : &quot;&quot;;
-
+        : undefined;
       if (defaultEntityType &amp;&amp; defaultProperty) {
-        this.entityPropertyPairs &#x3D; [
-          {
-            entityType: defaultEntityType,
-            property: defaultProperty,
-          },
-        ];
+        return [{ entityType: defaultEntityType, property: defaultProperty }];
       }
-      // If no valid entity types available, leave array empty
-      // The form validation will handle this case
     }
 
-    this.localConfig.threshold &#x3D; this.formControl.value?.threshold ?? 32;
-    this.updateLocalConfig();
-    this.updateEntityTypeOptionsPerRow();
-  }
+    return pairs;
+  });
 
-  private buildAvailablePropertiesMap() {
-    for (const ctor of this.availableEntityTypes) {
-      const schema &#x3D; getEntitySchema(ctor);
-      this.dateFieldsByEntityType[ctor.ENTITY_TYPE] &#x3D; Array.from(
-        schema.entries(),
-      )
-        .filter(([_, field]: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;)
-        .map(([key]) &#x3D;&gt; key);
-    }
-  }
+  /** Available entity type options for each row, filtered to prevent duplicates */
+  entityTypeOptionsPerRow &#x3D; computed(() &#x3D;&gt;
+    this.entityPropertyPairs().map((pair, index) &#x3D;&gt; {
+      const usedCombinations &#x3D; this.getUsedCombinations(index);
+      return this.availableEntityTypes.filter((ctor) &#x3D;&gt; {
+        const entityType &#x3D; ctor.ENTITY_TYPE;
+        const availableFields &#x3D; this.availablePropertiesFor(entityType);
+        return availableFields.some(
+          (field) &#x3D;&gt;
+            !usedCombinations.has(&#x60;${entityType}:${field}&#x60;) ||
+            (entityType &#x3D;&#x3D;&#x3D; pair.entityType &amp;&amp; field &#x3D;&#x3D;&#x3D; pair.property),
+        );
+      });
+    }),
+  );
 
-  availablePropertiesFor(entityType: string): string[] {
-    return this.dateFieldsByEntityType[entityType] ?? [];
-  }
-
-  private getUsedCombinations(excludeIndex?: number): Set&lt;string&gt; {
-    return new Set(
-      this.entityPropertyPairs
-        .filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; excludeIndex)
-        .map((p) &#x3D;&gt; &#x60;${p.entityType}:${p.property}&#x60;),
-    );
-  }
-
-  updateEntityTypeOptionsPerRow() {
-    this.entityTypeOptionsPerRow &#x3D; this.entityPropertyPairs.map(
-      (pair, index) &#x3D;&gt; {
-        const usedCombinations &#x3D; this.getUsedCombinations(index);
-
-        return this.availableEntityTypes.filter((ctor) &#x3D;&gt; {
-          const entityType &#x3D; ctor.ENTITY_TYPE;
-          const availableFields &#x3D; this.availablePropertiesFor(entityType);
-
-          return availableFields.some(
-            (field) &#x3D;&gt;
-              !usedCombinations.has(&#x60;${entityType}:${field}&#x60;) ||
-              (entityType &#x3D;&#x3D;&#x3D; pair.entityType &amp;&amp; field &#x3D;&#x3D;&#x3D; pair.property),
-          );
-        });
-      },
-    );
-  }
-
-  get canAddMorePairs(): boolean {
+  canAddMorePairs &#x3D; computed(() &#x3D;&gt; {
     const usedCombinations &#x3D; this.getUsedCombinations();
-
     return this.availableEntityTypes.some((ctor) &#x3D;&gt; {
       const entityType &#x3D; ctor.ENTITY_TYPE;
       const availableFields &#x3D; this.availablePropertiesFor(entityType);
@@ -455,121 +400,112 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
         (field) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${field}&#x60;),
       );
     });
+  });
+
+  isFormValid &#x3D; computed(() &#x3D;&gt;
+    this.entityPropertyPairs().every(
+      (pair) &#x3D;&gt; pair.entityType &amp;&amp; pair.property,
+    ),
+  );
+
+  constructor() {
+    // Sync signal state to the form control whenever any value changes
+    effect(() &#x3D;&gt; {
+      if (this.isFormValid()) {
+        this.formControl().setValue({
+          threshold: this.threshold(),
+          entities: this.pairsToEntitiesMap(this.entityPropertyPairs()),
+        });
+        this.formControl().setErrors(null);
+      } else {
+        this.formControl().setErrors({ invalidPairs: true });
+      }
+    });
   }
 
-  get isFormValid(): boolean {
-    return this.entityPropertyPairs.every(
-      (pair) &#x3D;&gt; pair.entityType &amp;&amp; pair.property,
+  private pairsToEntitiesMap(pairs: EntityPropertyPair[]): {
+    [entityType: string]: string | string[];
+  } {
+    const entities: { [entityType: string]: string | string[] } &#x3D; {};
+    for (const { entityType, property } of pairs) {
+      if (!entityType || !property) continue;
+      if (Array.isArray(entities[entityType])) {
+        (entities[entityType] as string[]).push(property);
+      } else if (entities[entityType]) {
+        entities[entityType] &#x3D; [entities[entityType] as string, property];
+      } else {
+        entities[entityType] &#x3D; property;
+      }
+    }
+    return entities;
+  }
+
+  private availablePropertiesFor(entityType: string): string[] {
+    return this.dateFieldsByEntityType[entityType] ?? [];
+  }
+
+  private getUsedCombinations(excludeIndex?: number): Set&lt;string&gt; {
+    return new Set(
+      this.entityPropertyPairs()
+        .filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; excludeIndex)
+        .map((p) &#x3D;&gt; &#x60;${p.entityType}:${p.property}&#x60;),
     );
   }
 
   onEntityTypeChange(entityType: string, index: number) {
-    this.entityPropertyPairs[index].entityType &#x3D; entityType;
-
-    // Auto-select first available property that&#x27;s not already used
     const usedCombinations &#x3D; this.getUsedCombinations(index);
-    const availableProperties &#x3D; this.availablePropertiesFor(entityType);
-    const unusedProperty &#x3D; availableProperties.find(
-      (prop) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${prop}&#x60;),
+    const property &#x3D;
+      this.availablePropertiesFor(entityType).find(
+        (prop) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${prop}&#x60;),
+      ) ?? &quot;&quot;;
+    this.entityPropertyPairs.update((prev) &#x3D;&gt;
+      prev.map((pair, i) &#x3D;&gt; (i &#x3D;&#x3D;&#x3D; index ? { entityType, property } : pair)),
     );
-
-    this.entityPropertyPairs[index].property &#x3D; unusedProperty ?? &quot;&quot;;
-    this.updateEntityTypeOptionsPerRow();
-    this.updateAndEmitConfig();
   }
 
   onPropertyChange(property: string, index: number) {
-    this.entityPropertyPairs[index].property &#x3D; property;
-    this.updateAndEmitConfig();
-  }
-
-  onThresholdChange() {
-    this.updateAndEmitConfig();
+    this.entityPropertyPairs.update((prev) &#x3D;&gt;
+      prev.map((pair, i) &#x3D;&gt; (i &#x3D;&#x3D;&#x3D; index ? { ...pair, property } : pair)),
+    );
   }
 
   addPair() {
     const usedCombinations &#x3D; this.getUsedCombinations();
-
     for (const ctor of this.availableEntityTypes) {
       const entityType &#x3D; ctor.ENTITY_TYPE;
-      const availableFields &#x3D; this.availablePropertiesFor(entityType);
-      const unusedField &#x3D; availableFields.find(
+      const unusedField &#x3D; this.availablePropertiesFor(entityType).find(
         (field) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${field}&#x60;),
       );
-
       if (unusedField) {
-        this.entityPropertyPairs.push({ entityType, property: unusedField });
-        this.updateEntityTypeOptionsPerRow();
-        this.updateAndEmitConfig();
+        this.entityPropertyPairs.update((prev) &#x3D;&gt; [
+          ...prev,
+          { entityType, property: unusedField },
+        ]);
         return;
       }
     }
   }
 
   removePair(index: number) {
-    this.entityPropertyPairs.splice(index, 1);
-    this.updateEntityTypeOptionsPerRow();
-    this.updateAndEmitConfig();
+    this.entityPropertyPairs.update((prev) &#x3D;&gt;
+      prev.filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; index),
+    );
   }
 
-  private updateAndEmitConfig() {
-    this.updateLocalConfig();
-    this.emitConfigChange();
-  }
-
-  updateLocalConfig() {
-    const entities: { [entityType: string]: string | string[] } &#x3D; {};
-
-    for (const pair of this.entityPropertyPairs) {
-      if (pair.entityType &amp;&amp; pair.property) {
-        const entityType &#x3D; pair.entityType;
-        const property &#x3D; pair.property;
-
-        if (entities[entityType]) {
-          // If entity already exists, convert to array or add to existing array
-          if (Array.isArray(entities[entityType])) {
-            (entities[entityType] as string[]).push(property);
-          } else {
-            entities[entityType] &#x3D; [entities[entityType] as string, property];
-          }
-        } else {
-          entities[entityType] &#x3D; property;
+  /** Per-row filter function for entity-field-select, hiding already-used combinations */
+  hideOptionsPerRow &#x3D; computed(() &#x3D;&gt;
+    this.entityPropertyPairs().map((_, index) &#x3D;&gt; {
+      const usedCombinations &#x3D; this.getUsedCombinations(index);
+      const currentEntityType &#x3D; this.entityPropertyPairs()[index]?.entityType;
+      return (option: FormFieldConfig): boolean &#x3D;&gt; {
+        if (option.dataType !&#x3D;&#x3D; &quot;date-with-age&quot;) return true;
+        if (currentEntityType &amp;&amp; option.id) {
+          return usedCombinations.has(&#x60;${currentEntityType}:${option.id}&#x60;);
         }
-      }
-    }
-
-    this.localConfig &#x3D; {
-      threshold: this.localConfig.threshold,
-      entities,
-    };
-  }
-
-  hideNonBirthdayFieldsForRow(currentIndex: number) {
-    return (option: FormFieldConfig): boolean &#x3D;&gt; {
-      if (option.dataType !&#x3D;&#x3D; &quot;date-with-age&quot;) {
-        return true;
-      }
-
-      const currentEntityType &#x3D;
-        this.entityPropertyPairs[currentIndex]?.entityType;
-      if (currentEntityType &amp;&amp; option.id) {
-        const usedCombinations &#x3D; this.getUsedCombinations(currentIndex);
-        return usedCombinations.has(&#x60;${currentEntityType}:${option.id}&#x60;);
-      }
-
-      return false;
-    };
-  }
-
-  emitConfigChange() {
-    // Set form control validity based on whether all pairs are complete
-    if (this.isFormValid) {
-      this.formControl.setValue({ ...this.localConfig });
-      this.formControl.setErrors(null);
-    } else {
-      this.formControl.setErrors({ invalidPairs: true });
-    }
-  }
+        return false;
+      };
+    }),
+  );
 }
 </code></pre>
     </div>

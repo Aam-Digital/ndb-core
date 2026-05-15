@@ -356,9 +356,10 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
+  linkedSignal,
 } from &quot;@angular/core&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
 import { MatInputModule } from &quot;@angular/material/input&quot;;
@@ -379,27 +380,26 @@ export interface AttendanceWeekDashboardSettingsConfig {
   templateUrl: &quot;./attendance-week-dashboard-settings.component.html&quot;,
   styleUrls: [&quot;./attendance-week-dashboard-settings.component.scss&quot;],
 })
-export class AttendanceWeekDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl&lt;AttendanceWeekDashboardSettingsConfig&gt;;
+export class AttendanceWeekDashboardSettingsComponent {
+  formControl &#x3D;
+    input.required&lt;FormControl&lt;AttendanceWeekDashboardSettingsConfig&gt;&gt;();
 
-  localConfig: AttendanceWeekDashboardSettingsConfig &#x3D; {
-    daysOffset: 0,
-    periodLabel: &quot;&quot;,
-    label: &quot;&quot;,
-    attendanceStatusType: &quot;&quot;,
-  };
+  daysOffset &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.daysOffset ?? 0);
+  periodLabel &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.periodLabel ?? &quot;&quot;);
+  label &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.label ?? &quot;&quot;);
+  attendanceStatusType &#x3D; linkedSignal(
+    () &#x3D;&gt; this.formControl().value?.attendanceStatusType ?? &quot;&quot;,
+  );
 
-  ngOnInit() {
-    this.localConfig &#x3D; {
-      daysOffset: this.formControl.value?.daysOffset ?? 0,
-      periodLabel: this.formControl.value?.periodLabel ?? &quot;&quot;,
-      label: this.formControl.value?.label ?? &quot;&quot;,
-      attendanceStatusType: this.formControl.value?.attendanceStatusType ?? &quot;&quot;,
-    };
-  }
-
-  emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+  constructor() {
+    effect(() &#x3D;&gt; {
+      this.formControl().setValue({
+        daysOffset: this.daysOffset(),
+        periodLabel: this.periodLabel(),
+        label: this.label(),
+        attendanceStatusType: this.attendanceStatusType(),
+      });
+    });
   }
 }
 </code></pre>

@@ -258,7 +258,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  ChangeDetectionStrategy,
+  effect,
+  input,
+} from &quot;@angular/core&quot;;
 import { getGroupingInformationString, ReportRow } from &quot;../../report-row&quot;;
 import { FlatTreeControl } from &quot;@angular/cdk/tree&quot;;
 import {
@@ -282,9 +287,7 @@ interface FlattenedReportRow extends ReportRow {
   imports: [MatTableModule, MatButtonModule, FontAwesomeModule],
 })
 export class ReportRowComponent {
-  @Input() set rows(rows: ReportRow[]) {
-    this.dataSource.data &#x3D; rows;
-  }
+  rows &#x3D; input&lt;ReportRow[]&gt;([]);
 
   displayedColumns: string[] &#x3D; [&quot;name&quot;, &quot;count&quot;];
 
@@ -304,6 +307,12 @@ export class ReportRowComponent {
     (row) &#x3D;&gt; row.isExpandable,
   );
   dataSource &#x3D; new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  constructor() {
+    effect(() &#x3D;&gt; {
+      this.dataSource.data &#x3D; this.rows();
+    });
+  }
 }
 </code></pre>
     </div>

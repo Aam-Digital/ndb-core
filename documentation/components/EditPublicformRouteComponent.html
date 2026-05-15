@@ -1894,7 +1894,7 @@ that links the form control value to the component value</p>
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
 } from &quot;@angular/core&quot;;
 import {
@@ -1956,8 +1956,8 @@ export class EditPublicformRouteComponent
 {
   private alertService &#x3D; inject(AlertService);
 
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
+  entity &#x3D; input&lt;Entity&gt;();
 
   prefixValue: string;
   private fullPrefixUrl: string;

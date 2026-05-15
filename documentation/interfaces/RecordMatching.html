@@ -395,10 +395,9 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
   ViewChild,
   ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
@@ -466,7 +465,7 @@ import { MatProgressBar } from &quot;@angular/material/progress-bar&quot;;
   templateUrl: &quot;./bulk-link-external-profiles.component.html&quot;,
   styleUrl: &quot;./bulk-link-external-profiles.component.scss&quot;,
 })
-export class BulkLinkExternalProfilesComponent implements OnChanges {
+export class BulkLinkExternalProfilesComponent {
   private readonly skillApi &#x3D; inject(SkillApiService);
   private readonly dialog &#x3D; inject(MatDialog);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
@@ -474,13 +473,14 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   /**
    * The bulk-selected entities for which to search external profiles.
    */
-  @Input() entities: Entity[];
-  @Input() config: FormFieldConfig;
+  entities &#x3D; input&lt;Entity[]&gt;();
+  config &#x3D; input&lt;FormFieldConfig&gt;();
+  private resolvedConfig: FormFieldConfig | undefined;
 
   private MAX_CONCURRENT_REQUESTS &#x3D; 20;
 
-  records: MatTableDataSource&lt;RecordMatching&gt;;
-  matchedRecordsCount: number;
+  records &#x3D; new MatTableDataSource&lt;RecordMatching&gt;([]);
+  matchedRecordsCount &#x3D; 0;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     if (this.records) {
@@ -488,34 +488,41 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entities) {
+  constructor() {
+    effect(() &#x3D;&gt; {
+      this.entities();
+      this.config();
       this.init();
-    }
+    });
   }
 
   private init() {
-    if (!this.config &amp;&amp; this.entities?.[0]) {
+    const entities &#x3D; this.entities();
+    const config &#x3D; this.config();
+    this.records &#x3D; new MatTableDataSource&lt;RecordMatching&gt;([]);
+    this.matchedRecordsCount &#x3D; 0;
+
+    this.resolvedConfig &#x3D; config;
+    if (!this.resolvedConfig &amp;&amp; entities?.[0]) {
       // TODO: handle cases with multiple &quot;external profile&quot; fields (add dropdown to UI here?)
-      this.config &#x3D; this.inferExternalProfileFieldFromEntitySchema(
-        this.entities[0].getSchema(),
+      this.resolvedConfig &#x3D; this.inferExternalProfileFieldFromEntitySchema(
+        entities[0].getSchema(),
       );
     }
 
-    if (!this.entities || !this.config) {
+    if (!entities || !this.resolvedConfig) {
       // abort
       Logging.debug(
         &quot;BulkLinkExternalProfilesComponent: aborting init due to missing entities or config&quot;,
-        this.entities,
-        this.config,
+        entities,
+        this.resolvedConfig,
       );
       return;
     }
 
     this.records &#x3D; new MatTableDataSource(
-      this.entities.map((entity) &#x3D;&gt; ({ entity }) as RecordMatching),
+      entities.map((entity) &#x3D;&gt; ({ entity }) as RecordMatching),
     );
-    this.matchedRecordsCount &#x3D; 0;
 
     from(this.records.data)
       .pipe(
@@ -536,6 +543,9 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   private async updateRecordWithMatches(
     record: RecordMatching,
   ): Promise&lt;RecordMatching&gt; {
+    if (!this.resolvedConfig) {
+      return record;
+    }
     await this.updateRecordWithCurrentlySelected(record);
 
     try {
@@ -543,7 +553,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
         this.skillApi.getExternalProfiles(
           this.skillApi.generateDefaultSearchParams(
             record.entity,
-            this.config.additional,
+            this.resolvedConfig.additional,
           ),
         ),
       );
@@ -586,7 +596,10 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
    * @private
    */
   private async updateRecordWithCurrentlySelected(record: RecordMatching) {
-    const existingExtProfileId &#x3D; record.entity[this.config.id];
+    if (!this.resolvedConfig) {
+      return;
+    }
+    const existingExtProfileId &#x3D; record.entity[this.resolvedConfig.id];
     if (!existingExtProfileId) {
       return;
     }
@@ -621,7 +634,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       .open(LinkExternalProfileDialogComponent, {
         data: {
           entity: record.entity,
-          config: this.config.additional,
+          config: this.resolvedConfig?.additional,
           possibleMatches: record.possibleMatches,
         } as LinkExternalProfileDialogData,
       })
@@ -635,19 +648,22 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   }
 
   async save() {
+    if (!this.records || !this.resolvedConfig) {
+      return;
+    }
     const newlyLinkedRecords &#x3D; this.records.data.filter(
-      (r) &#x3D;&gt; r.entity[this.config.id] !&#x3D;&#x3D; r.selected?.id,
+      (r) &#x3D;&gt; r.entity[this.resolvedConfig.id] !&#x3D;&#x3D; r.selected?.id,
     );
 
     for (const record of newlyLinkedRecords) {
       const updatedEntity: Entity &#x3D; record.entity;
-      updatedEntity[this.config.id] &#x3D; record.selected?.id;
+      updatedEntity[this.resolvedConfig.id] &#x3D; record.selected?.id;
 
       try {
         if (record.selected) {
           await this.skillApi.applyDataFromExternalProfile(
             record.selected, // if passed in as undefined, will reset the target values
-            this.config.additional,
+            this.resolvedConfig.additional,
             updatedEntity,
           );
         }

@@ -700,8 +700,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="127"
+                                    class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:127</a></div>
                         </td>
                     </tr>
 
@@ -737,8 +737,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="144"
-                                    class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:144</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="145"
+                                    class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:145</a></div>
                         </td>
                     </tr>
 
@@ -804,8 +804,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="135"
-                                    class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:135</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -2106,7 +2106,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:104</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:105</a></div>
                                 </td>
                             </tr>
 
@@ -2122,7 +2122,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
 } from &quot;@angular/core&quot;;
 import {
@@ -2177,8 +2177,8 @@ export class EditPrefilledValuesComponent
   extends CustomFormControlDirective&lt;Record&lt;string, DefaultValueConfig&gt;&gt;
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
+  entity &#x3D; input&lt;Entity&gt;();
 
   entityConstructor: EntityConstructor;
   entitySchemaField: EntitySchemaField;
@@ -2197,9 +2197,10 @@ export class EditPrefilledValuesComponent
   });
 
   ngOnInit(): void {
-    if (!this.entity) return;
+    const entity &#x3D; this.entity();
+    if (!entity) return;
 
-    this.entityConstructor &#x3D; this.entities.get(this.entity[&quot;entity&quot;]);
+    this.entityConstructor &#x3D; this.entities.get(entity[&quot;entity&quot;]);
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) &#x3D;&gt;
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),

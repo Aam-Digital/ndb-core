@@ -144,12 +144,6 @@
 
 
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
-    </p>
 
 
 <section data-compodoc="block-metadata">
@@ -177,10 +171,6 @@
                 <td class="col-md-9"><code>app-birthday-dashboard-settings</code></td>
             </tr>
 
-            <tr>
-                <td class="col-md-3">standalone</td>
-                <td class="col-md-9"><code>true</code></td>
-            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
@@ -235,6 +225,9 @@
                                 <a href="#availableEntityTypes" >availableEntityTypes</a>
                             </li>
                             <li>
+                                <a href="#canAddMorePairs" >canAddMorePairs</a>
+                            </li>
+                            <li>
                                 <a href="#dateFieldsByEntityType" >dateFieldsByEntityType</a>
                             </li>
                             <li>
@@ -244,7 +237,13 @@
                                 <a href="#entityTypeOptionsPerRow" >entityTypeOptionsPerRow</a>
                             </li>
                             <li>
-                                <a href="#localConfig" >localConfig</a>
+                                <a href="#hideOptionsPerRow" >hideOptionsPerRow</a>
+                            </li>
+                            <li>
+                                <a href="#isFormValid" >isFormValid</a>
+                            </li>
+                            <li>
+                                <a href="#threshold" >threshold</a>
                             </li>
                         </ul>
                     </td>
@@ -262,31 +261,13 @@
                                 <a href="#addPair" >addPair</a>
                             </li>
                             <li>
-                                <a href="#availablePropertiesFor" >availablePropertiesFor</a>
-                            </li>
-                            <li>
-                                <a href="#emitConfigChange" >emitConfigChange</a>
-                            </li>
-                            <li>
-                                <a href="#hideNonBirthdayFieldsForRow" >hideNonBirthdayFieldsForRow</a>
-                            </li>
-                            <li>
                                 <a href="#onEntityTypeChange" >onEntityTypeChange</a>
                             </li>
                             <li>
                                 <a href="#onPropertyChange" >onPropertyChange</a>
                             </li>
                             <li>
-                                <a href="#onThresholdChange" >onThresholdChange</a>
-                            </li>
-                            <li>
                                 <a href="#removePair" >removePair</a>
-                            </li>
-                            <li>
-                                <a href="#updateEntityTypeOptionsPerRow" >updateEntityTypeOptionsPerRow</a>
-                            </li>
-                            <li>
-                                <a href="#updateLocalConfig" >updateLocalConfig</a>
                             </li>
                         </ul>
                     </td>
@@ -310,27 +291,28 @@
 
 
 
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Accessors</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#canAddMorePairs" >canAddMorePairs</a>
-                                </li>
-                                <li>
-                                    <a href="#isFormValid" >isFormValid</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
         </tbody>
     </table>
 </section>
 
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:155</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
 
     <section data-compodoc="block-inputs">
     <h3 id="inputs">Inputs</h3>
@@ -348,9 +330,14 @@
 
                     </td>
                 </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Required : </i>&nbsp;<b>true</b>
+                    </td>
+                </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:60</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:61</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -384,8 +371,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="236"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:236</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:218</a></div>
                         </td>
                     </tr>
 
@@ -397,177 +384,6 @@
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="availablePropertiesFor"></a>
-                    <span class="name">
-                        <span ><b>availablePropertiesFor</b></span>
-                        <a href="#availablePropertiesFor"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>availablePropertiesFor(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="163"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:163</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>entityType</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>string[]</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="emitConfigChange"></a>
-                    <span class="name">
-                        <span ><b>emitConfigChange</b></span>
-                        <a href="#emitConfigChange"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>emitConfigChange()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="310"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:310</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="hideNonBirthdayFieldsForRow"></a>
-                    <span class="name">
-                        <span ><b>hideNonBirthdayFieldsForRow</b></span>
-                        <a href="#hideNonBirthdayFieldsForRow"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>hideNonBirthdayFieldsForRow(currentIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="293"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:293</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>currentIndex</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >(option: FormFieldConfig) &#x3D;&gt; boolean</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
                 </td>
             </tr>
         </tbody>
@@ -592,8 +408,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="212"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:212</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="201"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:201</a></div>
                         </td>
                     </tr>
 
@@ -671,8 +487,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="227"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:227</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="212"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:212</a></div>
                         </td>
                     </tr>
 
@@ -734,43 +550,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="onThresholdChange"></a>
-                    <span class="name">
-                        <span ><b>onThresholdChange</b></span>
-                        <a href="#onThresholdChange"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>onThresholdChange()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="232"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:232</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="removePair"></a>
                     <span class="name">
                         <span ><b>removePair</b></span>
@@ -787,8 +566,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="255"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:255</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="235"
+                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:235</a></div>
                         </td>
                     </tr>
 
@@ -834,80 +613,6 @@
             </tr>
         </tbody>
     </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="updateEntityTypeOptionsPerRow"></a>
-                    <span class="name">
-                        <span ><b>updateEntityTypeOptionsPerRow</b></span>
-                        <a href="#updateEntityTypeOptionsPerRow"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>updateEntityTypeOptionsPerRow()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="175"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:175</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="updateLocalConfig"></a>
-                    <span class="name">
-                        <span ><b>updateLocalConfig</b></span>
-                        <a href="#updateLocalConfig"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>updateLocalConfig()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="266"
-                                    class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:266</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 </section>
     <section data-compodoc="block-properties">
     
@@ -933,12 +638,60 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
+                        <i>Default value : </i><code>this.entityRegistry
+    .getEntityTypes(true)
+    .map(({ value }) &#x3D;&gt; value)
+    .filter((ctor: EntityConstructor) &#x3D;&gt; {
+      const schema &#x3D; getEntitySchema(ctor);
+      return Array.from(schema.values()).some(
+        (field: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;,
+      );
+    })</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:62</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:65</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canAddMorePairs"></a>
+                    <span class="name">
+                        <span ><b>canAddMorePairs</b></span>
+                        <a href="#canAddMorePairs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const usedCombinations &#x3D; this.getUsedCombinations();
+    return this.availableEntityTypes.some((ctor) &#x3D;&gt; {
+      const entityType &#x3D; ctor.ENTITY_TYPE;
+      const availableFields &#x3D; this.availablePropertiesFor(entityType);
+      return availableFields.some(
+        (field) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${field}&#x60;),
+      );
+    });
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="140" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:140</a></div>
                         </td>
                     </tr>
 
@@ -964,12 +717,19 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>{}</code>
+                        <i>Default value : </i><code>Object.fromEntries(
+      this.availableEntityTypes.map((ctor) &#x3D;&gt; [
+        ctor.ENTITY_TYPE,
+        Array.from(getEntitySchema(ctor).entries())
+          .filter(([_, field]: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;)
+          .map(([key]) &#x3D;&gt; key),
+      ]),
+    )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:64</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -995,18 +755,52 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/EntityPropertyPair.html" target="_self" >EntityPropertyPair[]</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
+                        <i>Default value : </i><code>linkedSignal&lt;EntityPropertyPair[]&gt;(() &#x3D;&gt; {
+    const entities &#x3D; this.formControl().value?.entities;
+    const pairs: EntityPropertyPair[] &#x3D; [];
+
+    if (entities) {
+      for (const [entityType, properties] of Object.entries(entities)) {
+        if (
+          !this.availableEntityTypes.some(
+            (ctor) &#x3D;&gt; ctor.ENTITY_TYPE &#x3D;&#x3D;&#x3D; entityType,
+          )
+        )
+          continue;
+        const propertyList &#x3D; Array.isArray(properties)
+          ? properties
+          : [properties];
+        for (const property of propertyList) {
+          if (this.dateFieldsByEntityType[entityType]?.includes(property)) {
+            pairs.push({ entityType, property });
+          }
+        }
+      }
+    }
+
+    if (pairs.length &#x3D;&#x3D;&#x3D; 0) {
+      const defaultEntityType &#x3D; this.availableEntityTypes[0]?.ENTITY_TYPE;
+      const defaultProperty &#x3D; defaultEntityType
+        ? this.dateFieldsByEntityType[defaultEntityType]?.[0]
+        : undefined;
+      if (defaultEntityType &amp;&amp; defaultProperty) {
+        return [{ entityType: defaultEntityType, property: defaultProperty }];
+      }
+    }
+
+    return pairs;
+  })</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -1026,18 +820,31 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >EntityConstructor[][]</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.entityPropertyPairs().map((pair, index) &#x3D;&gt; {
+      const usedCombinations &#x3D; this.getUsedCombinations(index);
+      return this.availableEntityTypes.filter((ctor) &#x3D;&gt; {
+        const entityType &#x3D; ctor.ENTITY_TYPE;
+        const availableFields &#x3D; this.availablePropertiesFor(entityType);
+        return availableFields.some(
+          (field) &#x3D;&gt;
+            !usedCombinations.has(&#x60;${entityType}:${field}&#x60;) ||
+            (entityType &#x3D;&#x3D;&#x3D; pair.entityType &amp;&amp; field &#x3D;&#x3D;&#x3D; pair.property),
+        );
+      });
+    }),
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:66</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:125</a></div>
                         </td>
                     </tr>
 
@@ -1054,30 +861,111 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="localConfig"></a>
+                    <a name="hideOptionsPerRow"></a>
                     <span class="name">
-                        <span ><b>localConfig</b></span>
-                        <a href="#localConfig"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>hideOptionsPerRow</b></span>
+                        <a href="#hideOptionsPerRow"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/BirthdayDashboardSettingsConfig.html" target="_self" >BirthdayDashboardSettingsConfig</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>{
-    threshold: 32,
-    entities: { Child: &quot;dateOfBirth&quot; },
-  }</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.entityPropertyPairs().map((_, index) &#x3D;&gt; {
+      const usedCombinations &#x3D; this.getUsedCombinations(index);
+      const currentEntityType &#x3D; this.entityPropertyPairs()[index]?.entityType;
+      return (option: FormFieldConfig): boolean &#x3D;&gt; {
+        if (option.dataType !&#x3D;&#x3D; &quot;date-with-age&quot;) return true;
+        if (currentEntityType &amp;&amp; option.id) {
+          return usedCombinations.has(&#x60;${currentEntityType}:${option.id}&#x60;);
+        }
+        return false;
+      };
+    }),
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="242" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:242</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Per-row filter function for entity-field-select, hiding already-used combinations</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isFormValid"></a>
+                    <span class="name">
+                        <span ><b>isFormValid</b></span>
+                        <a href="#isFormValid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.entityPropertyPairs().every(
+      (pair) &#x3D;&gt; pair.entityType &amp;&amp; pair.property,
+    ),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:151</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="threshold"></a>
+                    <span class="name">
+                        <span ><b>threshold</b></span>
+                        <a href="#threshold"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>linkedSignal(() &#x3D;&gt; this.formControl().value?.threshold ?? 32)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -1086,65 +974,18 @@
     </table>
 </section>
 
-    <section data-compodoc="block-accessors">
-    <h3 id="accessors">
-        Accessors
-    </h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="canAddMorePairs"></a>
-                        <span class="name"><b>canAddMorePairs</b><a href="#canAddMorePairs"><span class="icon ion-ios-link"></span></a></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>get</b><code>canAddMorePairs()</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="194" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:194</a></div>
-                                </td>
-                            </tr>
-
-            </tbody>
-        </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="isFormValid"></a>
-                        <span class="name"><b>isFormValid</b><a href="#isFormValid"><span class="icon ion-ios-link"></span></a></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>get</b><code>isFormValid()</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="206" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-settings.component/birthday-dashboard-settings.component.ts:206</a></div>
-                                </td>
-                            </tr>
-
-            </tbody>
-        </table>
-</section>
 </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  Input,
-  OnInit,
-  inject,
   ChangeDetectionStrategy,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
 } from &quot;@angular/core&quot;;
 import { FormControl, FormsModule } from &quot;@angular/forms&quot;;
 
@@ -1183,7 +1024,6 @@ interface EntityPropertyPair {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-birthday-dashboard-settings&quot;,
-  standalone: true,
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -1197,144 +1037,88 @@ interface EntityPropertyPair {
   templateUrl: &quot;./birthday-dashboard-settings.component.html&quot;,
   styleUrls: [&quot;./birthday-dashboard-settings.component.scss&quot;],
 })
-export class BirthdayDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl&lt;BirthdayDashboardSettingsConfig&gt;;
-
-  availableEntityTypes: EntityConstructor[] &#x3D; [];
-  /** Map of entity types to their available date-with-age fields */
-  dateFieldsByEntityType: { [entityType: string]: string[] } &#x3D; {};
-  /** Available entity type options for each row, filtered to prevent duplicates */
-  entityTypeOptionsPerRow: EntityConstructor[][] &#x3D; [];
-
-  entityPropertyPairs: EntityPropertyPair[] &#x3D; [];
-
-  localConfig: BirthdayDashboardSettingsConfig &#x3D; {
-    threshold: 32,
-    entities: { Child: &quot;dateOfBirth&quot; },
-  };
+export class BirthdayDashboardSettingsComponent {
+  formControl &#x3D; input.required&lt;FormControl&lt;BirthdayDashboardSettingsConfig&gt;&gt;();
 
   private entityRegistry &#x3D; inject(EntityRegistry);
 
-  ngOnInit() {
-    // Get all entity types and filter for those with a date-with-age field
-    const allEntityTypes &#x3D; this.entityRegistry
-      .getEntityTypes(true)
-      .map(({ value }) &#x3D;&gt; value);
+  availableEntityTypes: EntityConstructor[] &#x3D; this.entityRegistry
+    .getEntityTypes(true)
+    .map(({ value }) &#x3D;&gt; value)
+    .filter((ctor: EntityConstructor) &#x3D;&gt; {
+      const schema &#x3D; getEntitySchema(ctor);
+      return Array.from(schema.values()).some(
+        (field: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;,
+      );
+    });
 
-    this.availableEntityTypes &#x3D; allEntityTypes.filter(
-      (ctor: EntityConstructor) &#x3D;&gt; {
-        const schema &#x3D; getEntitySchema(ctor);
-        return Array.from(schema.values()).some(
-          (field: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;,
-        );
-      },
+  /** Map of entity types to their available date-with-age fields */
+  dateFieldsByEntityType: { [entityType: string]: string[] } &#x3D;
+    Object.fromEntries(
+      this.availableEntityTypes.map((ctor) &#x3D;&gt; [
+        ctor.ENTITY_TYPE,
+        Array.from(getEntitySchema(ctor).entries())
+          .filter(([_, field]: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;)
+          .map(([key]) &#x3D;&gt; key),
+      ]),
     );
 
-    this.buildAvailablePropertiesMap();
+  threshold &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.threshold ?? 32);
 
-    // Initialize pairs from config or create a single default pair
-    const entities &#x3D; this.formControl.value?.entities;
+  entityPropertyPairs &#x3D; linkedSignal&lt;EntityPropertyPair[]&gt;(() &#x3D;&gt; {
+    const entities &#x3D; this.formControl().value?.entities;
+    const pairs: EntityPropertyPair[] &#x3D; [];
 
-    if (entities &amp;&amp; Object.keys(entities).length &gt; 0) {
-      // Use existing valid entities, filtering out invalid ones
-      this.entityPropertyPairs &#x3D; [];
-
-      Object.entries(entities).forEach(([entityType, properties]) &#x3D;&gt; {
-        const isValidEntityType &#x3D; this.availableEntityTypes.some(
-          (ctor) &#x3D;&gt; ctor.ENTITY_TYPE &#x3D;&#x3D;&#x3D; entityType,
-        );
-
-        if (!isValidEntityType) return;
-
-        // Handle both string and array properties
+    if (entities) {
+      for (const [entityType, properties] of Object.entries(entities)) {
+        if (
+          !this.availableEntityTypes.some(
+            (ctor) &#x3D;&gt; ctor.ENTITY_TYPE &#x3D;&#x3D;&#x3D; entityType,
+          )
+        )
+          continue;
         const propertyList &#x3D; Array.isArray(properties)
           ? properties
           : [properties];
-
-        propertyList.forEach((property) &#x3D;&gt; {
-          const isValidProperty &#x3D;
-            this.dateFieldsByEntityType[entityType]?.includes(property);
-          if (isValidProperty) {
-            this.entityPropertyPairs.push({
-              entityType,
-              property,
-            });
+        for (const property of propertyList) {
+          if (this.dateFieldsByEntityType[entityType]?.includes(property)) {
+            pairs.push({ entityType, property });
           }
-        });
-      });
-    } else {
-      this.entityPropertyPairs &#x3D; [];
+        }
+      }
     }
 
-    // If no valid pairs exist, create one default pair
-    if (this.entityPropertyPairs.length &#x3D;&#x3D;&#x3D; 0) {
+    if (pairs.length &#x3D;&#x3D;&#x3D; 0) {
       const defaultEntityType &#x3D; this.availableEntityTypes[0]?.ENTITY_TYPE;
       const defaultProperty &#x3D; defaultEntityType
         ? this.dateFieldsByEntityType[defaultEntityType]?.[0]
-        : &quot;&quot;;
-
+        : undefined;
       if (defaultEntityType &amp;&amp; defaultProperty) {
-        this.entityPropertyPairs &#x3D; [
-          {
-            entityType: defaultEntityType,
-            property: defaultProperty,
-          },
-        ];
+        return [{ entityType: defaultEntityType, property: defaultProperty }];
       }
-      // If no valid entity types available, leave array empty
-      // The form validation will handle this case
     }
 
-    this.localConfig.threshold &#x3D; this.formControl.value?.threshold ?? 32;
-    this.updateLocalConfig();
-    this.updateEntityTypeOptionsPerRow();
-  }
+    return pairs;
+  });
 
-  private buildAvailablePropertiesMap() {
-    for (const ctor of this.availableEntityTypes) {
-      const schema &#x3D; getEntitySchema(ctor);
-      this.dateFieldsByEntityType[ctor.ENTITY_TYPE] &#x3D; Array.from(
-        schema.entries(),
-      )
-        .filter(([_, field]: any) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;date-with-age&quot;)
-        .map(([key]) &#x3D;&gt; key);
-    }
-  }
+  /** Available entity type options for each row, filtered to prevent duplicates */
+  entityTypeOptionsPerRow &#x3D; computed(() &#x3D;&gt;
+    this.entityPropertyPairs().map((pair, index) &#x3D;&gt; {
+      const usedCombinations &#x3D; this.getUsedCombinations(index);
+      return this.availableEntityTypes.filter((ctor) &#x3D;&gt; {
+        const entityType &#x3D; ctor.ENTITY_TYPE;
+        const availableFields &#x3D; this.availablePropertiesFor(entityType);
+        return availableFields.some(
+          (field) &#x3D;&gt;
+            !usedCombinations.has(&#x60;${entityType}:${field}&#x60;) ||
+            (entityType &#x3D;&#x3D;&#x3D; pair.entityType &amp;&amp; field &#x3D;&#x3D;&#x3D; pair.property),
+        );
+      });
+    }),
+  );
 
-  availablePropertiesFor(entityType: string): string[] {
-    return this.dateFieldsByEntityType[entityType] ?? [];
-  }
-
-  private getUsedCombinations(excludeIndex?: number): Set&lt;string&gt; {
-    return new Set(
-      this.entityPropertyPairs
-        .filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; excludeIndex)
-        .map((p) &#x3D;&gt; &#x60;${p.entityType}:${p.property}&#x60;),
-    );
-  }
-
-  updateEntityTypeOptionsPerRow() {
-    this.entityTypeOptionsPerRow &#x3D; this.entityPropertyPairs.map(
-      (pair, index) &#x3D;&gt; {
-        const usedCombinations &#x3D; this.getUsedCombinations(index);
-
-        return this.availableEntityTypes.filter((ctor) &#x3D;&gt; {
-          const entityType &#x3D; ctor.ENTITY_TYPE;
-          const availableFields &#x3D; this.availablePropertiesFor(entityType);
-
-          return availableFields.some(
-            (field) &#x3D;&gt;
-              !usedCombinations.has(&#x60;${entityType}:${field}&#x60;) ||
-              (entityType &#x3D;&#x3D;&#x3D; pair.entityType &amp;&amp; field &#x3D;&#x3D;&#x3D; pair.property),
-          );
-        });
-      },
-    );
-  }
-
-  get canAddMorePairs(): boolean {
+  canAddMorePairs &#x3D; computed(() &#x3D;&gt; {
     const usedCombinations &#x3D; this.getUsedCombinations();
-
     return this.availableEntityTypes.some((ctor) &#x3D;&gt; {
       const entityType &#x3D; ctor.ENTITY_TYPE;
       const availableFields &#x3D; this.availablePropertiesFor(entityType);
@@ -1342,121 +1126,112 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
         (field) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${field}&#x60;),
       );
     });
+  });
+
+  isFormValid &#x3D; computed(() &#x3D;&gt;
+    this.entityPropertyPairs().every(
+      (pair) &#x3D;&gt; pair.entityType &amp;&amp; pair.property,
+    ),
+  );
+
+  constructor() {
+    // Sync signal state to the form control whenever any value changes
+    effect(() &#x3D;&gt; {
+      if (this.isFormValid()) {
+        this.formControl().setValue({
+          threshold: this.threshold(),
+          entities: this.pairsToEntitiesMap(this.entityPropertyPairs()),
+        });
+        this.formControl().setErrors(null);
+      } else {
+        this.formControl().setErrors({ invalidPairs: true });
+      }
+    });
   }
 
-  get isFormValid(): boolean {
-    return this.entityPropertyPairs.every(
-      (pair) &#x3D;&gt; pair.entityType &amp;&amp; pair.property,
+  private pairsToEntitiesMap(pairs: EntityPropertyPair[]): {
+    [entityType: string]: string | string[];
+  } {
+    const entities: { [entityType: string]: string | string[] } &#x3D; {};
+    for (const { entityType, property } of pairs) {
+      if (!entityType || !property) continue;
+      if (Array.isArray(entities[entityType])) {
+        (entities[entityType] as string[]).push(property);
+      } else if (entities[entityType]) {
+        entities[entityType] &#x3D; [entities[entityType] as string, property];
+      } else {
+        entities[entityType] &#x3D; property;
+      }
+    }
+    return entities;
+  }
+
+  private availablePropertiesFor(entityType: string): string[] {
+    return this.dateFieldsByEntityType[entityType] ?? [];
+  }
+
+  private getUsedCombinations(excludeIndex?: number): Set&lt;string&gt; {
+    return new Set(
+      this.entityPropertyPairs()
+        .filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; excludeIndex)
+        .map((p) &#x3D;&gt; &#x60;${p.entityType}:${p.property}&#x60;),
     );
   }
 
   onEntityTypeChange(entityType: string, index: number) {
-    this.entityPropertyPairs[index].entityType &#x3D; entityType;
-
-    // Auto-select first available property that&#x27;s not already used
     const usedCombinations &#x3D; this.getUsedCombinations(index);
-    const availableProperties &#x3D; this.availablePropertiesFor(entityType);
-    const unusedProperty &#x3D; availableProperties.find(
-      (prop) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${prop}&#x60;),
+    const property &#x3D;
+      this.availablePropertiesFor(entityType).find(
+        (prop) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${prop}&#x60;),
+      ) ?? &quot;&quot;;
+    this.entityPropertyPairs.update((prev) &#x3D;&gt;
+      prev.map((pair, i) &#x3D;&gt; (i &#x3D;&#x3D;&#x3D; index ? { entityType, property } : pair)),
     );
-
-    this.entityPropertyPairs[index].property &#x3D; unusedProperty ?? &quot;&quot;;
-    this.updateEntityTypeOptionsPerRow();
-    this.updateAndEmitConfig();
   }
 
   onPropertyChange(property: string, index: number) {
-    this.entityPropertyPairs[index].property &#x3D; property;
-    this.updateAndEmitConfig();
-  }
-
-  onThresholdChange() {
-    this.updateAndEmitConfig();
+    this.entityPropertyPairs.update((prev) &#x3D;&gt;
+      prev.map((pair, i) &#x3D;&gt; (i &#x3D;&#x3D;&#x3D; index ? { ...pair, property } : pair)),
+    );
   }
 
   addPair() {
     const usedCombinations &#x3D; this.getUsedCombinations();
-
     for (const ctor of this.availableEntityTypes) {
       const entityType &#x3D; ctor.ENTITY_TYPE;
-      const availableFields &#x3D; this.availablePropertiesFor(entityType);
-      const unusedField &#x3D; availableFields.find(
+      const unusedField &#x3D; this.availablePropertiesFor(entityType).find(
         (field) &#x3D;&gt; !usedCombinations.has(&#x60;${entityType}:${field}&#x60;),
       );
-
       if (unusedField) {
-        this.entityPropertyPairs.push({ entityType, property: unusedField });
-        this.updateEntityTypeOptionsPerRow();
-        this.updateAndEmitConfig();
+        this.entityPropertyPairs.update((prev) &#x3D;&gt; [
+          ...prev,
+          { entityType, property: unusedField },
+        ]);
         return;
       }
     }
   }
 
   removePair(index: number) {
-    this.entityPropertyPairs.splice(index, 1);
-    this.updateEntityTypeOptionsPerRow();
-    this.updateAndEmitConfig();
+    this.entityPropertyPairs.update((prev) &#x3D;&gt;
+      prev.filter((_, i) &#x3D;&gt; i !&#x3D;&#x3D; index),
+    );
   }
 
-  private updateAndEmitConfig() {
-    this.updateLocalConfig();
-    this.emitConfigChange();
-  }
-
-  updateLocalConfig() {
-    const entities: { [entityType: string]: string | string[] } &#x3D; {};
-
-    for (const pair of this.entityPropertyPairs) {
-      if (pair.entityType &amp;&amp; pair.property) {
-        const entityType &#x3D; pair.entityType;
-        const property &#x3D; pair.property;
-
-        if (entities[entityType]) {
-          // If entity already exists, convert to array or add to existing array
-          if (Array.isArray(entities[entityType])) {
-            (entities[entityType] as string[]).push(property);
-          } else {
-            entities[entityType] &#x3D; [entities[entityType] as string, property];
-          }
-        } else {
-          entities[entityType] &#x3D; property;
+  /** Per-row filter function for entity-field-select, hiding already-used combinations */
+  hideOptionsPerRow &#x3D; computed(() &#x3D;&gt;
+    this.entityPropertyPairs().map((_, index) &#x3D;&gt; {
+      const usedCombinations &#x3D; this.getUsedCombinations(index);
+      const currentEntityType &#x3D; this.entityPropertyPairs()[index]?.entityType;
+      return (option: FormFieldConfig): boolean &#x3D;&gt; {
+        if (option.dataType !&#x3D;&#x3D; &quot;date-with-age&quot;) return true;
+        if (currentEntityType &amp;&amp; option.id) {
+          return usedCombinations.has(&#x60;${currentEntityType}:${option.id}&#x60;);
         }
-      }
-    }
-
-    this.localConfig &#x3D; {
-      threshold: this.localConfig.threshold,
-      entities,
-    };
-  }
-
-  hideNonBirthdayFieldsForRow(currentIndex: number) {
-    return (option: FormFieldConfig): boolean &#x3D;&gt; {
-      if (option.dataType !&#x3D;&#x3D; &quot;date-with-age&quot;) {
-        return true;
-      }
-
-      const currentEntityType &#x3D;
-        this.entityPropertyPairs[currentIndex]?.entityType;
-      if (currentEntityType &amp;&amp; option.id) {
-        const usedCombinations &#x3D; this.getUsedCombinations(currentIndex);
-        return usedCombinations.has(&#x60;${currentEntityType}:${option.id}&#x60;);
-      }
-
-      return false;
-    };
-  }
-
-  emitConfigChange() {
-    // Set form control validity based on whether all pairs are complete
-    if (this.isFormValid) {
-      this.formControl.setValue({ ...this.localConfig });
-      this.formControl.setErrors(null);
-    } else {
-      this.formControl.setErrors({ invalidPairs: true });
-    }
-  }
+        return false;
+      };
+    }),
+  );
 }
 </code></pre>
     </div>
@@ -1470,15 +1245,15 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
         matInput
         type&#x3D;&quot;number&quot;
         min&#x3D;&quot;1&quot;
-        [(ngModel)]&#x3D;&quot;localConfig.threshold&quot;
-        (ngModelChange)&#x3D;&quot;onThresholdChange()&quot;
+        [ngModel]&#x3D;&quot;threshold()&quot;
+        (ngModelChange)&#x3D;&quot;threshold.set($event)&quot;
       /&gt;
     &lt;/mat-form-field&gt;
   &lt;/div&gt;
 
   &lt;div&gt;
     &lt;h3 i18n&gt;Birthdays / Anniversaries to show&lt;/h3&gt;
-    @for (pair of entityPropertyPairs; track $index; let i &#x3D; $index) {
+    @for (pair of entityPropertyPairs(); track $index; let i &#x3D; $index) {
       &lt;div class&#x3D;&quot;margin-bottom-regular position-relative&quot;&gt;
         &lt;div class&#x3D;&quot;flex-row align-center gap-regular&quot;&gt;
           &lt;mat-form-field
@@ -1489,7 +1264,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
             &lt;app-entity-type-select
               [ngModel]&#x3D;&quot;pair.entityType&quot;
               (ngModelChange)&#x3D;&quot;onEntityTypeChange($event, i)&quot;
-              [options]&#x3D;&quot;entityTypeOptionsPerRow[i]&quot;
+              [options]&#x3D;&quot;entityTypeOptionsPerRow()[i]&quot;
               [required]&#x3D;&quot;true&quot;
             &gt;&lt;/app-entity-type-select&gt;
           &lt;/mat-form-field&gt;
@@ -1508,7 +1283,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
             [entityType]&#x3D;&quot;pair.entityType&quot;
             [ngModel]&#x3D;&quot;pair.property&quot;
             (ngModelChange)&#x3D;&quot;onPropertyChange($event, i)&quot;
-            [hideOption]&#x3D;&quot;hideNonBirthdayFieldsForRow(i)&quot;
+            [hideOption]&#x3D;&quot;hideOptionsPerRow()[i]&quot;
             [required]&#x3D;&quot;true&quot;
           &gt;&lt;/app-entity-field-select&gt;
         &lt;/mat-form-field&gt;
@@ -1517,14 +1292,14 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
     &lt;div
       matTooltip&#x3D;&quot;There are no additional fields with datatype &#x27;date of birth (date + age)&#x27;.&quot;
       i18n-matTooltip
-      [matTooltipDisabled]&#x3D;&quot;canAddMorePairs&quot;
+      [matTooltipDisabled]&#x3D;&quot;canAddMorePairs()&quot;
       matTooltipPosition&#x3D;&quot;before&quot;
     &gt;
       &lt;button
         mat-button
         color&#x3D;&quot;accent&quot;
         (click)&#x3D;&quot;addPair()&quot;
-        [disabled]&#x3D;&quot;!canAddMorePairs&quot;
+        [disabled]&#x3D;&quot;!canAddMorePairs()&quot;
       &gt;
         &lt;fa-icon
           class&#x3D;&quot;button-icon margin-sides-small&quot;
@@ -1534,7 +1309,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
       &lt;/button&gt;
     &lt;/div&gt;
 
-    @if (!isFormValid) {
+    @if (!isFormValid()) {
       &lt;div class&#x3D;&quot;margin-top-regular validation-error&quot;&gt;
         &lt;fa-icon icon&#x3D;&quot;exclamation-triangle&quot;&gt;&lt;/fa-icon&gt;
         &lt;span i18n
@@ -1586,7 +1361,7 @@ export class BirthdayDashboardSettingsComponent implements OnInit {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div style="padding: 16px">  <div style="margin-bottom: 32px">    <mat-form-field appearance="fill" class="full-width">      <mat-label i18n>Days ahead to show birthdays</mat-label>      <input        matInput        type="number"        min="1"        [(ngModel)]="localConfig.threshold"        (ngModelChange)="onThresholdChange()"      />    </mat-form-field>  </div>  <div>    <h3 i18n>Birthdays / Anniversaries to show</h3>    @for (pair of entityPropertyPairs; track $index; let i = $index) {      <div class="margin-bottom-regular position-relative">        <div class="flex-row align-center gap-regular">          <mat-form-field            appearance="fill"            class="full-width remove-margin-bottom"          >            <mat-label i18n>Record Type</mat-label>            <app-entity-type-select              [ngModel]="pair.entityType"              (ngModelChange)="onEntityTypeChange($event, i)"              [options]="entityTypeOptionsPerRow[i]"              [required]="true"            ></app-entity-type-select>          </mat-form-field>          <button            mat-icon-button            color="accent"            aria-label="Remove"            (click)="removePair(i)"          >            <fa-icon icon="trash"></fa-icon>          </button>        </div>        <mat-form-field appearance="fill" class="full-width margin-top-small">          <mat-label i18n>Birthday Property</mat-label>          <app-entity-field-select            [entityType]="pair.entityType"            [ngModel]="pair.property"            (ngModelChange)="onPropertyChange($event, i)"            [hideOption]="hideNonBirthdayFieldsForRow(i)"            [required]="true"          ></app-entity-field-select>        </mat-form-field>      </div>    }    <div      matTooltip="There are no additional fields with datatype \'date of birth (date + age)\'."      i18n-matTooltip      [matTooltipDisabled]="canAddMorePairs"      matTooltipPosition="before"    >      <button        mat-button        color="accent"        (click)="addPair()"        [disabled]="!canAddMorePairs"      >        <fa-icon          class="button-icon margin-sides-small"          icon="plus-circle"        ></fa-icon>        <span i18n>Add another</span>      </button>    </div>    @if (!isFormValid) {      <div class="margin-top-regular validation-error">        <fa-icon icon="exclamation-triangle"></fa-icon>        <span i18n          >Please select both record type and property for all entries before          saving.</span        >      </div>    }  </div></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div style="padding: 16px">  <div style="margin-bottom: 32px">    <mat-form-field appearance="fill" class="full-width">      <mat-label i18n>Days ahead to show birthdays</mat-label>      <input        matInput        type="number"        min="1"        [ngModel]="threshold()"        (ngModelChange)="threshold.set($event)"      />    </mat-form-field>  </div>  <div>    <h3 i18n>Birthdays / Anniversaries to show</h3>    @for (pair of entityPropertyPairs(); track $index; let i = $index) {      <div class="margin-bottom-regular position-relative">        <div class="flex-row align-center gap-regular">          <mat-form-field            appearance="fill"            class="full-width remove-margin-bottom"          >            <mat-label i18n>Record Type</mat-label>            <app-entity-type-select              [ngModel]="pair.entityType"              (ngModelChange)="onEntityTypeChange($event, i)"              [options]="entityTypeOptionsPerRow()[i]"              [required]="true"            ></app-entity-type-select>          </mat-form-field>          <button            mat-icon-button            color="accent"            aria-label="Remove"            (click)="removePair(i)"          >            <fa-icon icon="trash"></fa-icon>          </button>        </div>        <mat-form-field appearance="fill" class="full-width margin-top-small">          <mat-label i18n>Birthday Property</mat-label>          <app-entity-field-select            [entityType]="pair.entityType"            [ngModel]="pair.property"            (ngModelChange)="onPropertyChange($event, i)"            [hideOption]="hideOptionsPerRow()[i]"            [required]="true"          ></app-entity-field-select>        </mat-form-field>      </div>    }    <div      matTooltip="There are no additional fields with datatype \'date of birth (date + age)\'."      i18n-matTooltip      [matTooltipDisabled]="canAddMorePairs()"      matTooltipPosition="before"    >      <button        mat-button        color="accent"        (click)="addPair()"        [disabled]="!canAddMorePairs()"      >        <fa-icon          class="button-icon margin-sides-small"          icon="plus-circle"        ></fa-icon>        <span i18n>Add another</span>      </button>    </div>    @if (!isFormValid()) {      <div class="margin-top-regular validation-error">        <fa-icon icon="exclamation-triangle"></fa-icon>        <span i18n          >Please select both record type and property for all entries before          saving.</span        >      </div>    }  </div></div></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportAdditionalSettingsComponent', 'selector': 'app-import-additional-settings'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
     var ACTUAL_COMPONENT = {'name': 'BirthdayDashboardSettingsComponent'};

@@ -266,9 +266,10 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
+  linkedSignal,
 } from &quot;@angular/core&quot;;
 import { FormsModule, FormControl } from &quot;@angular/forms&quot;;
 import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
@@ -307,28 +308,19 @@ export interface EntityCountDashboardConfig {
   templateUrl: &quot;./entity-count-dashboard-settings.component.html&quot;,
   styleUrls: [&quot;./entity-count-dashboard-settings.component.scss&quot;],
 })
-export class EntityCountDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl&lt;EntityCountDashboardConfig&gt;;
+export class EntityCountDashboardSettingsComponent {
+  formControl &#x3D; input.required&lt;FormControl&lt;EntityCountDashboardConfig&gt;&gt;();
 
-  localConfig: EntityCountDashboardConfig;
+  entityType &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.entityType);
+  groupBy &#x3D; linkedSignal(() &#x3D;&gt; [...(this.formControl().value?.groupBy ?? [])]);
 
-  ngOnInit() {
-    this.localConfig &#x3D; {
-      entityType: this.formControl.value?.entityType,
-      groupBy: [...(this.formControl.value?.groupBy ?? [])],
-    };
-  }
-
-  onEntityTypeChange() {
-    this.emitConfigChange();
-  }
-
-  onGroupByChange() {
-    this.emitConfigChange();
-  }
-
-  private emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+  constructor() {
+    effect(() &#x3D;&gt; {
+      this.formControl().setValue({
+        entityType: this.entityType(),
+        groupBy: this.groupBy(),
+      });
+    });
   }
 }
 </code></pre>

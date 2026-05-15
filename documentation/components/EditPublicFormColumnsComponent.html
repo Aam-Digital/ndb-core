@@ -681,8 +681,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="100"
-                                    class="link-to-prism">src/app/features/public-form/edit-public-form-columns/edit-public-form-columns.component.ts:100</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="101"
+                                    class="link-to-prism">src/app/features/public-form/edit-public-form-columns/edit-public-form-columns.component.ts:101</a></div>
                         </td>
                     </tr>
 
@@ -2012,7 +2012,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
   signal,
   ViewChild,
@@ -2053,8 +2053,8 @@ export class EditPublicFormColumnsComponent
   extends CustomFormControlDirective&lt;FieldGroup[]&gt;
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
+  entity &#x3D; input&lt;Entity&gt;();
 
   @ViewChild(AdminEntityFormComponent) entityForm?: AdminEntityFormComponent;
 
@@ -2074,8 +2074,9 @@ export class EditPublicFormColumnsComponent
   }
 
   ngOnInit() {
-    if (this.entity) {
-      this.entityConstructor &#x3D; this.entities.get(this.entity[&quot;entity&quot;]);
+    const entity &#x3D; this.entity();
+    if (entity) {
+      this.entityConstructor &#x3D; this.entities.get(entity[&quot;entity&quot;]);
 
       const publicFormConfig: PublicFormConfig &#x3D; migratePublicFormConfig({
         columns: this.formControl.getRawValue(),

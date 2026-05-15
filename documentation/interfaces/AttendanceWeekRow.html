@@ -234,7 +234,7 @@
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>attendanceDays:         <code><a href="../classes/AttendanceItem.html" target="_self" >(AttendanceItem | undefined)[]</a></code>
+                                        <code>attendanceDays:         <code><a href="../classess/AttendanceItem.html" target="_self" >(AttendanceItem | undefined)[]</a></code>
 </code>
                                     </td>
                                 </tr>
@@ -242,7 +242,7 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../classes/AttendanceItem.html" target="_self" >(AttendanceItem | undefined)[]</a></code>
+                                            <i>Type : </i>        <code><a href="../classess/AttendanceItem.html" target="_self" >(AttendanceItem | undefined)[]</a></code>
 
                                         </td>
                                     </tr>
@@ -295,15 +295,14 @@
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   input,
-  signal,
-  untracked,
+  resource,
 } from &quot;@angular/core&quot;;
 import { MatTableModule } from &quot;@angular/material/table&quot;;
 import moment, { Moment } from &quot;moment&quot;;
 import { DynamicComponent } from &quot;#src/app/core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 import { DashboardListWidgetComponent } from &quot;#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
 import { EntityBlockComponent } from &quot;#src/app/core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
 import { AttendanceService } from &quot;../attendance.service&quot;;
@@ -382,85 +381,85 @@ export class AttendanceWeekDashboardComponent {
     return undefined;
   });
 
-  entries &#x3D; signal&lt;AttendanceWeekRow[][] | undefined&gt;(undefined);
+  entries &#x3D; resource({
+    params: () &#x3D;&gt; ({
+      daysOffset: this.daysOffset(),
+      absentWarningThreshold: this.absentWarningThreshold(),
+      attendanceStatusType: this.attendanceStatusType(),
+    }),
+    loader: async ({ params }) &#x3D;&gt; {
+      const { from, to } &#x3D; this.getWeekDateRange(params.daysOffset);
+      const rawEvents &#x3D; await this.attendanceService.getEventsOnDate(
+        from.toDate(),
+        to.toDate(),
+      );
 
-  constructor() {
-    effect((onCleanup) &#x3D;&gt; {
-      // Track relevant inputs so this re-loads when widget config changes.
-      this.daysOffset();
-      this.absentWarningThreshold();
-      this.attendanceStatusType();
+      const groupedByActivity &#x3D; this.groupEventsByActivity(rawEvents);
 
-      let isCurrent &#x3D; true;
-      this.entries.set(undefined);
-      untracked(() &#x3D;&gt; {
-        void this.loadAttendanceOfAbsentees(() &#x3D;&gt; isCurrent);
-      });
+      const lowAttendanceCases &#x3D; new Set&lt;string&gt;();
+      const allRows: AttendanceWeekRow[] &#x3D; [];
+      for (const [activityId, activityEvents] of groupedByActivity) {
+        const rows &#x3D; this.generateRowsFromEvents(
+          activityEvents,
+          from,
+          to,
+          activityId,
+        );
+        allRows.push(...rows);
+        rows
+          .filter((row) &#x3D;&gt;
+            this.filterLowAttendance(
+              row,
+              params.absentWarningThreshold,
+              params.attendanceStatusType,
+            ),
+          )
+          .forEach((row) &#x3D;&gt; lowAttendanceCases.add(row.participantId));
+      }
 
-      onCleanup(() &#x3D;&gt; {
-        isCurrent &#x3D; false;
-      });
-    });
-  }
+      return Array.from(this.groupRowsByParticipant(allRows).entries())
+        .filter(([participantId]) &#x3D;&gt; lowAttendanceCases.has(participantId))
+        .map(([_, attendance]) &#x3D;&gt; attendance);
+    },
+  });
 
-  private async loadAttendanceOfAbsentees(isCurrent: () &#x3D;&gt; boolean) {
-    const previousMonday &#x3D; moment()
+  private getWeekDateRange(daysOffset: number): { from: Moment; to: Moment } {
+    const from &#x3D; moment()
       .startOf(&quot;isoWeek&quot;)
       .subtract(1, &quot;week&quot;)
-      .add(this.daysOffset(), &quot;days&quot;);
-    const previousSaturday &#x3D; moment(previousMonday).add(5, &quot;days&quot;);
+      .add(daysOffset, &quot;days&quot;);
+    const to &#x3D; moment(from).add(5, &quot;days&quot;);
+    return { from, to };
+  }
 
-    const rawEvents &#x3D; await this.attendanceService.getEventsOnDate(
-      previousMonday.toDate(),
-      previousSaturday.toDate(),
-    );
-
-    // Standalone events (without a linked activity) are grouped together
-    // under &#x60;undefined&#x60; so they appear as a combined row in the dashboard.
-    // this means if multiple events are on one day, only one will be displayed
-    const groupedByActivity &#x3D; new Map&lt;
-      string | undefined,
-      EventWithAttendance[]
-    &gt;();
+  /**
+   * Wraps raw event entities and groups them by activity.
+   * Standalone events (without a linked activity) are grouped under &#x60;undefined&#x60;
+   * so they appear as a combined row in the dashboard.
+   */
+  private groupEventsByActivity(
+    rawEvents: Entity[],
+  ): Map&lt;string | undefined, EventWithAttendance[]&gt; {
+    const grouped &#x3D; new Map&lt;string | undefined, EventWithAttendance[]&gt;();
     for (const event of rawEvents) {
       const wrappedEvent &#x3D; this.attendanceService.wrapEventEntity(event);
-      const key &#x3D; wrappedEvent.activityId;
-      const eventsForKey &#x3D; groupedByActivity.get(key) ?? [];
-      eventsForKey.push(wrappedEvent);
-      groupedByActivity.set(key, eventsForKey);
+      const existing &#x3D; grouped.get(wrappedEvent.activityId) ?? [];
+      existing.push(wrappedEvent);
+      grouped.set(wrappedEvent.activityId, existing);
     }
+    return grouped;
+  }
 
-    const lowAttendanceCases &#x3D; new Set&lt;string&gt;();
-    const records: AttendanceWeekRow[] &#x3D; [];
-    for (const [activityId, activityEvents] of groupedByActivity) {
-      const rows &#x3D; this.generateRowsFromEvents(
-        activityEvents,
-        previousMonday,
-        previousSaturday,
-        activityId,
-      );
-      records.push(...rows);
-      rows
-        .filter((row) &#x3D;&gt; this.filterLowAttendance(row))
-        .forEach((row) &#x3D;&gt; {
-          lowAttendanceCases.add(row.participantId);
-        });
+  private groupRowsByParticipant(
+    rows: AttendanceWeekRow[],
+  ): Map&lt;string, AttendanceWeekRow[]&gt; {
+    const grouped &#x3D; new Map&lt;string, AttendanceWeekRow[]&gt;();
+    for (const row of rows) {
+      const existing &#x3D; grouped.get(row.participantId) ?? [];
+      existing.push(row);
+      grouped.set(row.participantId, existing);
     }
-
-    const groupsMap &#x3D; new Map&lt;string, AttendanceWeekRow[]&gt;();
-    for (const record of records) {
-      const recordsForParticipant &#x3D; groupsMap.get(record.participantId) ?? [];
-      recordsForParticipant.push(record);
-      groupsMap.set(record.participantId, recordsForParticipant);
-    }
-
-    const entries &#x3D; Array.from(groupsMap.entries())
-      .filter(([participantId]) &#x3D;&gt; lowAttendanceCases.has(participantId))
-      .map(([_, attendance]) &#x3D;&gt; attendance);
-
-    if (isCurrent()) {
-      this.entries.set(entries);
-    }
+    return grouped;
   }
 
   private generateRowsFromEvents(
@@ -469,60 +468,76 @@ export class AttendanceWeekDashboardComponent {
     to: Moment,
     activityId: string | undefined,
   ): AttendanceWeekRow[] {
-    const participants &#x3D; [
+    return this.getUniqueParticipants(events).map((participantId) &#x3D;&gt; ({
+      participantId,
+      activityId,
+      attendanceDays: this.buildAttendanceDays(events, from, to, participantId),
+    }));
+  }
+
+  private getUniqueParticipants(events: EventWithAttendance[]): string[] {
+    return [
       ...new Set(
         events.flatMap((event) &#x3D;&gt;
           event.attendanceItems
             .map((item) &#x3D;&gt; item.participant)
-            .filter((participant): participant is string &#x3D;&gt; !!participant),
+            .filter((p): p is string &#x3D;&gt; !!p),
         ),
       ),
     ];
-
-    const results: AttendanceWeekRow[] &#x3D; [];
-    for (const participant of participants) {
-      const attendanceDays: (AttendanceItem | undefined)[] &#x3D; [];
-
-      let day &#x3D; moment(from);
-      while (day.isSameOrBefore(to, &quot;day&quot;)) {
-        const eventsOnDay &#x3D; events.filter((event) &#x3D;&gt;
-          day.isSame(event.date, &quot;day&quot;),
-        );
-        // When multiple events overlap on the same day (for example, grouped standalone events),
-        // prefer the first event where the participant is marked absent.
-        const event &#x3D;
-          eventsOnDay.find(
-            (candidate) &#x3D;&gt;
-              candidate.getAttendanceForParticipant(participant)?.status
-                ?.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.ABSENT,
-          ) ?? eventsOnDay[0];
-
-        // Put a placeholder into the array if no event occurred on this day.
-        attendanceDays.push(
-          event ? event.getAttendanceForParticipant(participant) : undefined,
-        );
-        day &#x3D; day.add(1, &quot;day&quot;);
-      }
-
-      results.push({ participantId: participant, activityId, attendanceDays });
-    }
-
-    return results;
   }
 
-  private filterLowAttendance(row: AttendanceWeekRow): boolean {
+  private buildAttendanceDays(
+    events: EventWithAttendance[],
+    from: Moment,
+    to: Moment,
+    participant: string,
+  ): (AttendanceItem | undefined)[] {
+    const days: (AttendanceItem | undefined)[] &#x3D; [];
+    let day &#x3D; moment(from);
+    while (day.isSameOrBefore(to, &quot;day&quot;)) {
+      days.push(this.getAttendanceOnDay(events, day, participant));
+      day &#x3D; day.add(1, &quot;day&quot;);
+    }
+    return days;
+  }
+
+  /**
+   * When multiple events overlap on the same day (e.g. grouped standalone events),
+   * prefer the first event where the participant is marked absent.
+   */
+  private getAttendanceOnDay(
+    events: EventWithAttendance[],
+    day: Moment,
+    participant: string,
+  ): AttendanceItem | undefined {
+    const eventsOnDay &#x3D; events.filter((e) &#x3D;&gt; day.isSame(e.date, &quot;day&quot;));
+    const event &#x3D;
+      eventsOnDay.find(
+        (e) &#x3D;&gt;
+          e.getAttendanceForParticipant(participant)?.status?.countAs &#x3D;&#x3D;&#x3D;
+          AttendanceLogicalStatus.ABSENT,
+      ) ?? eventsOnDay[0];
+    return event?.getAttendanceForParticipant(participant);
+  }
+
+  private filterLowAttendance(
+    row: AttendanceWeekRow,
+    absentWarningThreshold: number,
+    attendanceStatusType: string | undefined,
+  ): boolean {
     let countAbsences &#x3D; 0;
-    if (!this.attendanceStatusType()) {
+    if (!attendanceStatusType) {
       countAbsences &#x3D; row.attendanceDays.filter(
         (entry) &#x3D;&gt; entry?.status?.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.ABSENT,
       ).length;
     } else {
       countAbsences &#x3D; row.attendanceDays.filter(
-        (entry) &#x3D;&gt; entry?.status?.id &#x3D;&#x3D;&#x3D; this.attendanceStatusType(),
+        (entry) &#x3D;&gt; entry?.status?.id &#x3D;&#x3D;&#x3D; attendanceStatusType,
       ).length;
     }
 
-    return countAbsences &gt; this.absentWarningThreshold();
+    return countAbsences &gt; absentWarningThreshold;
   }
 }
 </code></pre>

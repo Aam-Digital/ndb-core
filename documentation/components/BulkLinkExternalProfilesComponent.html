@@ -140,12 +140,6 @@
 
 
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.io/api/core/OnChanges" target="_blank" >OnChanges</a></code>
-    </p>
 
 
 <section data-compodoc="block-metadata">
@@ -306,6 +300,24 @@
     </table>
 </section>
 
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:94</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
 
     <section data-compodoc="block-inputs">
     <h3 id="inputs">Inputs</h3>
@@ -325,7 +337,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:83</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:82</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -346,7 +358,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:82</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:81</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -386,8 +398,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="224"
-                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:224</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="237"
+                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:237</a></div>
                         </td>
                     </tr>
 
@@ -455,8 +467,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="242"
-                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:242</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="255"
+                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:255</a></div>
                         </td>
                     </tr>
 
@@ -492,8 +504,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="280"
-                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:280</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="296"
+                                    class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:296</a></div>
                         </td>
                     </tr>
 
@@ -562,6 +574,11 @@
 
                     </td>
                 </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>0</code>
+                    </td>
+                </tr>
                     <tr>
                         <td class="col-md-4">
                                 <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/skill/bulk-link-external-profiles/bulk-link-external-profiles.component.ts:88</a></div>
@@ -584,8 +601,13 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/RecordMatching.html" target="_self" >MatTableDataSource&lt;RecordMatching&gt;</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new MatTableDataSource&lt;RecordMatching&gt;([])</code>
                     </td>
                 </tr>
                     <tr>
@@ -667,10 +689,9 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
   ViewChild,
   ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
@@ -738,7 +759,7 @@ import { MatProgressBar } from &quot;@angular/material/progress-bar&quot;;
   templateUrl: &quot;./bulk-link-external-profiles.component.html&quot;,
   styleUrl: &quot;./bulk-link-external-profiles.component.scss&quot;,
 })
-export class BulkLinkExternalProfilesComponent implements OnChanges {
+export class BulkLinkExternalProfilesComponent {
   private readonly skillApi &#x3D; inject(SkillApiService);
   private readonly dialog &#x3D; inject(MatDialog);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
@@ -746,13 +767,14 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   /**
    * The bulk-selected entities for which to search external profiles.
    */
-  @Input() entities: Entity[];
-  @Input() config: FormFieldConfig;
+  entities &#x3D; input&lt;Entity[]&gt;();
+  config &#x3D; input&lt;FormFieldConfig&gt;();
+  private resolvedConfig: FormFieldConfig | undefined;
 
   private MAX_CONCURRENT_REQUESTS &#x3D; 20;
 
-  records: MatTableDataSource&lt;RecordMatching&gt;;
-  matchedRecordsCount: number;
+  records &#x3D; new MatTableDataSource&lt;RecordMatching&gt;([]);
+  matchedRecordsCount &#x3D; 0;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     if (this.records) {
@@ -760,34 +782,41 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entities) {
+  constructor() {
+    effect(() &#x3D;&gt; {
+      this.entities();
+      this.config();
       this.init();
-    }
+    });
   }
 
   private init() {
-    if (!this.config &amp;&amp; this.entities?.[0]) {
+    const entities &#x3D; this.entities();
+    const config &#x3D; this.config();
+    this.records &#x3D; new MatTableDataSource&lt;RecordMatching&gt;([]);
+    this.matchedRecordsCount &#x3D; 0;
+
+    this.resolvedConfig &#x3D; config;
+    if (!this.resolvedConfig &amp;&amp; entities?.[0]) {
       // TODO: handle cases with multiple &quot;external profile&quot; fields (add dropdown to UI here?)
-      this.config &#x3D; this.inferExternalProfileFieldFromEntitySchema(
-        this.entities[0].getSchema(),
+      this.resolvedConfig &#x3D; this.inferExternalProfileFieldFromEntitySchema(
+        entities[0].getSchema(),
       );
     }
 
-    if (!this.entities || !this.config) {
+    if (!entities || !this.resolvedConfig) {
       // abort
       Logging.debug(
         &quot;BulkLinkExternalProfilesComponent: aborting init due to missing entities or config&quot;,
-        this.entities,
-        this.config,
+        entities,
+        this.resolvedConfig,
       );
       return;
     }
 
     this.records &#x3D; new MatTableDataSource(
-      this.entities.map((entity) &#x3D;&gt; ({ entity }) as RecordMatching),
+      entities.map((entity) &#x3D;&gt; ({ entity }) as RecordMatching),
     );
-    this.matchedRecordsCount &#x3D; 0;
 
     from(this.records.data)
       .pipe(
@@ -808,6 +837,9 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   private async updateRecordWithMatches(
     record: RecordMatching,
   ): Promise&lt;RecordMatching&gt; {
+    if (!this.resolvedConfig) {
+      return record;
+    }
     await this.updateRecordWithCurrentlySelected(record);
 
     try {
@@ -815,7 +847,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
         this.skillApi.getExternalProfiles(
           this.skillApi.generateDefaultSearchParams(
             record.entity,
-            this.config.additional,
+            this.resolvedConfig.additional,
           ),
         ),
       );
@@ -858,7 +890,10 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
    * @private
    */
   private async updateRecordWithCurrentlySelected(record: RecordMatching) {
-    const existingExtProfileId &#x3D; record.entity[this.config.id];
+    if (!this.resolvedConfig) {
+      return;
+    }
+    const existingExtProfileId &#x3D; record.entity[this.resolvedConfig.id];
     if (!existingExtProfileId) {
       return;
     }
@@ -893,7 +928,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       .open(LinkExternalProfileDialogComponent, {
         data: {
           entity: record.entity,
-          config: this.config.additional,
+          config: this.resolvedConfig?.additional,
           possibleMatches: record.possibleMatches,
         } as LinkExternalProfileDialogData,
       })
@@ -907,19 +942,22 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   }
 
   async save() {
+    if (!this.records || !this.resolvedConfig) {
+      return;
+    }
     const newlyLinkedRecords &#x3D; this.records.data.filter(
-      (r) &#x3D;&gt; r.entity[this.config.id] !&#x3D;&#x3D; r.selected?.id,
+      (r) &#x3D;&gt; r.entity[this.resolvedConfig.id] !&#x3D;&#x3D; r.selected?.id,
     );
 
     for (const record of newlyLinkedRecords) {
       const updatedEntity: Entity &#x3D; record.entity;
-      updatedEntity[this.config.id] &#x3D; record.selected?.id;
+      updatedEntity[this.resolvedConfig.id] &#x3D; record.selected?.id;
 
       try {
         if (record.selected) {
           await this.skillApi.applyDataFromExternalProfile(
             record.selected, // if passed in as undefined, will reset the target values
-            this.config.additional,
+            this.resolvedConfig.additional,
             updatedEntity,
           );
         }
