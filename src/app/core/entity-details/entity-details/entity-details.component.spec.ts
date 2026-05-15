@@ -158,7 +158,7 @@ describe("EntityDetailsComponent", () => {
     try {
       const testChild = new TestEntity("Role-Test");
       testChild.getConstructor().enableUserAccounts = false;
-      fixture.componentRef.setInput("entity", testChild);
+      component.entity.set(testChild);
       fixture.detectChanges();
 
       fixture.componentRef.setInput("panels", [

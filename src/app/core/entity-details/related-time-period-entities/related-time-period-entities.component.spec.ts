@@ -76,7 +76,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    let columnNames = component._columns.map((column) => column.label);
+    let columnNames = component._columns().map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
@@ -93,7 +93,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    columnNames = component._columns.map((column) => column.label);
+    columnNames = component._columns().map((column) => column.label);
     expect(columnNames).toEqual(
       expect.arrayContaining(["Team", "From", "To", "Currently"]),
     );

@@ -59,6 +59,8 @@ describe("FormComponent", () => {
 
     fixture.componentRef.setInput("creatingNew", true);
     fixture.componentRef.setInput("entity", testChild);
+    fixture.detectChanges();
+    await fixture.whenStable();
     await component.saveClicked();
 
     expect(entityFormService.saveChanges).toHaveBeenCalled();
@@ -78,10 +80,12 @@ describe("FormComponent", () => {
     expect(alertService.addDanger).toHaveBeenCalledWith("error message");
   });
 
-  it("should align form with entity if canceled", () => {
+  it("should align form with entity if canceled", async () => {
     const child = new TestEntity();
     child.name = "test child";
     fixture.componentRef.setInput("entity", child);
+    fixture.detectChanges();
+    await fixture.whenStable();
     component.form()?.formGroup.enable();
     component.form()?.formGroup.get("name").setValue("other name");
 

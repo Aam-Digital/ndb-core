@@ -349,5 +349,4 @@ export class RelatedEntitiesComponent<E extends Entity> {
     }
     return value.map((column) => toFormFieldConfig(column));
   }
-
 }
