@@ -54,23 +54,26 @@
     <div class="config-component flex-grow mat-elevation-z1">
       @switch (mode) {
         @case ("details") {
-          @switch (configDetailsView.component) {
+          @switch (configDetailsView().component) {
             @case ("EntityDetails") {
               <app-admin-entity-details
-                [entityConstructor]="entityConstructor"
-                [config]="configDetailsView.config"
+                [entityConstructor]="entityConstructor()"
+                [config]="configDetailsView().config"
                 (relatedEntityModified)="registerRelatedEntityForSave($event)"
               ></app-admin-entity-details>
             }
             @case ("NoteDetails") {
               <app-admin-note-details
-                [entityConstructor]="entityConstructor"
-                [(config)]="configDetailsView.config"
+                [entityConstructor]="entityConstructor()"
+                [config]="configDetailsView().config"
+                (configChange)="
+                  configDetailsView.update((v) => ({ ...v, config: $event }))
+                "
               ></app-admin-note-details>
             }
             @default {
               <p class="admin-ui-not-supported-info" i18n>
-                This component ({{ configDetailsView.component }}) cannot be
+                This component ({{ configDetailsView().component }}) cannot be
                 edited by users in the Admin UI yet. Please contact your
                 technical support team to make changes to this.
               </p>
@@ -79,19 +82,20 @@
         }
         @case ("list") {
           <app-admin-entity-list
-            [entityConstructor]="entityConstructor"
-            [config]="configListView.config"
+            [entityConstructor]="entityConstructor()"
+            [config]="configListView().config"
           ></app-admin-entity-list>
         }
         @case ("general") {
           <app-admin-entity-general-settings
-            [entityConstructor]="entityConstructor"
-            [(generalSettings)]="configEntitySettings"
+            [entityConstructor]="entityConstructor()"
+            [generalSettings]="configEntitySettings()"
+            (generalSettingsChange)="configEntitySettings.set($event)"
           ></app-admin-entity-general-settings>
         }
         @case ("publicForm") {
           <app-admin-entity-public-forms-component
-            [entityConstructor]="entityConstructor"
+            [entityConstructor]="entityConstructor()"
           ></app-admin-entity-public-forms-component>
         }
       }

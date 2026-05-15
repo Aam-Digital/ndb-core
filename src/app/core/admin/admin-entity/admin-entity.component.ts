@@ -1,14 +1,15 @@
 import { Location } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
   Component,
   ContentChild,
-  effect,
+  DestroyRef,
   TemplateRef,
   ViewChild,
-  DestroyRef,
+  computed,
   inject,
   input,
-  ChangeDetectionStrategy,
+  linkedSignal,
 } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatListItem, MatNavList } from "@angular/material/list";
@@ -19,13 +20,11 @@ import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/e
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { EntityConstructor } from "../../entity/model/entity";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list.component";
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
@@ -60,9 +59,14 @@ export class AdminEntityComponent {
   private entityActionsService = inject(EntityActionsService);
   private routes = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+
   entityType = input.required<string>();
-  entityConstructor: EntityConstructor;
-  private originalEntitySchemaFields: [string, EntitySchemaField][];
+  entityConstructor = computed(() => this.entities.get(this.entityType()));
+  private readonly originalEntitySchemaFields = computed(() =>
+    JSON.parse(
+      JSON.stringify(Array.from(this.entityConstructor().schema.entries())),
+    ),
+  );
 
   /**
    * Track related entity types that have been modified through the panel config dialog.
@@ -70,9 +74,15 @@ export class AdminEntityComponent {
    */
   private readonly modifiedRelatedEntities = new Set<EntityConstructor>();
 
-  configDetailsView: DynamicComponentConfig<any>; // typed any to avoid type issues with different detail components
-  configListView: DynamicComponentConfig<EntityListConfig>;
-  configEntitySettings: EntityConfig;
+  configDetailsView = linkedSignal(() =>
+    this.loadViewConfig(this.entityConstructor(), "details"),
+  );
+  configListView = linkedSignal(() =>
+    this.loadViewConfig(this.entityConstructor(), "list"),
+  );
+  configEntitySettings = linkedSignal(() =>
+    this.getEntitySettingsFromConstructor(this.entityConstructor()),
+  );
 
   protected mode: "details" | "list" | "general" | "publicForm" = "details";
 
@@ -82,33 +92,11 @@ export class AdminEntityComponent {
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
   constructor() {
-    effect(() => {
-      this.entityType();
-      this.init();
-    });
-
     this.routes.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         this.mode = params.mode ?? this.mode;
       });
-  }
-
-  private init() {
-    this.entityConstructor = this.entities.get(this.entityType());
-    this.originalEntitySchemaFields = JSON.parse(
-      JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
-    );
-
-    this.configDetailsView = this.loadViewConfig(
-      this.entityConstructor,
-      "details",
-    );
-    this.configListView = this.loadViewConfig(this.entityConstructor, "list");
-
-    this.configEntitySettings = this.getEntitySettingsFromConstructor(
-      this.entityConstructor,
-    );
   }
 
   private getEntitySettingsFromConstructor(
@@ -175,7 +163,9 @@ export class AdminEntityComponent {
   }
 
   cancel() {
-    this.entityConstructor.schema = new Map(this.originalEntitySchemaFields);
+    this.entityConstructor().schema = new Map(
+      this.originalEntitySchemaFields(),
+    );
     this.location.back();
   }
 
@@ -189,10 +179,10 @@ export class AdminEntityComponent {
 
     // Save the main entity configuration along with all related entities in a single transaction
     const result = await this.adminEntityService.setAndSaveEntityConfig(
-      this.entityConstructor,
-      this.configEntitySettings,
-      this.configListView,
-      this.configDetailsView,
+      this.entityConstructor(),
+      this.configEntitySettings(),
+      this.configListView(),
+      this.configDetailsView(),
       Array.from(this.modifiedRelatedEntities),
     );
 
