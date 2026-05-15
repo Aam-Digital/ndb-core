@@ -7,10 +7,10 @@ import { Location } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
-  Input,
-  OnInit,
-  signal,
+  input,
+  linkedSignal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -59,10 +59,23 @@ import { IconButtonComponent } from "#src/app/core/common-components/icon-button
     "../../dashboard/dashboard/dashboard.component.scss",
   ],
 })
-export class AdminDashboardComponent implements OnInit {
-  @Input() dashboardViewId: string;
+export class AdminDashboardComponent {
+  dashboardViewId = input.required<string>();
 
-  dashboardConfig = signal<DashboardConfig>({ widgets: [] });
+  private readonly dashboardViewConfigKey = computed(
+    () => PREFIX_VIEW_CONFIG + this.dashboardViewId(),
+  );
+
+  private readonly dashboardViewConfig = computed(
+    () =>
+      this.configService.getConfig(this.dashboardViewConfigKey()) as
+        | DynamicComponentConfig<DashboardConfig>
+        | undefined,
+  );
+
+  dashboardConfig = linkedSignal(() =>
+    structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
+  );
 
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);
@@ -70,20 +83,7 @@ export class AdminDashboardComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
-  ngOnInit() {
-    this.loadDashboardViewConfig();
-  }
-
-  private loadDashboardViewConfig() {
-    const viewConfig: DynamicComponentConfig<DashboardConfig> =
-      this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
-
-    this.dashboardConfig.set(
-      JSON.parse(JSON.stringify(viewConfig?.config)) || { widgets: [] },
-    );
-  }
-
-  drop(event: CdkDragDrop<any[]>) {
+  drop(event: CdkDragDrop<DynamicComponentConfig[]>) {
     if (event.previousContainer === event.container) {
       this.dashboardConfig.update((config) => {
         const widgets = [...config.widgets];
@@ -172,8 +172,7 @@ export class AdminDashboardComponent implements OnInit {
       config: this.dashboardConfig(),
     };
 
-    currentConfig[PREFIX_VIEW_CONFIG + this.dashboardViewId] =
-      updatedViewConfig;
+    currentConfig[this.dashboardViewConfigKey()] = updatedViewConfig;
 
     await this.configService.saveConfig(currentConfig);
 

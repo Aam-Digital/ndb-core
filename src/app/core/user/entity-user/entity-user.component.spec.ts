@@ -101,11 +101,11 @@ describe("EntityUserComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load existing account data", () => {
-    component.ngOnInit();
+  it("should load existing account data", async () => {
+    await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(component.user()).toBe(keycloakUser);
+    expect(component.user.value()).toBe(keycloakUser);
   });
 
   it("should check user permissions", () => {

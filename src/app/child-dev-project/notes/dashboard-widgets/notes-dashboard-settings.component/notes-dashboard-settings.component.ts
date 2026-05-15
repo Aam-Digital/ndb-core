@@ -1,8 +1,10 @@
 import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  computed,
+  effect,
+  input,
+  linkedSignal,
 } from "@angular/core";
 import { FormControl, FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -20,7 +22,6 @@ export interface NotesDashboardSettingsConfig {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-notes-dashboard-settings",
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -32,36 +33,41 @@ export interface NotesDashboardSettingsConfig {
   templateUrl: "./notes-dashboard-settings.component.html",
   styleUrls: ["./notes-dashboard-settings.component.scss"],
 })
-export class NotesDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl<NotesDashboardSettingsConfig>;
+export class NotesDashboardSettingsComponent {
+  formControl = input.required<FormControl<NotesDashboardSettingsConfig>>();
 
-  localConfig: NotesDashboardSettingsConfig = {
-    sinceDays: 28,
-    fromBeginningOfWeek: false,
-    mode: "with-recent-notes",
-  };
+  sinceDays = linkedSignal(() => this.formControl().value?.sinceDays ?? 28);
+  fromBeginningOfWeek = linkedSignal(
+    () => this.formControl().value?.fromBeginningOfWeek ?? false,
+  );
+  mode = linkedSignal(
+    () => this.formControl().value?.mode ?? "with-recent-notes",
+  );
 
-  ngOnInit() {
-    this.localConfig = {
-      sinceDays: this.formControl.value?.sinceDays ?? 28,
-      fromBeginningOfWeek: this.formControl.value?.fromBeginningOfWeek ?? false,
-      mode: this.formControl.value?.mode ?? "with-recent-notes",
-    };
+  localConfig = computed<NotesDashboardSettingsConfig>(() => ({
+    sinceDays: this.sinceDays(),
+    fromBeginningOfWeek: this.fromBeginningOfWeek(),
+    mode: this.mode(),
+  }));
+
+  constructor() {
+    effect(() => {
+      this.formControl().setValue(this.localConfig());
+    });
   }
 
-  onSinceDaysChange() {
-    this.emitConfigChange();
+  onSinceDaysChange(sinceDays: number) {
+    this.sinceDays.set(sinceDays);
+    this.formControl().markAsDirty();
   }
 
-  onFromBeginningOfWeekChange() {
-    this.emitConfigChange();
+  onFromBeginningOfWeekChange(fromBeginningOfWeek: boolean) {
+    this.fromBeginningOfWeek.set(fromBeginningOfWeek);
+    this.formControl().markAsDirty();
   }
 
-  onModeChange() {
-    this.emitConfigChange();
-  }
-
-  emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+  onModeChange(mode: string) {
+    this.mode.set(mode);
+    this.formControl().markAsDirty();
   }
 }

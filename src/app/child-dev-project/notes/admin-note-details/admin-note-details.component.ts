@@ -1,10 +1,9 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
   ChangeDetectionStrategy,
+  input,
+  linkedSignal,
+  output,
 } from "@angular/core";
 
 import { EntityConstructor } from "../../../core/entity/model/entity";
@@ -25,66 +24,65 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
   imports: [AdminEntityFormComponent, HintBoxComponent],
   templateUrl: "./admin-note-details.component.html",
 })
-export class AdminNoteDetailsComponent implements OnInit {
-  @Input() config: NoteDetailsConfig = {};
-  @Input() entityConstructor: EntityConstructor;
-  @Output() configChange = new EventEmitter<NoteDetailsConfig>();
+export class AdminNoteDetailsComponent {
+  private static readonly TOP_FORM_HEADER = "Top Form";
+  private static readonly MIDDLE_FORM_HEADER = "Middle Form";
+  private static readonly BOTTOM_FORM_HEADER = "Bottom Form";
 
-  noteDetailsConfig: FormConfig = { fieldGroups: [] };
+  config = input<NoteDetailsConfig>({});
+  entityConstructor = input.required<EntityConstructor>();
+  configChange = output<NoteDetailsConfig>();
 
-  ngOnInit(): void {
-    this.initializeFormConfigs();
-  }
+  noteDetailsConfig = linkedSignal<FormConfig>(() =>
+    this.toFormConfig(this.config()),
+  );
 
-  private initializeFormConfigs(): void {
+  private toFormConfig(config: NoteDetailsConfig): FormConfig {
     const currentConfig = {
       ...getDefaultNoteDetailsConfig(),
-      ...this.config,
+      ...config,
     } as NoteDetailsConfig;
 
-    // Convert string to FieldGroup for the admin form and add header for distinguishing sections
     const topFieldGroup: FieldGroup = {
       fields: currentConfig.topForm,
-      header: "Top Form",
+      header: AdminNoteDetailsComponent.TOP_FORM_HEADER,
     };
 
     const middleFieldGroup: FieldGroup = {
       fields: currentConfig.middleForm,
-      header: "Middle Form",
+      header: AdminNoteDetailsComponent.MIDDLE_FORM_HEADER,
     };
 
     const bottomFieldGroup: FieldGroup = {
       fields: currentConfig.bottomForm,
-      header: "Bottom Form",
+      header: AdminNoteDetailsComponent.BOTTOM_FORM_HEADER,
     };
 
-    this.noteDetailsConfig = {
+    return {
       fieldGroups: [topFieldGroup, middleFieldGroup, bottomFieldGroup],
     };
   }
 
-  onNoteDetailsConfigChange(formConfig: FormConfig): void {
-    this.noteDetailsConfig = formConfig;
-    // Extract fields from each section based on headers and convert back to string arrays
+  private toConfig(formConfig: FormConfig): NoteDetailsConfig {
     const topGroup = formConfig.fieldGroups.find(
-      (group) => group.header === "Top Form",
+      (group) => group.header === AdminNoteDetailsComponent.TOP_FORM_HEADER,
     );
     const middleGroup = formConfig.fieldGroups.find(
-      (group) => group.header === "Middle Form",
+      (group) => group.header === AdminNoteDetailsComponent.MIDDLE_FORM_HEADER,
     );
     const bottomGroup = formConfig.fieldGroups.find(
-      (group) => group.header === "Bottom Form",
+      (group) => group.header === AdminNoteDetailsComponent.BOTTOM_FORM_HEADER,
     );
 
-    // Update the config as simple string arrays
-    this.config.topForm = topGroup ? (topGroup.fields as string[]) : [];
-    this.config.middleForm = middleGroup
-      ? (middleGroup.fields as string[])
-      : [];
-    this.config.bottomForm = bottomGroup
-      ? (bottomGroup.fields as string[])
-      : [];
+    return {
+      topForm: topGroup ? (topGroup.fields as string[]) : [],
+      middleForm: middleGroup ? (middleGroup.fields as string[]) : [],
+      bottomForm: bottomGroup ? (bottomGroup.fields as string[]) : [],
+    };
+  }
 
-    this.configChange.emit(this.config);
+  onNoteDetailsConfigChange(formConfig: FormConfig): void {
+    this.noteDetailsConfig.set(formConfig);
+    this.configChange.emit(this.toConfig(formConfig));
   }
 }

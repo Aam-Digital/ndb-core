@@ -1,12 +1,12 @@
 import {
+  computed,
   Component,
   inject,
-  Input,
-  OnInit,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  input,
+  resource,
 } from "@angular/core";
-import { DefaultValueConfig } from "../default-value-config";
+import { DefaultValueConfig, DefaultValueMode } from "../default-value-config";
 import {
   MatError,
   MatFormField,
@@ -70,53 +70,75 @@ import { AdminInheritedFieldComponent } from "../../../features/inherited-field/
     { provide: MatFormFieldControl, useExisting: AdminDefaultValueComponent },
   ],
 })
-export class AdminDefaultValueComponent
-  extends CustomFormControlDirective<DefaultValueConfig>
-  implements OnInit
-{
-  @Input() entityType: EntityConstructor;
-  @Input() entitySchemaField: EntitySchemaField;
-  form: FormGroup;
+export class AdminDefaultValueComponent extends CustomFormControlDirective<DefaultValueConfig> {
+  entityType = input.required<EntityConstructor>();
+  entitySchemaField = input.required<EntitySchemaField>();
+
+  private readonly modeControl = new FormControl<DefaultValueMode | null>(null);
+  private readonly configControl = new FormControl<
+    DefaultValueConfig["config"] | null
+  >(null, {
+    validators: [this.requiredIfModeSelected()],
+  });
+
+  form = new FormGroup({
+    mode: this.modeControl,
+    config: this.configControl,
+  });
 
   private defaultValueStrategies = inject(
     DefaultValueStrategy,
   ) as unknown as DefaultValueStrategy[];
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  modes: AdminDefaultValueContext[];
+  private readonly modesResource = resource<
+    AdminDefaultValueContext[],
+    unknown
+  >({
+    loader: async () =>
+      Promise.all(
+        this.defaultValueStrategies.map((strategy) => strategy.getAdminUI()),
+      ),
+  });
 
-  async ngOnInit() {
-    this.initForm();
-    await this.initAvailableModes();
-  }
+  modes = computed(() => this.modesResource.value() ?? []);
 
-  private async initAvailableModes() {
-    this.modes = await Promise.all(
-      this.defaultValueStrategies.map((strategy) => strategy.getAdminUI()),
-    );
-    this.cdr.markForCheck();
-  }
+  selectedMode = computed(() => this.form.get("mode")?.value ?? null);
 
-  private initForm() {
-    this.form = new FormGroup({
-      mode: new FormControl(this.value?.mode),
-      config: new FormControl(this.value?.config, {
-        validators: [this.requiredIfModeSelected()],
-      }),
-    });
+  constructor() {
+    super();
+    this.syncFormWithValue(this.value);
 
     this.form
       .get("mode")
-      .valueChanges.subscribe((mode) => this.form.get("config").setValue(null));
+      ?.valueChanges.subscribe(() => this.form.get("config")?.setValue(null));
 
-    this.form.get("config").valueChanges.subscribe((value) => {
-      if (!this.form.get("mode").getRawValue() && !!value) {
+    this.form.get("config")?.valueChanges.subscribe((value) => {
+      if (!this.form.get("mode")?.getRawValue() && !!value) {
         // set default mode as "static" after user started typing a value
-        this.form.get("mode").setValue("static", { emitEvent: false });
+        this.form.get("mode")?.setValue("static", { emitEvent: false });
       }
     });
 
     this.form.valueChanges.subscribe(() => this.updateValue());
+  }
+
+  override writeValue(value: DefaultValueConfig, notifyFormControl = false) {
+    super.writeValue(value, notifyFormControl);
+    this.syncFormWithValue(value);
+  }
+
+  private syncFormWithValue(value: DefaultValueConfig | null | undefined) {
+    const newFormValue = {
+      mode: value?.mode ?? null,
+      config: value?.config ?? null,
+    };
+
+    if (
+      JSON.stringify(this.form.getRawValue()) !== JSON.stringify(newFormValue)
+    ) {
+      this.form.setValue(newFormValue, { emitEvent: false });
+      this.form.updateValueAndValidity({ emitEvent: false });
+    }
   }
 
   private updateValue() {
@@ -140,7 +162,7 @@ export class AdminDefaultValueComponent
 
   private requiredIfModeSelected(): ValidatorFn {
     return (control) => {
-      if (this.form?.get("mode")?.value && !control.value) {
+      if (this.modeControl.value && !control.value) {
         return { requiredForMode: true };
       }
       return null;

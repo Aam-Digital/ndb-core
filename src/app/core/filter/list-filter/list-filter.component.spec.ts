@@ -17,7 +17,10 @@ describe("ListFilterComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ListFilterComponent);
     component = fixture.componentInstance;
-    component.filterConfig = new SelectableFilter<any>("test", []);
+    fixture.componentRef.setInput(
+      "filterConfig",
+      new SelectableFilter<any>("test", []),
+    );
     fixture.detectChanges();
   });
 

@@ -13,13 +13,19 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { componentRegistry, ComponentRegistry } from "app/dynamic-components";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 describe("AdminDefaultValueComponent", () => {
   let component: AdminDefaultValueComponent;
   let fixture: ComponentFixture<AdminDefaultValueComponent>;
   let mockEntityFormService: any;
+  let testEntitySchemaField: EntitySchemaField;
 
   beforeEach(async () => {
+    testEntitySchemaField = {
+      dataType: "string",
+    };
+
     mockEntityFormService = {
       createEntityForm: vi.fn().mockName("EntityFormService.createEntityForm"),
       extendFormFieldConfig: vi
@@ -61,9 +67,9 @@ describe("AdminDefaultValueComponent", () => {
 
     fixture = TestBed.createComponent(AdminDefaultValueComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("entityType", Entity);
+    fixture.componentRef.setInput("entitySchemaField", testEntitySchemaField);
     fixture.detectChanges();
-
-    component.entityType = Entity;
   });
 
   it("should create", () => {
@@ -91,7 +97,7 @@ describe("AdminDefaultValueComponent", () => {
       config: {
         value: "New value",
       },
-    } as DefaultValueConfig);
+    });
     expect(component.valueChange.emit).toHaveBeenCalledWith(
       expect.objectContaining({
         mode: "static",
@@ -105,7 +111,7 @@ describe("AdminDefaultValueComponent", () => {
     component.form.setValue({
       mode: "static",
       config: null,
-    } as DefaultValueConfig);
+    });
     expect(component.valueChange.emit).not.toHaveBeenCalled();
   });
 
@@ -129,7 +135,6 @@ describe("AdminDefaultValueComponent", () => {
 
   it("should apply input values to form", () => {
     component.value = { mode: "dynamic", config: { value: "Test value" } };
-    component.ngOnInit();
     expect(component.form.get("mode").value).toEqual("dynamic");
     expect(component.form.get("config").value).toEqual({ value: "Test value" });
   });

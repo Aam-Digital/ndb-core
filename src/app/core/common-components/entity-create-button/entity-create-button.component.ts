@@ -27,7 +27,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   styleUrl: "./entity-create-button.component.scss",
 })
 export class EntityCreateButtonComponent<T extends Entity = Entity> {
-  entityType = input.required<EntityConstructor<T>>();
+  entityType = input<EntityConstructor<T>>();
 
   /** Optional factory method to create a new entity instance with some default values. */
   newRecordFactory = input<() => T>();
@@ -39,8 +39,13 @@ export class EntityCreateButtonComponent<T extends Entity = Entity> {
   iconOnly = input<boolean>(false);
 
   create() {
+    const entityType = this.entityType();
+    if (!entityType) {
+      return;
+    }
+
     const factory = this.newRecordFactory();
-    const newRecord = factory ? factory() : new (this.entityType())();
+    const newRecord = factory ? factory() : new entityType();
     this.entityCreate.emit(newRecord);
   }
 }

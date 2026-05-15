@@ -38,7 +38,7 @@ describe("AdminDefaultValueStaticComponent", () => {
     fixture = TestBed.createComponent(AdminDefaultValueStaticComponent);
     component = fixture.componentInstance;
 
-    component.entitySchemaField = testEntitySchemaField;
+    fixture.componentRef.setInput("entitySchemaField", testEntitySchemaField);
 
     fixture.detectChanges();
   });

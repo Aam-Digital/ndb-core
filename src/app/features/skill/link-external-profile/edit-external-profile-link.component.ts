@@ -20,7 +20,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatTooltip } from "@angular/material/tooltip";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
@@ -44,7 +43,6 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
   standalone: true,
   imports: [
     MatButton,
-    FaIconComponent,
     MatTooltip,
     FormsModule,
     ReactiveFormsModule,

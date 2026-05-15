@@ -10,8 +10,8 @@
 
 <div class="form-sections">
   <app-admin-entity-form
-    [entityType]="entityConstructor"
-    [config]="noteDetailsConfig"
+    [entityType]="entityConstructor()"
+    [config]="noteDetailsConfig()"
     (configChange)="onNoteDetailsConfigChange($event)"
     uniqueAreaId="note-details-form"
     [fieldsOnlyMode]="true"
