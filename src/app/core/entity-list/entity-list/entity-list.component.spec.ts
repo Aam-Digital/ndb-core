@@ -126,7 +126,7 @@ describe("EntityListComponent", () => {
       createComponent();
       // Test only works in desktop mode
       component.isDesktop = true;
-      await initComponentInputs();
+      initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
       expect(component.selectedColumnGroupIndex).toBe(1);
 

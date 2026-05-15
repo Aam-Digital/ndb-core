@@ -2,9 +2,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
+  effect,
   input,
   model,
-  OnInit,
   signal,
   inject,
 } from "@angular/core";
@@ -45,7 +46,7 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
   templateUrl: "./related-entities.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
-export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
+export class RelatedEntitiesComponent<E extends Entity> {
   protected entityMapper = inject(EntityMapperService);
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
@@ -100,13 +101,14 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   clickMode = input<"popup" | "navigate" | "popup-details">("popup");
   editable = input<boolean>(true);
 
-  data: E[];
+  readonly data = signal<E[] | undefined>(undefined);
   protected entityCtr: EntityConstructor<E>;
   protected relationProperty: string | string[];
   filterObj: DataFilter<E> = {};
   private readonly currentScreenSize = signal(
     this.screenWidthObserver.currentScreenSize(),
   );
+  private updateListenerSub?: import("rxjs").Subscription;
 
   constructor() {
     this.screenWidthObserver
@@ -119,31 +121,37 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         this.updateColumnsToDisplayForScreenSize();
         this.cdr.markForCheck();
       });
+
+    effect(() => {
+      void this.initData();
+    });
   }
 
-  async ngOnInit() {
+  private async initData() {
     const entityType = this.entityType();
+    const configuredColumns = this.columns();
+    const entity = this.entity();
+    const property = this.property();
+
     if (entityType) {
       this.entityCtr = this.entityRegistry.get(
         entityType,
       ) as EntityConstructor<E>;
     }
-    const configuredColumns = this.columns();
     if (Array.isArray(configuredColumns) && configuredColumns.length > 0) {
       this._columns = this.getColumns(configuredColumns);
     }
     this.updateColumnsToDisplayForScreenSize();
 
-    const entity = this.entity();
     if (!entity || !this.entityCtr) {
       return;
     }
-    const property = this.property() ?? this.getProperty();
+    const resolvedProperty = property ?? this.getProperty();
     this.relationProperty =
-      typeof property === "string"
-        ? this.resolvePropertyPath(property)
-        : property.map((p) => this.resolvePropertyPath(p));
-    this.data = await this.getData();
+      typeof resolvedProperty === "string"
+        ? this.resolvePropertyPath(resolvedProperty)
+        : resolvedProperty.map((p) => this.resolvePropertyPath(p));
+    this.data.set(await this.getData());
     this.filterObj = this.initFilter();
 
     if (this.showInactive() === undefined) {
@@ -151,7 +159,8 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
       this.showInactive.set(entity.anonymized);
     }
 
-    this.listenToEntityUpdates();
+    this.updateListenerSub?.unsubscribe();
+    this.updateListenerSub = this.listenToEntityUpdates();
 
     // added relatedEntitiesParent (e.g., current RecurringActivity or School) to each column with additional config
     this._columns?.forEach((column) => {
@@ -159,8 +168,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         column.additional.relatedEntitiesParent = entity;
       }
     });
-
-    this.cdr.markForCheck();
   }
 
   protected getData(): Promise<E[]> {
@@ -299,13 +306,12 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
       .map(([key]) => key);
   }
 
-  protected listenToEntityUpdates() {
-    this.entityMapper
+  protected listenToEntityUpdates(): import("rxjs").Subscription {
+    return this.entityMapper
       .receiveUpdates(this.entityCtr)
       .pipe(untilDestroyed(this))
       .subscribe((next) => {
-        this.data = applyUpdate(this.data, next);
-        this.cdr.markForCheck();
+        this.data.set(applyUpdate(this.data(), next));
       });
   }
 

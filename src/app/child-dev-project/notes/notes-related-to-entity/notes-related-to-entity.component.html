@@ -1,12 +1,12 @@
 <app-entities-table
   [entityType]="entityCtr"
-  [records]="data"
+  [records]="data()"
   [customColumns]="_columns"
   [filter]="filterObj"
   [newRecordFactory]="newRecordFactory"
   clickMode="none"
   (entityClick)="showNoteDetails($event)"
-  [getBackgroundColor]="getColor"
+  [getBackgroundColor]="getColor()"
 >
 </app-entities-table>
 

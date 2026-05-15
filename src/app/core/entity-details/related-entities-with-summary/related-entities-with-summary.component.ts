@@ -1,7 +1,7 @@
 import {
+  AfterViewInit,
   Component,
   input,
-  OnInit,
   ViewChild,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -24,7 +24,7 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
 })
 export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   extends RelatedEntitiesComponent<E>
-  implements OnInit
+  implements AfterViewInit
 {
   @ViewChild(EntitiesTableComponent, { static: true })
   entitiesTable: EntitiesTableComponent<E>;
@@ -41,8 +41,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   summarySum = "";
   summaryAvg = "";
 
-  override async ngOnInit() {
-    await super.ngOnInit();
+  ngAfterViewInit() {
     this.entitiesTable.filteredRecordsChange.subscribe((data) =>
       this.updateSummary(data),
     );

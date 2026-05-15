@@ -14,7 +14,7 @@
     <app-entity-form
       [fieldGroups]="topFieldGroups"
       [entity]="entity()"
-      [form]="$any(form)"
+      [form]="$any(form())"
     >
     </app-entity-form>
 
@@ -22,20 +22,20 @@
     <app-entity-form
       [fieldGroups]="middleFieldGroups"
       [entity]="entity()"
-      [form]="$any(form)"
+      [form]="$any(form())"
       [fullWidth]="true"
     ></app-entity-form>
 
     <app-entity-form
       [fieldGroups]="bottomFieldGroups"
       [entity]="entity()"
-      [form]="$any(form)"
+      [form]="$any(form())"
       style="margin-top: 10px"
     ></app-entity-form>
   </div>
 
   <app-view-actions>
-    <app-dialog-buttons [form]="$any(form)" [entity]="entity()">
+    <app-dialog-buttons [form]="$any(form())" [entity]="entity()">
       <button mat-menu-item (click)="openExportDialog()">
         <fa-icon
           class="color-accent standard-icon-with-text"

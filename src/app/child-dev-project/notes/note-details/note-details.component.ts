@@ -75,20 +75,34 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   middleFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
 
-  form: EntityForm<Note>;
-  tmpEntity = signal<Note | undefined>(undefined);
+  readonly form = signal<EntityForm<Note> | undefined>(undefined);
+  readonly tmpEntity = signal<Note | undefined>(undefined);
 
   constructor() {
     super();
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
+
     effect(() => {
       this.entity();
       this.topForm();
       this.middleForm();
       this.bottomForm();
       void this.initForm();
+    });
+
+    // Subscribe to form value changes; onCleanup tears down stale subscription on re-init.
+    effect((onCleanup) => {
+      const currentForm = this.form();
+      const entity = this.entity() as Note;
+      if (!currentForm || !entity) return;
+      const sub = currentForm.formGroup.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value) => {
+          this.tmpEntity.set(Object.assign(entity.copy(), value));
+        });
+      onCleanup(() => sub.unsubscribe());
     });
   }
 
@@ -113,17 +127,12 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
     this.middleFieldGroups = [{ fields: this.middleForm() }];
     this.bottomFieldGroups = [{ fields: this.bottomForm() }];
 
-    this.form = await this.entityFormService.createEntityForm(
+    const newForm = await this.entityFormService.createEntityForm(
       this.middleForm().concat(this.topForm(), this.bottomForm()),
       entity,
     );
 
-    // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
     this.tmpEntity.set(entity.copy());
-    this.form.formGroup.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        this.tmpEntity.set(Object.assign(entity.copy(), value));
-      });
+    this.form.set(newForm); // triggers the valueChanges effect
   }
 }

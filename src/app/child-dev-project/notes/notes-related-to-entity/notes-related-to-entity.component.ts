@@ -1,7 +1,7 @@
 import {
   Component,
+  computed,
   inject,
-  OnInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Note } from "../model/note";
@@ -30,7 +30,6 @@ import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-def
 })
 export class NotesRelatedToEntityComponent
   extends RelatedEntitiesComponent<Note>
-  implements OnInit
 {
   private childrenService = inject(ChildrenService);
   private formDialog = inject(FormDialogService);
@@ -39,21 +38,13 @@ export class NotesRelatedToEntityComponent
   override _columns: FormFieldConfig[] =
     RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns;
 
-  /**
-   * returns the color for a note; passed to the entity subrecord component
-   * @param note note to get color for
-   */
-  getColor = (note: Note) => note?.getColor();
-  newRecordFactory = this.createNewRecordFactory();
-
-  override ngOnInit() {
+  readonly getColor = computed(() => {
     if (this.entity()?.getType() === "Child") {
-      // When displaying notes for a child, use attendance color highlighting
-      this.getColor = (note: Note) =>
-        note?.getColorForId(this.entity()?.getId());
+      return (note: Note) => note?.getColorForId(this.entity()?.getId());
     }
-    return super.ngOnInit();
-  }
+    return (note: Note) => note?.getColor();
+  });
+  newRecordFactory = this.createNewRecordFactory();
 
   override getData() {
     const entityId = this.entity()?.getId();
