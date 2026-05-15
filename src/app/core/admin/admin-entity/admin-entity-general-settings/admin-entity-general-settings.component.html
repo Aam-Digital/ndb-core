@@ -5,7 +5,7 @@
 
 <h2 i18n>General Settings of "{{ entityConstructor().label }}" Records</h2>
 
-<form [formGroup]="basicSettingsForm">
+<form [formGroup]="basicSettingsForm()">
   <mat-tab-group>
     <mat-tab label="Basics" i18n-label>
       <div class="grid-layout flex-grow margin-top-regular">
@@ -32,7 +32,7 @@
             />
           </mat-form-field>
 
-          <app-icon-input [control]="iconControl"></app-icon-input>
+          <app-icon-input [control]="iconControl()"></app-icon-input>
 
           <app-conditional-color-config
             formControlName="color"
@@ -65,7 +65,7 @@
             <app-basic-autocomplete
               formControlName="toStringAttributes"
               #formDataType
-              [options]="toStringAttributesOptions"
+              [options]="toStringAttributesOptions()"
               [optionToString]="objectToLabel"
               [valueMapper]="objectToValue"
               [multi]="true"
@@ -141,7 +141,7 @@
                 <fa-icon
                   icon="question-circle"
                   [matTooltip]="
-                    hasImageFields
+                    hasImageFields()
                       ? 'Optional: Select an image field to display a photo in the tooltip. Only fields that contain images (like profile photos) can be selected here.'
                       : 'No image fields are available for this record type.'
                   "
@@ -154,7 +154,7 @@
                 [hideOption]="showOnlyImageFields"
                 placeholder=""
               ></app-entity-field-select>
-              @if (!hasImageFields) {
+              @if (!hasImageFields()) {
                 <mat-hint i18n>
                   This record type has no image fields. Add fields with dataType
                   'file' or 'photo' to enable this option.
@@ -186,7 +186,7 @@
       <div class="margin-top-regular overflow-table">
         <div class="flex-row align-center">
           <mat-checkbox
-            [checked]="showPIIDetails"
+            [checked]="showPIIDetails()"
             (change)="toggleAnonymizationTable($event)"
             i18n
             >Has personal information (PII)</mat-checkbox
@@ -197,7 +197,7 @@
           ></app-help-button>
         </div>
 
-        @if (showPIIDetails) {
+        @if (showPIIDetails()) {
           <div>
             <p i18n>
               Configure how records of this type can be anonymized. Users can
@@ -208,7 +208,7 @@
               which fields have to be removed because they contain personal
               details.
             </p>
-            <mat-table [dataSource]="fieldAnonymizationDataSource">
+            <mat-table [dataSource]="fieldAnonymizationDataSource()">
               <ng-container matColumnDef="label">
                 <mat-cell *matCellDef="let anonymizeData">
                   {{ anonymizeData.label }}

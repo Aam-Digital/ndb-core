@@ -5,18 +5,18 @@ import {
   output,
   effect,
   ChangeDetectionStrategy,
-  DestroyRef,
+  computed,
+  linkedSignal,
 } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
+import { ColorMapping } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
+  FormControl, FormsModule,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from "@angular/forms";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -44,7 +44,6 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 import { MatExpansionModule } from "@angular/material/expansion";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,7 +75,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 export class AdminEntityGeneralSettingsComponent {
   private fb = inject(FormBuilder);
   private adminEntityService = inject(AdminEntityService);
-  private readonly destroyRef = inject(DestroyRef);
 
   entityConstructor = input.required<EntityConstructor>();
   generalSettings = input.required<EntityConfig>();
@@ -84,138 +82,105 @@ export class AdminEntityGeneralSettingsComponent {
 
   generalSettingsChange = output<EntityConfig>();
 
-  fieldAnonymizationDataSource: MatTableDataSource<{
-    key: string;
-    label: string;
-    field: EntitySchemaField;
-  }>;
+  hasImageFields = computed(() =>
+    Array.from(this.entityConstructor().schema.values()).some(
+      (field) => field.dataType === PhotoDatatype.dataType,
+    ),
+  );
 
-  basicSettingsForm: FormGroup;
-  toStringAttributesOptions: SimpleDropdownValue[] = [];
-  hasImageFields: boolean = false;
-  showTooltipDetails: boolean = false;
-  isConditionalColor: boolean = false;
-  showPIIDetails: boolean = false;
-  iconControl: FormControl<string | null>;
+  showTooltipDetails = linkedSignal(
+    () => !!this.generalSettings().toBlockDetailsAttributes,
+  );
 
-  constructor() {
-    effect(() => {
-      this.entityConstructor(); // Track inputs
-      this.generalSettings();
-      this.init();
-    });
-  }
+  showPIIDetails = linkedSignal(() => this.showPIIDetailsInput());
 
-  private init() {
-    // Initialize options for toStringAttributes only
-    this.initToStringAttributesOptions();
-    // Determine if any photo fields exist (for image selector)
-    this.hasImageFields = Array.from(
-      this.entityConstructor().schema.values(),
-    ).some((field) => field.dataType === PhotoDatatype.dataType);
+  isConditionalColor = linkedSignal(() => {
+    const color = this.generalSettings().color;
+    return Array.isArray(color) && (color as ColorMapping[]).length > 0;
+  });
 
-    // Check if tooltip configuration should be enabled by default
-    this.showTooltipDetails = !!this.generalSettings().toBlockDetailsAttributes;
+  private selectedStringAttributes = linkedSignal<string[]>(
+    () => this.generalSettings().toStringAttributes ?? [],
+  );
 
-    this.basicSettingsForm = this.fb.group({
-      label: [this.generalSettings().label, Validators.required],
-      labelPlural: [this.generalSettings().labelPlural],
-      icon: [this.generalSettings().icon],
-      color: [this.generalSettings().color],
-      toStringAttributes: [this.generalSettings().toStringAttributes],
-      hasPII: [this.generalSettings().hasPII],
-      enableUserAccounts: [this.generalSettings()?.enableUserAccounts],
+  toStringAttributesOptions = computed<SimpleDropdownValue[]>(() => {
+    if (!this.generalSettings().toStringAttributes) return [];
 
+    const selectedKeys = this.selectedStringAttributes();
+    const allSchemaOptions = Array.from(
+      this.entityConstructor().schema.entries(),
+    )
+      .filter(
+        ([, field]) =>
+          [
+            StringDatatype.dataType,
+            ConfigurableEnumDatatype.dataType,
+            DateOnlyDatatype.dataType,
+          ].includes(field.dataType) && field.label,
+      )
+      .map(([key, field]) => ({ value: key, label: field.label }));
+
+    return [
+      ...selectedKeys
+        .map((key) => allSchemaOptions.find((o) => o.value === key))
+        .filter(Boolean),
+      ...allSchemaOptions.filter((o) => !selectedKeys.includes(o.value)),
+    ];
+  });
+
+  fieldAnonymizationDataSource = computed(() => {
+    if (!this.showPIIDetails()) return undefined;
+    const fields = Array.from(this.entityConstructor().schema.entries())
+      .filter(([, field]) => !field.isInternalField)
+      .map(([key, field]) => ({ key, label: field.label, field }));
+    return new MatTableDataSource(fields);
+  });
+
+  basicSettingsForm = linkedSignal(() => {
+    const settings = this.generalSettings();
+    return this.fb.group({
+      label: [settings.label, Validators.required],
+      labelPlural: [settings.labelPlural],
+      icon: [settings.icon],
+      color: [settings.color],
+      toStringAttributes: [settings.toStringAttributes],
+      hasPII: [settings.hasPII],
+      enableUserAccounts: [settings.enableUserAccounts],
       toBlockDetailsAttributes: this.fb.group({
-        title: [this.generalSettings().toBlockDetailsAttributes?.title],
+        title: [settings.toBlockDetailsAttributes?.title ?? null],
         image: [
           {
-            value: this.generalSettings().toBlockDetailsAttributes?.image,
-            disabled: !this.hasImageFields,
+            value: settings.toBlockDetailsAttributes?.image ?? null,
+            disabled: !this.hasImageFields(),
           },
         ],
-        fields: [this.generalSettings().toBlockDetailsAttributes?.fields || []],
+        fields: [settings.toBlockDetailsAttributes?.fields ?? []],
       }),
     });
+  });
 
-    this.iconControl = this.basicSettingsForm.get("icon") as FormControl<
-      string | null
-    >;
+  iconControl = computed(
+    () => this.basicSettingsForm().get("icon") as FormControl<string | null>,
+  );
 
-    this.showPIIDetails =
-      this.showPIIDetailsInput() || this.basicSettingsForm.get("hasPII").value;
-    this.fetchAnonymizationTableData();
-    this.initToStringAttributesOptions();
-    this.initToBlockAttributes();
-    this.initColorMode();
-
-    this.basicSettingsForm.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => {
-        this.reorderedStringAttributesOptions();
-        this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
+  constructor() {
+    effect((onCleanup) => {
+      const form = this.basicSettingsForm();
+      const sub = form.valueChanges.subscribe(() => {
+        const selectedKeys: string[] =
+          form.get("toStringAttributes")!.value ?? [];
+        this.selectedStringAttributes.set(selectedKeys);
+        this.generalSettingsChange.emit(
+          form.getRawValue() as unknown as EntityConfig,
+        );
       });
-  }
-
-  private reorderedStringAttributesOptions() {
-    const selectedKeys =
-      this.basicSettingsForm.get("toStringAttributes").value ?? [];
-    const allOptions = [...this.toStringAttributesOptions];
-
-    this.toStringAttributesOptions = [
-      ...selectedKeys
-        .map((key) => allOptions.find((o) => o.value === key))
-        .filter(Boolean),
-      ...allOptions.filter((o) => !selectedKeys.includes(o.value)),
-    ];
-  }
-
-  fetchAnonymizationTableData() {
-    if (this.showPIIDetails) {
-      const fields = Array.from(this.entityConstructor().schema.entries())
-        .filter(([key, field]) => !field.isInternalField)
-        .map(([key, field]) => ({
-          key: key,
-          label: field.label,
-          field: field,
-        }));
-      this.fieldAnonymizationDataSource = new MatTableDataSource(fields);
-    }
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   toggleAnonymizationTable(event: MatCheckboxChange) {
-    this.showPIIDetails = event.checked;
-    this.basicSettingsForm.get("hasPII").setValue(this.showPIIDetails);
-    this.fetchAnonymizationTableData();
-  }
-
-  private initToBlockAttributes() {
-    // Patch tooltip values after options are initialized for proper display
-    const block = this.generalSettings().toBlockDetailsAttributes || {
-      title: null,
-      image: null,
-      fields: [],
-    };
-
-    this.basicSettingsForm.get("toBlockDetailsAttributes").patchValue({
-      title: block.title ?? null,
-      image: block.image ?? null,
-      fields: block.fields ?? [],
-    });
-
-    // Disable the image form control if no image fields are available
-    const imageControl = this.basicSettingsForm.get(
-      "toBlockDetailsAttributes.image",
-    );
-    if (this.hasImageFields) {
-      imageControl?.enable();
-    } else {
-      imageControl?.disable();
-    }
-  }
-
-  clearToBlockAttributes() {
-    this.basicSettingsForm.get("toBlockDetailsAttributes").reset();
+    this.showPIIDetails.set(event.checked);
+    this.basicSettingsForm().get("hasPII")!.setValue(event.checked);
   }
 
   changeFieldAnonymization(
@@ -226,71 +191,33 @@ export class AdminEntityGeneralSettingsComponent {
 
     this.adminEntityService.updateSchemaField(
       this.entityConstructor(),
-      this.fieldAnonymizationDataSource.data.find(
+      this.fieldAnonymizationDataSource()!.data.find(
         (v) => v.field === fieldSchema,
-      ).key,
+      )!.key,
       fieldSchema,
     );
   }
 
-  private initToStringAttributesOptions() {
-    if (!this.generalSettings().toStringAttributes) {
-      return;
-    }
-
-    const selectedOptions = this.generalSettings().toStringAttributes;
-    const unselectedOptions = Array.from(
-      this.entityConstructor().schema.entries(),
-    )
-      .filter(
-        ([key, field]) =>
-          [
-            StringDatatype.dataType,
-            ConfigurableEnumDatatype.dataType,
-            DateOnlyDatatype.dataType,
-          ].includes(field.dataType) &&
-          field.label &&
-          !selectedOptions.includes(key),
-      )
-      .map(([key, field]) => ({ value: key, label: field.label }));
-
-    this.toStringAttributesOptions = [
-      ...selectedOptions.map((value) => ({
-        value: value,
-        label: this.entityConstructor().schema.get(value)?.label,
-      })),
-      ...unselectedOptions,
-    ];
+  clearToBlockAttributes() {
+    this.basicSettingsForm().get("toBlockDetailsAttributes")!.reset();
   }
 
   // Filter functions for app-entity-field-select
-  hideNonTextFields = (field: EntitySchemaField): boolean => {
-    // Hide image fields from title and additional selection
-    return field.dataType === "file" || field.dataType === "photo";
-  };
+  hideNonTextFields = (field: EntitySchemaField): boolean =>
+    field.dataType === "file" || field.dataType === "photo";
 
-  showOnlyImageFields = (field: EntitySchemaField): boolean => {
-    // Only allow photo fields for image selection
-    return field.dataType !== PhotoDatatype.dataType;
-  };
+  showOnlyImageFields = (field: EntitySchemaField): boolean =>
+    field.dataType !== PhotoDatatype.dataType;
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
 
   isFormValid(): boolean {
-    if (!this.basicSettingsForm.valid) {
-      this.basicSettingsForm.markAllAsTouched();
+    const form = this.basicSettingsForm();
+    if (!form.valid) {
+      form.markAllAsTouched();
       return false;
     }
     return true;
-  }
-
-  /**
-   * Initialize color mode from existing configuration
-   */
-  private initColorMode() {
-    const colorValue = this.basicSettingsForm.get("color").value;
-    this.isConditionalColor =
-      Array.isArray(colorValue) && colorValue.length > 0;
   }
 }
