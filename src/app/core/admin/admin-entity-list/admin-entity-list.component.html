@@ -12,7 +12,7 @@
 
 <div>
   <app-admin-list-manager
-    [items]="filters"
+    [items]="filters()"
     [additionalFields]="config().columns"
     [entityType]="entityConstructor()"
     templateType="filter"
@@ -23,13 +23,10 @@
 
   <div class="mat-elevation-z1">
     <app-admin-tabs
-      [tabs]="config().columnGroups?.groups"
+      [tabs]="columnGroups().groups"
       [newTabFactory]="newColumnGroupFactory"
     >
-      <ng-template
-        [appAdminTabTemplate]="config().columnGroups?.groups"
-        let-item
-      >
+      <ng-template [appAdminTabTemplate]="columnGroups().groups" let-item>
         <app-admin-list-manager
           [items]="item.columns"
           [additionalFields]="config().columns"

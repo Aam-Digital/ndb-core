@@ -2,6 +2,7 @@ import {
   Component,
   input,
   effect,
+  linkedSignal,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { EntityConstructor } from "../../entity/model/entity";
@@ -35,40 +36,32 @@ export class AdminEntityListComponent {
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityListConfig>();
 
-  filters: string[];
+  filters = linkedSignal(() => (this.config().filters ?? []).map((f) => f.id));
 
-  constructor() {
-    effect(() => {
-      const entityConstructor = this.entityConstructor();
-      const config = this.config();
-
-      config.entityType = config.entityType ?? entityConstructor.ENTITY_TYPE;
-      config.filters = config.filters ?? [];
-
-      this.initColumnGroupsIfNecessary(config);
-
-      this.filters = config.filters.map((f) => f.id);
-    });
-  }
-
-  /**
-   * Config allows to not have columnGroups and by default then display all `columns`,
-   * create an initial columnGroup in this case to allow full editing.
-   * @private
-   */
-  private initColumnGroupsIfNecessary(config: EntityListConfig) {
-    if (!config.columnGroups) {
-      config.columnGroups = {
+  columnGroups = linkedSignal(
+    () =>
+      this.config().columnGroups ?? {
         groups: [
           {
             name: "",
-            columns: (config.columns ?? []).map((c) =>
+            columns: (this.config().columns ?? []).map((c) =>
               typeof c === "string" ? c : c.id,
             ),
           },
         ],
-      };
-    }
+      },
+  );
+
+  constructor() {
+    // keep the config object updated in-place while using signals for the component
+    effect(() => {
+      const config = this.config();
+      config.entityType ??= this.entityConstructor().ENTITY_TYPE;
+      config.filters = this.filters().map(
+        (f) => config.filters?.find((ef) => ef.id === f) ?? { id: f },
+      );
+      config.columnGroups = this.columnGroups();
+    });
   }
 
   updateFilters(filters: string[]) {
@@ -78,14 +71,7 @@ export class AdminEntityListComponent {
       );
       filters = [];
     }
-
-    this.filters = [...filters];
-    this.config().filters = this.filters.map(
-      (f) =>
-        this.config().filters.find(
-          (existingFilter) => existingFilter.id === f,
-        ) ?? { id: f },
-    );
+    this.filters.set([...filters]);
   }
 
   updateColumns(columns: string[], group: GroupConfig) {
@@ -95,7 +81,10 @@ export class AdminEntityListComponent {
       );
       return;
     }
-    group.columns = columns;
+    this.columnGroups.update((cg) => ({
+      ...cg,
+      groups: cg.groups.map((g) => (g === group ? { ...g, columns } : g)),
+    }));
   }
 
   newColumnGroupFactory(): GroupConfig {

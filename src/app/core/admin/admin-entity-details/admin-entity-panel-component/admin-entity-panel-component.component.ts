@@ -7,10 +7,9 @@ import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entit
 import {
   Component,
   input,
-  OnInit,
   inject,
   computed,
-  signal,
+  linkedSignal,
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -52,13 +51,19 @@ import { IconButtonComponent } from "#src/app/core/common-components/icon-button
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
 })
-export class AdminEntityPanelComponentComponent implements OnInit {
+export class AdminEntityPanelComponentComponent {
   private entities = inject(EntityRegistry);
   private confirmation = inject(ConfirmationDialogService);
   private entityRelationsService = inject(EntityRelationsService);
   private readonly dialog = inject(MatDialog);
 
   config = input.required<PanelComponent>();
+
+  /**
+   * The parent entity type being configured in this panel.
+   * This is provided by the parent component and does not change.
+   * Example: When configuring details for a "Child" entity.
+   */
   entityType = input.required<EntityConstructor>();
 
   /**
@@ -66,21 +71,39 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    */
   relatedEntityModified = output<EntityConstructor>();
 
-  entityConstructor: EntityConstructor;
-  selectedEntityType = signal<string>("");
+  selectedEntityType = linkedSignal(
+    () => this.config()?.config?.entityType ?? "",
+  );
+
+  /**
+   * The related entity type currently selected in the dropdown.
+   * Automatically derived from selectedEntityType; updates whenever the user selects a different related entity type.
+   * Example: When the user selects "EducationalMaterial" or "Note" from the dropdown.
+   */
+  entityConstructor = computed(() =>
+    this.entities.get(this.selectedEntityType()),
+  );
 
   isDialogOpen = false;
 
   /** Stores the currently active/selected field IDs to be shown in the panel */
-  activeFields: ColumnConfig[];
+  activeFields = linkedSignal<ColumnConfig[]>(() =>
+    (this.config()?.config?.columns ?? []).map((col) =>
+      typeof col === "string" ? col : col.id,
+    ),
+  );
 
   /**
    * List of entity types that reference the current entity type.
    */
-  availableRelatedEntities: {
-    label: string;
-    entityType: string;
-  }[];
+  availableRelatedEntities = computed(() =>
+    this.entityRelationsService
+      .getEntityTypesReferencingType(this.entityType().ENTITY_TYPE)
+      .map((refType) => ({
+        label: refType.entityType.label || refType.entityType.ENTITY_TYPE,
+        entityType: refType.entityType.ENTITY_TYPE,
+      })),
+  );
 
   /**
    * Computed signal to determine if the "Edit data structure" button should be shown.
@@ -90,21 +113,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     const entityType = this.selectedEntityType();
     return entityType !== "Note" && entityType !== "Todo";
   });
-
-  ngOnInit(): void {
-    if (!this.config()?.config?.entityType) return;
-    this.availableRelatedEntities = this.entityRelationsService
-      .getEntityTypesReferencingType(this.entityType().ENTITY_TYPE)
-      .map((refType) => ({
-        label: refType.entityType.label || refType.entityType.ENTITY_TYPE,
-        entityType: refType.entityType.ENTITY_TYPE,
-      }));
-    this.selectedEntityType.set(this.config().config.entityType);
-    this.entityConstructor = this.entities.get(this.selectedEntityType());
-    this.activeFields = (this.config().config.columns ?? []).map((col) =>
-      typeof col === "string" ? col : col.id,
-    );
-  }
 
   /**
    * Updates the active fields and synchronizes the config columns accordingly.
@@ -119,8 +127,8 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       this.config().config.columns = [];
     }
 
-    this.activeFields = [...activeFields];
-    this.config().config.columns = this.activeFields.map(
+    this.activeFields.set([...activeFields]);
+    this.config().config.columns = this.activeFields().map(
       (fieldId) =>
         this.config().config.columns.find(
           (existingFields) => existingFields.id === fieldId,
@@ -152,7 +160,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.updateConfigForNewEntityType(newType);
     this.applyCustomOverrides(newType);
 
-    this.activeFields = [];
+    this.activeFields.set([]);
   }
 
   /**
@@ -165,7 +173,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private updateConfigForNewEntityType(newType: string) {
     this.selectedEntityType.set(newType);
     this.config().config.entityType = newType;
-    this.entityConstructor = this.entities.get(newType);
 
     const matchingEntry = Object.entries(RELATED_ENTITIES_DEFAULT_CONFIGS).find(
       ([_, value]) => value.entityType === newType,
@@ -207,7 +214,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    * If the related entity's schema was modified, emits an event so the parent can save it.
    */
   openRelatedEntityDetailsConfig(): void {
-    if (!this.entityConstructor) {
+    if (!this.entityConstructor()) {
       return;
     }
 
@@ -217,8 +224,8 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       width: "90vw",
       minHeight: "76vh",
       data: {
-        entityConstructor: this.entityConstructor,
-        currentColumns: this.activeFields.map((col) =>
+        entityConstructor: this.entityConstructor(),
+        currentColumns: this.activeFields().map((col) =>
           typeof col === "string" ? col : col.id,
         ),
       },
@@ -229,10 +236,10 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       .subscribe((result: AdminRelatedEntityDetailsResult) => {
         if (result) {
           this.config().config.columns = result.fieldIds;
-          this.activeFields = result.fieldIds;
+          this.activeFields.set(result.fieldIds);
 
           if (result.schemaChanged) {
-            this.relatedEntityModified.emit(this.entityConstructor);
+            this.relatedEntityModified.emit(this.entityConstructor());
           }
         }
       });
