@@ -14,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<NavigationComponent> = (args: NavigationComponent) => ({
+const Template: StoryFn<NavigationComponent> = (args) => ({
   component: NavigationComponent,
   props: args,
 });

@@ -13,9 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<AlertStoriesHelperComponent> = (
-  args: AlertStoriesHelperComponent,
-) => ({
+const Template: StoryFn<AlertStoriesHelperComponent> = (args) => ({
   component: AlertStoriesHelperComponent,
   props: args,
 });

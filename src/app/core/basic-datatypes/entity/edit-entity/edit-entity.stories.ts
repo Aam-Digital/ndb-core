@@ -28,7 +28,7 @@ export default {
   parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: StoryFn<FormComponent<any>> = (args: FormComponent<any>) => ({
+const Template: StoryFn<FormComponent<any>> = (args) => ({
   props: args,
 });
 

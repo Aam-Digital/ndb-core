@@ -31,7 +31,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ImportComponent> = (args: ImportComponent) => ({
+const Template: StoryFn<ImportComponent> = (args) => ({
   props: args,
 });
 

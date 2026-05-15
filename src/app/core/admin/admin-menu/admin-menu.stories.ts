@@ -33,7 +33,7 @@ export default {
   ],
 } as Meta<AdminMenuComponent>;
 
-const Template: StoryFn<AdminMenuComponent> = (args: AdminMenuComponent) => ({
+const Template: StoryFn<AdminMenuComponent> = (args) => ({
   props: { ...args },
 });
 

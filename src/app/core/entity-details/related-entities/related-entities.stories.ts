@@ -27,9 +27,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<RelatedEntitiesComponent<Note>> = (
-  args: RelatedEntitiesComponent<Note>,
-) => ({
+const Template: StoryFn<RelatedEntitiesComponent<Note>> = (args) => ({
   component: RelatedEntitiesComponent<Note>,
   props: args,
 });
