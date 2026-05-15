@@ -113,7 +113,7 @@ export class EntityDetailsComponent extends AbstractEntityDetailsComponent {
       panel.components.some((c) => c.component === "UserSecurity"),
     );
 
-    if (this.entityConstructor?.enableUserAccounts && !hasUserSecurityPanel) {
+    if (this.entityConstructor()?.enableUserAccounts && !hasUserSecurityPanel) {
       filteredPanels.push({
         title: $localize`:Panel title:User Account`,
         components: [

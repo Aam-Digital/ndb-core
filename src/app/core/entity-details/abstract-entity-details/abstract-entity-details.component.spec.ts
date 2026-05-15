@@ -77,7 +77,6 @@ describe("AbstractEntityDetailsComponent", () => {
   it("should load the correct entity on init", async () => {
     vi.useFakeTimers();
     try {
-      component.isLoading = true;
       const testChild = new TestEntity("Test-Child");
       const entityMapper = TestBed.inject(EntityMapperService);
       entityMapper.save(testChild);
@@ -86,7 +85,7 @@ describe("AbstractEntityDetailsComponent", () => {
 
       fixture.componentRef.setInput("id", testChild.getId(true));
       fixture.detectChanges();
-      expect(component.isLoading).toBe(true);
+      expect(component.isLoading()).toBe(true);
       await vi.advanceTimersByTimeAsync(0);
 
       expect(entityMapper.load).toHaveBeenCalledWith(
@@ -94,7 +93,7 @@ describe("AbstractEntityDetailsComponent", () => {
         testChild.getId(true),
       );
       expect(component.entity()).toBe(testChild);
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
     } finally {
       vi.useRealTimers();
     }

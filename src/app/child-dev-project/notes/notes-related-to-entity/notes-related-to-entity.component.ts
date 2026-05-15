@@ -33,8 +33,10 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
   private formDialog = inject(FormDialogService);
 
   override entityCtr = Note;
-  override _columns: FormFieldConfig[] =
-    RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns;
+
+  protected override getDefaultColumns(): FormFieldConfig[] {
+    return RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns;
+  }
 
   readonly getColor = computed(() => {
     if (this.entity()?.getType() === "Child") {

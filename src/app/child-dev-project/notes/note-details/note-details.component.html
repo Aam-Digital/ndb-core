@@ -1,4 +1,4 @@
-@if (isLoading || !tmpEntity()) {
+@if (isLoading() || !tmpEntity()) {
   <div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -12,7 +12,7 @@
     <app-entity-archived-info [entity]="entity()"></app-entity-archived-info>
 
     <app-entity-form
-      [fieldGroups]="topFieldGroups"
+      [fieldGroups]="topFieldGroups()"
       [entity]="entity()"
       [form]="$any(form())"
     >
@@ -20,14 +20,14 @@
 
     <!-- Primary information of Note -->
     <app-entity-form
-      [fieldGroups]="middleFieldGroups"
+      [fieldGroups]="middleFieldGroups()"
       [entity]="entity()"
       [form]="$any(form())"
       [fullWidth]="true"
     ></app-entity-form>
 
     <app-entity-form
-      [fieldGroups]="bottomFieldGroups"
+      [fieldGroups]="bottomFieldGroups()"
       [entity]="entity()"
       [form]="$any(form())"
       style="margin-top: 10px"

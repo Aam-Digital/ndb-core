@@ -53,7 +53,8 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
    * human-readable format
    */
   updateSummary(filteredData: E[]) {
-    if (!this.summaries()) {
+    const summaries = this.summaries();
+    if (!summaries) {
       this.summarySum = "";
       this.summaryAvg = "";
       return;
@@ -61,10 +62,6 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
 
     const summary = new Map<string, { count: number; sum: number }>();
     const average = new Map<string, number>();
-    const summaries = this.summaries();
-    if (!summaries) {
-      return;
-    }
 
     filteredData.forEach((m) => {
       const amount = m[summaries.countProperty];

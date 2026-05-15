@@ -1,8 +1,8 @@
 import {
   Component,
-  effect,
+  computed,
   inject,
-  signal,
+  resource,
   ChangeDetectionStrategy,
   input,
   output,
@@ -52,40 +52,19 @@ export class EntityActionsMenuComponent {
   /**
    * The actions being displayed as menu items.
    */
-  readonly actions = signal<EntityAction[]>([]);
+  private readonly actionsResource = resource({
+    params: () => this.entity(),
+    loader: ({ params: entity }) =>
+      entity
+        ? this.entityActionsMenuService.getActionsForSingle(entity)
+        : Promise.resolve([]),
+  });
+  readonly actions = computed(() => this.actionsResource.value() ?? []);
 
   /**
    * Whether some buttons should be displayed directly, outside the three-dot menu in dialog views.
    */
   showExpanded = input<boolean | undefined>();
-
-  constructor() {
-    effect((onCleanup) => {
-      const entity = this.entity();
-      let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
-      });
-      void this.filterAvailableActions(entity, () => cancelled);
-    });
-  }
-
-  private async filterAvailableActions(
-    entity: Entity | undefined,
-    isCancelled: () => boolean,
-  ) {
-    if (!entity) {
-      this.actions.set([]);
-      return;
-    }
-
-    const allActions =
-      await this.entityActionsMenuService.getActionsForSingle(entity);
-    if (isCancelled()) {
-      return;
-    }
-    this.actions.set(allActions);
-  }
 
   async executeAction(action: EntityAction) {
     const entity = this.entity();
@@ -108,9 +87,6 @@ export class EntityActionsMenuComponent {
         this.dialogRef.close();
       }
     }
-    setTimeout(() => {
-      const currentEntity = this.entity();
-      void this.filterAvailableActions(currentEntity, () => false);
-    });
+    this.actionsResource.reload();
   }
 }

@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   effect,
   inject,
   input,
@@ -61,8 +62,6 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   private entityFormService = inject(EntityFormService);
   private readonly dialog = inject(MatDialog);
 
-  override entityConstructor = Note;
-
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
@@ -71,25 +70,32 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   middleForm = input(this.defaultFormConfig.middleForm);
   bottomForm = input(this.defaultFormConfig.bottomForm);
 
-  topFieldGroups: FieldGroup[];
-  middleFieldGroups: FieldGroup[];
-  bottomFieldGroups: FieldGroup[];
+  readonly topFieldGroups = computed(() =>
+    this.topForm().map((f) => ({ fields: [f] })),
+  );
+  readonly middleFieldGroups = computed(() => [{ fields: this.middleForm() }]);
+  readonly bottomFieldGroups = computed(() => [{ fields: this.bottomForm() }]);
 
   readonly form = signal<EntityForm<Note> | undefined>(undefined);
   readonly tmpEntity = signal<Note | undefined>(undefined);
 
   constructor() {
     super();
+    this.entityConstructor.set(Note);
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
 
-    effect(() => {
-      this.entity();
+    effect((onCleanup) => {
+      const entity = this.entity();
       this.topForm();
       this.middleForm();
       this.bottomForm();
-      void this.initForm();
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.initForm(entity as Note, () => cancelled);
     });
 
     // Subscribe to form value changes; onCleanup tears down stale subscription on re-init.
@@ -119,19 +125,18 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
     });
   }
 
-  private async initForm() {
-    const entity = this.entity() as Note;
+  private async initForm(
+    entity: Note,
+    isCancelled: () => boolean = () => false,
+  ) {
     if (!entity) return;
-
-    this.topFieldGroups = this.topForm().map((f) => ({ fields: [f] }));
-    this.middleFieldGroups = [{ fields: this.middleForm() }];
-    this.bottomFieldGroups = [{ fields: this.bottomForm() }];
 
     const newForm = await this.entityFormService.createEntityForm(
       this.middleForm().concat(this.topForm(), this.bottomForm()),
       entity,
     );
 
+    if (isCancelled()) return;
     this.tmpEntity.set(entity.copy());
     this.form.set(newForm); // triggers the valueChanges effect
   }

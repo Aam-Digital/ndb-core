@@ -28,8 +28,10 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   private dbIndexingService = inject(DatabaseIndexingService);
 
   override entityCtr = Todo;
-  override _columns: FormFieldConfig[] =
-    RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
+
+  protected override getDefaultColumns(): FormFieldConfig[] {
+    return RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
+  }
 
   backgroundColorFn = (r: Todo) => {
     if (!r.isActive) {

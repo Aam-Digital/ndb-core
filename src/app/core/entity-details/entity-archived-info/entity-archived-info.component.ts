@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   effect,
   input,
-  signal,
+  linkedSignal,
 } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -27,13 +27,9 @@ export class EntityArchivedInfoComponent {
   protected entityActionsService = inject(EntityActionsService);
   private entityMapper = inject(EntityMapperService);
   entity = input<Entity>();
-  protected readonly displayEntity = signal<Entity | undefined>(undefined);
+  protected readonly displayEntity = linkedSignal(() => this.entity());
 
   constructor() {
-    effect(() => {
-      this.displayEntity.set(this.entity());
-    });
-
     effect((onCleanup) => {
       const entity = this.displayEntity();
       if (!entity) {

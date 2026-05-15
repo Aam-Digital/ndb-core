@@ -1,8 +1,8 @@
 <!-- Header: title + actions -->
 <app-view-title>
-  @if (entityConstructor?.icon) {
+  @if (entityConstructor()?.icon) {
     <app-fa-dynamic-icon
-      [icon]="entityConstructor.icon"
+      [icon]="entityConstructor()!.icon"
       class="standard-icon-with-text margin-left-regular"
     ></app-fa-dynamic-icon>
   }
@@ -10,7 +10,7 @@
     {{ entity()?.toString() }}
   } @else {
     <span i18n="Title when adding a new entity">
-      Adding new {{ this.entityConstructor?.label }}
+      Adding new {{ entityConstructor()?.label }}
     </span>
   }
 </app-view-title>
@@ -24,7 +24,7 @@
     @if (
       ("update"
         | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
-        | async) && !entityConstructor?.isInternalEntity
+        | async) && !entityConstructor()?.isInternalEntity
     ) {
       <button
         mat-menu-item
@@ -60,7 +60,7 @@
         </span>
       </ng-template>
       <ng-template matTabContent>
-        @if (isLoading) {
+        @if (isLoading()) {
           <div class="process-spinner">
             <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>

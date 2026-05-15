@@ -4,7 +4,7 @@ import {
   effect,
   inject,
   input,
-  signal,
+  resource,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
@@ -49,42 +49,26 @@ export class FormComponent<E extends Entity> {
   entity = input<E>();
   creatingNew = input<boolean>(false);
   fieldGroups = input<FieldGroup[]>();
-  form = signal<EntityForm<E> | undefined>(undefined);
+
+  private readonly formResource = resource({
+    params: () => ({ entity: this.entity(), fieldGroups: this.fieldGroups() }),
+    loader: async ({ params: { entity, fieldGroups } }) => {
+      if (!entity || !fieldGroups) return undefined;
+      return this.entityFormService.createEntityForm(
+        [].concat(...fieldGroups.map((group) => group.fields)),
+        entity,
+      );
+    },
+  });
+  readonly form = this.formResource.value;
 
   constructor() {
-    effect((onCleanup) => {
-      const entity = this.entity();
-      const fieldGroups = this.fieldGroups();
-      if (!entity || !fieldGroups) {
-        this.form.set(undefined);
-        return;
+    effect(() => {
+      const form = this.form();
+      if (form && !this.creatingNew()) {
+        form.formGroup.disable();
       }
-
-      let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
-      });
-
-      void this.initializeForm(entity, fieldGroups, () => cancelled);
     });
-  }
-
-  private async initializeForm(
-    entity: E,
-    fieldGroups: FieldGroup[],
-    isCancelled: () => boolean,
-  ) {
-    const form = await this.entityFormService.createEntityForm(
-      [].concat(...fieldGroups.map((group) => group.fields)),
-      entity,
-    );
-    if (isCancelled()) {
-      return;
-    }
-    this.form.set(form);
-    if (!this.creatingNew()) {
-      form.formGroup.disable();
-    }
   }
 
   async saveClicked() {

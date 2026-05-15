@@ -4,7 +4,7 @@ import {
   effect,
   inject,
   input,
-  model,
+  signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -32,24 +32,30 @@ export abstract class AbstractEntityDetailsComponent {
   protected readonly unsavedChanges = inject(UnsavedChangesService);
   protected readonly cdr = inject(ChangeDetectorRef);
 
-  isLoading: boolean;
+  readonly isLoading = signal(false);
   private changesSubscription: Subscription;
 
   entityType = input<string>();
-  entityConstructor: EntityConstructor;
+  readonly entityConstructor = signal<EntityConstructor | undefined>(undefined);
 
   id = input<string>();
-  entity = model<Entity | null>(null);
+  readonly entity = signal<Entity | null>(null);
 
   constructor() {
-    effect(() => {
+    effect((onCleanup) => {
       const entityType = this.entityType();
       const id = this.id();
       if (!entityType || !id) {
         return;
       }
-      this.entityConstructor = this.entities.get(entityType);
-      void this.loadEntity(id).then(() => this.subscribeToEntityChanges());
+      this.entityConstructor.set(this.entities.get(entityType));
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.loadEntity(id, () => cancelled).then(() => {
+        if (!cancelled) this.subscribeToEntityChanges();
+      });
     });
   }
 
@@ -62,13 +68,14 @@ export abstract class AbstractEntityDetailsComponent {
   protected subscribeToEntityChanges() {
     const entityType = this.entityType();
     const id = this.id();
-    if (!entityType || !id || !this.entityConstructor) {
+    const ctor = this.entityConstructor();
+    if (!entityType || !id || !ctor) {
       return;
     }
     const fullId = Entity.createPrefixedId(entityType, id);
     this.changesSubscription?.unsubscribe();
     this.changesSubscription = this.entityMapperService
-      .receiveUpdates(this.entityConstructor)
+      .receiveUpdates(ctor)
       .pipe(
         filter(({ entity }) => entity.getId() === fullId),
         filter(({ type }) => type !== "remove"),
@@ -81,24 +88,31 @@ export abstract class AbstractEntityDetailsComponent {
       });
   }
 
-  protected async loadEntity(id: string) {
-    this.isLoading = true;
+  protected async loadEntity(
+    id: string,
+    isCancelled: () => boolean = () => false,
+  ) {
+    const ctor = this.entityConstructor();
+    if (!ctor) return;
+
+    this.isLoading.set(true);
 
     if (id === "new") {
-      if (this.ability.cannot("create", this.entityConstructor)) {
+      if (this.ability.cannot("create", ctor)) {
         this.router.navigate([""]);
         return;
       }
-      this.entity.set(new this.entityConstructor());
-      this.isLoading = false;
+      this.entity.set(new ctor());
+      this.isLoading.set(false);
       return;
     }
 
     try {
-      this.entity.set(
-        await this.entityMapperService.load(this.entityConstructor, id),
-      );
+      const loaded = await this.entityMapperService.load(ctor, id);
+      if (isCancelled()) return;
+      this.entity.set(loaded);
     } catch (error) {
+      if (isCancelled()) return;
       if (error?.status !== 404) {
         Logging.warn("Error loading record", error);
       }
@@ -108,7 +122,7 @@ export abstract class AbstractEntityDetailsComponent {
     if (!this.entity()) {
       await this.router.navigate(["/404"]);
     }
-    this.isLoading = false;
+    this.isLoading.set(false);
     this.cdr.markForCheck();
   }
 }

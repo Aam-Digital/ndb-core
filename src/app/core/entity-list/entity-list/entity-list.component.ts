@@ -258,6 +258,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     if (!this.allEntities()) {
       // if no entities are passed as input, by default load all entities of the type
       await this.loadEntities();
+    } else {
+      this.cdr.markForCheck();
     }
   }
 

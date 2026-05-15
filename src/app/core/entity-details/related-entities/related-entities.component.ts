@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   computed,
   effect,
@@ -51,7 +50,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
   protected filterService = inject(FilterService);
-  private readonly cdr = inject(ChangeDetectorRef);
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
@@ -84,9 +82,32 @@ export class RelatedEntitiesComponent<E extends Entity> {
    * @param value
    */
   columns = input<ColumnConfig[]>([]);
-  _columns: FormFieldConfig[] = [];
 
-  columnsToDisplay: string[];
+  readonly _columns = computed(() => {
+    const entity = this.entity();
+    const rawCols = this.getColumns(this.columns());
+    if (!entity) return rawCols;
+    return rawCols.map((column) => {
+      if (typeof column.additional === "object" && column.additional !== null) {
+        return {
+          ...column,
+          additional: { ...column.additional, relatedEntitiesParent: entity },
+        };
+      }
+      return column;
+    });
+  });
+
+  readonly columnsToDisplay = computed(() =>
+    this._columns()
+      .filter((column) => {
+        if (column?.hideFromTable) return false;
+        const numericValue = ScreenSize[column?.visibleFrom];
+        if (numericValue === undefined) return true;
+        return this.currentScreenSize() >= numericValue;
+      })
+      .map((c) => c.id),
+  );
 
   /**
    * This filter is applied before displaying the data.
@@ -118,8 +139,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
         this.currentScreenSize.set(
           this.screenWidthObserver.currentScreenSize(),
         );
-        this.updateColumnsToDisplayForScreenSize();
-        this.cdr.markForCheck();
       });
 
     effect((onCleanup) => {
@@ -133,7 +152,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   private async initData(isCancelled: () => boolean = () => false) {
     const entityType = this.entityType();
-    const configuredColumns = this.columns();
     const entity = this.entity();
     const property = this.property();
 
@@ -142,10 +160,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
         entityType,
       ) as EntityConstructor<E>;
     }
-    if (Array.isArray(configuredColumns) && configuredColumns.length > 0) {
-      this._columns = this.getColumns(configuredColumns);
-    }
-    this.updateColumnsToDisplayForScreenSize();
 
     if (!entity || !this.entityCtr) {
       return;
@@ -170,13 +184,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
     this.updateListenerSub?.unsubscribe();
     this.updateListenerSub = this.listenToEntityUpdates();
-
-    // added relatedEntitiesParent (e.g., current RecurringActivity or School) to each column with additional config
-    this._columns?.forEach((column) => {
-      if (typeof column.additional === "object" && column.additional !== null) {
-        column.additional.relatedEntitiesParent = entity;
-      }
-    });
   }
 
   protected getData(): Promise<E[]> {
@@ -332,30 +339,15 @@ export class RelatedEntitiesComponent<E extends Entity> {
     };
   }
 
+  protected getDefaultColumns(): FormFieldConfig[] {
+    return [];
+  }
+
   protected getColumns(value: ColumnConfig[] | undefined): FormFieldConfig[] {
-    if (!Array.isArray(value)) {
-      return [];
+    if (!Array.isArray(value) || value.length === 0) {
+      return this.getDefaultColumns();
     }
     return value.map((column) => toFormFieldConfig(column));
   }
 
-  private updateColumnsToDisplayForScreenSize() {
-    if (!this._columns) {
-      return;
-    }
-
-    this.columnsToDisplay = this._columns
-      .filter((column) => {
-        if (column?.hideFromTable) {
-          return false;
-        }
-
-        const numericValue = ScreenSize[column?.visibleFrom];
-        if (numericValue === undefined) {
-          return true;
-        }
-        return this.currentScreenSize() >= numericValue;
-      })
-      .map((c) => c.id);
-  }
 }
