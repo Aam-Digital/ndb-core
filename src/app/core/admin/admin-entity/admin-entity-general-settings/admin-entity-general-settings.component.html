@@ -5,7 +5,7 @@
 
 <h2 i18n>General Settings of "{{ entityConstructor().label }}" Records</h2>
 
-<form [formGroup]="basicSettingsForm()">
+<form [formGroup]="basicSettingsForm">
   <mat-tab-group>
     <mat-tab label="Basics" i18n-label>
       <div class="grid-layout flex-grow margin-top-regular">
@@ -32,7 +32,7 @@
             />
           </mat-form-field>
 
-          <app-icon-input [control]="iconControl()"></app-icon-input>
+          <app-icon-input [control]="iconControl"></app-icon-input>
 
           <app-conditional-color-config
             formControlName="color"

@@ -136,42 +136,63 @@ export class AdminEntityGeneralSettingsComponent {
     return new MatTableDataSource(fields);
   });
 
-  basicSettingsForm = linkedSignal(() => {
-    const settings = this.generalSettings();
-    return this.fb.group({
-      label: [settings.label, Validators.required],
-      labelPlural: [settings.labelPlural],
-      icon: [settings.icon],
-      color: [settings.color],
-      toStringAttributes: [settings.toStringAttributes],
-      hasPII: [settings.hasPII],
-      enableUserAccounts: [settings.enableUserAccounts],
-      toBlockDetailsAttributes: this.fb.group({
-        title: [settings.toBlockDetailsAttributes?.title ?? null],
-        image: [
-          {
-            value: settings.toBlockDetailsAttributes?.image ?? null,
-            disabled: !this.hasImageFields(),
-          },
-        ],
-        fields: [settings.toBlockDetailsAttributes?.fields ?? []],
-      }),
-    });
+  readonly basicSettingsForm = this.fb.group({
+    label: [null as string | null, Validators.required],
+    labelPlural: [null as string | null],
+    icon: [null as string | null],
+    color: [null as any],
+    toStringAttributes: [null as string[] | null],
+    hasPII: [null as boolean | null],
+    enableUserAccounts: [null as boolean | null],
+    toBlockDetailsAttributes: this.fb.group({
+      title: [null as string | null],
+      image: [{ value: null as string | null, disabled: true }],
+      fields: [[] as string[]],
+    }),
   });
 
-  iconControl = computed(
-    () => this.basicSettingsForm().get("icon") as FormControl<string | null>,
-  );
+  readonly iconControl = this.basicSettingsForm.get("icon") as FormControl<
+    string | null
+  >;
 
   constructor() {
+    effect(() => {
+      const settings = this.generalSettings();
+      this.basicSettingsForm.patchValue(
+        {
+          label: settings.label,
+          labelPlural: settings.labelPlural,
+          icon: settings.icon,
+          color: settings.color as EntityConfig["color"] | null,
+          toStringAttributes: settings.toStringAttributes,
+          hasPII: settings.hasPII,
+          enableUserAccounts: settings.enableUserAccounts,
+          toBlockDetailsAttributes: {
+            title: settings.toBlockDetailsAttributes?.title ?? null,
+            image: settings.toBlockDetailsAttributes?.image ?? null,
+            fields: settings.toBlockDetailsAttributes?.fields ?? [],
+          },
+        },
+        { emitEvent: false },
+      );
+
+      const imageControl = this.basicSettingsForm.get(
+        "toBlockDetailsAttributes.image",
+      );
+      if (this.hasImageFields()) {
+        imageControl?.enable({ emitEvent: false });
+      } else {
+        imageControl?.disable({ emitEvent: false });
+      }
+    });
+
     effect((onCleanup) => {
-      const form = this.basicSettingsForm();
-      const sub = form.valueChanges.subscribe(() => {
+      const sub = this.basicSettingsForm.valueChanges.subscribe(() => {
         const selectedKeys: string[] =
-          form.get("toStringAttributes").value ?? [];
+          this.basicSettingsForm.get("toStringAttributes").value ?? [];
         this.selectedStringAttributes.set(selectedKeys);
         this.generalSettingsChange.emit(
-          form.getRawValue() as unknown as EntityConfig,
+          this.basicSettingsForm.getRawValue() as unknown as EntityConfig,
         );
       });
       onCleanup(() => sub.unsubscribe());
@@ -180,7 +201,7 @@ export class AdminEntityGeneralSettingsComponent {
 
   toggleAnonymizationTable(event: MatCheckboxChange) {
     this.showPIIDetails.set(event.checked);
-    this.basicSettingsForm().get("hasPII").setValue(event.checked);
+    this.basicSettingsForm.get("hasPII").setValue(event.checked);
   }
 
   changeFieldAnonymization(
@@ -199,7 +220,7 @@ export class AdminEntityGeneralSettingsComponent {
   }
 
   clearToBlockAttributes() {
-    this.basicSettingsForm().get("toBlockDetailsAttributes").reset();
+    this.basicSettingsForm.get("toBlockDetailsAttributes").reset();
   }
 
   // Filter functions for app-entity-field-select
@@ -213,9 +234,8 @@ export class AdminEntityGeneralSettingsComponent {
   objectToValue = (v: SimpleDropdownValue) => v?.value;
 
   isFormValid(): boolean {
-    const form = this.basicSettingsForm();
-    if (!form.valid) {
-      form.markAllAsTouched();
+    if (!this.basicSettingsForm.valid) {
+      this.basicSettingsForm.markAllAsTouched();
       return false;
     }
     return true;
