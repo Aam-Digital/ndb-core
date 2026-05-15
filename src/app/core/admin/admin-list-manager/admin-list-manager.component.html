@@ -5,11 +5,11 @@
 >
   <div
     class="flex-row gap-regular flex-wrap gap-large"
-    [class.column-header]="templateType !== 'filter'"
+    [class.column-header]="templateType() !== 'filter'"
   >
-    @for (item of items; track getFieldId(item)) {
+    @for (item of items(); track getFieldId(item)) {
       <div cdkDrag class="drop-item">
-        @if (templateType === "filter") {
+        @if (templateType() === "filter") {
           <div class="flex-row gap-small filter-field">
             <fa-icon
               icon="grip-vertical"
@@ -19,9 +19,9 @@
             <mat-form-field appearance="fill">
               <mat-label>
                 <app-entity-field-label
-                  [additionalFields]="additionalFields"
+                  [additionalFields]="additionalFields()"
                   [field]="item"
-                  [entityType]="entityType"
+                  [entityType]="entityType()"
                 ></app-entity-field-label>
               </mat-label>
               <mat-select disabled></mat-select>
@@ -36,9 +36,9 @@
           <div class="default-item flex-row gap-small align-center">
             <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
             <app-entity-field-label
-              [additionalFields]="additionalFields"
+              [additionalFields]="additionalFields()"
               [field]="item"
-              [entityType]="entityType"
+              [entityType]="entityType()"
             ></app-entity-field-label>
             <fa-icon
               icon="times"
@@ -52,13 +52,13 @@
   </div>
 </div>
 
-@if (availableItems.length > 0) {
+@if (availableItems().length > 0) {
   <div class="table-content-preview">
-    <span>{{ fieldLabel }}</span>
+    <span>{{ fieldLabel() }}</span>
     <app-entity-fields-menu
       class="full-width-field"
-      [entityType]="entityType"
-      [availableFields]="availableItems"
+      [entityType]="entityType()"
+      [availableFields]="availableItems()"
       [activeFields]="itemsAsStrings"
       (activeFieldsChange)="updateItems($event)"
     ></app-entity-fields-menu>

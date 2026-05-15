@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   computed,
   inject,
   model,
@@ -75,13 +75,13 @@ export class AdminMenuItemComponent {
     return item ? hasNoLinkAndNoSubItems(item) : false;
   });
 
-  @Input() connectedTo: string[];
+  connectedTo = input<string[]>([]);
 
   /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
-  @Input() allowEntityLinks: boolean = true;
+  allowEntityLinks = input<boolean>(true);
 
   /** Whether sub-menus are allowed for this item type */
-  @Input() allowSubMenu: boolean = true;
+  allowSubMenu = input<boolean>(true);
 
   itemDrop = output<CdkDragDrop<MenuItemForAdminUi[]>>();
   deleteItem = output<MenuItemForAdminUi>();
