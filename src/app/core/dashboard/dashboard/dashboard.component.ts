@@ -16,10 +16,11 @@
  */
 
 import {
-  Component, inject,
+  Component,
+  inject,
   input,
   resource,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
