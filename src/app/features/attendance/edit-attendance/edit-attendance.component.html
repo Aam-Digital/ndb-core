@@ -1,11 +1,11 @@
-@if (!compact) {
+@if (!compact()) {
   <div>
     <!-- Desktop view: display the information as table -->
     <table class="table">
-      @for (item of formControl.value ?? []; track item.participant) {
+      @for (item of attendanceItems(); track item.participant) {
         <tr>
           <td>
-            @if (!formControl.disabled) {
+            @if (!isDisabled()) {
               <button
                 class="remove-btn"
                 type="button"
@@ -26,7 +26,7 @@
             <mat-form-field class="margin-small">
               <app-edit-configurable-enum
                 [formControl]="getStatusControl(item.participant)"
-                [formFieldConfig]="statusFieldConfig"
+                [formFieldConfig]="statusFieldConfig()"
               ></app-edit-configurable-enum>
             </mat-form-field>
           </td>
@@ -47,13 +47,13 @@
                     inputElement.value
                   )
                 "
-                [disabled]="formControl.disabled"
+                [disabled]="isDisabled()"
               />
             </mat-form-field>
           </td>
         </tr>
       }
-      @if (!formControl.disabled) {
+      @if (!isDisabled()) {
         <tr>
           <td colspan="4">
             <ng-container *ngTemplateOutlet="addParticipant"></ng-container>
@@ -65,12 +65,12 @@
 } @else {
   <div class="attendance-blocks">
     <!-- Mobile view / smaller screen: display the information using a flex-layout -->
-    @for (item of formControl.value; track item.participant) {
+    @for (item of attendanceItems(); track item.participant) {
       <mat-card class="attendance-item mat-elevation-z1 margin-bottom-small">
         <mat-card-content>
           <div class="attendance-item--header margin-bottom-regular">
             <app-entity-block [entityId]="item.participant"></app-entity-block>
-            @if (!formControl.disabled) {
+            @if (!isDisabled()) {
               <button
                 type="button"
                 mat-icon-button
@@ -89,7 +89,7 @@
               <mat-label i18n="Attendance Status field label">Status</mat-label>
               <app-edit-configurable-enum
                 [formControl]="getStatusControl(item.participant)"
-                [formFieldConfig]="statusFieldConfig"
+                [formFieldConfig]="statusFieldConfig()"
               ></app-edit-configurable-enum>
             </mat-form-field>
             <mat-form-field>
@@ -107,14 +107,14 @@
                     inputElement.value
                   )
                 "
-                [disabled]="formControl.disabled"
+                [disabled]="isDisabled()"
               />
             </mat-form-field>
           </div>
         </mat-card-content>
       </mat-card>
     }
-    @if (!formControl.disabled) {
+    @if (!isDisabled()) {
       <ng-container *ngTemplateOutlet="addParticipant"></ng-container>
     }
   </div>
@@ -125,7 +125,7 @@
     <mat-label i18n>Add participant</mat-label>
     <app-edit-entity
       [formControl]="addParticipantControl"
-      [formFieldConfig]="participantFieldConfig"
+      [formFieldConfig]="participantFieldConfig()"
       [showEntities]="false"
       [additionalFilter]="participantFilter()"
     ></app-edit-entity>

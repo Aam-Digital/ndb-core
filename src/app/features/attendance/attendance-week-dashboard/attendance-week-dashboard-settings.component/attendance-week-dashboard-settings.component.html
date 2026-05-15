@@ -3,8 +3,8 @@
     <mat-label i18n>Period Label</mat-label>
     <input
       matInput
-      [(ngModel)]="localConfig.periodLabel"
-      (ngModelChange)="emitConfigChange()"
+      [ngModel]="periodLabel()"
+      (ngModelChange)="periodLabel.set($event)"
     />
   </mat-form-field>
   <mat-form-field appearance="fill" class="full-width">
@@ -12,16 +12,16 @@
     <input
       matInput
       type="number"
-      [(ngModel)]="localConfig.daysOffset"
-      (ngModelChange)="emitConfigChange()"
+      [ngModel]="daysOffset()"
+      (ngModelChange)="daysOffset.set($event)"
     />
   </mat-form-field>
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Attendance Status Type</mat-label>
     <input
       matInput
-      [(ngModel)]="localConfig.attendanceStatusType"
-      (ngModelChange)="emitConfigChange()"
+      [ngModel]="attendanceStatusType()"
+      (ngModelChange)="attendanceStatusType.set($event)"
       placeholder="(optional, e.g. LATE)"
       i18n-placeholder
     />

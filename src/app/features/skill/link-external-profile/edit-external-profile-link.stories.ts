@@ -66,6 +66,5 @@ export const LinkedProfileNotFound: Story = {
       },
       applyData: [],
     } as ExternalProfileLinkConfig,
-    externalProfileError: true,
   },
 };

@@ -18,7 +18,11 @@ describe("AttendanceBlockComponent", () => {
     fixture = TestBed.createComponent(AttendanceBlockComponent);
     component = fixture.componentInstance;
 
-    component.attendanceData = ActivityAttendance.create(new Date());
+    fixture.componentRef.setInput(
+      "attendanceData",
+      ActivityAttendance.create(new Date()),
+    );
+    fixture.componentRef.setInput("forChild", "test-child");
 
     fixture.detectChanges();
   });

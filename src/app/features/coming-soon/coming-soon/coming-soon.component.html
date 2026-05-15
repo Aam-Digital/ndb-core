@@ -12,9 +12,9 @@
       color="primary"
       class="full-width"
       (click)="reportFeatureRequest()"
-      [disabled]="requested"
+      [disabled]="requested()"
     >
-      @if (requested) {
+      @if (requested()) {
         <fa-icon aria-label="requested" icon="check"></fa-icon>
       }
       <span
@@ -32,9 +32,9 @@
       class="full-width"
       target="_blank"
       rel="noopener"
-      href="mailto:info@aam-digital.com?subject=Feature-Request%20{{
-        featureId
-      }}"
+      [href]="
+        'mailto:info@aam-digital.com?subject=Feature-Request%20' + featureId()
+      "
     >
       I can tell you about my use case
     </a>

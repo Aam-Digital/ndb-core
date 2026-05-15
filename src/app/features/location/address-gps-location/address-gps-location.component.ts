@@ -1,9 +1,9 @@
 import {
   Component,
-  EventEmitter,
-  Output,
   inject,
   ChangeDetectionStrategy,
+  output,
+  signal,
 } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { GpsService } from "../gps.service";
@@ -33,12 +33,12 @@ export class AddressGpsLocationComponent {
   private alertService = inject(AlertService);
   private geoService = inject(GeoService);
 
-  @Output() locationSelected = new EventEmitter<GeoResult>();
+  locationSelected = output<GeoResult>();
 
-  public gpsLoading = false;
+  public gpsLoading = signal(false);
 
   async updateLocationFromGps() {
-    this.gpsLoading = true;
+    this.gpsLoading.set(true);
     try {
       const location = await this.gpsService.getGpsLocationCoordinates();
       if (location) {
@@ -64,7 +64,7 @@ export class AddressGpsLocationComponent {
         $localize`Failed to access device location. Please check if location permission is enabled in your device settings.`,
       );
     } finally {
-      this.gpsLoading = false;
+      this.gpsLoading.set(false);
     }
   }
 }

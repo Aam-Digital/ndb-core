@@ -14,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ReportRowComponent> = (args: ReportRowComponent) => ({
+const Template: StoryFn<ReportRowComponent> = (args) => ({
   component: ReportRowComponent,
   props: args,
 });

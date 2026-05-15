@@ -1,10 +1,14 @@
 import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 import {
   Component,
-  Input,
-  OnInit,
+  input,
+  computed,
+  effect,
+  untracked,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { toSignal, toObservable } from "@angular/core/rxjs-interop";
+import { switchMap, startWith } from "rxjs";
 import { AbstractControl } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
@@ -14,39 +18,45 @@ import { Entity } from "app/core/entity/model/entity";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-merge-fields",
-  standalone: true,
   imports: [MatCheckboxModule, MatRadioModule, EntityFieldViewComponent],
   templateUrl: "./merge-fields.component.html",
   styleUrls: ["./merge-fields.component.scss"],
 })
-export class MergeFieldsComponent implements OnInit {
-  @Input() field!: FormFieldConfig;
-  @Input() entities!: Entity[];
-  @Input() control!: AbstractControl;
+export class MergeFieldsComponent {
+  field = input.required<FormFieldConfig>();
+  entities = input.required<Entity[]>();
+  control = input.required<AbstractControl>();
 
-  existingSelected: boolean[] = [];
-  isDisabled: boolean[] = [];
-  allowsMultiValue: boolean = false;
+  allowsMultiValue = computed(() => this.allowsMultiValueMerge());
 
-  ngOnInit() {
-    this.initializeFieldState();
-    this.control?.valueChanges.subscribe((newValue) => {
-      this.updateSelectedStatus(newValue);
+  isDisabled = computed(() =>
+    this.entities().map((entity) => !this.hasValue(entity[this.field().id])),
+  );
+
+  private readonly controlValue = toSignal(
+    toObservable(this.control).pipe(
+      switchMap((ctrl) => ctrl.valueChanges.pipe(startWith(ctrl.value))),
+    ),
+  );
+
+  existingSelected = computed(() =>
+    this.entities().map((entity, i) =>
+      this.isDisabled()[i]
+        ? false
+        : this.isValueSelected(this.controlValue(), entity[this.field().id]),
+    ),
+  );
+
+  constructor() {
+    effect(() => {
+      const entities = this.entities();
+      const field = this.field();
+      const ctrl = this.control();
+      if (!entities?.length) return;
+      const [valueA, valueB] = entities.map((e) => e[field.id]);
+      const smartValue = this.setSmartSelectedValue(valueA, valueB, ctrl.value);
+      untracked(() => ctrl.setValue(smartValue));
     });
-  }
-
-  private initializeFieldState(): void {
-    if (!this.entities?.length) return;
-
-    const [valueA, valueB] = this.entities.map((e) => e[this.field.id]);
-    this.control.setValue(
-      this.setSmartSelectedValue(valueA, valueB, this.control.value),
-    );
-    this.allowsMultiValue = this.allowsMultiValueMerge();
-    this.isDisabled = this.entities.map(
-      (entity) => !this.hasValue(entity[this.field.id]),
-    );
-    this.updateSelectedStatus(this.control.value);
   }
 
   /**
@@ -75,20 +85,12 @@ export class MergeFieldsComponent implements OnInit {
     return currentValue;
   }
 
-  private updateSelectedStatus(currentValue: any): void {
-    this.existingSelected = this.entities.map((entity, i) =>
-      this.isDisabled[i]
-        ? false
-        : this.isValueSelected(currentValue, entity[this.field.id]),
-    );
-  }
-
   private isValueSelected(currentValue: any, entityValue: any): boolean {
-    if (this.field.isArray) {
+    if (this.field().isArray) {
       return entityValue?.every((e: any) =>
         currentValue?.some((c: any) => JSON.stringify(c) === JSON.stringify(e)),
       );
-    } else if (this.allowsMultiValue) {
+    } else if (this.allowsMultiValue()) {
       return (currentValue ?? "").includes(entityValue);
     } else {
       return JSON.stringify(currentValue) === JSON.stringify(entityValue);
@@ -105,9 +107,9 @@ export class MergeFieldsComponent implements OnInit {
 
   private allowsMultiValueMerge(): boolean {
     return (
-      this.field?.dataType === "string" ||
-      this.field?.dataType === "long-text" ||
-      this.field?.isArray
+      this.field()?.dataType === "string" ||
+      this.field()?.dataType === "long-text" ||
+      this.field()?.isArray
     );
   }
 
@@ -117,23 +119,23 @@ export class MergeFieldsComponent implements OnInit {
    * If the field allows multi-value merge, the selected value is appended to the existing value.
    */
   selectExistingValue(entityIndex: number, checked?: boolean): void {
-    const selectedValue = this.entities[entityIndex][this.field.id];
+    const selectedValue = this.entities()[entityIndex][this.field().id];
     let newValue = selectedValue;
-    if (this.field.isArray) {
+    if (this.field().isArray) {
       newValue = this.getMergedArrayValue(
-        this.control.value,
+        this.control().value,
         selectedValue,
         checked,
       );
-    } else if (this.allowsMultiValue) {
+    } else if (this.allowsMultiValue()) {
       newValue = this.getMergedStringValue(
-        this.control.value,
+        this.control().value,
         selectedValue,
         checked,
       );
     }
 
-    this.control.setValue(newValue);
+    this.control().setValue(newValue);
   }
 
   private getMergedArrayValue(

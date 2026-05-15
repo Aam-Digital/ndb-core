@@ -33,7 +33,7 @@
         <mat-form-field class="full-width">
           <mat-label i18n>Left Match Property</mat-label>
           <app-entity-field-select
-            [entityType]="entityConstructor"
+            [entityType]="entityConstructor()"
             formControlName="newEntityMatchPropertyLeft"
             [hideOption]="hideLeftOption"
           ></app-entity-field-select>
@@ -46,7 +46,7 @@
         <mat-form-field class="full-width">
           <mat-label i18n>Right Match Property</mat-label>
           <app-entity-field-select
-            [entityType]="entityConstructor"
+            [entityType]="entityConstructor()"
             formControlName="newEntityMatchPropertyRight"
             [hideOption]="hideRightOption"
           ></app-entity-field-select>
@@ -62,17 +62,17 @@
           Fields shown in dialog for confirmation or editing when creating a
           match:
         </div>
-        @if (!(activeFields?.length > 0)) {
+        @if (!(activeFields()?.length > 0)) {
           <div class="color-error" i18n>
             You should select at least one field to be shown in the confirmation
             dialog.
           </div>
         }
         <app-entity-fields-menu
-          [entityType]="entityConstructor"
-          [availableFields]="availableFields"
-          [activeFields]="fieldsAsStrings"
-          (activeFieldsChange)="activeFields = $event"
+          [entityType]="entityConstructor()"
+          [availableFields]="availableFields()"
+          [activeFields]="fieldsAsStrings()"
+          (activeFieldsChange)="setActiveFields($event)"
           class="full-with-field"
         ></app-entity-fields-menu>
       </div>

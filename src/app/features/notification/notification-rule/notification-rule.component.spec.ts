@@ -10,7 +10,6 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { SimpleChange } from "@angular/core";
 import type { Mock } from "vitest";
 
 type HttpClientMock = {
@@ -71,11 +70,9 @@ describe("NotificationRuleComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should parse component.value into formControls on ngOnChanges", () => {
-    component.value = mockValue;
-    component.ngOnChanges({
-      value: new SimpleChange(null, mockValue, true),
-    });
+  it("should parse component.value into formControls", () => {
+    fixture.componentRef.setInput("value", mockValue);
+    fixture.detectChanges();
 
     expect(component.form.getRawValue()).toEqual({
       label: "label1",
@@ -87,9 +84,10 @@ describe("NotificationRuleComponent", () => {
     });
   });
 
-  it("should emit valueChange with the correct format when a formControl is updated", () => {
-    vi.spyOn(component.valueChange, "emit");
-    component.initForm();
+  it("should update value model with the correct format when a formControl is updated", () => {
+    fixture.componentRef.setInput("value", mockValue);
+    fixture.detectChanges();
+    const setSpy = vi.spyOn(component.value, "set");
 
     component.form.setValue({
       label: "label2",
@@ -100,7 +98,7 @@ describe("NotificationRuleComponent", () => {
       enabled: true,
     });
 
-    expect(component.valueChange.emit).toHaveBeenCalledWith(
+    expect(setSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         label: "label2",
         entityType: "TestEntity",

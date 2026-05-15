@@ -1,10 +1,10 @@
 import {
   Component,
   inject,
-  Input,
   LOCALE_ID,
-  OnChanges,
   ChangeDetectionStrategy,
+  computed,
+  input,
 } from "@angular/core";
 import { ActivityAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
@@ -29,39 +29,50 @@ import { AttendanceCalendarComponent } from "../../analysis/attendance-calendar/
     AttendanceCalendarComponent,
   ],
 })
-export class AttendanceBlockComponent implements OnChanges {
+export class AttendanceBlockComponent {
   private locale = inject(LOCALE_ID);
 
-  @Input() attendanceData: ActivityAttendance;
-  @Input() forChild: string;
+  attendanceData = input<ActivityAttendance>();
+  forChild = input<string>();
   LStatus = AttendanceLogicalStatus;
-  logicalCount: { [key in AttendanceLogicalStatus]?: number };
+  readonly logicalCount = computed<{
+    [key in AttendanceLogicalStatus]?: number;
+  }>(() => {
+    const attendanceData = this.attendanceData();
+    const forChild = this.forChild();
+    if (!attendanceData || !forChild) {
+      return {};
+    }
+    return attendanceData.individualLogicalStatusCounts.get(forChild) ?? {};
+  });
 
-  ngOnChanges() {
-    this.logicalCount =
-      this.attendanceData.individualLogicalStatusCounts.get(this.forChild) ??
-      {};
-  }
-
-  get attendanceDescription(): string {
-    return `${this.logicalCount[this.LStatus.PRESENT]} / ${
-      (this.logicalCount[this.LStatus.PRESENT] || 0) +
-      (this.logicalCount[this.LStatus.ABSENT] || 0)
+  readonly attendanceDescription = computed(() => {
+    const logicalCount = this.logicalCount();
+    return `${logicalCount[this.LStatus.PRESENT]} / ${
+      (logicalCount[this.LStatus.PRESENT] || 0) +
+      (logicalCount[this.LStatus.ABSENT] || 0)
     }`;
-  }
+  });
 
-  get attendancePercentage(): string {
-    const percentage = this.attendanceData.getAttendancePercentage(
-      this.forChild,
-    );
+  readonly attendancePercentage = computed(() => {
+    const attendanceData = this.attendanceData();
+    const forChild = this.forChild();
+    if (!attendanceData || !forChild) {
+      return "-";
+    }
+    const percentage = attendanceData.getAttendancePercentage(forChild);
     if (!Number.isFinite(percentage)) {
       return "-";
-    } else {
-      return formatPercent(percentage, this.locale, "1.0-0");
     }
-  }
+    return formatPercent(percentage, this.locale, "1.0-0");
+  });
 
-  get warningLevel(): string {
-    return this.attendanceData.getWarningLevel(this.forChild);
-  }
+  readonly warningLevel = computed(() => {
+    const attendanceData = this.attendanceData();
+    const forChild = this.forChild();
+    if (!attendanceData || !forChild) {
+      return "";
+    }
+    return attendanceData.getWarningLevel(forChild);
+  });
 }

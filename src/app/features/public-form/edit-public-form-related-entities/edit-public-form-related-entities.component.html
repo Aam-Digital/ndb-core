@@ -6,7 +6,7 @@
     multiple
     class="flex-grow"
   >
-    @for (field of relatedRefFields; track field.id) {
+    @for (field of relatedRefFields(); track field.id) {
       <mat-option [value]="field.id">
         {{ field.label || field.additional }}
       </mat-option>

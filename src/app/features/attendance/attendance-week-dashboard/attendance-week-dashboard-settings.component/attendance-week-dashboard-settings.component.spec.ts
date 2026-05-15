@@ -15,12 +15,15 @@ describe("AttendanceWeekDashboardSettingsComponent", () => {
     fixture = TestBed.createComponent(AttendanceWeekDashboardSettingsComponent);
     component = fixture.componentInstance;
 
-    component.formControl = new FormControl({
-      daysOffset: 0,
-      periodLabel: "",
-      label: "",
-      attendanceStatusType: "",
-    });
+    fixture.componentRef.setInput(
+      "formControl",
+      new FormControl({
+        daysOffset: 0,
+        periodLabel: "",
+        label: "",
+        attendanceStatusType: "",
+      }),
+    );
 
     fixture.detectChanges();
   });

@@ -1,5 +1,5 @@
 <div class="address-edit-container full-width">
-  @if (!disabled) {
+  @if (!disabled()) {
     <div class="flex-row gap-small align-center search-row">
       <app-address-search
         (locationSelected)="updateFromAddressSearch($event)"
@@ -19,25 +19,25 @@
       placeholder="no location selected"
       i18n-placeholder
       [value]="
-        selectedLocation?.locationString ??
-        selectedLocation?.geoLookup?.display_name
+        selectedLocation()?.locationString ??
+        selectedLocation()?.geoLookup?.display_name
       "
       (change)="updateLocationString(manualAddressInput.value)"
-      [disabled]="disabled || !manualAddressEnabled"
+      [disabled]="disabled() || !manualAddressEnabled()"
       rows="2"
     ></textarea>
 
     <mat-hint>
       @if (
-        selectedLocation?.geoLookup?.display_name !==
-        selectedLocation?.locationString
+        selectedLocation()?.geoLookup?.display_name !==
+        selectedLocation()?.locationString
       ) {
-        @if (selectedLocation?.geoLookup) {
+        @if (selectedLocation()?.geoLookup) {
           <span
             matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."
             i18n-matTooltip
           >
-            {{ selectedLocation.geoLookup.display_name }}
+            {{ selectedLocation()?.geoLookup?.display_name }}
           </span>
         } @else {
           <span
@@ -51,7 +51,7 @@
         <br />
       }
 
-      @if (!disabled && selectedLocation) {
+      @if (!disabled() && selectedLocation()) {
         <span>
           <a
             href=""

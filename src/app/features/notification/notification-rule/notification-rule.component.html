@@ -69,9 +69,9 @@
 
         <!-- Conditions -->
         <app-conditions-editor
-          [disabled]="!value.entityType"
+          [disabled]="!value()?.entityType"
           [conditions]="form.get('conditions')?.value"
-          [entityConstructor]="entityConstructor"
+          [entityConstructor]="entityConstructor()"
           (conditionsChange)="onConditionsChange($event)"
         ></app-conditions-editor>
       </div>

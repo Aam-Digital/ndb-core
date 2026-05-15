@@ -18,7 +18,7 @@ import {
 import { ActivatedRoute } from "@angular/router";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { delay, of } from "rxjs";
+import { EMPTY, delay, of } from "rxjs";
 import { map } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
@@ -96,7 +96,8 @@ describe("TemplateExportSelectionDialogComponent", () => {
           provide: EntityMapperService,
           useValue: {
             load: vi.fn(),
-            loadType: vi.fn(),
+            loadType: vi.fn().mockResolvedValue([]),
+            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
           },
         },
         { provide: ActivatedRoute, useValue: null },
@@ -140,10 +141,6 @@ describe("TemplateExportSelectionDialogComponent", () => {
   it("should trigger download with API response when requesting file", async () => {
     vi.useFakeTimers();
     try {
-      const entity = new TestEntity();
-      entity.name = "test entity";
-      component.entity = entity;
-
       const mockResponse: TemplateExportResult = {
         filename: "test.pdf",
         file: new ArrayBuffer(10),
@@ -154,9 +151,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
       component.requestFile();
       await vi.advanceTimersByTimeAsync(1);
-      expect(component.loadingRequestedFile).toBe(true);
+      expect(component.loadingRequestedFile()).toBe(true);
       await vi.advanceTimersByTimeAsync(100);
-      expect(component.loadingRequestedFile).toBe(false);
+      expect(component.loadingRequestedFile()).toBe(false);
 
       expect(
         mockPdfGeneratorApiService.generatePdfFromTemplate,
@@ -186,9 +183,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
       component.requestFile();
       await vi.advanceTimersByTimeAsync(1);
-      expect(component.loadingRequestedFile).toBe(true);
+      expect(component.loadingRequestedFile()).toBe(true);
       await vi.advanceTimersByTimeAsync(100);
-      expect(component.loadingRequestedFile).toBe(false);
+      expect(component.loadingRequestedFile()).toBe(false);
 
       expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
       expect(mockDialogRef.close).not.toHaveBeenCalled();

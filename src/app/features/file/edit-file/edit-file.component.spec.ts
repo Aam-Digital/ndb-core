@@ -61,11 +61,11 @@ describe("EditFileComponent", () => {
 
   it("should use acceptedFileTypes from field config", () => {
     setupComponent();
-    component.formFieldConfig = {
+    fixture.componentRef.setInput("formFieldConfig", {
       id: "testProp",
       dataType: "file",
       additional: { acceptedFileTypes: ".png" } as FileFieldConfig,
-    };
+    });
 
     component.ngOnInit();
 
@@ -131,8 +131,8 @@ describe("EditFileComponent", () => {
     expect(component.formControl.value).toEqual(file.name);
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
-      component.entity,
-      component.formFieldConfig.id,
+      component.entity(),
+      component.formFieldConfig().id,
     );
   });
 
@@ -170,8 +170,8 @@ describe("EditFileComponent", () => {
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
-      component.entity,
-      component.formFieldConfig.id,
+      component.entity(),
+      component.formFieldConfig().id,
     );
   });
 
@@ -215,8 +215,8 @@ describe("EditFileComponent", () => {
 
     expect(component.formControl.value).toEqual(undefined);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
-      component.entity,
-      component.formFieldConfig.id,
+      component.entity(),
+      component.formFieldConfig().id,
     );
     expect(mockAlertService.addInfo).toHaveBeenCalled();
   });
@@ -235,8 +235,8 @@ describe("EditFileComponent", () => {
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
-      component.entity,
-      component.formFieldConfig.id,
+      component.entity(),
+      component.formFieldConfig().id,
     );
   });
 
@@ -245,7 +245,7 @@ describe("EditFileComponent", () => {
     try {
       setupComponent("old.file");
       mockEntityMapper.load.mockResolvedValue(
-        Object.assign(new Entity(component.entity.getId()), {
+        Object.assign(new Entity(component.entity().getId()), {
           _rev: "2",
           testProp: "new.file",
         }),
@@ -256,21 +256,25 @@ describe("EditFileComponent", () => {
 
       component.onFileSelected(file);
 
-      component.entity[component.formFieldConfig.id] = file.name;
+      component.entity()[component.formFieldConfig().id] = file.name;
       component.formControl.disable();
 
       expect(component.formControl.value).toEqual(file.name);
-      expect(component.entity[component.formFieldConfig.id]).toBe(file.name);
+      expect(component.entity()[component.formFieldConfig().id]).toBe(
+        file.name,
+      );
 
       subject.error(new Error());
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockAlertService.addDanger).toHaveBeenCalled();
       expect(component.formControl.value).toEqual("old.file");
-      expect(component.entity[component.formFieldConfig.id]).toBe("old.file");
+      expect(component.entity()[component.formFieldConfig().id]).toBe(
+        file.name,
+      );
       expect(mockEntityMapper.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          _id: component.entity["_id"],
+          _id: component.entity()["_id"],
           _rev: "2",
           testProp: "old.file",
         }),
@@ -286,8 +290,8 @@ describe("EditFileComponent", () => {
     component.formClicked();
 
     expect(mockFileService.showFile).toHaveBeenCalledWith(
-      component.entity,
-      component.formFieldConfig.id,
+      component.entity(),
+      component.formFieldConfig().id,
     );
   });
 
@@ -306,8 +310,11 @@ describe("EditFileComponent", () => {
       control: new FormControl(initialValue),
     } as any;
 
-    component.entity = Object.assign(new Entity(), { testProp: initialValue });
-    component.formFieldConfig = { id: "testProp" };
+    fixture.componentRef.setInput(
+      "entity",
+      Object.assign(new Entity(), { testProp: initialValue }),
+    );
+    fixture.componentRef.setInput("formFieldConfig", { id: "testProp" });
     component.formControl.disable();
     fixture.detectChanges();
   }

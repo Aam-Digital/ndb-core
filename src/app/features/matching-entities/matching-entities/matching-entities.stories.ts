@@ -59,9 +59,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<MatchingEntitiesComponent> = (
-  args: MatchingEntitiesComponent,
-) => ({
+const Template: StoryFn<MatchingEntitiesComponent> = (args) => ({
   component: MatchingEntitiesComponent,
   props: args,
 });

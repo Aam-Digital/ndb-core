@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
+  linkedSignal,
   OnInit,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -49,18 +50,23 @@ export class EditRecurringIntervalComponent
 {
   private matDialog = inject(MatDialog);
 
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
-  predefinedIntervals: { label: string; interval: TimeInterval }[] = [
-    {
-      label: $localize`:default interval select option:weekly`,
-      interval: { amount: 1, unit: "week" },
-    },
-    {
-      label: $localize`:default interval select option:monthly`,
-      interval: { amount: 1, unit: "month" },
-    },
-  ];
+  predefinedIntervals = linkedSignal<
+    { label: string; interval: TimeInterval }[]
+  >(
+    () =>
+      this.formFieldConfig()?.additional ?? [
+        {
+          label: $localize`:default interval select option:weekly`,
+          interval: { amount: 1, unit: "week" },
+        },
+        {
+          label: $localize`:default interval select option:monthly`,
+          interval: { amount: 1, unit: "month" },
+        },
+      ],
+  );
 
   compareOptionFun = (a: TimeInterval, b: TimeInterval) =>
     JSON.stringify(a) === JSON.stringify(b);
@@ -70,9 +76,6 @@ export class EditRecurringIntervalComponent
   }
 
   ngOnInit(): void {
-    this.predefinedIntervals =
-      this.formFieldConfig.additional ?? this.predefinedIntervals;
-
     // re-create active custom interval if necessary
     this.addCustomInterval(this.formControl.value);
   }
@@ -107,14 +110,14 @@ export class EditRecurringIntervalComponent
       return;
     }
 
-    const selectedOptionValue = this.predefinedIntervals.find((o) =>
+    const selectedOptionValue = this.predefinedIntervals().find((o) =>
       this.compareOptionFun(interval, o.interval),
     )?.interval;
     if (!selectedOptionValue) {
-      this.predefinedIntervals.push({
-        label: generateLabelFromInterval(interval),
-        interval: interval,
-      });
+      this.predefinedIntervals.update((prev) => [
+        ...prev,
+        { label: generateLabelFromInterval(interval), interval },
+      ]);
     }
   }
 }

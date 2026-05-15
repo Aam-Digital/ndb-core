@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
-import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceItem } from "../../model/attendance-item";
@@ -16,6 +15,9 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { createEntityMapperSpyObj } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EventWithAttendance } from "../../model/event-with-attendance";
+import { Angulartics2Module } from "angulartics2";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { faCaretDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -37,7 +39,11 @@ describe("AttendanceCalendarComponent", () => {
     );
 
     TestBed.configureTestingModule({
-      imports: [AttendanceCalendarComponent, MatNativeDateModule],
+      imports: [
+        AttendanceCalendarComponent,
+        MatNativeDateModule,
+        Angulartics2Module.forRoot(),
+      ],
       providers: [
         { provide: EntityMapperService, useValue: createEntityMapperSpyObj() },
         {
@@ -53,6 +59,7 @@ describe("AttendanceCalendarComponent", () => {
         {
           provide: EntityAbility,
           useValue: {
+            can: vi.fn(),
             cannot: vi.fn(),
           },
         },
@@ -62,8 +69,7 @@ describe("AttendanceCalendarComponent", () => {
 
     fixture = TestBed.createComponent(AttendanceCalendarComponent);
     component = fixture.componentInstance;
-
-    fixture.detectChanges();
+    TestBed.inject(FaIconLibrary).addIcons(faCaretDown, faTimes);
   });
 
   it("should create", () => {
@@ -71,21 +77,17 @@ describe("AttendanceCalendarComponent", () => {
   });
 
   it("sets min and max selectable date based on time range of given records", () => {
-    component.records = [
+    fixture.componentRef.setInput("records", [
       TestEventEntity.generateEventWithAttendance([], new Date("2020-01-05")),
       TestEventEntity.generateEventWithAttendance([], new Date("2020-01-20")),
-    ];
+    ]);
 
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, component.records, true),
-    });
-
-    expect(moment(component.minDate).isSame(moment("2020-01-01"), "day")).toBe(
-      true,
-    );
-    expect(moment(component.maxDate).isSame(moment("2020-01-31"), "day")).toBe(
-      true,
-    );
+    expect(
+      moment(component.minDate()).isSame(moment("2020-01-01"), "day"),
+    ).toBe(true);
+    expect(
+      moment(component.maxDate()).isSame(moment("2020-01-31"), "day"),
+    ).toBe(true);
   });
 
   it("should correctly compute the average attendance", () => {
@@ -110,7 +112,7 @@ describe("AttendanceCalendarComponent", () => {
         ),
       ],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -119,20 +121,20 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
+    ]);
 
     component.selectDay(new Date());
 
-    expect(component.selectedEventStats).not.toBeNull();
-    expect(component.selectedEventStats.average).toEqual(0.5);
-    expect(component.selectedEventStats.excludedUnknown).toBe(1);
+    expect(component.selectedEventStats()).not.toBeNull();
+    expect(component.selectedEventStats()!.average).toEqual(0.5);
+    expect(component.selectedEventStats()!.excludedUnknown).toBe(1);
   });
 
   it("should mark day with red triangle when highlighted child has no attendance status for event", () => {
     const testDate = new Date("2020-06-15");
     const childWithNoStatus = new TestEntity("child_no_status");
     const event = TestEventEntity.create(testDate);
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -141,8 +143,11 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
-    component.highlightForChild = childWithNoStatus.getId();
+    ]);
+    fixture.componentRef.setInput(
+      "highlightForChild",
+      childWithNoStatus.getId(),
+    );
 
     const classes = component.highlightDate(testDate);
 
@@ -160,7 +165,7 @@ describe("AttendanceCalendarComponent", () => {
     const event = Object.assign(TestEventEntity.create(testDate), {
       attendance: [new AttendanceItem(presentStatus, "", child.getId())],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -169,8 +174,8 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
-    component.highlightForChild = child.getId();
+    ]);
+    fixture.componentRef.setInput("highlightForChild", child.getId());
 
     const classes = component.highlightDate(testDate);
 
@@ -188,7 +193,7 @@ describe("AttendanceCalendarComponent", () => {
         new AttendanceItem(NullAttendanceStatusType, "", "child2"),
       ],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -197,7 +202,7 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
+    ]);
 
     const classes = component.highlightDate(testDate);
 
@@ -215,7 +220,7 @@ describe("AttendanceCalendarComponent", () => {
         new AttendanceItem(NullAttendanceStatusType, "", "child2"),
       ],
     });
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -224,7 +229,7 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
+    ]);
 
     const classes = component.highlightDate(testDate);
 
@@ -236,7 +241,7 @@ describe("AttendanceCalendarComponent", () => {
     const testDate = new Date();
     const excludedChild = new TestEntity("excluded_child");
     const event = TestEventEntity.create(testDate);
-    component.records = [
+    fixture.componentRef.setInput("records", [
       new EventWithAttendance(
         event,
         "attendance",
@@ -245,15 +250,16 @@ describe("AttendanceCalendarComponent", () => {
         "authors",
         undefined,
       ),
-    ];
-    component.highlightForChild = excludedChild.getId();
+    ]);
+    fixture.componentRef.setInput("highlightForChild", excludedChild.getId());
 
     component.selectDay(testDate);
+    fixture.detectChanges();
 
     expect(
-      component.selectedEvent.getAttendanceForParticipant(
-        excludedChild.getId(),
-      ),
+      component
+        .selectedEvent()!
+        .getAttendanceForParticipant(excludedChild.getId()),
     ).toBeDefined();
   });
 });

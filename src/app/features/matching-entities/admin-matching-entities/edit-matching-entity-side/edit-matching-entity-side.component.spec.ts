@@ -30,11 +30,11 @@ describe("EditMatchingEntitySideComponent", () => {
     fixture = TestBed.createComponent(EditMatchingEntitySideComponent);
     component = fixture.componentInstance;
 
-    component.sideConfig = {
+    fixture.componentRef.setInput("sideConfig", {
       entityType: TestEntity.ENTITY_TYPE,
       columns: [],
       availableFilters: [],
-    };
+    });
 
     fixture.detectChanges();
   });

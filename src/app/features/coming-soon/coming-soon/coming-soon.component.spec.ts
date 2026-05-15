@@ -44,7 +44,7 @@ describe("ComingSoonComponent", () => {
   });
 
   it("should create and report", () => {
-    component.featureId = testFeatureId;
+    fixture.componentRef.setInput("featureId", testFeatureId);
 
     mockActivatedRoute.paramMap.next(
       convertToParamMap({
@@ -60,7 +60,7 @@ describe("ComingSoonComponent", () => {
   });
 
   it("should report on click and lock button", () => {
-    component.featureId = testFeatureId;
+    fixture.componentRef.setInput("featureId", testFeatureId);
 
     component.reportFeatureRequest();
 
@@ -68,7 +68,7 @@ describe("ComingSoonComponent", () => {
       category: "feature_request",
       label: "request",
     });
-    expect(component.requested).toBe(true);
+    expect(component.requested()).toBe(true);
   });
 
   it("should remember previously requested feature", () => {
@@ -78,6 +78,6 @@ describe("ComingSoonComponent", () => {
     const component2 = fixture2.componentInstance;
     fixture2.detectChanges();
 
-    expect(component2.requested).toBe(true);
+    expect(component2.requested()).toBe(true);
   });
 });

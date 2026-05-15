@@ -24,17 +24,17 @@ describe("AttendanceSummaryComponent", () => {
   });
 
   it("should remove the from and to column", () => {
-    component.columns = [
+    fixture.componentRef.setInput("columns", [
       { id: "periodFrom", label: "Month" },
       { id: "totalEvents", label: "Total" },
       { id: "attendancePercentage", label: "Attendance" },
-    ];
+    ]);
 
-    expect(component._columns).toEqual([
+    expect(component._columns()).toEqual([
       { id: "attendancePercentage", label: "Attendance" },
       { id: "totalEvents", label: "Total" },
     ]);
-    expect(component._columns).not.toContain({
+    expect(component._columns()).not.toContain({
       id: "periodFrom",
       label: "Month",
     });

@@ -1,13 +1,13 @@
 import {
   Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  input,
+  model,
+  signal,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
@@ -33,6 +33,7 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-select/entity-type-select.component";
+import { Subject, takeUntil } from "rxjs";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,105 +56,103 @@ import { EntityTypeSelectComponent } from "#src/app/core/entity/entity-type-sele
   templateUrl: "./edit-new-match-action.component.html",
   styleUrl: "./edit-new-match-action.component.scss",
 })
-export class EditNewMatchActionComponent implements OnInit, OnChanges {
+export class EditNewMatchActionComponent implements OnDestroy {
   readonly fb = inject(FormBuilder);
   readonly entityRegistry = inject(EntityRegistry);
   readonly dialog = inject(MatDialog);
   readonly entityRelationsService = inject(EntityRelationsService);
+  private readonly destroyed$ = new Subject<void>();
 
-  @Input() value: NewMatchAction;
-  @Output() valueChange = new EventEmitter<NewMatchAction>();
-
-  @Input() leftEntityType: string;
-  @Input() rightEntityType: string;
+  value = model<NewMatchAction>();
+  leftEntityType = input<string>();
+  rightEntityType = input<string>();
 
   form: FormGroup;
 
   /**
    * Entities common to both sides, each with its available left/right reference fields.
    */
-  availableRelatedEntities: {
-    label: string;
-    entityType: string;
-    leftReferenceFields: string[];
-    rightReferenceFields: string[];
-  }[] = [];
-  availableFields: ColumnConfig[] = [];
+  availableRelatedEntities = computed(() =>
+    this.buildAvailableRelatedEntities(
+      this.leftEntityType(),
+      this.rightEntityType(),
+    ),
+  );
+  availableFields = signal<ColumnConfig[]>([]);
 
   /** Available field IDs for left-side match property based on selected entity. */
-  matchPropertyLeftOptions: string[] = [];
+  matchPropertyLeftOptions = signal<string[]>([]);
   /** Available field IDs for right-side match property based on selected entity. */
-  matchPropertyRightOptions: string[] = [];
+  matchPropertyRightOptions = signal<string[]>([]);
 
-  get activeFields(): ColumnConfig[] {
-    return this._activeFields;
-  }
+  activeFields = signal<ColumnConfig[]>([]);
 
-  set activeFields(fields: ColumnConfig[]) {
-    this._activeFields = fields;
+  protected setActiveFields(fields: ColumnConfig[]): void {
+    this.activeFields.set(fields);
     if (this.form?.value) {
-      this.valueChange.emit({
-        ...this.value,
+      this.value.set({
+        ...this.value(),
         ...this.form.value,
-        columnsToReview: this._activeFields,
+        columnsToReview: fields,
       });
     }
   }
-
-  private _activeFields: ColumnConfig[] = [];
 
   /** The currently selected entity constructor for generating field options. */
-  entityConstructor: EntityConstructor;
+  entityConstructor = signal<EntityConstructor | null>(null);
 
-  ngOnInit() {
-    if (this.value) {
-      this.availableRelatedEntities = this.buildAvailableRelatedEntities(
-        this.leftEntityType,
-        this.rightEntityType,
-      );
+  constructor() {
+    effect(() => {
+      const value = this.value();
+      // Also read entity type signals to recompute options when they change
+      this.leftEntityType();
+      this.rightEntityType();
 
-      this.initForm();
-      this.updateMatchOptions(this.value.newEntityType);
+      if (!value) {
+        return;
+      }
 
-      this.activeFields = this.value.columnsToReview;
-      this.form.valueChanges.subscribe((formValues) => {
-        this.valueChange.emit({
-          ...this.value,
-          ...formValues,
-          columnsToReview: this.activeFields,
-        });
-      });
-    }
-  }
+      if (!this.form) {
+        this.initForm();
+        this.form.valueChanges
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((formValues) => {
+            this.value.set({
+              ...this.value(),
+              ...formValues,
+              columnsToReview: this.activeFields(),
+            });
+          });
+      } else {
+        this.form.patchValue(
+          {
+            newEntityType: value.newEntityType ?? "",
+            newEntityMatchPropertyLeft: value.newEntityMatchPropertyLeft ?? "",
+            newEntityMatchPropertyRight:
+              value.newEntityMatchPropertyRight ?? "",
+          },
+          { emitEvent: false },
+        );
+      }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.leftEntityType || changes.rightEntityType) {
-      this.availableRelatedEntities = this.buildAvailableRelatedEntities(
-        this.leftEntityType,
-        this.rightEntityType,
-      );
-    }
+      this.activeFields.set(value.columnsToReview ?? []);
+      this.updateMatchOptions(value.newEntityType);
+    });
   }
 
   initForm() {
+    const value = this.value();
     this.form = this.fb.group({
-      newEntityType: [this.value?.newEntityType ?? ""],
-      newEntityMatchPropertyLeft: [
-        this.value?.newEntityMatchPropertyLeft ?? "",
-      ],
-      newEntityMatchPropertyRight: [
-        this.value?.newEntityMatchPropertyRight ?? "",
-      ],
+      newEntityType: [value?.newEntityType ?? ""],
+      newEntityMatchPropertyLeft: [value?.newEntityMatchPropertyLeft ?? ""],
+      newEntityMatchPropertyRight: [value?.newEntityMatchPropertyRight ?? ""],
     });
   }
 
   /**
    * Builds the list of related entities common to both sides.
    */
-  private buildAvailableRelatedEntities(
-    leftType: string,
-    rightType: string,
-  ): typeof this.availableRelatedEntities {
+  private buildAvailableRelatedEntities(leftType: string, rightType: string) {
     if (!leftType || !rightType) {
       return [];
     }
@@ -183,7 +182,7 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
             }
           : null;
       })
-      .filter((e) => e) as typeof this.availableRelatedEntities;
+      .filter((e): e is NonNullable<typeof e> => !!e);
   }
 
   /**
@@ -192,8 +191,8 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
    */
   hideLeftOption = (option: FormFieldConfig): boolean => {
     return (
-      this.matchPropertyLeftOptions.length > 0 &&
-      !this.matchPropertyLeftOptions.includes(option.id)
+      this.matchPropertyLeftOptions().length > 0 &&
+      !this.matchPropertyLeftOptions().includes(option.id)
     );
   };
 
@@ -203,8 +202,8 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
    */
   hideRightOption = (option: FormFieldConfig): boolean => {
     return (
-      this.matchPropertyRightOptions.length > 0 &&
-      !this.matchPropertyRightOptions.includes(option.id)
+      this.matchPropertyRightOptions().length > 0 &&
+      !this.matchPropertyRightOptions().includes(option.id)
     );
   };
 
@@ -215,14 +214,17 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
    */
   onEntityTypeChange(newType: string | string[]) {
     const selectedEntityType = newType as string;
-    if (selectedEntityType === this.value?.newEntityType) {
+    if (selectedEntityType === this.value()?.newEntityType) {
       return;
     }
     this.updateMatchOptions(selectedEntityType, true);
-    if (!this.value) {
+    if (!this.value()) {
       return;
     }
-    this.value.newEntityType = selectedEntityType;
+    this.value.set({
+      ...this.value(),
+      newEntityType: selectedEntityType,
+    });
   }
 
   /**
@@ -235,44 +237,46 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
     clearExisting: boolean = false,
   ): void {
     if (!entityType) {
-      this.entityConstructor = null;
-      this.availableFields = Array.from(new Set(this.activeFields ?? []));
-      this.matchPropertyLeftOptions = [];
-      this.matchPropertyRightOptions = [];
+      this.entityConstructor.set(null);
+      this.availableFields.set(Array.from(new Set(this.activeFields() ?? [])));
+      this.matchPropertyLeftOptions.set([]);
+      this.matchPropertyRightOptions.set([]);
       if (clearExisting) {
         this.form.patchValue({
           newEntityMatchPropertyLeft: "",
           newEntityMatchPropertyRight: "",
         });
-        this.activeFields = [];
+        this.setActiveFields([]);
       }
       return;
     }
 
     try {
-      this.entityConstructor = this.entityRegistry.get(entityType) ?? null;
+      this.entityConstructor.set(this.entityRegistry.get(entityType) ?? null);
     } catch {
-      this.entityConstructor = null;
+      this.entityConstructor.set(null);
     }
 
     const targetEntitySchemaFields = Array.from(
-      this.entityConstructor?.schema.keys() ?? [],
+      this.entityConstructor()?.schema.keys() ?? [],
     );
-    this.availableFields = Array.from(
-      new Set([...(this.activeFields ?? []), ...targetEntitySchemaFields]),
+    this.availableFields.set(
+      Array.from(
+        new Set([...(this.activeFields() ?? []), ...targetEntitySchemaFields]),
+      ),
     );
     if (clearExisting) {
       this.form.patchValue({
         newEntityMatchPropertyLeft: "",
         newEntityMatchPropertyRight: "",
       });
-      this.activeFields = [];
+      this.setActiveFields([]);
     }
-    const selected = this.availableRelatedEntities?.find(
+    const selected = this.availableRelatedEntities().find(
       (e) => e.entityType === entityType,
-    ) as (typeof this.availableRelatedEntities)[0];
-    this.matchPropertyLeftOptions = selected?.leftReferenceFields || [];
-    this.matchPropertyRightOptions = selected?.rightReferenceFields || [];
+    );
+    this.matchPropertyLeftOptions.set(selected?.leftReferenceFields ?? []);
+    this.matchPropertyRightOptions.set(selected?.rightReferenceFields ?? []);
     this.applySingleOptionDefaults();
   }
 
@@ -280,21 +284,34 @@ export class EditNewMatchActionComponent implements OnInit, OnChanges {
    * Auto-selects matchProperty controls when only a single option exists.
    */
   private applySingleOptionDefaults(): void {
-    if (this.matchPropertyLeftOptions.length === 1) {
+    if (
+      this.matchPropertyLeftOptions().length === 1 &&
+      this.form.get("newEntityMatchPropertyLeft")?.value !==
+        this.matchPropertyLeftOptions()[0]
+    ) {
       this.form.patchValue({
-        newEntityMatchPropertyLeft: this.matchPropertyLeftOptions[0],
+        newEntityMatchPropertyLeft: this.matchPropertyLeftOptions()[0],
       });
     }
-    if (this.matchPropertyRightOptions.length === 1) {
+    if (
+      this.matchPropertyRightOptions().length === 1 &&
+      this.form.get("newEntityMatchPropertyRight")?.value !==
+        this.matchPropertyRightOptions()[0]
+    ) {
       this.form.patchValue({
-        newEntityMatchPropertyRight: this.matchPropertyRightOptions[0],
+        newEntityMatchPropertyRight: this.matchPropertyRightOptions()[0],
       });
     }
   }
 
-  get fieldsAsStrings(): string[] {
-    return this.value?.columnsToReview?.map((field) =>
+  fieldsAsStrings = computed(() =>
+    this.value()?.columnsToReview?.map((field) =>
       typeof field === "string" ? field : field.id,
-    );
+    ),
+  );
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

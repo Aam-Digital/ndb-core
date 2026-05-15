@@ -1,9 +1,9 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  model,
+  signal,
   viewChild,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -40,31 +40,27 @@ export class AddressEditComponent {
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
-  @Output() selectedLocationChange = new EventEmitter<GeoLocation>();
-  /**
-   * The initially pre-selected location (displayed in addition to the search field allowing to change it).
-   */
-  @Input() selectedLocation: GeoLocation;
+  selectedLocation = model<GeoLocation>();
 
   /**
    * Whether the search box is enabled and visible.
    */
-  @Input() disabled: boolean;
+  disabled = input<boolean>(false);
 
-  manualAddressEnabled: boolean;
+  manualAddressEnabled = signal(false);
 
   enableManualAddressEditing() {
-    this.manualAddressEnabled = true;
+    this.manualAddressEnabled.set(true);
     // switch focus only after input has been enabled
     setTimeout(() => this.manualAddressInput()?.nativeElement.focus(), 0);
   }
 
   updateLocation(selected: GeoLocation | undefined) {
-    this.selectedLocation = selected;
-    this.selectedLocationChange.emit(selected);
-    this.manualAddressEnabled =
-      this.selectedLocation?.geoLookup?.display_name !==
-      this.selectedLocation?.locationString;
+    this.selectedLocation.set(selected);
+    this.manualAddressEnabled.set(
+      this.selectedLocation()?.geoLookup?.display_name !==
+        this.selectedLocation()?.locationString,
+    );
   }
 
   clearLocation() {
@@ -73,7 +69,7 @@ export class AddressEditComponent {
 
   updateLocationString(value: string) {
     const manualAddress: string = value ?? "";
-    if (manualAddress === "" && this.selectedLocation?.geoLookup) {
+    if (manualAddress === "" && this.selectedLocation()?.geoLookup) {
       this.clearLocation();
       // possible alternative UX: ask user if they want to remove the mapped location also? or update the location with the display_location?
       return;
@@ -81,7 +77,7 @@ export class AddressEditComponent {
 
     this.updateLocation({
       locationString: manualAddress,
-      geoLookup: this.selectedLocation?.geoLookup,
+      geoLookup: this.selectedLocation()?.geoLookup,
     });
   }
 
@@ -136,8 +132,8 @@ export class AddressEditComponent {
     const userInput = event.userInput;
 
     if (
-      value?.geoLookup === this.selectedLocation?.geoLookup &&
-      value?.locationString === this.selectedLocation?.locationString
+      value?.geoLookup === this.selectedLocation()?.geoLookup &&
+      value?.locationString === this.selectedLocation()?.locationString
     ) {
       // nothing changed, skip
       return;

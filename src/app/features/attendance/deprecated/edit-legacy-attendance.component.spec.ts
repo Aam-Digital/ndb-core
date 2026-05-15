@@ -46,8 +46,8 @@ describe("EditLegacyAttendanceComponent", () => {
       control: childrenForm,
     } as any;
 
-    component.formFieldConfig = { id: "children" };
-    component.entity = new Note();
+    fixture.componentRef.setInput("formFieldConfig", { id: "children" });
+    fixture.componentRef.setInput("entity", new Note());
     fixture.detectChanges();
   });
 

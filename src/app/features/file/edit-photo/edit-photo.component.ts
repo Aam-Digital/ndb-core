@@ -1,8 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
   OnInit,
-  ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -28,11 +29,11 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private readonly defaultImage = "assets/child.png";
   private compression = 480;
   private initialImg: SafeUrl = this.defaultImage;
-  imgPath: SafeUrl = this.initialImg;
+  readonly imgPath = signal<SafeUrl>(this.defaultImage);
 
   override async onFileSelected(file: File): Promise<void> {
     const cvs = await resizeImage(file, this.compression);
-    this.imgPath = cvs.toDataURL();
+    this.imgPath.set(cvs.toDataURL());
     const blob = await new Promise<Blob>((res) => cvs.toBlob(res));
     const reducedFile = new File([blob], file.name, {
       type: file.type,
@@ -42,18 +43,17 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   }
 
   override ngOnInit() {
-    super.ngOnInit();
+    this.acceptedFileTypes = "image/*";
     this.compression =
-      this.formFieldConfig.additional?.imageCompression ?? this.compression;
-    this.acceptedFileTypes =
-      this.formFieldConfig.additional?.acceptedFileTypes ?? "image/*";
-    if (this.formControl.value) {
-      this.fileService
-        .loadFile(this.entity, this.formFieldConfig.id)
-        .subscribe((res) => {
-          this.imgPath = res;
-          this.initialImg = res;
-        });
+      this.formFieldConfig()?.additional?.imageCompression ?? this.compression;
+    super.ngOnInit();
+    const entity = this.entity();
+    const formFieldConfig = this.formFieldConfig();
+    if (this.formControl.value && entity && formFieldConfig) {
+      this.fileService.loadFile(entity, formFieldConfig.id).subscribe((res) => {
+        this.imgPath.set(res);
+        this.initialImg = res;
+      });
     }
   }
 
@@ -68,10 +68,10 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   }
 
   private resetPreview(resetImage: SafeUrl) {
-    if (this.imgPath !== this.initialImg) {
-      URL.revokeObjectURL(this.imgPath as string);
+    if (this.imgPath() !== this.initialImg) {
+      URL.revokeObjectURL(this.imgPath() as string);
     }
-    this.imgPath = resetImage;
+    this.imgPath.set(resetImage);
   }
 
   protected override deleteExistingFile() {
@@ -81,6 +81,6 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   }
 
   openPopup() {
-    this.dialog.open(ImagePopupComponent, { data: { url: this.imgPath } });
+    this.dialog.open(ImagePopupComponent, { data: { url: this.imgPath() } });
   }
 }

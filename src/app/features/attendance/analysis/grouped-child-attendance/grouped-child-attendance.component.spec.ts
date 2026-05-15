@@ -32,7 +32,7 @@ describe("GroupedChildAttendanceComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(GroupedChildAttendanceComponent);
     component = fixture.componentInstance;
-    component.entity = new TestEntity();
+    fixture.componentRef.setInput("entity", new TestEntity());
     fixture.detectChanges();
   });
 
@@ -46,9 +46,11 @@ describe("GroupedChildAttendanceComponent", () => {
       activity,
     ]);
 
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", TestEntity.create("test-child-1"));
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    expectEntitiesToMatch(component.activities, [activity]);
+    expectEntitiesToMatch(component.activities(), [activity]);
   });
 
   it("should separate active and archived activities", async () => {
@@ -61,9 +63,11 @@ describe("GroupedChildAttendanceComponent", () => {
       archivedActivity,
     ]);
 
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", TestEntity.create("test-child-2"));
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    expectEntitiesToMatch(component.activities, [activeActivity]);
-    expectEntitiesToMatch(component.archivedActivities, [archivedActivity]);
+    expectEntitiesToMatch(component.activities(), [activeActivity]);
+    expectEntitiesToMatch(component.archivedActivities(), [archivedActivity]);
   });
 });
