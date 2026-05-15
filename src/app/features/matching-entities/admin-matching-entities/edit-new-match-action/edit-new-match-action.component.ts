@@ -1,10 +1,12 @@
 import {
   Component,
+  ChangeDetectionStrategy,
+  computed,
   effect,
   inject,
   input,
   model,
-  ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
@@ -67,46 +69,37 @@ export class EditNewMatchActionComponent {
   /**
    * Entities common to both sides, each with its available left/right reference fields.
    */
-  availableRelatedEntities: {
-    label: string;
-    entityType: string;
-    leftReferenceFields: string[];
-    rightReferenceFields: string[];
-  }[] = [];
-  availableFields: ColumnConfig[] = [];
+  availableRelatedEntities = computed(() =>
+    this.buildAvailableRelatedEntities(
+      this.leftEntityType(),
+      this.rightEntityType(),
+    ),
+  );
+  availableFields = signal<ColumnConfig[]>([]);
 
   /** Available field IDs for left-side match property based on selected entity. */
-  matchPropertyLeftOptions: string[] = [];
+  matchPropertyLeftOptions = signal<string[]>([]);
   /** Available field IDs for right-side match property based on selected entity. */
-  matchPropertyRightOptions: string[] = [];
+  matchPropertyRightOptions = signal<string[]>([]);
 
-  get activeFields(): ColumnConfig[] {
-    return this._activeFields;
-  }
+  activeFields = signal<ColumnConfig[]>([]);
 
-  set activeFields(fields: ColumnConfig[]) {
-    this._activeFields = fields;
+  protected setActiveFields(fields: ColumnConfig[]): void {
+    this.activeFields.set(fields);
     if (this.form?.value) {
       this.value.set({
         ...this.value(),
         ...this.form.value,
-        columnsToReview: this._activeFields,
+        columnsToReview: fields,
       });
     }
   }
 
-  private _activeFields: ColumnConfig[] = [];
-
   /** The currently selected entity constructor for generating field options. */
-  entityConstructor: EntityConstructor;
+  entityConstructor = signal<EntityConstructor | null>(null);
 
   constructor() {
     effect(() => {
-      this.availableRelatedEntities = this.buildAvailableRelatedEntities(
-        this.leftEntityType(),
-        this.rightEntityType(),
-      );
-
       const value = this.value();
       if (!value) {
         return;
@@ -118,7 +111,7 @@ export class EditNewMatchActionComponent {
           this.value.set({
             ...this.value(),
             ...formValues,
-            columnsToReview: this.activeFields,
+            columnsToReview: this.activeFields(),
           });
         });
       } else {
@@ -133,7 +126,7 @@ export class EditNewMatchActionComponent {
         );
       }
 
-      this._activeFields = value.columnsToReview ?? [];
+      this.activeFields.set(value.columnsToReview ?? []);
       this.updateMatchOptions(value.newEntityType);
     });
   }
@@ -150,10 +143,7 @@ export class EditNewMatchActionComponent {
   /**
    * Builds the list of related entities common to both sides.
    */
-  private buildAvailableRelatedEntities(
-    leftType: string,
-    rightType: string,
-  ): typeof this.availableRelatedEntities {
+  private buildAvailableRelatedEntities(leftType: string, rightType: string) {
     if (!leftType || !rightType) {
       return [];
     }
@@ -183,7 +173,7 @@ export class EditNewMatchActionComponent {
             }
           : null;
       })
-      .filter((e) => e) as typeof this.availableRelatedEntities;
+      .filter((e): e is NonNullable<typeof e> => !!e);
   }
 
   /**
@@ -192,8 +182,8 @@ export class EditNewMatchActionComponent {
    */
   hideLeftOption = (option: FormFieldConfig): boolean => {
     return (
-      this.matchPropertyLeftOptions.length > 0 &&
-      !this.matchPropertyLeftOptions.includes(option.id)
+      this.matchPropertyLeftOptions().length > 0 &&
+      !this.matchPropertyLeftOptions().includes(option.id)
     );
   };
 
@@ -203,8 +193,8 @@ export class EditNewMatchActionComponent {
    */
   hideRightOption = (option: FormFieldConfig): boolean => {
     return (
-      this.matchPropertyRightOptions.length > 0 &&
-      !this.matchPropertyRightOptions.includes(option.id)
+      this.matchPropertyRightOptions().length > 0 &&
+      !this.matchPropertyRightOptions().includes(option.id)
     );
   };
 
@@ -238,44 +228,46 @@ export class EditNewMatchActionComponent {
     clearExisting: boolean = false,
   ): void {
     if (!entityType) {
-      this.entityConstructor = null;
-      this.availableFields = Array.from(new Set(this.activeFields ?? []));
-      this.matchPropertyLeftOptions = [];
-      this.matchPropertyRightOptions = [];
+      this.entityConstructor.set(null);
+      this.availableFields.set(Array.from(new Set(this.activeFields() ?? [])));
+      this.matchPropertyLeftOptions.set([]);
+      this.matchPropertyRightOptions.set([]);
       if (clearExisting) {
         this.form.patchValue({
           newEntityMatchPropertyLeft: "",
           newEntityMatchPropertyRight: "",
         });
-        this.activeFields = [];
+        this.setActiveFields([]);
       }
       return;
     }
 
     try {
-      this.entityConstructor = this.entityRegistry.get(entityType) ?? null;
+      this.entityConstructor.set(this.entityRegistry.get(entityType) ?? null);
     } catch {
-      this.entityConstructor = null;
+      this.entityConstructor.set(null);
     }
 
     const targetEntitySchemaFields = Array.from(
-      this.entityConstructor?.schema.keys() ?? [],
+      this.entityConstructor()?.schema.keys() ?? [],
     );
-    this.availableFields = Array.from(
-      new Set([...(this.activeFields ?? []), ...targetEntitySchemaFields]),
+    this.availableFields.set(
+      Array.from(
+        new Set([...(this.activeFields() ?? []), ...targetEntitySchemaFields]),
+      ),
     );
     if (clearExisting) {
       this.form.patchValue({
         newEntityMatchPropertyLeft: "",
         newEntityMatchPropertyRight: "",
       });
-      this.activeFields = [];
+      this.setActiveFields([]);
     }
-    const selected = this.availableRelatedEntities?.find(
+    const selected = this.availableRelatedEntities().find(
       (e) => e.entityType === entityType,
-    ) as (typeof this.availableRelatedEntities)[0];
-    this.matchPropertyLeftOptions = selected?.leftReferenceFields || [];
-    this.matchPropertyRightOptions = selected?.rightReferenceFields || [];
+    );
+    this.matchPropertyLeftOptions.set(selected?.leftReferenceFields ?? []);
+    this.matchPropertyRightOptions.set(selected?.rightReferenceFields ?? []);
     this.applySingleOptionDefaults();
   }
 
@@ -284,28 +276,28 @@ export class EditNewMatchActionComponent {
    */
   private applySingleOptionDefaults(): void {
     if (
-      this.matchPropertyLeftOptions.length === 1 &&
+      this.matchPropertyLeftOptions().length === 1 &&
       this.form.get("newEntityMatchPropertyLeft")?.value !==
-        this.matchPropertyLeftOptions[0]
+        this.matchPropertyLeftOptions()[0]
     ) {
       this.form.patchValue({
-        newEntityMatchPropertyLeft: this.matchPropertyLeftOptions[0],
+        newEntityMatchPropertyLeft: this.matchPropertyLeftOptions()[0],
       });
     }
     if (
-      this.matchPropertyRightOptions.length === 1 &&
+      this.matchPropertyRightOptions().length === 1 &&
       this.form.get("newEntityMatchPropertyRight")?.value !==
-        this.matchPropertyRightOptions[0]
+        this.matchPropertyRightOptions()[0]
     ) {
       this.form.patchValue({
-        newEntityMatchPropertyRight: this.matchPropertyRightOptions[0],
+        newEntityMatchPropertyRight: this.matchPropertyRightOptions()[0],
       });
     }
   }
 
-  get fieldsAsStrings(): string[] {
-    return this.value()?.columnsToReview?.map((field) =>
+  fieldsAsStrings = computed(() =>
+    this.value()?.columnsToReview?.map((field) =>
       typeof field === "string" ? field : field.id,
-    );
-  }
+    ),
+  );
 }

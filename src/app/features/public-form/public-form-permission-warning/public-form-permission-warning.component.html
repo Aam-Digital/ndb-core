@@ -1,4 +1,4 @@
-@if (!hasPublicCreatePermission() && !isCheckingPermissions()) {
+@if (permissionCheck.value() === false) {
   <app-hint-box type="warning" class="margin-bottom-regular">
     <div>
       <strong i18n>⚠️ Missing Public Permission</strong>

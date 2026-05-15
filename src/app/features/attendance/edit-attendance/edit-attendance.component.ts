@@ -4,16 +4,15 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
   input,
   OnInit,
   signal,
-  untracked,
   WritableSignal,
 } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
-import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { startWith } from "rxjs";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -146,6 +145,20 @@ export class EditAttendanceComponent
     return this.ngControl.control as FormControl<AttendanceItem[]>;
   }
 
+  constructor() {
+    super();
+    // Whenever a new participant is selected in the autocomplete, add them.
+    // addParticipantControl is a class field so it's available at construction time.
+    this.addParticipantControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id) => {
+        if (id) {
+          this.addParticipant(id);
+          this.addParticipantControl.setValue(null, { emitEvent: false });
+        }
+      });
+  }
+
   ngOnInit() {
     this.resizeObserver = new ResizeObserver((entries) => {
       const width = entries[0]?.contentRect?.width ?? 0;
@@ -157,48 +170,26 @@ export class EditAttendanceComponent
     });
     this.resizeObserver.observe(this.elementRef.nativeElement);
 
-    // Whenever a new participant is selected in the autocomplete, add them
-    const selectedParticipant = toSignal(
-      this.addParticipantControl.valueChanges.pipe(
+    // Re-render when the form control value changes externally (e.g. loading entity data).
+    // startWith emits the initial value so the filter and status controls are set up immediately.
+    this.formControl.valueChanges
+      .pipe(
+        startWith(this.formControl.value ?? []),
         takeUntilDestroyed(this.destroyRef),
-      ),
-      { manualCleanup: true },
-    );
-    effect(() => {
-      const id = selectedParticipant();
-      if (id) {
-        untracked(() => {
-          this.addParticipant(id);
-          this.addParticipantControl.setValue(null, { emitEvent: false });
-        });
-      }
-    });
-
-    // Re-render when the form control value or status changes externally (e.g. loading entity data, switching between view/edit mode)
-    const attendanceItems = toSignal(
-      this.formControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)),
-      {
-        initialValue: this.formControl.value ?? [],
-        manualCleanup: true,
-      },
-    );
-    effect(() => {
-      const items = attendanceItems() ?? [];
-      untracked(() => {
-        const currentIds = new Set(items.map((item) => item.participant));
+      )
+      .subscribe((items) => {
+        const currentIds = new Set(
+          (items ?? []).map((item) => item.participant),
+        );
         this.participantFilter.set((e: Entity) => !currentIds.has(e.getId()));
-        this.syncStatusControlValues(items);
+        this.syncStatusControlValues(items ?? []);
         this.changeDetector.markForCheck();
       });
-    });
 
-    const formStatus = toSignal(
-      this.formControl.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)),
-      { manualCleanup: true },
-    );
-    effect(() => {
-      formStatus();
-      untracked(() => {
+    // Sync enabled/disabled state of per-participant status controls.
+    this.formControl.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
         const disabled = this.formControl.disabled;
         this.statusControls.forEach((ctrl) =>
           disabled
@@ -207,7 +198,6 @@ export class EditAttendanceComponent
         );
         this.changeDetector.markForCheck();
       });
-    });
   }
 
   private syncStatusControlValues(items: AttendanceItem[]) {

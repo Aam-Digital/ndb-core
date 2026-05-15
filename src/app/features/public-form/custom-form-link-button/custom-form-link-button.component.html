@@ -1,4 +1,7 @@
-@for (matchingForm of matchingCustomForms(); track matchingForm.getId()) {
+@for (
+  matchingForm of matchingCustomForms.value() ?? [];
+  track matchingForm.getId()
+) {
   <button
     class="margin-top-regular"
     mat-flat-button

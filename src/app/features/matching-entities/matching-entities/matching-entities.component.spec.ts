@@ -163,7 +163,7 @@ describe("MatchingEntitiesComponent", () => {
     fixture.componentRef.setInput("onMatch", testConfig.onMatch);
     await stabilizeCurrentFixture();
 
-    expect(component.sideDetails[0].selected).toEqual([testEntity]);
+    expect(component.sideDetails()![0].selected()).toEqual([testEntity]);
 
     fixture.componentRef.setInput("leftSide", {
       entityType: TestEntity.ENTITY_TYPE,
@@ -173,7 +173,7 @@ describe("MatchingEntitiesComponent", () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(component.sideDetails[1].selected).toEqual([testEntity]);
+    expect(component.sideDetails()![1].selected()).toEqual([testEntity]);
   });
 
   it("should init details for template including available entities table and its columns", async () => {
@@ -199,18 +199,22 @@ describe("MatchingEntitiesComponent", () => {
 
     await stabilizeCurrentFixture();
 
-    expect(component.sideDetails.length).toBe(2);
+    expect(component.sideDetails()!.length).toBe(2);
 
-    expect(component.sideDetails[0].selected).toEqual([testEntity]);
-    expect(component.sideDetails[0].entityType).toEqual(testEntity.getType());
-    expect(component.sideDetails[0].availableEntities).toBeUndefined();
-    expect(component.sideDetails[0].columns).toEqual(["_id", "_rev"]);
+    expect(component.sideDetails()![0].selected()).toEqual([testEntity]);
+    expect(component.sideDetails()![0].entityType).toEqual(
+      testEntity.getType(),
+    );
+    expect(component.sideDetails()![0].availableEntities).toBeUndefined();
+    expect(component.sideDetails()![0].columns).toEqual(["_id", "_rev"]);
 
-    expect(component.sideDetails[1].selected).toBeUndefined();
-    expect(component.sideDetails[1].entityType).toEqual(TestEntity.ENTITY_TYPE);
+    expect(component.sideDetails()![1].selected()).toEqual([]);
+    expect(component.sideDetails()![1].entityType).toEqual(
+      TestEntity.ENTITY_TYPE,
+    );
     expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity.ENTITY_TYPE);
-    expect(component.sideDetails[1].availableEntities).toEqual(allChildren);
-    expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
+    expect(component.sideDetails()![1].availableEntities).toEqual(allChildren);
+    expect(component.sideDetails()![1].columns).toEqual(["name", "phone"]);
   });
 
   it("should select only one entity at a time in single select mode", async () => {
@@ -224,13 +228,13 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyLeft: "schoolId",
     });
     await stabilizeCurrentFixture();
-    const testedSide = component.sideDetails[1];
+    const testedSide = component.sideDetails()![1];
 
     testedSide.selectMatch(matchedEntity);
-    expect(testedSide.selected).toEqual([matchedEntity]);
+    expect(testedSide.selected()).toEqual([matchedEntity]);
 
     testedSide.selectMatch(otherMatchedEntity);
-    expect(testedSide.selected).toEqual([otherMatchedEntity]);
+    expect(testedSide.selected()).toEqual([otherMatchedEntity]);
   });
 
   it("should select multiple entities in multiSelect mode", async () => {
@@ -244,14 +248,14 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyLeft: "schools",
     });
     await stabilizeCurrentFixture();
-    const testedSide = component.sideDetails[1];
+    const testedSide = component.sideDetails()![1];
 
     testedSide.selectMatch(matchedEntity);
     testedSide.selectMatch(otherMatchedEntity);
-    expect(testedSide.selected).toEqual([matchedEntity, otherMatchedEntity]);
+    expect(testedSide.selected()).toEqual([matchedEntity, otherMatchedEntity]);
 
     testedSide.selectMatch(matchedEntity); // deselect by second click
-    expect(testedSide.selected).toEqual([otherMatchedEntity]);
+    expect(testedSide.selected()).toEqual([otherMatchedEntity]);
   });
 
   it("should create a new entity onMatch, with single entity property", async () => {
@@ -268,8 +272,8 @@ describe("MatchingEntitiesComponent", () => {
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
 
     await stabilizeCurrentFixture();
-    component.sideDetails[0].selected = [testEntity];
-    component.sideDetails[1].selected = [matchedEntity];
+    component.sideDetails()![0].selected.set([testEntity]);
+    component.sideDetails()![1].selected.set([matchedEntity]);
 
     await component.createMatch();
     await fixture.whenStable();
@@ -304,8 +308,8 @@ describe("MatchingEntitiesComponent", () => {
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
     await stabilizeCurrentFixture();
 
-    component.sideDetails[0].selected = [testEntity];
-    component.sideDetails[1].selected = [child1, child2];
+    component.sideDetails()![0].selected.set([testEntity]);
+    component.sideDetails()![1].selected.set([child1, child2]);
 
     await component.createMatch();
     await fixture.whenStable();
@@ -339,20 +343,20 @@ describe("MatchingEntitiesComponent", () => {
 
     await stabilizeCurrentFixture();
 
-    component.sideDetails[0].selected = [testEntity];
-    component.sideDetails[0].highlightedSelected = testEntity;
-    component.sideDetails[1].selected = [matchedEntity];
-    component.sideDetails[1].highlightedSelected = matchedEntity;
+    component.sideDetails()![0].selected.set([testEntity]);
+    component.sideDetails()![0].highlightedSelected.set(testEntity);
+    component.sideDetails()![1].selected.set([matchedEntity]);
+    component.sideDetails()![1].highlightedSelected.set(matchedEntity);
 
     await component.createMatch();
     await fixture.whenStable();
 
     expect(saveSpy).toHaveBeenCalledWith(expect.any(ChildSchoolRelation));
-    expect(component.sideDetails[0].selected).toEqual([]);
-    expect(component.sideDetails[1].selected).toEqual([]);
-    expect(component.sideDetails[0].highlightedSelected).toBeNull();
-    expect(component.sideDetails[1].highlightedSelected).toBeNull();
-    expect(component.lockedMatching).toBe(false);
+    expect(component.sideDetails()![0].selected()).toEqual([]);
+    expect(component.sideDetails()![1].selected()).toEqual([]);
+    expect(component.sideDetails()![0].highlightedSelected()).toBeNull();
+    expect(component.sideDetails()![1].highlightedSelected()).toBeNull();
+    expect(component.lockedMatching()).toBe(false);
   });
 
   it("should create distance column and publish updates", async () => {
@@ -366,7 +370,7 @@ describe("MatchingEntitiesComponent", () => {
 
     await stabilizeCurrentFixture();
 
-    const distanceColumn = component.sideDetails[1]
+    const distanceColumn = component.sideDetails()![1]
       .columns[0] as FormFieldConfig;
     expect(distanceColumn).toEqual({
       id: "distance",
@@ -388,7 +392,7 @@ describe("MatchingEntitiesComponent", () => {
     const compare = new TestEntity();
     compare["address"] = LOCATION_1;
 
-    component.sideDetails[0].selectMatch(compare);
+    component.sideDetails()![0].selectMatch(compare);
 
     expect(newCoordinates).toEqual([
       (compare["address"] as GeoLocation)?.geoLookup,
@@ -408,15 +412,15 @@ describe("MatchingEntitiesComponent", () => {
     const child = new TestEntity();
     component.entityInMapClicked(child);
 
-    expect(component.sideDetails[1].selected).toEqual([child]);
+    expect(component.sideDetails()![1].selected()).toEqual([child]);
   });
 
   it("should not change the provided config object directly", async () => {
     setInputs(testConfig);
     await stabilizeCurrentFixture();
     const selectedChild = new TestEntity();
-    component.sideDetails[1].selectMatch(selectedChild);
-    expect(component.sideDetails[1].selected).toEqual([selectedChild]);
+    component.sideDetails()![1].selectMatch(selectedChild);
+    expect(component.sideDetails()![1].selected()).toEqual([selectedChild]);
 
     const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
     const newComponent = newFixture.componentInstance;
@@ -426,7 +430,9 @@ describe("MatchingEntitiesComponent", () => {
     await newFixture.whenStable();
     newFixture.detectChanges();
 
-    expect(newComponent.sideDetails[1].selected).not.toEqual([selectedChild]);
+    expect(newComponent.sideDetails()![1].selected()).not.toEqual([
+      selectedChild,
+    ]);
   });
 
   it("should update the distance calculation when the selected map properties change", async () => {
@@ -453,8 +459,8 @@ describe("MatchingEntitiesComponent", () => {
       entityType: TestEntity.ENTITY_TYPE,
     });
     await stabilizeCurrentFixture();
-    const leftSide = component.sideDetails[0];
-    const rightSide = component.sideDetails[1];
+    const leftSide = component.sideDetails()![0];
+    const rightSide = component.sideDetails()![1];
     let lastLeftValue: Coordinates[];
     let lastRightValue: Coordinates[];
     leftSide.distanceColumn.compareCoordinates.subscribe(
@@ -474,7 +480,10 @@ describe("MatchingEntitiesComponent", () => {
     lastLeftValue = undefined;
     lastRightValue = undefined;
     // select only one property
-    component.displayedLocationProperties[TestEntity.ENTITY_TYPE] = ["address"];
+    component.displayedLocationProperties.update((p) => ({
+      ...p,
+      [TestEntity.ENTITY_TYPE]: ["address"],
+    }));
     component.updateMarkersAndDistances();
 
     expect(lastLeftValue).toEqual([]);
@@ -495,10 +504,10 @@ describe("MatchingEntitiesComponent", () => {
     lastLeftValue = undefined;
     lastRightValue = undefined;
     //select both properties
-    component.displayedLocationProperties[TestEntity.ENTITY_TYPE] = [
-      "address",
-      "otherAddress",
-    ];
+    component.displayedLocationProperties.update((p) => ({
+      ...p,
+      [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
+    }));
     component.updateMarkersAndDistances();
 
     expect(lastLeftValue).toEqual([
@@ -541,17 +550,17 @@ describe("MatchingEntitiesComponent", () => {
     fixture.componentRef.setInput("onMatch", testConfig.onMatch);
     await stabilizeCurrentFixture();
 
-    expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
+    expect(component.filteredMapEntities().map((entity) => entity)).toEqual([
       c1,
       c3,
       other,
     ]);
 
-    component.applySelectedFilters(component.sideDetails[0], {
+    component.applySelectedFilters(component.sideDetails()![0], {
       name: "active",
     } as any);
 
-    expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
+    expect(component.filteredMapEntities().map((entity) => entity)).toEqual([
       c1,
       other,
     ]);
@@ -566,7 +575,6 @@ describe("MatchingEntitiesComponent", () => {
           TestEntity.schema.delete(name);
         }
       });
-      component.mapVisible = false;
       fixture.componentRef.setInput("entity", new TestEntity());
       fixture.componentRef.setInput("leftSide", {
         entityType: TestEntity.ENTITY_TYPE,
@@ -576,14 +584,14 @@ describe("MatchingEntitiesComponent", () => {
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.mapVisible).toBe(false);
+      expect(component.mapVisible()).toBe(false);
 
       TestEntity.schema.set("address", { dataType: "location" });
 
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.mapVisible).toBe(true);
+      expect(component.mapVisible()).toBe(true);
 
       TestEntity.schema.delete("address");
     } finally {
@@ -639,8 +647,8 @@ describe("MatchingEntitiesComponent", () => {
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.sideDetails[0].multiSelect).toBeFalsy();
-      expect(component.sideDetails[1].multiSelect).toBeFalsy();
+      expect(component.sideDetails()![0].multiSelect).toBeFalsy();
+      expect(component.sideDetails()![1].multiSelect).toBeFalsy();
 
       fixture.componentRef.setInput("onMatch", {
         newEntityType: Note.ENTITY_TYPE,
@@ -650,8 +658,8 @@ describe("MatchingEntitiesComponent", () => {
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.sideDetails[0].multiSelect).toBe(true);
-      expect(component.sideDetails[1].multiSelect).toBe(true);
+      expect(component.sideDetails()![0].multiSelect).toBe(true);
+      expect(component.sideDetails()![1].multiSelect).toBe(true);
     } finally {
       vi.useRealTimers();
     }
@@ -663,15 +671,15 @@ function expectConfigToMatch(
   configToLoad: MatchingEntitiesConfig,
 ) {
   const expectedColumns =
-    component.columns() ?? (component as any).defaultColumns;
+    component.columns() ?? (component as any).resolvedColumns();
   const expectedOnMatch =
-    component.onMatch() ?? (component as any).defaultOnMatch;
+    component.onMatch() ?? (component as any).resolvedOnMatch();
   const expectedMatchActionLabel =
-    component.matchActionLabel() ?? (component as any).defaultMatchActionLabel;
+    component.matchActionLabel() ?? component.resolvedMatchActionLabel();
   const expectedRightSide =
-    component.rightSide() ?? (component as any).defaultRightSide;
+    component.rightSide() ?? (component as any).resolvedRightSide();
   const expectedLeftSide =
-    component.leftSide() ?? (component as any).defaultLeftSide;
+    component.leftSide() ?? (component as any).resolvedLeftSide();
 
   expect(expectedColumns).toEqual(configToLoad.columns);
   expect(expectedOnMatch).toEqual(configToLoad.onMatch);

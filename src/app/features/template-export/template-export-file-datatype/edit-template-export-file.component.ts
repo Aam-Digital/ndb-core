@@ -5,11 +5,10 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { TemplateExportApiService } from "#src/app/features/template-export/template-export-api/template-export-api.service";
 import {
   Component,
+  ChangeDetectionStrategy,
   inject,
   input,
-  OnInit,
-  ChangeDetectionStrategy,
-  signal,
+  resource,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -46,7 +45,7 @@ import { TemplateExportService } from "../template-export-service/template-expor
 })
 export class EditTemplateExportFileComponent
   extends CustomFormControlDirective<string>
-  implements OnInit, EditComponent
+  implements EditComponent
 {
   private readonly templateExportService = inject(TemplateExportService);
 
@@ -57,13 +56,8 @@ export class EditTemplateExportFileComponent
     return this.ngControl.control as FormControl<string>;
   }
 
-  exportServerEnabled = signal<boolean | undefined>(undefined);
-
-  ngOnInit(): void {
-    // Check if export server is enabled
-    this.templateExportService
-      .isExportServerEnabled()
-      .then((enabled) => this.exportServerEnabled.set(enabled))
-      .catch(() => this.exportServerEnabled.set(false));
-  }
+  exportServerEnabled = resource({
+    loader: () =>
+      this.templateExportService.isExportServerEnabled().catch(() => false),
+  });
 }

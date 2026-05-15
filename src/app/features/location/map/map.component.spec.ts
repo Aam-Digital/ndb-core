@@ -151,20 +151,20 @@ describe("MapComponent", () => {
   it("should only show the button to select properties if entities have been set", () => {
     fixture.componentRef.setInput("displayedProperties", {});
     fixture.detectChanges();
-    expect(component.showPropertySelection).toBe(false);
+    expect(component.showPropertySelection()).toBe(false);
 
     fixture.componentRef.setInput("displayedProperties", {
       [TestEntity.ENTITY_TYPE]: ["address"],
     });
     fixture.detectChanges();
-    expect(component.showPropertySelection).toBe(true);
+    expect(component.showPropertySelection()).toBe(true);
 
     fixture.componentRef.setInput("displayedProperties", {});
-    component.showPropertySelection = false;
+    component.showPropertySelection.set(false);
     fixture.componentRef.setInput("entities", [new TestEntity()]);
     fixture.detectChanges();
 
-    expect(component.showPropertySelection).toBe(true);
+    expect(component.showPropertySelection()).toBe(true);
   });
 
   it("should trigger an update for the markers, once the map popup has been closed", async () => {

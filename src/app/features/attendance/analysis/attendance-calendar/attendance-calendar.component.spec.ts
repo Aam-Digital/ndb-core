@@ -15,6 +15,9 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { createEntityMapperSpyObj } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EventWithAttendance } from "../../model/event-with-attendance";
+import { Angulartics2Module } from "angulartics2";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { faCaretDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -36,7 +39,11 @@ describe("AttendanceCalendarComponent", () => {
     );
 
     TestBed.configureTestingModule({
-      imports: [AttendanceCalendarComponent, MatNativeDateModule],
+      imports: [
+        AttendanceCalendarComponent,
+        MatNativeDateModule,
+        Angulartics2Module.forRoot(),
+      ],
       providers: [
         { provide: EntityMapperService, useValue: createEntityMapperSpyObj() },
         {
@@ -52,6 +59,7 @@ describe("AttendanceCalendarComponent", () => {
         {
           provide: EntityAbility,
           useValue: {
+            can: vi.fn(),
             cannot: vi.fn(),
           },
         },
@@ -61,8 +69,7 @@ describe("AttendanceCalendarComponent", () => {
 
     fixture = TestBed.createComponent(AttendanceCalendarComponent);
     component = fixture.componentInstance;
-
-    fixture.detectChanges();
+    TestBed.inject(FaIconLibrary).addIcons(faCaretDown, faTimes);
   });
 
   it("should create", () => {
@@ -74,7 +81,6 @@ describe("AttendanceCalendarComponent", () => {
       TestEventEntity.generateEventWithAttendance([], new Date("2020-01-05")),
       TestEventEntity.generateEventWithAttendance([], new Date("2020-01-20")),
     ]);
-    fixture.detectChanges();
 
     expect(
       moment(component.minDate()).isSame(moment("2020-01-01"), "day"),
@@ -248,6 +254,7 @@ describe("AttendanceCalendarComponent", () => {
     fixture.componentRef.setInput("highlightForChild", excludedChild.getId());
 
     component.selectDay(testDate);
+    fixture.detectChanges();
 
     expect(
       component

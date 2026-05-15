@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   input,
+  InputSignal,
 } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -42,7 +43,7 @@ export class EditTodoCompletionComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-  entity = input<Entity>();
+  entity = input<Entity>() as InputSignal<Todo>;
 
   private readonly entityFormService = inject(EntityFormService);
   private readonly todoService = inject(TodoService);
@@ -52,19 +53,15 @@ export class EditTodoCompletionComponent
     return this.ngControl.control as FormControl<TodoCompletion>;
   }
 
-  get todo(): Todo {
-    return this.entity() as Todo;
-  }
-
   async completeTodo() {
     if (this.formControl.parent?.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
       await this.entityFormService.saveChanges(
         { formGroup: this.formControl.parent } as any,
-        this.todo,
+        this.entity(),
       );
     }
-    await this.todoService.completeTodo(this.todo);
+    await this.todoService.completeTodo(this.entity());
 
     if (this.dialogRef) {
       this.dialogRef.close();
@@ -72,6 +69,6 @@ export class EditTodoCompletionComponent
   }
 
   async uncompleteTodo() {
-    await this.todoService.uncompleteTodo(this.todo);
+    await this.todoService.uncompleteTodo(this.entity());
   }
 }

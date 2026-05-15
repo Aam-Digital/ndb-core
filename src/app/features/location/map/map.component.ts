@@ -8,6 +8,7 @@ import {
   input,
   model,
   output,
+  signal,
   ViewChild,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
@@ -65,7 +66,7 @@ export class MapComponent implements AfterViewInit {
   mapClick = output<Coordinates>();
   entityClick = output<Entity>();
 
-  showPropertySelection = false;
+  showPropertySelection = signal(false);
 
   private map: L.Map;
   private markerClusterGroup: L.MarkerClusterGroup;
@@ -99,8 +100,9 @@ export class MapComponent implements AfterViewInit {
       this.highlightedEntitiesState = highlighted;
       this.displayedPropertiesState =
         this.cloneDisplayedProperties(displayedProperties);
-      this.showPropertySelection =
-        Object.keys(this.displayedPropertiesState).length > 0;
+      this.showPropertySelection.set(
+        Object.keys(this.displayedPropertiesState).length > 0,
+      );
 
       this.updateMarkers();
     });
@@ -361,7 +363,7 @@ export class MapComponent implements AfterViewInit {
     };
     this.displayedPropertiesState = updatedProperties;
     this.displayedProperties.set(updatedProperties);
-    this.showPropertySelection = true;
+    this.showPropertySelection.set(true);
 
     return locationProperties;
   }

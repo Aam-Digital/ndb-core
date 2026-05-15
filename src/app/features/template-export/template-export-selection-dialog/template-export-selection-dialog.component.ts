@@ -1,11 +1,11 @@
 import {
   Component,
-  OnInit,
   computed,
   inject,
   input,
   ChangeDetectionStrategy,
   signal,
+  resource,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
@@ -55,7 +55,7 @@ import { TemplateExport } from "../template-export.entity";
   templateUrl: "./template-export-selection-dialog.component.html",
   styleUrl: "./template-export-selection-dialog.component.scss",
 })
-export class TemplateExportSelectionDialogComponent implements OnInit {
+export class TemplateExportSelectionDialogComponent {
   private dialogRef =
     inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
   private readonly dialogData = inject<Entity>(MAT_DIALOG_DATA, {
@@ -69,7 +69,6 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
   entity = input<Entity>();
 
   templateSelectionForm: FormControl = new FormControl();
-  isFeatureEnabled = signal<boolean | undefined>(undefined);
   TemplateExport = TemplateExport;
   readonly currentEntity = computed(() => this.entity() ?? this.dialogData);
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
@@ -77,13 +76,10 @@ export class TemplateExportSelectionDialogComponent implements OnInit {
 
   loadingRequestedFile = signal<boolean>(false);
 
-  constructor() {}
-
-  async ngOnInit() {
-    this.isFeatureEnabled.set(
-      await this.templateExportService.isExportServerEnabled(),
-    );
-  }
+  isFeatureEnabled = resource({
+    loader: () =>
+      this.templateExportService.isExportServerEnabled().catch(() => false),
+  });
 
   requestFile() {
     const templateId = this.templateSelectionForm.value;

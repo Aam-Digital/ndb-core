@@ -28,12 +28,13 @@ describe("DisplayImgComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should reset picture if child has none", () => {
+  it("should reset picture if child has none", async () => {
     const withPicture = new TestEntity();
     withPicture["photo"] = "some-picture";
     fixture.componentRef.setInput("entity", withPicture);
     fixture.componentRef.setInput("imgProperty", "photo");
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(mockFileService.loadFile).toHaveBeenCalled();
     expect(component.imgSrc.value()).toBeDefined();
@@ -42,17 +43,19 @@ describe("DisplayImgComponent", () => {
     // without picture
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(mockFileService.loadFile).not.toHaveBeenCalled();
     expect(component.imgSrc.value()).toBeUndefined();
   });
 
-  it("should use remote URL directly without calling FileService", () => {
+  it("should use remote URL directly without calling FileService", async () => {
     const entity = new TestEntity();
     entity["photo"] = "https://example.com/logo.png";
     fixture.componentRef.setInput("entity", entity);
     fixture.componentRef.setInput("imgProperty", "photo");
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(mockFileService.loadFile).not.toHaveBeenCalled();
     expect(component.imgSrc.value()).toBe("https://example.com/logo.png");

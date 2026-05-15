@@ -1,7 +1,7 @@
 import {
   Component,
   computed,
-  effect,
+  resource,
   input,
   inject,
   signal,
@@ -31,16 +31,6 @@ export class PublicFormPermissionWarningComponent {
   entity = input<Entity>();
 
   /**
-   * Whether public users have create permission for this entity type
-   */
-  hasPublicCreatePermission = signal<boolean>(true);
-
-  /**
-   * Whether we're currently checking permissions
-   */
-  isCheckingPermissions = signal<boolean>(false);
-
-  /**
    * Whether the current user can add permissions (has admin_app role)
    */
   canAddPermissions = signal<boolean>(false);
@@ -60,50 +50,23 @@ export class PublicFormPermissionWarningComponent {
     return legacyEntityType ?? "";
   });
 
+  readonly permissionCheck = resource({
+    params: () => ({ entityType: this.entityType() }),
+    loader: async ({ params: { entityType } }) => {
+      if (!entityType) return true;
+      try {
+        return await this.permissionService.hasPublicCreatePermission(
+          entityType,
+        );
+      } catch (error) {
+        Logging.error("Failed to check public permissions:", error);
+        return false;
+      }
+    },
+  });
+
   constructor() {
     this.canAddPermissions.set(this.permissionService.hasAdminPermission());
-    effect((onCleanup) => {
-      const entityType = this.entityType();
-      let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
-      });
-      void this.checkPermissions(entityType, () => cancelled);
-    });
-  }
-
-  /**
-   * Check if public users have create permission for this entity type
-   */
-  private async checkPermissions(
-    entityType: string,
-    isCancelled: () => boolean = () => false,
-  ): Promise<void> {
-    if (!entityType) {
-      this.hasPublicCreatePermission.set(true);
-      return;
-    }
-
-    this.isCheckingPermissions.set(true);
-
-    try {
-      const hasPermission =
-        await this.permissionService.hasPublicCreatePermission(entityType);
-      if (isCancelled()) {
-        return;
-      }
-      this.hasPublicCreatePermission.set(hasPermission);
-    } catch (error) {
-      if (isCancelled()) {
-        return;
-      }
-      Logging.error("Failed to check public permissions:", error);
-      this.hasPublicCreatePermission.set(false);
-    } finally {
-      if (!isCancelled()) {
-        this.isCheckingPermissions.set(false);
-      }
-    }
   }
 
   /**
@@ -118,7 +81,7 @@ export class PublicFormPermissionWarningComponent {
       this.alertService.addInfo(
         $localize`Permission added successfully! The public form should now work correctly.`,
       );
-      await this.checkPermissions(entityType);
+      this.permissionCheck.reload();
     } catch (error) {
       Logging.error("Failed to add permission:", error);
       this.alertService.addDanger(

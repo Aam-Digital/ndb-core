@@ -1,8 +1,7 @@
 import {
   Component,
-  effect,
   input,
-  signal,
+  resource,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -38,67 +37,37 @@ export class CustomFormLinkButtonComponent {
    */
   formEntityType = input<EntityConstructor>();
 
-  public matchingCustomForms = signal<PublicFormConfig[]>([]);
+  matchingCustomForms = resource({
+    params: () => ({
+      linkedEntity: this.linkedEntity(),
+      formEntityType: this.formEntityType(),
+    }),
+    loader: async ({ params: { linkedEntity, formEntityType } }) => {
+      if (!linkedEntity || !formEntityType) return [];
 
-  constructor() {
-    effect((onCleanup) => {
-      const linkedEntity = this.linkedEntity();
-      const formEntityType = this.formEntityType();
-      if (!linkedEntity || !formEntityType) {
-        this.matchingCustomForms.set([]);
-        return;
-      }
-
-      let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
-      });
-      void this.loadMatchingForms(
-        linkedEntity,
-        formEntityType,
-        () => cancelled,
+      const allForms = await this.entityMapper.loadType(PublicFormConfig);
+      const matchingForms = allForms.filter((config) =>
+        this.publicFormsService.hasLinkedEntities(config),
       );
-    });
-  }
 
-  private async loadMatchingForms(
-    linkedEntity: Entity,
-    formEntityType: EntityConstructor,
-    isCancelled: () => boolean,
-  ): Promise<void> {
-    const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    if (isCancelled()) {
-      return;
-    }
-    const matchingForms = allForms.filter((config) =>
-      this.publicFormsService.hasLinkedEntities(config),
-    );
-
-    const selectedForms: PublicFormConfig[] = [];
-
-    for (const config of matchingForms) {
-      const matchesCustomForm =
-        await this.publicFormsService.isEntityTypeLinkedToConfig(
+      const selectedForms: PublicFormConfig[] = [];
+      for (const config of matchingForms) {
+        const matchesCustomForm =
+          await this.publicFormsService.isEntityTypeLinkedToConfig(
+            config,
+            linkedEntity,
+          );
+        const matchesEntityType = this.isMatchingFormEntityType(
           config,
-          linkedEntity,
+          formEntityType,
         );
-      if (isCancelled()) {
-        return;
+        if (matchesCustomForm && matchesEntityType) {
+          selectedForms.push(config);
+        }
       }
-      const matchesEntityType = this.isMatchingFormEntityType(
-        config,
-        formEntityType,
-      );
-
-      if (matchesCustomForm && matchesEntityType) {
-        selectedForms.push(config);
-      }
-    }
-    if (isCancelled()) {
-      return;
-    }
-    this.matchingCustomForms.set(selectedForms);
-  }
+      return selectedForms;
+    },
+  });
 
   async copyLink(matchingCustomForm: PublicFormConfig) {
     const linkedEntity = this.linkedEntity();

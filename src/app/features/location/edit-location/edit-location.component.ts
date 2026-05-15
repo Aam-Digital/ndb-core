@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   inject,
   input,
   OnInit,
+  signal,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatIconButton } from "@angular/material/button";
@@ -55,7 +55,6 @@ export class EditLocationComponent
   extends CustomFormControlDirective<GeoLocation>
   implements EditComponent, OnInit
 {
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly dialog = inject(MatDialog);
 
   formFieldConfig = input<FormFieldConfig>();
@@ -69,12 +68,11 @@ export class EditLocationComponent
    * The location value
    * (because this.value doesn't always reflect the correct field value, probably because of the DynamicEditComponent wrapper).
    */
-  locationValue: GeoLocation;
+  locationValue = signal<GeoLocation>(undefined);
 
   override set value(v: GeoLocation) {
     super.value = v;
-    this.locationValue = v;
-    this.cdr.markForCheck();
+    this.locationValue.set(v);
   }
 
   override get value() {
@@ -83,12 +81,11 @@ export class EditLocationComponent
 
   ngOnInit(): void {
     if (this.ngControl?.control) {
-      this.locationValue = this.ngControl.control.value;
+      this.locationValue.set(this.ngControl.control.value);
       this.ngControl.control.valueChanges
         .pipe(untilDestroyed(this))
         .subscribe((value) => {
-          this.locationValue = value;
-          this.cdr.markForCheck();
+          this.locationValue.set(value);
         });
     }
   }
@@ -101,7 +98,7 @@ export class EditLocationComponent
 
   openMap() {
     const config: MapPopupConfig = {
-      selectedLocation: this.locationValue,
+      selectedLocation: this.locationValue(),
       disabled: this._disabled,
     };
 
@@ -123,7 +120,7 @@ export class EditLocationComponent
           map((result: GeoLocation[]) => result[0]),
           filter(
             (result: GeoLocation | undefined) =>
-              JSON.stringify(result) !== JSON.stringify(this.locationValue),
+              JSON.stringify(result) !== JSON.stringify(this.locationValue()),
           ), // nothing changed, skip
         )
         .subscribe((result: GeoLocation) => {
@@ -132,7 +129,6 @@ export class EditLocationComponent
           } else {
             this.value = result;
           }
-          this.cdr.markForCheck();
         });
     }
   }

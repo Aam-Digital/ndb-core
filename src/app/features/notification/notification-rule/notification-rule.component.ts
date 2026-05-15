@@ -5,6 +5,7 @@ import {
   inject,
   model,
   output,
+  signal,
 } from "@angular/core";
 import {
   AbstractControl,
@@ -67,7 +68,7 @@ export class NotificationRuleComponent {
 
   form: FormGroup;
   entityTypeControl: AbstractControl;
-  entityConstructor: EntityConstructor | null = null;
+  entityConstructor = signal<EntityConstructor | null>(null);
 
   private readonly entityRegistry = inject(EntityRegistry);
 
@@ -167,9 +168,10 @@ export class NotificationRuleComponent {
   }
 
   private updateEntityConstructor(entityType: string) {
-    this.entityConstructor =
+    this.entityConstructor.set(
       entityType && this.entityRegistry.has(entityType)
         ? this.entityRegistry.get(entityType)
-        : null;
+        : null,
+    );
   }
 }

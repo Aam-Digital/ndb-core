@@ -110,6 +110,7 @@ describe("EditAttendanceComponent", () => {
     expect(component.participantFilter()(newEntity)).toBe(true);
 
     component.addParticipant(newEntity.getId());
+    fixture.detectChanges();
 
     expect(component.participantFilter()(newEntity)).toBe(false);
   });

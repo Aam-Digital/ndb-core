@@ -18,10 +18,10 @@
 <div class="margin-bottom-small" #matchComparison>
   <table
     mat-table
-    [dataSource]="columns()"
+    [dataSource]="resolvedColumns()"
     class="match-comparison-table mat-elevation-z1"
   >
-    @for (side of sideDetails; track $index; let i = $index) {
+    @for (side of sideDetails(); track $index; let i = $index) {
       <ng-container [matColumnDef]="'side-' + i">
         <th
           mat-header-cell
@@ -33,18 +33,18 @@
             >{{ (side.entityType | entityType)?.label }}:</em
           >
           &nbsp;
-          @for (s of side.selected; track s.getId(); let i = $index) {
+          @for (s of side.selected(); track s.getId(); let i = $index) {
             <span
-              [class.highlighted-name]="s === side.highlightedSelected"
-              (click)="side.highlightedSelected = s"
+              [class.highlighted-name]="s === side.highlightedSelected()"
+              (click)="side.highlightedSelected.set(s)"
               >{{ s.toString() }}</span
             >
-            @if (i < side.selected.length - 1) {
+            @if (i < side.selected().length - 1) {
               ,
             }
           }
           &nbsp;
-          @if (!side.availableEntities || lockedMatching) {
+          @if (!side.availableEntities || lockedMatching()) {
             <fa-icon
               icon="lock"
               matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
@@ -56,9 +56,9 @@
           }
         </th>
         <td mat-cell *matCellDef="let property">
-          @if (side.highlightedSelected && property[i]) {
+          @if (side.highlightedSelected() && property[i]) {
             <app-entity-field-view
-              [entity]="side.highlightedSelected"
+              [entity]="side.highlightedSelected()"
               [field]="property[i]"
               showLabel="above"
             ></app-entity-field-view>
@@ -69,8 +69,8 @@
       </ng-container>
     }
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay()"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay()"></tr>
   </table>
 </div>
 
@@ -82,32 +82,33 @@
     (click)="createMatch()"
     [disabled]="
       !(
-        sideDetails?.[0].selected?.length > 0 &&
-        sideDetails?.[1].selected?.length > 0
-      ) || lockedMatching
+        sideDetails()?.[0].selected().length > 0 &&
+        sideDetails()?.[1].selected().length > 0
+      ) || lockedMatching()
     "
   >
-    {{ resolvedMatchActionLabel }}
+    {{ resolvedMatchActionLabel() }}
   </button>
-  @if (mapVisible) {
+  @if (mapVisible()) {
     <app-map
       class="flex-grow"
       [expandable]="true"
       [showMapOnly]="true"
-      [entities]="filteredMapEntities"
+      [entities]="filteredMapEntities()"
       [highlightedEntities]="
-        [sideDetails?.[0].selected, sideDetails?.[1].selected] | flattenArray
+        [sideDetails()?.[0].selected(), sideDetails()?.[1].selected()]
+          | flattenArray
       "
       (entityClick)="entityInMapClicked($event)"
-      [(displayedProperties)]="displayedLocationProperties"
-      (displayedPropertiesChange)="updateMarkersAndDistances()"
+      [displayedProperties]="displayedLocationProperties()"
+      (displayedPropertiesChange)="onDisplayedPropertiesChange($event)"
     ></app-map>
   }
 </div>
 
-@if (!lockedMatching) {
+@if (!lockedMatching()) {
   <div class="flex-row flex-wrap gap-large">
-    @for (side of sideDetails; track $index) {
+    @for (side of sideDetails(); track $index) {
       @if (side.availableEntities) {
         <div class="flex-grow">
           <h3
@@ -139,7 +140,7 @@
             [editable]="false"
             clickMode="none"
             (entityClick)="side.selectMatch($event)"
-            [filter]="side.filterObj"
+            [filter]="side.filterObj()"
             [getBackgroundColor]="getEntityBackgroundColor"
           ></app-entities-table>
         </div>
