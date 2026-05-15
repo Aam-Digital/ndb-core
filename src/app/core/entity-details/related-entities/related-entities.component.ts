@@ -122,12 +122,16 @@ export class RelatedEntitiesComponent<E extends Entity> {
         this.cdr.markForCheck();
       });
 
-    effect(() => {
-      void this.initData();
+    effect((onCleanup) => {
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.initData(() => cancelled);
     });
   }
 
-  private async initData() {
+  private async initData(isCancelled: () => boolean = () => false) {
     const entityType = this.entityType();
     const configuredColumns = this.columns();
     const entity = this.entity();
@@ -151,7 +155,12 @@ export class RelatedEntitiesComponent<E extends Entity> {
       typeof resolvedProperty === "string"
         ? this.resolvePropertyPath(resolvedProperty)
         : resolvedProperty.map((p) => this.resolvePropertyPath(p));
-    this.data.set(await this.getData());
+
+    if (isCancelled()) return;
+    const data = await this.getData();
+    if (isCancelled()) return;
+
+    this.data.set(data);
     this.filterObj = this.initFilter();
 
     if (this.showInactive() === undefined) {

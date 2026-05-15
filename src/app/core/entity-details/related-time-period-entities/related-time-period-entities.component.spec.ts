@@ -73,7 +73,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
       { id: "start", label: "From", viewComponent: "date" },
       { id: "end", label: "To", viewComponent: "date" },
     ]);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     let columnNames = component._columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
@@ -82,12 +83,15 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     expect(columnNames).not.toContain("Class");
     expect(columnNames).not.toContain("Result");
 
-    component._columns.push(
+    fixture.componentRef.setInput("columns", [
+      { id: "schoolId", label: "Team", viewComponent: "school" },
+      { id: "start", label: "From", viewComponent: "date" },
+      { id: "end", label: "To", viewComponent: "date" },
       { id: "schoolClass", label: "Class", viewComponent: "text" },
       { id: "result", label: "Result", viewComponent: "percentageResult" },
-    );
-
-    await component.ngOnInit();
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     columnNames = component._columns.map((column) => column.label);
     expect(columnNames).toEqual(
@@ -99,7 +103,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     const child = new TestEntity();
     fixture.componentRef.setInput("entity", child);
     fixture.componentRef.setInput("property", "childId");
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const newRelation = component.createNewRecordFactory()();
 
@@ -116,7 +121,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     loadType.mockResolvedValue([existingRelation]);
 
     fixture.componentRef.setInput("entity", child);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const newRelation = component.createNewRecordFactory()();
 
@@ -134,7 +140,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
       loadType.mockResolvedValue([active1, active2, inactive]);
 
       component.showInactive.set(true);
-      component.ngOnInit();
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.backgroundColorFn(active1)).not.toEqual("");

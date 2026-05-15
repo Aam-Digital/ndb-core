@@ -28,9 +28,7 @@ import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-def
   templateUrl: "./notes-related-to-entity.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
-export class NotesRelatedToEntityComponent
-  extends RelatedEntitiesComponent<Note>
-{
+export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note> {
   private childrenService = inject(ChildrenService);
   private formDialog = inject(FormDialogService);
 

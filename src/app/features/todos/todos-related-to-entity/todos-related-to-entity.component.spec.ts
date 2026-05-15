@@ -35,7 +35,7 @@ describe("TodosRelatedToEntityComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load data from index when having a single relation", async () => {
+  it("should load data from index when having a single relation", waitForAsync(async () => {
     const child = createEntityOfType("Child");
     const relatedTodo = new Todo();
     relatedTodo.relatedEntities = [child.getId(), new TestEntity().getId()];
@@ -45,25 +45,25 @@ describe("TodosRelatedToEntityComponent", () => {
       relatedTodo,
       unrelatedTodo,
     ]);
-    const indexSpy = vi.spyOn(
-      TestBed.inject(DatabaseIndexingService),
-      "queryIndexDocs",
-    );
+    const indexSpy = vi
+      .spyOn(TestBed.inject(DatabaseIndexingService), "queryIndexDocs")
+      .mockResolvedValue([relatedTodo]);
 
     fixture.componentRef.setInput("entity", child);
     fixture.componentRef.setInput("property", undefined);
     fixture.componentRef.setInput("filter", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(indexSpy).toHaveBeenCalled();
     expect(component.filterObj).toEqual({
       relatedEntities: { $elemMatch: { $eq: child.getId() } },
       isActive: true,
     });
-    expect(component.data).toEqual([relatedTodo]);
-  });
+    expect(component.data()).toEqual([relatedTodo]);
+  }));
 
-  it("should load data with entity mapper when having multiple relations", async () => {
+  it("should load data with entity mapper when having multiple relations", waitForAsync(async () => {
     const relatedEntitiesSchema = Todo.schema.get("relatedEntities");
     const originalRelatedEntitiesAdditional = relatedEntitiesSchema.additional;
     relatedEntitiesSchema.additional = [TestEntity.ENTITY_TYPE];
@@ -81,15 +81,19 @@ describe("TodosRelatedToEntityComponent", () => {
     unrelatedTodo.relatedEntities = [new TestEntity().getId()];
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([relatedTodo, relatedTodo2, unrelatedTodo]);
-    const loadTypeSpy = vi.spyOn(entityMapper, "loadType");
+    const loadTypeSpy = vi
+      .spyOn(entityMapper, "loadType")
+      .mockResolvedValue([relatedTodo, relatedTodo2, unrelatedTodo]);
 
     fixture.componentRef.setInput("entity", user);
     fixture.componentRef.setInput("property", undefined);
     fixture.componentRef.setInput("filter", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    TestBed.flushEffects();
+    await fixture.whenStable();
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expectArrayWithExactContents(component.data, [
+    expectArrayWithExactContents(component.data(), [
       relatedTodo,
       relatedTodo2,
       unrelatedTodo,
@@ -108,5 +112,5 @@ describe("TodosRelatedToEntityComponent", () => {
 
     relatedEntitiesSchema.additional = originalRelatedEntitiesAdditional;
     assignedToSchema.additional = originalAssignedToAdditional;
-  });
+  }));
 });

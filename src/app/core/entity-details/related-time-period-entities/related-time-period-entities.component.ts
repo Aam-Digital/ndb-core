@@ -46,9 +46,9 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
     CustomFormLinkButtonComponent,
   ],
 })
-export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
-  extends RelatedEntitiesComponent<E>
-{
+export class RelatedTimePeriodEntitiesComponent<
+  E extends TimePeriod,
+> extends RelatedEntitiesComponent<E> {
   // also see super class for Inputs
 
   single = input(true);

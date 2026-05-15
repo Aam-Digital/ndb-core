@@ -36,7 +36,8 @@ describe("RelatedEntitiesComponent", () => {
   });
 
   async function initComponent() {
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
   }
 
   it("should create", () => {
@@ -97,7 +98,7 @@ describe("RelatedEntitiesComponent", () => {
     const entity = new TestEntity();
     entityUpdates.next({ entity: entity, type: "new" });
 
-    expect(component.data).toEqual([entity]);
+    expect(component.data()).toEqual([entity]);
   });
 
   it("should remove an entity from the table when it has been deleted", async () => {
@@ -109,12 +110,12 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("entityType", entity.getType());
     fixture.componentRef.setInput("property", "ref");
-    component.data = [entity];
     await initComponent();
+    component.data.set([entity]);
 
     entityUpdates.next({ entity: entity, type: "remove" });
 
-    expect(component.data).toEqual([]);
+    expect(component.data()).toEqual([]);
   });
 
   it("should support multiple related properties", async () => {
@@ -163,7 +164,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.filterObj).toEqual({
       singleRelation: component.entity().getId(),
     });
@@ -176,7 +178,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.filterObj).toEqual({
       $or: [
         { singleRelation: component.entity().getId() },
@@ -192,7 +195,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new Entity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.filterObj).toEqual({
       multiTypeRelation: { $elemMatch: { $eq: component.entity().getId() } },
     });
@@ -201,7 +205,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.filterObj).toEqual({
       $or: [
         { singleRelation: component.entity().getId() },
@@ -218,7 +223,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", "singleRelation");
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.filterObj).toEqual({
       singleRelation: component.entity().getId(),
     });
@@ -243,7 +249,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(component.filterObj).toEqual({
       attendance: {
@@ -276,7 +283,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", undefined);
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(component.filterObj).toEqual({
       $or: [
@@ -314,7 +322,8 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("filter", undefined);
     fixture.componentRef.setInput("property", "attendance");
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     // should only filter by attendance, not authors
     expect(component.filterObj).toEqual({
