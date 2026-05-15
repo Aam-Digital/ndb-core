@@ -239,7 +239,7 @@ export class AdminEntityFormComponent {
       data: {
         entitySchemaField: entitySchemaField,
         entityType: this.entityType(),
-        overwriteLocally: !this.updateEntitySchema?.(),
+        overwriteLocally: this.updateEntitySchema?.() === false,
       } as AdminEntityFieldData,
     });
 
@@ -371,7 +371,7 @@ export class AdminEntityFormComponent {
     }
 
     if (
-      !this.updateEntitySchema?.() ||
+      this.updateEntitySchema?.() === false ||
       configDetails.viewComponent === "DisplayDescriptionOnly"
     ) {
       this.applySchemaOverride(
