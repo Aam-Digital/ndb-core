@@ -8,7 +8,7 @@ import {
   computed,
   linkedSignal,
 } from "@angular/core";
-import { ColorMapping, EntityConstructor } from "../../../entity/model/entity";
+import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import {
@@ -168,7 +168,7 @@ export class AdminEntityGeneralSettingsComponent {
       const form = this.basicSettingsForm();
       const sub = form.valueChanges.subscribe(() => {
         const selectedKeys: string[] =
-          form.get("toStringAttributes")!.value ?? [];
+          form.get("toStringAttributes").value ?? [];
         this.selectedStringAttributes.set(selectedKeys);
         this.generalSettingsChange.emit(
           form.getRawValue() as unknown as EntityConfig,
@@ -180,7 +180,7 @@ export class AdminEntityGeneralSettingsComponent {
 
   toggleAnonymizationTable(event: MatCheckboxChange) {
     this.showPIIDetails.set(event.checked);
-    this.basicSettingsForm().get("hasPII")!.setValue(event.checked);
+    this.basicSettingsForm().get("hasPII").setValue(event.checked);
   }
 
   changeFieldAnonymization(
@@ -199,7 +199,7 @@ export class AdminEntityGeneralSettingsComponent {
   }
 
   clearToBlockAttributes() {
-    this.basicSettingsForm().get("toBlockDetailsAttributes")!.reset();
+    this.basicSettingsForm().get("toBlockDetailsAttributes").reset();
   }
 
   // Filter functions for app-entity-field-select
