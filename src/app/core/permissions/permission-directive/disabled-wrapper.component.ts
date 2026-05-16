@@ -52,7 +52,7 @@ export class DisabledWrapperComponent {
 
   wrapper = viewChild<ElementRef<HTMLDivElement>>("wrapper");
 
-  private syncButtonState = effect(() => {
+  private readonly syncButtonState = effect(() => {
     this.template();
     const wrapper = this.wrapper();
     const elementDisabled = this.elementDisabled();

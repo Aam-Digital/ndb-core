@@ -145,7 +145,8 @@ export class NotificationSettingsComponent implements OnInit {
       );
     }
 
-    await this.saveNotificationConfig(config);
+    const saved = await this.saveNotificationConfig(config);
+    if (!saved) return;
     this.alertService.addInfo(
       $localize`Initial notification settings created and saved.`,
     );

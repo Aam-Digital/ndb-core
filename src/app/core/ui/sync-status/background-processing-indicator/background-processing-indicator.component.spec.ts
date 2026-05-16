@@ -46,7 +46,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     try {
       const taskListDropdownTrigger = component.taskListDropdownTrigger();
       expect(taskListDropdownTrigger).toBeTruthy();
-      const openMenuSpy = vi.spyOn(taskListDropdownTrigger!, "openMenu");
+      const openMenuSpy = vi.spyOn(taskListDropdownTrigger, "openMenu");
 
       const p1 = { title: "sync", pending: true };
       const p2a = { title: "indexing", details: "A", pending: false };
@@ -80,7 +80,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     try {
       const taskListDropdownTrigger = component.taskListDropdownTrigger();
       expect(taskListDropdownTrigger).toBeTruthy();
-      const closeMenuSpy = vi.spyOn(taskListDropdownTrigger!, "closeMenu");
+      const closeMenuSpy = vi.spyOn(taskListDropdownTrigger, "closeMenu");
 
       fixture.componentRef.setInput(
         "backgroundProcesses",
@@ -108,7 +108,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     try {
       const taskListDropdownTrigger = component.taskListDropdownTrigger();
       expect(taskListDropdownTrigger).toBeTruthy();
-      const openMenuSpy = vi.spyOn(taskListDropdownTrigger!, "openMenu");
+      const openMenuSpy = vi.spyOn(taskListDropdownTrigger, "openMenu");
 
       component.markWasClosed();
       fixture.componentRef.setInput(
