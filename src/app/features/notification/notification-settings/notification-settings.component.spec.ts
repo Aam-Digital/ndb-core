@@ -193,8 +193,9 @@ describe("NotificationSettingComponent", () => {
 
     component.updateNotificationRule(testRule, updatedRule);
 
-    expect(testRule.entityType).toBe("Child");
-    expect(testRule.label).toBe("Test label");
+    const updatedInSignal = component.notificationConfig().notificationRules[0];
+    expect(updatedInSignal.entityType).toBe("Child");
+    expect(updatedInSignal.label).toBe("Test label");
   });
 
   it("should mark unsaved changes pending after updating a rule", async () => {

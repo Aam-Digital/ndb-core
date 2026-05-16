@@ -87,7 +87,7 @@ export class AdminDefaultValueStaticComponent extends CustomFormControlDirective
 
   private getInternalValue(defaultValueConfig: DefaultValueConfigStatic) {
     let value = defaultValueConfig?.value ?? null;
-    if (value) {
+    if (value !== null && value !== undefined) {
       value = this.entitySchemaService.valueToEntityFormat(
         value,
         this.entitySchemaField(),
@@ -103,7 +103,7 @@ export class AdminDefaultValueStaticComponent extends CustomFormControlDirective
    */
   private emitNewValue(newValue: any) {
     // to the outside we want to set the value in the database format for simplified storing in the config object
-    if (newValue) {
+    if (newValue !== null && newValue !== undefined) {
       newValue = this.entitySchemaService.valueToDatabaseFormat(
         newValue,
         this.entitySchemaField(),

@@ -194,27 +194,39 @@ export class FilterComponent<T extends Entity = Entity> {
     const params = this.tableStateUrl.getFilterParams();
     const hasUrlParams = Object.keys(params).length > 0;
     let hasChanges = false;
-    const updatedSelections = [...filterSelections];
 
-    updatedSelections.forEach((filter) => {
-      if (Object.prototype.hasOwnProperty.call(params, filter.name)) {
-        const selectedOptionValues = params[filter.name]
+    const updatedSelections = filterSelections.map((filter) => {
+      let nextValues: string[] | undefined;
+
+      if (Object.hasOwn(params, filter.name)) {
+        nextValues = params[filter.name]
           .split(",")
           .filter((value) => value !== "");
-        if (
-          JSON.stringify(filter.selectedOptionValues ?? []) !==
-          JSON.stringify(selectedOptionValues)
-        ) {
-          filter.selectedOptionValues = selectedOptionValues;
-          hasChanges = true;
-        }
       } else if (
         hasUrlParams &&
         (filter.selectedOptionValues?.length ?? 0) > 0
       ) {
-        filter.selectedOptionValues = [];
-        hasChanges = true;
+        nextValues = [];
       }
+
+      if (nextValues === undefined) {
+        return filter;
+      }
+
+      if (
+        JSON.stringify(filter.selectedOptionValues ?? []) !==
+        JSON.stringify(nextValues)
+      ) {
+        hasChanges = true;
+        const clone = Object.assign(
+          Object.create(Object.getPrototypeOf(filter)),
+          filter,
+          { selectedOptionValues: nextValues },
+        );
+        return clone;
+      }
+
+      return filter;
     });
 
     if (hasChanges) {
@@ -226,11 +238,11 @@ export class FilterComponent<T extends Entity = Entity> {
   }
 
   clearAllFilters() {
-    const updatedSelections = [...this.filterSelections()];
-
-    updatedSelections.forEach((filter) => {
-      filter.selectedOptionValues = [];
-    });
+    const updatedSelections = this.filterSelections().map((filter) =>
+      Object.assign(Object.create(Object.getPrototypeOf(filter)), filter, {
+        selectedOptionValues: [],
+      }),
+    );
 
     this.filterSelections.set(updatedSelections);
 
@@ -251,15 +263,15 @@ export class FilterComponent<T extends Entity = Entity> {
     filterName: string,
     selectedOptions: string[],
   ): Filter<T>[] {
-    const updatedSelections = [...this.filterSelections()];
-
-    updatedSelections.forEach((currentFilter) => {
-      if (currentFilter.name !== filterName) {
-        return;
-      }
-
-      currentFilter.selectedOptionValues = selectedOptions;
-    });
+    const updatedSelections = this.filterSelections().map((currentFilter) =>
+      currentFilter.name === filterName
+        ? Object.assign(
+            Object.create(Object.getPrototypeOf(currentFilter)),
+            currentFilter,
+            { selectedOptionValues: selectedOptions },
+          )
+        : currentFilter,
+    );
 
     this.filterSelections.set(updatedSelections);
     return updatedSelections;

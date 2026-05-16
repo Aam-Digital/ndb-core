@@ -26,7 +26,7 @@
 }
 
 <div class="widgets-container">
-  @for (widgetConfig of permittedWidgets.value() ?? []; track $index) {
+  @for (widgetConfig of permittedWidgets.value() ?? []; track widgetConfig) {
     <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
   }
 </div>

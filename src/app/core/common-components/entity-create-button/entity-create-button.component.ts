@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -17,7 +17,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-entity-create-button",
   imports: [
     DisableEntityOperationDirective,
-    FaIconComponent,
+    FaDynamicIconComponent,
     MatButtonModule,
     MatTableModule,
     Angulartics2OnModule,

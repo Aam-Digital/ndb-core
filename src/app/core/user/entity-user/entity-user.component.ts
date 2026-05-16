@@ -6,6 +6,7 @@ import {
   input,
   resource,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../alerts/alert.service";
 import { SessionSubject } from "../../session/auth/session-info";
@@ -31,12 +32,15 @@ export class EntityUserComponent {
   private readonly userAdminService = inject(UserAdminService);
   private readonly alertService = inject(AlertService);
   private readonly sessionInfo = inject(SessionSubject);
+  private readonly sessionSignal = toSignal(this.sessionInfo, {
+    initialValue: this.sessionInfo.value,
+  });
 
   entity = input<Entity>();
 
   userIsPermitted = computed(
     () =>
-      this.sessionInfo.value?.roles.includes(
+      this.sessionSignal()?.roles.includes(
         UserAdminService.ACCOUNT_MANAGER_ROLE,
       ) ?? false,
   );

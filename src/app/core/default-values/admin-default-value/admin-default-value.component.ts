@@ -6,6 +6,7 @@ import {
   input,
   resource,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { DefaultValueConfig, DefaultValueMode } from "../default-value-config";
 import {
   MatError,
@@ -102,7 +103,9 @@ export class AdminDefaultValueComponent extends CustomFormControlDirective<Defau
 
   modes = computed(() => this.modesResource.value() ?? []);
 
-  selectedMode = computed(() => this.form.get("mode")?.value ?? null);
+  selectedMode = toSignal(this.modeControl.valueChanges, {
+    initialValue: this.modeControl.value,
+  });
 
   constructor() {
     super();

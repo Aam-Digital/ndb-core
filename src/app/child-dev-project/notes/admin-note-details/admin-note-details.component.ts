@@ -25,9 +25,9 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
   templateUrl: "./admin-note-details.component.html",
 })
 export class AdminNoteDetailsComponent {
-  private static readonly TOP_FORM_HEADER = "Top Form";
-  private static readonly MIDDLE_FORM_HEADER = "Middle Form";
-  private static readonly BOTTOM_FORM_HEADER = "Bottom Form";
+  private static readonly TOP_FORM_HEADER = $localize`:@@adminNoteDetails.topFormHeader:Top Form`;
+  private static readonly MIDDLE_FORM_HEADER = $localize`:@@adminNoteDetails.middleFormHeader:Middle Form`;
+  private static readonly BOTTOM_FORM_HEADER = $localize`:@@adminNoteDetails.bottomFormHeader:Bottom Form`;
 
   config = input<NoteDetailsConfig>({});
   entityConstructor = input.required<EntityConstructor>();

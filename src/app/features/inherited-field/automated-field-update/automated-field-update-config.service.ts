@@ -415,8 +415,8 @@ export class AutomatedFieldUpdateConfigService {
       }
     });
 
-    this.unsavedChangesService.pending.set(false);
     await Promise.all(savePromises);
+    this.unsavedChangesService.pending.set(false);
   }
 
   /**

@@ -22,6 +22,7 @@ import {
   resource,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
@@ -61,17 +62,26 @@ export class DashboardComponent {
 
   readonly widgets = input<DynamicComponentConfig[]>([]);
 
+  private readonly sessionRoles = toSignal(this.session, {
+    initialValue: this.session.value,
+  });
+
   readonly permittedWidgets = resource({
     params: () => ({
-      widgets: this.widgets().filter((widget) => this.hasRequiredRole(widget)),
+      widgets: this.widgets(),
+      // include session roles so resource reloads when roles change
+      roles: this.sessionRoles()?.roles ?? [],
     }),
     loader: async ({ params: { widgets } }) => {
-      if (!widgets.length) {
+      const roleFiltered = widgets.filter((widget) =>
+        this.hasRequiredRole(widget),
+      );
+      if (!roleFiltered.length) {
         return [];
       }
 
       const widgetsWithAccess = await Promise.all(
-        widgets.map(async (widget) => {
+        roleFiltered.map(async (widget) => {
           if (await this.hasEntityPermission(widget)) {
             return widget;
           }

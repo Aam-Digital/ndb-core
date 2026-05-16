@@ -77,6 +77,7 @@ export class BackgroundProcessingIndicatorComponent {
         clearTimeout(this.openMenuTimeout);
       }
       taskListDropdownTrigger?.closeMenu();
+      this.wasClosed.set(false);
     } else {
       if (!this.wasClosed()) {
         // Need to wait for the change cycle that shows the sync button.
