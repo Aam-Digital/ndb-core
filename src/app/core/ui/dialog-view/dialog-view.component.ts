@@ -1,12 +1,13 @@
+import { CommonModule } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
-  Injector,
-  ChangeDetectorRef,
   inject,
-  ChangeDetectionStrategy,
+  Injector,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -14,13 +15,12 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from "@angular/material/dialog";
-import { getEntityRuntimeDetailsRoutePath } from "../../entity/entity-config.service";
-import { Entity } from "../../entity/model/entity";
+import { Router } from "@angular/router";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
+import { getEntityRuntimeDetailsRoutePath } from "../../entity/entity-config.service";
+import { Entity } from "../../entity/model/entity";
 import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
-import { Router } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
  * Wrapper component for a modal/dialog view

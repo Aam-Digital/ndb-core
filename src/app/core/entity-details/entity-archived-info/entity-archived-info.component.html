@@ -1,17 +1,17 @@
-@if (entity && !entity.isActive) {
+@if (displayEntity() && !displayEntity()?.isActive) {
   <mat-card appearance="outlined" class="card">
     <mat-card-header class="card-header">
       <div mat-card-avatar class="card-icon">
         <fa-icon icon="info-circle" size="lg"></fa-icon>
       </div>
-      @if (!entity.anonymized) {
+      @if (!displayEntity()?.anonymized) {
         <mat-card-title i18n>Archived</mat-card-title>
       } @else {
         <mat-card-title i18n>Anonymized & Archived</mat-card-title>
       }
     </mat-card-header>
     <mat-card-content>
-      @if (entity.anonymized) {
+      @if (displayEntity()?.anonymized) {
         <p i18n>
           This record has been anonymized. Details containing personal
           information have been deleted and cannot be restored. For statistical
@@ -23,12 +23,12 @@
         by default.
       </p>
     </mat-card-content>
-    @if (!entity.anonymized) {
+    @if (!displayEntity()?.anonymized) {
       <mat-card-actions>
         <button
           mat-stroked-button
           color="accent"
-          (click)="entityActionsService.undoArchive(entity)"
+          (click)="entityActionsService.undoArchive(displayEntity())"
         >
           Reactivate
         </button>

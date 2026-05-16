@@ -38,16 +38,19 @@ describe("EntityActionsMenuComponent", () => {
 
       const actionsService = TestBed.inject(EntityActionsMenuService);
       actionsService.registerActions([testAction]);
-      component.entity = new Entity();
+      fixture.componentRef.setInput("entity", new Entity());
 
       let actionEvent;
       component.actionTriggered.subscribe((x) => (actionEvent = x));
-      component.ngOnChanges({ entity: { currentValue: {} } as any });
+      fixture.detectChanges();
 
-      component.executeAction(testAction);
+      await component.executeAction(testAction);
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(testAction.execute).toHaveBeenCalledWith(component.entity, false);
+      expect(testAction.execute).toHaveBeenCalledWith(
+        component.entity(),
+        false,
+      );
       expect(actionEvent).toBe("test_action");
     } finally {
       vi.useRealTimers();

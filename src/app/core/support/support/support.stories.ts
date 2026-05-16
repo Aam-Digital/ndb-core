@@ -37,7 +37,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<SupportComponent> = (args: SupportComponent) => ({
+const Template: StoryFn<SupportComponent> = (args) => ({
   component: SupportComponent,
   props: args,
 });

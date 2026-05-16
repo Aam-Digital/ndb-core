@@ -40,9 +40,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<NoteDetailsComponent> = (
-  args: NoteDetailsComponent,
-) => ({
+const Template: StoryFn<NoteDetailsComponent> = (args) => ({
   component: NoteDetailsComponent,
   props: args,
 });

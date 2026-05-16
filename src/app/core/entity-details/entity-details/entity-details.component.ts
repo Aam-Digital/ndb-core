@@ -1,34 +1,33 @@
+import { CommonModule } from "@angular/common";
 import {
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
-import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { Angulartics2OnModule } from "angulartics2";
-import { MatTabsModule } from "@angular/material/tabs";
-import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { CommonModule } from "@angular/common";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { RouterLink } from "@angular/router";
+import { AblePurePipe } from "@casl/angular";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { UntilDestroy } from "@ngneat/until-destroy";
+import { Angulartics2OnModule } from "angulartics2";
+import { RouteTarget } from "../../../route-target";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
+import { SessionSubject } from "../../session/auth/session-info";
+import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
 import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
-import { UntilDestroy } from "@ngneat/until-destroy";
-import { RouteTarget } from "../../../route-target";
-import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
-import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
-import { AblePurePipe } from "@casl/angular";
-import { SessionSubject } from "../../session/auth/session-info";
-import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
+import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -64,32 +63,19 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
     EntityLoadPipe,
   ],
 })
-export class EntityDetailsComponent
-  extends AbstractEntityDetailsComponent
-  implements OnChanges
-{
+export class EntityDetailsComponent extends AbstractEntityDetailsComponent {
   /**
    * The configuration for the panels on this details page.
    */
-  @Input() panels: Panel[] = [];
+  panels = input<Panel[]>([]);
 
   private session = inject(SessionSubject);
 
-  protected override onEntityUpdated() {
-    this.initPanels();
-  }
+  readonly panelsState = computed<Panel[]>(() => {
+    const entity = this.entity();
+    if (!entity) return [];
 
-  override async ngOnChanges(changes: SimpleChanges) {
-    await super.ngOnChanges(changes);
-
-    if (changes.id || changes.entity || changes.panels) {
-      this.initPanels();
-      this.cdr.markForCheck();
-    }
-  }
-
-  private initPanels() {
-    let filteredPanels = this.panels
+    let filteredPanels = this.panels()
       .filter((p) =>
         this.hasRequiredRole({ permittedUserRoles: p?.permittedUserRoles }),
       )
@@ -106,7 +92,7 @@ export class EntityDetailsComponent
       panel.components.some((c) => c.component === "UserSecurity"),
     );
 
-    if (this.entityConstructor?.enableUserAccounts && !hasUserSecurityPanel) {
+    if (this.entityConstructor()?.enableUserAccounts && !hasUserSecurityPanel) {
       filteredPanels.push({
         title: $localize`:Panel title:User Account`,
         components: [
@@ -119,8 +105,8 @@ export class EntityDetailsComponent
       });
     }
 
-    this.panels = filteredPanels;
-  }
+    return filteredPanels;
+  });
 
   /**
    * Checks if the current user has access based on permitted user roles.
@@ -138,9 +124,10 @@ export class EntityDetailsComponent
   }
 
   private getPanelConfig(c: PanelComponent): PanelConfig {
+    const entity = this.entity();
     let panelConfig: PanelConfig = {
-      entity: this.entity,
-      creatingNew: this.entity?.isNew,
+      entity,
+      creatingNew: entity?.isNew,
     };
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
       panelConfig = { ...c.config, ...panelConfig };

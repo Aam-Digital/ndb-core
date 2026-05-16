@@ -15,9 +15,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ListFilterComponent<Entity>> = (
-  args: ListFilterComponent<Entity>,
-) => ({
+const Template: StoryFn<ListFilterComponent<Entity>> = (args) => ({
   component: ListFilterComponent<Entity>,
   props: args,
 });

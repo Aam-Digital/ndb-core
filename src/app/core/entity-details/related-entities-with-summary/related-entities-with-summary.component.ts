@@ -1,15 +1,17 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
+  AfterViewInit,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  signal,
+  ViewChild,
 } from "@angular/core";
-import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
-import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
-import { Entity } from "../../entity/model/entity";
-import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
+import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
+import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
+import { Entity } from "../../entity/model/entity";
+import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 
 /**
  * Load and display a list of related entities
@@ -24,28 +26,27 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
 })
 export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   extends RelatedEntitiesComponent<E>
-  implements OnInit
+  implements AfterViewInit
 {
   @ViewChild(EntitiesTableComponent, { static: true })
   entitiesTable: EntitiesTableComponent<E>;
   /**
    * Configuration of what numbers should be summarized below the table.
    */
-  @Input() summaries?: {
+  summaries = input<{
     countProperty: string;
     groupBy?: string;
     total?: boolean;
     average?: boolean;
-  };
+  }>();
 
-  summarySum = "";
-  summaryAvg = "";
+  private readonly filteredData = signal<E[]>([]);
+  protected readonly summary = computed(() => this.buildSummary());
 
-  override async ngOnInit() {
-    await super.ngOnInit();
-    this.entitiesTable.filteredRecordsChange.subscribe((data) =>
-      this.updateSummary(data),
-    );
+  ngAfterViewInit() {
+    this.entitiesTable.filteredRecordsChange.subscribe((data) => {
+      this.updateSummary(data);
+    });
   }
 
   /**
@@ -54,21 +55,26 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
    * human-readable format
    */
   updateSummary(filteredData: E[]) {
-    if (!this.summaries) {
-      this.summarySum = "";
-      this.summaryAvg = "";
-      return;
+    this.filteredData.set(filteredData);
+  }
+
+  private buildSummary() {
+    const summaries = this.summaries();
+    if (!summaries) {
+      return { sum: "", avg: "" };
     }
 
-    const summary = new Map<string, { count: number; sum: number }>();
-    const average = new Map<string, number>();
+    const summary = new Map<
+      string | undefined,
+      { count: number; sum: number }
+    >();
+    const filteredData = this.filteredData();
 
     filteredData.forEach((m) => {
-      const amount = m[this.summaries.countProperty];
-      let groupLabel;
-      if (this.summaries.groupBy) {
-        groupLabel =
-          m[this.summaries.groupBy]?.label ?? m[this.summaries.groupBy];
+      const amount = Number(m[summaries.countProperty]);
+      let groupLabel: string | undefined;
+      if (summaries.groupBy) {
+        groupLabel = m[summaries.groupBy]?.label ?? m[summaries.groupBy];
       }
 
       summary.set(groupLabel, summary.get(groupLabel) || { count: 0, sum: 0 });
@@ -76,30 +82,34 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
       summary.get(groupLabel).sum += amount;
     });
 
-    if (this.summaries.total) {
+    let summarySum = "";
+    let summaryAvg = "";
+
+    if (summaries.total) {
       const summarySumArray = Array.from(
         summary.entries(),
         ([label, { sum }]) => `${label}: ${sum}`,
       );
-      this.summarySum = summarySumArray.join(", ");
+      summarySum = summarySumArray.join(", ");
     }
 
-    if (this.summaries.average) {
+    if (summaries.average) {
       const summaryAvgArray = Array.from(
         summary.entries(),
         ([label, { count, sum }]) => {
           const avg = parseFloat((sum / count).toFixed(2));
-          average.set(label, avg);
           return `${label}: ${avg}`;
         },
       );
-      this.summaryAvg = summaryAvgArray.join(", ");
+      summaryAvg = summaryAvgArray.join(", ");
     }
 
     if (summary.size === 1 && summary.has(undefined)) {
       // display only single summary without group label (this also applies if no groupBy is given)
-      this.summarySum = this.summarySum.replace("undefined: ", "");
-      this.summaryAvg = this.summaryAvg.replace("undefined: ", "");
+      summarySum = summarySum.replace("undefined: ", "");
+      summaryAvg = summaryAvg.replace("undefined: ", "");
     }
+
+    return { sum: summarySum, avg: summaryAvg };
   }
 }

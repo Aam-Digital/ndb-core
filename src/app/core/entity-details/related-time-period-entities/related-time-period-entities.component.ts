@@ -1,10 +1,14 @@
 import {
   Component,
-  Input,
-  OnInit,
+  computed,
   ChangeDetectionStrategy,
+  input,
 } from "@angular/core";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../../common-components/entity-form/FormConfig";
 import moment from "moment";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -42,47 +46,54 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
     CustomFormLinkButtonComponent,
   ],
 })
-export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
-  extends RelatedEntitiesComponent<E>
-  implements OnInit
-{
+export class RelatedTimePeriodEntitiesComponent<
+  E extends TimePeriod,
+> extends RelatedEntitiesComponent<E> {
   // also see super class for Inputs
 
-  @Input() single = true;
-  @Input() override showInactive = false;
-
-  @Input() override set columns(value: FormFieldConfig[]) {
-    this._columns = [...value, isActiveIndicator];
-  }
-  override get columns(): FormFieldConfig[] {
-    return this._columns;
-  }
-
-  override _columns: FormFieldConfig[] = [
-    { id: "start", visibleFrom: "md" },
-    { id: "end", visibleFrom: "md" },
-    isActiveIndicator,
-  ];
+  single = input(true);
 
   backgroundColorFn = (r: E) => r.getColor();
-  hasCurrentlyActiveEntry: boolean;
 
-  override async ngOnInit() {
-    await super.ngOnInit();
-    this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
+  readonly hasCurrentlyActiveEntry = computed(
+    () => this.data()?.some((record) => record.isActive) ?? false,
+  );
+
+  constructor() {
+    super();
+    if (this.showInactive() === undefined) {
+      this.showInactive.set(false);
+    }
   }
 
   override createNewRecordFactory() {
     return () => {
       const newRelation = super.createNewRecordFactory()();
+      const currentData = this.data();
 
       newRelation.start =
-        this.data?.length && this.data[0].end
-          ? moment(this.data[0].end).add(1, "day").toDate()
+        currentData?.length && currentData[0].end
+          ? moment(currentData[0].end).add(1, "day").toDate()
           : moment().startOf("day").toDate();
 
       return newRelation;
     };
+  }
+
+  protected override getColumns(
+    value: ColumnConfig[] | undefined,
+  ): FormFieldConfig[] {
+    if (!Array.isArray(value) || value.length === 0) {
+      return [
+        { id: "start", visibleFrom: "md" },
+        { id: "end", visibleFrom: "md" },
+        isActiveIndicator,
+      ];
+    }
+    return [
+      ...value.map((column) => toFormFieldConfig(column)),
+      isActiveIndicator,
+    ];
   }
 }
 

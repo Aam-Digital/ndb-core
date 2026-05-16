@@ -1,16 +1,16 @@
-@if (!entity?.isNew) {
+@if (!entity()?.isNew) {
   <!-- inline display of primary actions -->
-  @for (a of actions; track a.action) {
-    @if (showExpanded && viewContext?.isDialog && a.primaryAction) {
+  @for (a of actions(); track a.action) {
+    @if (showExpanded() && viewContext?.isDialog && a.primaryAction) {
       <button
         mat-stroked-button
         (click)="executeAction(a)"
         *appDisabledEntityOperation="{
           operation: a.permission,
-          entity: entity,
+          entity: entity(),
         }"
         angulartics2On="click"
-        [angularticsCategory]="entity?.getType()"
+        [angularticsCategory]="entity()?.getType()"
         [angularticsAction]="'entity_' + a.action"
         [matTooltip]="a.tooltip"
       >
@@ -36,17 +36,17 @@
   <!-- context menu -->
   <mat-menu #additional>
     <!-- standard actions -->
-    @for (a of actions; track a.action) {
-      @if (!a.primaryAction || !showExpanded || !viewContext?.isDialog) {
+    @for (a of actions(); track a.action) {
+      @if (!a.primaryAction || !showExpanded() || !viewContext?.isDialog) {
         <button
           mat-menu-item
           (click)="executeAction(a)"
           *appDisabledEntityOperation="{
             operation: a.permission,
-            entity: entity,
+            entity: entity(),
           }"
           angulartics2On="click"
-          [angularticsCategory]="entity?.getType()"
+          [angularticsCategory]="entity()?.getType()"
           [angularticsAction]="'entity_' + a.action"
           [matTooltip]="a.tooltip"
           matTooltipPosition="before"

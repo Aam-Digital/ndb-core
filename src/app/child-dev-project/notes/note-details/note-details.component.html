@@ -1,4 +1,4 @@
-@if (isLoading || !tmpEntity()) {
+@if (isLoading() || !tmpEntity()) {
   <div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -9,33 +9,33 @@
   </app-view-title>
 
   <div class="flex-column gap-regular">
-    <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
+    <app-entity-archived-info [entity]="entity()"></app-entity-archived-info>
 
     <app-entity-form
-      [fieldGroups]="topFieldGroups"
-      [entity]="entity"
-      [form]="form"
+      [fieldGroups]="topFieldGroups()"
+      [entity]="entity()"
+      [form]="$any(form())"
     >
     </app-entity-form>
 
     <!-- Primary information of Note -->
     <app-entity-form
-      [fieldGroups]="middleFieldGroups"
-      [entity]="entity"
-      [form]="form"
+      [fieldGroups]="middleFieldGroups()"
+      [entity]="entity()"
+      [form]="$any(form())"
       [fullWidth]="true"
     ></app-entity-form>
 
     <app-entity-form
-      [fieldGroups]="bottomFieldGroups"
-      [entity]="entity"
-      [form]="form"
+      [fieldGroups]="bottomFieldGroups()"
+      [entity]="entity()"
+      [form]="$any(form())"
       style="margin-top: 10px"
     ></app-entity-form>
   </div>
 
   <app-view-actions>
-    <app-dialog-buttons [form]="form" [entity]="entity">
+    <app-dialog-buttons [form]="$any(form())" [entity]="entity()">
       <button mat-menu-item (click)="openExportDialog()">
         <fa-icon
           class="color-accent standard-icon-with-text"
