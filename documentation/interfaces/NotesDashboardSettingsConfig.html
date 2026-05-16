@@ -311,9 +311,11 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  computed,
+  effect,
+  input,
+  linkedSignal,
 } from &quot;@angular/core&quot;;
 import { FormControl, FormsModule } from &quot;@angular/forms&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
@@ -331,7 +333,6 @@ export interface NotesDashboardSettingsConfig {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-notes-dashboard-settings&quot;,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -343,37 +344,42 @@ export interface NotesDashboardSettingsConfig {
   templateUrl: &quot;./notes-dashboard-settings.component.html&quot;,
   styleUrls: [&quot;./notes-dashboard-settings.component.scss&quot;],
 })
-export class NotesDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl&lt;NotesDashboardSettingsConfig&gt;;
+export class NotesDashboardSettingsComponent {
+  formControl &#x3D; input.required&lt;FormControl&lt;NotesDashboardSettingsConfig&gt;&gt;();
 
-  localConfig: NotesDashboardSettingsConfig &#x3D; {
-    sinceDays: 28,
-    fromBeginningOfWeek: false,
-    mode: &quot;with-recent-notes&quot;,
-  };
+  sinceDays &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.sinceDays ?? 28);
+  fromBeginningOfWeek &#x3D; linkedSignal(
+    () &#x3D;&gt; this.formControl().value?.fromBeginningOfWeek ?? false,
+  );
+  mode &#x3D; linkedSignal(
+    () &#x3D;&gt; this.formControl().value?.mode ?? &quot;with-recent-notes&quot;,
+  );
 
-  ngOnInit() {
-    this.localConfig &#x3D; {
-      sinceDays: this.formControl.value?.sinceDays ?? 28,
-      fromBeginningOfWeek: this.formControl.value?.fromBeginningOfWeek ?? false,
-      mode: this.formControl.value?.mode ?? &quot;with-recent-notes&quot;,
-    };
+  localConfig &#x3D; computed&lt;NotesDashboardSettingsConfig&gt;(() &#x3D;&gt; ({
+    sinceDays: this.sinceDays(),
+    fromBeginningOfWeek: this.fromBeginningOfWeek(),
+    mode: this.mode(),
+  }));
+
+  constructor() {
+    effect(() &#x3D;&gt; {
+      this.formControl().setValue(this.localConfig());
+    });
   }
 
-  onSinceDaysChange() {
-    this.emitConfigChange();
+  onSinceDaysChange(sinceDays: number) {
+    this.sinceDays.set(sinceDays);
+    this.formControl().markAsDirty();
   }
 
-  onFromBeginningOfWeekChange() {
-    this.emitConfigChange();
+  onFromBeginningOfWeekChange(fromBeginningOfWeek: boolean) {
+    this.fromBeginningOfWeek.set(fromBeginningOfWeek);
+    this.formControl().markAsDirty();
   }
 
-  onModeChange() {
-    this.emitConfigChange();
-  }
-
-  emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+  onModeChange(mode: string) {
+    this.mode.set(mode);
+    this.formControl().markAsDirty();
   }
 }
 </code></pre>

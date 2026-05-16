@@ -719,7 +719,7 @@ export class EntityFormService {
         // Clean up everything once navigation happens
         this.subscriptions.forEach((sub) &#x3D;&gt; sub.unsubscribe());
         this.subscriptions &#x3D; [];
-        this.unsavedChanges.pending &#x3D; false;
+        this.unsavedChanges.pending.set(false);
       });
   }
 
@@ -848,8 +848,8 @@ export class EntityFormService {
     }
     const group &#x3D; this.fb.group&lt;Partial&lt;T&gt;&gt;(formConfig);
 
-    const valueChangesSubscription &#x3D; group.valueChanges.subscribe(
-      () &#x3D;&gt; (this.unsavedChanges.pending &#x3D; group.dirty),
+    const valueChangesSubscription &#x3D; group.valueChanges.subscribe(() &#x3D;&gt;
+      this.unsavedChanges.pending.set(group.dirty),
     );
 
     this.subscriptions.push(valueChangesSubscription);
@@ -933,7 +933,7 @@ export class EntityFormService {
       );
     }
 
-    this.unsavedChanges.pending &#x3D; false;
+    this.unsavedChanges.pending.set(false);
     form.markAsPristine();
     form.disable();
     Object.assign(entity, updatedEntity);
@@ -998,7 +998,7 @@ export class EntityFormService {
     }
 
     form.markAsPristine();
-    this.unsavedChanges.pending &#x3D; false;
+    this.unsavedChanges.pending.set(false);
     entityForm.onFormStateChange.emit(&quot;cancelled&quot;);
   }
 }

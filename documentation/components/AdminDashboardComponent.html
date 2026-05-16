@@ -144,12 +144,6 @@
 
 
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
-    </p>
 
 
 <section data-compodoc="block-metadata">
@@ -313,6 +307,11 @@
 
                     </td>
                 </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Required : </i>&nbsp;<b>true</b>
+                    </td>
+                </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
                                     <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/dashboard/admin-dashboard/admin-dashboard.component.ts:63</a></div>
@@ -418,7 +417,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>drop(event: CdkDragDrop<any[]>)</code>
+<code>drop(event: <a href="../interfaces/DynamicComponentConfig.html" target="_self">CdkDragDrop&lt;DynamicComponentConfig[]&gt;</a>)</code>
                 </td>
             </tr>
 
@@ -449,7 +448,7 @@
                                         <tr>
                                                 <td>event</td>
                                             <td>
-                                                        <code>CdkDragDrop&lt;any[]&gt;</code>
+                                                            <code><a href="../interfaces/DynamicComponentConfig.html" target="_self" >CdkDragDrop&lt;DynamicComponentConfig[]&gt;</a></code>
                                             </td>
 
                                             <td>
@@ -684,12 +683,14 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;DashboardConfig&gt;({ widgets: [] })</code>
+                        <i>Default value : </i><code>linkedSignal(() &#x3D;&gt;
+    structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/dashboard/admin-dashboard/admin-dashboard.component.ts:65</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/dashboard/admin-dashboard/admin-dashboard.component.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -711,10 +712,10 @@ import { Location } from &quot;@angular/common&quot;;
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
-  Input,
-  OnInit,
-  signal,
+  input,
+  linkedSignal,
 } from &quot;@angular/core&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
@@ -763,10 +764,23 @@ import { IconButtonComponent } from &quot;#src/app/core/common-components/icon-b
     &quot;../../dashboard/dashboard/dashboard.component.scss&quot;,
   ],
 })
-export class AdminDashboardComponent implements OnInit {
-  @Input() dashboardViewId: string;
+export class AdminDashboardComponent {
+  dashboardViewId &#x3D; input.required&lt;string&gt;();
 
-  dashboardConfig &#x3D; signal&lt;DashboardConfig&gt;({ widgets: [] });
+  private readonly dashboardViewConfigKey &#x3D; computed(
+    () &#x3D;&gt; PREFIX_VIEW_CONFIG + this.dashboardViewId(),
+  );
+
+  private readonly dashboardViewConfig &#x3D; computed(
+    () &#x3D;&gt;
+      this.configService.getConfig(this.dashboardViewConfigKey()) as
+        | DynamicComponentConfig&lt;DashboardConfig&gt;
+        | undefined,
+  );
+
+  dashboardConfig &#x3D; linkedSignal(() &#x3D;&gt;
+    structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
+  );
 
   private readonly configService &#x3D; inject(ConfigService);
   private readonly dialog &#x3D; inject(MatDialog);
@@ -774,20 +788,7 @@ export class AdminDashboardComponent implements OnInit {
   private readonly snackBar &#x3D; inject(MatSnackBar);
   private readonly widgetRegistry &#x3D; inject(DashboardWidgetRegistryService);
 
-  ngOnInit() {
-    this.loadDashboardViewConfig();
-  }
-
-  private loadDashboardViewConfig() {
-    const viewConfig: DynamicComponentConfig&lt;DashboardConfig&gt; &#x3D;
-      this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
-
-    this.dashboardConfig.set(
-      JSON.parse(JSON.stringify(viewConfig?.config)) || { widgets: [] },
-    );
-  }
-
-  drop(event: CdkDragDrop&lt;any[]&gt;) {
+  drop(event: CdkDragDrop&lt;DynamicComponentConfig[]&gt;) {
     if (event.previousContainer &#x3D;&#x3D;&#x3D; event.container) {
       this.dashboardConfig.update((config) &#x3D;&gt; {
         const widgets &#x3D; [...config.widgets];
@@ -876,8 +877,7 @@ export class AdminDashboardComponent implements OnInit {
       config: this.dashboardConfig(),
     };
 
-    currentConfig[PREFIX_VIEW_CONFIG + this.dashboardViewId] &#x3D;
-      updatedViewConfig;
+    currentConfig[this.dashboardViewConfigKey()] &#x3D; updatedViewConfig;
 
     await this.configService.saveConfig(currentConfig);
 

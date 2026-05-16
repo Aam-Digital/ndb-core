@@ -282,7 +282,7 @@ If there are pending changes, certain actions in the app should trigger a user c
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
+                        <i>Default value : </i><code>signal(false)</code>
                     </td>
                 </tr>
                     <tr>
@@ -307,7 +307,7 @@ Set to false once the changes have been saved or discarded.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject, signal } from &quot;@angular/core&quot;;
 import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 
 /**
@@ -325,12 +325,12 @@ export class UnsavedChangesService {
    * Set to true if the user has pending changes that are not yet saved.
    * Set to false once the changes have been saved or discarded.
    */
-  pending &#x3D; false;
+  pending &#x3D; signal(false);
 
   constructor() {
     // prevent browser navigation if changes are pending
     window.onbeforeunload &#x3D; (e) &#x3D;&gt; {
-      if (this.pending) {
+      if (this.pending()) {
         e.preventDefault();
         e.returnValue &#x3D; &quot;onbeforeunload&quot;;
       }
@@ -341,10 +341,10 @@ export class UnsavedChangesService {
    * Shows a user confirmation popup if there are unsaved changes which will be discarded.
    */
   async checkUnsavedChanges() {
-    if (this.pending) {
+    if (this.pending()) {
       const confirmed &#x3D; await this.confirmation.getDiscardConfirmation();
       if (confirmed) {
-        this.pending &#x3D; false;
+        this.pending.set(false);
         return true;
       } else {
         return false;

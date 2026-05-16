@@ -151,12 +151,6 @@
     </p>
 
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
-    </p>
 
 
 <section data-compodoc="block-metadata">
@@ -240,20 +234,6 @@
                     </td>
                 </tr>
 
-                <tr>
-                    <td class="col-md-4">
-                        <h6><b>Methods</b></h6>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <ul class="index-list">
-                            <li>
-                                <a href="#getEntity" >getEntity</a>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
 
                 <tr>
                     <td class="col-md-4">
@@ -277,24 +257,6 @@
     </table>
 </section>
 
-    <section data-compodoc="block-constructor">
-    <h3 id="constructor">Constructor</h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-<code>constructor()</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/user/entity-user/entity-user.component.ts:41</a></div>
-                            </td>
-                        </tr>
-
-            </tbody>
-        </table>
-</section>
 
     <section data-compodoc="block-inputs">
     <h3 id="inputs">Inputs</h3>
@@ -323,49 +285,7 @@
 
 
 
-    <section data-compodoc="block-methods">
-    
-    <h3 id="methods">
-        Methods
-    </h3>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="getEntity"></a>
-                    <span class="name">
-                        <span ><b>getEntity</b></span>
-                        <a href="#getEntity"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>getEntity()</code>
-                </td>
-            </tr>
 
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">src/app/core/user/entity-user/entity-user.component.ts:53</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Entity | undefined</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -391,10 +311,12 @@
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>computed&lt;UserAccount | null&gt;(() &#x3D;&gt; {
-    if (this.user()) {
-      return this.user();
+    const loadedUser &#x3D; this.user.value();
+    if (loadedUser) {
+      return loadedUser;
     }
-    const entity &#x3D; this.getEntity();
+
+    const entity &#x3D; this.entity();
     if (entity) {
       // stub account object for creating a new account
       return {
@@ -411,7 +333,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/user/entity-user/entity-user.component.ts:57</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/user/entity-user/entity-user.component.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -437,12 +359,48 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;UserAccount | null&gt;(null)</code>
+                        <i>Default value : </i><code>resource({
+    params: () &#x3D;&gt; {
+      if (!this.userIsPermitted()) {
+        return undefined;
+      }
+
+      const entity &#x3D; this.entity();
+      if (!entity) {
+        return undefined;
+      }
+
+      return { entity };
+    },
+    loader: async ({ params: { entity } }) &#x3D;&gt; {
+      try {
+        const primaryUser &#x3D; await firstValueFrom(
+          this.userAdminService.getUser(entity.getId()),
+        );
+
+        if (primaryUser !&#x3D;&#x3D; null) {
+          return primaryUser;
+        }
+
+        return await firstValueFrom(
+          this.userAdminService.getUser(entity.getId(true)),
+        );
+      } catch (err: unknown) {
+        const error &#x3D; err as { error?: { message?: string }; message?: string };
+        this.alertService.addDanger(
+          error?.error?.message ||
+            error?.message ||
+            $localize&#x60;Failed to load user account&#x60;,
+        );
+        return null;
+      }
+    },
+  })</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/user/entity-user/entity-user.component.ts:40</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/user/entity-user/entity-user.component.ts:48</a></div>
                         </td>
                     </tr>
 
@@ -468,7 +426,12 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;boolean&gt;(false)</code>
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt;
+      this.sessionSignal()?.roles.includes(
+        UserAdminService.ACCOUNT_MANAGER_ROLE,
+      ) ?? false,
+  )</code>
                     </td>
                 </tr>
                     <tr>
@@ -491,25 +454,22 @@
   Component,
   computed,
   inject,
-  Input,
-  OnInit,
-  signal,
+  input,
+  resource,
 } from &quot;@angular/core&quot;;
+import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
 import { DynamicComponent } from &quot;../../config/dynamic-components/dynamic-component.decorator&quot;;
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
-import { UntilDestroy } from &quot;@ngneat/until-destroy&quot;;
 import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
-import { switchMap } from &quot;rxjs/operators&quot;;
 import { UserAdminService } from &quot;../user-admin-service/user-admin.service&quot;;
 import { UserAccount } from &quot;../user-admin-service/user-account&quot;;
-import { of } from &quot;rxjs&quot;;
+import { firstValueFrom } from &quot;rxjs&quot;;
 import { UserDetailsComponent } from &quot;../user-details/user-details.component&quot;;
 
 /**
  * Display User Account details and configuration related to a given profile Entity.
  */
-@UntilDestroy()
 @DynamicComponent(&quot;EntityUser&quot;)
 @DynamicComponent(&quot;UserSecurity&quot;) // for backwards compatibility. Prefer to use &quot;EntityUser&quot;
 @Component({
@@ -519,34 +479,68 @@ import { UserDetailsComponent } from &quot;../user-details/user-details.componen
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [UserDetailsComponent],
 })
-export class EntityUserComponent implements OnInit {
+export class EntityUserComponent {
   private readonly userAdminService &#x3D; inject(UserAdminService);
   private readonly alertService &#x3D; inject(AlertService);
   private readonly sessionInfo &#x3D; inject(SessionSubject);
+  private readonly sessionSignal &#x3D; toSignal(this.sessionInfo, {
+    initialValue: this.sessionInfo.value,
+  });
 
-  @Input() entity?: Entity;
-  user &#x3D; signal&lt;UserAccount | null&gt;(null);
-  userIsPermitted &#x3D; signal&lt;boolean&gt;(false);
+  entity &#x3D; input&lt;Entity&gt;();
 
-  constructor() {
-    if (
-      this.sessionInfo.value?.roles.includes(
+  userIsPermitted &#x3D; computed(
+    () &#x3D;&gt;
+      this.sessionSignal()?.roles.includes(
         UserAdminService.ACCOUNT_MANAGER_ROLE,
-      )
-    ) {
-      this.userIsPermitted.set(true);
-    }
-  }
+      ) ?? false,
+  );
 
-  getEntity(): Entity | undefined {
-    return this.entity;
-  }
+  user &#x3D; resource({
+    params: () &#x3D;&gt; {
+      if (!this.userIsPermitted()) {
+        return undefined;
+      }
+
+      const entity &#x3D; this.entity();
+      if (!entity) {
+        return undefined;
+      }
+
+      return { entity };
+    },
+    loader: async ({ params: { entity } }) &#x3D;&gt; {
+      try {
+        const primaryUser &#x3D; await firstValueFrom(
+          this.userAdminService.getUser(entity.getId()),
+        );
+
+        if (primaryUser !&#x3D;&#x3D; null) {
+          return primaryUser;
+        }
+
+        return await firstValueFrom(
+          this.userAdminService.getUser(entity.getId(true)),
+        );
+      } catch (err: unknown) {
+        const error &#x3D; err as { error?: { message?: string }; message?: string };
+        this.alertService.addDanger(
+          error?.error?.message ||
+            error?.message ||
+            $localize&#x60;Failed to load user account&#x60;,
+        );
+        return null;
+      }
+    },
+  });
 
   getUserAccountForDetails &#x3D; computed&lt;UserAccount | null&gt;(() &#x3D;&gt; {
-    if (this.user()) {
-      return this.user();
+    const loadedUser &#x3D; this.user.value();
+    if (loadedUser) {
+      return loadedUser;
     }
-    const entity &#x3D; this.getEntity();
+
+    const entity &#x3D; this.entity();
     if (entity) {
       // stub account object for creating a new account
       return {
@@ -559,40 +553,6 @@ export class EntityUserComponent implements OnInit {
 
     return null;
   });
-
-  ngOnInit() {
-    if (!this.userIsPermitted()) {
-      return;
-    }
-
-    const entityToUse &#x3D; this.getEntity();
-
-    if (!entityToUse) {
-      return;
-    }
-
-    this.userAdminService
-      .getUser(entityToUse.getId())
-      .pipe(
-        switchMap((user) &#x3D;&gt;
-          user &#x3D;&#x3D;&#x3D; null
-            ? this.userAdminService.getUser(entityToUse.getId(true))
-            : of(user),
-        ),
-      )
-      .subscribe({
-        next: (res) &#x3D;&gt; {
-          this.user.set(res);
-        },
-        error: (err) &#x3D;&gt; {
-          this.alertService.addDanger(
-            err?.error?.message ||
-              err?.message ||
-              &quot;Failed to load user account&quot;,
-          );
-        },
-      });
-  }
 }
 </code></pre>
     </div>

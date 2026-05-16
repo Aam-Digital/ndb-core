@@ -188,6 +188,9 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                <a href="#clone" >clone</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Abstract</span>
                                 <a href="#getFilter" >getFilter</a>
                             </li>
@@ -443,6 +446,77 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="clone"></a>
+                    <span class="name">
+                        <span ><b>clone</b></span>
+                        <a href="#clone"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>clone(changes: Partial<unknown>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="82"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:82</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>changes</td>
+                                            <td>
+                                                        <code>Partial&lt;unknown&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getFilter"></a>
                     <span class="name">
                             <span class="modifier">Abstract</span>
@@ -461,8 +535,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -551,6 +625,14 @@ export abstract class Filter&lt;T extends Entity&gt; {
     public name: string,
     public label: string &#x3D; name,
   ) {}
+
+  clone(changes: Partial&lt;this&gt; &#x3D; {}): this {
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      changes,
+    );
+  }
 
   abstract getFilter(): DataFilter&lt;T&gt;;
 }

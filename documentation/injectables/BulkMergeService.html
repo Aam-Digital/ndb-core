@@ -611,7 +611,7 @@ export class BulkMergeService {
       dialogResult.deleteSecondaryAccount,
       dialogResult.accountUpdate,
     );
-    this.unsavedChangesService.pending &#x3D; false;
+    this.unsavedChangesService.pending.set(false);
     this.alert.addInfo($localize&#x60;Records merged successfully.&#x60;);
     return true;
   }

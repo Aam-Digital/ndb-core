@@ -144,6 +144,14 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Configuration DTO for dashboard view definitions (e.g. view config persistence/editing).
+The component itself uses signal inputs and therefore does not implement this plain object shape.</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -215,11 +223,12 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
-  Input,
   inject,
-  signal,
+  input,
+  resource,
   ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
+import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
 import { DynamicComponentConfig } from &quot;../../config/dynamic-components/dynamic-component-config.interface&quot;;
 import { DynamicComponentDirective } from &quot;../../config/dynamic-components/dynamic-component.directive&quot;;
 import { RouteTarget } from &quot;../../../route-target&quot;;
@@ -251,36 +260,48 @@ import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
     MatTooltipModule,
   ],
 })
-export class DashboardComponent implements DashboardConfig {
-  private ability &#x3D; inject(EntityAbility);
-  private components &#x3D; inject(ComponentRegistry);
-  private session &#x3D; inject(SessionSubject);
+export class DashboardComponent {
+  private readonly ability &#x3D; inject(EntityAbility);
+  private readonly components &#x3D; inject(ComponentRegistry);
+  private readonly session &#x3D; inject(SessionSubject);
   private readonly activeRoute &#x3D; inject(ActivatedRoute);
 
-  @Input() set widgets(widgets: DynamicComponentConfig[]) {
-    this.filterPermittedWidgets(widgets).then((res) &#x3D;&gt; this._widgets.set(res));
-  }
-  get widgets(): DynamicComponentConfig[] {
-    return this._widgets();
-  }
-  _widgets &#x3D; signal&lt;DynamicComponentConfig[]&gt;([]);
+  readonly widgets &#x3D; input&lt;DynamicComponentConfig[]&gt;([]);
+
+  private readonly sessionRoles &#x3D; toSignal(this.session, {
+    initialValue: this.session.value,
+  });
+
+  readonly permittedWidgets &#x3D; resource({
+    params: () &#x3D;&gt; ({
+      widgets: this.widgets(),
+      // include session roles so resource reloads when roles change
+      roles: this.sessionRoles()?.roles ?? [],
+    }),
+    loader: async ({ params: { widgets } }) &#x3D;&gt; {
+      const roleFiltered &#x3D; widgets.filter((widget) &#x3D;&gt;
+        this.hasRequiredRole(widget),
+      );
+      if (!roleFiltered.length) {
+        return [];
+      }
+
+      const widgetsWithAccess &#x3D; await Promise.all(
+        roleFiltered.map(async (widget) &#x3D;&gt; {
+          if (await this.hasEntityPermission(widget)) {
+            return widget;
+          }
+          return undefined;
+        }),
+      );
+
+      return widgetsWithAccess.filter(
+        (widget): widget is DynamicComponentConfig &#x3D;&gt; widget !&#x3D;&#x3D; undefined,
+      );
+    },
+  });
 
   dashboardViewId: string &#x3D; this.activeRoute.snapshot.url.join(&quot;/&quot;);
-
-  private async filterPermittedWidgets(
-    widgets: DynamicComponentConfig[],
-  ): Promise&lt;DynamicComponentConfig[]&gt; {
-    const permittedWidgets: DynamicComponentConfig[] &#x3D; [];
-    for (const widget of widgets) {
-      if (
-        this.hasRequiredRole(widget) &amp;&amp;
-        (await this.hasEntityPermission(widget))
-      ) {
-        permittedWidgets.push(widget);
-      }
-    }
-    return permittedWidgets;
-  }
 
   private hasRequiredRole(widget: DynamicComponentConfig) {
     if (widget.permittedUserRoles?.length &gt; 0) {
@@ -293,17 +314,17 @@ export class DashboardComponent implements DashboardConfig {
   }
 
   private async hasEntityPermission(widget: DynamicComponentConfig) {
-    const comp &#x3D; (await this.components.get(widget.component)()) as unknown as {
-      getRequiredEntities?: (config: any) &#x3D;&gt; string | string[];
+    const comp &#x3D; (await this.components.get(widget.component)()) as {
+      getRequiredEntities?: (config: unknown) &#x3D;&gt; string | string[];
     };
-    let entity: string | string[];
+    let entity: string | string[] | undefined;
     if (typeof comp.getRequiredEntities &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
       entity &#x3D; comp.getRequiredEntities(widget.config);
     }
     return this.userHasAccess(entity);
   }
 
-  private userHasAccess(entity: string | string[]): boolean {
+  private userHasAccess(entity: string | string[] | undefined): boolean {
     if (entity) {
       if (Array.isArray(entity)) {
         return entity.some((e) &#x3D;&gt; this.ability.can(&quot;read&quot;, e));
@@ -316,6 +337,10 @@ export class DashboardComponent implements DashboardConfig {
   }
 }
 
+/**
+ * Configuration DTO for dashboard view definitions (e.g. view config persistence/editing).
+ * The component itself uses signal inputs and therefore does not implement this plain object shape.
+ */
 export interface DashboardConfig {
   widgets: DynamicComponentConfig[];
 }

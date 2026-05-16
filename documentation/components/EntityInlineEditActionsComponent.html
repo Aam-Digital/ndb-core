@@ -592,7 +592,7 @@ export class EntityInlineEditActionsComponent&lt;T extends Entity &#x3D; Entity&
    */
   resetChanges() {
     delete this.row().formGroup;
-    this.unsavedChanges.pending &#x3D; false;
+    this.unsavedChanges.pending.set(false);
   }
 }
 </code></pre>
