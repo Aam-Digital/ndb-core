@@ -1,21 +1,22 @@
 import {
-  ChangeDetectorRef,
   Directive,
+  computed,
   effect,
   inject,
   input,
+  model,
   signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
-import { UnsavedChangesService } from "../form/unsaved-changes.service";
+import { filter } from "rxjs/operators";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { Logging } from "../../logging/logging.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { UnsavedChangesService } from "../form/unsaved-changes.service";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -30,25 +31,29 @@ export abstract class AbstractEntityDetailsComponent {
   protected readonly ability = inject(EntityAbility);
   protected readonly router = inject(Router);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
-  protected readonly cdr = inject(ChangeDetectorRef);
 
   readonly isLoading = signal(false);
   private changesSubscription: Subscription;
 
   entityType = input<string>();
-  readonly entityConstructor = signal<EntityConstructor | undefined>(undefined);
+  readonly entityConstructor = computed<EntityConstructor | undefined>(() =>
+    this.entityType() ? this.entities.get(this.entityType()) : undefined,
+  );
 
   id = input<string>();
-  readonly entity = signal<Entity | null>(null);
+  readonly entity = model<Entity | null>(null);
 
   constructor() {
     effect((onCleanup) => {
-      const entityType = this.entityType();
-      const id = this.id();
-      if (!entityType || !id) {
+      if (this.entity()) {
         return;
       }
-      this.entityConstructor.set(this.entities.get(entityType));
+
+      const id = this.id();
+      if (!this.entityType() || !id) {
+        return;
+      }
+
       let cancelled = false;
       onCleanup(() => {
         cancelled = true;
@@ -84,7 +89,6 @@ export abstract class AbstractEntityDetailsComponent {
       .subscribe(({ entity }) => {
         this.entity.set(entity);
         this.onEntityUpdated();
-        this.cdr.markForCheck();
       });
   }
 
@@ -123,6 +127,5 @@ export abstract class AbstractEntityDetailsComponent {
       await this.router.navigate(["/404"]);
     }
     this.isLoading.set(false);
-    this.cdr.markForCheck();
   }
 }

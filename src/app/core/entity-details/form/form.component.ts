@@ -108,6 +108,7 @@ export class FormComponent<E extends Entity> {
 
     if (this.creatingNew()) {
       this.location.back();
+      return;
     }
     this.entityFormService.resetForm(form, entity);
     form.formGroup.disable();

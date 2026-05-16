@@ -7,6 +7,7 @@ import {
   model,
   signal,
   inject,
+  untracked,
 } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -14,6 +15,7 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Subscription } from "rxjs";
 import { applyUpdate } from "../../entity/model/entity-update";
 import {
   ScreenSize,
@@ -123,9 +125,17 @@ export class RelatedEntitiesComponent<E extends Entity> {
   editable = input<boolean>(true);
 
   readonly data = signal<E[] | undefined>(undefined);
-  protected entityCtr: EntityConstructor<E>;
+  protected readonly entityCtr = computed<EntityConstructor<E> | undefined>(
+    () => {
+      const entityType = this.entityType();
+      if (!entityType) {
+        return undefined;
+      }
+      return this.entityRegistry.get(entityType) as EntityConstructor<E>;
+    },
+  );
   protected relationProperty: string | string[];
-  filterObj: DataFilter<E> = {};
+  readonly filterObj = signal<DataFilter<E>>({});
   private readonly currentScreenSize = signal(
     this.screenWidthObserver.currentScreenSize(),
   );
@@ -151,17 +161,11 @@ export class RelatedEntitiesComponent<E extends Entity> {
   }
 
   private async initData(isCancelled: () => boolean = () => false) {
-    const entityType = this.entityType();
     const entity = this.entity();
     const property = this.property();
+    const entityCtr = this.entityCtr();
 
-    if (entityType) {
-      this.entityCtr = this.entityRegistry.get(
-        entityType,
-      ) as EntityConstructor<E>;
-    }
-
-    if (!entity || !this.entityCtr) {
+    if (!entity || !entityCtr) {
       return;
     }
     const resolvedProperty = property ?? this.getProperty();
@@ -175,9 +179,10 @@ export class RelatedEntitiesComponent<E extends Entity> {
     if (isCancelled()) return;
 
     this.data.set(data);
-    this.filterObj = this.initFilter();
+    this.filterObj.set(this.initFilter());
 
-    if (this.showInactive() === undefined) {
+    // untracked: showInactive changes (user toggle) must not re-trigger full initData()
+    if (untracked(() => this.showInactive()) === undefined) {
       // show all related docs when visiting an archived entity
       this.showInactive.set(entity.anonymized);
     }
@@ -188,6 +193,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   protected getData(): Promise<E[]> {
     const entity = this.entity();
+    const entityCtr = this.entityCtr();
     if (!entity) {
       return Promise.resolve([]);
     }
@@ -196,7 +202,11 @@ export class RelatedEntitiesComponent<E extends Entity> {
       return this.entitySpecialLoader.loadDataFor(loaderMethod, entity);
     }
 
-    return this.entityMapper.loadType(this.entityCtr);
+    if (!entityCtr) {
+      return Promise.resolve([]);
+    }
+
+    return this.entityMapper.loadType(entityCtr);
   }
 
   /**
@@ -205,13 +215,14 @@ export class RelatedEntitiesComponent<E extends Entity> {
    */
   protected getProperty(): string | string[] {
     const entity = this.entity();
-    if (!entity) {
+    const entityCtr = this.entityCtr();
+    if (!entity || !entityCtr) {
       return [];
     }
     const relType = entity.getType();
     const found: string[] = [];
 
-    for (const [key, field] of this.entityCtr.schema) {
+    for (const [key, field] of entityCtr.schema) {
       if (this.fieldReferencesType(field, relType)) {
         found.push(key);
         continue;
@@ -233,7 +244,11 @@ export class RelatedEntitiesComponent<E extends Entity> {
     if (property.includes(".")) {
       return property;
     }
-    const field = this.entityCtr.schema.get(property);
+    const entityCtr = this.entityCtr();
+    if (!entityCtr) {
+      return property;
+    }
+    const field = entityCtr.schema.get(property);
     if (!field) {
       return property;
     }
@@ -263,12 +278,13 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   private getFilterForProperty(property: string) {
     const relatedEntityId = this.entity()?.getId();
-    if (!relatedEntityId) {
+    const entityCtr = this.entityCtr();
+    if (!relatedEntityId || !entityCtr) {
       return {};
     }
     if (property.includes(".")) {
       const [outerProp, innerProp] = property.split(".", 2);
-      const outerIsArray = this.entityCtr.schema.get(outerProp)?.isArray;
+      const outerIsArray = entityCtr.schema.get(outerProp)?.isArray;
       return outerIsArray
         ? {
             [outerProp]: { $elemMatch: { [innerProp]: relatedEntityId } },
@@ -276,7 +292,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
         : { [`${outerProp}.${innerProp}`]: relatedEntityId };
     }
 
-    const isArray = this.entityCtr.schema.get(property)?.isArray;
+    const isArray = entityCtr.schema.get(property)?.isArray;
     return {
       [property]: isArray
         ? { $elemMatch: { $eq: relatedEntityId } }
@@ -323,8 +339,13 @@ export class RelatedEntitiesComponent<E extends Entity> {
   }
 
   protected listenToEntityUpdates(): import("rxjs").Subscription {
+    const entityCtr = this.entityCtr();
+    if (!entityCtr) {
+      return new Subscription();
+    }
+
     return this.entityMapper
-      .receiveUpdates(this.entityCtr)
+      .receiveUpdates(entityCtr)
       .pipe(untilDestroyed(this))
       .subscribe((next) => {
         this.data.set(applyUpdate(this.data(), next));
@@ -333,8 +354,13 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   createNewRecordFactory() {
     return () => {
-      const rec = new this.entityCtr();
-      this.filterService.alignEntityWithFilter(rec, this.filterObj);
+      const entityCtr = this.entityCtr();
+      if (!entityCtr) {
+        throw new Error("Cannot create related record without entity type");
+      }
+
+      const rec = new entityCtr();
+      this.filterService.alignEntityWithFilter(rec, this.filterObj());
       return rec;
     };
   }

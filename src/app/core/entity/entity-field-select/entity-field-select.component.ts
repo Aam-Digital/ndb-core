@@ -1,20 +1,21 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
   input,
-  ChangeDetectionStrategy,
+  Input,
 } from "@angular/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
 } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
-import { EntityConstructor } from "../model/entity";
-import { EntityRegistry } from "../database-entity.decorator";
-import { EntitySchema } from "../schema/entity-schema";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { EntityRegistry } from "../database-entity.decorator";
+import { EntityConstructor } from "../model/entity";
+import { EntitySchema } from "../schema/entity-schema";
 
 /**
  * Dropdown field offering all fields of a given entity type
@@ -34,14 +35,16 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   FormFieldConfig,
   string
 > {
-  override placeholder: string = $localize`:EntityFieldSelect placeholder:Select Record Field`;
+  @Input() override placeholder: string =
+    $localize`:EntityFieldSelect placeholder:Select Record Field`;
 
   override optionToString = (option: FormFieldConfig) => option.label;
   override valueMapper = (option: FormFieldConfig) => option.id;
 
-  override multi?: boolean;
+  @Input() override multi?: boolean;
 
-  override hideOption: (option: FormFieldConfig) => boolean = () => false;
+  @Input() override hideOption: (option: FormFieldConfig) => boolean = () =>
+    false;
 
   /**
    * Whether to show the internal _id field in the dropdown.

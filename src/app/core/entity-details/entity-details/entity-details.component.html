@@ -46,7 +46,7 @@
 
 <!-- Content: tabbed components -->
 <mat-tab-group appTabStateMemo [preserveContent]="true">
-  @for (panelConfig of panelsState; track panelConfig.title) {
+  @for (panelConfig of panelsState(); track panelConfig.title) {
     <mat-tab [disabled]="entity()?.isNew || unsavedChanges.pending">
       <ng-template mat-tab-label>
         <span

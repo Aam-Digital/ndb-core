@@ -7,9 +7,9 @@
 }
 
 <app-entities-table
-  [entityType]="entityCtr!"
+  [entityType]="entityCtr()!"
   [records]="data()"
-  [filter]="filterObj"
+  [filter]="filterObj()"
   [customColumns]="_columns()"
   [newRecordFactory]="createNewRecordFactory()"
   [getBackgroundColor]="showInactive() ? backgroundColorFn : undefined"
@@ -20,6 +20,6 @@
 
 <app-custom-form-link-button
   [linkedEntity]="entity()"
-  [formEntityType]="entityCtr!"
+  [formEntityType]="entityCtr()!"
 >
 </app-custom-form-link-button>

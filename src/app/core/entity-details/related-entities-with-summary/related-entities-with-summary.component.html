@@ -1,22 +1,22 @@
 <app-entities-table
-  [entityType]="entityCtr!"
+  [entityType]="entityCtr()!"
   [records]="data()"
-  [filter]="filterObj"
+  [filter]="filterObj()"
   [customColumns]="_columns()"
   [newRecordFactory]="createNewRecordFactory()"
 ></app-entities-table>
 
 <div class="margin-top-large">
-  @if (summarySum) {
-    <strong i18n>Total:</strong> {{ summarySum }} <br />
+  @if (summary().sum) {
+    <strong i18n>Total:</strong> {{ summary().sum }} <br />
   }
-  @if (summaryAvg) {
-    <strong i18n>Average:</strong> {{ summaryAvg }} <br />
+  @if (summary().avg) {
+    <strong i18n>Average:</strong> {{ summary().avg }} <br />
   }
 </div>
 
 <app-custom-form-link-button
   [linkedEntity]="entity()"
-  [formEntityType]="entityCtr!"
+  [formEntityType]="entityCtr()!"
 >
 </app-custom-form-link-button>

@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { RelatedEntitiesComponent } from "./related-entities.component";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../entity/model/entity-update";
-import { Entity } from "../../entity/model/entity";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
+import { Entity } from "../../entity/model/entity";
+import { UpdatedEntity } from "../../entity/model/entity-update";
+import { RelatedEntitiesComponent } from "./related-entities.component";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<any>;
@@ -53,7 +53,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("columns", columns);
     await initComponent();
 
-    expect(component.filterObj).toEqual({ ref: entity.getId() });
+    expect(component.filterObj()).toEqual({ ref: entity.getId() });
   });
 
   it("should also include the provided filter", async () => {
@@ -66,7 +66,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("filter", { ...filter });
     await initComponent();
 
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       ...filter,
       ref: entity.getId(),
     });
@@ -140,7 +140,7 @@ describe("RelatedEntitiesComponent", () => {
     await initComponent();
 
     // filter matching relations at any of the available props
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       $or: [
         { singleChild: entity.getId() },
         { multiEntities: { $elemMatch: { $eq: entity.getId() } } },
@@ -166,7 +166,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       singleRelation: component.entity().getId(),
     });
 
@@ -180,7 +180,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       $or: [
         { singleRelation: component.entity().getId() },
         { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
@@ -197,7 +197,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       multiTypeRelation: { $elemMatch: { $eq: component.entity().getId() } },
     });
 
@@ -207,7 +207,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       $or: [
         { singleRelation: component.entity().getId() },
         { arrayRelation: { $elemMatch: { $eq: component.entity().getId() } } },
@@ -225,7 +225,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.componentRef.setInput("property", "singleRelation");
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       singleRelation: component.entity().getId(),
     });
   });
@@ -252,7 +252,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       attendance: {
         $elemMatch: { participant: component.entity().getId() },
       },
@@ -286,7 +286,7 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       $or: [
         { authors: { $elemMatch: { $eq: component.entity().getId() } } },
         {
@@ -326,7 +326,7 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
 
     // should only filter by attendance, not authors
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       attendance: {
         $elemMatch: { participant: component.entity().getId() },
       },

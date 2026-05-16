@@ -108,7 +108,7 @@ describe("EntityDetailsComponent", () => {
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.panelsState.forEach((p) =>
+      component.panelsState().forEach((p) =>
         p.components.forEach((c) => {
           const panelConfig = c.config as PanelConfig;
           expect(panelConfig.entity).toEqual(testChild);
@@ -145,7 +145,7 @@ describe("EntityDetailsComponent", () => {
       await entityMapper.save(updatedChild);
       await vi.advanceTimersByTimeAsync(0);
 
-      const panelConfig = component.panelsState[0].components[0]
+      const panelConfig = component.panelsState()[0].components[0]
         .config as PanelConfig;
       expect(panelConfig.entity.anonymized).toBe(true);
     } finally {
@@ -186,8 +186,8 @@ describe("EntityDetailsComponent", () => {
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.panelsState.length).toBe(2);
-      expect(component.panelsState[0].title).toBe("Visible Panel");
+      expect(component.panelsState()).toHaveLength(2);
+      expect(component.panelsState()[0].title).toBe("Visible Panel");
     } finally {
       vi.useRealTimers();
     }

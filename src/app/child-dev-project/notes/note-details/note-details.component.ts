@@ -1,4 +1,6 @@
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -6,31 +8,29 @@ import {
   input,
   signal,
   ViewEncapsulation,
-  ChangeDetectionStrategy,
 } from "@angular/core";
-import { Note } from "../model/note";
-import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
-import { ConfigService } from "../../../core/config/config.service";
-import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
-import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatMenuModule } from "@angular/material/menu";
-import { ExportDialogComponent } from "../../../core/export/export-dialog/export-dialog.component";
-import { Angulartics2Module } from "angulartics2";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
-import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
-import { FieldGroup } from "../../../core/entity-details/form/field-group";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
-import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
+import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Angulartics2Module } from "angulartics2";
+import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
+import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
+import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
+import { ConfigService } from "../../../core/config/config.service";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
+import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
+import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
+import { EntityConstructor } from "../../../core/entity/model/entity";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
+import { ExportDialogComponent } from "../../../core/export/export-dialog/export-dialog.component";
+import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
+import { Note } from "../model/note";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -62,8 +62,14 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   private entityFormService = inject(EntityFormService);
   private readonly dialog = inject(MatDialog);
 
+  override readonly entityConstructor = computed<EntityConstructor>(() => Note);
+
   /** export format for notes to be used for downloading the individual details */
-  exportConfig: ExportColumnConfig[];
+  readonly exportConfig = computed<ExportColumnConfig[]>(
+    () =>
+      this.configService.getConfig<{ config: EntityListConfig }>("view:note")
+        ?.config.exportConfig,
+  );
 
   private readonly defaultFormConfig = getDefaultNoteDetailsConfig();
   topForm = input(this.defaultFormConfig.topForm);
@@ -81,10 +87,6 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
 
   constructor() {
     super();
-    this.entityConstructor.set(Note);
-    this.exportConfig = this.configService.getConfig<{
-      config: EntityListConfig;
-    }>("view:note")?.config.exportConfig;
 
     effect((onCleanup) => {
       const entity = this.entity();
@@ -119,7 +121,7 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
     this.dialog.open(ExportDialogComponent, {
       data: {
         allEntities: entity ? [entity] : [],
-        exportConfig: this.exportConfig,
+        exportConfig: this.exportConfig(),
         filename,
       },
     });

@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { TodosRelatedToEntityComponent } from "./todos-related-to-entity.component";
-import { DatabaseTestingModule } from "../../../utils/database-testing.module";
-import { Todo } from "../model/todo";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
-import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
+import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { Todo } from "../model/todo";
+import { TodosRelatedToEntityComponent } from "./todos-related-to-entity.component";
 
 describe("TodosRelatedToEntityComponent", () => {
   let component: TodosRelatedToEntityComponent;
@@ -56,7 +56,7 @@ describe("TodosRelatedToEntityComponent", () => {
     await fixture.whenStable();
 
     expect(indexSpy).toHaveBeenCalled();
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       relatedEntities: { $elemMatch: { $eq: child.getId() } },
       isActive: true,
     });
@@ -98,7 +98,7 @@ describe("TodosRelatedToEntityComponent", () => {
       relatedTodo2,
       unrelatedTodo,
     ]);
-    expect(component.filterObj).toEqual({
+    expect(component.filterObj()).toEqual({
       $or: [
         {
           assignedTo: { $elemMatch: { $eq: user.getId() } },

@@ -1,18 +1,20 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
-  OnInit,
   input,
-  ChangeDetectionStrategy,
+  Input,
+  OnInit,
 } from "@angular/core";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
 } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
-import { EntityConstructor } from "../model/entity";
 import { EntityRegistry } from "../database-entity.decorator";
-import { MatFormFieldControl } from "@angular/material/form-field";
+import { EntityConstructor } from "../model/entity";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,8 +30,9 @@ export class EntityTypeSelectComponent
   extends BasicAutocompleteComponent<EntityConstructor, string>
   implements OnInit
 {
-  override multi = false;
-  override placeholder = $localize`:EntityTypeSelect placeholder:Select Record Type`;
+  @Input() override multi = false;
+  @Input() override placeholder =
+    $localize`:EntityTypeSelect placeholder:Select Record Type`;
 
   /**
    * whether to include record types without a human-readable label
@@ -39,25 +42,20 @@ export class EntityTypeSelectComponent
 
   private entityRegistry = inject(EntityRegistry);
 
+  private entityTypes = computed(() =>
+    this.entityRegistry
+      .getEntityTypes(!this.showInternalTypes())
+      .map(({ value }) => value),
+  );
+
   constructor() {
     super();
     effect(() => {
-      this.initOptions();
+      this.options = this.entityTypes();
     });
   }
 
   override optionToString = (option: EntityConstructor) =>
     option.label ?? option.ENTITY_TYPE;
   override valueMapper = (option: EntityConstructor) => option.ENTITY_TYPE;
-
-  override ngOnInit() {
-    this.initOptions();
-    super.ngOnInit();
-  }
-
-  private initOptions() {
-    this.options = this.entityRegistry
-      .getEntityTypes(!this.showInternalTypes())
-      .map(({ value }) => value);
-  }
 }

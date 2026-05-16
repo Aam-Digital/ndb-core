@@ -8,6 +8,7 @@ import {
   model,
   OnInit,
   output,
+  untracked,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -195,7 +196,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.columns();
       this.columnGroups();
       this.loaderMethod();
-      void this.buildComponentFromConfig();
+      // untracked: internal signals set during build (title, allEntities) must not re-trigger this effect
+      void untracked(() => this.buildComponentFromConfig());
     });
 
     this.screenWidthObserver

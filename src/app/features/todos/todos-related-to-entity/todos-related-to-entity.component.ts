@@ -1,4 +1,9 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  signal,
+} from "@angular/core";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
@@ -27,7 +32,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   private formDialog = inject(FormDialogService);
   private dbIndexingService = inject(DatabaseIndexingService);
 
-  override entityCtr = Todo;
+  override entityCtr = signal(Todo);
 
   protected override getDefaultColumns(): FormFieldConfig[] {
     return RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
