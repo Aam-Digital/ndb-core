@@ -151,7 +151,6 @@
     </p>
     <p class="comment">
                     <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
-                    <code><a href="https://angular.io/api/core/OnChanges" target="_blank" >OnChanges</a></code>
     </p>
 
 
@@ -505,6 +504,24 @@
     </table>
 </section>
 
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/entity/entity-type-select/entity-type-select.component.ts:49</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
 
     <section data-compodoc="block-inputs">
     <h3 id="inputs">Inputs</h3>
@@ -535,7 +552,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:31</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:33</a></code>
 </div>
                             </td>
                         </tr>
@@ -568,7 +585,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:32</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:34</a></code>
 </div>
                             </td>
                         </tr>
@@ -584,18 +601,12 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
                         <i>Default value : </i><code>false</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/entity/entity-type-select/entity-type-select.component.ts:39</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/entity/entity-type-select/entity-type-select.component.ts:41</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -2662,7 +2673,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/entity/entity-type-select/entity-type-select.component.ts:43</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/entity/entity-type-select/entity-type-select.component.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -2694,7 +2705,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/entity/entity-type-select/entity-type-select.component.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/entity/entity-type-select/entity-type-select.component.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -3928,20 +3939,22 @@ Set to match the full width of the Material form field container (including icon
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  Input,
+  OnInit,
 } from &quot;@angular/core&quot;;
+import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
 } from &quot;../../common-components/basic-autocomplete/basic-autocomplete.component&quot;;
-import { EntityConstructor } from &quot;../model/entity&quot;;
 import { EntityRegistry } from &quot;../database-entity.decorator&quot;;
-import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
+import { EntityConstructor } from &quot;../model/entity&quot;;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -3955,7 +3968,7 @@ import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
 })
 export class EntityTypeSelectComponent
   extends BasicAutocompleteComponent&lt;EntityConstructor, string&gt;
-  implements OnInit, OnChanges
+  implements OnInit
 {
   @Input() override multi &#x3D; false;
   @Input() override placeholder &#x3D;
@@ -3965,32 +3978,26 @@ export class EntityTypeSelectComponent
    * whether to include record types without a human-readable label
    * (usually only used internally for technical purposes)
    */
-  @Input() showInternalTypes: boolean &#x3D; false;
+  showInternalTypes &#x3D; input(false);
 
   private entityRegistry &#x3D; inject(EntityRegistry);
+
+  private entityTypes &#x3D; computed(() &#x3D;&gt;
+    this.entityRegistry
+      .getEntityTypes(!this.showInternalTypes())
+      .map(({ value }) &#x3D;&gt; value),
+  );
+
+  constructor() {
+    super();
+    effect(() &#x3D;&gt; {
+      this.options &#x3D; this.entityTypes();
+    });
+  }
 
   override optionToString &#x3D; (option: EntityConstructor) &#x3D;&gt;
     option.label ?? option.ENTITY_TYPE;
   override valueMapper &#x3D; (option: EntityConstructor) &#x3D;&gt; option.ENTITY_TYPE;
-
-  override ngOnInit() {
-    this.initOptions();
-    super.ngOnInit();
-  }
-
-  private initOptions() {
-    this.options &#x3D; this.entityRegistry
-      .getEntityTypes(!this.showInternalTypes)
-      .map(({ value }) &#x3D;&gt; value);
-  }
-
-  override ngOnChanges(changes: { [key in keyof this]?: any }) {
-    if (changes.showInternalTypes) {
-      this.initOptions();
-    }
-
-    super.ngOnChanges(changes);
-  }
 }
 </code></pre>
     </div>

@@ -222,11 +222,11 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  effect,
   inject,
-  Input,
-  OnInit,
+  input,
+  resource,
 } from &quot;@angular/core&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { getParentUrl } from &quot;../../../utils/utils&quot;;
@@ -261,52 +261,57 @@ import { PublicFormPermissionService } from &quot;../../../features/public-form/
     DisableEntityOperationDirective,
   ],
 })
-export class FormComponent&lt;E extends Entity&gt; implements FormConfig, OnInit {
+export class FormComponent&lt;E extends Entity&gt; {
   private router &#x3D; inject(Router);
   private location &#x3D; inject(Location);
   private entityFormService &#x3D; inject(EntityFormService);
   private alertService &#x3D; inject(AlertService);
   private viewContext &#x3D; inject(ViewComponentContext, { optional: true });
   private readonly permissionService &#x3D; inject(PublicFormPermissionService);
-  private readonly cdr &#x3D; inject(ChangeDetectorRef);
+  entity &#x3D; input&lt;E&gt;();
+  creatingNew &#x3D; input&lt;boolean&gt;(false);
+  fieldGroups &#x3D; input&lt;FieldGroup[]&gt;();
 
-  @Input() entity: E;
-  @Input() creatingNew &#x3D; false;
+  private readonly formResource &#x3D; resource({
+    params: () &#x3D;&gt; ({ entity: this.entity(), fieldGroups: this.fieldGroups() }),
+    loader: async ({ params: { entity, fieldGroups } }) &#x3D;&gt; {
+      if (!entity || !fieldGroups) return undefined;
+      return this.entityFormService.createEntityForm(
+        [].concat(...fieldGroups.map((group) &#x3D;&gt; group.fields)),
+        entity,
+      );
+    },
+  });
+  readonly form &#x3D; this.formResource.value;
 
-  @Input() fieldGroups: FieldGroup[];
-  form: EntityForm&lt;E&gt; | undefined;
-
-  ngOnInit() {
-    this.entityFormService
-      .createEntityForm(
-        [].concat(...this.fieldGroups.map((group) &#x3D;&gt; group.fields)),
-        this.entity,
-      )
-      .then((value) &#x3D;&gt; {
-        this.form &#x3D; value;
-        if (!this.creatingNew) {
-          this.form.formGroup.disable();
-        }
-        this.cdr.markForCheck();
-      });
+  constructor() {
+    effect(() &#x3D;&gt; {
+      const form &#x3D; this.form();
+      if (form &amp;&amp; !this.creatingNew()) {
+        form.formGroup.disable();
+      }
+    });
   }
 
   async saveClicked() {
+    const entity &#x3D; this.entity();
+    const form &#x3D; this.form();
+    if (!entity || !form) {
+      return;
+    }
     try {
       // Check if this is a PublicFormConfig and needs permission checking
-      if (this.entity.getType() &#x3D;&#x3D;&#x3D; PublicFormConfig.ENTITY_TYPE) {
-        const entityType &#x3D; this.form.formGroup.getRawValue()[
-          &quot;entity&quot;
-        ] as string;
+      if (entity.getType() &#x3D;&#x3D;&#x3D; PublicFormConfig.ENTITY_TYPE) {
+        const entityType &#x3D; form.formGroup.getRawValue()[&quot;entity&quot;] as string;
         if (!(await this.permissionService.checkOnSave(entityType))) return;
       }
 
-      await this.entityFormService.saveChanges(this.form, this.entity);
+      await this.entityFormService.saveChanges(form, entity);
 
-      if (this.creatingNew &amp;&amp; !this.viewContext?.isDialog) {
+      if (this.creatingNew() &amp;&amp; !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
-          this.entity.getId(true),
+          entity.getId(true),
         ]);
       }
     } catch (err) {
@@ -317,11 +322,18 @@ export class FormComponent&lt;E extends Entity&gt; implements FormConfig, OnInit
   }
 
   cancelClicked() {
-    if (this.creatingNew) {
-      this.location.back();
+    const entity &#x3D; this.entity();
+    const form &#x3D; this.form();
+    if (!entity || !form) {
+      return;
     }
-    this.entityFormService.resetForm(this.form, this.entity);
-    this.form.formGroup.disable();
+
+    if (this.creatingNew()) {
+      this.location.back();
+      return;
+    }
+    this.entityFormService.resetForm(form, entity);
+    form.formGroup.disable();
   }
 }
 

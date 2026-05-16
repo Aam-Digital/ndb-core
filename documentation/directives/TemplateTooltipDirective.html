@@ -198,7 +198,7 @@ when hovered over.</p>
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#appTemplateTooltip" >appTemplateTooltip</a>
+                                <a href="#contentTemplate" >contentTemplate</a>
                             </li>
                             <li>
                                 <a href="#delayHide" >delayHide</a>
@@ -227,8 +227,8 @@ when hovered over.</p>
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="appTemplateTooltip"></a>
-                        <b>appTemplateTooltip</b>
+                        <a name="contentTemplate"></a>
+                        <b>contentTemplate</b>
                     </td>
                 </tr>
                 <tr>
@@ -237,9 +237,19 @@ when hovered over.</p>
 
                     </td>
                 </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Required : </i>&nbsp;<b>true</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{    alias: &quot;appTemplateTooltip&quot;,  }</code>
+                    </td>
+                </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:76</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:74</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -266,18 +276,12 @@ used element.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
                         <i>Default value : </i><code>150</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:62</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:60</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -299,18 +303,12 @@ be hidden</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
                         <i>Default value : </i><code>150</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:56</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:54</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -332,18 +330,12 @@ is shown</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
                         <i>Default value : </i><code>false</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:50</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/common-components/template-tooltip/template-tooltip.directive.ts:48</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -368,12 +360,12 @@ is shown</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Directive,
   ElementRef,
-  Input,
   NgZone,
   OnDestroy,
   OnInit,
   TemplateRef,
   inject,
+  input,
 } from &quot;@angular/core&quot;;
 import {
   Overlay,
@@ -382,7 +374,6 @@ import {
 } from &quot;@angular/cdk/overlay&quot;;
 import { ComponentPortal } from &quot;@angular/cdk/portal&quot;;
 import { TemplateTooltipComponent } from &quot;./template-tooltip.component&quot;;
-import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
 
 /**
  * A directive that can be used to render a custom tooltip that may contain HTML code.
@@ -400,7 +391,6 @@ import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
  *
  * @see contentTemplate
  */
-@UntilDestroy()
 @Directive({
   selector: &quot;[appTemplateTooltip]&quot;,
   standalone: true,
@@ -414,19 +404,19 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
   /**
    * Whether to disable the tooltip, so it won&#x27;t ever be shown
    */
-  @Input() tooltipDisabled: boolean &#x3D; false;
+  tooltipDisabled &#x3D; input(false);
 
   /**
    * The amount of time in milliseconds that the user has to hover over the element before the tooltip
    * is shown
    */
-  @Input() delayShow: number &#x3D; 150;
+  delayShow &#x3D; input(150);
 
   /**
    * The amount of time in milliseconds that the user&#x27;s mouse has to leave the tooltip before it will
    * be hidden
    */
-  @Input() delayHide: number &#x3D; 150;
+  delayHide &#x3D; input(150);
 
   /**
    * The template that is shown in the tooltip.
@@ -440,7 +430,9 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    *   Custom tooltip &lt;i&gt;with&lt;/i&gt; HTML-Elements
    * &lt;/ng-template&gt;
    */
-  @Input(&quot;appTemplateTooltip&quot;) contentTemplate!: TemplateRef&lt;any&gt;;
+  contentTemplate &#x3D; input.required&lt;TemplateRef&lt;any&gt;&gt;({
+    alias: &quot;appTemplateTooltip&quot;,
+  });
 
   /**
    * Reference to the overlay (the Tooltip) to control the visibility of the tooltip
@@ -455,6 +447,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    * @private
    */
   private timeoutRef?: ReturnType&lt;typeof setTimeout&gt;;
+  private tooltipRefSubscriptions: Array&lt;{ unsubscribe: () &#x3D;&gt; void }&gt; &#x3D; [];
 
   ngOnInit(): void {
     // Create a position strategy that determines where the overlay is positioned.
@@ -484,6 +477,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.hide();
+    this.unsubscribeTooltipRefOutputs();
     this.overlayRef.dispose();
   }
 
@@ -494,7 +488,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    * @private
    */
   private show() {
-    if (this.tooltipDisabled) {
+    if (this.tooltipDisabled()) {
       return;
     }
     // clear the timeout so that when the user hovers twice the last hover action is used.
@@ -510,16 +504,15 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
           const tooltipRef &#x3D; this.overlayRef.attach(
             new ComponentPortal(TemplateTooltipComponent),
           );
-          tooltipRef.instance.contentTemplate &#x3D; this.contentTemplate;
-          tooltipRef.instance.hide
-            .pipe(untilDestroyed(this))
-            .subscribe(() &#x3D;&gt; this.hide());
-          tooltipRef.instance.show
-            .pipe(untilDestroyed(this))
-            .subscribe(() &#x3D;&gt; this.show());
+          tooltipRef.setInput(&quot;contentTemplate&quot;, this.contentTemplate());
+          this.unsubscribeTooltipRefOutputs();
+          this.tooltipRefSubscriptions &#x3D; [
+            tooltipRef.instance.hide.subscribe(() &#x3D;&gt; this.hide()),
+            tooltipRef.instance.show.subscribe(() &#x3D;&gt; this.show()),
+          ];
         });
       }
-    }, this.delayShow);
+    }, this.delayShow());
   }
 
   /**
@@ -542,9 +535,17 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
     }
     this.timeoutRef &#x3D; setTimeout(() &#x3D;&gt; {
       if (this.overlayRef.hasAttached()) {
+        this.unsubscribeTooltipRefOutputs();
         this.zone.run(() &#x3D;&gt; this.overlayRef.detach());
       }
-    }, this.delayHide);
+    }, this.delayHide());
+  }
+
+  private unsubscribeTooltipRefOutputs() {
+    this.tooltipRefSubscriptions.forEach((subscription) &#x3D;&gt;
+      subscription.unsubscribe(),
+    );
+    this.tooltipRefSubscriptions &#x3D; [];
   }
 }
 </code></pre>

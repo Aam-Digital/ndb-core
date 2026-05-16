@@ -413,15 +413,16 @@ as a full page view or in a modal dialog.
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &quot;@angular/common&quot;;
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
-  Injector,
-  ChangeDetectorRef,
   inject,
-  ChangeDetectionStrategy,
+  Injector,
 } from &quot;@angular/core&quot;;
-import { CommonModule } from &quot;@angular/common&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -429,13 +430,12 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from &quot;@angular/material/dialog&quot;;
-import { getEntityRuntimeDetailsRoutePath } from &quot;../../entity/entity-config.service&quot;;
-import { Entity } from &quot;../../entity/model/entity&quot;;
+import { Router } from &quot;@angular/router&quot;;
 import { DialogCloseComponent } from &quot;../../common-components/dialog-close/dialog-close.component&quot;;
 import { DynamicComponentPipe } from &quot;../../config/dynamic-components/dynamic-component.pipe&quot;;
+import { getEntityRuntimeDetailsRoutePath } from &quot;../../entity/entity-config.service&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
 import { AbstractViewComponent } from &quot;../abstract-view/abstract-view.component&quot;;
-import { Router } from &quot;@angular/router&quot;;
-import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 
 /**
  * Wrapper component for a modal/dialog view
