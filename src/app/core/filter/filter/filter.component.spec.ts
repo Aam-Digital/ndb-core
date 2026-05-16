@@ -40,146 +40,200 @@ describe("FilterComponent", () => {
     fixture.detectChanges();
   });
 
+  async function setComponentInputs(
+    inputs: Partial<{
+      entityType: any;
+      useUrlQueryParams: boolean;
+      filterConfig: any[];
+      entities: any[];
+      onlyShowRelevantFilterOptions: boolean;
+      filterObj: any;
+    }>,
+  ) {
+    if (inputs.entityType !== undefined) {
+      fixture.componentRef.setInput("entityType", inputs.entityType);
+    }
+    if (inputs.useUrlQueryParams !== undefined) {
+      fixture.componentRef.setInput(
+        "useUrlQueryParams",
+        inputs.useUrlQueryParams,
+      );
+    }
+    if (inputs.filterConfig !== undefined) {
+      fixture.componentRef.setInput("filterConfig", inputs.filterConfig);
+    }
+    if (inputs.entities !== undefined) {
+      fixture.componentRef.setInput("entities", inputs.entities);
+    }
+    if (inputs.onlyShowRelevantFilterOptions !== undefined) {
+      fixture.componentRef.setInput(
+        "onlyShowRelevantFilterOptions",
+        inputs.onlyShowRelevantFilterOptions,
+      );
+    }
+    if (inputs.filterObj !== undefined) {
+      fixture.componentRef.setInput("filterObj", inputs.filterObj);
+    }
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
   it("should have no filter selected when url params are empty", async () => {
-    component.entityType = Note;
-    component.useUrlQueryParams = true;
-    component.filterConfig = [{ id: "category" }];
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "category" }],
+    });
 
-    await component.ngOnChanges({ filterConfig: true } as any);
-
-    expect(component.filterSelections.length).toBe(1);
-    expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionValues).toHaveLength(0);
+    expect(component.filterSelections().length).toBe(1);
+    expect(component.filterSelections()[0].name).toBe("category");
+    expect(component.filterSelections()[0].selectedOptionValues).toHaveLength(
+      0,
+    );
   });
 
   it("should load url params and set single filter value", async () => {
-    component.entityType = Note;
-    component.useUrlQueryParams = true;
-    component.filterConfig = [{ id: "category" }];
-
     activatedRouteMock.snapshot = {
       queryParams: {
         category: "foo",
       },
     };
 
-    await component.ngOnChanges({ filterConfig: true } as any);
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "category" }],
+    });
 
-    expect(component.filterSelections.length).toBe(1);
-    expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionValues.length).toBe(1);
-    expect(component.filterSelections[0].selectedOptionValues[0]).toBe("foo");
+    expect(component.filterSelections().length).toBe(1);
+    expect(component.filterSelections()[0].name).toBe("category");
+    expect(component.filterSelections()[0].selectedOptionValues.length).toBe(1);
+    expect(component.filterSelections()[0].selectedOptionValues[0]).toBe("foo");
   });
 
   it("should load url params and set multiple filter value", async () => {
-    component.entityType = Note;
-    component.useUrlQueryParams = true;
-    component.filterConfig = [{ id: "category" }];
-
     activatedRouteMock.snapshot = {
       queryParams: {
         category: "foo,bar",
       },
     };
 
-    await component.ngOnChanges({ filterConfig: true } as any);
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "category" }],
+    });
 
-    expect(component.filterSelections.length).toBe(1);
-    expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionValues.length).toBe(2);
-    expect(component.filterSelections[0].selectedOptionValues[0]).toBe("foo");
-    expect(component.filterSelections[0].selectedOptionValues[1]).toBe("bar");
+    expect(component.filterSelections().length).toBe(1);
+    expect(component.filterSelections()[0].name).toBe("category");
+    expect(component.filterSelections()[0].selectedOptionValues.length).toBe(2);
+    expect(component.filterSelections()[0].selectedOptionValues[0]).toBe("foo");
+    expect(component.filterSelections()[0].selectedOptionValues[1]).toBe("bar");
   });
 
   it("should load url params and set no filter value when empty", async () => {
-    component.entityType = Note;
-    component.useUrlQueryParams = true;
-    component.filterConfig = [{ id: "category" }];
-
     activatedRouteMock.snapshot = {
       queryParams: {
         category: "",
       },
     };
 
-    await component.ngOnChanges({ filterConfig: true } as any);
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "category" }],
+    });
 
-    expect(component.filterSelections.length).toBe(1);
-    expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionValues).toHaveLength(0);
+    expect(component.filterSelections().length).toBe(1);
+    expect(component.filterSelections()[0].name).toBe("category");
+    expect(component.filterSelections()[0].selectedOptionValues).toHaveLength(
+      0,
+    );
   });
 
   it("should apply url param filter even when field is not in filterConfig", async () => {
     const e1 = TestEntity.create({ other: "Alipore" });
     const e2 = TestEntity.create({ other: "Delhi" });
-
-    component.entityType = TestEntity;
-    component.entities = [e1, e2];
-    component.useUrlQueryParams = true;
-    component.filterConfig = []; // "other" is NOT in filterConfig
+    let emittedFilterObj: any;
+    component.filterObjChange.subscribe(
+      (filterObj) => (emittedFilterObj = filterObj),
+    );
 
     activatedRouteMock.snapshot = {
       queryParams: { other: "Alipore" },
     };
 
-    await component.ngOnChanges({ filterConfig: true } as any);
+    await setComponentInputs({
+      entityType: TestEntity,
+      entities: [e1, e2],
+      useUrlQueryParams: true,
+      filterConfig: [],
+      filterObj: {},
+    });
 
-    expect(component.filterObj).toEqual({
+    expect(emittedFilterObj).toEqual({
       $and: [{ $or: [{ other: "Alipore" }] }],
     } as any);
   });
 
   it("should clear default filters when other URL params are present", async () => {
-    component.entityType = Note;
-    component.useUrlQueryParams = true;
-    component.filterConfig = [{ id: "date", default: "0" }, { id: "category" }];
-
     activatedRouteMock.snapshot = {
       queryParams: { category: "someCategory" },
     };
 
-    await component.ngOnChanges({ filterConfig: true } as any);
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "date", default: "0" }, { id: "category" }],
+    });
 
-    const dateFilter = component.filterSelections.find(
-      (f) => f.name === "date",
-    );
+    const dateFilter = component
+      .filterSelections()
+      .find((f) => f.name === "date");
     expect(dateFilter.selectedOptionValues).toHaveLength(0);
 
-    const categoryFilter = component.filterSelections.find(
-      (f) => f.name === "category",
-    );
+    const categoryFilter = component
+      .filterSelections()
+      .find((f) => f.name === "category");
     expect(categoryFilter.selectedOptionValues).toEqual(["someCategory"]);
   });
 
   it("should compute available category options and build filterObj", async () => {
-    component.entityType = Note;
     const t1 = defaultInteractionTypes[0];
     const t2 = defaultInteractionTypes[1];
+    let emittedFilterObj: any;
+    component.filterObjChange.subscribe(
+      (filterObj) => (emittedFilterObj = filterObj),
+    );
 
     const n1 = new Note();
     n1.category = t1;
     const n2 = new Note();
     n2.category = t2;
 
-    component.entities = [n1, n2];
-    component.onlyShowRelevantFilterOptions = true;
-    component.filterConfig = [{ id: "category" }];
+    await setComponentInputs({
+      entityType: Note,
+      entities: [n1, n2],
+      onlyShowRelevantFilterOptions: true,
+      filterConfig: [{ id: "category" }],
+      filterObj: {},
+    });
 
-    await component.ngOnChanges({ filterConfig: true } as any);
-
-    const avilableOptions = component.filterSelections.find(
-      (f) => f.name === "category",
-    );
+    const avilableOptions = component
+      .filterSelections()
+      .find((f) => f.name === "category");
     expect(avilableOptions).toBeTruthy();
     expect((avilableOptions as any).options.length).toBe(2);
 
     component.filterOptionSelected(avilableOptions, [t1.id]);
 
-    expect(component.filterObj).toEqual({
+    expect(emittedFilterObj).toEqual({
       $and: [
         {
           $or: [{ "category.id": t1.id }],

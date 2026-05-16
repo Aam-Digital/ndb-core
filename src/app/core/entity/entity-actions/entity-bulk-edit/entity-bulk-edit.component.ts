@@ -52,7 +52,7 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
   private readonly unsavedChanges = inject(UnsavedChangesService);
-  private readonly pendingStateBeforeDialogOpen = this.unsavedChanges.pending;
+  private readonly pendingStateBeforeDialogOpen = this.unsavedChanges.pending();
 
   entityConstructor: EntityConstructor;
   entitiesToEdit: E[];
@@ -80,7 +80,7 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
     this.dialogRef.beforeClosed().subscribe((result) => {
       if (!result) {
-        this.unsavedChanges.pending = this.pendingStateBeforeDialogOpen;
+        this.unsavedChanges.pending.set(this.pendingStateBeforeDialogOpen);
       }
     });
   }

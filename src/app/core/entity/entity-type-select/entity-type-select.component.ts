@@ -1,20 +1,19 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
-  input,
   Input,
-  OnInit,
+  input,
+  ChangeDetectionStrategy,
 } from "@angular/core";
-import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
 } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
-import { EntityRegistry } from "../database-entity.decorator";
 import { EntityConstructor } from "../model/entity";
+import { EntityRegistry } from "../database-entity.decorator";
+import { MatFormFieldControl } from "@angular/material/form-field";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,10 +25,10 @@ import { EntityConstructor } from "../model/entity";
     { provide: MatFormFieldControl, useExisting: EntityTypeSelectComponent },
   ],
 })
-export class EntityTypeSelectComponent
-  extends BasicAutocompleteComponent<EntityConstructor, string>
-  implements OnInit
-{
+export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
+  EntityConstructor,
+  string
+> {
   @Input() override multi = false;
   @Input() override placeholder =
     $localize`:EntityTypeSelect placeholder:Select Record Type`;
@@ -40,9 +39,8 @@ export class EntityTypeSelectComponent
    */
   showInternalTypes = input(false);
 
-  private entityRegistry = inject(EntityRegistry);
-
-  private entityTypes = computed(() =>
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly availableEntityTypes = computed(() =>
     this.entityRegistry
       .getEntityTypes(!this.showInternalTypes())
       .map(({ value }) => value),
@@ -50,8 +48,9 @@ export class EntityTypeSelectComponent
 
   constructor() {
     super();
+
     effect(() => {
-      this.options = this.entityTypes();
+      this.options = this.availableEntityTypes();
     });
   }
 

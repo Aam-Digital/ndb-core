@@ -1,20 +1,19 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  inject,
   ChangeDetectionStrategy,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
+  output,
+  resource,
 } from "@angular/core";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
-import { Router } from "@angular/router";
 import { TableStateUrlService } from "../../common-components/entities-table/table-state-url.service";
 import { NgComponentOutlet } from "@angular/common";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { FilterService } from "../filter.service";
 import { DataFilter, Filter } from "../filters/filters";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -37,95 +36,112 @@ import { IconButtonComponent } from "../../common-components/icon-button/icon-bu
     IconButtonComponent,
   ],
 })
-export class FilterComponent<T extends Entity = Entity> implements OnChanges {
+export class FilterComponent<T extends Entity = Entity> {
   private filterGenerator = inject(FilterGeneratorService);
   private filterService = inject(FilterService);
-  private router = inject(Router);
   private readonly tableStateUrl = inject(TableStateUrlService);
 
   /**
    * The filter configuration from the config
    */
-  @Input() filterConfig: FilterConfig[];
+  filterConfig = input<FilterConfig[]>([]);
   /**
    * The type of entities that will be filtered
    */
-  @Input() entityType: EntityConstructor<T>;
+  entityType = input<EntityConstructor<T>>();
   /**
    * The list of entities. This is used to detect which options should be available
    */
-  @Input() entities: T[];
+  entities = input<T[]>([]);
   /**
    * If true, the filter state will be stored in the url and automatically applied on reload or navigation.
    * default `false`.
    */
-  @Input() useUrlQueryParams = false;
+  useUrlQueryParams = input(false);
   /**
    * If true, only filter options are shown, for which some entities pass the filter.
    * default `false`
    */
-  @Input() onlyShowRelevantFilterOptions = false;
+  onlyShowRelevantFilterOptions = input(false);
   /**
    * A string representation of the current filter state.
    * This can be used to display the active filters as a single string.
    */
-  @Input() filterString: string;
+  filterString = input("");
   /**
    * The filter query which is build by combining all selected filters.
    * This can be used as two-way-binding or through the `filterObjChange` output.
    */
-  @Input() filterObj: DataFilter<T>;
+  filterObj = input<DataFilter<T>>({});
   /**
    * An event emitter that notifies about updates of the filter.
    */
-  @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
+  filterObjChange = output<DataFilter<T>>();
   /**
    * An event emitter that notifies about updates to the filter string.
    */
-  @Output() filterStringChange = new EventEmitter<string>();
+  filterStringChange = output<string>();
 
-  filterSelections: Filter<T>[] = [];
-  urlPath: string;
-  hasActiveFilters: boolean = false;
+  filterSelections = linkedSignal<Filter<T>[]>(
+    () => this.generatedFilterSelections.value() ?? [],
+  );
+
+  hasActiveFilters = computed(() =>
+    this.filterSelections().some((f) => f.selectedOptionValues?.length > 0),
+  );
+
+  readonly showClearButton = computed(
+    () => this.hasActiveFilters() || !!this.filterString(),
+  );
+
+  private readonly generatedFilterSelections = resource({
+    params: () => ({
+      filterConfig: this.getEffectiveFilterConfig(),
+      entityType: this.entityType(),
+      entities: this.entities(),
+      onlyShowRelevantFilterOptions: this.onlyShowRelevantFilterOptions(),
+    }),
+    loader: async ({ params }) => {
+      if (!params.entityType) {
+        return [];
+      }
+
+      return this.filterGenerator.generate(
+        params.filterConfig,
+        params.entityType,
+        params.entities,
+        params.onlyShowRelevantFilterOptions,
+      );
+    },
+  });
 
   constructor() {
-    this.urlPath = getUrlWithoutParams(this.router);
-  }
-
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.filterConfig || changes.entityType || changes.entities) {
-      this.filterSelections = await this.filterGenerator.generate(
-        this.getEffectiveFilterConfig(),
-        this.entityType,
-        this.entities,
-        this.onlyShowRelevantFilterOptions,
+    effect(() => {
+      const selectionsWithUrlParams = this.loadUrlParams(
+        this.filterSelections(),
       );
-      for (const filter of this.filterSelections) {
+      this.applyFilterSelections(selectionsWithUrlParams);
+    });
+
+    effect((onCleanup) => {
+      const subscriptions = this.filterSelections().map((filter) =>
         filter.selectedOptionChange.subscribe((event) =>
           this.filterOptionSelected(filter, event),
-        );
-      }
-      // Check if there are any active filters which applied by codebase(for example in Todo List)
-      this.hasActiveFilters = this.filterSelections.some(
-        (f) => f.selectedOptionValues?.length > 0,
+        ),
       );
-
-      this.loadUrlParams();
-      this.applyFilterSelections();
-    }
+      onCleanup(() =>
+        subscriptions.forEach((subscription) => subscription.unsubscribe()),
+      );
+    });
   }
 
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
-    filter.selectedOptionValues = selectedOptions;
-    // It is only safe to update `hasActiveFilters` after the view is rendered.
-    setTimeout(() => {
-      this.hasActiveFilters = this.filterSelections.some(
-        (f) => f.selectedOptionValues?.length > 0,
-      );
-    });
-
-    this.applyFilterSelections();
-    if (this.useUrlQueryParams) {
+    const updatedSelections = this.updateSelectionsByFilterName(
+      filter.name,
+      selectedOptions,
+    );
+    this.applyFilterSelections(updatedSelections);
+    if (this.useUrlQueryParams()) {
       this.tableStateUrl.updateFilterParam(
         filter.name,
         selectedOptions.toString(),
@@ -134,19 +150,19 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     }
   }
 
-  private applyFilterSelections() {
-    const previousFilter: string = JSON.stringify(this.filterObj);
+  private applyFilterSelections(
+    selections: Filter<T>[] = this.filterSelections(),
+  ) {
+    const previousFilter: string = JSON.stringify(this.filterObj() ?? {});
 
-    const newFilter: DataFilter<T> = this.filterService.combineFilters<T>(
-      this.filterSelections,
-    );
+    const newFilter: DataFilter<T> =
+      this.filterService.combineFilters<T>(selections);
 
     if (previousFilter === JSON.stringify(newFilter)) {
       return;
     }
 
-    this.filterObj = newFilter;
-    this.filterObjChange.emit(this.filterObj);
+    this.filterObjChange.emit(newFilter);
   }
 
   /**
@@ -157,56 +173,107 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    * as a filter UI element.
    */
   private getEffectiveFilterConfig(): FilterConfig[] {
-    if (!this.useUrlQueryParams || !this.entityType) {
-      return this.filterConfig ?? [];
+    if (!this.useUrlQueryParams() || !this.entityType()) {
+      return this.filterConfig() ?? [];
     }
+
     const params = this.tableStateUrl.getFilterParams();
-    const configuredIds = new Set((this.filterConfig ?? []).map((f) => f.id));
+    const configuredIds = new Set((this.filterConfig() ?? []).map((f) => f.id));
     const extraConfigs: FilterConfig[] = Object.keys(params)
-      .filter((k) => !configuredIds.has(k) && this.entityType.schema.has(k))
+      .filter((k) => !configuredIds.has(k) && this.entityType().schema.has(k))
       .map((k) => ({ id: k }));
-    return [...(this.filterConfig ?? []), ...extraConfigs];
+
+    return [...(this.filterConfig() ?? []), ...extraConfigs];
   }
 
-  private loadUrlParams() {
-    if (!this.useUrlQueryParams) {
-      return;
+  private loadUrlParams(filterSelections: Filter<T>[]): Filter<T>[] {
+    if (!this.useUrlQueryParams()) {
+      return filterSelections;
     }
+
     const params = this.tableStateUrl.getFilterParams();
     const hasUrlParams = Object.keys(params).length > 0;
+    let hasChanges = false;
 
-    if (hasUrlParams) {
-      // When navigating from a dashboard link, reset defaults so only the
-      // URL-specified filters are active and counts match the dashboard widget.
-      this.hasActiveFilters = false;
-    }
+    const updatedSelections = filterSelections.map((filter) => {
+      let nextValues: string[] | undefined;
 
-    this.filterSelections.forEach((f) => {
-      if (params.hasOwnProperty(f.name)) {
-        this.hasActiveFilters = true;
-        f.selectedOptionValues = params[f.name]
+      if (Object.hasOwn(params, filter.name)) {
+        nextValues = params[filter.name]
           .split(",")
           .filter((value) => value !== "");
-      } else if (hasUrlParams) {
-        f.selectedOptionValues = [];
+      } else if (
+        hasUrlParams &&
+        (filter.selectedOptionValues?.length ?? 0) > 0
+      ) {
+        nextValues = [];
       }
+
+      if (nextValues === undefined) {
+        return filter;
+      }
+
+      if (
+        JSON.stringify(filter.selectedOptionValues ?? []) !==
+        JSON.stringify(nextValues)
+      ) {
+        hasChanges = true;
+        const clone = Object.assign(
+          Object.create(Object.getPrototypeOf(filter)),
+          filter,
+          { selectedOptionValues: nextValues },
+        );
+        return clone;
+      }
+
+      return filter;
     });
+
+    if (hasChanges) {
+      this.filterSelections.set(updatedSelections);
+      return updatedSelections;
+    }
+
+    return filterSelections;
   }
 
   clearAllFilters() {
-    this.filterSelections.forEach((filter) => {
-      filter.selectedOptionValues = [];
-      filter.selectedOptionChange.emit(filter.selectedOptionValues);
-    });
+    const updatedSelections = this.filterSelections().map((filter) =>
+      Object.assign(Object.create(Object.getPrototypeOf(filter)), filter, {
+        selectedOptionValues: [],
+      }),
+    );
 
-    this.hasActiveFilters = false;
+    this.filterSelections.set(updatedSelections);
+
+    updatedSelections.forEach((filter) => {
+      filter.selectedOptionChange.emit(filter.selectedOptionValues ?? []);
+    });
 
     this.filterObjChange.emit({});
     this.filterStringChange.emit("");
 
-    if (this.useUrlQueryParams) {
-      const filterKeys = this.filterSelections.map((f) => f.name);
+    if (this.useUrlQueryParams()) {
+      const filterKeys = this.filterSelections().map((f) => f.name);
       this.tableStateUrl.clearFilterParams(filterKeys, false);
     }
+  }
+
+  private updateSelectionsByFilterName(
+    filterName: string,
+    selectedOptions: string[],
+  ): Filter<T>[] {
+    const updatedSelections = this.filterSelections().map((currentFilter) =>
+      currentFilter.name === filterName
+        ? Object.assign(
+            Object.create(Object.getPrototypeOf(currentFilter)),
+            currentFilter,
+            { selectedOptionValues: selectedOptions },
+          )
+        : currentFilter,
+    );
+
+    this.filterSelections.set(updatedSelections);
+    return updatedSelections;
   }
 }

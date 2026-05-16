@@ -1,9 +1,9 @@
-@for (filter of filterSelections; track filter.name) {
+@for (filter of filterSelections(); track filter.name) {
   <ng-container
     *ngComponentOutlet="filter.component; inputs: { filterConfig: filter }"
   />
 }
-@if (hasActiveFilters || filterString) {
+@if (showClearButton()) {
   <div class="align-center flex-row gap-regular">
     <app-icon-button
       icon="times-circle"

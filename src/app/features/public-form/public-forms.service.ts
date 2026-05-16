@@ -234,8 +234,8 @@ export class PublicFormsService {
     }
 
     if (hasNewFields) {
-      this.unsavedChangesService.pending = false;
       await this.adminEntityService.setAndSaveEntityConfig(entityConstructor);
+      this.unsavedChangesService.pending.set(false);
     }
   }
 }

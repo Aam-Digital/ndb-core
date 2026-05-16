@@ -1,8 +1,8 @@
 <mat-form-field appearance="fill" class="full-width">
-  <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
+  <mat-label>{{ filterConfig().label || filterConfig().name }}</mat-label>
   <app-basic-autocomplete
-    [multi]="!filterConfig.singleSelectOnly"
-    [options]="filterConfig.options"
+    [multi]="!filterConfig().singleSelectOnly"
+    [options]="filterConfig().options"
     [formControl]="autocompleteControl"
     [optionToString]="getOptionLabel"
     [valueMapper]="getOptionValue"
@@ -14,8 +14,8 @@
           i18n
           class="util-button flex-grow"
           (click)="selectAll()"
-          [disabled]="!!filterConfig.singleSelectOnly"
-          [class.hidden]="!!filterConfig.singleSelectOnly"
+          [disabled]="!!filterConfig().singleSelectOnly"
+          [class.hidden]="!!filterConfig().singleSelectOnly"
         >
           Select All
         </button>

@@ -3,10 +3,9 @@ import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit
 import {
   Component,
   inject,
-  OnInit,
   ChangeDetectionStrategy,
-  computed,
   input,
+  linkedSignal,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -35,45 +34,33 @@ import { DefaultValueConfigStatic } from "../default-value-config-static";
     },
   ],
 })
-export class AdminDefaultValueStaticComponent
-  extends CustomFormControlDirective<DefaultValueConfigStatic>
-  implements OnInit
-{
-  entitySchemaField = input<EntitySchemaField>();
+export class AdminDefaultValueStaticComponent extends CustomFormControlDirective<DefaultValueConfigStatic> {
+  entitySchemaField = input.required<EntitySchemaField>();
 
   /** mapped from the entitySchemaField to use for the entity-field-edit field */
-  readonly targetFieldConfig = computed<FormFieldConfig | undefined>(() => {
-    const field = this.entitySchemaField();
-    if (!field) {
-      return undefined;
-    }
-    return {
-      ...field,
-      id: "defaultValueId", // overwrite the id with a static temporary one for our isolated form control here
-    };
-  });
+  targetFieldConfig = linkedSignal<FormFieldConfig>(() => ({
+    ...this.entitySchemaField(),
+    id: "defaultValueId", // overwrite the id with a static temporary one for our isolated form control here
+  }));
 
-  formControl: FormControl<string>;
-  staticvalueForm: EntityForm<Entity>;
+  formControl = new FormControl<unknown>(null);
+  staticvalueForm: EntityForm<Entity> = {
+    formGroup: new FormGroup({
+      defaultValueId: this.formControl,
+    }),
+  } as unknown as EntityForm<Entity>;
 
   private readonly entitySchemaService = inject(EntitySchemaService);
 
-  ngOnInit() {
-    this.formControl = new FormControl(this.getInternalValue(this.value));
-    this.formControl.valueChanges.subscribe((v) => this.emitNewValue(v));
-    const targetFieldConfig = this.targetFieldConfig();
-    if (!targetFieldConfig) {
-      return;
-    }
-
-    const formGroup = new FormGroup({
-      [targetFieldConfig.id]: this.formControl,
+  constructor() {
+    super();
+    this.formControl.setValue(this.getInternalValue(this.value), {
+      emitEvent: false,
     });
-    this.staticvalueForm = {
-      formGroup,
-    } as unknown as EntityForm<Entity>;
 
-    this.ngControl?.valueChanges.subscribe(
+    this.formControl.valueChanges.subscribe((v) => this.emitNewValue(v));
+
+    this.ngControl?.valueChanges?.subscribe(
       (newValue: DefaultValueConfigStatic) => {
         this.formControl.setValue(this.getInternalValue(newValue), {
           emitEvent: false,
@@ -83,9 +70,24 @@ export class AdminDefaultValueStaticComponent
     );
   }
 
+  override writeValue(
+    value: DefaultValueConfigStatic,
+    notifyFormControl = false,
+  ) {
+    super.writeValue(value, notifyFormControl);
+
+    const internalValue = this.getInternalValue(value);
+    if (
+      JSON.stringify(this.formControl.value) !== JSON.stringify(internalValue)
+    ) {
+      this.formControl.setValue(internalValue, { emitEvent: false });
+      setTimeout(() => this.formControl.updateValueAndValidity(), 0);
+    }
+  }
+
   private getInternalValue(defaultValueConfig: DefaultValueConfigStatic) {
     let value = defaultValueConfig?.value ?? null;
-    if (value) {
+    if (value !== null && value !== undefined) {
       value = this.entitySchemaService.valueToEntityFormat(
         value,
         this.entitySchemaField(),
@@ -101,7 +103,7 @@ export class AdminDefaultValueStaticComponent
    */
   private emitNewValue(newValue: any) {
     // to the outside we want to set the value in the database format for simplified storing in the config object
-    if (newValue) {
+    if (newValue !== null && newValue !== undefined) {
       newValue = this.entitySchemaService.valueToDatabaseFormat(
         newValue,
         this.entitySchemaField(),

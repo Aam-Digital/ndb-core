@@ -218,22 +218,22 @@ describe("EntityFormService", () => {
 
     form.formGroup.markAsDirty();
     form.formGroup.get("inactive").setValue(true);
-    expect(unsavedChanges.pending).toBe(true);
+    expect(unsavedChanges.pending()).toBe(true);
 
     TestBed.inject(EntityAbility).update([
       { action: "manage", subject: "all" },
     ]);
     await service.saveChanges(form, new Entity());
 
-    expect(unsavedChanges.pending).toBe(false);
+    expect(unsavedChanges.pending()).toBe(false);
 
     form.formGroup.markAsDirty();
     form.formGroup.get("inactive").setValue(true);
-    expect(unsavedChanges.pending).toBe(true);
+    expect(unsavedChanges.pending()).toBe(true);
 
     service.resetForm(form, new Entity());
 
-    expect(unsavedChanges.pending).toBe(false);
+    expect(unsavedChanges.pending()).toBe(false);
   });
 
   it("should disable fields that have readonlyAfterSet validator and have a value", async () => {
@@ -297,17 +297,17 @@ describe("EntityFormService", () => {
     formGroup.formGroup.markAsDirty();
     formGroup.formGroup.get("inactive").setValue(true);
 
-    expect(unsavedChanged.pending).toBe(true);
+    expect(unsavedChanged.pending()).toBe(true);
 
     await router.navigate(["test"]);
 
-    expect(unsavedChanged.pending).toBe(false);
+    expect(unsavedChanged.pending()).toBe(false);
 
     // Changes are not listened to anymore
     formGroup.formGroup.markAsDirty();
     formGroup.formGroup.get("inactive").setValue(true);
 
-    expect(unsavedChanged.pending).toBe(false);
+    expect(unsavedChanged.pending()).toBe(false);
   });
 
   it("should assign default values", async () => {

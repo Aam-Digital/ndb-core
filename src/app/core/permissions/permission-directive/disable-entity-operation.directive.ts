@@ -1,18 +1,16 @@
 import {
   ComponentRef,
+  DestroyRef,
   Directive,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
   TemplateRef,
   ViewContainerRef,
+  effect,
   inject,
+  input,
 } from "@angular/core";
 import { DisabledWrapperComponent } from "./disabled-wrapper.component";
 import { EntityActionPermission, EntitySubject } from "../permission-types";
 import { EntityAbility } from "../ability/entity-ability";
-import { Unsubscribe } from "@casl/ability";
 import { asArray } from "#src/app/utils/asArray";
 
 /**
@@ -23,12 +21,12 @@ import { asArray } from "#src/app/utils/asArray";
   selector: "[appDisabledEntityOperation]",
   standalone: true,
 })
-export class DisableEntityOperationDirective
-  implements OnInit, OnChanges, OnDestroy
-{
-  private templateRef = inject<TemplateRef<HTMLButtonElement>>(TemplateRef);
-  private viewContainerRef = inject(ViewContainerRef);
-  private ability = inject(EntityAbility);
+export class DisableEntityOperationDirective {
+  private readonly templateRef =
+    inject<TemplateRef<HTMLButtonElement>>(TemplateRef);
+  private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly ability = inject(EntityAbility);
+  private readonly destroyRef = inject(DestroyRef);
 
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
@@ -38,57 +36,58 @@ export class DisableEntityOperationDirective
    * If an array of subjects is provided, the element will only be disabled if the user
    * has permissions for none of them.
    */
-  @Input("appDisabledEntityOperation") arguments: {
-    operation: EntityActionPermission;
-    entity: EntitySubject | EntitySubject[];
-    field?: string;
-  };
+  arguments = input<
+    | {
+        operation: EntityActionPermission;
+        entity: EntitySubject | EntitySubject[];
+        field?: string;
+      }
+    | undefined
+  >(undefined, { alias: "appDisabledEntityOperation" });
 
-  private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
-  private text: string = $localize`:Missing permission:Your account does not have the required permission for this action.`;
-
-  private readonly unsubscribeAbilityUpdates: Unsubscribe;
+  private readonly wrapperComponent: ComponentRef<DisabledWrapperComponent> =
+    this.viewContainerRef.createComponent(DisabledWrapperComponent);
+  private readonly text = $localize`:Missing permission:Your account does not have the required permission for this action.`;
 
   constructor() {
-    this.unsubscribeAbilityUpdates = this.ability.on("updated", () =>
-      this.applyPermissions(),
-    );
+    this.wrapperComponent.setInput("template", this.templateRef);
+    this.wrapperComponent.setInput("text", this.text);
+    this.wrapperComponent.changeDetectorRef.detectChanges();
+
+    const unsubscribeAbilityUpdates = this.ability.on("updated", () => {
+      this.applyPermissions(this.arguments());
+    });
+    this.destroyRef.onDestroy(unsubscribeAbilityUpdates);
+
+    effect(() => {
+      this.applyPermissions(this.arguments());
+    });
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribeAbilityUpdates();
-  }
-
-  ngOnInit() {
-    this.wrapperComponent = this.viewContainerRef.createComponent(
-      DisabledWrapperComponent,
-    );
-    this.wrapperComponent.instance.template = this.templateRef;
-    this.wrapperComponent.instance.text = this.text;
-    this.applyPermissions();
-  }
-
-  ngOnChanges() {
-    this.applyPermissions();
-  }
-
-  private applyPermissions() {
-    if (
-      this.wrapperComponent &&
-      this.arguments?.operation &&
-      this.arguments?.entity
-    ) {
-      // Update the disabled property whenever the input values change
-      const entities = asArray(this.arguments.entity);
-      this.wrapperComponent.instance.elementDisabled = entities.every(
-        (entity) =>
-          this.ability.cannot(
-            this.arguments.operation,
-            entity,
-            this.arguments.field,
-          ),
-      );
-      this.wrapperComponent.instance.ngAfterViewInit();
+  private applyPermissions(
+    argumentsValue:
+      | {
+          operation: EntityActionPermission;
+          entity: EntitySubject | EntitySubject[];
+          field?: string;
+        }
+      | undefined,
+  ): void {
+    if (!argumentsValue?.operation || !argumentsValue?.entity) {
+      return;
     }
+
+    const entities = asArray(argumentsValue.entity);
+    this.wrapperComponent.setInput(
+      "elementDisabled",
+      entities.every((entity) =>
+        this.ability.cannot(
+          argumentsValue.operation,
+          entity,
+          argumentsValue.field,
+        ),
+      ),
+    );
+    this.wrapperComponent.changeDetectorRef.detectChanges();
   }
 }

@@ -2,10 +2,10 @@
   <mat-label i18n>Choose your language</mat-label>
 
   <mat-select
-    [value]="currentLocale"
+    [value]="currentLocale()"
     (selectionChange)="changeLocale($event.value)"
   >
-    @for (locale of availableLocales; track locale.id) {
+    @for (locale of availableLocales(); track locale.id) {
       <mat-option [value]="locale.id">
         {{ locale.label }}
       </mat-option>

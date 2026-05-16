@@ -3,7 +3,7 @@
 
   <div class="flex-row gap-regular align-center">
     <div class="flex-grow">
-      @switch (this.form.get("mode")?.value) {
+      @switch (selectedMode()) {
         @default {
           <app-admin-default-value-static
             formControlName="config"
@@ -31,7 +31,7 @@
       hideSingleSelectionIndicator
       style="flex: none"
     >
-      @for (strategy of modes; track strategy.mode) {
+      @for (strategy of modes(); track strategy.mode) {
         <mat-button-toggle
           [value]="strategy.mode"
           [matTooltip]="strategy.description"

@@ -92,7 +92,7 @@ describe("DashboardComponent", () => {
   });
 
   async function setWidgetsAndStabilize(widgets: DynamicComponentConfig[]) {
-    component.widgets = widgets;
+    fixture.componentRef.setInput("widgets", [...widgets]);
     fixture.detectChanges();
     await fixture.whenStable();
     await Promise.resolve();
@@ -127,24 +127,34 @@ describe("DashboardComponent", () => {
     ]);
     await setWidgetsAndStabilize(widgets);
     await vi.waitFor(() =>
-      expect(component.widgets).toEqual([widgets[0], widgets[1], widgets[3]]),
+      expect(component.permittedWidgets.value() ?? []).toEqual([
+        widgets[0],
+        widgets[1],
+        widgets[3],
+      ]),
     );
 
     // No read permissions
     ability.update([{ subject: "all", action: "update" }]);
     await setWidgetsAndStabilize(widgets);
-    await vi.waitFor(() => expect(component.widgets).toEqual([widgets[3]]));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toEqual([widgets[3]]),
+    );
 
     // All read permissions
     ability.update([{ subject: "all", action: "manage" }]);
     await setWidgetsAndStabilize(widgets);
-    await vi.waitFor(() => expect(component.widgets).toEqual(widgets));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toEqual(widgets),
+    );
   });
 
   it("should show birthday widget if user has access to any provided entity", async () => {
     ability.update([{ subject: "Child", action: "read" }]);
     await setWidgetsAndStabilize([{ component: "BirthdayDashboard" }]);
-    await vi.waitFor(() => expect(component.widgets).toHaveLength(1));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toHaveLength(1),
+    );
 
     await setWidgetsAndStabilize([
       {
@@ -152,7 +162,9 @@ describe("DashboardComponent", () => {
         config: { entities: { User: "birthday" } },
       },
     ]);
-    await vi.waitFor(() => expect(component.widgets).toHaveLength(0));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toHaveLength(0),
+    );
 
     await setWidgetsAndStabilize([
       {
@@ -160,7 +172,9 @@ describe("DashboardComponent", () => {
         config: { entities: { User: "birthday", Child: "dateOfBirth" } },
       },
     ]);
-    await vi.waitFor(() => expect(component.widgets).toHaveLength(1));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toHaveLength(1),
+    );
   });
 
   it("should show widget if user only have access to some entities", async () => {
@@ -171,7 +185,9 @@ describe("DashboardComponent", () => {
         config: { entityType: "Note" } as EntityCountDashboardConfig,
       },
     ]);
-    await vi.waitFor(() => expect(component.widgets).toHaveLength(0));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toHaveLength(0),
+    );
 
     ability.update([
       { subject: "Note", action: "manage", conditions: { category: "VISIT" } },
@@ -182,7 +198,9 @@ describe("DashboardComponent", () => {
         config: { entityType: "Note" } as EntityCountDashboardConfig,
       },
     ]);
-    await vi.waitFor(() => expect(component.widgets).toHaveLength(1));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toHaveLength(1),
+    );
   });
 
   it("should hide widgets if the user is missing the required role", async () => {
@@ -199,10 +217,14 @@ describe("DashboardComponent", () => {
 
     session.next({ name: "not_admin", id: "1", roles: ["user_app"] });
     await setWidgetsAndStabilize(widgets);
-    await vi.waitFor(() => expect(component.widgets).toEqual([widgets[1]]));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toEqual([widgets[1]]),
+    );
 
     session.next({ name: "admin", id: "2", roles: ["user_app", "admin_app"] });
     await setWidgetsAndStabilize(widgets);
-    await vi.waitFor(() => expect(component.widgets).toEqual(widgets));
+    await vi.waitFor(() =>
+      expect(component.permittedWidgets.value() ?? []).toEqual(widgets),
+    );
   });
 });

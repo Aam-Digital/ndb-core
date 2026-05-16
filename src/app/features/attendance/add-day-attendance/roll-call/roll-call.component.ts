@@ -353,7 +353,7 @@ export class RollCallComponent {
       attendance.status = status;
     }
     this.isDirty.set(true);
-    this.unsavedChanges.pending = true;
+    this.unsavedChanges.pending.set(true);
 
     this.goToParticipantWithIndex(this.currentIndex() + 1);
   }
@@ -392,7 +392,7 @@ export class RollCallComponent {
             text: $localize`:Discard changes made to a form:Discard`,
             click: (): boolean => {
               this.isDirty.set(false);
-              this.unsavedChanges.pending = false;
+              this.unsavedChanges.pending.set(false);
               this.location.back();
               return false;
             },
@@ -411,7 +411,7 @@ export class RollCallComponent {
       try {
         await this.entityMapper.save(entity);
         this.isDirty.set(false);
-        this.unsavedChanges.pending = false;
+        this.unsavedChanges.pending.set(false);
       } catch (e) {
         Logging.warn("Could not save attendance event", e);
         this.confirmationDialog.getConfirmation(

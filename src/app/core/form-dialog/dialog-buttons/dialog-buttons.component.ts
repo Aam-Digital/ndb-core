@@ -95,7 +95,7 @@ export class DialogButtonsComponent<E extends Entity> {
     // This happens before the `canDeactivate` check and therefore does not warn when leaving
     this.dialog
       .afterClosed()
-      .subscribe(() => (this.unsavedChanges.pending = false));
+      .subscribe(() => this.unsavedChanges.pending.set(false));
   }
 
   async save() {
@@ -115,7 +115,7 @@ export class DialogButtonsComponent<E extends Entity> {
   }
 
   cancel() {
-    this.unsavedChanges.pending = false;
+    this.unsavedChanges.pending.set(false);
     this.close();
   }
 
@@ -123,7 +123,7 @@ export class DialogButtonsComponent<E extends Entity> {
     this.dialog?.close(result);
     this.closeView.emit(result);
 
-    this.unsavedChanges.pending = false;
+    this.unsavedChanges.pending.set(false);
   }
 
   onAction(action: string) {

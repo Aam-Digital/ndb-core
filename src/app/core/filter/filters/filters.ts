@@ -79,6 +79,14 @@ export abstract class Filter<T extends Entity> {
     public label: string = name,
   ) {}
 
+  clone(changes: Partial<this> = {}): this {
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      changes,
+    );
+  }
+
   abstract getFilter(): DataFilter<T>;
 }
 

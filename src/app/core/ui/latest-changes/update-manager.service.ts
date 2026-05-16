@@ -102,7 +102,7 @@ export class UpdateManagerService {
       return;
     }
 
-    if (this.unsavedChanges.pending) {
+    if (this.unsavedChanges.pending()) {
       // app cannot be safely reloaded
       localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,

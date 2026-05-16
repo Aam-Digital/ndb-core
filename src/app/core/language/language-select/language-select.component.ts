@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
+  signal,
 } from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
@@ -21,15 +22,12 @@ import { LanguageService } from "#src/app/core/language/language.service";
 export class LanguageSelectComponent {
   private readonly languageService = inject(LanguageService);
 
-  @Input() availableLocales: ConfigurableEnumValue[] = [];
+  availableLocales = input<ConfigurableEnumValue[]>([]);
 
-  currentLocale: string;
+  currentLocale = signal(this.languageService.getCurrentLocale());
 
-  constructor() {
-    this.currentLocale = this.languageService.getCurrentLocale();
-  }
-
-  changeLocale(lang: string) {
+  changeLocale(lang: string): void {
+    this.currentLocale.set(lang);
     this.languageService.switchLocale(lang);
   }
 }
