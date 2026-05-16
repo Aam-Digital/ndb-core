@@ -10,6 +10,7 @@ import { generateChild } from "#src/app/child-dev-project/children/demo-data-gen
 import { Todo } from "#src/app/features/todos/model/todo.js";
 
 const TASK_SUBJECT = "<PLAN CAREER COUNSELLING>";
+const ARCHIVE_TASK_SUBJECT = "<ARCHIVE TASK>";
 
 test("Add a new task record to the list", async ({ page }) => {
   const users = generateUsers();
@@ -280,33 +281,54 @@ test("Logged-in users Tasks list displayed in the Dashboard", async ({
   ).toBeVisible();
 });
 
-test("Archive a task hides it from the list", async ({ page }) => {
+test("Task lifecycle: archive hides task; complete moves it to completed filter", async ({
+  page,
+}) => {
   const users = generateUsers();
   const [, demoAdmin] = users;
 
-  // Pre-existing task with no startDate so it is visible under the default filter
+  const child1 = generateChild({ name: "Anand Trivedi" });
+  const child2 = generateChild({ name: "Anand Nehru" });
+  const child3 = generateChild({ name: "Arun Kapoor" });
+
+  // Two pre-existing tasks; no startDate so both are visible under the default filter
   const taskToArchive = Todo.create({
-    subject: TASK_SUBJECT,
+    subject: ARCHIVE_TASK_SUBJECT,
     deadline: new Date("2025-02-28"),
     assignedTo: [demoAdmin.getId()],
   });
+  const taskToComplete = Todo.create({
+    subject: TASK_SUBJECT,
+    deadline: new Date("2025-02-28"),
+    assignedTo: [demoAdmin.getId()],
+    relatedEntities: [child1.getId(), child2.getId(), child3.getId()],
+  });
 
-  await loadApp(page, [...users, taskToArchive]);
+  await loadApp(page, [
+    ...users,
+    child1,
+    child2,
+    child3,
+    taskToArchive,
+    taskToComplete,
+  ]);
 
   // When I click on Tasks from the Main Menu
   await page.getByRole("navigation").getByText("Tasks").click();
 
-  // And I click on the record with the subject
-  await page.getByRole("cell", { name: TASK_SUBJECT }).click();
+  // --- Archive flow ---
+
+  await page.getByRole("cell", { name: ARCHIVE_TASK_SUBJECT }).click();
 
   const dialog = page.getByRole("dialog");
 
-  // Then the form is displayed and the "Archive" button is shown as a primary
-  // action in the dialog header (primaryAction: true, showExpanded: true)
+  // The "Archive" button is shown as a primary action in the dialog header
   await dialog.getByRole("button", { name: "Archive" }).click();
 
   // A snackbar confirmation message is shown
-  await expect(page.getByText(`"${TASK_SUBJECT}" archived`)).toBeVisible();
+  await expect(
+    page.getByText(`"${ARCHIVE_TASK_SUBJECT}" archived`),
+  ).toBeVisible();
 
   // The dialog shows the archived info card below the task header
   await expect(
@@ -327,36 +349,12 @@ test("Archive a task hides it from the list", async ({ page }) => {
 
   // The archived task is no longer visible under the default "Currently Active" filter
   await expect(
-    page.getByRole("cell", { name: TASK_SUBJECT }),
+    page.getByRole("cell", { name: ARCHIVE_TASK_SUBJECT }),
   ).not.toBeVisible();
-});
 
-test("Complete a task that is related to a child", async ({ page }) => {
-  const users = generateUsers();
-  const [, demoAdmin] = users;
+  // --- Complete flow ---
 
-  const child1 = generateChild({ name: "Anand Trivedi" });
-  const child2 = generateChild({ name: "Anand Nehru" });
-  const child3 = generateChild({ name: "Arun Kapoor" });
-
-  // Pre-existing task with three related children; no startDate so it is
-  // visible under the default "Currently Active" filter
-  const taskToComplete = Todo.create({
-    subject: TASK_SUBJECT,
-    deadline: new Date("2025-02-28"),
-    assignedTo: [demoAdmin.getId()],
-    relatedEntities: [child1.getId(), child2.getId(), child3.getId()],
-  });
-
-  await loadApp(page, [...users, child1, child2, child3, taskToComplete]);
-
-  // When I click on Tasks from the Main Menu
-  await page.getByRole("navigation").getByText("Tasks").click();
-
-  // And I click on the record with the subject
   await page.getByRole("cell", { name: TASK_SUBJECT }).click();
-
-  const dialog = page.getByRole("dialog");
 
   // Click "Edit" to enter edit mode — the "Complete Task" button requires the
   // form to be in edit mode before it can be activated
@@ -397,6 +395,11 @@ test("Complete a task that is related to a child", async ({ page }) => {
   // The "completed by" user is shown in the list row
   const taskRow = page.getByRole("row").filter({ hasText: TASK_SUBJECT });
   await expect(taskRow.getByText(/by demo-admin on/)).toBeVisible();
+
+  // Wait for the "Assigned to" filter chip to finish rendering before screenshot
+  await expect(
+    page.locator("mat-form-field").filter({ hasText: "Assigned to" }),
+  ).toContainText("demo-admin");
 
   // [screenshot] table view showing the completed column
   await argosScreenshot(page, "task-completed-table");
