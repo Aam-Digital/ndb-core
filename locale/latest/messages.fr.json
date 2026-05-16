@@ -1424,5 +1424,13 @@
   "7398595580858143195": "Age must be at most {$PH} years",
   "303031625814234366": "Date must be on or after {$PH}",
   "8633762438039370064": "Date must be on or before {$PH}",
-  "8134695558272106554": "Please enter a valid email"
+  "8134695558272106554": "Please enter a valid email",
+  "8265660029086252302": "Open map in popup",
+  "5367188559446372967": "Open map properties",
+  "3698081308217397892": "Could not determine current record.",
+  "adminNoteDetails.topFormHeader": "Top Form",
+  "adminNoteDetails.middleFormHeader": "Middle Form",
+  "adminNoteDetails.bottomFormHeader": "Bottom Form",
+  "4566201598079129347": "add element",
+  "8928798545994192560": "Failed to load user account"
 }
