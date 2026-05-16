@@ -31,18 +31,19 @@ export class EntityArchivedInfoComponent {
 
   constructor() {
     effect((onCleanup) => {
-      const entity = this.displayEntity();
+      const entity = this.entity();
       if (!entity) {
         return;
       }
       const sub = this.entityMapper
         .receiveUpdates(entity.getType())
         .subscribe((update) => {
-          if (update.entity.getId() === this.displayEntity()?.getId()) {
+          if (update.entity.getId() === entity.getId()) {
             this.displayEntity.set(update.entity);
           }
         });
       onCleanup(() => sub.unsubscribe());
     });
+  }
   }
 }
