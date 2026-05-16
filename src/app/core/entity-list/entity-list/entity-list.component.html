@@ -3,17 +3,17 @@
   <div>
     <!-- Header bar; contains the title on the left and controls on the right -->
     <app-view-title [ngStyle]="offsetFilterStyle">
-      {{ title }}
+      {{ title() }}
     </app-view-title>
 
     <app-view-actions>
-      @if (selectedRows) {
+      @if (selectedRows()) {
         <!-- Bulk actions -->
         <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
       } @else {
         <div class="flex-row gap-regular">
           <app-entity-create-button
-            [entityType]="entityConstructor"
+            [entityType]="entityConstructor()!"
             (entityCreate)="addNew()"
           ></app-entity-create-button>
           <button
@@ -30,12 +30,12 @@
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
-      @if (!!allEntities) {
+      @if (!!allEntities()) {
         <app-filter
           class="flex-row gap-regular flex-wrap"
-          [filterConfig]="filters"
-          [entityType]="entityConstructor"
-          [entities]="allEntities"
+          [filterConfig]="filters()"
+          [entityType]="entityConstructor()!"
+          [entities]="allEntities()"
           [useUrlQueryParams]="true"
           [(filterObj)]="filterObj"
           [filterString]="filterString"
@@ -56,7 +56,7 @@
               <mat-tab
                 [label]="item.name"
                 angulartics2On="click"
-                [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+                [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
                 angularticsAction="list_column_view"
                 [angularticsLabel]="item.name"
               ></mat-tab>
@@ -71,7 +71,7 @@
   <!-- Mobile version -->
   <div>
     <app-view-title [disableBackButton]="true">
-      <h2>{{ title }}</h2>
+      <h2>{{ title() }}</h2>
     </app-view-title>
     <app-view-actions>
       <div class="flex-row full-width">
@@ -86,7 +86,7 @@
       </div>
     </app-view-actions>
 
-    @if (selectedRows) {
+    @if (selectedRows()) {
       <div class="bulk-action-spacing">
         <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
       </div>
@@ -127,21 +127,21 @@
 
 <ng-template #subrecord>
   <app-entities-table
-    [entityType]="entityConstructor"
-    [records]="allEntities"
-    [customColumns]="columns"
+    [entityType]="entityConstructor()!"
+    [records]="allEntities()"
+    [customColumns]="columns()"
     [editable]="false"
-    [clickMode]="clickMode"
+    [clickMode]="clickMode()"
     (entityClick)="onRowClick($event)"
     [columnsToDisplay]="columnsToDisplay"
-    [filter]="filterObj"
-    [sortBy]="defaultSort"
+    [filter]="filterObj()"
+    [sortBy]="defaultSort()"
     [(selectedRecords)]="selectedRows"
-    [selectable]="!!selectedRows"
-    [showInactive]="showInactive"
+    [selectable]="!!selectedRows()"
+    [showInactive]="showInactive()"
     (filteredRecordsChange)="filteredData = $event"
     [filterFreetext]="filterFreetext"
-    [showEntityColor]="showEntityColor"
+    [showEntityColor]="showEntityColor()"
   ></app-entities-table>
 </ng-template>
 
@@ -152,9 +152,9 @@
       (click)="addNew()"
       angulartics2On="click"
       angularticsCategory="UserAction"
-      [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
+      [angularticsAction]="title().toLowerCase().replace(' ', '_') + '_add_new'"
       *appDisabledEntityOperation="{
-        entity: entityConstructor,
+        entity: entityConstructor()!,
         operation: 'create',
       }"
     >
@@ -183,7 +183,7 @@
     mat-menu-item
     (click)="openExportDialog()"
     angulartics2On="click"
-    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
     angularticsAction="list_export"
     matTooltip="Download records as CSV or XLSX"
     i18n-matTooltip
@@ -200,10 +200,10 @@
   <button
     mat-menu-item
     angulartics2On="click"
-    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
     angularticsAction="import_file"
     [routerLink]="['/import']"
-    [queryParams]="{ entityType: entityConstructor?.ENTITY_TYPE }"
+    [queryParams]="{ entityType: entityConstructor()?.ENTITY_TYPE }"
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
@@ -215,7 +215,7 @@
 
   <button
     mat-menu-item
-    (click)="selectedRows = []"
+    (click)="selectedRows.set([])"
     matTooltip="Select multiple records for bulk actions like duplicating or deleting"
     i18n-matTooltip
     matTooltipPosition="before"
@@ -244,11 +244,11 @@
     </button>
   }
 
-  @if (!entityConstructor.isInternalEntity) {
+  @if (!entityConstructor()?.isInternalEntity) {
     <button
       mat-menu-item
       [routerLink]="['/deduplication/review-duplicates']"
-      [queryParams]="{ entityType: entityConstructor.ENTITY_TYPE }"
+      [queryParams]="{ entityType: entityConstructor()?.ENTITY_TYPE }"
     >
       <fa-icon
         class="standard-icon-with-text color-accent"
@@ -261,11 +261,11 @@
   @if (
     ("update"
       | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
-      | async) && !entityConstructor.isInternalEntity
+      | async) && !entityConstructor()?.isInternalEntity
   ) {
     <button
       mat-menu-item
-      [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
+      [routerLink]="['/admin/entity', entityConstructor()?.ENTITY_TYPE]"
       [queryParams]="{ mode: 'list' }"
       queryParamsHandling="merge"
     >
@@ -281,10 +281,10 @@
 </mat-menu>
 
 <ng-template #bulkActions>
-  @if (!!selectedRows) {
+  @if (!!selectedRows()) {
     <app-entity-bulk-actions
-      [entities]="selectedRows"
-      (resetBulkActionMode)="selectedRows = undefined"
+      [entities]="selectedRows()"
+      (resetBulkActionMode)="selectedRows.set(undefined)"
     >
     </app-entity-bulk-actions>
   }

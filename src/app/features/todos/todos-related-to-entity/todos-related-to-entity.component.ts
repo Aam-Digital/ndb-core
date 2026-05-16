@@ -1,19 +1,20 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { Todo } from "../model/todo";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
-import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
-import { FilterService } from "../../../core/filter/filter.service";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
+import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
+import { DataFilter } from "../../../core/filter/filters/filters";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { Todo } from "../model/todo";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -27,12 +28,12 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   private formDialog = inject(FormDialogService);
   private dbIndexingService = inject(DatabaseIndexingService);
 
-  override entityCtr = Todo;
-  override _columns: FormFieldConfig[] =
-    RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
+  override entityCtr = signal(Todo);
 
-  // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
-  override filter: DataFilter<Todo> = { isActive: true };
+  protected override getDefaultColumns(): FormFieldConfig[] {
+    return RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
+  }
+
   backgroundColorFn = (r: Todo) => {
     if (!r.isActive) {
       return "#e0e0e0";
@@ -42,21 +43,26 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   };
 
   override getData() {
-    if (Array.isArray(this.property)) {
+    const relationProperty = this.relationProperty();
+    if (Array.isArray(relationProperty)) {
       return super.getData();
     }
 
     // TODO: move this generic index creation into schema
+    const relationPropertyKey = relationProperty as keyof Todo;
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
       Todo,
-      this.property as keyof Todo,
+      relationPropertyKey,
       "deadline",
     );
-    const entityId = this.entity.getId();
+    const entityId = this.entity()?.getId();
+    if (!entityId) {
+      return Promise.resolve([]);
+    }
     return this.dbIndexingService.queryIndexDocs(
       Todo,
-      "todo_index/by_" + this.property,
+      "todo_index/by_" + relationPropertyKey,
       {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],
@@ -68,9 +74,14 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   public getNewEntryFunction(): () => Todo {
     return () => {
       const newEntry = new Todo();
-      newEntry.relatedEntities = [this.entity.getId()];
+      const entityId = this.entity()?.getId();
+      newEntry.relatedEntities = entityId ? [entityId] : [];
       return newEntry;
     };
+  }
+
+  protected override initFilter(): DataFilter<Todo> {
+    return { isActive: true, ...super.initFilter() };
   }
 
   showDetails(entity: Todo) {

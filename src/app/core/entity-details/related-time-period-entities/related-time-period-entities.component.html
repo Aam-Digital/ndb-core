@@ -1,4 +1,4 @@
-@if (!hasCurrentlyActiveEntry && !!data) {
+@if (!hasCurrentlyActiveEntry() && data() !== undefined) {
   <app-pill class="hint-badge">
     Currently there is no active entry. To add a new entry, click on the
     <fa-icon class="color-accent" aria-label="add" icon="plus-circle"></fa-icon>
@@ -7,19 +7,19 @@
 }
 
 <app-entities-table
-  [entityType]="entityCtr"
-  [records]="data"
-  [filter]="filter"
-  [customColumns]="_columns"
+  [entityType]="entityCtr()!"
+  [records]="data()"
+  [filter]="filterObj()"
+  [customColumns]="_columns()"
   [newRecordFactory]="createNewRecordFactory()"
-  [getBackgroundColor]="showInactive ? backgroundColorFn : undefined"
-  [clickMode]="clickMode"
+  [getBackgroundColor]="showInactive() ? backgroundColorFn : undefined"
+  [clickMode]="clickMode()"
   [(showInactive)]="showInactive"
 >
 </app-entities-table>
 
 <app-custom-form-link-button
-  [linkedEntity]="entity"
-  [formEntityType]="entityCtr"
+  [linkedEntity]="entity()"
+  [formEntityType]="entityCtr()!"
 >
 </app-custom-form-link-button>

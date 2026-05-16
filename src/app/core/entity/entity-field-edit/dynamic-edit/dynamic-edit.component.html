@@ -1,10 +1,10 @@
 <ng-container
   [appDynamicComponent]="{
-    component: formFieldConfig.editComponent,
+    component: formFieldConfig()?.editComponent,
     config: {
       ngControl: ngControl,
-      formFieldConfig: formFieldConfig,
-      entity: entity,
+      formFieldConfig: formFieldConfig(),
+      entity: entity(),
     },
   }"
 >

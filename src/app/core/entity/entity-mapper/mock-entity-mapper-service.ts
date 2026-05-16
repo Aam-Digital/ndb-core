@@ -6,11 +6,10 @@ import { UpdatedEntity } from "../model/entity-update";
 import { Provider } from "@angular/core";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { vi } from "vitest";
 
 export function createEntityMapperSpyObj() {
   return {
-    receiveUpdates: vi.fn().mockReturnValue(NEVER),
+    receiveUpdates: () => NEVER,
   };
 }
 

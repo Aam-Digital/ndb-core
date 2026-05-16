@@ -47,7 +47,7 @@ export default {
 
 const Template: StoryFn<
   RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>
-> = (args: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>) => ({
+> = (args) => ({
   component: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>,
   props: args,
 });

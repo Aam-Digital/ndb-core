@@ -1,7 +1,7 @@
 import {
   Component,
+  computed,
   inject,
-  OnInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Note } from "../model/note";
@@ -28,47 +28,49 @@ import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-def
   templateUrl: "./notes-related-to-entity.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
-export class NotesRelatedToEntityComponent
-  extends RelatedEntitiesComponent<Note>
-  implements OnInit
-{
+export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note> {
   private childrenService = inject(ChildrenService);
   private formDialog = inject(FormDialogService);
 
-  override entityCtr = Note;
-  override _columns: FormFieldConfig[] =
-    RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns;
+  override entityCtr = computed(() => Note);
 
-  /**
-   * returns the color for a note; passed to the entity subrecord component
-   * @param note note to get color for
-   */
-  getColor = (note: Note) => note?.getColor();
-  newRecordFactory = this.createNewRecordFactory();
-
-  override ngOnInit() {
-    if (this.entity.getType() === "Child") {
-      // When displaying notes for a child, use attendance color highlighting
-      this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
-    }
-    return super.ngOnInit();
+  protected override getDefaultColumns(): FormFieldConfig[] {
+    return structuredClone(
+      RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns,
+    );
   }
 
+  readonly getColor = computed(() => {
+    if (this.entity()?.getType() === "Child") {
+      return (note: Note) => note?.getColorForId(this.entity()?.getId());
+    }
+    return (note: Note) => note?.getColor();
+  });
+  newRecordFactory = this.createNewRecordFactory();
+
   override getData() {
-    return this.childrenService.getNotesRelatedTo(this.entity.getId());
+    const entityId = this.entity()?.getId();
+    if (!entityId) {
+      return Promise.resolve([]);
+    }
+    return this.childrenService.getNotesRelatedTo(entityId);
   }
 
   override createNewRecordFactory() {
     return () => {
       const newNote = super.createNewRecordFactory()();
 
-      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+      const entity = this.entity();
+      if (!entity) {
+        return newNote;
+      }
+      if (entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
         this.specialLinkingForChildSchoolRelation(newNote);
       }
 
       for (const e of [
-        this.entity.getId(),
-        ...this.getIndirectlyRelatedEntityIds(this.entity),
+        entity.getId(),
+        ...this.getIndirectlyRelatedEntityIds(entity),
       ]) {
         if (!this.isAlreadyLinked(newNote, e)) {
           newNote.relatedEntities.push(e);
@@ -82,7 +84,7 @@ export class NotesRelatedToEntityComponent
   private specialLinkingForChildSchoolRelation(newNote: Note) {
     //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
     for (const childId of asArray(
-      (this.entity as ChildSchoolRelation).childId,
+      (this.entity() as ChildSchoolRelation).childId,
     )) {
       if (childId) {
         newNote.children.push(childId);
@@ -90,7 +92,7 @@ export class NotesRelatedToEntityComponent
     }
 
     for (const schooldId of asArray(
-      (this.entity as ChildSchoolRelation).schoolId,
+      (this.entity() as ChildSchoolRelation).schoolId,
     )) {
       if (schooldId) {
         newNote.schools.push(schooldId);

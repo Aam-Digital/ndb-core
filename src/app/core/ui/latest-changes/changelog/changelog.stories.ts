@@ -47,7 +47,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ChangelogComponent> = (args: ChangelogComponent) => ({
+const Template: StoryFn<ChangelogComponent> = (args) => ({
   component: ChangelogComponent,
   props: args,
 });

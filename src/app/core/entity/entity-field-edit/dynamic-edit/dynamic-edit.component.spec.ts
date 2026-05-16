@@ -16,9 +16,9 @@ describe("DynamicEditComponent", () => {
     fixture = TestBed.createComponent(DynamicEditComponent);
     component = fixture.componentInstance;
 
-    component.formFieldConfig = {
+    fixture.componentRef.setInput("formFieldConfig", {
       id: "testField",
-    };
+    });
 
     fixture.detectChanges();
   });

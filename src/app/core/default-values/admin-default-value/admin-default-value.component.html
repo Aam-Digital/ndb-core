@@ -7,7 +7,7 @@
         @default {
           <app-admin-default-value-static
             formControlName="config"
-            [entitySchemaField]="entitySchemaField"
+            [entitySchemaField]="entitySchemaField()"
           ></app-admin-default-value-static>
         }
         @case ("dynamic") {
@@ -18,8 +18,8 @@
         @case ("inherited-field") {
           <app-admin-inherited-field
             formControlName="config"
-            [entityType]="entityType"
-            [entitySchemaField]="entitySchemaField"
+            [entityType]="entityType()"
+            [entitySchemaField]="entitySchemaField()"
           ></app-admin-inherited-field>
         }
       }

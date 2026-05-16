@@ -14,9 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<EntityArchivedInfoComponent> = (
-  args: EntityArchivedInfoComponent,
-) => ({
+const Template: StoryFn<EntityArchivedInfoComponent> = (args) => ({
   props: args,
 });
 
