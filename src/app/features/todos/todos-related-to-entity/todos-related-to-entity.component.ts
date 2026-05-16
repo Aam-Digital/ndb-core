@@ -1,24 +1,20 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
-  ChangeDetectionStrategy,
   signal,
 } from "@angular/core";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { Todo } from "../model/todo";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
-import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
-import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
-import { FilterService } from "../../../core/filter/filter.service";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
+import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
+import { DataFilter } from "../../../core/filter/filters/filters";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { Todo } from "../model/todo";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -47,16 +43,17 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   };
 
   override getData() {
-    if (Array.isArray(this.relationProperty)) {
+    const relationProperty = this.relationProperty();
+    if (Array.isArray(relationProperty)) {
       return super.getData();
     }
 
     // TODO: move this generic index creation into schema
-    const relationProperty = this.relationProperty as keyof Todo;
+    const relationPropertyKey = relationProperty as keyof Todo;
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
       Todo,
-      relationProperty,
+      relationPropertyKey,
       "deadline",
     );
     const entityId = this.entity()?.getId();
@@ -65,7 +62,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     }
     return this.dbIndexingService.queryIndexDocs(
       Todo,
-      "todo_index/by_" + relationProperty,
+      "todo_index/by_" + relationPropertyKey,
       {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],

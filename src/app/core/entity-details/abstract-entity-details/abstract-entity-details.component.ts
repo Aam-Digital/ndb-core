@@ -100,32 +100,36 @@ export abstract class AbstractEntityDetailsComponent {
     if (!ctor) return;
 
     this.isLoading.set(true);
-
-    if (id === "new") {
-      if (this.ability.cannot("create", ctor)) {
-        this.router.navigate([""]);
+    try {
+      if (id === "new") {
+        if (this.ability.cannot("create", ctor)) {
+          await this.router.navigate([""]);
+          return;
+        }
+        this.entity.set(new ctor());
         return;
       }
-      this.entity.set(new ctor());
-      this.isLoading.set(false);
-      return;
-    }
 
-    try {
-      const loaded = await this.entityMapperService.load(ctor, id);
-      if (isCancelled()) return;
+      const cancelledLoad = Symbol("cancelledLoad");
+      const loaded: Entity | null | typeof cancelledLoad =
+        await this.entityMapperService.load(ctor, id).catch((error) => {
+          if (isCancelled()) {
+            return cancelledLoad;
+          }
+          if (error?.status !== 404) {
+            Logging.warn("Error loading record", error);
+          }
+          return null;
+        });
+
+      if (isCancelled() || loaded === cancelledLoad) return;
       this.entity.set(loaded);
-    } catch (error) {
-      if (isCancelled()) return;
-      if (error?.status !== 404) {
-        Logging.warn("Error loading record", error);
-      }
-      this.entity.set(null);
-    }
 
-    if (!this.entity()) {
-      await this.router.navigate(["/404"]);
+      if (!this.entity()) {
+        await this.router.navigate(["/404"]);
+      }
+    } finally {
+      this.isLoading.set(false);
     }
-    this.isLoading.set(false);
   }
 }

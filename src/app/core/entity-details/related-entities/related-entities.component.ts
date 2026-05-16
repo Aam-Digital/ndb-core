@@ -3,38 +3,38 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
   model,
   signal,
-  inject,
   untracked,
 } from "@angular/core";
-import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import { Subscription } from "rxjs";
-import { applyUpdate } from "../../entity/model/entity-update";
 import {
   ScreenSize,
   ScreenWidthObserver,
 } from "../../../utils/media/screen-size-observer.service";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
 } from "../../common-components/entity-form/FormConfig";
-import { DataFilter } from "../../filter/filters/filters";
-import { FilterService } from "../../filter/filter.service";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
-import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { applyUpdate } from "../../entity/model/entity-update";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { FilterService } from "../../filter/filter.service";
+import { DataFilter } from "../../filter/filters/filters";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -134,7 +134,18 @@ export class RelatedEntitiesComponent<E extends Entity> {
       return this.entityRegistry.get(entityType) as EntityConstructor<E>;
     },
   );
-  protected relationProperty: string | string[];
+  protected readonly relationProperty = computed<string | string[]>(() => {
+    const entity = this.entity();
+    const entityCtr = this.entityCtr();
+    if (!entity || !entityCtr) {
+      return [];
+    }
+
+    const resolvedProperty = this.property() ?? this.getProperty();
+    return typeof resolvedProperty === "string"
+      ? this.resolvePropertyPath(resolvedProperty)
+      : resolvedProperty.map((p) => this.resolvePropertyPath(p));
+  });
   readonly filterObj = signal<DataFilter<E>>({});
   private readonly currentScreenSize = signal(
     this.screenWidthObserver.currentScreenSize(),
@@ -162,18 +173,11 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   private async initData(isCancelled: () => boolean = () => false) {
     const entity = this.entity();
-    const property = this.property();
     const entityCtr = this.entityCtr();
 
     if (!entity || !entityCtr) {
       return;
     }
-    const resolvedProperty = property ?? this.getProperty();
-    this.relationProperty =
-      typeof resolvedProperty === "string"
-        ? this.resolvePropertyPath(resolvedProperty)
-        : resolvedProperty.map((p) => this.resolvePropertyPath(p));
-
     if (isCancelled()) return;
     const data = await this.getData();
     if (isCancelled()) return;
@@ -262,12 +266,13 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   protected initFilter(): DataFilter<E> {
     const filter: DataFilter<E> = { ...(this.filter() ?? {}) };
-    if (this.relationProperty) {
+    const relationProperty = this.relationProperty();
+    if (relationProperty) {
       // only show related entities
-      if (typeof this.relationProperty === "string") {
-        Object.assign(filter, this.getFilterForProperty(this.relationProperty));
-      } else if (this.relationProperty.length > 0) {
-        filter["$or"] = this.relationProperty.map((prop) =>
+      if (typeof relationProperty === "string") {
+        Object.assign(filter, this.getFilterForProperty(relationProperty));
+      } else if (relationProperty.length > 0) {
+        filter["$or"] = relationProperty.map((prop) =>
           this.getFilterForProperty(prop),
         );
       }
