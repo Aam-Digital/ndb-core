@@ -4,9 +4,9 @@
     <mat-calendar
       class="calendar"
       (selectedChange)="selectedRangeChange($event)"
-      [selected]="selectedRangeValue"
-      [comparisonStart]="comparisonRange.start"
-      [comparisonEnd]="comparisonRange.end"
+      [selected]="selectedRangeValue()"
+      [comparisonStart]="comparisonRange().start"
+      [comparisonEnd]="comparisonRange().end"
     >
     </mat-calendar>
     <div class="panel">
@@ -16,7 +16,7 @@
         color="primary"
         (click)="selectRangeAndClose('empty')"
         [class.selected-option]="
-          filter.selectedOptionValues[0] === emptyFilterOptionKey
+          selectedOptionValues()[0] === emptyFilterOptionKey
         "
       >
         <span class="not-defined-label" i18n="Filter option label">
@@ -30,13 +30,13 @@
         (mouseenter)="preselectAllRange()"
         (mouseleave)="unselectRange()"
         (click)="selectRangeAndClose('all')"
-        [class.selected-option]="filter.selectedOptionValues.length === 0"
+        [class.selected-option]="selectedOptionValues().length === 0"
         i18n
       >
         All
       </button>
       @for (
-        item of filter.rangeOptions;
+        item of rangeOptions();
         track item;
         let selectedIndexOfDateRanges = $index
       ) {
@@ -44,7 +44,7 @@
           class="button"
           mat-button
           color="primary"
-          [class.selected-option]="item === selectedOption"
+          [class.selected-option]="item === selectedOption()"
           (mouseenter)="preselectRange(item)"
           (mouseleave)="unselectRange()"
           (click)="selectRangeAndClose(selectedIndexOfDateRanges)"

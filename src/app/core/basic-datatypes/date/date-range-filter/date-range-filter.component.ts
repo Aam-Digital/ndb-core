@@ -108,10 +108,22 @@ export class DateRangeFilterComponent<T extends Entity> {
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
-        data: this.filterConfig(),
+        data: {
+          selectedOptionValues: this.filterConfig()?.selectedOptionValues,
+          selectedOption: this.filterConfig()?.getSelectedOption(),
+          dateRange: this.filterConfig()?.getDateRange(),
+          rangeOptions: this.filterConfig()?.rangeOptions,
+        },
       })
       .afterClosed()
-      .subscribe(() => {
+      .subscribe((result) => {
+        if (!result) return;
+        const filterConfig = this.filterConfig();
+        if (!filterConfig) return;
+        filterConfig.selectedOptionValues = result.selectedOptionValues;
+        filterConfig.selectedOptionChange.emit(
+          filterConfig.selectedOptionValues,
+        );
         this.selectedOptionVersion.update((version) => version + 1);
       });
   }
