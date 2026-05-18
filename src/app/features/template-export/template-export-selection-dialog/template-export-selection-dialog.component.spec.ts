@@ -124,6 +124,36 @@ describe("TemplateExportSelectionDialogComponent", () => {
     fixture.detectChanges();
   });
 
+  it("should show template selection when export feature is enabled", async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.isFeatureEnabled.value()).toBe(true);
+    expect(
+      fixture.nativeElement.querySelector("app-edit-entity"),
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector(".feature-disabled-box"),
+    ).toBeNull();
+  });
+
+  it("should show feature-disabled info when export feature is disabled", async () => {
+    mockTemplateExportService.isExportServerEnabled.mockReturnValue(
+      Promise.resolve(false),
+    );
+    fixture = TestBed.createComponent(TemplateExportSelectionDialogComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.isFeatureEnabled.value()).toBe(false);
+    expect(fixture.nativeElement.querySelector("app-edit-entity")).toBeNull();
+    expect(
+      fixture.nativeElement.querySelector(".feature-disabled-box"),
+    ).not.toBeNull();
+  });
+
   it("should only show applicable templates for the entity type", () => {
     const template1 = new TemplateExport();
     template1.applicableForEntityTypes = [TestEntity.ENTITY_TYPE];
