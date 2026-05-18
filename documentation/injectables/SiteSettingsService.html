@@ -244,7 +244,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:40</a></div>
                             </td>
                         </tr>
 
@@ -277,8 +277,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="165"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:165</a></div>
                         </td>
                     </tr>
 
@@ -352,8 +352,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:53</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -545,7 +545,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -577,7 +577,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:26</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -608,7 +608,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:35</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:36</a></div>
                         </td>
                     </tr>
 
@@ -639,7 +639,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:36</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:37</a></div>
                         </td>
                     </tr>
 
@@ -674,7 +674,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:27</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:28</a></div>
                         </td>
                     </tr>
 
@@ -705,7 +705,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:34</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -736,7 +736,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -796,7 +796,7 @@ through the <code>entityUpdated</code> property</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { SiteSettings } from &quot;./site-settings&quot;;
 import { Observable, skipWhile } from &quot;rxjs&quot;;
-import { distinctUntilChanged, map, shareReplay } from &quot;rxjs/operators&quot;;
+import { distinctUntilChanged, map, shareReplay, take } from &quot;rxjs/operators&quot;;
 import { Title } from &quot;@angular/platform-browser&quot;;
 import materialColours from &quot;@aytek/material-color-picker&quot;;
 import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
@@ -806,6 +806,7 @@ import { Entity } from &quot;../entity/model/entity&quot;;
 import { EntitySchemaService } from &quot;../entity/schema/entity-schema.service&quot;;
 import { availableLocales } from &quot;../language/languages&quot;;
 import { ConfigurableEnumService } from &quot;../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
+import { EntityConfigReadyService } from &quot;../entity/entity-config-ready.service&quot;;
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -831,6 +832,8 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
   displayLanguageSelect &#x3D; this.getPropertyObservable(&quot;displayLanguageSelect&quot;);
   dateFormat &#x3D; this.getPropertyObservable(&quot;dateFormat&quot;);
 
+  private entityConfigReady &#x3D; inject(EntityConfigReadyService);
+
   constructor() {
     const entityMapper &#x3D; inject(EntityMapperService);
 
@@ -838,10 +841,15 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
 
     this.init();
 
-    super.startLoading().catch((err) &#x3D;&gt; {
-      const error &#x3D; new Error(&quot;Failed to load site settings&quot;, { cause: err });
-      error.name &#x3D; &quot;SiteSettingsLoadError&quot;;
-      Logging.error(error);
+    // Wait for dynamic entity schemas to be applied before parsing/loading settings,
+    // so config-defined SiteSettings fields are transformed correctly.
+    this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() &#x3D;&gt; {
+      this.initFromLocalStorage();
+      super.startLoading().catch((err) &#x3D;&gt; {
+        const error &#x3D; new Error(&quot;Failed to load site settings&quot;, { cause: err });
+        error.name &#x3D; &quot;SiteSettingsLoadError&quot;;
+        Logging.error(error);
+      });
     });
   }
 
@@ -855,7 +863,6 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
     this.subscribeColorChanges(&quot;error&quot;);
     this.subscribeDateFormatChanges();
 
-    this.initFromLocalStorage();
     this.cacheInLocalStorage();
   }
 

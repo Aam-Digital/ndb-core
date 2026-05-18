@@ -1968,6 +1968,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/EntityAnonymizeService.html" data-type="entity-link" >EntityAnonymizeService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/EntityConfigReadyService.html" data-type="entity-link" >EntityConfigReadyService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/EntityConfigService.html" data-type="entity-link" >EntityConfigService</a>
                                 </li>
                                 <li class="link">

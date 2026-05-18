@@ -202,7 +202,7 @@ like creating secondary relationship entities.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:35</a></div>
                             </td>
                         </tr>
 
@@ -626,6 +626,7 @@ import { Note } from &quot;../../../child-dev-project/notes/model/note&quot;;
 import { Todo } from &quot;../../../features/todos/model/todo&quot;;
 import { EntityRelationsService } from &quot;../../entity/entity-mapper/entity-relations.service&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
+import { EntityConfigReadyService } from &quot;../../entity/entity-config-ready.service&quot;;
 
 /**
  * Service to handle additional import actions
@@ -636,6 +637,7 @@ import { asArray } from &quot;../../../utils/asArray&quot;;
 })
 export class ImportAdditionalService {
   private configService &#x3D; inject(ConfigService);
+  private entityConfigReady &#x3D; inject(EntityConfigReadyService);
 
   private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
@@ -645,10 +647,8 @@ export class ImportAdditionalService {
 
   constructor() {
     this.updateLinkableEntities();
-    this.configService.configUpdates.subscribe(() &#x3D;&gt;
-      // need to wait until EntityConfigService has updated the entityRegistry after the configUpdate
-      // TODO: better way to wait for EntityConfig updates?
-      setTimeout(() &#x3D;&gt; this.updateLinkableEntities()),
+    this.entityConfigReady.setupCompleted$.subscribe(() &#x3D;&gt;
+      this.updateLinkableEntities(),
     );
   }
 
