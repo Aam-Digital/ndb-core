@@ -6,7 +6,7 @@ import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 // Clicking "Configure Data Structure" from a list view always opens ?mode=list.
 // This helper always clicks the target section nav item explicitly so the correct view is shown.
 const navigateToChildAdminConfig = async (
-  page,
+  page: Parameters<typeof loadApp>[0],
   section: "details" | "list" | "general" = "details",
 ) => {
   await page.getByRole("navigation").getByText("Children").click();
@@ -84,9 +84,9 @@ test("Edit existing Name field to set and reset default value", async ({
   await dialog.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(dialog).not.toBeVisible();
 
-  await page.waitForTimeout(500);
   await nameField.scrollIntoViewIfNeeded();
   await nameField.hover();
+  await expect(editFieldButton).toBeVisible();
   await editFieldButton.click();
 
   await expect(dialog).toBeVisible();
@@ -217,7 +217,7 @@ test("Configure automated status update and verify UI", async ({ page }) => {
     const input = nameInputs.nth(i);
     if (await input.isVisible()) {
       await input.fill(testMappings[i]);
-      await page.waitForTimeout(500);
+      await expect(input).toHaveValue(testMappings[i]);
     }
   }
 
@@ -230,8 +230,8 @@ test("Configure automated status update and verify UI", async ({ page }) => {
 
   // Now back in the main field configuration dialog, click Apply button
   await page.getByRole("button", { name: "Apply" }).first().click();
-
-  await page.waitForTimeout(1000);
+  // Wait for the automation sub-dialog to close before saving.
+  await expect(page.locator("mat-dialog-container").nth(1)).not.toBeVisible();
 
   // Save the overall configuration changes
   await page.getByRole("button", { name: "Save" }).first().click();
@@ -720,8 +720,19 @@ test("Admin: mark a field as required and verify save persists the validator", a
   await dialog.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(dialog).not.toBeVisible();
 
-  // Re-open the same field to verify the Required setting persisted within
-  // the admin dialog round-trip (this exercises the validator config signal).
+  // Save the configuration to the backend to test true persistence.
+  await page.getByRole("button", { name: "Save" }).first().click();
+  await expect(page.getByText("Configuration updated")).toBeVisible();
+
+  // Navigate away and back to prove the setting survived the full save round-trip.
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.locator("button[mat-icon-button][color='primary']").click();
+  await page.getByText("Configure Data Structure").click();
+  await page.waitForLoadState("networkidle");
+  await page.getByText("Details View & Fields").click();
+  await page.waitForLoadState("networkidle");
+
+  // Re-open the same field to verify the Required setting survived persistence.
   await phoneField.scrollIntoViewIfNeeded();
   await phoneField.hover();
   await phoneField.getByRole("button", { name: "Edit Field" }).click();

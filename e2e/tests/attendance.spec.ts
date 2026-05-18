@@ -37,7 +37,7 @@ test("Record attendance for one activity", async ({ page }) => {
   await dateField.fill("25.12.2024");
   await dateField.blur();
 
-  // FIXME: A simple .click() does not trigger the action and we don't know why.
+  // Workaround: dispatchEvent("click") is required because a plain .click() does not trigger the action in this e2e environment.
   await page.getByText(activity.title).dispatchEvent("click");
 
   await expect(
@@ -347,4 +347,3 @@ test("Assign a recurring activity to a user", async ({ page }) => {
   await expect(page.getByText(otherActivities[0].title)).toBeVisible();
   await expect(page.getByText(otherActivities[1].title)).toBeVisible();
 });
-

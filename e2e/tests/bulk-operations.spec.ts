@@ -193,13 +193,12 @@ test.describe("Bulk selection with sorting", () => {
 
     // Now test with changed sort order
     // Click on a sortable column header (like "name")
-    await page
-      .locator("app-entities-table th")
-      .filter({ hasText: "Name" })
-      .click();
+    await page.getByRole("columnheader", { name: "Name" }).click();
 
-    // Wait for sort to apply
-    await page.waitForTimeout(500);
+    // Wait deterministically for sort indicator to appear on the column header.
+    await expect(
+      page.getByRole("columnheader", { name: "Name" }),
+    ).toHaveAttribute("aria-sort", /ascending|descending/);
 
     // Try the same selection pattern after sorting
     await firstRow.click();
@@ -217,5 +216,7 @@ test.describe("Bulk selection with sorting", () => {
           .locator("mat-checkbox input"),
       ).toBeChecked();
     }
+
+    await argosScreenshot(page, "bulk-selection-range-sorted");
   });
 });

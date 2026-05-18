@@ -15,10 +15,7 @@ test("Public form: anonymous submission creates a new entity", async ({
   // Seed a PublicFormConfig (deprecated single-form schema, but still
   // supported and exposed in the UI). It exposes a Child creation form
   // at /public-form/form/e2e-test with just the Name field configured.
-  const formConfig = createEntityOfType(
-    "PublicFormConfig",
-    "e2e-public-form",
-  ) as any;
+  const formConfig = createEntityOfType("PublicFormConfig", "e2e-public-form");
   formConfig.title = FORM_TITLE;
   // The dashboard's "Public Registration Form" nav link is hard-coded to
   // /public-form/form/test in the all-features config — keep this route id

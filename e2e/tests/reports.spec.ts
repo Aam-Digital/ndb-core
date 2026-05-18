@@ -18,10 +18,7 @@ test("Generate a configured aggregation report and download CSV", async ({
   // Seed a non-SQL aggregation ReportConfig so the Reports view has
   // something to select. The query language is browser-side data
   // aggregation; "Child:toArray" yields all Child entities.
-  const reportConfig = createEntityOfType(
-    "ReportConfig",
-    "e2e-basic-report",
-  ) as any;
+  const reportConfig = createEntityOfType("ReportConfig", "e2e-basic-report");
   reportConfig.title = "E2E Basic Report";
   reportConfig.mode = "reporting";
   reportConfig.aggregationDefinitions = [

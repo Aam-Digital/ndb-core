@@ -161,7 +161,7 @@ test("Translated and localized app versions (i18n)", async ({ page }) => {
   const paginatorText = await page
     .locator(".mat-mdc-paginator-range-label")
     .textContent();
-  const countMatch = paginatorText.match(/von (\d+)/);
+  const countMatch = paginatorText?.match(/von (\d+)/);
   const studentCount = countMatch ? countMatch[1] : "0";
 
   await page.getByRole("navigation").getByText("Dashboard").click();

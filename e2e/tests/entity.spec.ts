@@ -59,10 +59,7 @@ test("Create, persist, delete and undo a Child entity end-to-end", async ({
 
   // Delete the record via the entity actions menu (ellipsis button in
   // the entity-actions-menu component on the details page).
-  await page
-    .locator("app-entity-actions-menu button[mat-icon-button]")
-    .first()
-    .click();
+  await page.locator("app-entity-actions-menu [matMenuTriggerFor]").click();
   await page.getByRole("menuitem", { name: /Delete/i }).click();
 
   // Confirmation dialog — confirm with Yes.
@@ -82,8 +79,12 @@ test("Create, persist, delete and undo a Child entity end-to-end", async ({
 const CENTER_ALIPORE = { id: "C1", label: "Alipore" };
 const CENTER_TOLLYGUNGE = { id: "C2", label: "Tollygunge" };
 
-function assignCenter(child: any, center: { id: string; label: string }) {
-  child.center = center;
+function assignCenter(
+  child: ReturnType<typeof generateChild>,
+  center: { id: string; label: string },
+) {
+  (child as unknown as { center: { id: string; label: string } }).center =
+    center;
 }
 
 test("List filter narrows results and clears restore full list", async ({
@@ -217,7 +218,7 @@ test("Discard-changes guard: stay on edit then save and leave without prompt", a
 }) => {
   const users = generateUsers();
   const child = generateChild({ name: UNSAVED_CHILD_NAME });
-  child.phone = ORIGINAL_PHONE;
+  (child as unknown as { phone: string }).phone = ORIGINAL_PHONE;
 
   await loadApp(page, [...users, child]);
 
