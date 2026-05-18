@@ -15,12 +15,24 @@
 ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<h1 mat-dialog-title>Latest Changes</h1>
+<div mat-dialog-title>
+  <h1 class="title-name">Aam Digital</h1>
+  <div class="title-links flex-row flex-wrap gap-regular">
+    <a href="https://www.aam-digital.com" target="_blank"
+      >www.aam-digital.com</a
+    >
+    <a href="https://github.com/Aam-Digital" target="_blank"
+      >www.github.com/Aam-Digital</a
+    >
+  </div>
+</div>
 
 <mat-dialog-content #changelogContainer>
+  <h2 i18n>Latest Changes:</h2>
+
   @for (changelog of changelogs(); track changelog.tag_name) {
     <div class="changelog-entry-container">
-      <h2>{{ changelog?.name || noChangelogAvailable }}</h2>
+      <h3>{{ changelog?.name || noChangelogAvailable }}</h3>
       <div class="padding-bottom-regular">
         <span
           ><fa-icon icon="calendar-alt"></fa-icon>

@@ -142,3 +142,8 @@ mat-sidenav-container {
 .justify-content-end {
   justify-content: end;
 }
+
+app-powered-by ::ng-deep .powered-by {
+  /* make powered-by more dense with version */
+  padding-top: 0;
+}

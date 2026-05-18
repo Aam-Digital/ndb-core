@@ -1,9 +1,16 @@
 @use "variables/sizes";
 
-.changelog-entry-container {
-  border-top: 1px black solid;
+.title-name {
+  margin: 0;
+}
+.title-links {
+  font-size: small;
 }
 
-.changelog-entry-container h2 {
+.changelog-entry-container {
+  border-bottom: 1px black solid;
+}
+
+.changelog-entry-container h3 {
   margin: sizes.$small 0 sizes.$small 0;
 }
