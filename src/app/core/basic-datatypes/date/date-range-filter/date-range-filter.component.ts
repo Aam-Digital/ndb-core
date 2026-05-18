@@ -124,7 +124,6 @@ export class DateRangeFilterComponent<T extends Entity> {
         filterConfig.selectedOptionChange.emit(
           filterConfig.selectedOptionValues,
         );
-        this.selectedOptionVersion.update((version) => version + 1);
       });
   }
 }
