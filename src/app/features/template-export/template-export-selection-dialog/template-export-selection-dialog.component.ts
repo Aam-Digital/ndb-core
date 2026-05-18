@@ -22,6 +22,7 @@ import { RouterLink } from "@angular/router";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
+import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
@@ -70,6 +71,9 @@ export class TemplateExportSelectionDialogComponent {
 
   templateSelectionForm: FormControl = new FormControl();
   TemplateExport = TemplateExport;
+  readonly configureTemplatesRoute = signal(
+    getEntityRuntimeRoute(TemplateExport),
+  );
   readonly currentEntity = computed(() => this.entity() ?? this.dialogData);
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
     e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
