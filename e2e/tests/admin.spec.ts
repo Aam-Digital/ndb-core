@@ -385,6 +385,15 @@ test("Admin: edit list view column-group tabs (add, rename, remove, verify after
     page.locator("mat-tab-header").getByText("Health", { exact: true }),
   ).not.toBeVisible();
 
+  // Angular's effect() that writes columnGroups back into config runs asynchronously
+  // after the signal update. Two rAFs ensure the effect has settled before save() reads it.
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+
   // Save – use CSS selector (accessible name of the button may be temporarily empty)
   await page.locator(".save-buttons button").first().click();
   await expect(page.getByText("Configuration updated")).toBeVisible();
