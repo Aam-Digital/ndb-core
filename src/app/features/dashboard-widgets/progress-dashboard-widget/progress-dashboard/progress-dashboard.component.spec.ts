@@ -27,6 +27,7 @@ describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
   let fixture: ComponentFixture<ProgressDashboardComponent>;
   let mockEntityMapper: EntityMapperMock;
+  let defaultLoadImplementation: EntityMapperMock["load"];
   let loadSpy: ReturnType<typeof vi.spyOn>;
   const mockDialog: MatDialogMock = {
     open: vi.fn().mockName("matDialog.open"),
@@ -56,13 +57,22 @@ describe("ProgressDashboardComponent", () => {
 
   beforeEach(() => {
     mockEntityMapper = TestBed.inject(EntityMapperService);
+    defaultLoadImplementation = mockEntityMapper.load.bind(mockEntityMapper);
     const mockConfig = {
       title: "test",
       parts: [],
       getId: vi.fn().mockReturnValue("test-id"),
     } as any as ProgressDashboardConfig;
 
-    loadSpy = vi.spyOn(mockEntityMapper, "load").mockResolvedValue(mockConfig);
+    loadSpy = vi
+      .spyOn(mockEntityMapper, "load")
+      .mockImplementation((entityType, id) => {
+        if (entityType === ProgressDashboardConfig) {
+          return Promise.resolve(mockConfig);
+        }
+
+        return defaultLoadImplementation(entityType, id);
+      });
     vi.spyOn(mockEntityMapper, "save").mockResolvedValue(undefined);
     fixture = TestBed.createComponent(ProgressDashboardComponent);
     component = fixture.componentInstance;
@@ -94,13 +104,25 @@ describe("ProgressDashboardComponent", () => {
   it("should retry loading the config after sync has finished", async () => {
     vi.useFakeTimers();
     try {
-      loadSpy.mockRejectedValue(new Error());
+      loadSpy.mockImplementation((entityType, id) => {
+        if (entityType === ProgressDashboardConfig) {
+          return Promise.reject(new Error());
+        }
+
+        return defaultLoadImplementation(entityType, id);
+      });
       fixture.componentRef.setInput("dashboardConfigId", "someId");
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       const config = new ProgressDashboardConfig("someId");
-      loadSpy.mockResolvedValue(config);
+      loadSpy.mockImplementation((entityType, id) => {
+        if (entityType === ProgressDashboardConfig) {
+          return Promise.resolve(config);
+        }
+
+        return defaultLoadImplementation(entityType, id);
+      });
       mockSync.next(SyncState.COMPLETED);
 
       expect(component.data()).toEqual(config);
@@ -112,7 +134,13 @@ describe("ProgressDashboardComponent", () => {
   it("should create a new progress dashboard config if no configuration could be found after initial sync", async () => {
     vi.useFakeTimers();
     try {
-      loadSpy.mockRejectedValue(new Error());
+      loadSpy.mockImplementation((entityType, id) => {
+        if (entityType === ProgressDashboardConfig) {
+          return Promise.reject(new Error());
+        }
+
+        return defaultLoadImplementation(entityType, id);
+      });
       mockSync.next(SyncState.COMPLETED);
 
       fixture.componentRef.setInput("dashboardConfigId", "config-id");

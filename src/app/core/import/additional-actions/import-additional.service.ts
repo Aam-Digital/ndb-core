@@ -15,6 +15,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { Todo } from "../../../features/todos/model/todo";
 import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
 import { asArray } from "../../../utils/asArray";
+import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
 
 /**
  * Service to handle additional import actions
@@ -25,6 +26,7 @@ import { asArray } from "../../../utils/asArray";
 })
 export class ImportAdditionalService {
   private configService = inject(ConfigService);
+  private entityConfigReady = inject(EntityConfigReadyService);
 
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
@@ -34,10 +36,8 @@ export class ImportAdditionalService {
 
   constructor() {
     this.updateLinkableEntities();
-    this.configService.configUpdates.subscribe(() =>
-      // need to wait until EntityConfigService has updated the entityRegistry after the configUpdate
-      // TODO: better way to wait for EntityConfig updates?
-      setTimeout(() => this.updateLinkableEntities()),
+    this.entityConfigReady.setupCompleted$.subscribe(() =>
+      this.updateLinkableEntities(),
     );
   }
 
