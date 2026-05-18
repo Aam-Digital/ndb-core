@@ -35,8 +35,8 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { filter, take } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
-import { ConfigService } from "../../config/config.service";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
 
 /**
  * This service handles the user session.
@@ -53,7 +53,7 @@ export class SessionManagerService {
   private loginStateSubject = inject(LoginStateSubject);
   private router = inject(Router);
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
-  private configService = inject(ConfigService);
+  private entityConfigReady = inject(EntityConfigReadyService);
   private databaseResolver = inject(DatabaseResolverService);
   private readonly syncStateSubject = inject(SyncStateSubject);
 
@@ -152,8 +152,8 @@ export class SessionManagerService {
     await this.databaseResolver.initDatabasesForSession(session);
     this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
-    this.configService.configUpdates.pipe(take(1)).subscribe(() =>
-      // requires initial config to be loaded first!
+    this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() =>
+      // requires dynamic entity config to be applied first!
       this.initUserEntity(session.entityId),
     );
   }

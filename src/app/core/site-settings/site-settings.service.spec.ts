@@ -13,6 +13,7 @@ import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/con
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { Config } from "../config/config";
+import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -29,6 +30,7 @@ describe("SiteSettingsService", () => {
       ],
     });
     service = TestBed.inject(SiteSettingsService);
+    TestBed.inject(EntityConfigReadyService).markSetupCompleted();
 
     entityMapper = TestBed.inject(
       EntityMapperService,
@@ -130,7 +132,7 @@ describe("SiteSettingsService", () => {
 
       const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
 
-      service.init();
+      TestBed.runInInjectionContext(() => new SiteSettingsService());
       await vi.advanceTimersByTimeAsync(0);
 
       expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
