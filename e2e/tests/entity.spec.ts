@@ -59,7 +59,7 @@ test("Create, persist, delete and undo a Child entity end-to-end", async ({
 
   // Delete the record via the entity actions menu (ellipsis button in
   // the entity-actions-menu component on the details page).
-  await page.locator("app-entity-actions-menu [matMenuTriggerFor]").click();
+  await page.locator("app-entity-actions-menu").getByRole("button").click();
   await page.getByRole("menuitem", { name: /Delete/i }).click();
 
   // Confirmation dialog — confirm with Yes.
