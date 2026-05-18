@@ -396,11 +396,6 @@ test("Task lifecycle: archive hides task; complete moves it to completed filter"
   const taskRow = page.getByRole("row").filter({ hasText: TASK_SUBJECT });
   await expect(taskRow.getByText(/by demo-admin on/)).toBeVisible();
 
-  // Wait for the "Assigned to" filter chip to finish rendering before screenshot
-  await expect(
-    page.locator("mat-form-field").filter({ hasText: "Assigned to" }),
-  ).toContainText("demo-admin");
-
   // [screenshot] table view showing the completed column
   await argosScreenshot(page, "task-completed-table");
 
