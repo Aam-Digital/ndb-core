@@ -12,6 +12,7 @@ import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { CoreTestingModule } from "../../utils/core-testing.module";
+import { Config } from "../config/config";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -22,7 +23,10 @@ describe("SiteSettingsService", () => {
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, ConfigurableEnumModule],
-      providers: [...mockEntityMapperProvider(), EntityAbility],
+      providers: [
+        ...mockEntityMapperProvider([new Config(Config.CONFIG_KEY, {})]),
+        EntityAbility,
+      ],
     });
     service = TestBed.inject(SiteSettingsService);
 
