@@ -61,7 +61,7 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
 export class DateRangeFilterPanelComponent {
   readonly emptyFilterOptionKey = EMPTY_FILTER_OPTION_KEY;
   // Dialog input data (plain DTO) instead of full DateFilter instance
-  private data = inject<any>(MAT_DIALOG_DATA) as {
+  private readonly data = inject<any>(MAT_DIALOG_DATA) as {
     selectedOptionValues?: string[];
     selectedOption?: DateRangeFilterConfigOption;
     dateRange?: DateRange<Date>;

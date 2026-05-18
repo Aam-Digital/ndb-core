@@ -154,7 +154,7 @@ describe("DateRangeFilterComponent", () => {
     const emitSpy = vi.spyOn(dateFilter.selectedOptionChange, "emit");
 
     const result = { selectedOptionValues: ["0"] };
-    (dialogMock.open as any).mockReturnValue({ afterClosed: () => of(result) });
+    dialogMock.open.mockReturnValue({ afterClosed: () => of(result) });
 
     component.openDialog(new Event("click"));
 
