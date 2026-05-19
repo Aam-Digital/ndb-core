@@ -277,8 +277,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="165"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:165</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:166</a></div>
                         </td>
                     </tr>
 
@@ -352,8 +352,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -841,10 +841,9 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
 
     this.init();
 
-    // Wait for dynamic entity schemas to be applied before parsing/loading settings,
+    // Wait for dynamic entity schemas to be applied before loading from DB,
     // so config-defined SiteSettings fields are transformed correctly.
     this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() &#x3D;&gt; {
-      this.initFromLocalStorage();
       super.startLoading().catch((err) &#x3D;&gt; {
         const error &#x3D; new Error(&quot;Failed to load site settings&quot;, { cause: err });
         error.name &#x3D; &quot;SiteSettingsLoadError&quot;;
@@ -863,6 +862,8 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
     this.subscribeColorChanges(&quot;error&quot;);
     this.subscribeDateFormatChanges();
 
+    // Apply cached branding early so login/setup screens use the latest known theme.
+    this.initFromLocalStorage();
     this.cacheInLocalStorage();
   }
 
