@@ -1,14 +1,15 @@
 import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
   inject,
   ChangeDetectionStrategy,
+  input,
+  model,
+  signal,
+  effect,
+  DestroyRef,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   FormControl,
   FormGroup,
@@ -36,7 +37,6 @@ import { ImportAdditionalService } from "../import-additional.service";
   selector: "app-import-additional-actions",
   templateUrl: "./import-additional-actions.component.html",
   styleUrls: ["./import-additional-actions.component.scss"],
-  standalone: true,
   imports: [
     MatListModule,
     FontAwesomeModule,
@@ -53,15 +53,13 @@ import { ImportAdditionalService } from "../import-additional.service";
   ],
   providers: [EntityTypeLabelPipe],
 })
-export class ImportAdditionalActionsComponent implements OnChanges {
+export class ImportAdditionalActionsComponent {
   private importAdditionalService = inject(ImportAdditionalService);
 
-  @Input() entityType: string;
+  entityType = input<string>();
+  importActions = model<AdditionalImportAction[]>([]);
 
-  @Input() importActions: AdditionalImportAction[] = [];
-  @Output() importActionsChange = new EventEmitter<AdditionalImportAction[]>();
-
-  availableImportActions: AdditionalImportAction[] = [];
+  availableImportActions = signal<AdditionalImportAction[]>([]);
 
   // TODO: may need more distinction --> like in ImportModule?
   actionToString = (a: AdditionalImportAction) =>
@@ -78,42 +76,43 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   constructor() {
     this.linkEntityForm
       .get("action")
-      .valueChanges.subscribe((val) =>
+      .valueChanges.pipe(takeUntilDestroyed(inject(DestroyRef)))
+      .subscribe((val) =>
         !!val
           ? this.linkEntityForm.get("targetId").enable()
           : this.linkEntityForm.get("targetId").disable(),
       );
-  }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("entityType")) {
-      this.availableImportActions = this.importAdditionalService
-        .getActionsLinkingFor(this.entityType)
-        .sort(sortExportOnlyLast);
-
+    effect(() => {
+      const entityType = this.entityType();
+      this.availableImportActions.set(
+        this.importAdditionalService
+          .getActionsLinkingFor(entityType)
+          .sort(sortExportOnlyLast),
+      );
       this.linkEntityForm.reset();
-      if (this.entityType) {
+      if (entityType) {
         this.linkEntityForm.get("action").enable();
       }
-    }
+    });
   }
 
   addAction() {
     const newAction = this.linkEntityForm.get("action").getRawValue();
-    this.importActions = [
-      ...(this.importActions ?? []),
+    this.importActions.update((actions) => [
+      ...(actions ?? []),
       {
         ...newAction,
         targetId: this.linkEntityForm.get("targetId").value,
       },
-    ];
+    ]);
     this.linkEntityForm.reset();
-    this.importActionsChange.emit(this.importActions);
   }
 
   removeAction(actionToRemove: AdditionalImportAction) {
-    this.importActions = this.importActions.filter((a) => a !== actionToRemove);
-    this.importActionsChange.emit(this.importActions);
+    this.importActions.update((actions) =>
+      actions.filter((a) => a !== actionToRemove),
+    );
   }
 }
 

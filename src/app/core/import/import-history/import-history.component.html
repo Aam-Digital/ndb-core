@@ -47,10 +47,10 @@
         <div
           i18n-matTooltip="Tooltip help text for button"
           matTooltip="Please select a file first"
-          [matTooltipDisabled]="data?.length > 0"
+          [matTooltipDisabled]="data()?.length > 0"
         >
           <button
-            [disabled]="!data?.length"
+            [disabled]="!data()?.length"
             (click)="itemSelected.emit(item)"
             mat-stroked-button
             color="accent"
