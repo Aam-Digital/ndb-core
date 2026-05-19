@@ -9,10 +9,12 @@ import { Injector } from "@angular/core";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype.js";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.js";
+import { DateDatatype } from "#src/app/core/basic-datatypes/date/date.datatype.js";
 import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
 import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.js";
 import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
 import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
+import { NumberDatatype } from "#src/app/core/basic-datatypes/number/number.datatype.js";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype.js";
 import defaultJsonConfig from "#src/assets/base-configs/all-features/Config_CONFIG_ENTITY.json";
 import { faker } from "#src/app/core/demo-data/faker.js";
@@ -138,9 +140,11 @@ function serializeEntities(entities: Entity[]): unknown[] {
       { provide: EntityRegistry, useValue: entityRegistry },
       { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
       { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateWithAgeDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
       { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: NumberDatatype, multi: true },
       {
         provide: DefaultDatatype,
         useClass: ConfigurableEnumDatatype,
