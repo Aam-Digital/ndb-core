@@ -11,3 +11,12 @@
 .details-line {
   line-height: 32px;
 }
+
+.multiline {
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
+  line-height: 1.3;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}

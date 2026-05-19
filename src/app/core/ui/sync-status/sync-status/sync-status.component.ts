@@ -17,6 +17,8 @@
 
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { SyncState } from "../../../session/session-states/sync-state.enum";
+import { SessionType } from "../../../session/session-type";
+import { environment } from "../../../../../environments/environment";
 import { DatabaseIndexingService } from "../../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { BehaviorSubject } from "rxjs";
@@ -75,10 +77,17 @@ export class SyncStatusComponent {
         pending: true,
       });
     } else {
-      currentProcesses.push({
-        title: $localize`Database up-to-date`,
-        pending: false,
-      });
+      if (environment.session_type === SessionType.online) {
+        currentProcesses.push({
+          title: $localize`Offline sync disabled — loading data directly from server`,
+          pending: false,
+        });
+      } else {
+        currentProcesses.push({
+          title: $localize`Database up-to-date`,
+          pending: false,
+        });
+      }
     }
     currentProcesses = currentProcesses.concat(this.indexingProcesses);
     this._backgroundProcesses.next(currentProcesses);
