@@ -176,7 +176,10 @@ export class RollCallComponent {
     () => this.currentIndex() === this.participants().length - 1,
   );
   readonly isFinished = computed(
-    () => this.currentIndex() >= this.participants().length,
+    () =>
+      !!this.event() &&
+      !this.eventResource.isLoading() &&
+      this.currentIndex() >= this.participants().length,
   );
 
   constructor() {
