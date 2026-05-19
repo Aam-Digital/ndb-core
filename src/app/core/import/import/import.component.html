@@ -76,7 +76,8 @@
       </div>
 
       <app-import-entity-type
-        [(entityType)]="importSettings.entityType"
+        [entityType]="importSettings.entityType"
+        (entityTypeChange)="onEntityTypeChange($event)"
       ></app-import-entity-type>
 
       <app-import-additional-settings

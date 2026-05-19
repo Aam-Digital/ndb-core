@@ -116,6 +116,18 @@ export class ImportComponent {
     );
   }
 
+  onEntityTypeChange(newType: string) {
+    this.importSettings.entityType = newType;
+    if (this.importSettings.columnMapping?.length) {
+      this.onColumnMappingUpdate(
+        this.importSettings.columnMapping.map(({ column }) => ({
+          column,
+          propertyName: undefined,
+        })),
+      );
+    }
+  }
+
   onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
     this.importSettings.columnMapping = newColumnMapping;
     // to avoid ExpressionChangedAfterItHasBeenCheckedError
