@@ -19,6 +19,7 @@ import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
 import { EntityListConfig } from "../entity-list/EntityListConfig";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { Logging } from "../logging/logging.service";
+import { EntityConfigReadyService } from "./entity-config-ready.service";
 
 /**
  * A service that allows to work with configuration-objects
@@ -32,6 +33,7 @@ export class EntityConfigService {
   private readonly configService = inject(ConfigService);
   private readonly entities = inject(EntityRegistry);
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly entityConfigReady = inject(EntityConfigReadyService);
 
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
@@ -93,6 +95,8 @@ export class EntityConfigService {
       this.setCoreSchemaAttributes(ctor, config.extends);
       this.addConfigAttributes(ctor, config);
     }
+
+    this.entityConfigReady.markSetupCompleted();
   }
 
   private createNewEntity(id: string, parent: string) {
