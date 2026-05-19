@@ -46,10 +46,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.init();
 
-    // Wait for dynamic entity schemas to be applied before parsing/loading settings,
+    // Wait for dynamic entity schemas to be applied before loading from DB,
     // so config-defined SiteSettings fields are transformed correctly.
     this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() => {
-      this.initFromLocalStorage();
       super.startLoading().catch((err) => {
         const error = new Error("Failed to load site settings", { cause: err });
         error.name = "SiteSettingsLoadError";
@@ -68,6 +67,8 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     this.subscribeColorChanges("error");
     this.subscribeDateFormatChanges();
 
+    // Apply cached branding early so login/setup screens use the latest known theme.
+    this.initFromLocalStorage();
     this.cacheInLocalStorage();
   }
 

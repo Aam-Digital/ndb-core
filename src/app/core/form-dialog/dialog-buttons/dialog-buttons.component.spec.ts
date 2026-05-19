@@ -36,10 +36,14 @@ describe("DialogButtonsComponent", () => {
   }));
 
   beforeEach(() => {
+    createComponent();
+  });
+
+  function createComponent() {
     fixture = TestBed.createComponent(DialogButtonsComponent);
     component = fixture.componentInstance;
 
-    let mockEntityForm: EntityForm<any> = {
+    const mockEntityForm: EntityForm<any> = {
       formGroup: new FormGroup({}),
       onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
       entity: new Entity(),
@@ -52,7 +56,7 @@ describe("DialogButtonsComponent", () => {
     fixture.componentRef.setInput("entity", entity);
     fixture.componentRef.setInput("form", mockEntityForm);
     fixture.detectChanges();
-  });
+  }
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -156,5 +160,19 @@ describe("DialogButtonsComponent", () => {
     closed.next();
 
     expect(unsavedChanges.pending()).toBe(false);
+  });
+
+  it("should restore previous pending state when dialog is closed", () => {
+    fixture.destroy();
+    closed = new Subject<void>();
+    dialogRef.afterClosed.mockReturnValue(closed);
+
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
+    unsavedChanges.pending.set(true);
+    createComponent();
+
+    closed.next();
+
+    expect(unsavedChanges.pending()).toBe(true);
   });
 });
