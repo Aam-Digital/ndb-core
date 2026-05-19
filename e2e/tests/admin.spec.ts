@@ -280,17 +280,19 @@ test("Configure automated status update and verify UI", async ({ page }) => {
 // });
 
 // ---------------------------------------------------------------------------
-// List View – Filters CRUD
-// Default Child list-view filters: "Center" (center) and "School" (schoolId)
-// Action: add "Gender" filter, remove "School" filter
+// List View – Combined CRUD persistence check
+// Actions in one flow (single save + single post-save screenshot):
+//   - Filters: add "Gender", remove "School"
+//   - Tabs: add "E2E Tab", rename "Status" -> "E2E Status", remove "Health"
+//   - Columns (Basic Info): add "Date of birth", remove "Email"
 // ---------------------------------------------------------------------------
-test("Admin: edit list view filters (add, remove, verify after save)", async ({
+test("Admin: edit list view config (filters, tabs, columns) and verify after save", async ({
   page,
 }) => {
   await loadApp(page, []);
   await navigateToChildAdminConfig(page, "list");
 
-  // Remove the "School" filter (field id "schoolId", label "Linked School" / visible as "School" in filter bar)
+  // --- FILTERS ---
   await page
     .locator(".filter-field")
     .filter({ hasText: "School" })
@@ -300,56 +302,30 @@ test("Admin: edit list view filters (add, remove, verify after save)", async ({
     page.locator(".filter-field").filter({ hasText: "School" }),
   ).not.toBeVisible();
 
-  // Add "Gender" filter via the entity-fields-menu below the existing filters
   const filterAddArea = page
     .locator(".table-content-preview")
-    .filter({ hasText: "Add Filter" });
+    .filter({ hasText: "Add Filter" })
+    .first();
   await filterAddArea.locator("mat-form-field").click();
   await page.getByRole("option", { name: "Gender" }).click();
-
-  // Verify Gender filter now appears in the filter list
   await expect(
     page.locator(".filter-field").filter({ hasText: "Gender" }),
   ).toBeVisible();
 
-  // Save
-  await page.getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByText("Configuration updated")).toBeVisible();
+  // Close dropdown by pressing Escape before moving to tabs.
+  await page.keyboard.press("Escape");
+  await page.waitForLoadState("networkidle");
 
-  // Re-open List View config and verify persistence
-  await navigateToChildAdminConfig(page, "list");
-  await expect(
-    page.locator(".filter-field").filter({ hasText: "Gender" }),
-  ).toBeVisible();
-  await expect(
-    page.locator(".filter-field").filter({ hasText: "School" }),
-  ).not.toBeVisible();
-
-  await argosScreenshot(page, "admin-list-view-filters-after-save");
-});
-
-// ---------------------------------------------------------------------------
-// List View – Column-group tabs CRUD
-// Default tabs: "Basic Info", "School Info", "Status", "Health"
-// Action: add new tab "E2E Tab", rename "Status" → "E2E Status", remove "Health"
-// ---------------------------------------------------------------------------
-test("Admin: edit list view column-group tabs (add, rename, remove, verify after save)", async ({
-  page,
-}) => {
-  await loadApp(page, []);
-  await navigateToChildAdminConfig(page, "list");
-
-  // --- ADD a new tab via the "+" button ---
-  // The add-tab button uses matTooltip (not title attr); its accessible name is "add" (from fa-icon aria-label)
-  await page.getByRole("button", { name: "add" }).click();
-  // New tab is auto-selected; its rename input (placeholder "(no title)") is shown in the tab header
+  // --- TABS ---
+  await page
+    .locator("mat-tab-header")
+    .getByRole("button", { name: "add" })
+    .click();
   await page
     .locator("mat-tab-header")
     .getByPlaceholder("(no title)")
     .fill("E2E Tab");
 
-  // --- RENAME "Status" tab → "E2E Status" ---
-  // Click the non-selected "Status" tab label to select it
   await page.getByRole("tab", { name: "Status" }).click();
   const renameInput = page
     .locator("mat-tab-header")
@@ -357,24 +333,17 @@ test("Admin: edit list view column-group tabs (add, rename, remove, verify after
   await renameInput.clear();
   await renameInput.fill("E2E Status");
 
-  // --- REMOVE "Health" tab ---
-  // Select the "Health" tab so that its remove button (app-admin-section-header) appears.
-  // Use text-scoped locators: after many fill() calls the tab accessible-names may be
-  // temporarily absent due to Angular signal re-renders, so don't rely on getByRole+name.
   await page
     .locator("mat-tab-header")
     .getByText("Health", { exact: true })
     .click();
-  // Wait for admin-section-header (and its remove button) to render for the now-selected tab
   const tabRemoveBtn = page.locator(
     "app-admin-section-header button.group-remove-button",
   );
   await expect(tabRemoveBtn).toBeVisible();
   await tabRemoveBtn.click();
-  // admin-section-header.removeSection() shows a ConfirmationDialog; click "Yes" to confirm
   await page.getByRole("dialog").getByRole("button", { name: "Yes" }).click();
 
-  // Verify intermediate state using text (accessible-names may be empty after signal updates)
   await expect(
     page.locator("mat-tab-header").getByText("E2E Tab"),
   ).toBeVisible();
@@ -385,8 +354,35 @@ test("Admin: edit list view column-group tabs (add, rename, remove, verify after
     page.locator("mat-tab-header").getByText("Health", { exact: true }),
   ).not.toBeVisible();
 
+  // --- COLUMNS (on Basic Info tab) ---
+  await page.getByRole("tab", { name: "Basic Info" }).click();
+  const activeBasicInfoTabBody = page.locator(
+    "mat-tab-body.mat-mdc-tab-body-active",
+  );
+  await activeBasicInfoTabBody
+    .locator(".default-item")
+    .filter({ hasText: "Email" })
+    .locator(".remove-icon")
+    .click();
+  await expect(
+    activeBasicInfoTabBody
+      .locator(".default-item")
+      .filter({ hasText: "Email" }),
+  ).not.toBeVisible();
+
+  const columnAddArea = activeBasicInfoTabBody
+    .locator(".table-content-preview")
+    .filter({ hasText: "Add columns" });
+  await columnAddArea.locator("mat-form-field").click();
+  await page.getByRole("option", { name: "Date of birth" }).click();
+  await expect(
+    activeBasicInfoTabBody
+      .locator(".default-item")
+      .filter({ hasText: "Date of birth" }),
+  ).toBeVisible();
+
   // Angular's effect() that writes columnGroups back into config runs asynchronously
-  // after the signal update. Two rAFs ensure the effect has settled before save() reads it.
+  // after signal updates. Two rAFs ensure the effect has settled before save() reads it.
   await page.evaluate(
     () =>
       new Promise<void>((resolve) =>
@@ -394,12 +390,20 @@ test("Admin: edit list view column-group tabs (add, rename, remove, verify after
       ),
   );
 
-  // Save – use CSS selector (accessible name of the button may be temporarily empty)
+  // Save once for all list-view modifications.
   await page.locator(".save-buttons button").first().click();
   await expect(page.getByText("Configuration updated")).toBeVisible();
 
-  // Re-open and verify persistence
+  // Re-open once and verify all persisted changes together.
   await navigateToChildAdminConfig(page, "list");
+
+  await expect(
+    page.locator(".filter-field").filter({ hasText: "Gender" }),
+  ).toBeVisible();
+  await expect(
+    page.locator(".filter-field").filter({ hasText: "School" }),
+  ).not.toBeVisible();
+
   await expect(
     page.locator("mat-tab-header").getByText("E2E Tab"),
   ).toBeVisible();
@@ -410,74 +414,38 @@ test("Admin: edit list view column-group tabs (add, rename, remove, verify after
     page.locator("mat-tab-header").getByText("Health", { exact: true }),
   ).not.toBeVisible();
 
-  await argosScreenshot(page, "admin-list-view-tabs-after-save");
+  await page.getByRole("tab", { name: "Basic Info" }).click();
+  const activeBasicInfoTabBodyAfterSave = page.locator(
+    "mat-tab-body.mat-mdc-tab-body-active",
+  );
+  await expect(
+    activeBasicInfoTabBodyAfterSave
+      .locator(".default-item")
+      .filter({ hasText: "Date of birth" }),
+  ).toBeVisible();
+  await expect(
+    activeBasicInfoTabBodyAfterSave
+      .locator(".default-item")
+      .filter({ hasText: "Email" }),
+  ).not.toBeVisible();
+
+  await argosScreenshot(page, "admin-list-view-config-after-save");
 });
 
 // ---------------------------------------------------------------------------
-// List View – Columns within a tab CRUD
-// "Basic Info" tab columns include "Email". "Date of birth" is not in this tab.
-// Action: remove "Email" column, add "Date of birth" column
+// Details View – Combined CRUD persistence check
+// Actions in one flow (single save + single post-save screenshot):
+//   - Panels: add "E2E Panel" with Form Fields Section; remove "ASER Results" from Education
+//   - Field label: rename "Name" → "Name (edited)"
+//   - Validation: mark "Phone" as Required
 // ---------------------------------------------------------------------------
-test("Admin: edit list view columns (add, remove, verify after save)", async ({
-  page,
-}) => {
-  await loadApp(page, []);
-  await navigateToChildAdminConfig(page, "list");
-
-  // "Basic Info" is the first (default-selected) tab – no click needed
-
-  // Remove "Email" column
-  await page
-    .locator(".default-item")
-    .filter({ hasText: "Email" })
-    .locator(".remove-icon")
-    .click();
-  await expect(
-    page.locator(".default-item").filter({ hasText: "Email" }),
-  ).not.toBeVisible();
-
-  // Add "Date of birth" column via the entity-fields-menu below the columns list
-  const columnAddArea = page
-    .locator(".table-content-preview")
-    .filter({ hasText: "Add columns" });
-  await columnAddArea.locator("mat-form-field").click();
-  await page.getByRole("option", { name: "Date of birth" }).click();
-
-  // Verify "Date of birth" now appears as a column
-  await expect(
-    page.locator(".default-item").filter({ hasText: "Date of birth" }),
-  ).toBeVisible();
-
-  // Save
-  await page.getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByText("Configuration updated")).toBeVisible();
-
-  // Re-open, navigate to "Basic Info" tab, verify persistence
-  await navigateToChildAdminConfig(page, "list");
-  // "Basic Info" is selected by default
-  await expect(
-    page.locator(".default-item").filter({ hasText: "Date of birth" }),
-  ).toBeVisible();
-  await expect(
-    page.locator(".default-item").filter({ hasText: "Email" }),
-  ).not.toBeVisible();
-
-  await argosScreenshot(page, "admin-list-view-columns-after-save");
-});
-
-// ---------------------------------------------------------------------------
-// Details View – Panels & Sections CRUD
-// Actions:
-//   - Add new panel tab "E2E Panel" and add a "Form Fields Section" to it
-//   - Navigate to "Education" panel and remove the "ASER Results" section
-// ---------------------------------------------------------------------------
-test("Admin: edit details view panels and sections (add, remove, verify after save)", async ({
+test("Admin: edit details view config (panels, field label, required validator) and verify after save", async ({
   page,
 }) => {
   await loadApp(page, []);
   await navigateToChildAdminConfig(page, "details");
 
-  // --- ADD new panel tab "E2E Panel" ---
+  // --- PANELS: add "E2E Panel" with a Form Fields Section ---
   // The add-tab button uses matTooltip (not title attr); its accessible name is "add" (from fa-icon aria-label).
   // Use exact:true to avoid matching the "Add Section" button (name: "add element Add Section") in strict mode.
   await page
@@ -489,22 +457,19 @@ test("Admin: edit details view panels and sections (add, remove, verify after sa
     .getByPlaceholder("(no title)")
     .fill("E2E Panel");
 
-  // --- ADD a "Form Fields Section" inside the new panel ---
   // With [preserveContent]="true", each panel has an "Add Section" button in the DOM.
   // E2E Panel is the last tab, so its button is last.
   await page.locator("button.section-add-button").last().click();
-  const dialog = page.getByRole("dialog");
-  await dialog.getByRole("combobox").click(); // open the widget-type select
+  const sectionDialog = page.getByRole("dialog");
+  await sectionDialog.getByRole("combobox").click(); // open the widget-type select
   await page.getByRole("option", { name: "Form Fields Section" }).click();
   // Dialog auto-closes on selection; wait for it to disappear
-  await expect(dialog).not.toBeVisible();
-
-  // Verify the new section appeared in "E2E Panel".
+  await expect(sectionDialog).not.toBeVisible();
   // With [preserveContent]="true" multiple panels from other tabs are in DOM; use :visible to
   // target only the active tab's panels.
   await expect(page.locator("mat-expansion-panel:visible")).toBeVisible();
 
-  // --- REMOVE "ASER Results" section from the "Education" panel ---
+  // --- PANELS: remove "ASER Results" from the "Education" panel ---
   // After adding E2E Panel (last tab, auto-selected), the tab header scrolls right and
   // "Education" is pushed outside the viewport. Use JS click() to bypass the overflow.
   await page.evaluate(() => {
@@ -524,15 +489,67 @@ test("Admin: edit details view panels and sections (add, remove, verify after sa
   await aserPanel.locator(".group-remove-button").click();
   // admin-section-header.removeSection() shows a ConfirmationDialog; click "Yes" to confirm
   await page.getByRole("dialog").getByRole("button", { name: "Yes" }).click();
-  // Verify "ASER Results" section is gone
   await expect(aserPanel).not.toBeAttached();
 
-  // Save
+  // Return to the first tab (Basic Info) to access the Name and Phone fields.
+  await page.evaluate(() => {
+    const tabs = Array.from(
+      document.querySelectorAll("mat-tab-header .mat-mdc-tab"),
+    );
+    if (tabs[0]) (tabs[0] as HTMLElement).click();
+  });
+
+  // --- FIELD LABEL: rename "Name" → "Name (edited)" ---
+  // The admin-form-field div contains "Edit Field  Name *" so we can't use exact /^Name$/ on the div.
+  // Instead: find the mat-form-field whose label text is "Name", then walk up to the admin-form-field ancestor.
+  const nameFormFieldLabel = page.locator("mat-form-field").getByText("Name");
+  const nameField = nameFormFieldLabel.locator(
+    'xpath=ancestor::div[contains(@class,"admin-form-field")]',
+  );
+  await nameField.scrollIntoViewIfNeeded();
+  await nameField.hover();
+  const editNameButton = nameField.getByRole("button", { name: "Edit Field" });
+  await expect(editNameButton).toBeVisible();
+  await editNameButton.click();
+
+  const fieldDialog = page.locator("mat-dialog-container");
+  await expect(fieldDialog).toBeVisible();
+  // getByLabel("Label") finds 3 inputs (Label, Label (short), checkbox); use getByRole + exact.
+  const labelInput = fieldDialog.getByRole("textbox", {
+    name: "Label",
+    exact: true,
+  });
+  await labelInput.clear();
+  await labelInput.fill("Name (edited)");
+  await fieldDialog.getByRole("button", { name: "Apply", exact: true }).click();
+  await expect(fieldDialog).not.toBeVisible();
+
+  // --- VALIDATION: mark "Phone" field as Required ---
+  const phoneTextbox = page.locator("mat-form-field").getByText("Phone");
+  const phoneField = phoneTextbox.locator(
+    'xpath=ancestor::div[contains(@class,"admin-form-field")]',
+  );
+  await phoneField.scrollIntoViewIfNeeded();
+  await phoneField.hover();
+  await phoneField.getByRole("button", { name: "Edit Field" }).click();
+
+  await expect(fieldDialog).toBeVisible();
+  await fieldDialog.getByRole("tab", { name: "Validation" }).click();
+  const requiredCheckbox = fieldDialog.getByRole("checkbox", {
+    name: /Required Field/,
+  });
+  await requiredCheckbox.check();
+  await expect(requiredCheckbox).toBeChecked();
+  await fieldDialog.getByRole("button", { name: "Apply", exact: true }).click();
+  await expect(fieldDialog).not.toBeVisible();
+
+  // Save once for all details-view modifications.
   await page.getByRole("button", { name: "Save" }).first().click();
   await expect(page.getByText("Configuration updated")).toBeVisible();
 
-  // Re-open and verify persistence
+  // Re-open once and verify all persisted changes together.
   await navigateToChildAdminConfig(page, "details");
+
   await expect(
     page.locator("mat-tab-header").getByText("E2E Panel"),
   ).toBeVisible();
@@ -557,68 +574,40 @@ test("Admin: edit details view panels and sections (add, remove, verify after sa
     page.locator("mat-expansion-panel").filter({ hasText: "Literacy Test" }),
   ).not.toBeAttached();
 
-  await argosScreenshot(page, "admin-details-view-panels-after-save");
-});
+  // Return to first tab to verify field label and required validator.
+  await page.evaluate(() => {
+    const tabs = Array.from(
+      document.querySelectorAll("mat-tab-header .mat-mdc-tab"),
+    );
+    if (tabs[0]) (tabs[0] as HTMLElement).click();
+  });
 
-// ---------------------------------------------------------------------------
-// Details View – Field editor: change label via the Edit Field dialog
-// Action: edit the "Name" field label (append " (edited)"), apply, save, verify
-// ---------------------------------------------------------------------------
-test("Admin: edit details view field label (apply, save, verify after save)", async ({
-  page,
-}) => {
-  await loadApp(page, []);
-  await navigateToChildAdminConfig(page, "details");
+  // Verify Name field label is edited — use first() to resolve strict mode
+  const nameFieldAfterSave = page
+    .locator("mat-form-field")
+    .getByText("Name (edited)");
+  await expect(nameFieldAfterSave.first()).toBeVisible();
 
-  // Hover over the "Name" field to reveal the "Edit Field" button.
-  // The admin-form-field div contains "Edit Field  Name *" so we can't use exact /^Name$/ on the div.
-  // Instead: find the mat-form-field whose label text is "Name", then walk up to the admin-form-field ancestor.
-  const nameFormFieldLabel = page.locator("mat-form-field").getByText("Name");
-  const nameField = nameFormFieldLabel.locator(
+  // Verify Phone field is still required
+  const phoneTextboxAfterSave = page
+    .locator("mat-form-field")
+    .getByText("Phone")
+    .first();
+  const phoneFieldAfterSave = phoneTextboxAfterSave.locator(
     'xpath=ancestor::div[contains(@class,"admin-form-field")]',
   );
-  await nameField.scrollIntoViewIfNeeded();
-  await nameField.hover();
-
-  const editButton = nameField.getByRole("button", { name: "Edit Field" });
-  await expect(editButton).toBeVisible();
-  await editButton.click();
-
-  const fieldDialog = page.locator("mat-dialog-container");
+  await phoneFieldAfterSave.scrollIntoViewIfNeeded();
+  await phoneFieldAfterSave.hover();
+  await phoneFieldAfterSave.getByRole("button", { name: "Edit Field" }).click();
   await expect(fieldDialog).toBeVisible();
-
-  // Change the field label.
-  // getByLabel("Label") finds 3 inputs (Label, Label (short), checkbox); use getByRole + exact.
-  const labelInput = fieldDialog.getByRole("textbox", {
-    name: "Label",
-    exact: true,
-  });
-  await labelInput.clear();
-  await labelInput.fill("Name (edited)");
-
+  await fieldDialog.getByRole("tab", { name: "Validation" }).click();
+  await expect(
+    fieldDialog.getByRole("checkbox", { name: /Required Field/ }),
+  ).toBeChecked();
   await fieldDialog.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(fieldDialog).not.toBeVisible();
 
-  // Verify label updated in the form preview
-  await expect(
-    page
-      .locator('div[class*="admin-form-field"]')
-      .filter({ hasText: "Name (edited)" }),
-  ).toBeVisible();
-
-  // Save
-  await page.getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByText("Configuration updated")).toBeVisible();
-
-  // Re-open Details View and verify the updated label persists
-  await navigateToChildAdminConfig(page);
-  await expect(
-    page
-      .locator('div[class*="admin-form-field"]')
-      .filter({ hasText: "Name (edited)" }),
-  ).toBeVisible();
-
-  await argosScreenshot(page, "admin-details-view-field-edited");
+  await argosScreenshot(page, "admin-details-view-config-after-save");
 });
 
 // ---------------------------------------------------------------------------
@@ -684,72 +673,6 @@ test("Admin: edit general settings (label, tooltip, verify after save)", async (
   );
 
   await argosScreenshot(page, "admin-general-settings-after-save");
-});
-
-test("Admin: mark a field as required and verify save persists the validator", async ({
-  page,
-}) => {
-  await loadApp(page, []);
-
-  // Navigate to Children list and open Configure Data Structure.
-  await page.getByRole("navigation").getByText("Children").click();
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByText("Configure Data Structure").click();
-
-  await page.waitForLoadState("networkidle");
-  await expect(page.getByText("Configuring data structure for")).toBeVisible();
-
-  await page.getByText("Details View & Fields").click();
-  await page.waitForLoadState("networkidle");
-
-  // Locate the Phone field's admin card and open the Edit Field dialog.
-  // The label "Phone" matches a mat-form-field; the surrounding wrapper has
-  // the Edit Field button (revealed on hover).
-  const phoneTextbox = page.locator("mat-form-field").getByText("Phone");
-  await expect(phoneTextbox).toBeVisible();
-  const phoneField = phoneTextbox.locator(
-    'xpath=ancestor::div[contains(@class,"admin-form-field")]',
-  );
-  await phoneField.scrollIntoViewIfNeeded();
-  await phoneField.hover();
-
-  await phoneField.getByRole("button", { name: "Edit Field" }).click();
-
-  const dialog = page.locator("mat-dialog-container");
-  await expect(dialog).toBeVisible();
-
-  // Open the Validation tab and tick the Required Field checkbox.
-  await dialog.getByRole("tab", { name: "Validation" }).click();
-  const requiredCheckbox = dialog.getByRole("checkbox", {
-    name: /Required Field/,
-  });
-  await requiredCheckbox.check();
-  await expect(requiredCheckbox).toBeChecked();
-
-  await dialog.getByRole("button", { name: "Apply", exact: true }).click();
-  await expect(dialog).not.toBeVisible();
-
-  // Save the configuration to the backend to test true persistence.
-  await page.getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByText("Configuration updated")).toBeVisible();
-
-  // Navigate away and back to prove the setting survived the full save round-trip.
-  await page.getByRole("navigation").getByText("Children").click();
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByText("Configure Data Structure").click();
-  await page.waitForLoadState("networkidle");
-  await page.getByText("Details View & Fields").click();
-  await page.waitForLoadState("networkidle");
-
-  // Re-open the same field to verify the Required setting survived persistence.
-  await phoneField.scrollIntoViewIfNeeded();
-  await phoneField.hover();
-  await phoneField.getByRole("button", { name: "Edit Field" }).click();
-  await expect(dialog).toBeVisible();
-  await dialog.getByRole("tab", { name: "Validation" }).click();
-  await expect(
-    dialog.getByRole("checkbox", { name: /Required Field/ }),
-  ).toBeChecked();
 });
 
 const NEW_SITE_NAME = "E2E Site Test";
