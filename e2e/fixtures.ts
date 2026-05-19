@@ -22,6 +22,7 @@ import {
 } from "#src/app/core/entity/database-entity.decorator.js";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype.js";
 import { EntityConfigService } from "#src/app/core/entity/entity-config.service.js";
+import { EntityConfigReadyService } from "#src/app/core/entity/entity-config-ready.service.js";
 import type { Entity } from "#src/app/core/entity/model/entity.js";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service.js";
 import { LocationDatatype } from "#src/app/features/location/location.datatype.js";
@@ -132,6 +133,7 @@ function serializeEntities(entities: Entity[]): unknown[] {
       { provide: EntityActionsService, useValue: undefined },
       { provide: ConfigService, useValue: undefined },
       { provide: EntitySchemaService, useClass: EntitySchemaService },
+      { provide: EntityConfigReadyService, useClass: EntityConfigReadyService },
       { provide: EntityConfigService, useClass: EntityConfigService },
       { provide: EntityRegistry, useValue: entityRegistry },
       { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
