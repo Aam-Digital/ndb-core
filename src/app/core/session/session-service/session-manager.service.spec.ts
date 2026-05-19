@@ -18,11 +18,10 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { Config } from "../../config/config";
-import { ConfigService } from "../../config/config.service";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import type { Mock } from "vitest";
+import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
 
 type KeycloakAuthServiceMock = Pick<
   KeycloakAuthService,
@@ -175,8 +174,7 @@ describe("SessionManagerService", () => {
       service.remoteLogin();
       await vi.advanceTimersByTimeAsync(0);
 
-      // we somehow need this in the Test as the replay doesn't trigger
-      TestBed.inject(ConfigService).entityUpdated.next(new Config());
+      TestBed.inject(EntityConfigReadyService).markSetupCompleted();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(currentUser.value).toEqual(loggedInUser);
@@ -229,8 +227,7 @@ describe("SessionManagerService", () => {
       service.remoteLogin();
       await vi.advanceTimersByTimeAsync(0);
 
-      // we somehow need this in the Test as the replay doesn't trigger
-      TestBed.inject(ConfigService).entityUpdated.next(new Config());
+      TestBed.inject(EntityConfigReadyService).markSetupCompleted();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockedEntityMapper.load).not.toHaveBeenCalled();
