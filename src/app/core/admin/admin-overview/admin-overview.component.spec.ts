@@ -7,6 +7,8 @@ import { SessionType } from "../../session/session-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
 import { DownloadService } from "../../export/download-service/download.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../entity/model/entity";
 
 describe("AdminComponent", () => {
   let component: AdminOverviewComponent;
@@ -98,13 +100,54 @@ describe("AdminComponent", () => {
     expect(mockDownloadService.triggerDownload).toHaveBeenCalled();
   });
 
-  it("should save and apply new configuration", async () => {
+  it("should save and apply new configuration when uploading a single config object", async () => {
     const mockFileReader = createFileReaderMock("{}");
     const saveConfigSpy = vi.spyOn(TestBed.inject(ConfigService), "saveConfig");
     saveConfigSpy.mockResolvedValue(null);
     await component.uploadConfigFile({ target: { files: [] } } as any);
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(saveConfigSpy).toHaveBeenCalled();
+  });
+
+  it("should bulk-save all docs when uploading an array of entity docs", async () => {
+    const rawDocs = [
+      { _id: "Config:CONFIG_ENTITY", _type: "Config", data: {} },
+      {
+        _id: "ConfigurableEnum:test-enum",
+        _type: "ConfigurableEnum",
+        label: "Test",
+      },
+    ];
+    createFileReaderMock(JSON.stringify(rawDocs));
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const mockEntity = new Entity("Config:CONFIG_ENTITY");
+    vi.spyOn(entityMapper, "entityFromRawDoc").mockReturnValue(mockEntity);
+    const saveAllSpy = vi.spyOn(entityMapper, "saveAll").mockResolvedValue([]);
+    const saveConfigSpy = vi.spyOn(TestBed.inject(ConfigService), "saveConfig");
+
+    await component.uploadConfigFile({ target: { files: [] } } as any);
+
+    expect(entityMapper.entityFromRawDoc).toHaveBeenCalledTimes(rawDocs.length);
+    expect(saveAllSpy).toHaveBeenCalledWith(
+      expect.arrayContaining([mockEntity]),
+      true,
+    );
+    expect(saveConfigSpy).not.toHaveBeenCalled();
+  });
+
+  it("should set isUploadingConfig signal to false after upload completes", async () => {
+    createFileReaderMock("{}");
+    vi.spyOn(TestBed.inject(ConfigService), "saveConfig").mockResolvedValue(
+      null,
+    );
+
+    const uploadPromise = component.uploadConfigFile({
+      target: { files: [] },
+    } as any);
+    expect(component.isUploadingConfig()).toBe(true);
+    await uploadPromise;
+    expect(component.isUploadingConfig()).toBe(false);
   });
 
   it("should open dialog and call backup service when loading backup", async () => {

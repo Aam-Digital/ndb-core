@@ -65,6 +65,7 @@ export class AdminOverviewComponent {
   public templates: MenuItem[] = [];
   public configurationMenuItems: MenuItem[] = [];
   expandedSection = computed(() => this.sectionStateService.getExpanded());
+  isUploadingConfig = signal(false);
 
   isSaasEnvironment: boolean;
 
@@ -115,8 +116,21 @@ export class AdminOverviewComponent {
   }
 
   async uploadConfigFile(inputEvent: Event) {
-    const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
-    await this.configService.saveConfig(JSON.parse(loadedFile));
+    this.isUploadingConfig.set(true);
+    try {
+      const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
+      const parsed = JSON.parse(loadedFile);
+      if (Array.isArray(parsed)) {
+        const entities = parsed.map((doc) =>
+          this.entityMapper.entityFromRawDoc(doc),
+        );
+        await this.entityMapper.saveAll(entities, true);
+      } else {
+        await this.configService.saveConfig(parsed);
+      }
+    } finally {
+      this.isUploadingConfig.set(false);
+    }
   }
 
   editConfig() {
