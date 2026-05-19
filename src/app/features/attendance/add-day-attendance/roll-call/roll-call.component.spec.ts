@@ -266,6 +266,23 @@ describe("RollCallComponent", () => {
     expect(location.back).toHaveBeenCalled();
   });
 
+  it("should not be finished when no event is loaded", async () => {
+    fixture.componentRef.setInput("eventEntity", undefined);
+    await stabilize();
+
+    expect(component.isFinished()).toBe(false);
+  });
+
+  it("should not call openView if event entity is undefined when showDetails is called", async () => {
+    fixture.componentRef.setInput("eventEntity", undefined);
+    await stabilize();
+
+    const formDialog = TestBed.inject(FormDialogService);
+    component.showDetails();
+
+    expect(formDialog.openView).not.toHaveBeenCalled();
+  });
+
   it("isn't dirty initially", () => {
     expect(component.isDirty()).toBe(false);
   });

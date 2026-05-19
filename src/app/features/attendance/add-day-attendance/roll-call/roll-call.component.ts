@@ -176,7 +176,10 @@ export class RollCallComponent {
     () => this.currentIndex() === this.participants().length - 1,
   );
   readonly isFinished = computed(
-    () => this.currentIndex() >= this.participants().length,
+    () =>
+      !!this.event() &&
+      !this.eventResource.isLoading() &&
+      this.currentIndex() >= this.participants().length,
   );
 
   constructor() {
@@ -424,7 +427,9 @@ export class RollCallComponent {
   }
 
   showDetails() {
-    this.formDialog.openView(this.event()?.entity);
+    const entity = this.event()?.entity;
+    if (!entity) return;
+    this.formDialog.openView(entity);
   }
 
   async includeInactive() {
