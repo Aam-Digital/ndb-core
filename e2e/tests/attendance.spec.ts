@@ -37,7 +37,7 @@ test("Record attendance for one activity", async ({ page }) => {
   await dateField.fill("25.12.2024");
   await dateField.blur();
 
-  // FIXME: A simple .click() does not trigger the action and we don’t know why.
+  // Workaround: dispatchEvent("click") is required because a plain .click() does not trigger the action in this e2e environment.
   await page.getByText(activity.title).dispatchEvent("click");
 
   await expect(
@@ -129,19 +129,48 @@ test("Children list displays monthly attendance percentage", async ({
   await argosScreenshot(page, "children-school-info");
 });
 
-test("Recurring activities list", async ({ page }) => {
+test("Recurring activities list and calendar navigation", async ({ page }) => {
+  // Default demo data includes recurring activities AND their generated events,
+  // which is what the calendar needs to render highlighted days.
   await loadApp(page);
+
   await page.getByRole("navigation").getByText("Attendance").click();
-  await page
-    .getByRole("button", {
-      name: "Recurring Activities",
-    })
-    .click();
+  await page.getByRole("button", { name: "Recurring Activities" }).click();
+
   await expect(
     page.getByRole("heading", { name: "Recurring Activities" }),
   ).toBeVisible();
   await expect(page.locator("tr.mat-mdc-row")).toHaveCount(7);
   await argosScreenshot(page, "recurring-activities-list");
+
+  // Open the first recurring activity in the list to check the calendar.
+  await page.locator("app-entities-table tbody tr").first().click();
+
+  // The calendar lives inside the "Events & Attendance" tab.
+  await page.getByRole("tab", { name: "Events & Attendance" }).click();
+
+  // The calendar (mat-calendar) is rendered inside the ActivityAttendanceSection.
+  const calendar = page.locator("mat-calendar");
+  await expect(calendar).toBeVisible({ timeout: 10_000 });
+
+  // The currently visible month label (e.g. "JAN 2025" given the mocked clock).
+  const periodButton = page.getByRole("button", {
+    name: /Choose month and year/i,
+  });
+  await expect(periodButton).toBeVisible();
+
+  const initialPeriodText = (await periodButton.textContent())?.trim() ?? "";
+
+  await argosScreenshot(page, "attendance-calendar-initial");
+
+  // Navigate back one month using the "Previous month" button.
+  await page.getByRole("button", { name: /Previous month/i }).click();
+
+  // The period label should now reflect a different month.
+  await expect(periodButton).not.toHaveText(initialPeriodText);
+
+  // The calendar grid is still present after the change.
+  await expect(calendar.getByRole("grid")).toBeVisible();
 });
 
 test("Edit participants of a recurring activity", async ({ page }) => {

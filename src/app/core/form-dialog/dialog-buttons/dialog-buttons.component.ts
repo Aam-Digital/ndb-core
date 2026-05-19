@@ -6,6 +6,7 @@ import {
   output,
   computed,
   effect,
+  signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -46,6 +47,12 @@ export class DialogButtonsComponent<E extends Entity> {
   private router = inject(Router);
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
+  private readonly pendingStateBeforeDialogOpen = signal(
+    this.dialog ? this.unsavedChanges.pending() : false,
+  );
+  private readonly pendingStateAfterClose = computed(() =>
+    this.dialog ? this.pendingStateBeforeDialogOpen() : false,
+  );
 
   protected viewContext = inject(ViewComponentContext, { optional: true });
 
@@ -92,10 +99,8 @@ export class DialogButtonsComponent<E extends Entity> {
         }
       }),
     );
-    // This happens before the `canDeactivate` check and therefore does not warn when leaving
-    this.dialog
-      .afterClosed()
-      .subscribe(() => this.unsavedChanges.pending.set(false));
+    // Dialog closing happens before the `canDeactivate` check, so restore the state synchronously.
+    this.dialog.afterClosed().subscribe(() => this.restorePendingChanges());
   }
 
   async save() {
@@ -115,7 +120,6 @@ export class DialogButtonsComponent<E extends Entity> {
   }
 
   cancel() {
-    this.unsavedChanges.pending.set(false);
     this.close();
   }
 
@@ -123,7 +127,11 @@ export class DialogButtonsComponent<E extends Entity> {
     this.dialog?.close(result);
     this.closeView.emit(result);
 
-    this.unsavedChanges.pending.set(false);
+    this.restorePendingChanges();
+  }
+
+  private restorePendingChanges() {
+    this.unsavedChanges.pending.set(this.pendingStateAfterClose());
   }
 
   onAction(action: string) {
