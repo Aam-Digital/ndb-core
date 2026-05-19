@@ -17,7 +17,6 @@
 
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { SyncState } from "../../../session/session-states/sync-state.enum";
-import { SessionType } from "../../../session/session-type";
 import { environment } from "../../../../../environments/environment";
 import { DatabaseIndexingService } from "../../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
@@ -25,7 +24,7 @@ import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { BackgroundProcessingIndicatorComponent } from "../background-processing-indicator/background-processing-indicator.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { SyncStateSubject } from "../../../session/session-type";
+import { SyncStateSubject, SessionType } from "../../../session/session-type";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -76,18 +75,16 @@ export class SyncStatusComponent {
         title: $localize`Synchronizing database`,
         pending: true,
       });
+    } else if (environment.session_type === SessionType.online) {
+      currentProcesses.push({
+        title: $localize`Offline sync disabled — loading data directly from server`,
+        pending: false,
+      });
     } else {
-      if (environment.session_type === SessionType.online) {
-        currentProcesses.push({
-          title: $localize`Offline sync disabled — loading data directly from server`,
-          pending: false,
-        });
-      } else {
-        currentProcesses.push({
-          title: $localize`Database up-to-date`,
-          pending: false,
-        });
-      }
+      currentProcesses.push({
+        title: $localize`Database up-to-date`,
+        pending: false,
+      });
     }
     currentProcesses = currentProcesses.concat(this.indexingProcesses);
     this._backgroundProcesses.next(currentProcesses);
