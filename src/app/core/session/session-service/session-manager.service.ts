@@ -32,11 +32,11 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { filter, take } from "rxjs/operators";
-import { Subscription } from "rxjs";
+import { filter, take, takeUntil } from "rxjs/operators";
+import { Subject, Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
-import { ConfigService } from "../../config/config.service";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
 
 /**
  * This service handles the user session.
@@ -53,7 +53,7 @@ export class SessionManagerService {
   private loginStateSubject = inject(LoginStateSubject);
   private router = inject(Router);
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
-  private configService = inject(ConfigService);
+  private entityConfigReady = inject(EntityConfigReadyService);
   private databaseResolver = inject(DatabaseResolverService);
   private readonly syncStateSubject = inject(SyncStateSubject);
 
@@ -72,6 +72,7 @@ export class SessionManagerService {
   private updateSubscription: Subscription;
   /** Subscription waiting for first sync completion before registering the user for offline login. */
   private syncSaveSubscription: Subscription | undefined;
+  private readonly logout$ = new Subject<void>();
 
   /**
    * Silently check for an existing SSO session without redirecting.
@@ -152,10 +153,12 @@ export class SessionManagerService {
     await this.databaseResolver.initDatabasesForSession(session);
     this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
-    this.configService.configUpdates.pipe(take(1)).subscribe(() =>
-      // requires initial config to be loaded first!
-      this.initUserEntity(session.entityId),
-    );
+    this.entityConfigReady.setupCompleted$
+      .pipe(takeUntil(this.logout$), take(1))
+      .subscribe(() => {
+        // requires dynamic entity config to be applied first!
+        this.initUserEntity(session.entityId);
+      });
   }
 
   private initUserEntity(entityId: string) {
@@ -192,6 +195,8 @@ export class SessionManagerService {
    * If offline, reset the state and forward to login page.
    */
   async logout() {
+    this.logout$.next();
+
     if (this.remoteLoggedIn) {
       // Tell the next page load (after the Keycloak logout redirect round-trip)
       // not to run another silent SSO check — it would only delay the login
