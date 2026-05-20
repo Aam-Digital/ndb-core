@@ -9,6 +9,7 @@ import { environment } from "../../../../environments/environment";
 import { DownloadService } from "../../export/download-service/download.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 describe("AdminComponent", () => {
   let component: AdminOverviewComponent;
@@ -147,6 +148,39 @@ describe("AdminComponent", () => {
     } as any);
     expect(component.isUploadingConfig()).toBe(true);
     await uploadPromise;
+    expect(component.isUploadingConfig()).toBe(false);
+  });
+
+  it("should show success snackbar after uploading configuration", async () => {
+    createFileReaderMock("{}");
+    vi.spyOn(TestBed.inject(ConfigService), "saveConfig").mockResolvedValue(
+      null,
+    );
+    const snackBarSpy = vi.spyOn(TestBed.inject(MatSnackBar), "open");
+
+    await component.uploadConfigFile({ target: { files: [] } } as any);
+
+    expect(snackBarSpy).toHaveBeenCalledWith(
+      expect.stringContaining("updated"),
+      undefined,
+      expect.any(Object),
+    );
+  });
+
+  it("should show error snackbar and reset signal if upload fails", async () => {
+    createFileReaderMock("{}");
+    vi.spyOn(TestBed.inject(ConfigService), "saveConfig").mockRejectedValue(
+      new Error("DB error"),
+    );
+    const snackBarSpy = vi.spyOn(TestBed.inject(MatSnackBar), "open");
+
+    await component.uploadConfigFile({ target: { files: [] } } as any);
+
+    expect(snackBarSpy).toHaveBeenCalledWith(
+      expect.stringContaining("failed"),
+      undefined,
+      expect.any(Object),
+    );
     expect(component.isUploadingConfig()).toBe(false);
   });
 
