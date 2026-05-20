@@ -37,26 +37,22 @@ import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 })
 export class DateRangeFilterComponent<T extends Entity> {
   private dialog = inject(MatDialog);
-  private readonly selectedOptionVersion = signal(0);
+  private readonly selectedOptionValues = signal<string[]>([]);
 
   readonly fromDate = signal<Date | null>(null);
   readonly toDate = signal<Date | null>(null);
 
   filterConfig = input<DateFilter<T>>();
   dateRangeChange = output<{ from: Date | null; to: Date | null }>();
-  readonly isNoDateFilterActive = computed(() => {
-    this.selectedOptionVersion();
-    return (
-      this.filterConfig()?.selectedOptionValues?.[0] === EMPTY_FILTER_OPTION_KEY
-    );
-  });
-  readonly isAnyDateFilterActive = computed(() => {
-    this.selectedOptionVersion();
-    return (this.filterConfig()?.selectedOptionValues?.length ?? 0) > 0;
-  });
+  readonly isNoDateFilterActive = computed(
+    () => this.selectedOptionValues()[0] === EMPTY_FILTER_OPTION_KEY,
+  );
+  readonly isAnyDateFilterActive = computed(
+    () => this.selectedOptionValues().length > 0,
+  );
   private readonly selectedRange = computed(() => {
-    this.selectedOptionVersion();
     const filterConfig = this.filterConfig();
+    this.selectedOptionValues(); // tracked to re-run when values change
     if (!filterConfig) {
       return { from: null as Date | null, to: null as Date | null };
     }
@@ -69,8 +65,12 @@ export class DateRangeFilterComponent<T extends Entity> {
       const filterConfig = this.filterConfig();
       if (!filterConfig) return;
 
-      const sub = filterConfig.selectedOptionChange.subscribe(() => {
-        this.selectedOptionVersion.update((version) => version + 1);
+      this.selectedOptionValues.set([
+        ...(filterConfig.selectedOptionValues ?? []),
+      ]);
+
+      const sub = filterConfig.selectedOptionChange.subscribe((values) => {
+        this.selectedOptionValues.set([...(values ?? [])]);
       });
       onCleanup(() => sub.unsubscribe());
     });
@@ -108,11 +108,22 @@ export class DateRangeFilterComponent<T extends Entity> {
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
-        data: this.filterConfig(),
+        data: {
+          selectedOptionValues: this.filterConfig()?.selectedOptionValues,
+          selectedOption: this.filterConfig()?.getSelectedOption(),
+          dateRange: this.filterConfig()?.getDateRange(),
+          rangeOptions: this.filterConfig()?.rangeOptions,
+        },
       })
       .afterClosed()
-      .subscribe(() => {
-        this.selectedOptionVersion.update((version) => version + 1);
+      .subscribe((result) => {
+        if (!result) return;
+        const filterConfig = this.filterConfig();
+        if (!filterConfig) return;
+        filterConfig.selectedOptionValues = result.selectedOptionValues;
+        filterConfig.selectedOptionChange.emit(
+          filterConfig.selectedOptionValues,
+        );
       });
   }
 }
