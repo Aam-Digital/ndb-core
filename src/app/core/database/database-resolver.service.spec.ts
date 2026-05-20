@@ -3,17 +3,21 @@ import { TestBed } from "@angular/core/testing";
 import { DatabaseResolverService } from "./database-resolver.service";
 import { SessionInfo } from "../session/auth/session-info";
 import { MemoryPouchDatabase } from "./pouchdb/memory-pouch-database";
+import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import { DatabaseFactoryService } from "./database-factory.service";
 import { SessionType, SyncStateSubject } from "../session/session-type";
 import {
   IndexeddbMigrationService,
   DbConfig,
 } from "./indexeddb-migration.service";
+import { environment } from "../../../environments/environment";
 
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
   let syncStateSubject: SyncStateSubject;
   let migrationServiceSpy: any;
+  let factory: { createDatabase: (dbName: string) => any };
+  const originalSessionType = environment.session_type;
 
   const testDbConfig: DbConfig = {
     dbNames: { app: "test-uuid-app", notifications: "test-uuid-notifications" },
@@ -32,14 +36,20 @@ describe("DatabaseResolverService", () => {
     };
     migrationServiceSpy.resolveDbConfig.mockResolvedValue(testDbConfig);
 
+    factory = {
+      createDatabase: (dbName: string) => {
+        if (environment.session_type === SessionType.online) {
+          return new RemotePouchDatabase(dbName, null as any, syncStateSubject);
+        }
+        return new MemoryPouchDatabase(dbName, syncStateSubject);
+      },
+    };
+
     TestBed.configureTestingModule({
       providers: [
         {
           provide: DatabaseFactoryService,
-          useValue: {
-            createDatabase: () =>
-              new MemoryPouchDatabase("unit-test-db", syncStateSubject),
-          },
+          useValue: factory,
         },
         {
           provide: IndexeddbMigrationService,
@@ -51,6 +61,10 @@ describe("DatabaseResolverService", () => {
 
     // @ts-ignore - forcing this for stable test conditions
     service["sessionType"] = SessionType.mock;
+  });
+
+  afterEach(() => {
+    environment.session_type = originalSessionType;
   });
 
   it("should be created", () => {
@@ -69,6 +83,58 @@ describe("DatabaseResolverService", () => {
 
     expect(migrationServiceSpy.resolveDbConfig).toHaveBeenCalled();
     expect(defaultDb.init).toHaveBeenCalledWith("test-uuid-app");
+  });
+
+  it("should switch to online session type before creating the anonymous database", () => {
+    environment.session_type = SessionType.synced;
+    // @ts-ignore
+    service["sessionType"] = SessionType.synced;
+    let sessionTypeAtCreate: SessionType | undefined;
+    vi.spyOn(factory, "createDatabase").mockImplementation((dbName: string) => {
+      sessionTypeAtCreate = environment.session_type;
+      return new RemotePouchDatabase(dbName, null as any, syncStateSubject);
+    });
+
+    service.initDatabasesForAnonymous();
+
+    expect(sessionTypeAtCreate).toBe(SessionType.online);
+    expect(environment.session_type).toBe(SessionType.online);
+  });
+
+  it("should init the anonymous database with unauthenticatedSession flag", () => {
+    environment.session_type = SessionType.synced;
+    // @ts-ignore
+    service["sessionType"] = SessionType.synced;
+    const initSpy = vi.fn();
+    vi.spyOn(factory, "createDatabase").mockImplementation((dbName: string) => {
+      const db = new RemotePouchDatabase(dbName, null as any, syncStateSubject);
+      db.init = initSpy;
+      vi.spyOn(db, "isInitialized").mockReturnValue(false);
+      return db;
+    });
+
+    service.initDatabasesForAnonymous();
+
+    expect(initSpy).toHaveBeenCalledWith(undefined, {
+      unauthenticatedSession: true,
+    });
+  });
+
+  it("should not re-init the anonymous database if already initialized", () => {
+    environment.session_type = SessionType.synced;
+    // @ts-ignore
+    service["sessionType"] = SessionType.synced;
+    const initSpy = vi.fn();
+    vi.spyOn(factory, "createDatabase").mockImplementation((dbName: string) => {
+      const db = new RemotePouchDatabase(dbName, null as any, syncStateSubject);
+      db.init = initSpy;
+      vi.spyOn(db, "isInitialized").mockReturnValue(true);
+      return db;
+    });
+
+    service.initDatabasesForAnonymous();
+
+    expect(initSpy).not.toHaveBeenCalled();
   });
 
   it("should use legacy DB names when migration returns legacy config", async () => {

@@ -7,6 +7,7 @@ import { Observable, Subject } from "rxjs";
 import { NotificationEvent } from "app/features/notification/model/notification-event";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
+import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import {
   DbConfig,
   IndexeddbMigrationService,
@@ -153,9 +154,22 @@ export class DatabaseResolverService {
   }
 
   initDatabasesForAnonymous() {
-    if (!this.getDatabase(Entity.DATABASE).isInitialized()) {
-      // this internally only uses the remote database of the SyncedPouchDatabase instance:
-      this.getDatabase(Entity.DATABASE).init(null);
+    // Switch to online-only mode before the factory creates the database
+    // so it returns a plain RemotePouchDatabase (no local PouchDB, no sync).
+    environment.session_type = SessionType.online;
+    this.sessionType = SessionType.online;
+
+    const db = this.getDatabase(Entity.DATABASE);
+    if (db.isInitialized()) {
+      return;
+    }
+
+    // Public forms run without any logged-in user, so suppress the Keycloak
+    // redirect that RemotePouchDatabase would otherwise trigger on a 401.
+    if (db instanceof RemotePouchDatabase) {
+      db.init(undefined, { unauthenticatedSession: true });
+    } else {
+      db.init();
     }
   }
 }
