@@ -205,10 +205,13 @@ export class RollCallComponent {
    */
   private async initializeForEvent() {
     this.isInitializing.set(true);
-    this.loadAttendanceStatusTypes();
-    await this.loadParticipants();
-    this.setInitialIndex();
-    this.isInitializing.set(false);
+    try {
+      this.loadAttendanceStatusTypes();
+      await this.loadParticipants();
+      this.setInitialIndex();
+    } finally {
+      this.isInitializing.set(false);
+    }
   }
 
   /**
