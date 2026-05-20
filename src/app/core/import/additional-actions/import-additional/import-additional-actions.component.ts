@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
   input,
   model,
-  signal,
+  computed,
   effect,
   DestroyRef,
 } from "@angular/core";
@@ -59,7 +59,11 @@ export class ImportAdditionalActionsComponent {
   entityType = input<string>();
   importActions = model<AdditionalImportAction[]>([]);
 
-  availableImportActions = signal<AdditionalImportAction[]>([]);
+  availableImportActions = computed(() =>
+    this.importAdditionalService
+      .getActionsLinkingFor(this.entityType())
+      .sort(sortExportOnlyLast),
+  );
 
   // TODO: may need more distinction --> like in ImportModule?
   actionToString = (a: AdditionalImportAction) =>
@@ -85,11 +89,6 @@ export class ImportAdditionalActionsComponent {
 
     effect(() => {
       const entityType = this.entityType();
-      this.availableImportActions.set(
-        this.importAdditionalService
-          .getActionsLinkingFor(entityType)
-          .sort(sortExportOnlyLast),
-      );
       this.linkEntityForm.reset();
       if (entityType) {
         this.linkEntityForm.get("action").enable();

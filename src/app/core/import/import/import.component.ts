@@ -3,6 +3,8 @@ import {
   ViewChild,
   inject,
   ChangeDetectionStrategy,
+  signal,
+  computed,
 } from "@angular/core";
 import { ParsedData } from "../../common-components/input-file/input-file.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
@@ -64,24 +66,32 @@ export class ImportComponent {
 
   rawData: any[];
 
-  importSettings: Partial<ImportSettings> = {};
+  importSettings = signal<Partial<ImportSettings>>({});
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
 
   /** calculated for validation on columnMapping changes */
-  mappedColumnsCount: number;
+  mappedColumnsCount = computed(
+    () =>
+      this.importSettings().columnMapping?.filter((m) => !!m.propertyName)
+        .length ?? 0,
+  );
 
   constructor() {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {
-        this.importSettings.entityType = params.get("entityType");
+        this.updateImportSettings({ entityType: params.get("entityType") });
       }
       if (params.has("additionalAction")) {
         const action = JSON.parse(params.get("additionalAction"));
-        this.importSettings.additionalActions = [action];
+        this.updateImportSettings({ additionalActions: [action] });
       }
     });
+  }
+
+  updateImportSettings(patch: Partial<ImportSettings>) {
+    this.importSettings.update((settings) => ({ ...settings, ...patch }));
   }
 
   async reset(skipConfirmation?: boolean) {
@@ -104,9 +114,9 @@ export class ImportComponent {
 
   onDataLoaded(data: ParsedData) {
     this.rawData = data.data;
-    this.importSettings.filename = data.filename;
+    this.updateImportSettings({ filename: data.filename });
 
-    if (this.importSettings.columnMapping) {
+    if (this.importSettings().columnMapping) {
       this.alertService.addInfo(
         $localize`:alert info after file load:Column Mappings have been reset`,
       );
@@ -117,10 +127,10 @@ export class ImportComponent {
   }
 
   onEntityTypeChange(newType: string) {
-    this.importSettings.entityType = newType;
-    if (this.importSettings.columnMapping?.length) {
+    this.updateImportSettings({ entityType: newType });
+    if (this.importSettings().columnMapping?.length) {
       this.onColumnMappingUpdate(
-        this.importSettings.columnMapping.map(({ column }) => ({
+        this.importSettings().columnMapping.map(({ column }) => ({
           column,
           propertyName: undefined,
         })),
@@ -129,21 +139,21 @@ export class ImportComponent {
   }
 
   onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
-    this.importSettings.columnMapping = newColumnMapping;
-    // to avoid ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(() => {
-      this.mappedColumnsCount = newColumnMapping.filter(
-        (m) => !!m.propertyName,
-      ).length;
-    });
+    this.updateImportSettings({ columnMapping: newColumnMapping });
   }
 
   applyPreviousMapping(importMetadata: ImportMetadata) {
-    this.importSettings.entityType = importMetadata.config.entityType;
-    this.importSettings.additionalActions =
-      importMetadata.config.additionalActions;
+    this.updateImportSettings({
+      entityType: importMetadata.config.entityType,
+      additionalActions: importMetadata.config.additionalActions,
+    });
 
-    const adjustedMappings = this.importSettings.columnMapping.map(
+    const currentColumnMapping = this.importSettings().columnMapping;
+    if (!currentColumnMapping) {
+      return;
+    }
+
+    const adjustedMappings = currentColumnMapping.map(
       ({ column }) =>
         importMetadata.config.columnMapping.find(
           (c) => column === c.column,
