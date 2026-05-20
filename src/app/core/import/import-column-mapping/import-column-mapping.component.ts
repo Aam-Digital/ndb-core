@@ -1,16 +1,15 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
   inject,
   ChangeDetectionStrategy,
+  input,
+  model,
+  computed,
+  effect,
+  untracked,
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { EntityConstructor } from "../../entity/model/entity";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
@@ -38,48 +37,46 @@ import { ImportAdditionalSettings } from "../import-additional-settings/import-a
     MatBadgeModule,
   ],
 })
-export class ImportColumnMappingComponent implements OnChanges {
+export class ImportColumnMappingComponent {
   private entities = inject(EntityRegistry);
   private importColumnMappingService = inject(ImportColumnMappingService);
 
-  @Input() rawData: any[] = [];
-  @Input() columnMapping: ColumnMapping[] = [];
-  @Input() additionalSettings: ImportAdditionalSettings;
-  @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
+  rawData = input<any[]>([]);
+  columnMapping = model<ColumnMapping[]>([]);
+  additionalSettings = input<ImportAdditionalSettings>();
+  entityType = input<string>();
 
-  entityCtor: EntityConstructor;
-  usedPropertyNames: Set<string> = new Set();
+  entityCtor = computed(() =>
+    this.entityType() ? this.entities.get(this.entityType()) : undefined,
+  );
 
-  @Input() set entityType(value: string) {
-    if (!value) {
-      return;
-    }
-    this.entityCtor = this.entities.get(value);
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.columnMapping) {
+  constructor() {
+    effect(() => {
+      const cm = this.columnMapping();
+      const ctor = this.entityCtor();
+      if (!ctor) return;
       const autoMappings =
         this.importColumnMappingService.automaticallySelectMappings(
-          JSON.parse(JSON.stringify(this.columnMapping)),
-          this.entityCtor.schema,
+          JSON.parse(JSON.stringify(cm)),
+          ctor.schema,
         );
-      if (JSON.stringify(autoMappings) !== JSON.stringify(this.columnMapping)) {
-        this.columnMapping = autoMappings;
-        this.columnMappingChange.emit([...this.columnMapping]);
+      if (JSON.stringify(autoMappings) !== JSON.stringify(cm)) {
+        untracked(() => this.columnMapping.set(autoMappings));
       }
-    }
+    });
   }
 
   updateColumnMapping(
     originalColumnMapping: ColumnMapping,
     newColumnMapping: ColumnMapping,
   ) {
-    const index = this.columnMapping.indexOf(originalColumnMapping);
-    if (index >= 0) {
-      this.columnMapping[index] = { ...newColumnMapping };
-    }
-    this.columnMapping = [...this.columnMapping];
-    this.columnMappingChange.emit(this.columnMapping);
+    this.columnMapping.update((cm) => {
+      const next = [...cm];
+      const index = next.indexOf(originalColumnMapping);
+      if (index >= 0) {
+        next[index] = { ...newColumnMapping };
+      }
+      return next;
+    });
   }
 }

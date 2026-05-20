@@ -1,18 +1,17 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
   inject,
   ChangeDetectionStrategy,
   signal,
+  input,
+  output,
+  DestroyRef,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ImportMetadata } from "../import-metadata";
 import { ImportService } from "../import.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { CustomDatePipe } from "../../basic-datatypes/date/custom-date.pipe";
@@ -22,7 +21,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-import-history",
@@ -38,28 +36,26 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     FaIconComponent,
   ],
 })
-export class ImportHistoryComponent implements OnInit {
+export class ImportHistoryComponent {
   private entityMapper = inject(EntityMapperService);
   private importService = inject(ImportService);
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  @Input() data: any[];
-  @Output() itemSelected = new EventEmitter<ImportMetadata>();
+  data = input<any[]>();
+  itemSelected = output<ImportMetadata>();
 
   previousImports = signal<ImportMetadata[]>([]);
 
   constructor() {
     this.entityMapper
       .receiveUpdates(ImportMetadata)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(inject(DestroyRef)))
       .subscribe((update) => {
         this.previousImports.update((imports) =>
           this.sortImports(applyUpdate(imports, update)),
         );
       });
-  }
 
-  ngOnInit(): void {
     this.loadPreviousImports();
   }
 
