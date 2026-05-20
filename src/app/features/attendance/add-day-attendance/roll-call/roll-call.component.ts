@@ -170,6 +170,7 @@ export class RollCallComponent {
 
   readonly participants = signal<Entity[]>([]);
   readonly inactiveParticipants = signal<Entity[]>([]);
+  readonly isInitializing = signal(false);
 
   readonly isFirst = computed(() => this.currentIndex() === 0);
   readonly isLast = computed(
@@ -179,6 +180,7 @@ export class RollCallComponent {
     () =>
       !!this.event() &&
       !this.eventResource.isLoading() &&
+      !this.isInitializing() &&
       this.currentIndex() >= this.participants().length,
   );
 
@@ -202,9 +204,11 @@ export class RollCallComponent {
    * Initialize participant data for the current event entity.
    */
   private async initializeForEvent() {
+    this.isInitializing.set(true);
     this.loadAttendanceStatusTypes();
     await this.loadParticipants();
     this.setInitialIndex();
+    this.isInitializing.set(false);
   }
 
   /**

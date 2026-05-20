@@ -266,10 +266,25 @@ describe("RollCallComponent", () => {
     expect(location.back).toHaveBeenCalled();
   });
 
-  it("should not be finished when no event is loaded", async () => {
+  it("should not be finished while event or participants are not yet loaded", async () => {
     fixture.componentRef.setInput("eventEntity", undefined);
     await stabilize();
+    expect(component.isFinished()).toBe(false);
 
+    fixture.componentRef.setInput(
+      "eventEntity",
+      new EventWithAttendance(
+        Note.create(new Date()),
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    );
+    await stabilize();
+    component.isInitializing.set(true);
+    fixture.detectChanges();
     expect(component.isFinished()).toBe(false);
   });
 

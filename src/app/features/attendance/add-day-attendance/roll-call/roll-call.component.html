@@ -13,7 +13,7 @@
   }
 </div>
 
-@if (eventResource.isLoading()) {
+@if (eventResource.isLoading() || isInitializing()) {
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 }
 
