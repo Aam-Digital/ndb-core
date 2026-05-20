@@ -1432,5 +1432,6 @@
   "adminNoteDetails.middleFormHeader": "Middle Form",
   "adminNoteDetails.bottomFormHeader": "Bottom Form",
   "4566201598079129347": "add element",
-  "8928798545994192560": "Failed to load user account"
+  "8928798545994192560": "Failed to load user account",
+  "931272690246720471": " Event could not be loaded. Please go back and try again. "
 }
