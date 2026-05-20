@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DateRangeFilterComponent } from "./date-range-filter.component";
 import { MatDialog } from "@angular/material/dialog";
+import { of } from "rxjs";
+import { vi } from "vitest";
 import { MatNativeDateModule } from "@angular/material/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { defaultDateFilters } from "./date-range-filter-panel/date-range-filter-panel.component";
@@ -13,10 +15,15 @@ describe("DateRangeFilterComponent", () => {
   let component: DateRangeFilterComponent<any>;
   let fixture: ComponentFixture<DateRangeFilterComponent<any>>;
 
+  let dialogMock: any;
+
   beforeEach(async () => {
+    dialogMock = {
+      open: vi.fn().mockReturnValue({ afterClosed: () => of(null) }),
+    };
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule, NoopAnimationsModule],
-      providers: [{ provide: MatDialog, useValue: null }],
+      providers: [{ provide: MatDialog, useValue: dialogMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DateRangeFilterComponent);
@@ -137,5 +144,21 @@ describe("DateRangeFilterComponent", () => {
       },
     };
     expect(component.filterConfig().getFilter()).toEqual(expectedDataFilter);
+  });
+
+  it("applies dialog result to filterConfig when dialog returns selection", () => {
+    const dateFilter = new DateFilter("test", "Test", defaultDateFilters);
+    dateFilter.selectedOptionValues = [];
+    fixture.componentRef.setInput("filterConfig", dateFilter);
+
+    const emitSpy = vi.spyOn(dateFilter.selectedOptionChange, "emit");
+
+    const result = { selectedOptionValues: ["0"] };
+    dialogMock.open.mockReturnValue({ afterClosed: () => of(result) });
+
+    component.openDialog(new Event("click"));
+
+    expect(dateFilter.selectedOptionValues).toEqual(["0"]);
+    expect(emitSpy).toHaveBeenCalledWith(["0"]);
   });
 });
