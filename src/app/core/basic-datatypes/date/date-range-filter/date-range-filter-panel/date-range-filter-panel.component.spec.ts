@@ -4,6 +4,7 @@ import {
   DateRangeFilterPanelComponent,
   defaultDateFilters,
 } from "./date-range-filter-panel.component";
+import { vi } from "vitest";
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import { calculateDateRange } from "./date-range-utils";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -22,6 +23,7 @@ describe("DateRangeFilterPanelComponent", () => {
   let fixture: ComponentFixture<DateRangeFilterPanelComponent>;
   let loader: HarnessLoader;
   let dateFilter: DateFilter<any>;
+  let dialogCloseSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     dateFilter = new DateFilter("test", "Test", defaultDateFilters);
@@ -31,13 +33,24 @@ describe("DateRangeFilterPanelComponent", () => {
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: dateFilter },
-        { provide: MatDialogRef, useValue: { close: () => undefined } },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            selectedOptionValues: dateFilter.selectedOptionValues,
+            selectedOption: defaultDateFilters[1],
+            dateRange: dateFilter.getDateRange(),
+            rangeOptions: defaultDateFilters,
+          },
+        },
+        { provide: MatDialogRef, useValue: { close: (v: any) => undefined } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(DateRangeFilterPanelComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
+    // spy on the injected dialogRef.close
+    const dialogRef = TestBed.inject(MatDialogRef) as any;
+    dialogCloseSpy = vi.spyOn(dialogRef, "close");
     fixture.detectChanges();
   });
 
@@ -48,18 +61,17 @@ describe("DateRangeFilterPanelComponent", () => {
   });
 
   it("should highlight the currently selected option", () => {
-    expect(component.selectedOption).toEqual(defaultDateFilters[1]);
+    expect(component.selectedOption()).toEqual(defaultDateFilters[1]);
   });
 
   it("should set selected dates on the component", () => {
     const fromDate = moment().startOf("month");
     const toDate = moment().startOf("month").add(13, "days");
-    component.selectedRangeValue = new DateRange(
-      fromDate.toDate(),
-      toDate.toDate(),
+    component.selectedRangeValue.set(
+      new DateRange(fromDate.toDate(), toDate.toDate()),
     );
-    expect(component.selectedRangeValue.start).toEqual(fromDate.toDate());
-    expect(component.selectedRangeValue.end).toEqual(toDate.toDate());
+    expect(component.selectedRangeValue().start).toEqual(fromDate.toDate());
+    expect(component.selectedRangeValue().end).toEqual(toDate.toDate());
   });
 
   it("should set the manually selected dates", async () => {
@@ -67,21 +79,21 @@ describe("DateRangeFilterPanelComponent", () => {
     const cells = await calendar.getCells();
     await cells[7].select();
     await cells[12].select();
-
-    const filterRange = dateFilter.getDateRange();
-    expect(filterRange.start).toEqual(moment("2023-04-08").toDate());
-    expect(filterRange.end).toEqual(moment("2023-04-13").toDate());
+    // component should close the dialog with selectedOptionValues for the selected dates
+    expect(dialogCloseSpy).toHaveBeenCalled();
+    const calledWith = dialogCloseSpy.mock.calls[0][0];
+    expect(calledWith).toHaveProperty("selectedOptionValues");
+    expect(calledWith.selectedOptionValues).toEqual([
+      moment("2023-04-08").format("YYYY-MM-DD"),
+      moment("2023-04-13").format("YYYY-MM-DD"),
+    ]);
   });
 
   it("should set the dates selected via the preset options", async () => {
     component.selectRangeAndClose(0);
-
-    const filterRange = dateFilter.getDateRange();
-    expect(filterRange.start).toEqual(
-      moment("2023-04-08").startOf("day").toDate(),
-    );
-    expect(filterRange.end).toEqual(moment("2023-04-08").endOf("day").toDate());
-    expect(dateFilter.selectedOptionValues).toEqual(["0"]);
+    expect(dialogCloseSpy).toHaveBeenCalledWith({
+      selectedOptionValues: ["0"],
+    });
   });
 
   it("should set the comparison range when hovering over an option", () => {
@@ -93,25 +105,27 @@ describe("DateRangeFilterPanelComponent", () => {
     component.preselectRange(option);
 
     const expectedRange = calculateDateRange(option);
-    expect(component.comparisonRange).toEqual(expectedRange);
+    expect(component.comparisonRange()).toEqual(expectedRange);
   });
 
   it("should set a full comparison range when hovering over the 'all' option ", () => {
     component.preselectAllRange();
 
-    expect(component.comparisonRange).toEqual(
+    expect(component.comparisonRange()).toEqual(
       new DateRange(new Date("1900-01-01"), new Date("2999-12-31")),
     );
   });
 
   it("should return empty array as filter.selectedOption when 'all' option has been chosen", async () => {
     component.selectRangeAndClose("all");
-    expect(dateFilter.selectedOptionValues).toEqual([]);
+    expect(dialogCloseSpy).toHaveBeenCalledWith({ selectedOptionValues: [] });
   });
 
   it("should set empty option when selected", () => {
     component.selectRangeAndClose("empty");
-    expect(dateFilter.selectedOptionValues).toEqual([EMPTY_FILTER_OPTION_KEY]);
+    expect(dialogCloseSpy).toHaveBeenCalledWith({
+      selectedOptionValues: [EMPTY_FILTER_OPTION_KEY],
+    });
   });
 
   it("should correctly calculate date ranges based on the config", () => {
