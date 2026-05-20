@@ -49,13 +49,13 @@
   </mat-step>
 
   <!-- STEP 2: SELECT IMPORT TYPE -->
-  <mat-step [completed]="!!importSettings.entityType" #step2>
+  <mat-step [completed]="!!importSettings().entityType" #step2>
     <ng-template matStepLabel>
       <div i18n="Import Step - import types">Select Import Type(s)</div>
 
       @if (step2.completed) {
         <div class="step-label-extra" i18n="Import Step - type - sub-label">
-          as {{ importSettings.entityType | entityTypeLabel }}
+          as {{ importSettings().entityType | entityTypeLabel }}
         </div>
       }
     </ng-template>
@@ -76,28 +76,34 @@
       </div>
 
       <app-import-entity-type
-        [(entityType)]="importSettings.entityType"
+        [entityType]="importSettings().entityType"
+        (entityTypeChange)="onEntityTypeChange($event)"
       ></app-import-entity-type>
 
       <app-import-additional-settings
-        [entityType]="importSettings.entityType"
-        [(settings)]="importSettings.additionalSettings"
+        [entityType]="importSettings().entityType"
+        [settings]="importSettings().additionalSettings"
+        (settingsChange)="updateImportSettings({ additionalSettings: $event })"
       ></app-import-additional-settings>
 
       <app-import-additional-actions
-        [entityType]="importSettings.entityType"
-        [(importActions)]="importSettings.additionalActions"
+        [entityType]="importSettings().entityType"
+        [importActions]="importSettings().additionalActions"
+        (importActionsChange)="
+          updateImportSettings({ additionalActions: $event })
+        "
       ></app-import-additional-actions>
 
       <app-import-match-existing
-        [entityType]="importSettings.entityType"
-        [(settings)]="importSettings.importExisting"
+        [entityType]="importSettings().entityType"
+        [settings]="importSettings().importExisting"
+        (settingsChange)="updateImportSettings({ importExisting: $event })"
       ></app-import-match-existing>
     </ng-template>
   </mat-step>
 
   <!-- STEP 3: MAP COLUMNS -->
-  <mat-step [completed]="mappedColumnsCount > 0" #step3>
+  <mat-step [completed]="mappedColumnsCount() > 0" #step3>
     <ng-template matStepLabel>
       <div i18n="Import Step - map columns">Map Columns</div>
 
@@ -106,7 +112,7 @@
           class="step-label-extra"
           i18n="Import Step - map columns - sub-label"
         >
-          {{ mappedColumnsCount }} columns selected
+          {{ mappedColumnsCount() }} columns selected
         </div>
       }
     </ng-template>
@@ -127,11 +133,11 @@
       </div>
 
       <app-import-column-mapping
-        [entityType]="importSettings.entityType"
-        [columnMapping]="importSettings.columnMapping"
+        [entityType]="importSettings().entityType"
+        [columnMapping]="importSettings().columnMapping"
         (columnMappingChange)="onColumnMappingUpdate($event)"
         [rawData]="rawData"
-        [additionalSettings]="importSettings.additionalSettings"
+        [additionalSettings]="importSettings().additionalSettings"
       ></app-import-column-mapping>
     </ng-template>
   </mat-step>
@@ -159,12 +165,12 @@
 
       <app-import-review-data
         [rawData]="rawData"
-        [entityType]="importSettings.entityType"
-        [columnMapping]="importSettings.columnMapping"
-        [additionalSettings]="importSettings.additionalSettings"
-        [additionalActions]="importSettings.additionalActions"
-        [importExisting]="importSettings.importExisting"
-        [filename]="importSettings.filename"
+        [entityType]="importSettings().entityType"
+        [columnMapping]="importSettings().columnMapping"
+        [additionalSettings]="importSettings().additionalSettings"
+        [additionalActions]="importSettings().additionalActions"
+        [importExisting]="importSettings().importExisting"
+        [filename]="importSettings().filename"
         [stepIsFocused]="stepper.selectedIndex === 3"
         (importComplete)="onImportCompleted()"
       ></app-import-review-data>

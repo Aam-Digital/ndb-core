@@ -26,13 +26,13 @@ describe("ImportColumnMappingComponent", () => {
       column: "Name",
       propertyName: "Test2",
     };
-    component.columnMapping = [originalColumnMapping];
 
-    vi.spyOn(component.columnMappingChange, "emit");
+    fixture.componentRef.setInput("columnMapping", [originalColumnMapping]);
+    fixture.detectChanges();
 
     component.updateColumnMapping(originalColumnMapping, newColumnMapping);
 
-    expect(component.columnMappingChange.emit).toHaveBeenCalledWith([
+    expect(component.columnMapping()).toEqual([
       expect.objectContaining({
         column: "Name",
         propertyName: "Test2",

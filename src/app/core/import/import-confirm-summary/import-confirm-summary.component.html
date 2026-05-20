@@ -1,4 +1,4 @@
-@if (!importInProgress) {
+@if (!importInProgress()) {
   <h2 mat-dialog-title i18n>Start Import?</h2>
 } @else {
   <h2 mat-dialog-title i18n>Importing Data</h2>
@@ -8,7 +8,7 @@
   <!-- Summary -->
   <div i18n>{{ data.entitiesToImport?.length }} records will be imported.</div>
 
-  @if (showInheritanceImportWarning) {
+  @if (showInheritanceImportWarning()) {
     <app-hint-box type="warning" class="margin-bottom-regular">
       <strong i18n>⚠️ Manual update required</strong>
       <div i18n>
@@ -19,7 +19,7 @@
   }
 
   <!-- Progress -->
-  @if (importInProgress) {
+  @if (importInProgress()) {
     <div class="margin-top-large">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       <div i18n>Importing data ...</div>
@@ -32,7 +32,7 @@
     mat-stroked-button
     color="accent"
     (click)="executeImport()"
-    [disabled]="importInProgress"
+    [disabled]="importInProgress()"
     i18n
   >
     Confirm & Run Import
@@ -40,7 +40,7 @@
   <button
     mat-stroked-button
     [mat-dialog-close]="false"
-    [disabled]="importInProgress"
+    [disabled]="importInProgress()"
     i18n
   >
     Cancel
