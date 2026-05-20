@@ -1,4 +1,9 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  signal,
+} from "@angular/core";
 import { ImportService } from "../import.service";
 import {
   MAT_DIALOG_DATA,
@@ -57,8 +62,8 @@ export class ImportConfirmSummaryComponent {
   private readonly importService = inject(ImportService);
   private readonly entityRegistry = inject(EntityRegistry);
 
-  importInProgress: boolean;
-  showInheritanceImportWarning = false;
+  importInProgress = signal(false);
+  showInheritanceImportWarning = signal(false);
 
   constructor() {
     const entityType = this.data?.importSettings?.entityType;
@@ -66,18 +71,19 @@ export class ImportConfirmSummaryComponent {
       ? this.entityRegistry.get(entityType)
       : undefined;
 
-    this.showInheritanceImportWarning =
+    this.showInheritanceImportWarning.set(
       !!entityCtor &&
-      hasMappedInheritedSourceField(
-        entityCtor,
-        this.data?.importSettings?.columnMapping ?? [],
-      );
+        hasMappedInheritedSourceField(
+          entityCtor,
+          this.data?.importSettings?.columnMapping ?? [],
+        ),
+    );
   }
 
   // TODO: detailed summary including warnings of unmapped columns, ignored values, etc. (#1943)
 
   async executeImport() {
-    this.importInProgress = true;
+    this.importInProgress.set(true);
     this.dialogRef.disableClose = true;
 
     try {
@@ -97,7 +103,7 @@ export class ImportConfirmSummaryComponent {
       }
       this.dialogRef.close({ errorOccured: true });
     } finally {
-      this.importInProgress = false;
+      this.importInProgress.set(false);
       this.dialogRef.disableClose = false;
     }
   }
