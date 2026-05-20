@@ -65,10 +65,12 @@ export class DateRangeFilterComponent<T extends Entity> {
       const filterConfig = this.filterConfig();
       if (!filterConfig) return;
 
-      this.selectedOptionValues.set(filterConfig.selectedOptionValues ?? []);
+      this.selectedOptionValues.set([
+        ...(filterConfig.selectedOptionValues ?? []),
+      ]);
 
       const sub = filterConfig.selectedOptionChange.subscribe((values) => {
-        this.selectedOptionValues.set(values ?? []);
+        this.selectedOptionValues.set([...(values ?? [])]);
       });
       onCleanup(() => sub.unsubscribe());
     });
