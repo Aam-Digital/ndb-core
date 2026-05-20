@@ -4,10 +4,10 @@
   <mat-form-field class="full-width">
     <mat-label i18n>Import as</mat-label>
     <app-entity-type-select
-      [(ngModel)]="entityType"
+      [ngModel]="entityType()"
       (ngModelChange)="onSelectedTypeChange($event)"
       [multi]="false"
-      [showInternalTypes]="expertMode"
+      [showInternalTypes]="expertMode()"
     ></app-entity-type-select>
   </mat-form-field>
 
@@ -17,7 +17,10 @@
   >
   </app-help-button>
 
-  <mat-slide-toggle [(ngModel)]="expertMode" i18n="Toggle label"
+  <mat-slide-toggle
+    [ngModel]="expertMode()"
+    (ngModelChange)="expertMode.set($event)"
+    i18n="Toggle label"
     >Expert Mode</mat-slide-toggle
   >
 </div>

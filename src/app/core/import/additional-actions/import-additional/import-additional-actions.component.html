@@ -1,6 +1,6 @@
 <mat-expansion-panel
-  [expanded]="importActions?.length > 0"
-  [disabled]="!entityType"
+  [expanded]="importActions()?.length > 0"
+  [disabled]="!entityType()"
 >
   <mat-expansion-panel-header>
     <mat-panel-title>
@@ -21,7 +21,7 @@
   <!-- Existing additional actions -->
   <div>
     <mat-list>
-      @for (action of importActions; track $index) {
+      @for (action of importActions(); track $index) {
         <mat-list-item>
           <fa-icon
             icon="xmark"
@@ -45,7 +45,7 @@
       }
     </mat-list>
 
-    @if (!(importActions?.length > 0)) {
+    @if (!(importActions()?.length > 0)) {
       <div
         class="no-actions margin-bottom-large"
         i18n="import additional actions"
@@ -56,7 +56,7 @@
   </div>
 
   <!-- Create new additional action -->
-  @if (availableImportActions?.length > 0) {
+  @if (availableImportActions()?.length > 0) {
     <form [formGroup]="linkEntityForm">
       <div>
         @if (linkEntityForm.disabled) {
@@ -74,7 +74,7 @@
           <app-basic-autocomplete
             formControlName="action"
             [multi]="false"
-            [options]="availableImportActions"
+            [options]="availableImportActions()"
             [optionToString]="actionToString"
           ></app-basic-autocomplete>
         </mat-form-field>
@@ -105,10 +105,10 @@
         </button>
       </div>
     </form>
-  } @else if (entityType) {
+  } @else if (entityType()) {
     <p i18n>
       No special import actions are available for importing
-      {{ entityType | entityTypeLabel: true }} records.
+      {{ entityType() | entityTypeLabel: true }} records.
     </p>
   }
 </mat-expansion-panel>
