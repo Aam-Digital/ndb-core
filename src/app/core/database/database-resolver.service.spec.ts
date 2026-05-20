@@ -85,26 +85,11 @@ describe("DatabaseResolverService", () => {
     expect(defaultDb.init).toHaveBeenCalledWith("test-uuid-app");
   });
 
-  it("should switch to online session type before creating the anonymous database", () => {
-    environment.session_type = SessionType.synced;
-    // @ts-ignore
-    service["sessionType"] = SessionType.synced;
-    let sessionTypeAtCreate: SessionType | undefined;
-    vi.spyOn(factory, "createDatabase").mockImplementation((dbName: string) => {
-      sessionTypeAtCreate = environment.session_type;
-      return new RemotePouchDatabase(dbName, null as any, syncStateSubject);
-    });
-
-    service.initDatabasesForAnonymous();
-
-    expect(sessionTypeAtCreate).toBe(SessionType.online);
-    expect(environment.session_type).toBe(SessionType.online);
-  });
-
   it("should init the anonymous database with unauthenticatedSession flag", () => {
-    environment.session_type = SessionType.synced;
-    // @ts-ignore
-    service["sessionType"] = SessionType.synced;
+    // The bootstrap-environment forces session_type = online before Angular
+    // DI starts when the URL is a /public-form/ route, so the factory will
+    // already produce a RemotePouchDatabase by the time this method runs.
+    environment.session_type = SessionType.online;
     const initSpy = vi.fn();
     vi.spyOn(factory, "createDatabase").mockImplementation((dbName: string) => {
       const db = new RemotePouchDatabase(dbName, null as any, syncStateSubject);
@@ -121,9 +106,7 @@ describe("DatabaseResolverService", () => {
   });
 
   it("should not re-init the anonymous database if already initialized", () => {
-    environment.session_type = SessionType.synced;
-    // @ts-ignore
-    service["sessionType"] = SessionType.synced;
+    environment.session_type = SessionType.online;
     const initSpy = vi.fn();
     vi.spyOn(factory, "createDatabase").mockImplementation((dbName: string) => {
       const db = new RemotePouchDatabase(dbName, null as any, syncStateSubject);

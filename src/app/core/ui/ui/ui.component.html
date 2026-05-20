@@ -19,7 +19,7 @@
 <mat-toolbar color="primary" class="ui-toolbar">
   <!-- Left items -->
   <div class="flex-row align-center">
-    @if ((configReady$ | async) && sideNavMode() === "over") {
+    @if ((configReady$ | async) && sideNavMode() === "over" && isLoggedIn()) {
       <span>
         <button mat-icon-button (click)="sideNav.toggle()">
           <fa-icon class="header-icon" icon="bars"></fa-icon>
@@ -27,7 +27,10 @@
       </span>
     }
 
-    @if (sideNavMode() !== "over" && !siteSettings().hideSiteNameInToolbar) {
+    @if (
+      (sideNavMode() !== "over" || !isLoggedIn()) &&
+      !siteSettings().hideSiteNameInToolbar
+    ) {
       <a
         [routerLink]="['']"
         class="header-title"
@@ -146,6 +149,6 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-@if (showPrimaryAction()) {
+@if (showPrimaryAction() && isLoggedIn()) {
   <app-primary-action></app-primary-action>
 }

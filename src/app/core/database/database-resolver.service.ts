@@ -154,18 +154,16 @@ export class DatabaseResolverService {
   }
 
   initDatabasesForAnonymous() {
-    // Switch to online-only mode before the factory creates the database
-    // so it returns a plain RemotePouchDatabase (no local PouchDB, no sync).
-    environment.session_type = SessionType.online;
-    this.sessionType = SessionType.online;
-
     const db = this.getDatabase(Entity.DATABASE);
     if (db.isInitialized()) {
       return;
     }
 
-    // Public forms run without any logged-in user, so suppress the Keycloak
-    // redirect that RemotePouchDatabase would otherwise trigger on a 401.
+    // The /public-form/ route is detected in bootstrap-environment.ts and
+    // session_type is forced to "online" before Angular DI starts, so the
+    // factory already produced a RemotePouchDatabase here. We just need to
+    // init it with the anonymous-session flag so a 401 doesn't trigger the
+    // Keycloak redirect.
     if (db instanceof RemotePouchDatabase) {
       db.init(undefined, { unauthenticatedSession: true });
     } else {
