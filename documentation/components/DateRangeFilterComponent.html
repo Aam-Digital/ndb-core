@@ -307,7 +307,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter.component.ts:65</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter.component.ts:61</a></div>
                             </td>
                         </tr>
 
@@ -569,15 +569,14 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
-    this.selectedOptionVersion();
-    return (this.filterConfig()?.selectedOptionValues?.length ?? 0) &gt; 0;
-  })</code>
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; this.selectedOptionValues().length &gt; 0,
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter.component.ts:53</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter.component.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -604,12 +603,9 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
-    this.selectedOptionVersion();
-    return (
-      this.filterConfig()?.selectedOptionValues?.[0] &#x3D;&#x3D;&#x3D; EMPTY_FILTER_OPTION_KEY
-    );
-  })</code>
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; this.selectedOptionValues()[0] &#x3D;&#x3D;&#x3D; EMPTY_FILTER_OPTION_KEY,
+  )</code>
                     </td>
                 </tr>
                     <tr>
@@ -698,26 +694,22 @@ import { EMPTY_FILTER_OPTION_KEY } from &quot;app/core/filter/filters/filters&qu
 })
 export class DateRangeFilterComponent&lt;T extends Entity&gt; {
   private dialog &#x3D; inject(MatDialog);
-  private readonly selectedOptionVersion &#x3D; signal(0);
+  private readonly selectedOptionValues &#x3D; signal&lt;string[]&gt;([]);
 
   readonly fromDate &#x3D; signal&lt;Date | null&gt;(null);
   readonly toDate &#x3D; signal&lt;Date | null&gt;(null);
 
   filterConfig &#x3D; input&lt;DateFilter&lt;T&gt;&gt;();
   dateRangeChange &#x3D; output&lt;{ from: Date | null; to: Date | null }&gt;();
-  readonly isNoDateFilterActive &#x3D; computed(() &#x3D;&gt; {
-    this.selectedOptionVersion();
-    return (
-      this.filterConfig()?.selectedOptionValues?.[0] &#x3D;&#x3D;&#x3D; EMPTY_FILTER_OPTION_KEY
-    );
-  });
-  readonly isAnyDateFilterActive &#x3D; computed(() &#x3D;&gt; {
-    this.selectedOptionVersion();
-    return (this.filterConfig()?.selectedOptionValues?.length ?? 0) &gt; 0;
-  });
+  readonly isNoDateFilterActive &#x3D; computed(
+    () &#x3D;&gt; this.selectedOptionValues()[0] &#x3D;&#x3D;&#x3D; EMPTY_FILTER_OPTION_KEY,
+  );
+  readonly isAnyDateFilterActive &#x3D; computed(
+    () &#x3D;&gt; this.selectedOptionValues().length &gt; 0,
+  );
   private readonly selectedRange &#x3D; computed(() &#x3D;&gt; {
-    this.selectedOptionVersion();
     const filterConfig &#x3D; this.filterConfig();
+    this.selectedOptionValues(); // tracked to re-run when values change
     if (!filterConfig) {
       return { from: null as Date | null, to: null as Date | null };
     }
@@ -730,8 +722,12 @@ export class DateRangeFilterComponent&lt;T extends Entity&gt; {
       const filterConfig &#x3D; this.filterConfig();
       if (!filterConfig) return;
 
-      const sub &#x3D; filterConfig.selectedOptionChange.subscribe(() &#x3D;&gt; {
-        this.selectedOptionVersion.update((version) &#x3D;&gt; version + 1);
+      this.selectedOptionValues.set([
+        ...(filterConfig.selectedOptionValues ?? []),
+      ]);
+
+      const sub &#x3D; filterConfig.selectedOptionChange.subscribe((values) &#x3D;&gt; {
+        this.selectedOptionValues.set([...(values ?? [])]);
       });
       onCleanup(() &#x3D;&gt; sub.unsubscribe());
     });
@@ -769,11 +765,22 @@ export class DateRangeFilterComponent&lt;T extends Entity&gt; {
       .open(DateRangeFilterPanelComponent, {
         width: &quot;600px&quot;,
         minWidth: &quot;400px&quot;,
-        data: this.filterConfig(),
+        data: {
+          selectedOptionValues: this.filterConfig()?.selectedOptionValues,
+          selectedOption: this.filterConfig()?.getSelectedOption(),
+          dateRange: this.filterConfig()?.getDateRange(),
+          rangeOptions: this.filterConfig()?.rangeOptions,
+        },
       })
       .afterClosed()
-      .subscribe(() &#x3D;&gt; {
-        this.selectedOptionVersion.update((version) &#x3D;&gt; version + 1);
+      .subscribe((result) &#x3D;&gt; {
+        if (!result) return;
+        const filterConfig &#x3D; this.filterConfig();
+        if (!filterConfig) return;
+        filterConfig.selectedOptionValues &#x3D; result.selectedOptionValues;
+        filterConfig.selectedOptionChange.emit(
+          filterConfig.selectedOptionValues,
+        );
       });
   }
 }
