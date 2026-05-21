@@ -1,10 +1,10 @@
 <div
   class="day-cell"
-  [class.has-remark]="attendance?.remarks"
-  [style.backgroundColor]="attendance?.status?.color"
+  [class.has-remark]="attendance()?.remarks"
+  [style.backgroundColor]="attendance()?.status?.color"
   [matTooltipShowDelay]="200"
-  [matTooltip]="tooltip"
+  [matTooltip]="tooltip()"
   matTooltipPosition="above"
 >
-  {{ attendance?.status?.shortName || "-" }}
+  {{ attendance()?.status?.shortName || "-" }}
 </div>

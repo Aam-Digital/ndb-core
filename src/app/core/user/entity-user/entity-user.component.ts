@@ -3,25 +3,22 @@ import {
   Component,
   computed,
   inject,
-  Input,
-  OnInit,
-  signal,
+  input,
+  resource,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../alerts/alert.service";
-import { UntilDestroy } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
-import { switchMap } from "rxjs/operators";
 import { UserAdminService } from "../user-admin-service/user-admin.service";
 import { UserAccount } from "../user-admin-service/user-account";
-import { of } from "rxjs";
+import { firstValueFrom } from "rxjs";
 import { UserDetailsComponent } from "../user-details/user-details.component";
 
 /**
  * Display User Account details and configuration related to a given profile Entity.
  */
-@UntilDestroy()
 @DynamicComponent("EntityUser")
 @DynamicComponent("UserSecurity") // for backwards compatibility. Prefer to use "EntityUser"
 @Component({
@@ -31,34 +28,68 @@ import { UserDetailsComponent } from "../user-details/user-details.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [UserDetailsComponent],
 })
-export class EntityUserComponent implements OnInit {
+export class EntityUserComponent {
   private readonly userAdminService = inject(UserAdminService);
   private readonly alertService = inject(AlertService);
   private readonly sessionInfo = inject(SessionSubject);
+  private readonly sessionSignal = toSignal(this.sessionInfo, {
+    initialValue: this.sessionInfo.value,
+  });
 
-  @Input() entity?: Entity;
-  user = signal<UserAccount | null>(null);
-  userIsPermitted = signal<boolean>(false);
+  entity = input<Entity>();
 
-  constructor() {
-    if (
-      this.sessionInfo.value?.roles.includes(
+  userIsPermitted = computed(
+    () =>
+      this.sessionSignal()?.roles.includes(
         UserAdminService.ACCOUNT_MANAGER_ROLE,
-      )
-    ) {
-      this.userIsPermitted.set(true);
-    }
-  }
+      ) ?? false,
+  );
 
-  getEntity(): Entity | undefined {
-    return this.entity;
-  }
+  user = resource({
+    params: () => {
+      if (!this.userIsPermitted()) {
+        return undefined;
+      }
+
+      const entity = this.entity();
+      if (!entity) {
+        return undefined;
+      }
+
+      return { entity };
+    },
+    loader: async ({ params: { entity } }) => {
+      try {
+        const primaryUser = await firstValueFrom(
+          this.userAdminService.getUser(entity.getId()),
+        );
+
+        if (primaryUser !== null) {
+          return primaryUser;
+        }
+
+        return await firstValueFrom(
+          this.userAdminService.getUser(entity.getId(true)),
+        );
+      } catch (err: unknown) {
+        const error = err as { error?: { message?: string }; message?: string };
+        this.alertService.addDanger(
+          error?.error?.message ||
+            error?.message ||
+            $localize`Failed to load user account`,
+        );
+        return null;
+      }
+    },
+  });
 
   getUserAccountForDetails = computed<UserAccount | null>(() => {
-    if (this.user()) {
-      return this.user();
+    const loadedUser = this.user.value();
+    if (loadedUser) {
+      return loadedUser;
     }
-    const entity = this.getEntity();
+
+    const entity = this.entity();
     if (entity) {
       // stub account object for creating a new account
       return {
@@ -71,38 +102,4 @@ export class EntityUserComponent implements OnInit {
 
     return null;
   });
-
-  ngOnInit() {
-    if (!this.userIsPermitted()) {
-      return;
-    }
-
-    const entityToUse = this.getEntity();
-
-    if (!entityToUse) {
-      return;
-    }
-
-    this.userAdminService
-      .getUser(entityToUse.getId())
-      .pipe(
-        switchMap((user) =>
-          user === null
-            ? this.userAdminService.getUser(entityToUse.getId(true))
-            : of(user),
-        ),
-      )
-      .subscribe({
-        next: (res) => {
-          this.user.set(res);
-        },
-        error: (err) => {
-          this.alertService.addDanger(
-            err?.error?.message ||
-              err?.message ||
-              "Failed to load user account",
-          );
-        },
-      });
-  }
 }

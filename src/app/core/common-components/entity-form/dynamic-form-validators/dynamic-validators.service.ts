@@ -14,6 +14,16 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
 import { AsyncPromiseValidatorFn } from "./validator-types";
+import {
+  descriptionForDateValidator,
+  maxDateValidator,
+  minDateValidator,
+} from "./date-validators";
+import {
+  descriptionForAgeValidator,
+  maxAgeValidator,
+  minAgeValidator,
+} from "./age-validators";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -64,11 +74,13 @@ export class DynamicValidatorsService {
     value: any,
     entity: Entity,
     fieldId?: string,
+    config?: FormValidatorConfig,
   ):
-    | { async?: false; fn: ValidatorFn }
+    | { async?: false; fn: ValidatorFn; errorName?: string }
     | {
         async: true;
         fn: AsyncPromiseValidatorFn;
+        errorName?: string;
       }
     | null {
     switch (key) {
@@ -76,6 +88,16 @@ export class DynamicValidatorsService {
         return { fn: Validators.min(value as number) };
       case "max":
         return { fn: Validators.max(value as number) };
+      case "minDate": {
+        return { fn: minDateValidator(value) };
+      }
+      case "maxDate": {
+        return { fn: maxDateValidator(value) };
+      }
+      case "minAge":
+        return { fn: minAgeValidator(value, config?.maxAge) };
+      case "maxAge":
+        return { fn: maxAgeValidator(value, config?.minAge) };
       case "pattern":
         if (typeof value === "object") {
           return { fn: patternWithMessage(value.pattern, value.message) };
@@ -135,17 +157,20 @@ export class DynamicValidatorsService {
         config[key],
         entity,
         fieldId,
+        config,
       );
 
       if (validatorFn?.async) {
+        const effectiveName = validatorFn.errorName || key;
         const validatorFnWithReadableErrors = (control) =>
           validatorFn
             .fn(control)
-            .then((res) => this.addHumanReadableError(key, res));
+            .then((res) => this.addHumanReadableError(effectiveName, res));
         formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
       } else if (validatorFn) {
+        const effectiveName = validatorFn.errorName || key;
         const validatorFnWithReadableErrors = (control: FormControl) =>
-          this.addHumanReadableError(key, validatorFn.fn(control));
+          this.addHumanReadableError(effectiveName, validatorFn.fn(control));
         formControlOptions.validators.push(validatorFnWithReadableErrors);
       }
 
@@ -206,6 +231,14 @@ export class DynamicValidatorsService {
         return $localize`Must be greater than ${validationValue.min}`;
       case "max":
         return $localize`Cannot be greater than ${validationValue.max}`;
+      case "minDate":
+        return descriptionForDateValidator("minDate", validationValue);
+      case "maxDate":
+        return descriptionForDateValidator("maxDate", validationValue);
+      case "minAge":
+        return descriptionForAgeValidator("minAge", validationValue);
+      case "maxAge":
+        return descriptionForAgeValidator("maxAge", validationValue);
       case "pattern":
         if (validationValue.message) {
           return validationValue.message;

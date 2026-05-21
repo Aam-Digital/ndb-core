@@ -1,9 +1,9 @@
-@if (text) {
+@if (text()) {
   <button
     mat-icon-button
     type="button"
     #tooltipElement="matTooltip"
-    [matTooltip]="text"
+    [matTooltip]="text()"
     (click)="tooltipElement.show()"
   >
     <fa-icon icon="question-circle"></fa-icon>

@@ -45,7 +45,7 @@
 
     <td mat-cell *matCellDef="let row">
       @if (row.icon) {
-        <fa-icon [icon]="row.icon"></fa-icon>
+        <app-fa-dynamic-icon [icon]="row.icon"></app-fa-dynamic-icon>
       }
     </td>
   </ng-container>

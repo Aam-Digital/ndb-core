@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
 } from "@angular/core";
 import {
@@ -58,8 +58,8 @@ export class EditPrefilledValuesComponent
   extends CustomFormControlDirective<Record<string, DefaultValueConfig>>
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   entityConstructor: EntityConstructor;
   entitySchemaField: EntitySchemaField;
@@ -78,9 +78,10 @@ export class EditPrefilledValuesComponent
   });
 
   ngOnInit(): void {
-    if (!this.entity) return;
+    const entity = this.entity();
+    if (!entity) return;
 
-    this.entityConstructor = this.entities.get(this.entity["entity"]);
+    this.entityConstructor = this.entities.get(entity["entity"]);
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),

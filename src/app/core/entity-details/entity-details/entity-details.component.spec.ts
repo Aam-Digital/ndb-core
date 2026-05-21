@@ -6,7 +6,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { SimpleChange } from "@angular/core";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
 
@@ -88,10 +87,8 @@ describe("EntityDetailsComponent", () => {
     fixture = TestBed.createComponent(EntityDetailsComponent);
     component = fixture.componentInstance;
 
-    Object.assign(component, routeConfig);
-    component.ngOnChanges(
-      simpleChangesFor(component, ...Object.keys(routeConfig)),
-    );
+    fixture.componentRef.setInput("entityType", routeConfig.entityType);
+    fixture.componentRef.setInput("panels", routeConfig.panels);
 
     fixture.detectChanges();
   });
@@ -105,13 +102,13 @@ describe("EntityDetailsComponent", () => {
     try {
       const testChild = new TestEntity("Test-Child");
       testChild["_rev"] = "1"; // mark as "not new"
-      TestBed.inject(EntityMapperService).save(testChild);
+      await TestBed.inject(EntityMapperService).save(testChild);
       await vi.advanceTimersByTimeAsync(0);
-      component.id = testChild.getId(true);
-      component.ngOnChanges(simpleChangesFor(component, "id"));
+      fixture.componentRef.setInput("id", testChild.getId(true));
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.panels.forEach((p) =>
+      component.panelsState().forEach((p) =>
         p.components.forEach((c) => {
           const panelConfig = c.config as PanelConfig;
           expect(panelConfig.entity).toEqual(testChild);
@@ -123,17 +120,48 @@ describe("EntityDetailsComponent", () => {
     }
   });
 
+  it("updates panel entity reference in configs when entity is saved externally (e.g. after anonymize)", async () => {
+    vi.useFakeTimers();
+    try {
+      const testChild = new TestEntity("Entity-Update-Test");
+      testChild["_rev"] = "1";
+      const entityMapper = TestBed.inject(EntityMapperService);
+      await entityMapper.save(testChild);
+      await vi.advanceTimersByTimeAsync(0);
+
+      fixture.componentRef.setInput("id", testChild.getId(true));
+      fixture.componentRef.setInput("panels", [
+        {
+          title: "Test Panel",
+          components: [{ title: "", component: "Form", config: {} }],
+        },
+      ]);
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      const updatedChild = new TestEntity(testChild.getId(true));
+      updatedChild.anonymized = true;
+      updatedChild["_rev"] = "2";
+      await entityMapper.save(updatedChild);
+      await vi.advanceTimersByTimeAsync(0);
+
+      const panelConfig = component.panelsState()[0].components[0]
+        .config as PanelConfig;
+      expect(panelConfig.entity.anonymized).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("filters out panels not permitted for the current user role", async () => {
     vi.useFakeTimers();
     try {
       const testChild = new TestEntity("Role-Test");
       testChild.getConstructor().enableUserAccounts = false;
+      component.entity.set(testChild);
+      fixture.detectChanges();
 
-      TestBed.inject(EntityMapperService).save(testChild);
-      await vi.advanceTimersByTimeAsync(0);
-      component.id = testChild.getId(true);
-
-      component.panels = [
+      fixture.componentRef.setInput("panels", [
         {
           title: "Visible Panel",
           components: [
@@ -154,22 +182,14 @@ describe("EntityDetailsComponent", () => {
             { title: "Component C", component: "TestComponent", config: {} },
           ],
         },
-      ];
-      component.ngOnChanges(simpleChangesFor(component, "id", "panels"));
+      ]);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.panels.length).toBe(2);
-      expect(component.panels[0].title).toBe("Visible Panel");
+      expect(component.panelsState()).toHaveLength(2);
+      expect(component.panelsState()[0].title).toBe("Visible Panel");
     } finally {
       vi.useRealTimers();
     }
   });
 });
-
-function simpleChangesFor(component, ...properties: string[]) {
-  const changes = {};
-  for (const p of properties) {
-    changes[p] = new SimpleChange(null, component[p], true);
-  }
-  return changes;
-}

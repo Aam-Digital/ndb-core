@@ -1,8 +1,9 @@
 import {
   Component,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
+  input,
+  linkedSignal,
 } from "@angular/core";
 import { FormsModule, FormControl } from "@angular/forms";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -41,31 +42,18 @@ export interface EntityCountDashboardConfig {
   templateUrl: "./entity-count-dashboard-settings.component.html",
   styleUrls: ["./entity-count-dashboard-settings.component.scss"],
 })
-export class EntityCountDashboardSettingsComponent implements OnInit {
-  @Input() formControl: FormControl<EntityCountDashboardConfig>;
+export class EntityCountDashboardSettingsComponent {
+  formControl = input.required<FormControl<EntityCountDashboardConfig>>();
 
-  localConfig: EntityCountDashboardConfig;
+  entityType = linkedSignal(() => this.formControl().value?.entityType);
+  groupBy = linkedSignal(() => [...(this.formControl().value?.groupBy ?? [])]);
 
-  ngOnInit() {
-    this.localConfig = {
-      entityType: this.formControl.value?.entityType || "Child",
-      groupBy:
-        this.formControl.value?.groupBy &&
-        this.formControl.value.groupBy.length > 0
-          ? [...this.formControl.value.groupBy]
-          : ["center", "gender"],
-    };
-  }
-
-  onEntityTypeChange() {
-    this.emitConfigChange();
-  }
-
-  onGroupByChange() {
-    this.emitConfigChange();
-  }
-
-  private emitConfigChange() {
-    this.formControl.setValue({ ...this.localConfig });
+  constructor() {
+    effect(() => {
+      this.formControl().setValue({
+        entityType: this.entityType(),
+        groupBy: this.groupBy(),
+      });
+    });
   }
 }

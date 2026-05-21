@@ -7,14 +7,14 @@
 </app-hint-box>
 
 <app-view-title [disableBackButton]="true" [displayInPlace]="true">
-  {{ entityConstructor.labelPlural }}
+  {{ entityConstructor().labelPlural }}
 </app-view-title>
 
 <div>
   <app-admin-list-manager
-    [items]="filters"
-    [additionalFields]="config?.columns"
-    [entityType]="entityConstructor"
+    [items]="filters()"
+    [additionalFields]="config().columns"
+    [entityType]="entityConstructor()"
     templateType="filter"
     fieldLabel="Add Filter:"
     i18n-fieldLabel
@@ -23,17 +23,15 @@
 
   <div class="mat-elevation-z1">
     <app-admin-tabs
-      [tabs]="config?.columnGroups?.groups"
+      [tabs]="columnGroups().groups"
+      (tabsChange)="updateGroups($event)"
       [newTabFactory]="newColumnGroupFactory"
     >
-      <ng-template
-        [appAdminTabTemplate]="config?.columnGroups?.groups"
-        let-item
-      >
+      <ng-template [appAdminTabTemplate]="columnGroups().groups" let-item>
         <app-admin-list-manager
           [items]="item.columns"
-          [additionalFields]="config?.columns"
-          [entityType]="entityConstructor"
+          [additionalFields]="config().columns"
+          [entityType]="entityConstructor()"
           fieldLabel="Drag & drop table column headers. Add columns:"
           i18n-fieldLabel
           (idsChange)="updateColumns($event, item)"

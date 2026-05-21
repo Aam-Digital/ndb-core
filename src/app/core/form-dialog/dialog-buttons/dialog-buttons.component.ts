@@ -1,11 +1,12 @@
 import {
   Component,
-  EventEmitter,
   inject,
-  Input,
-  OnInit,
-  Output,
   ChangeDetectionStrategy,
+  input,
+  output,
+  computed,
+  effect,
+  signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -39,26 +40,54 @@ import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
   templateUrl: "./dialog-buttons.component.html",
   styleUrls: ["./dialog-buttons.component.scss"],
 })
-export class DialogButtonsComponent<E extends Entity> implements OnInit {
+export class DialogButtonsComponent<E extends Entity> {
   private entityFormService = inject(EntityFormService);
   private dialog = inject<MatDialogRef<any>>(MatDialogRef, { optional: true });
   private alertService = inject(AlertService);
   private router = inject(Router);
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
+  private readonly pendingStateBeforeDialogOpen = signal(
+    this.dialog ? this.unsavedChanges.pending() : false,
+  );
+  private readonly pendingStateAfterClose = computed(() =>
+    this.dialog ? this.pendingStateBeforeDialogOpen() : false,
+  );
 
   protected viewContext = inject(ViewComponentContext, { optional: true });
 
-  @Input() entity: E;
-  @Input() form: EntityForm<E>;
-  detailsRoute: string;
+  entity = input.required<E>();
+  form = input.required<EntityForm<E>>();
+  closeView = output<any>();
 
-  @Output() closeView = new EventEmitter<any>();
+  detailsRoute = computed(() => {
+    const entity = this.entity();
+    if (entity.isNew) {
+      return undefined;
+    }
+    const route = getEntityRuntimeRoute(entity.getConstructor());
+    const detailsPath = `${route.replace(/^\//, "")}/:id`;
+    if (route && this.router.config.some((r) => r.path === detailsPath)) {
+      return route + "/" + entity.getId(true);
+    }
+    return undefined;
+  });
 
   constructor() {
     if (this.dialog) {
       this.initDialogSettings();
     }
+
+    // Handle permissions check when entity changes
+    effect(() => {
+      const entity = this.entity();
+      const form = this.form();
+      if (!entity.isNew) {
+        if (this.ability.cannot("update", entity)) {
+          form.formGroup.disable();
+        }
+      }
+    });
   }
 
   private initDialogSettings() {
@@ -70,36 +99,17 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
         }
       }),
     );
-    // This happens before the `canDeactivate` check and therefore does not warn when leaving
-    this.dialog
-      .afterClosed()
-      .subscribe(() => (this.unsavedChanges.pending = false));
-  }
-
-  ngOnInit() {
-    if (!this.entity.isNew) {
-      if (this.ability.cannot("update", this.entity)) {
-        this.form.formGroup.disable();
-      }
-      this.initializeDetailsRouteIfAvailable();
-    }
-  }
-
-  private initializeDetailsRouteIfAvailable() {
-    const route = getEntityRuntimeRoute(this.entity.getConstructor());
-    const detailsPath = `${route.replace(/^\//, "")}/:id`;
-    if (route && this.router.config.some((r) => r.path === detailsPath)) {
-      this.detailsRoute = route + "/" + this.entity.getId(true);
-    }
+    // Dialog closing happens before the `canDeactivate` check, so restore the state synchronously.
+    this.dialog.afterClosed().subscribe(() => this.restorePendingChanges());
   }
 
   async save() {
     this.entityFormService
-      .saveChanges(this.form, this.entity)
+      .saveChanges(this.form(), this.entity())
       .then((res) => {
         // Attachments are only saved once form is disabled
-        this.form.formGroup.disable();
-        this.form.formGroup.markAsPristine();
+        this.form().formGroup.disable();
+        this.form().formGroup.markAsPristine();
         this.close(res);
       })
       .catch((err) => {
@@ -110,7 +120,6 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
   }
 
   cancel() {
-    this.unsavedChanges.pending = false;
     this.close();
   }
 
@@ -118,7 +127,11 @@ export class DialogButtonsComponent<E extends Entity> implements OnInit {
     this.dialog?.close(result);
     this.closeView.emit(result);
 
-    this.unsavedChanges.pending = false;
+    this.restorePendingChanges();
+  }
+
+  private restorePendingChanges() {
+    this.unsavedChanges.pending.set(this.pendingStateAfterClose());
   }
 
   onAction(action: string) {

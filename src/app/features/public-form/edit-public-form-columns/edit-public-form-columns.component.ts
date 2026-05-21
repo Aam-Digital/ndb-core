@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
   OnInit,
   signal,
   ViewChild,
@@ -44,8 +44,8 @@ export class EditPublicFormColumnsComponent
   extends CustomFormControlDirective<FieldGroup[]>
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   @ViewChild(AdminEntityFormComponent) entityForm?: AdminEntityFormComponent;
 
@@ -65,8 +65,9 @@ export class EditPublicFormColumnsComponent
   }
 
   ngOnInit() {
-    if (this.entity) {
-      this.entityConstructor = this.entities.get(this.entity["entity"]);
+    const entity = this.entity();
+    if (entity) {
+      this.entityConstructor = this.entities.get(entity["entity"]);
 
       const publicFormConfig: PublicFormConfig = migratePublicFormConfig({
         columns: this.formControl.getRawValue(),

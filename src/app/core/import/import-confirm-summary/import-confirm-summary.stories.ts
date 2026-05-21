@@ -68,9 +68,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<LaunchDialogComponent> = (
-  args: LaunchDialogComponent,
-) => ({
+const Template: StoryFn<LaunchDialogComponent> = (args) => ({
   props: args,
 });
 

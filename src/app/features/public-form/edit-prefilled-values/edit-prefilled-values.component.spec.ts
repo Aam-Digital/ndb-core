@@ -39,8 +39,8 @@ describe("EditPrefilledValuesComponent", () => {
     fixture = TestBed.createComponent(EditPrefilledValuesComponent);
     component = fixture.componentInstance;
 
-    setupCustomFormControlEditComponent(component);
-    component.entity = new TestEntity();
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
+    fixture.componentRef.setInput("entity", new TestEntity());
 
     fixture.detectChanges();
   });

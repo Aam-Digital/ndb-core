@@ -20,9 +20,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<AttendanceBlockComponent> = (
-  args: AttendanceBlockComponent,
-) => ({
+const Template: StoryFn<AttendanceBlockComponent> = (args) => ({
   component: AttendanceBlockComponent,
   props: args,
 });

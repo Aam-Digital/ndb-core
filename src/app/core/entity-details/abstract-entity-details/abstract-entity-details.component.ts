@@ -1,21 +1,22 @@
 import {
-  ChangeDetectorRef,
   Directive,
+  computed,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
+  model,
+  signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
-import { UnsavedChangesService } from "../form/unsaved-changes.service";
+import { filter } from "rxjs/operators";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { Logging } from "../../logging/logging.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { UnsavedChangesService } from "../form/unsaved-changes.service";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -24,79 +25,111 @@ import { Logging } from "../../logging/logging.service";
  */
 @UntilDestroy()
 @Directive()
-export abstract class AbstractEntityDetailsComponent implements OnChanges {
+export abstract class AbstractEntityDetailsComponent {
   protected readonly entityMapperService = inject(EntityMapperService);
   protected readonly entities = inject(EntityRegistry);
   protected readonly ability = inject(EntityAbility);
   protected readonly router = inject(Router);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
-  protected readonly cdr = inject(ChangeDetectorRef);
 
-  isLoading: boolean;
+  readonly isLoading = signal(false);
   private changesSubscription: Subscription;
 
-  @Input() entityType: string;
-  entityConstructor: EntityConstructor;
+  entityType = input<string>();
+  readonly entityConstructor = computed<EntityConstructor | undefined>(() =>
+    this.entityType() ? this.entities.get(this.entityType()) : undefined,
+  );
 
-  @Input() id: string;
-  @Input() entity: Entity;
+  id = input<string>();
+  readonly entity = model<Entity | null>(null);
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.entityType) {
-      this.entityConstructor = this.entities.get(this.entityType);
-    }
+  constructor() {
+    effect((onCleanup) => {
+      if (this.entity()) {
+        return;
+      }
 
-    if (changes.id) {
-      await this.loadEntity();
-      this.subscribeToEntityChanges();
-    }
+      const id = this.id();
+      if (!this.entityType() || !id) {
+        return;
+      }
+
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.loadEntity(id, () => cancelled).then(() => {
+        if (!cancelled) this.subscribeToEntityChanges();
+      });
+    });
   }
 
+  /**
+   * Hook called whenever the entity is updated via the live subscription (e.g. after save or anonymize).
+   * Subclasses can override this to react to entity changes beyond what markForCheck() provides.
+   */
+  protected onEntityUpdated() {}
+
   protected subscribeToEntityChanges() {
-    const fullId = Entity.createPrefixedId(this.entityType, this.id);
+    const entityType = this.entityType();
+    const id = this.id();
+    const ctor = this.entityConstructor();
+    if (!entityType || !id || !ctor) {
+      return;
+    }
+    const fullId = Entity.createPrefixedId(entityType, id);
     this.changesSubscription?.unsubscribe();
     this.changesSubscription = this.entityMapperService
-      .receiveUpdates(this.entityConstructor)
+      .receiveUpdates(ctor)
       .pipe(
         filter(({ entity }) => entity.getId() === fullId),
         filter(({ type }) => type !== "remove"),
         untilDestroyed(this),
       )
       .subscribe(({ entity }) => {
-        this.entity = entity;
-        this.cdr.markForCheck();
+        this.entity.set(entity);
+        this.onEntityUpdated();
       });
   }
 
-  protected async loadEntity() {
-    this.isLoading = true;
+  protected async loadEntity(
+    id: string,
+    isCancelled: () => boolean = () => false,
+  ) {
+    const ctor = this.entityConstructor();
+    if (!ctor) return;
 
-    if (this.id === "new") {
-      if (this.ability.cannot("create", this.entityConstructor)) {
-        this.router.navigate([""]);
+    this.isLoading.set(true);
+    try {
+      if (id === "new") {
+        if (this.ability.cannot("create", ctor)) {
+          await this.router.navigate([""]);
+          return;
+        }
+        this.entity.set(new ctor());
         return;
       }
-      this.entity = new this.entityConstructor();
-      this.isLoading = false;
-      return;
-    }
 
-    try {
-      this.entity = await this.entityMapperService.load(
-        this.entityConstructor,
-        this.id,
-      );
-    } catch (error) {
-      if (error?.status !== 404) {
-        Logging.warn("Error loading record", error);
+      const cancelledLoad = Symbol("cancelledLoad");
+      const loaded: Entity | null | typeof cancelledLoad =
+        await this.entityMapperService.load(ctor, id).catch((error) => {
+          if (isCancelled()) {
+            return cancelledLoad;
+          }
+          if (error?.status !== 404) {
+            Logging.warn("Error loading record", error);
+          }
+          return null;
+        });
+
+      if (isCancelled() || loaded === cancelledLoad) return;
+      this.entity.set(loaded);
+
+      if (!this.entity()) {
+        await this.router.navigate(["/404"]);
       }
-      this.entity = null;
+    } finally {
+      this.isLoading.set(false);
     }
-
-    if (!this.entity) {
-      await this.router.navigate(["/404"]);
-    }
-    this.isLoading = false;
-    this.cdr.markForCheck();
   }
 }

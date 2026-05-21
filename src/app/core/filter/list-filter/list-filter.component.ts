@@ -1,10 +1,11 @@
 import {
   Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  linkedSignal,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -14,9 +15,8 @@ import { SelectableFilter } from "../filters/filters";
 import { MatButtonModule } from "@angular/material/button";
 import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
 import { asArray } from "../../../utils/asArray";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-list-filter",
@@ -31,41 +31,48 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
     BasicAutocompleteComponent,
   ],
 })
-export class ListFilterComponent<E extends Entity>
-  implements OnChanges, OnInit
-{
-  @Input({ transform: (value: any) => value as SelectableFilter<E> })
-  filterConfig: SelectableFilter<E>;
+export class ListFilterComponent<E extends Entity> {
+  filterConfig = input.required<SelectableFilter<E>>();
+
+  private readonly destroyRef = inject(DestroyRef);
+
+  selectedValues = linkedSignal({
+    source: this.filterConfig,
+    computation: (config) => asArray(config.selectedOptionValues),
+  });
 
   autocompleteControl = new FormControl([]);
 
-  ngOnInit() {
+  constructor() {
     this.autocompleteControl.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((values) => {
-        this.filterConfig.selectedOptionChange.emit(asArray(values));
+        const selectedValues = asArray(values);
+        this.selectedValues.set(selectedValues);
+        this.filterConfig().selectedOptionChange.emit(selectedValues);
       });
-  }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.filterConfig) {
-      this.autocompleteControl.setValue(this.filterConfig.selectedOptionValues);
-
-      this.filterConfig.selectedOptionChange
-        .pipe(untilDestroyed(this))
-        .subscribe((values) => {
-          this.autocompleteControl.setValue(asArray(values), {
-            emitEvent: false,
-          });
+    effect((onCleanup) => {
+      const selectedOptionChangeSubscription =
+        this.filterConfig().selectedOptionChange.subscribe((values) => {
+          this.selectedValues.set(asArray(values));
         });
-    }
+
+      onCleanup(() => selectedOptionChangeSubscription.unsubscribe());
+    });
+
+    effect(() => {
+      this.autocompleteControl.setValue(this.selectedValues(), {
+        emitEvent: false,
+      });
+    });
   }
 
   getOptionLabel = (option: any) => option.label;
   getOptionValue = (option: any) => option.key;
 
   selectAll() {
-    const allValues = this.filterConfig.options.map((opt) => opt.key);
+    const allValues = this.filterConfig().options.map((opt) => opt.key);
     this.autocompleteControl.setValue(allValues);
   }
 

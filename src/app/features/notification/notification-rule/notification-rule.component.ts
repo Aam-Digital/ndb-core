@@ -1,39 +1,38 @@
 import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  model,
+  output,
+  signal,
 } from "@angular/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
-import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
   AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { NotificationRule } from "../model/notification-config";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatOption } from "@angular/material/core";
-import { MatSelect } from "@angular/material/select";
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
 } from "@angular/material/expansion";
-import { IconButtonComponent } from "../../../core/common-components/icon-button/icon-button.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSelect } from "@angular/material/select";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
+import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConstructor } from "app/core/entity/model/entity";
+import { IconButtonComponent } from "../../../core/common-components/icon-button/icon-button.component";
+import { NotificationRule } from "../model/notification-config";
 
 /**
  * Configure a single notification rule.
@@ -63,40 +62,49 @@ import { EntityConstructor } from "app/core/entity/model/entity";
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",
 })
-export class NotificationRuleComponent implements OnChanges {
-  @Input() value: NotificationRule;
-  @Output() valueChange = new EventEmitter<NotificationRule>();
-
-  @Output() removeNotificationRule = new EventEmitter<void>();
+export class NotificationRuleComponent {
+  value = model<NotificationRule>();
+  removeNotificationRule = output<void>();
 
   form: FormGroup;
   entityTypeControl: AbstractControl;
-  entityConstructor: EntityConstructor | null = null;
+  entityConstructor = signal<EntityConstructor | null>(null);
 
   private readonly entityRegistry = inject(EntityRegistry);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.value) {
-      this.initForm();
-    }
+  constructor() {
+    effect(() => {
+      const value = this.value();
+      if (!value) {
+        return;
+      }
+
+      if (!this.form) {
+        this.initForm(value);
+        return;
+      }
+
+      this.form.patchValue(value, { emitEvent: false });
+      this.updateEntityConstructor(this.entityTypeControl.value);
+      this.setEntityTypeControlState(this.form.get("conditions")?.value);
+    });
   }
 
-  initForm() {
+  initForm(value: NotificationRule) {
     this.form = new FormGroup({
-      label: new FormControl(this.value?.label ?? ""),
+      label: new FormControl(value.label ?? ""),
       entityType: new FormControl({
-        value: this.value?.entityType ?? "",
-        disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
+        value: value.entityType ?? "",
+        disabled: Object.keys(value.conditions ?? {}).length > 0,
       }),
-      changeType: new FormControl(
-        this.value?.changeType ?? ["created", "updated"],
-      ),
-      enabled: new FormControl(this.value?.enabled || false),
-      conditions: new FormControl(this.value?.conditions ?? {}),
+      changeType: new FormControl(value.changeType ?? ["created", "updated"]),
+      enabled: new FormControl(value.enabled || false),
+      conditions: new FormControl(value.conditions ?? {}),
       notificationType: new FormControl(
-        this.value?.notificationType ?? "entity_change",
+        value.notificationType ?? "entity_change",
       ),
     });
+
     this.entityTypeControl = this.form.get("entityType");
     this.updateEntityConstructor(this.entityTypeControl.value);
     this.entityTypeControl.valueChanges.subscribe((entityType) =>
@@ -104,7 +112,7 @@ export class NotificationRuleComponent implements OnChanges {
     );
 
     this.updateEntityTypeControlState();
-    this.form.valueChanges.subscribe((value) => this.updateValue(value));
+    this.form.valueChanges.subscribe((newValue) => this.updateValue(newValue));
   }
 
   /**
@@ -116,28 +124,39 @@ export class NotificationRuleComponent implements OnChanges {
     if (!conditionsControl) {
       return;
     }
-    conditionsControl.valueChanges.subscribe((v) => {
-      if (JSON.stringify(v) !== "{}") {
-        this.entityTypeControl.disable();
-      } else {
-        this.entityTypeControl.enable();
-      }
-    });
+
+    this.setEntityTypeControlState(conditionsControl.value);
+    conditionsControl.valueChanges.subscribe((v) =>
+      this.setEntityTypeControlState(v),
+    );
   }
 
-  private updateValue(value: any) {
-    const entityTypeControl = this.form.get("entityType");
-    if (entityTypeControl?.disabled) {
-      value.entityType = entityTypeControl.value;
+  private setEntityTypeControlState(conditions: unknown) {
+    const hasConditions =
+      typeof conditions === "object" &&
+      conditions !== null &&
+      Object.keys(conditions).length > 0;
+    if (hasConditions) {
+      this.entityTypeControl.disable({ emitEvent: false });
+    } else {
+      this.entityTypeControl.enable({ emitEvent: false });
     }
+  }
 
-    if (JSON.stringify(value) === JSON.stringify(this.value)) {
-      // skip if no actual change
+  private updateValue(value: NotificationRule) {
+    const entityTypeControl = this.form.get("entityType");
+    const nextValue = {
+      ...value,
+      entityType: entityTypeControl?.disabled
+        ? entityTypeControl.value
+        : value.entityType,
+    };
+
+    if (JSON.stringify(nextValue) === JSON.stringify(this.value())) {
       return;
     }
 
-    this.value = value;
-    this.valueChange.emit(value);
+    this.value.set(nextValue);
   }
 
   /**
@@ -149,9 +168,10 @@ export class NotificationRuleComponent implements OnChanges {
   }
 
   private updateEntityConstructor(entityType: string) {
-    this.entityConstructor =
+    this.entityConstructor.set(
       entityType && this.entityRegistry.has(entityType)
         ? this.entityRegistry.get(entityType)
-        : null;
+        : null,
+    );
   }
 }

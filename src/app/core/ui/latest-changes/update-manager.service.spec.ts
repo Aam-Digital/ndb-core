@@ -1,5 +1,5 @@
 import { UpdateManagerService } from "./update-manager.service";
-import { ApplicationRef } from "@angular/core";
+import { ApplicationRef, signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import {
   SwUpdate,
@@ -90,7 +90,7 @@ describe("UpdateManagerService", () => {
       showLatestChangesIfUpdated: vi.fn(),
     };
     vi.spyOn(Logging, "error");
-    unsavedChanges = { pending: true };
+    unsavedChanges = { pending: signal(true) };
 
     service = createService();
   });
@@ -133,7 +133,7 @@ describe("UpdateManagerService", () => {
 
   it("should reload app if no unsaved changes are detected", () => {
     service.listenToAppUpdates();
-    unsavedChanges.pending = true;
+    unsavedChanges.pending.set(true);
 
     updateSubject.next(createVersionReadyEvent());
 
@@ -141,7 +141,7 @@ describe("UpdateManagerService", () => {
     expect(snackBar.open).toHaveBeenCalled();
 
     createService();
-    unsavedChanges.pending = false;
+    unsavedChanges.pending.set(false);
 
     updateSubject.next(createVersionReadyEvent());
 

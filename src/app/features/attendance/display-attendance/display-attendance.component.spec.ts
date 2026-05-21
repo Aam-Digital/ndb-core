@@ -31,13 +31,12 @@ describe("DisplayAttendanceComponent", () => {
   });
 
   it("should calculate percentage from attendance items", () => {
-    component.value = [
+    fixture.componentRef.setInput("value", [
       new AttendanceItem(makeStatus(AttendanceLogicalStatus.PRESENT, "P")),
       new AttendanceItem(makeStatus(AttendanceLogicalStatus.PRESENT, "P")),
       new AttendanceItem(makeStatus(AttendanceLogicalStatus.ABSENT, "A")),
       new AttendanceItem(makeStatus(AttendanceLogicalStatus.IGNORE, "E")),
-    ];
-    component.ngOnChanges();
+    ]);
 
     // 2 present / (2 present + 1 absent) = 0.666...
     expect(component.percentage()).toBeCloseTo(2 / 3);
@@ -45,34 +44,30 @@ describe("DisplayAttendanceComponent", () => {
   });
 
   it("should return undefined percentage when no present/absent items", () => {
-    component.value = [
+    fixture.componentRef.setInput("value", [
       new AttendanceItem(makeStatus(AttendanceLogicalStatus.IGNORE, "E")),
-    ];
-    component.ngOnChanges();
+    ]);
 
     expect(component.percentage()).toBeUndefined();
   });
 
   it("should compute warning class based on percentage", () => {
-    component.value = [
+    fixture.componentRef.setInput("value", [
       new AttendanceItem(makeStatus(AttendanceLogicalStatus.PRESENT, "P")),
-    ];
-    component.ngOnChanges();
+    ]);
 
     // 100% present → OK
     expect(component.warningClass()).toBe("w-OK");
   });
 
   it("should handle missing value gracefully", () => {
-    component.value = null;
-    component.ngOnChanges();
+    fixture.componentRef.setInput("value", null);
 
     expect(component.percentage()).toBeUndefined();
   });
 
   it("should handle empty array gracefully", () => {
-    component.value = [];
-    component.ngOnChanges();
+    fixture.componentRef.setInput("value", []);
 
     expect(component.percentage()).toBeUndefined();
   });

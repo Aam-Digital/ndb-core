@@ -94,7 +94,7 @@ describe("EntityListComponent", () => {
       createComponent();
       initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
-      expect(component.columns).toEqual([...testConfig.columns]);
+      expect(component.columns()).toEqual([...testConfig.columns]);
     } finally {
       vi.useRealTimers();
     }
@@ -121,20 +121,25 @@ describe("EntityListComponent", () => {
   });
 
   it("should set the clicked column group", async () => {
-    createComponent();
-    // Test only works in desktop mode
-    component.isDesktop = true;
-    await initComponentInputs();
-    expect(component.selectedColumnGroupIndex).toBe(1);
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      // Test only works in desktop mode
+      component.isDesktop = true;
+      initComponentInputs();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(component.selectedColumnGroupIndex).toBe(1);
 
-    const clickedColumnGroup = testConfig.columnGroups.groups[0];
+      const clickedColumnGroup = testConfig.columnGroups.groups[0];
 
-    // Simulate selecting the first tab group and verify table columns update.
-    component.selectedColumnGroupIndex = 0;
-    fixture.detectChanges();
+      // Simulate selecting the first tab group and verify table columns update.
+      component.selectedColumnGroupIndex = 0;
 
-    expect(component.selectedColumnGroupIndex).toEqual(0);
-    expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
+      expect(component.selectedColumnGroupIndex).toEqual(0);
+      expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("should allow to use entity fields which are only mentioned in the columnGroups", async () => {
@@ -149,19 +154,18 @@ describe("EntityListComponent", () => {
         testProperty: string;
       }
 
-      component.entityConstructor = Test;
-      component.columns = [
+      fixture.componentRef.setInput("entityConstructor", Test);
+      fixture.componentRef.setInput("columns", [
         {
           id: "anotherColumn",
           label: "Predefined Title",
           viewComponent: "DisplayDate",
         },
-      ];
-      component.columnGroups = {
+      ]);
+      fixture.componentRef.setInput("columnGroups", {
         groups: [{ name: "Both", columns: ["testProperty", "anotherColumn"] }],
-      };
-
-      component.ngOnChanges({ listConfig: null });
+      });
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.columnsToDisplay).toEqual([
@@ -177,12 +181,12 @@ describe("EntityListComponent", () => {
     createComponent();
     const navigateSpy = vi.spyOn(TestBed.inject(Router), "navigate");
 
-    component.clickMode = "popup";
+    fixture.componentRef.setInput("clickMode", "popup");
     component.addNew();
     expect(navigateSpy).not.toHaveBeenCalled();
 
     navigateSpy.mockClear();
-    component.clickMode = "navigate";
+    fixture.componentRef.setInput("clickMode", "navigate");
     component.addNew();
     expect(navigateSpy).toHaveBeenCalled();
   });
@@ -201,7 +205,7 @@ describe("EntityListComponent", () => {
       entityUpdates.next({ entity: entity, type: "new" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.allEntities).toEqual([entity]);
+      expect(component.allEntities()).toEqual([entity]);
     } finally {
       vi.useRealTimers();
     }
@@ -218,11 +222,11 @@ describe("EntityListComponent", () => {
       initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.allEntities = [entity];
+      component.allEntities.set([entity]);
       entityUpdates.next({ entity: entity, type: "remove" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.allEntities).toEqual([]);
+      expect(component.allEntities()).toEqual([]);
     } finally {
       vi.useRealTimers();
     }
@@ -232,16 +236,21 @@ describe("EntityListComponent", () => {
     vi.useFakeTimers();
     try {
       createComponent();
-      component.columnGroups = {
+      fixture.componentRef.setInput("columns", [
+        "name",
+        "age",
+        "category",
+        "other",
+      ]);
+      fixture.componentRef.setInput("columnGroups", {
         default: "Overview",
         mobile: "Overview",
         groups: [
           { name: "Basic Info", columns: ["name", "age", "category"] },
           { name: "School Info", columns: ["name", "age", "other"] },
         ],
-      };
-
-      component.ngOnChanges({ listConfig: null });
+      });
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.defaultColumnGroup).toEqual("Basic Info");
@@ -255,16 +264,15 @@ describe("EntityListComponent", () => {
     fixture = TestBed.createComponent(EntityListComponent);
     component = fixture.componentInstance;
 
-    component.entityConstructor = TestEntity;
+    fixture.componentRef.setInput("entityConstructor", TestEntity);
 
     fixture.detectChanges();
   }
 
-  async function initComponentInputs() {
-    Object.assign(component, testConfig);
-    await component.ngOnChanges({
-      allEntities: undefined,
-    });
+  function initComponentInputs() {
+    for (const [key, value] of Object.entries(testConfig)) {
+      fixture.componentRef.setInput(key as keyof EntityListConfig, value);
+    }
     fixture.detectChanges();
   }
 });

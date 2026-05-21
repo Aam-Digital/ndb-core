@@ -1,14 +1,14 @@
 <button
   mat-icon-button
   class="white"
-  [style.opacity]="(allTasksFinished | async) ? 0.5 : 1"
+  [style.opacity]="allTasksFinished() ? 0.5 : 1"
   [matMenuTriggerFor]="taskListDropdown"
-  (menuClosed)="wasClosed = true"
+  (menuClosed)="markWasClosed()"
 >
   <span
-    [matBadge]="taskCounterObservable | async"
+    [matBadge]="taskCounter()"
     matBadgeColor="accent"
-    [matBadgeHidden]="allTasksFinished | async"
+    [matBadgeHidden]="allTasksFinished()"
   >
     <fa-icon class="white" icon="sync"></fa-icon>
   </span>
@@ -16,14 +16,14 @@
 
 <mat-menu #taskListDropdown="matMenu">
   <div class="padding-left-regular padding-right-regular">
-    @if ((allTasksFinished | async) === false) {
+    @if (allTasksFinished() === false) {
       <div i18n class="details-header">
         The following processes are still running in the background. Until these
         are finished some pages may be slow or incomplete.
       </div>
     }
 
-    @for (process of filteredProcesses | async; track process.title) {
+    @for (process of filteredProcesses(); track process.title) {
       <div class="flex-row gap-small align-center mat-subtitle-2 details-line">
         <div>
           @if (process.pending) {
@@ -45,7 +45,7 @@
     <div class="full-width flex-row align-center gap-small">
       <button
         mat-stroked-button
-        (click)="taskListDropdownTrigger.closeMenu()"
+        (click)="closeTaskListDropdown()"
         i18n="Hide sync details"
         class="flex-grow"
         matTooltip="System will continue to sync data regularly"

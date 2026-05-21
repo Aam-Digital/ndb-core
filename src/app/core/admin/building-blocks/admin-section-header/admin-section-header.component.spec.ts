@@ -30,6 +30,7 @@ describe("AdminSectionHeaderComponent", () => {
     });
     fixture = TestBed.createComponent(AdminSectionHeaderComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("title", "Test Section");
     fixture.detectChanges();
   });
 
@@ -53,7 +54,8 @@ describe("AdminSectionHeaderComponent", () => {
   it("should not show confirmation dialog if disableConfirmation is set", async () => {
     vi.spyOn(component.remove, "emit");
 
-    component.disableConfirmation = true;
+    fixture.componentRef.setInput("disableConfirmation", true);
+    fixture.detectChanges();
     await component.removeSection();
     expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
     expect(component.remove.emit).toHaveBeenCalled();

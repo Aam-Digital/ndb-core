@@ -22,7 +22,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<PwaInstallComponent> = (args: PwaInstallComponent) => ({
+const Template: StoryFn<PwaInstallComponent> = (args) => ({
   props: args,
 });
 

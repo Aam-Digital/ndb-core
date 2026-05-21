@@ -4,7 +4,7 @@
   [explanation]="explanation()"
   theme="note"
   entityType="Note"
-  [dataMapper]="dataMapper"
+  [dataMapper]="dataMapper()"
 >
   <table mat-table aria-label="Notes needing follow-up">
     <!-- Table header only for assistive technologies like screen readers -->
@@ -29,7 +29,7 @@
       *matRowDef="let row; columns: ['date', 'title']"
       class="dashboard-table-row row-view"
       (click)="openNote(row)"
-      [ngStyle]="{ '--row-indicator-color': row.getColor?.() }"
+      [style.--row-indicator-color]="row.getColor?.()"
     ></tr>
   </table>
 </app-dashboard-list-widget>

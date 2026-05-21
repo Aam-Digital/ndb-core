@@ -4,43 +4,53 @@
     <mat-calendar
       class="calendar"
       (selectedChange)="selectedRangeChange($event)"
-      [selected]="selectedRangeValue"
-      [comparisonStart]="comparisonRange.start"
-      [comparisonEnd]="comparisonRange.end"
+      [selected]="selectedRangeValue()"
+      [comparisonStart]="comparisonRange().start"
+      [comparisonEnd]="comparisonRange().end"
     >
     </mat-calendar>
     <div class="panel">
-      <div>
+      <button
+        class="button"
+        mat-button
+        color="primary"
+        (click)="selectRangeAndClose('empty')"
+        [class.selected-option]="
+          selectedOptionValues()[0] === emptyFilterOptionKey
+        "
+      >
+        <span class="not-defined-label" i18n="Filter option label">
+          no date defined
+        </span>
+      </button>
+      <button
+        class="button"
+        mat-button
+        color="primary"
+        (mouseenter)="preselectAllRange()"
+        (mouseleave)="unselectRange()"
+        (click)="selectRangeAndClose('all')"
+        [class.selected-option]="selectedOptionValues().length === 0"
+        i18n
+      >
+        All
+      </button>
+      @for (
+        item of rangeOptions();
+        track item;
+        let selectedIndexOfDateRanges = $index
+      ) {
         <button
           class="button"
           mat-button
           color="primary"
-          (mouseenter)="preselectAllRange()"
+          [class.selected-option]="item === selectedOption()"
+          (mouseenter)="preselectRange(item)"
           (mouseleave)="unselectRange()"
-          (click)="selectRangeAndClose('all')"
-          [class.selected-option]="filter.selectedOptionValues.length === 0"
+          (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
         >
-          All
+          {{ item.label }}
         </button>
-      </div>
-      @for (
-        item of filter.rangeOptions;
-        track item;
-        let selectedIndexOfDateRanges = $index
-      ) {
-        <div>
-          <button
-            class="button"
-            mat-button
-            color="primary"
-            [class.selected-option]="item === selectedOption"
-            (mouseenter)="preselectRange(item)"
-            (mouseleave)="unselectRange()"
-            (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
-          >
-            {{ item.label }}
-          </button>
-        </div>
       }
     </div>
   </div>

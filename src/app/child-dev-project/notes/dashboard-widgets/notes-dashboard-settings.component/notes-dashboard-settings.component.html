@@ -5,14 +5,14 @@
       matInput
       type="number"
       min="1"
-      [(ngModel)]="localConfig.sinceDays"
-      (ngModelChange)="emitConfigChange()"
+      [ngModel]="sinceDays()"
+      (ngModelChange)="onSinceDaysChange($event)"
     />
   </mat-form-field>
 
   <mat-checkbox
-    [(ngModel)]="localConfig.fromBeginningOfWeek"
-    (ngModelChange)="emitConfigChange()"
+    [ngModel]="fromBeginningOfWeek()"
+    (ngModelChange)="onFromBeginningOfWeekChange($event)"
     i18n
   >
     From beginning of week
@@ -20,10 +20,7 @@
 
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Mode</mat-label>
-    <mat-select
-      [(ngModel)]="localConfig.mode"
-      (ngModelChange)="emitConfigChange()"
-    >
+    <mat-select [ngModel]="mode()" (ngModelChange)="onModeChange($event)">
       <mat-option value="with-recent-notes" i18n>With recent notes</mat-option>
       <mat-option value="without-recent-notes" i18n
         >Without recent notes</mat-option

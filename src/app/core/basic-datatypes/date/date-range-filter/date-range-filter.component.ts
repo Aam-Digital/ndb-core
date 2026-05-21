@@ -1,79 +1,105 @@
 import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormsModule } from "@angular/forms";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { dateToString, isValidDate } from "../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-range-filter",
   templateUrl: "./date-range-filter.component.html",
   styleUrls: ["./date-range-filter.component.scss"],
-  imports: [MatFormFieldModule, MatDatepickerModule, FormsModule],
+  imports: [
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatTooltipModule,
+    FormsModule,
+    FaIconComponent,
+  ],
 })
-export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
+export class DateRangeFilterComponent<T extends Entity> {
   private dialog = inject(MatDialog);
+  private readonly selectedOptionValues = signal<string[]>([]);
 
-  fromDate: Date;
-  toDate: Date;
+  readonly fromDate = signal<Date | null>(null);
+  readonly toDate = signal<Date | null>(null);
 
-  @Input() filterConfig: DateFilter<T>;
-  @Output() dateRangeChange = new EventEmitter<{ from: Date; to: Date }>();
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.filterConfig) {
-      this.filterConfig.selectedOptionChange
-        .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          if (this.filterConfig.selectedOptionValues.length === 0) {
-            this.fromDate = undefined;
-            this.toDate = undefined;
-            this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
-          }
-        });
-      this.initDates();
+  filterConfig = input<DateFilter<T>>();
+  dateRangeChange = output<{ from: Date | null; to: Date | null }>();
+  readonly isNoDateFilterActive = computed(
+    () => this.selectedOptionValues()[0] === EMPTY_FILTER_OPTION_KEY,
+  );
+  readonly isAnyDateFilterActive = computed(
+    () => this.selectedOptionValues().length > 0,
+  );
+  private readonly selectedRange = computed(() => {
+    const filterConfig = this.filterConfig();
+    this.selectedOptionValues(); // tracked to re-run when values change
+    if (!filterConfig) {
+      return { from: null as Date | null, to: null as Date | null };
     }
-  }
+    const range = filterConfig.getDateRange();
+    return { from: range.start ?? null, to: range.end ?? null };
+  });
 
-  private initDates() {
-    const range = this.filterConfig.getDateRange();
-    if (
-      (range.start !== this.fromDate || range.start === undefined) &&
-      (range.end !== this.toDate || range.end === undefined)
-    ) {
-      this.fromDate = range.start;
-      this.toDate = range.end;
-      this.filterConfig.selectedOptionChange.emit(
-        this.filterConfig.selectedOptionValues,
-      );
-      this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
-    }
+  constructor() {
+    effect((onCleanup) => {
+      const filterConfig = this.filterConfig();
+      if (!filterConfig) return;
+
+      this.selectedOptionValues.set([
+        ...(filterConfig.selectedOptionValues ?? []),
+      ]);
+
+      const sub = filterConfig.selectedOptionChange.subscribe((values) => {
+        this.selectedOptionValues.set([...(values ?? [])]);
+      });
+      onCleanup(() => sub.unsubscribe());
+    });
+
+    effect(() => {
+      const range = this.selectedRange();
+      this.fromDate.set(range.from);
+      this.toDate.set(range.to);
+      this.dateRangeChange.emit({ from: range.from, to: range.to });
+    });
   }
 
   dateChangedManually() {
-    this.filterConfig.selectedOptionValues = [
-      isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
-      isValidDate(this.toDate) ? dateToString(this.toDate) : "",
+    const filterConfig = this.filterConfig();
+    if (!filterConfig) return;
+    const from = this.fromDate();
+    const to = this.toDate();
+    filterConfig.selectedOptionValues = [
+      isValidDate(from) ? dateToString(from) : "",
+      isValidDate(to) ? dateToString(to) : "",
     ];
-    this.filterConfig.selectedOptionChange.emit(
-      this.filterConfig.selectedOptionValues,
-    );
-    this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
+    filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
+  }
+
+  resetNoDateFilter(): void {
+    const filterConfig = this.filterConfig();
+    if (!filterConfig) return;
+    filterConfig.selectedOptionValues = [];
+    filterConfig.selectedOptionChange.emit(filterConfig.selectedOptionValues);
   }
 
   openDialog(e: Event) {
@@ -82,9 +108,22 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
-        data: this.filterConfig,
+        data: {
+          selectedOptionValues: this.filterConfig()?.selectedOptionValues,
+          selectedOption: this.filterConfig()?.getSelectedOption(),
+          dateRange: this.filterConfig()?.getDateRange(),
+          rangeOptions: this.filterConfig()?.rangeOptions,
+        },
       })
       .afterClosed()
-      .subscribe(() => this.initDates());
+      .subscribe((result) => {
+        if (!result) return;
+        const filterConfig = this.filterConfig();
+        if (!filterConfig) return;
+        filterConfig.selectedOptionValues = result.selectedOptionValues;
+        filterConfig.selectedOptionChange.emit(
+          filterConfig.selectedOptionValues,
+        );
+      });
   }
 }

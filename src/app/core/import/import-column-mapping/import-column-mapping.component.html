@@ -13,14 +13,14 @@
 </div>
 
 <div>
-  @for (col of columnMapping; track col.column) {
+  @for (col of columnMapping(); track col.column) {
     <div class="margin-bottom-regular">
       <app-edit-import-column-mapping
         [columnMapping]="col"
-        [entityCtor]="entityCtor"
-        [otherColumnMappings]="columnMapping"
-        [rawData]="rawData"
-        [additionalSettings]="additionalSettings"
+        [entityCtor]="entityCtor()"
+        [otherColumnMappings]="columnMapping()"
+        [rawData]="rawData()"
+        [additionalSettings]="additionalSettings()"
         (columnMappingChange)="updateColumnMapping(col, $event)"
       />
     </div>

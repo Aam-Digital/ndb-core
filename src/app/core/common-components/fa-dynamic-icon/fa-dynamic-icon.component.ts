@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  computed,
+  input,
   inject,
 } from "@angular/core";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
@@ -20,8 +21,8 @@ import { resolveIconDefinition } from "./fa-icon-utils";
  */
 @Component({
   selector: "app-fa-dynamic-icon",
-  template: ` @if (_icon) {
-    <fa-icon [icon]="_icon"></fa-icon>
+  template: ` @if (_icon()) {
+    <fa-icon [icon]="_icon()"></fa-icon>
   }`,
   imports: [FontAwesomeModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,47 +30,22 @@ import { resolveIconDefinition } from "./fa-icon-utils";
 export class FaDynamicIconComponent {
   private iconLibrary = inject(FaIconLibrary);
 
-  /** The fallback icon if the given icon is neither known (inside the internal map)
-   * nor registered as a font-awesome icon
-   */
+  /** The fallback icon if the given icon is neither known nor registered as a font-awesome icon */
   static fallbackIcon = faQuestionCircle;
 
-  /**
-   * Sets the dynamic icon by name.
-   * You should make sure that the icon is registered inside the {@link iconAliases}-map,
-   * or put it into this map if it isn't there.
-   * <br>
-   * If for some reason the icon is not inside the map or cannot be inserted into the map,
-   * the icon name has to match the <em>exact</em> icon name as provided by font-awesome.
-   * A prefix can be specified using the syntax "<prefix> <icon-name>", for example
-   * "far address-book". The default prefix, if not specified, is "fas"
-   * (font-awesome solid icons)
-   * <br>
-   * In case the provided icon still doesn't exist, a question-mark-icon with circle
-   * (see {@link fallbackIcon}) will be shown.
-   * <br>
-   * Note that there is no getter, and you should not attempt to get the icon name, for example via
-   * {@link _icon#iconName} since it is not guaranteed to be the same as the provided name
-   * @param icon the icon name
-   */
-  @Input() set icon(icon: string) {
-    if (!icon) {
-      this._icon = undefined;
-      return;
-    }
+  icon = input<string>();
+
+  readonly _icon = computed<IconDefinition | undefined>(() => {
+    const icon = this.icon();
+    if (!icon) return undefined;
     let definition = resolveIconDefinition(icon, this.iconLibrary);
     if (!definition) {
-      // Fallback if the icon is neither in the map nor a registered icon
       definition = FaDynamicIconComponent.fallbackIcon;
       Logging.warn(
-        `Tried to set icon "${icon}" but it does not exist as a font awesome regular item nor is it registered as an alias.`,
+        "Tried to set icon but it does not exist as a font awesome regular item nor is it registered as an alias.",
+        icon,
       );
     }
-    this._icon = definition;
-  }
-
-  /**
-   * The font-awesome internal icon definition
-   */
-  _icon: IconDefinition;
+    return definition;
+  });
 }

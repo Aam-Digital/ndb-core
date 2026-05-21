@@ -1,8 +1,8 @@
 import {
   Component,
-  HostBinding,
-  Input,
   ChangeDetectionStrategy,
+  computed,
+  input,
 } from "@angular/core";
 
 /**
@@ -22,11 +22,16 @@ type PositionState = "left" | "center" | "right";
   selector: "app-roll-call-tab",
   template: "<ng-content></ng-content>",
   styleUrls: ["./roll-call-tab.component.scss"],
+  host: {
+    "[class]": "positionClass()",
+  },
   standalone: true,
 })
 export class RollCallTabComponent {
-  @Input()
-  set position(position: number) {
+  position = input<number>(0);
+
+  readonly positionClass = computed(() => {
+    const position = this.position();
     let posState: PositionState;
     if (position < 0) {
       posState = "left";
@@ -35,8 +40,6 @@ export class RollCallTabComponent {
     } else {
       posState = "center";
     }
-    this.positionClass = `tab-${posState}`;
-  }
-
-  @HostBinding("class") positionClass = "tab-center";
+    return `tab-${posState}`;
+  });
 }

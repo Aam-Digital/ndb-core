@@ -1,8 +1,8 @@
 <mat-form-field>
   <app-entity-field-select
-    [entityType]="entityType"
+    [entityType]="entityType()"
     [formControl]="selectedFieldsControl"
-    [options]="_availableFields"
+    [options]="_availableFields()"
     [multi]="true"
   />
 </mat-form-field>

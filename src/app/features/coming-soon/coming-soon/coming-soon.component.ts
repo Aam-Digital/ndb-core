@@ -1,7 +1,8 @@
 import {
   Component,
-  Input,
-  OnInit,
+  effect,
+  input,
+  linkedSignal,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -33,7 +34,7 @@ import { RouteTarget } from "../../../route-target";
     FontAwesomeModule,
   ],
 })
-export class ComingSoonComponent implements OnInit {
+export class ComingSoonComponent {
   private alertService = inject(AlertService);
   private analyticsService = inject(AnalyticsService);
   private activatedRoute = inject(ActivatedRoute);
@@ -49,44 +50,56 @@ export class ComingSoonComponent implements OnInit {
   /**
    * the identifier for the specific feature this page serves as a placeholder for
    */
-  @Input() featureId: string;
+  featureId = input<string>();
+  private readonly currentFeatureId = linkedSignal<string | undefined>(() =>
+    this.featureId(),
+  );
 
   /**
    * whether user has already requested the feature
    */
-  requested: boolean;
+  requested = linkedSignal<boolean>(
+    () =>
+      !!this.currentFeatureId() &&
+      ComingSoonComponent.featuresRequested.includes(this.currentFeatureId()),
+  );
 
   constructor() {
     const dialogData = inject<{
       featureId: string;
     }>(MAT_DIALOG_DATA, { optional: true });
 
-    if (dialogData) {
+    if (dialogData?.featureId) {
       this.init(dialogData.featureId);
     }
     this.activatedRoute.paramMap.subscribe((params) => {
       if (params.has("feature")) {
-        this.init(params.get("feature"));
+        this.init(params.get("feature") ?? undefined);
+      }
+    });
+
+    effect(() => {
+      if (this.featureId()) {
+        this.track("visit");
       }
     });
   }
 
-  ngOnInit(): void {
-    if (this.featureId) {
-      this.init(this.featureId);
+  private init(newFeatureId: string | undefined) {
+    if (!newFeatureId) {
+      return;
     }
-  }
-
-  private init(newFeatureId: string) {
-    this.featureId = newFeatureId;
-    this.requested =
-      ComingSoonComponent.featuresRequested.includes(newFeatureId);
+    this.currentFeatureId.set(newFeatureId);
 
     this.track("visit");
   }
 
   private track(action: string) {
-    this.analyticsService.eventTrack(this.featureId, {
+    const featureId = this.currentFeatureId();
+    if (!featureId) {
+      return;
+    }
+    this.analyticsService.eventTrack(featureId, {
       category: "feature_request",
       label: action,
     });
@@ -96,10 +109,14 @@ export class ComingSoonComponent implements OnInit {
    * Report an explicit user request for the feature through the analytics plugin.
    */
   reportFeatureRequest() {
+    const featureId = this.currentFeatureId();
+    if (!featureId) {
+      return;
+    }
     this.track("request");
 
-    this.requested = true;
-    ComingSoonComponent.featuresRequested.push(this.featureId);
+    this.requested.set(true);
+    ComingSoonComponent.featuresRequested.push(featureId);
     this.alertService.addInfo(
       $localize`:Sent after the user has sent a feature-request:Thank you for letting us know.`,
     );

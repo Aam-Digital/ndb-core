@@ -1,13 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 import { AdminEntityDetailsComponent } from "./admin-entity-details.component";
 import { EntityDetailsConfig } from "../../../entity-details/EntityDetailsConfig";
 import { Entity } from "../../../entity/model/entity";
-import { MatTabsModule } from "@angular/material/tabs";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import {
   DatabaseEntity,
   entityRegistry,
@@ -15,7 +12,7 @@ import {
 } from "../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
-import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 
 describe("AdminEntityDetailsComponent", () => {
   let component: AdminEntityDetailsComponent;
@@ -42,16 +39,10 @@ describe("AdminEntityDetailsComponent", () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [
-        AdminEntityDetailsComponent,
-        MatTabsModule,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
-      ],
+      imports: [AdminEntityDetailsComponent, MockedTestingModule.withState()],
       providers: [
         { provide: EntityRegistry, useValue: entityRegistry },
         SyncStateSubject,
-        CurrentUserSubject,
       ],
     }).overrideComponent(AdminEntityDetailsComponent, {
       set: {
@@ -61,8 +52,11 @@ describe("AdminEntityDetailsComponent", () => {
     fixture = TestBed.createComponent(AdminEntityDetailsComponent);
     component = fixture.componentInstance;
 
-    component.entityConstructor = AdminDetailsTestEntity;
-    component.config = JSON.parse(JSON.stringify(viewConfig));
+    fixture.componentRef.setInput("entityConstructor", AdminDetailsTestEntity);
+    fixture.componentRef.setInput(
+      "config",
+      JSON.parse(JSON.stringify(viewConfig)),
+    );
 
     fixture.detectChanges();
   });
@@ -81,9 +75,25 @@ describe("AdminEntityDetailsComponent", () => {
       afterClosed: () => of(defaultConfig),
     } as any);
 
-    component.addComponent(component.config.panels[0]);
+    component.addComponent(component.panels()[0]);
 
-    expect(component.config.panels[0].components.length).toBe(1);
-    expect(component.config.panels[0].components[0]).toEqual(defaultConfig);
+    expect(component.panels()[0].components.length).toBe(1);
+    expect(component.panels()[0].components[0]).toEqual(defaultConfig);
+  });
+
+  it("should sync panels changes back to config object", () => {
+    const defaultConfig = {
+      title: "New Section",
+      component: "Form",
+      config: { fieldGroups: [] },
+    };
+    mockDialog.open.mockReturnValue({
+      afterClosed: () => of(defaultConfig),
+    } as any);
+
+    component.addComponent(component.panels()[0]);
+    TestBed.flushEffects();
+
+    expect(component.config().panels[0].components[0]).toEqual(defaultConfig);
   });
 });

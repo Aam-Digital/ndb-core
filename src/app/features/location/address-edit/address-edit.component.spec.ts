@@ -64,34 +64,31 @@ describe("AddressEditComponent", () => {
   });
 
   it("should clear selected location when clicking 'Remove'", async () => {
-    component.selectedLocation = {
+    fixture.componentRef.setInput("selectedLocation", {
       locationString: "some value",
-    };
-
-    vi.spyOn(component.selectedLocationChange, "emit");
+    });
     component.clearLocation();
 
-    expect(component.selectedLocation).toBeUndefined();
-    expect(component.selectedLocationChange.emit).toHaveBeenCalledWith(
-      undefined,
-    );
+    expect(component.selectedLocation()).toBeUndefined();
   });
 
   it("should set manual address string to value", async () => {
     component.updateLocationString("manual address");
 
-    expect(component.selectedLocation.locationString).toEqual("manual address");
+    expect(component.selectedLocation()?.locationString).toEqual(
+      "manual address",
+    );
   });
 
   it("should also remove geoLocation when manual address is deleted", async () => {
-    component.selectedLocation = {
+    fixture.componentRef.setInput("selectedLocation", {
       locationString: "manual address",
       geoLookup: {} as GeoResult,
-    };
+    });
 
     component.updateLocationString("");
 
-    expect(component.selectedLocation).toBeUndefined();
+    expect(component.selectedLocation()).toBeUndefined();
   });
 
   it("should update manual address with suggested address and append extra details if present", async () => {
@@ -109,10 +106,10 @@ describe("AddressEditComponent", () => {
         geoLookup: SAMPLE_GEO_RESULT,
       };
 
-      component.selectedLocation = {
+      fixture.componentRef.setInput("selectedLocation", {
         locationString: "manual address",
         geoLookup: undefined,
-      };
+      });
 
       component.updateFromAddressSearch({
         location: selectedWithExtra,
@@ -120,16 +117,16 @@ describe("AddressEditComponent", () => {
       });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.selectedLocation).toEqual({
+      expect(component.selectedLocation()).toEqual({
         locationString: "lookup address\nManual",
         geoLookup: SAMPLE_GEO_RESULT,
       });
 
       // Case 2: No extra details, user input matches suggestion
-      component.selectedLocation = {
+      fixture.componentRef.setInput("selectedLocation", {
         locationString: "lookup address",
         geoLookup: undefined,
-      };
+      });
 
       component.updateFromAddressSearch({
         location: selectedWithExtra,
@@ -137,7 +134,7 @@ describe("AddressEditComponent", () => {
       });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.selectedLocation).toEqual({
+      expect(component.selectedLocation()).toEqual({
         locationString: "lookup address",
         geoLookup: SAMPLE_GEO_RESULT,
       });

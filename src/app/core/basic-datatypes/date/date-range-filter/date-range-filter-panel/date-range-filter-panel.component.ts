@@ -1,4 +1,9 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  signal,
+} from "@angular/core";
 import {
   DateRange,
   MatDatepickerModule,
@@ -16,6 +21,7 @@ import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { calculateDateRange } from "./date-range-utils";
+import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -53,56 +59,73 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterPanelComponent {
-  filter = inject<DateFilter<any>>(MAT_DIALOG_DATA);
+  readonly emptyFilterOptionKey = EMPTY_FILTER_OPTION_KEY;
+  // Dialog input data (plain DTO) instead of full DateFilter instance
+  private readonly data = inject<any>(MAT_DIALOG_DATA) as {
+    selectedOptionValues?: string[];
+    selectedOption?: DateRangeFilterConfigOption;
+    dateRange?: DateRange<Date>;
+    rangeOptions?: DateRangeFilterConfigOption[];
+  };
   private dialogRef =
     inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
 
-  selectedRangeValue: DateRange<Date>;
-  selectedOption: DateRangeFilterConfigOption;
-  comparisonRange: DateRange<Date> = new DateRange(null, null);
-
-  constructor() {
-    this.selectedRangeValue = new DateRange(
-      this.filter.getDateRange().start ?? new Date("1900-01-01"),
-      this.filter.getDateRange().end ?? new Date("2999-12-31"),
-    );
-    this.selectedOption = this.filter.getSelectedOption();
-  }
+  selectedRangeValue = signal<DateRange<Date>>(
+    new DateRange(
+      this.data?.dateRange?.start ?? new Date("1900-01-01"),
+      this.data?.dateRange?.end ?? new Date("2999-12-31"),
+    ),
+  );
+  selectedOption = signal<DateRangeFilterConfigOption | undefined>(
+    this.data?.selectedOption,
+  );
+  selectedOptionValues = signal<string[]>(
+    this.data?.selectedOptionValues ?? [],
+  );
+  rangeOptions = signal<DateRangeFilterConfigOption[]>(
+    this.data?.rangeOptions ?? [],
+  );
+  comparisonRange = signal<DateRange<Date>>(new DateRange(null, null));
 
   preselectRange(dateRangeOption): void {
-    this.comparisonRange = calculateDateRange(dateRangeOption);
+    this.comparisonRange.set(calculateDateRange(dateRangeOption));
   }
 
   preselectAllRange(): void {
-    this.comparisonRange = new DateRange(
-      new Date("1900-01-01"),
-      new Date("2999-12-31"),
+    this.comparisonRange.set(
+      new DateRange(new Date("1900-01-01"), new Date("2999-12-31")),
     );
   }
 
   unselectRange() {
-    this.comparisonRange = new DateRange(null, null);
+    this.comparisonRange.set(new DateRange(null, null));
   }
 
-  selectRangeAndClose(index: number | "all"): void {
+  selectRangeAndClose(index: number | "all" | "empty"): void {
+    let result: string[] = [];
     if (typeof index === "number") {
-      this.filter.selectedOptionValues = [index.toString()];
+      result = [index.toString()];
+    } else if (index === "empty") {
+      result = [EMPTY_FILTER_OPTION_KEY];
     } else {
-      this.filter.selectedOptionValues = [];
+      result = [];
     }
-    this.dialogRef.close();
+    this.selectedOptionValues.set(result);
+    this.dialogRef.close({ selectedOptionValues: result });
   }
 
   selectedRangeChange(selectedDate: Date) {
-    if (!this.selectedRangeValue?.start || this.selectedRangeValue?.end) {
-      this.selectedRangeValue = new DateRange(selectedDate, null);
+    const current = this.selectedRangeValue();
+    if (!current?.start || current?.end) {
+      this.selectedRangeValue.set(new DateRange(selectedDate, null));
     } else {
-      const start: Date = this.selectedRangeValue.start;
-      this.filter.selectedOptionValues =
+      const start: Date = current.start as Date;
+      const resultValues =
         start < selectedDate
           ? [dateToString(start), dateToString(selectedDate)]
           : [dateToString(selectedDate), dateToString(start)];
-      this.dialogRef.close();
+      this.selectedOptionValues.set(resultValues);
+      this.dialogRef.close({ selectedOptionValues: resultValues });
     }
   }
 }

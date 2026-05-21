@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
-  Input,
+  input,
   OnInit,
   signal,
   WritableSignal,
@@ -13,12 +14,12 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatTooltip } from "@angular/material/tooltip";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
@@ -34,6 +35,7 @@ import {
   LinkExternalProfileDialogComponent,
   LinkExternalProfileDialogData,
 } from "./link-external-profile-dialog/link-external-profile-dialog.component";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("EditExternalProfileLink")
 @Component({
@@ -41,11 +43,11 @@ import {
   standalone: true,
   imports: [
     MatButton,
-    FaIconComponent,
     MatTooltip,
     FormsModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
+    FaDynamicIconComponent,
   ],
   templateUrl: "./edit-external-profile-link.component.html",
   styleUrl: "./edit-external-profile-link.component.scss",
@@ -61,20 +63,20 @@ export class EditExternalProfileLinkComponent
   extends CustomFormControlDirective<string>
   implements OnInit, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
-  @Input() entity?: Entity;
+  formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   /**
    * The configuration details for this external profile link,
    * defined in the config field's `additional` property.
    */
   get additional(): ExternalProfileLinkConfig {
-    return this.formFieldConfig?.additional as ExternalProfileLinkConfig;
+    return this.formFieldConfig()?.additional as ExternalProfileLinkConfig;
   }
 
   isLoading: WritableSignal<boolean> = signal(false);
-  externalProfile: ExternalProfile | undefined;
-  externalProfileError: boolean;
+  externalProfile = signal<ExternalProfile | undefined>(undefined);
+  externalProfileError = signal(false);
   isDisabled = signal(false);
 
   get formControl(): FormControl<string> {
@@ -83,12 +85,12 @@ export class EditExternalProfileLinkComponent
 
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly skillApi: SkillApiService = inject(SkillApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    this.formControl.statusChanges.subscribe(() => {
-      this.isDisabled.set(this.formControl.disabled);
-    });
-
+    this.formControl.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.isDisabled.set(this.formControl.disabled));
     this.isDisabled.set(this.formControl.disabled);
 
     if (this.formControl.value) {
@@ -97,12 +99,12 @@ export class EditExternalProfileLinkComponent
         .pipe(
           retryOnServerError(2),
           catchError(() => {
-            this.externalProfileError = true;
+            this.externalProfileError.set(true);
             return of(undefined);
           }),
         )
         .subscribe((profile) => {
-          this.externalProfile = profile;
+          this.externalProfile.set(profile);
         });
     }
   }
@@ -110,7 +112,7 @@ export class EditExternalProfileLinkComponent
   async searchMatchingProfiles() {
     const currentEntity = Object.assign(
       {},
-      this.entity,
+      this.entity(),
       this.formControl.parent?.getRawValue(),
     );
 
@@ -130,7 +132,7 @@ export class EditExternalProfileLinkComponent
   }
 
   unlinkExternalProfile() {
-    this.externalProfile = undefined;
+    this.externalProfile.set(undefined);
     this.formControl.setValue(null);
     this.formControl.markAsDirty();
   }
@@ -153,7 +155,7 @@ export class EditExternalProfileLinkComponent
   }
 
   private linkProfile(externalProfile: ExternalProfile) {
-    this.externalProfile = externalProfile;
+    this.externalProfile.set(externalProfile);
     this.formControl.setValue(externalProfile.id);
     this.formControl.markAsDirty();
   }

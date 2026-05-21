@@ -91,9 +91,36 @@ describe("MatchingEntitiesComponent", () => {
     fixture.detectChanges();
   }
 
+  function setInputs(
+    inputConfig: Partial<MatchingEntitiesConfig> & { entity?: Entity },
+    targetFixture: ComponentFixture<MatchingEntitiesComponent> = fixture,
+  ) {
+    if ("entity" in inputConfig) {
+      targetFixture.componentRef.setInput("entity", inputConfig.entity);
+    }
+    if ("leftSide" in inputConfig) {
+      targetFixture.componentRef.setInput("leftSide", inputConfig.leftSide);
+    }
+    if ("rightSide" in inputConfig) {
+      targetFixture.componentRef.setInput("rightSide", inputConfig.rightSide);
+    }
+    if ("columns" in inputConfig) {
+      targetFixture.componentRef.setInput("columns", inputConfig.columns);
+    }
+    if ("matchActionLabel" in inputConfig) {
+      targetFixture.componentRef.setInput(
+        "matchActionLabel",
+        inputConfig.matchActionLabel,
+      );
+    }
+    if ("onMatch" in inputConfig) {
+      targetFixture.componentRef.setInput("onMatch", inputConfig.onMatch);
+    }
+  }
+
   it("should create and map dynamic config to inputs", () => {
-    Object.assign(component, testConfig);
-    component.entity = new Entity();
+    setInputs(testConfig);
+    fixture.componentRef.setInput("entity", new Entity());
     fixture.detectChanges();
 
     expectConfigToMatch(component, testConfig);
@@ -112,7 +139,7 @@ describe("MatchingEntitiesComponent", () => {
 
     fixture = TestBed.createComponent(MatchingEntitiesComponent);
     component = fixture.componentInstance;
-    component.entity = new Entity();
+    fixture.componentRef.setInput("entity", new Entity());
     fixture.detectChanges();
 
     expectConfigToMatch(component, testConfig);
@@ -120,7 +147,7 @@ describe("MatchingEntitiesComponent", () => {
     const currentConfig: MatchingEntitiesConfig = {
       columns: [["newA", "newB"]],
     };
-    Object.assign(component, currentConfig);
+    setInputs(currentConfig);
     component.ngOnInit();
 
     const expectedCombinedConfig = Object.assign({}, testConfig, currentConfig);
@@ -129,31 +156,37 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should assign config entity to the selected entity of the side not having a table with select options", async () => {
     const testEntity = new TestEntity("1");
-    component.entity = testEntity;
-    component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
-    component.onMatch = testConfig.onMatch;
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.componentRef.setInput("rightSide", {
+      entityType: TestEntity.ENTITY_TYPE,
+    });
+    fixture.componentRef.setInput("onMatch", testConfig.onMatch);
     await stabilizeCurrentFixture();
 
-    expect(component.sideDetails[0].selected).toEqual([testEntity]);
+    expect(component.sideDetails()![0].selected()).toEqual([testEntity]);
 
-    component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
-    component.rightSide = {};
+    fixture.componentRef.setInput("leftSide", {
+      entityType: TestEntity.ENTITY_TYPE,
+    });
+    fixture.componentRef.setInput("rightSide", {});
     await component.ngOnInit();
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(component.sideDetails[1].selected).toEqual([testEntity]);
+    expect(component.sideDetails()![1].selected()).toEqual([testEntity]);
   });
 
   it("should init details for template including available entities table and its columns", async () => {
     const testEntity = new TestEntity();
-    component.entity = testEntity;
-    component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
-    component.onMatch = testConfig.onMatch;
-    component.columns = [
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.componentRef.setInput("rightSide", {
+      entityType: TestEntity.ENTITY_TYPE,
+    });
+    fixture.componentRef.setInput("onMatch", testConfig.onMatch);
+    fixture.componentRef.setInput("columns", [
       ["_id", "name"],
       ["_rev", "phone"],
-    ];
+    ]);
     const allChildren: TestEntity[] = [
       TestEntity.create("1"),
       TestEntity.create("2"),
@@ -166,77 +199,81 @@ describe("MatchingEntitiesComponent", () => {
 
     await stabilizeCurrentFixture();
 
-    expect(component.sideDetails.length).toBe(2);
+    expect(component.sideDetails()!.length).toBe(2);
 
-    expect(component.sideDetails[0].selected).toEqual([testEntity]);
-    expect(component.sideDetails[0].entityType).toEqual(testEntity.getType());
-    expect(component.sideDetails[0].availableEntities).toBeUndefined();
-    expect(component.sideDetails[0].columns).toEqual(["_id", "_rev"]);
+    expect(component.sideDetails()![0].selected()).toEqual([testEntity]);
+    expect(component.sideDetails()![0].entityType).toEqual(
+      testEntity.getType(),
+    );
+    expect(component.sideDetails()![0].availableEntities).toBeUndefined();
+    expect(component.sideDetails()![0].columns).toEqual(["_id", "_rev"]);
 
-    expect(component.sideDetails[1].selected).toBeUndefined();
-    expect(component.sideDetails[1].entityType).toEqual(TestEntity.ENTITY_TYPE);
+    expect(component.sideDetails()![1].selected()).toEqual([]);
+    expect(component.sideDetails()![1].entityType).toEqual(
+      TestEntity.ENTITY_TYPE,
+    );
     expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity.ENTITY_TYPE);
-    expect(component.sideDetails[1].availableEntities).toEqual(allChildren);
-    expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
+    expect(component.sideDetails()![1].availableEntities).toEqual(allChildren);
+    expect(component.sideDetails()![1].columns).toEqual(["name", "phone"]);
   });
 
   it("should select only one entity at a time in single select mode", async () => {
     const matchedEntity = TestEntity.create("matched child");
     const otherMatchedEntity = TestEntity.create("second matched child");
 
-    Object.assign(component, testConfig);
-    component.onMatch = {
+    setInputs(testConfig);
+    fixture.componentRef.setInput("onMatch", {
       newEntityType: ChildSchoolRelation.ENTITY_TYPE,
       newEntityMatchPropertyRight: "childId",
       newEntityMatchPropertyLeft: "schoolId",
-    };
+    });
     await stabilizeCurrentFixture();
-    const testedSide = component.sideDetails[1];
+    const testedSide = component.sideDetails()![1];
 
     testedSide.selectMatch(matchedEntity);
-    expect(testedSide.selected).toEqual([matchedEntity]);
+    expect(testedSide.selected()).toEqual([matchedEntity]);
 
     testedSide.selectMatch(otherMatchedEntity);
-    expect(testedSide.selected).toEqual([otherMatchedEntity]);
+    expect(testedSide.selected()).toEqual([otherMatchedEntity]);
   });
 
   it("should select multiple entities in multiSelect mode", async () => {
     const matchedEntity = TestEntity.create("matched child");
     const otherMatchedEntity = TestEntity.create("second matched child");
 
-    Object.assign(component, testConfig);
-    component.onMatch = {
+    setInputs(testConfig);
+    fixture.componentRef.setInput("onMatch", {
       newEntityType: Note.ENTITY_TYPE,
       newEntityMatchPropertyRight: "children",
       newEntityMatchPropertyLeft: "schools",
-    };
+    });
     await stabilizeCurrentFixture();
-    const testedSide = component.sideDetails[1];
+    const testedSide = component.sideDetails()![1];
 
     testedSide.selectMatch(matchedEntity);
     testedSide.selectMatch(otherMatchedEntity);
-    expect(testedSide.selected).toEqual([matchedEntity, otherMatchedEntity]);
+    expect(testedSide.selected()).toEqual([matchedEntity, otherMatchedEntity]);
 
     testedSide.selectMatch(matchedEntity); // deselect by second click
-    expect(testedSide.selected).toEqual([otherMatchedEntity]);
+    expect(testedSide.selected()).toEqual([otherMatchedEntity]);
   });
 
   it("should create a new entity onMatch, with single entity property", async () => {
     const testEntity = new TestEntity();
     const matchedEntity = TestEntity.create("matched child");
-    component.entity = testEntity;
-    Object.assign(component, testConfig);
-    component.onMatch = {
+    fixture.componentRef.setInput("entity", testEntity);
+    setInputs(testConfig);
+    fixture.componentRef.setInput("onMatch", {
       newEntityType: ChildSchoolRelation.ENTITY_TYPE,
       newEntityMatchPropertyRight: "childId",
       newEntityMatchPropertyLeft: "schoolId",
-    };
-    component.columns = [["_id", "name"]];
+    });
+    fixture.componentRef.setInput("columns", [["_id", "name"]]);
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
 
     await stabilizeCurrentFixture();
-    component.sideDetails[0].selected = [testEntity];
-    component.sideDetails[1].selected = [matchedEntity];
+    component.sideDetails()![0].selected.set([testEntity]);
+    component.sideDetails()![1].selected.set([matchedEntity]);
 
     await component.createMatch();
     await fixture.whenStable();
@@ -260,19 +297,19 @@ describe("MatchingEntitiesComponent", () => {
     const child1 = TestEntity.create("matched child 1");
     const child2 = TestEntity.create("matched child 2");
 
-    Object.assign(component, testConfig);
-    component.onMatch = {
+    setInputs(testConfig);
+    fixture.componentRef.setInput("onMatch", {
       newEntityType: Note.ENTITY_TYPE,
       newEntityMatchPropertyRight: "children",
       newEntityMatchPropertyLeft: "schools",
-    };
-    component.entity = testEntity;
-    component.columns = [["_id", "name"]];
+    });
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.componentRef.setInput("columns", [["_id", "name"]]);
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
     await stabilizeCurrentFixture();
 
-    component.sideDetails[0].selected = [testEntity];
-    component.sideDetails[1].selected = [child1, child2];
+    component.sideDetails()![0].selected.set([testEntity]);
+    component.sideDetails()![1].selected.set([child1, child2]);
 
     await component.createMatch();
     await fixture.whenStable();
@@ -294,44 +331,47 @@ describe("MatchingEntitiesComponent", () => {
     const testEntity = new TestEntity();
     const matchedEntity = TestEntity.create("matched child");
 
-    Object.assign(component, testConfig);
-    component.entity = testEntity;
-    component.onMatch = {
+    setInputs(testConfig);
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.componentRef.setInput("onMatch", {
       newEntityType: ChildSchoolRelation.ENTITY_TYPE,
       newEntityMatchPropertyRight: "childId",
       newEntityMatchPropertyLeft: "schoolId",
-    };
-    component.columns = [["_id", "name"]];
+    });
+    fixture.componentRef.setInput("columns", [["_id", "name"]]);
     const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
 
     await stabilizeCurrentFixture();
 
-    component.sideDetails[0].selected = [testEntity];
-    component.sideDetails[0].highlightedSelected = testEntity;
-    component.sideDetails[1].selected = [matchedEntity];
-    component.sideDetails[1].highlightedSelected = matchedEntity;
+    component.sideDetails()![0].selected.set([testEntity]);
+    component.sideDetails()![0].highlightedSelected.set(testEntity);
+    component.sideDetails()![1].selected.set([matchedEntity]);
+    component.sideDetails()![1].highlightedSelected.set(matchedEntity);
 
     await component.createMatch();
     await fixture.whenStable();
 
     expect(saveSpy).toHaveBeenCalledWith(expect.any(ChildSchoolRelation));
-    expect(component.sideDetails[0].selected).toEqual([]);
-    expect(component.sideDetails[1].selected).toEqual([]);
-    expect(component.sideDetails[0].highlightedSelected).toBeNull();
-    expect(component.sideDetails[1].highlightedSelected).toBeNull();
-    expect(component.lockedMatching).toBe(false);
+    expect(component.sideDetails()![0].selected()).toEqual([]);
+    expect(component.sideDetails()![1].selected()).toEqual([]);
+    expect(component.sideDetails()![0].highlightedSelected()).toBeNull();
+    expect(component.sideDetails()![1].highlightedSelected()).toBeNull();
+    expect(component.lockedMatching()).toBe(false);
   });
 
   it("should create distance column and publish updates", async () => {
     TestEntity.schema.set("address", { dataType: "location" });
-    component.entity = new TestEntity();
-    component.columns = [[undefined, "distance"]];
-    component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
-    component.onMatch = testConfig.onMatch;
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("columns", [[undefined, "distance"]]);
+    fixture.componentRef.setInput("leftSide", {
+      entityType: TestEntity.ENTITY_TYPE,
+    });
+    fixture.componentRef.setInput("onMatch", testConfig.onMatch);
 
     await stabilizeCurrentFixture();
 
-    const distanceColumn = component.columns[0][1] as FormFieldConfig;
+    const distanceColumn = component.sideDetails()![1]
+      .columns[0] as FormFieldConfig;
     expect(distanceColumn).toEqual({
       id: "distance",
       label: "Distance",
@@ -342,6 +382,7 @@ describe("MatchingEntitiesComponent", () => {
         compareCoordinates: expect.any(BehaviorSubject),
       },
     });
+    expect(component.columns()?.[0][1]).toBe("distance");
 
     let newCoordinates: Coordinates[];
     distanceColumn.additional.compareCoordinates.subscribe(
@@ -351,7 +392,7 @@ describe("MatchingEntitiesComponent", () => {
     const compare = new TestEntity();
     compare["address"] = LOCATION_1;
 
-    component.sideDetails[0].selectMatch(compare);
+    component.sideDetails()![0].selectMatch(compare);
 
     expect(newCoordinates).toEqual([
       (compare["address"] as GeoLocation)?.geoLookup,
@@ -361,37 +402,41 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should select an entity if it has been selected in the map", async () => {
-    component.entity = new Entity();
-    component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
-    component.onMatch = testConfig.onMatch;
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput("rightSide", {
+      entityType: TestEntity.ENTITY_TYPE,
+    });
+    fixture.componentRef.setInput("onMatch", testConfig.onMatch);
     await stabilizeCurrentFixture();
 
     const child = new TestEntity();
     component.entityInMapClicked(child);
 
-    expect(component.sideDetails[1].selected).toEqual([child]);
+    expect(component.sideDetails()![1].selected()).toEqual([child]);
   });
 
   it("should not change the provided config object directly", async () => {
-    Object.assign(component, testConfig);
+    setInputs(testConfig);
     await stabilizeCurrentFixture();
     const selectedChild = new TestEntity();
-    component.sideDetails[1].selectMatch(selectedChild);
-    expect(component.sideDetails[1].selected).toEqual([selectedChild]);
+    component.sideDetails()![1].selectMatch(selectedChild);
+    expect(component.sideDetails()![1].selected()).toEqual([selectedChild]);
 
     const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
     const newComponent = newFixture.componentInstance;
-    newComponent.entity = new TestEntity();
-    Object.assign(newComponent, testConfig);
+    newFixture.componentRef.setInput("entity", new TestEntity());
+    setInputs(testConfig, newFixture);
     newFixture.detectChanges();
     await newFixture.whenStable();
     newFixture.detectChanges();
 
-    expect(newComponent.sideDetails[1].selected).not.toEqual([selectedChild]);
+    expect(newComponent.sideDetails()![1].selected()).not.toEqual([
+      selectedChild,
+    ]);
   });
 
   it("should update the distance calculation when the selected map properties change", async () => {
-    Object.assign(component, testConfig);
+    setInputs(testConfig);
     TestEntity.schema.set("address", { dataType: "location" });
     TestEntity.schema.set("otherAddress", { dataType: "location" });
     const leftEntity = new TestEntity();
@@ -404,18 +449,18 @@ describe("MatchingEntitiesComponent", () => {
     vi.spyOn(TestBed.inject(EntityMapperService), "loadType").mockResolvedValue(
       [rightEntity1, rightEntity2],
     );
-    component.entity = leftEntity;
-    component.columns = [];
-    component.leftSide = {
+    fixture.componentRef.setInput("entity", leftEntity);
+    fixture.componentRef.setInput("columns", []);
+    fixture.componentRef.setInput("leftSide", {
       columns: ["distance"],
-    };
-    component.rightSide = {
+    });
+    fixture.componentRef.setInput("rightSide", {
       columns: ["distance"],
       entityType: TestEntity.ENTITY_TYPE,
-    };
+    });
     await stabilizeCurrentFixture();
-    const leftSide = component.sideDetails[0];
-    const rightSide = component.sideDetails[1];
+    const leftSide = component.sideDetails()![0];
+    const rightSide = component.sideDetails()![1];
     let lastLeftValue: Coordinates[];
     let lastRightValue: Coordinates[];
     leftSide.distanceColumn.compareCoordinates.subscribe(
@@ -435,7 +480,10 @@ describe("MatchingEntitiesComponent", () => {
     lastLeftValue = undefined;
     lastRightValue = undefined;
     // select only one property
-    component.displayedLocationProperties[TestEntity.ENTITY_TYPE] = ["address"];
+    component.displayedLocationProperties.update((p) => ({
+      ...p,
+      [TestEntity.ENTITY_TYPE]: ["address"],
+    }));
     component.updateMarkersAndDistances();
 
     expect(lastLeftValue).toEqual([]);
@@ -456,10 +504,10 @@ describe("MatchingEntitiesComponent", () => {
     lastLeftValue = undefined;
     lastRightValue = undefined;
     //select both properties
-    component.displayedLocationProperties[TestEntity.ENTITY_TYPE] = [
-      "address",
-      "otherAddress",
-    ];
+    component.displayedLocationProperties.update((p) => ({
+      ...p,
+      [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
+    }));
     component.updateMarkersAndDistances();
 
     expect(lastLeftValue).toEqual([
@@ -490,29 +538,29 @@ describe("MatchingEntitiesComponent", () => {
     const other = new OtherEntity();
     await TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
 
-    component.leftSide = {
+    fixture.componentRef.setInput("leftSide", {
       entityType: TestEntity.ENTITY_TYPE,
       prefilter: { category: { $exists: false } } as any,
       columns: ["name"],
-    };
-    component.rightSide = {
+    });
+    fixture.componentRef.setInput("rightSide", {
       entityType: OtherEntity.ENTITY_TYPE,
       columns: ["_id"],
-    };
-    component.onMatch = testConfig.onMatch;
+    });
+    fixture.componentRef.setInput("onMatch", testConfig.onMatch);
     await stabilizeCurrentFixture();
 
-    expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
+    expect(component.filteredMapEntities().map((entity) => entity)).toEqual([
       c1,
       c3,
       other,
     ]);
 
-    component.applySelectedFilters(component.sideDetails[0], {
+    component.applySelectedFilters(component.sideDetails()![0], {
       name: "active",
     } as any);
 
-    expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
+    expect(component.filteredMapEntities().map((entity) => entity)).toEqual([
       c1,
       other,
     ]);
@@ -527,22 +575,23 @@ describe("MatchingEntitiesComponent", () => {
           TestEntity.schema.delete(name);
         }
       });
-      component.mapVisible = false;
-      component.entity = new TestEntity();
-      component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
-      component.onMatch = testConfig.onMatch;
+      fixture.componentRef.setInput("entity", new TestEntity());
+      fixture.componentRef.setInput("leftSide", {
+        entityType: TestEntity.ENTITY_TYPE,
+      });
+      fixture.componentRef.setInput("onMatch", testConfig.onMatch);
 
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.mapVisible).toBe(false);
+      expect(component.mapVisible()).toBe(false);
 
       TestEntity.schema.set("address", { dataType: "location" });
 
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.mapVisible).toBe(true);
+      expect(component.mapVisible()).toBe(true);
 
       TestEntity.schema.delete("address");
     } finally {
@@ -589,28 +638,28 @@ describe("MatchingEntitiesComponent", () => {
   it("should infer multiSelect mode from onMatch's entity schema", async () => {
     vi.useFakeTimers();
     try {
-      Object.assign(component, testConfig);
-      component.onMatch = {
+      setInputs(testConfig);
+      fixture.componentRef.setInput("onMatch", {
         newEntityType: ChildSchoolRelation.ENTITY_TYPE,
         newEntityMatchPropertyLeft: "childId",
         newEntityMatchPropertyRight: "schoolId",
-      };
+      });
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.sideDetails[0].multiSelect).toBeFalsy();
-      expect(component.sideDetails[1].multiSelect).toBeFalsy();
+      expect(component.sideDetails()![0].multiSelect).toBeFalsy();
+      expect(component.sideDetails()![1].multiSelect).toBeFalsy();
 
-      component.onMatch = {
+      fixture.componentRef.setInput("onMatch", {
         newEntityType: Note.ENTITY_TYPE,
         newEntityMatchPropertyLeft: "children",
         newEntityMatchPropertyRight: "schools",
-      };
+      });
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.sideDetails[0].multiSelect).toBe(true);
-      expect(component.sideDetails[1].multiSelect).toBe(true);
+      expect(component.sideDetails()![0].multiSelect).toBe(true);
+      expect(component.sideDetails()![1].multiSelect).toBe(true);
     } finally {
       vi.useRealTimers();
     }
@@ -621,13 +670,24 @@ function expectConfigToMatch(
   component: MatchingEntitiesComponent,
   configToLoad: MatchingEntitiesConfig,
 ) {
-  expect(component.columns).toEqual(configToLoad.columns);
-  expect(component.onMatch).toEqual(configToLoad.onMatch);
-  expect(component.matchActionLabel).toEqual(configToLoad.matchActionLabel);
-  expect(component.rightSide.entityType).toEqual(
+  const expectedColumns =
+    component.columns() ?? (component as any).resolvedColumns();
+  const expectedOnMatch =
+    component.onMatch() ?? (component as any).resolvedOnMatch();
+  const expectedMatchActionLabel =
+    component.matchActionLabel() ?? component.resolvedMatchActionLabel();
+  const expectedRightSide =
+    component.rightSide() ?? (component as any).resolvedRightSide();
+  const expectedLeftSide =
+    component.leftSide() ?? (component as any).resolvedLeftSide();
+
+  expect(expectedColumns).toEqual(configToLoad.columns);
+  expect(expectedOnMatch).toEqual(configToLoad.onMatch);
+  expect(expectedMatchActionLabel).toEqual(configToLoad.matchActionLabel);
+  expect(expectedRightSide?.entityType).toEqual(
     configToLoad.rightSide.entityType,
   );
-  expect(component.leftSide.entityType).toEqual(
+  expect(expectedLeftSide?.entityType).toEqual(
     configToLoad.leftSide.entityType,
   );
 }

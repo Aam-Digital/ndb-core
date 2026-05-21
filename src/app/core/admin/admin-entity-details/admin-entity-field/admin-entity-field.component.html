@@ -232,7 +232,7 @@
       <!--
         ADVANCED SETTINGS
         -->
-      <mat-tab label="Advanced Options & Validation" i18n-label>
+      <mat-tab label="Advanced Options" i18n-label>
         <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
             <app-admin-default-value
@@ -261,7 +261,11 @@
               [dataType]="schemaFieldsForm.get('dataType').value"
             ></app-admin-searchable-checkbox>
           </div>
+        </div>
+      </mat-tab>
 
+      <mat-tab label="Validation" i18n-label>
+        <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
             <app-configure-entity-field-validator
               [entitySchemaField]="data.entitySchemaField"

@@ -1,137 +1,131 @@
 import {
   AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-  inject,
   ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+  ViewChild,
 } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
 import * as L from "leaflet";
 import "leaflet.markercluster";
-
-import { BehaviorSubject, Observable, timeInterval } from "rxjs";
-import { debounceTime, filter, map } from "rxjs/operators";
-import { Coordinates } from "../coordinates";
-import { Entity } from "../../../core/entity/model/entity";
-import { getLocationProperties, createColoredDivIcon } from "../map-utils";
+import { BehaviorSubject, Subject } from "rxjs";
 import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
-import { MatDialog } from "@angular/material/dialog";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatButtonModule } from "@angular/material/button";
+import { Entity } from "../../../core/entity/model/entity";
+import { Coordinates } from "../coordinates";
+import { GeoResult } from "../geo.service";
+import { createColoredDivIcon, getLocationProperties } from "../map-utils";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import {
   LocationProperties,
   MapPropertiesPopupComponent,
 } from "./map-properties-popup/map-properties-popup.component";
-import { GeoResult } from "../geo.service";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-map",
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
-  imports: [FontAwesomeModule, MatButtonModule],
+  imports: [FaDynamicIconComponent, MatButtonModule],
 })
 export class MapComponent implements AfterViewInit {
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
+  private readonly configService = inject(ConfigService);
 
-  private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
+  private readonly startLocationDefault: L.LatLngTuple = [
+    52.4790412, 13.4319106,
+  ];
 
   @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
 
-  @Input() height = "200px";
-  @Input() expandable = false;
+  height = input<string>("200px");
+  expandable = input<boolean>(false);
 
   /**
    * If true, shows only the map with pins and a close button.
    * Hides address search, selected location, and save/cancel actions.
    */
-  @Input() showMapOnly = false;
+  showMapOnly = input<boolean>(false);
 
   /**
    * Coordinates to show as extra markers on the map, not linked to any entity.
-   * Use this to display locations like search results or temporary pins.
-   * This is different from highlighted entities, which refer to existing entities that should stand out on the map.
    */
-  @Input() set marked(coordinates: Coordinates[]) {
-    if (!coordinates) {
-      return;
-    }
-    this._marked.next(coordinates);
-    this.updateMarkers();
-  }
+  marked = input<Coordinates[]>([]);
+  entities = input<Entity[]>([]);
+  highlightedEntities = input<Entity[]>([]);
 
-  /** observable of updates to `marked`, see the description there */
-  private _marked = new BehaviorSubject<Coordinates[]>([]);
+  displayedProperties = model<LocationProperties>({});
+  mapClick = output<Coordinates>();
+  entityClick = output<Entity>();
 
-  @Input() set entities(entities: Entity[]) {
-    if (!entities) {
-      return;
-    }
-    const adjusted = this.adjustOverlappingCoordinates(entities);
-    this._entities.next(adjusted);
-    this.updateMarkers();
-  }
-  private _entities = new BehaviorSubject<Entity[]>([]);
-
-  @Input() set highlightedEntities(entities: Entity[]) {
-    if (!entities) {
-      return;
-    }
-    this._highlightedEntities.next(entities);
-    this.updateMarkers();
-  }
-  private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
-
-  @Input() set displayedProperties(displayedProperties: LocationProperties) {
-    if (displayedProperties) {
-      this._displayedProperties = displayedProperties;
-      this.showPropertySelection = Object.keys(displayedProperties).length > 0;
-    }
-  }
-  private _displayedProperties: LocationProperties = {};
-  @Output() displayedPropertiesChange = new EventEmitter<LocationProperties>();
-  showPropertySelection = false;
+  showPropertySelection = signal(false);
 
   private map: L.Map;
   private markerClusterGroup: L.MarkerClusterGroup;
   private mapInitialized = false;
+  private lastMapClickTimestamp = 0;
 
-  private clickStream = new EventEmitter<Coordinates>();
-
-  @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
-    timeInterval(),
-    debounceTime(400),
-    filter(({ interval }) => interval >= 400),
-    map(({ value }) => value),
-  );
-
-  @Output() entityClick = new EventEmitter<Entity>();
+  private markedState: Coordinates[] = [];
+  private entitiesState: Entity[] = [];
+  private highlightedEntitiesState: Entity[] = [];
+  private displayedPropertiesState: LocationProperties = {};
+  private previousEntitiesReference: Entity[] | undefined;
 
   constructor() {
-    const configService = inject(ConfigService);
-    const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
+    const config = this.configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
     if (config?.start) {
-      this.start_location = config.start;
+      this.startLocationDefault[0] = config.start[0];
+      this.startLocationDefault[1] = config.start[1];
     }
+
+    effect(() => {
+      const marked = this.marked() ?? [];
+      const entities = this.entities() ?? [];
+      const highlighted = this.highlightedEntities() ?? [];
+      const displayedProperties = this.displayedProperties() ?? {};
+
+      this.markedState = marked;
+      if (entities !== this.previousEntitiesReference) {
+        this.previousEntitiesReference = entities;
+        this.entitiesState = this.adjustOverlappingCoordinates(entities);
+      }
+      this.highlightedEntitiesState = highlighted;
+      this.displayedPropertiesState =
+        this.cloneDisplayedProperties(displayedProperties);
+      this.showPropertySelection.set(
+        Object.keys(this.displayedPropertiesState).length > 0,
+      );
+
+      this.updateMarkers();
+    });
   }
 
   ngAfterViewInit() {
-    // the map always starts at `start_location`, and centering on markers is handled later in `updateMarkers()` or `handleMarkerHighlights()`.
-    // init Map
     this.map = L.map(this.mapElement.nativeElement, {
-      center: this.start_location,
+      center: this.startLocationDefault,
       zoom: 14,
     });
+
     this.map.addEventListener("click", (res) => {
-      if (this.showMapOnly) {
-        return; // ignore map clicks when disabled
+      if (this.showMapOnly()) {
+        return;
       }
-      this.clickStream.emit({ lat: res.latlng.lat, lon: res.latlng.lng });
+
+      const now = Date.now();
+      if (now - this.lastMapClickTimestamp < 400) {
+        return;
+      }
+
+      this.lastMapClickTimestamp = now;
+      this.mapClick.emit({ lat: res.latlng.lat, lon: res.latlng.lng });
     });
 
     const tiles = L.tileLayer(
@@ -144,19 +138,18 @@ export class MapComponent implements AfterViewInit {
       },
     );
     tiles.addTo(this.map);
-    // this is necessary to remove gray spots when directly opening app on a page with the map
+
+    // Prevent gray tiles when opening directly on map pages.
     setTimeout(() => this.map.invalidateSize());
-    // Initialize the map with marker cluster group
     this.initializeMap();
   }
 
   private initializeMap() {
-    // Initialize marker cluster group
     this.markerClusterGroup = L.markerClusterGroup({
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
-      maxClusterRadius: 20, // needed to not use clustering on overlapping markers
+      maxClusterRadius: 20,
     });
     this.map.addLayer(this.markerClusterGroup);
     this.mapInitialized = true;
@@ -173,11 +166,10 @@ export class MapComponent implements AfterViewInit {
   }
 
   /**
-   * Adjusts overlapping entity coordinates in-place so markers don't overlap
+   * Adjust overlapping entity coordinates in-place so markers do not stack perfectly.
    */
   private adjustOverlappingCoordinates(entities: Entity[]): Entity[] {
     const locationOccurrencesMap = new Map<string, number>();
-
     const roundTo5Decimals = (n: any) => Number(Number(n).toFixed(5));
 
     entities.forEach((entity) => {
@@ -189,14 +181,16 @@ export class MapComponent implements AfterViewInit {
 
         const lat = Number(location?.lat);
         const lon = Number(location?.lon);
-        if (isNaN(lat) || isNaN(lon)) return;
+        if (isNaN(lat) || isNaN(lon)) {
+          return;
+        }
 
         const coordinateKey = `${roundTo5Decimals(lat)}_${roundTo5Decimals(lon)}`;
         const occurrenceCount = locationOccurrencesMap.get(coordinateKey) || 0;
 
         if (occurrenceCount > 0) {
           const angle = (occurrenceCount * 45 * Math.PI) / 180;
-          const dx = (10 / 111320) * Math.cos(angle); // approx 10m in degrees
+          const dx = (10 / 111320) * Math.cos(angle);
           const dy = (10 / 111320) * Math.sin(angle);
           location.lat = lat + dy;
           location.lon = lon + dx;
@@ -209,23 +203,18 @@ export class MapComponent implements AfterViewInit {
     return entities;
   }
 
-  /**
-   * Updates the markers on the map based on the current entities, highlighted entities, and marked coordinates.
-   * Clears all existing markers and adds new ones, then handles highlighting and zooming logic.
-   */
   private updateMarkers() {
-    if (!this.mapInitialized) return;
+    if (!this.mapInitialized) {
+      return;
+    }
 
-    // Remove all markers from the cluster group
     this.markerClusterGroup.clearLayers();
 
-    // Get IDs of highlighted entities for quick lookup
     const highlightedIds = new Set(
-      this._highlightedEntities.value?.map((e) => e.getId()) || [],
+      this.highlightedEntitiesState?.map((e) => e.getId()) || [],
     );
 
-    // Split all entities into normal and highlighted based on IDs
-    const allEntities = this._entities.value || [];
+    const allEntities = this.entitiesState || [];
     const normalEntities = allEntities.filter(
       (e) => !highlightedIds.has(e.getId()),
     );
@@ -233,15 +222,13 @@ export class MapComponent implements AfterViewInit {
       highlightedIds.has(e.getId()),
     );
 
-    // Create markers for each group
     const normalMarkers = this.createEntityMarkers(normalEntities, false);
     const highlightedMarkers = this.createEntityMarkers(
-      this._highlightedEntities.value,
+      this.highlightedEntitiesState,
       true,
     );
-    const coordinateMarkers = this.createMarkers(this._marked.value);
+    const coordinateMarkers = this.createMarkers(this.markedState);
 
-    // Handle marker display and map view adjustment
     this.handleMarkerHighlights(
       normalMarkers,
       highlightedMarkers,
@@ -250,20 +237,12 @@ export class MapComponent implements AfterViewInit {
     );
   }
 
-  /**
-   * Handles highlighting logic for map markers based on highlighted entities.
-   * - Adds all normal, highlighted, and coordinate markers to the cluster.
-   * - If exactly one entity is highlighted, zoom to it.
-   * - If exactly two entities are highlighted, zoom to their combined bounds.
-   * - Otherwise, show all normal + coordinate markers or only highlighted markers if available.
-   */
   private handleMarkerHighlights(
     normalMarkers: L.Marker[],
     highlightedMarkers: L.Marker[],
     coordinateMarkers: L.Marker[],
     highlightedEntities: Entity[],
   ) {
-    // Combine all markers and add to the cluster group initially
     const allMarkers = [
       ...normalMarkers,
       ...highlightedMarkers,
@@ -282,31 +261,25 @@ export class MapComponent implements AfterViewInit {
       .map((entity) => markerByEntityId.get(entity.getId()))
       .filter((m): m is L.Marker => !!m);
 
-    // If only one entity is highlighted, zoom to its marker
     if (highlightMarkers.length === 1) {
       const marker = highlightMarkers[0];
-
       this.map.setView(marker.getLatLng(), Math.max(this.map.getZoom(), 12), {
         animate: true,
       });
       return;
     }
 
-    // If exactly two entities are highlighted, show only their markers and fit bounds
     if (highlightMarkers.length === 2) {
-      this.markerClusterGroup.clearLayers(); // remove all to show only the two
-
-      highlightMarkers.forEach((marker) => {
-        this.markerClusterGroup.addLayer(marker);
-      });
+      this.markerClusterGroup.clearLayers();
+      highlightMarkers.forEach((marker) =>
+        this.markerClusterGroup.addLayer(marker),
+      );
 
       const bounds = L.featureGroup(highlightMarkers).getBounds();
       this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 18 });
       return;
     }
 
-    // If there are any highlight markers, prioritize showing them
-    // else show clustering
     const targetMarkers =
       highlightMarkers.length > 0
         ? highlightMarkers
@@ -337,7 +310,7 @@ export class MapComponent implements AfterViewInit {
           .map((prop) => entity[prop]?.geoLookup)
           .filter((loc: GeoResult) => !!loc)
           .forEach((loc: GeoResult) => {
-            const entityColor = entity.getColor() || "#808080"; // Default grey for entities without color
+            const entityColor = entity.getColor() || "#808080";
             const marker = L.marker([loc.lat, loc.lon], {
               icon: createColoredDivIcon(entityColor),
             });
@@ -358,11 +331,12 @@ export class MapComponent implements AfterViewInit {
             markers.push(marker);
           });
       });
+
     return markers;
   }
 
   /**
-   * Applies opacity styling to markers based on highlight status.
+   * Apply opacity styling based on highlight status.
    */
   private addMarkerStyle(marker: L.Marker, highlighted: boolean) {
     const icon = marker["_icon"] as HTMLElement;
@@ -376,19 +350,25 @@ export class MapComponent implements AfterViewInit {
   }
 
   private getMapProperties(entity: Entity) {
-    if (this._displayedProperties[entity.getType()]) {
-      return this._displayedProperties[entity.getType()];
-    } else {
-      const locationProperties = getLocationProperties(entity.getConstructor());
-      this._displayedProperties[entity.getType()] = locationProperties;
-      this.displayedPropertiesChange.emit(this._displayedProperties);
-      this.showPropertySelection = true;
-      return locationProperties;
+    const existing = this.displayedPropertiesState[entity.getType()];
+    if (existing) {
+      return existing;
     }
+
+    const locationProperties = getLocationProperties(entity.getConstructor());
+    const updatedProperties = {
+      ...this.displayedPropertiesState,
+      [entity.getType()]: locationProperties,
+    };
+    this.displayedPropertiesState = updatedProperties;
+    this.displayedProperties.set(updatedProperties);
+    this.showPropertySelection.set(true);
+
+    return locationProperties;
   }
 
   private createMarkers(coordinates: Coordinates[]): L.Marker[] {
-    return coordinates
+    return (coordinates ?? [])
       .filter((coord) => !!coord)
       .map((coord) => {
         const marker = L.marker([coord.lat, coord.lon]);
@@ -397,37 +377,53 @@ export class MapComponent implements AfterViewInit {
       });
   }
 
+  private cloneDisplayedProperties(
+    properties: LocationProperties = {},
+  ): LocationProperties {
+    return Object.fromEntries(
+      Object.entries(properties).map(([entityType, fields]) => [
+        entityType,
+        [...(fields ?? [])],
+      ]),
+    ) as LocationProperties;
+  }
+
   async openMapInPopup() {
-    // Breaking circular dependency by using async import
     const mapComponent = await import("../map-popup/map-popup.component");
     const data: MapPopupConfig = {
-      marked: this._marked.value,
-      entities: this._entities,
-      highlightedEntities: this._highlightedEntities,
-      entityClick: this.entityClick,
-      displayedProperties: this._displayedProperties,
-      showMapOnly: this.showMapOnly,
+      marked: this.markedState,
+      entities: new BehaviorSubject(this.entitiesState),
+      highlightedEntities: new BehaviorSubject(this.highlightedEntitiesState),
+      entityClick: {
+        next: (entity: Entity) => this.entityClick.emit(entity),
+      } as Subject<Entity>,
+      displayedProperties: this.cloneDisplayedProperties(
+        this.displayedPropertiesState,
+      ),
+      showMapOnly: this.showMapOnly(),
     };
+
     this.dialog
       .open(mapComponent.MapPopupComponent, { width: "90%", data })
       .afterClosed()
       .subscribe(() =>
-        // displayed properties might have changed in map view
         this.updatedDisplayedProperties(data.displayedProperties),
       );
   }
 
-  private updatedDisplayedProperties(properties: LocationProperties) {
-    this._displayedProperties = properties;
-    this.displayedPropertiesChange.emit(this._displayedProperties);
-    this.entities = this._entities.value;
-    this.highlightedEntities = this._highlightedEntities.value;
+  private updatedDisplayedProperties(
+    properties: LocationProperties | undefined,
+  ) {
+    const nextProperties = this.cloneDisplayedProperties(properties ?? {});
+    this.displayedPropertiesState = nextProperties;
+    this.displayedProperties.set(nextProperties);
+    this.updateMarkers();
   }
 
   openMapPropertiesPopup() {
     this.dialog
       .open(MapPropertiesPopupComponent, {
-        data: this._displayedProperties,
+        data: this.cloneDisplayedProperties(this.displayedPropertiesState),
       })
       .afterClosed()
       .subscribe((res: LocationProperties) => {

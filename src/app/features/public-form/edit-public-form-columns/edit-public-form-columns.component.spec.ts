@@ -71,8 +71,13 @@ describe("EditPublicFormColumnsComponent", () => {
     publicFormConfig.entity = TestEntity.ENTITY_TYPE;
     publicFormConfig.columns = testColumns;
 
-    component.entity = publicFormConfig;
-    formGroup = setupCustomFormControlEditComponent(component);
+    fixture.componentRef.setInput("entity", publicFormConfig);
+    formGroup = setupCustomFormControlEditComponent(
+      component,
+      "testProperty",
+      {},
+      fixture,
+    );
     fixture.detectChanges();
   });
 

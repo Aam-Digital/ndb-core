@@ -35,7 +35,7 @@ describe("FaDynamicIconComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FaDynamicIconComponent);
     component = fixture.componentInstance;
-    component._icon = faQuestion;
+    fixture.componentRef.setInput("icon", "question");
     fixture.detectChanges();
   });
 
@@ -44,19 +44,19 @@ describe("FaDynamicIconComponent", () => {
   });
 
   it("should show the correct icon when it is in the map", () => {
-    component.icon = "file-text";
-    expect(component._icon).toEqual(faFileAlt);
+    fixture.componentRef.setInput("icon", "file-text");
+    expect(component._icon()).toEqual(faFileAlt);
   });
 
   it("should show the registered icon when it is not in the map but exists as icon definition", () => {
-    component.icon = "coffee";
-    expect(component._icon).toEqual(faCoffee);
+    fixture.componentRef.setInput("icon", "coffee");
+    expect(component._icon()).toEqual(faCoffee);
   });
 
   it("should show the fallback icon and warn when it is neither in the map nor exists as icon definition", () => {
     vi.spyOn(Logging, "warn");
-    component.icon = "I do not exist";
-    expect(component._icon).toEqual(FaDynamicIconComponent.fallbackIcon);
+    fixture.componentRef.setInput("icon", "I do not exist");
+    expect(component._icon()).toEqual(FaDynamicIconComponent.fallbackIcon);
     expect(Logging.warn).toHaveBeenCalled();
   });
 
@@ -68,7 +68,7 @@ describe("FaDynamicIconComponent", () => {
         return undefined;
       }
     });
-    component.icon = "far address-book";
-    expect(component._icon).toEqual(faAddressBook);
+    fixture.componentRef.setInput("icon", "far address-book");
+    expect(component._icon()).toEqual(faAddressBook);
   });
 });

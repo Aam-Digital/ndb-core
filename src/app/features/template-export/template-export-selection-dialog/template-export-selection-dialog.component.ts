@@ -1,9 +1,11 @@
 import {
   Component,
-  Input,
-  OnInit,
+  computed,
   inject,
+  input,
   ChangeDetectionStrategy,
+  signal,
+  resource,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
@@ -20,6 +22,7 @@ import { RouterLink } from "@angular/router";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
+import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
@@ -53,55 +56,62 @@ import { TemplateExport } from "../template-export.entity";
   templateUrl: "./template-export-selection-dialog.component.html",
   styleUrl: "./template-export-selection-dialog.component.scss",
 })
-export class TemplateExportSelectionDialogComponent implements OnInit {
+export class TemplateExportSelectionDialogComponent {
   private dialogRef =
     inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
+  private readonly dialogData = inject<Entity>(MAT_DIALOG_DATA, {
+    optional: true,
+  });
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
   private readonly templateExportService = inject(TemplateExportService);
 
-  @Input() entity: Entity;
+  entity = input<Entity>();
 
   templateSelectionForm: FormControl = new FormControl();
-  isFeatureEnabled: boolean;
   TemplateExport = TemplateExport;
+  readonly configureTemplatesRoute = signal(
+    getEntityRuntimeRoute(TemplateExport),
+  );
+  readonly currentEntity = computed(() => this.entity() ?? this.dialogData);
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
-    e.applicableForEntityTypes.includes(this.entity.getType());
+    e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
 
-  loadingRequestedFile: boolean;
+  loadingRequestedFile = signal<boolean>(false);
 
-  constructor() {
-    const data = inject<Entity>(MAT_DIALOG_DATA);
-
-    this.entity = data;
-  }
-
-  async ngOnInit() {
-    this.isFeatureEnabled =
-      await this.templateExportService.isExportServerEnabled();
-  }
+  isFeatureEnabled = resource({
+    loader: () =>
+      this.templateExportService.isExportServerEnabled().catch(() => false),
+  });
 
   requestFile() {
     const templateId = this.templateSelectionForm.value;
+    const entity = this.currentEntity();
+    if (!entity) {
+      this.alertService.addWarning(
+        $localize`Could not determine current record.`,
+      );
+      return;
+    }
 
-    this.loadingRequestedFile = true;
+    this.loadingRequestedFile.set(true);
     this.templateExportApi
-      .generatePdfFromTemplate(templateId, this.entity)
+      .generatePdfFromTemplate(templateId, entity)
       .subscribe({
         error: (error) => {
           this.alertService.addWarning(
             $localize`Failed to generate document [${error}]`,
           );
-          this.loadingRequestedFile = false;
+          this.loadingRequestedFile.set(false);
         },
         next: (templateResult: TemplateExportResult) => {
           this.downloadService.triggerDownload(
             templateResult.file,
             "pdf",
-            templateResult.filename ?? this.entity?.toString(),
+            templateResult.filename ?? entity.toString(),
           );
-          this.loadingRequestedFile = false;
+          this.loadingRequestedFile.set(false);
           this.dialogRef.close(true);
         },
       });

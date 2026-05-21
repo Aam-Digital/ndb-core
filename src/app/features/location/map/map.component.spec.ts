@@ -62,7 +62,7 @@ describe("MapComponent", () => {
       await vi.advanceTimersByTimeAsync(300);
       map.fireEvent("click", { latlng: new L.LatLng(1, 2) });
       await vi.advanceTimersByTimeAsync(400);
-      expect(clicked).toBeUndefined();
+      expect(clicked).toEqual({ lat: 1, lon: 1 });
 
       map.fireEvent("click", { latlng: new L.LatLng(1, 3) });
       await vi.advanceTimersByTimeAsync(400);
@@ -73,10 +73,11 @@ describe("MapComponent", () => {
   });
 
   it("should center map around markers and keep zoom", () => {
-    component.marked = [
+    fixture.componentRef.setInput("marked", [
       { lat: 1, lon: 1 },
       { lat: 1, lon: 3 },
-    ];
+    ]);
+    fixture.detectChanges();
 
     const center = map.getCenter();
     expect(center.lat).toBeCloseTo(1);
@@ -87,7 +88,8 @@ describe("MapComponent", () => {
     TestEntity.schema.set("address", { dataType: "location" });
     const child = new TestEntity();
     child["address"] = TEST_LOCATION;
-    component.entities = [child];
+    fixture.componentRef.setInput("entities", [child]);
+    fixture.detectChanges();
 
     const marker = getEntityMarkers()[0];
 
@@ -104,7 +106,8 @@ describe("MapComponent", () => {
 
   it("should open a popup with the same marker data", async () => {
     const marked = { lat: 1, lon: 1 };
-    component.marked = [marked];
+    fixture.componentRef.setInput("marked", [marked]);
+    fixture.detectChanges();
 
     await component.openMapInPopup();
     const dialogData: MapPopupConfig = vi.mocked(mockDialog.open).mock
@@ -114,7 +117,6 @@ describe("MapComponent", () => {
   });
 
   it("should open a popup that allows to change the properties displayed in the map", () => {
-    const emitSpy = vi.spyOn(component.displayedPropertiesChange, "emit");
     TestEntity.schema.set("address", { dataType: "location" });
     TestEntity.schema.set("otherAddress", { dataType: "location" });
     const child = new TestEntity();
@@ -123,10 +125,11 @@ describe("MapComponent", () => {
       geoLookup: { lon: 99, lat: 99, display_name: "other address" },
     } as GeoLocation;
 
-    component.entities = [child];
+    fixture.componentRef.setInput("entities", [child]);
+    fixture.detectChanges();
 
     // all location properties are selected on default
-    expect(emitSpy).toHaveBeenCalledWith({
+    expect(component.displayedProperties()).toEqual({
       [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
     });
     expect(getEntityMarkers()).toHaveLength(2);
@@ -138,7 +141,7 @@ describe("MapComponent", () => {
     component.openMapPropertiesPopup();
 
     // only selected location property is now displayed
-    expect(emitSpy).toHaveBeenCalledWith(dialogResult);
+    expect(component.displayedProperties()).toEqual(dialogResult);
     expect(getEntityMarkers()).toHaveLength(1);
 
     TestEntity.schema.delete("address");
@@ -146,26 +149,31 @@ describe("MapComponent", () => {
   });
 
   it("should only show the button to select properties if entities have been set", () => {
-    component.displayedProperties = {};
-    expect(component.showPropertySelection).toBe(false);
+    fixture.componentRef.setInput("displayedProperties", {});
+    fixture.detectChanges();
+    expect(component.showPropertySelection()).toBe(false);
 
-    component.displayedProperties = { [TestEntity.ENTITY_TYPE]: ["address"] };
-    expect(component.showPropertySelection).toBe(true);
+    fixture.componentRef.setInput("displayedProperties", {
+      [TestEntity.ENTITY_TYPE]: ["address"],
+    });
+    fixture.detectChanges();
+    expect(component.showPropertySelection()).toBe(true);
 
-    component.displayedProperties = {};
-    component.showPropertySelection = false;
-    component.entities = [new TestEntity()];
+    fixture.componentRef.setInput("displayedProperties", {});
+    component.showPropertySelection.set(false);
+    fixture.componentRef.setInput("entities", [new TestEntity()]);
+    fixture.detectChanges();
 
-    expect(component.showPropertySelection).toBe(true);
+    expect(component.showPropertySelection()).toBe(true);
   });
 
   it("should trigger an update for the markers, once the map popup has been closed", async () => {
-    component.displayedProperties = {
+    fixture.componentRef.setInput("displayedProperties", {
       [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
-    };
+    });
+    fixture.detectChanges();
     const dialogClosed = new Subject<void>();
     mockDialog.open.mockReturnValue({ afterClosed: () => dialogClosed } as any);
-    const emitSpy = vi.spyOn(component.displayedPropertiesChange, "emit");
 
     await component.openMapInPopup();
     const popupData = vi.mocked(mockDialog.open).mock.lastCall[1]
@@ -174,7 +182,7 @@ describe("MapComponent", () => {
     properties[TestEntity.ENTITY_TYPE] = ["otherAddress"];
     dialogClosed.next();
 
-    expect(emitSpy).toHaveBeenCalledWith({
+    expect(component.displayedProperties()).toEqual({
       [TestEntity.ENTITY_TYPE]: ["otherAddress"],
     });
   });
@@ -192,7 +200,8 @@ describe("MapComponent", () => {
       geoLookup: { lat: 10, lon: 10, display_name: "Test place 2" },
     } as GeoLocation;
 
-    component.entities = [School1, School2];
+    fixture.componentRef.setInput("entities", [School1, School2]);
+    fixture.detectChanges();
 
     const markers = getEntityMarkers();
     expect(markers).toHaveLength(2);
@@ -229,7 +238,8 @@ describe("MapComponent", () => {
       },
     } as unknown as GeoLocation;
 
-    component.entities = [testEntity1, testEntity2];
+    fixture.componentRef.setInput("entities", [testEntity1, testEntity2]);
+    fixture.detectChanges();
 
     const markers = getEntityMarkers();
 

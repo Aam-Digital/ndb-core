@@ -14,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<LoginComponent> = (args: LoginComponent) => ({
+const Template: StoryFn<LoginComponent> = (args) => ({
   props: {
     ...args,
     siteSettingsService: { siteName: of("Aam Digital - Storybook") },

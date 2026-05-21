@@ -1,31 +1,34 @@
 <div
   class="flex-row justify-space-between align-center notification-item-wrapper"
-  [class.read-notification]="notification.readStatus"
+  [class.read-notification]="notification().readStatus"
 >
-  <div class="notification-details" (click)="onNotificationClick(notification)">
-    <div class="notification-title">{{ notification.title }}</div>
+  <div
+    class="notification-details"
+    (click)="onNotificationClick(notification())"
+  >
+    <div class="notification-title">{{ notification().title }}</div>
     <div class="notification-body">
-      @if (notification.body) {
-        {{ notification.body }}
-      } @else if (notification.context?.entityId) {
+      @if (notification().body) {
+        {{ notification().body }}
+      } @else if (notification().context?.entityId) {
         →
         <app-entity-block
-          [entityId]="notification.context.entityId"
+          [entityId]="notification().context.entityId"
         ></app-entity-block>
       }
     </div>
     <div
       i18n
       class="notification-time"
-      [matTooltip]="notification.created?.at | date: 'short'"
+      [matTooltip]="notification().created?.at | date: 'short'"
     >
-      {{ notification.created?.at | notificationTime | async }}
+      {{ notification().created?.at | notificationTime | async }}
     </div>
   </div>
 
   <!-- Blue indicator for unread/read notifications -->
   <span [matMenuTriggerFor]="actionsMenu" #actionsMenuTrigger="matMenuTrigger">
-    @if (notification.readStatus) {
+    @if (notification().readStatus) {
       <span
         class="read-indicator"
         matTooltip="Read notification"
@@ -42,7 +45,7 @@
 
   <mat-menu #actionsMenu="matMenu">
     <div (click)="closeOnlySubmenu(actionsMenuTrigger, $event)">
-      @if (!notification.readStatus) {
+      @if (!notification().readStatus) {
         <button mat-menu-item (click)="updateReadStatus(true)">
           <fa-icon icon="check"></fa-icon>
           <span class="menu-option" i18n>Mark as read</span>

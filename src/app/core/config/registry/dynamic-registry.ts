@@ -39,7 +39,7 @@ export abstract class Registry<T> extends Map<string, T> {
   public override get(key: string): T {
     if (!this.has(key)) {
       throw Error(
-        `${this.constructor.name}: Requested item "${key}" is not registered. See dynamic-registry.ts for more details.`,
+        `Requested item is not registered in ${this.constructor.name}. Key: ${key}`,
       );
       // To register a component, add @DynamicComponent("COMPONENTNAME") to the components .ts-file and implement the onInitFromDynamicConfig method, e.g. onInitFromDynamicConfig(config: any) {}
     }

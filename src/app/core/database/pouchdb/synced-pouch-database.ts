@@ -24,6 +24,7 @@ import {
   PouchdbCorruptionRecoveryService,
   isKnownMultiTabDatabaseCorruption,
 } from "./pouchdb-corruption-recovery.service";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 
 /**
  * An alternative implementation of PouchDatabase that additionally
@@ -183,7 +184,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return {};
     }
 
-    const localInfo = await this.getPouchDB().info();
+    const localDb = await this.getPouchDBOnceReady();
+
+    const localInfo = await localDb.info();
     const isFirstSync = localInfo.doc_count === 0;
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
@@ -202,7 +205,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     //    ErrorHandler / Sentry. Outer .then/.catch below still handle them
     //    explicitly and re-enter the zone for state updates.
     const createSyncHandler = () =>
-      this.getPouchDB().sync(this.remoteDatabase.getPouchDB(), {
+      localDb.sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
         ...options,
       });
@@ -247,6 +250,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
             err,
             `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
           );
+        } else if (this.isSyncConnectivityError(err)) {
+          Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
         } else {
           Logging.warn(`sync failed`, { db: this.dbName }, err);
         }
@@ -292,6 +297,12 @@ export class SyncedPouchDatabase extends PouchDatabase {
       message.includes("IDBObjectStore") ||
       message.includes("Failed to execute")
     );
+  }
+
+  private isSyncConnectivityError(err: any): boolean {
+    if (isConnectivityError(err)) return true;
+    const message = err?.message || err?.reason || String(err);
+    return message.includes("getCheckpoint");
   }
 
   /**

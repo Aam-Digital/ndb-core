@@ -21,7 +21,7 @@ describe("InputFileComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InputFileComponent<Object[]>);
     component = fixture.componentInstance;
-    component.fileType = "csv";
+    fixture.componentRef.setInput("fileType", "csv");
     fixture.detectChanges();
   });
 

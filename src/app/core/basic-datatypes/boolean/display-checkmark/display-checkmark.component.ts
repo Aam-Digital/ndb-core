@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { ViewDirective } from "../../../entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 /**
@@ -10,7 +10,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-tick",
-  template: `{{ value ? "✓" : "" }}`,
+  template: `{{ value() ? "✓" : "" }}`,
   standalone: true,
 })
 export class DisplayCheckmarkComponent extends ViewDirective<boolean> {}

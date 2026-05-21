@@ -19,13 +19,13 @@ All components **must** use `OnPush` change detection:
 
 ## Inputs and Outputs
 
-Use `input()` and `output()` functions — **not** `@Input()` / `@Output()` decorators:
+Use `input()` and `output()` functions (Angular signals) — **not** `@Input()` / `@Output()` decorators:
 
 ```typescript
 export class ExampleComponent {
-  title = input<string>();           // optional input
-  entity = input.required<Child>();  // required input
-  saved = output<Child>();           // output event
+  title = input<string>(); // optional input
+  entity = input.required<Child>(); // required input
+  saved = output<Child>(); // output event
 }
 ```
 
@@ -42,19 +42,12 @@ export class ExampleComponent {
 
 ## Signals and Computed State
 
-Use signals for local state and `computed()` for derived values:
-
-```typescript
-export class ExampleComponent {
-  items = input.required<Entity[]>();
-  filter = signal("");
-  filteredItems = computed(() =>
-    this.items().filter((item) => item.name.includes(this.filter())),
-  );
-}
-```
-
+Use signals for local state and `computed()` for derived values.
 Do NOT use `mutate` on signals — use `update` or `set` instead.
+
+Use `linkedSignal` for state that depends on other signals
+and `resource` for async data fetching.
+Try to avoid init methods to make code easier to read.
 
 ## Template Control Flow
 
@@ -62,25 +55,18 @@ Use native control flow — **not** structural directives (`*ngIf`, `*ngFor`, `*
 
 ```html
 @if (entity(); as entity) {
-  <app-entity-details [entity]="entity" />
-}
-
-@for (item of items(); track item.getId()) {
-  <app-item-card [item]="item" />
+<app-entity-details [entity]="entity" />
+} @for (item of items(); track item.getId()) {
+<app-item-card [item]="item" />
 } @empty {
-  <p i18n>No items found.</p>
-}
-
-@switch (status()) {
-  @case ("active") { <span i18n>Active</span> }
-  @case ("inactive") { <span i18n>Inactive</span> }
-}
+<p i18n>No items found.</p>
+} @switch (status()) { @case ("active") { <span i18n>Active</span> } @case ("inactive") { <span i18n>Inactive</span> } }
 ```
 
 ## Canonical Component Structure
 
 ```typescript
-import { Component, ChangeDetectionStrategy, computed, inject, input, output } from "@angular/core";
+import { Component, ChangeDetectionStrategy, computed, inject, input, output, resource } from "@angular/core";
 
 @Component({
   selector: "app-example",
@@ -90,15 +76,24 @@ import { Component, ChangeDetectionStrategy, computed, inject, input, output } f
   imports: [MatButtonModule, AsyncPipe],
 })
 export class ExampleComponent {
+  // Injected dependencies
+  private readonly entityMapper = inject(EntityMapperService);
+
   // Inputs and outputs
   entity = input.required<Child>();
+  relatedEntityId = input.required<string>();
   saved = output<Child>();
 
   // Derived state
   displayName = computed(() => this.entity().toString());
 
-  // Injected dependencies
-  private entityMapper = inject(EntityMapperService);
+  // Resource to load data
+  relatedEntity = resource({
+    params: () => ({ id: this.relatedEntityId() }),
+    loader: async ({ params: { id } }) => {
+      return await this.entityMapper.load(id);
+    },
+  });
 }
 ```
 
@@ -114,6 +109,7 @@ export class ExampleComponent {
 - Use `$localize` or i18n markers for all user-facing strings
   - Do not add context labels unless the purpose of the i18n string is truly ambiguous without it
 - Use `Logging` (from `#src/app/core/logging/logging.service`) — never `console.log`
+- Use `<app-fa-dynamic-icon>` for icons — never `<fa-icon>` directly
 
 ## SCSS Styling
 

@@ -5,7 +5,7 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { Entity } from "../../../core/entity/model/entity";
 import { Coordinates } from "../coordinates";
 import { getMinDistanceKm } from "../map-utils";
@@ -39,7 +39,7 @@ export interface ViewDistanceConfig {
   selector: "app-view-distance",
   template: `
     <app-readonly-function
-      [entity]="entity"
+      [entity]="entity()"
       [config]="distanceFunction"
     ></app-readonly-function>
   `,
@@ -54,8 +54,8 @@ export class ViewDistanceComponent
   distanceFunction = (_entity: Entity) => "-";
 
   ngOnInit() {
-    this.config.compareCoordinates
-      .pipe(untilDestroyed(this))
+    this.config()
+      ?.compareCoordinates.pipe(untilDestroyed(this))
       .subscribe((coordinates) => this.setDistanceFunction(coordinates));
   }
 
@@ -63,7 +63,7 @@ export class ViewDistanceComponent
     this.distanceFunction = (e: Entity) => {
       const closest = getMinDistanceKm(
         e,
-        this.config.coordinatesProperties ?? [],
+        this.config()?.coordinatesProperties ?? [],
         compareCoordinates,
       );
       if (closest === null) {

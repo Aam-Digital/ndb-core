@@ -1,8 +1,7 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import {
@@ -43,9 +42,9 @@ import { ConditionalColorSectionComponent } from "./conditional-color-section/co
 export class ConditionalColorConfigComponent extends CustomFormControlDirective<
   string | ColorMapping[]
 > {
-  @Input() entityConstructor: EntityConstructor;
-  @Input() isConditionalMode: boolean = false;
-  @Output() isConditionalModeChange = new EventEmitter<boolean>();
+  entityConstructor = input.required<EntityConstructor>();
+  isConditionalMode = input<boolean>(false);
+  isConditionalModeChange = output<boolean>();
 
   // Cached values to avoid recalculating in template
   get staticColor(): string {
@@ -67,7 +66,7 @@ export class ConditionalColorConfigComponent extends CustomFormControlDirective<
    */
   addConditionalColorSection(): void {
     // Enable conditional mode if not already enabled
-    if (!this.isConditionalMode) {
+    if (!this.isConditionalMode()) {
       this.isConditionalModeChange.emit(true);
     }
 
@@ -122,7 +121,20 @@ export class ConditionalColorConfigComponent extends CustomFormControlDirective<
   /**
    * Handle any change in conditional sections that requires value update
    */
-  onConditionChange(): void {
+  onConditionChange(section: ColorMapping, updatedConditions: any): void {
+    if (!Array.isArray(this.value)) return;
+
+    const sectionIndex = this.value.findIndex(
+      (candidate) => candidate === section,
+    );
+    if (sectionIndex < 0) return;
+
+    this.value = this.value.map((candidate, index) =>
+      index === sectionIndex
+        ? { ...candidate, condition: updatedConditions }
+        : candidate,
+    );
+
     this.updateValue();
   }
 

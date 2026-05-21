@@ -1,6 +1,6 @@
 <mat-paginator
   (page)="onPaginateChange($event)"
-  [pageSize]="pageSize"
+  [pageSize]="pageSize()"
   [pageSizeOptions]="pageSizeOptions"
   [showFirstLastButtons]="true"
 ></mat-paginator>

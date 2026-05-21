@@ -3,11 +3,11 @@
 
   <div class="flex-row gap-regular align-center">
     <div class="flex-grow">
-      @switch (this.form.get("mode")?.value) {
+      @switch (selectedMode()) {
         @default {
           <app-admin-default-value-static
             formControlName="config"
-            [entitySchemaField]="entitySchemaField"
+            [entitySchemaField]="entitySchemaField()"
           ></app-admin-default-value-static>
         }
         @case ("dynamic") {
@@ -18,8 +18,8 @@
         @case ("inherited-field") {
           <app-admin-inherited-field
             formControlName="config"
-            [entityType]="entityType"
-            [entitySchemaField]="entitySchemaField"
+            [entityType]="entityType()"
+            [entitySchemaField]="entitySchemaField()"
           ></app-admin-inherited-field>
         }
       }
@@ -31,12 +31,12 @@
       hideSingleSelectionIndicator
       style="flex: none"
     >
-      @for (strategy of modes; track strategy.mode) {
+      @for (strategy of modes(); track strategy.mode) {
         <mat-button-toggle
           [value]="strategy.mode"
           [matTooltip]="strategy.description"
         >
-          <fa-icon [icon]="strategy.icon"></fa-icon>
+          <app-fa-dynamic-icon [icon]="strategy.icon"></app-fa-dynamic-icon>
         </mat-button-toggle>
       }
     </mat-button-toggle-group>

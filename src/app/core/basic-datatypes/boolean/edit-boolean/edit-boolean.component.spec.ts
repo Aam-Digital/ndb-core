@@ -17,7 +17,7 @@ describe("EditBooleanComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditBooleanComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
     fixture.detectChanges();
   });
 

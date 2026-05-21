@@ -41,38 +41,41 @@ describe("NotesRelatedToEntityComponent", () => {
     const note = new Note();
     vi.spyOn(note, "getColorForId");
     const entity = createEntityOfType("Child");
-    component.entity = entity;
-    component.ngOnInit();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.detectChanges();
 
-    component.getColor(note);
+    component.getColor()(note);
 
     expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());
   });
 
   it("should create a new note and fill it with the appropriate initial value", async () => {
     let entity: Entity = createEntityOfType("Child");
-    component.entity = entity;
-    component.filter = undefined;
-    component.property = undefined;
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
+    fixture.detectChanges();
+    await fixture.whenStable();
     let note = component.createNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
     expect(note.relatedEntities).not.toContain(entity.getId());
 
     entity = createEntityOfType("School");
-    component.entity = entity;
-    component.filter = undefined;
-    component.property = undefined;
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
+    fixture.detectChanges();
+    await fixture.whenStable();
     note = component.createNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
     expect(note.relatedEntities).not.toContain(entity.getId());
 
     entity = createEntityOfType("User");
-    component.entity = entity;
-    component.filter = undefined;
-    component.property = undefined;
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
+    fixture.detectChanges();
+    await fixture.whenStable();
     note = component.createNewRecordFactory()();
     expect(note.authors).toContain(entity.getId());
     expect(note.relatedEntities).not.toContain(entity.getId());
@@ -80,10 +83,11 @@ describe("NotesRelatedToEntityComponent", () => {
     entity = new ChildSchoolRelation();
     entity["childId"] = `Child:someChild`;
     entity["schoolId"] = `School:someSchool`;
-    component.entity = entity;
-    component.filter = undefined;
-    component.property = undefined;
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.componentRef.setInput("property", undefined);
+    fixture.detectChanges();
+    await fixture.whenStable();
     note = component.createNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId()]);
     expect(note.children).toEqual([`Child:someChild`]);
@@ -95,8 +99,9 @@ describe("NotesRelatedToEntityComponent", () => {
     relation.schoolId = ["School:1"] as any; // assume entity config was overwritten to hold array
     relation.childId = ["Child:1", "Child:2"] as any; // assume entity config was overwritten to hold array
 
-    component.entity = relation;
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", relation);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const newNote = component.createNewRecordFactory()();
 
@@ -136,8 +141,8 @@ describe("NotesRelatedToEntityComponent", () => {
       "Child",
       EntityWithRelations.ENTITY_TYPE,
     ];
-    component.entity = customEntity;
-    component.ngOnInit();
+    fixture.componentRef.setInput("entity", customEntity);
+    fixture.detectChanges();
 
     const newNote = component.createNewRecordFactory()();
 

@@ -1,13 +1,15 @@
 import {
-  Component,
-  DestroyRef,
-  inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-  ViewEncapsulation,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+  ViewEncapsulation,
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule, FormsModule } from "@angular/forms";
@@ -17,7 +19,7 @@ import {
   MatCalendarCellCssClasses,
   MatDatepickerModule,
 } from "@angular/material/datepicker";
-import moment, { Moment } from "moment";
+import moment from "moment";
 import { AttendanceItem } from "../../model/attendance-item";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
@@ -26,7 +28,6 @@ import {
 } from "../../model/attendance-status";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
-import type { AttendanceStats } from "../../model/event-with-attendance";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
 import { PercentPipe } from "@angular/common";
@@ -72,26 +73,47 @@ import { Logging } from "#src/app/core/logging/logging.service";
     FontAwesomeModule,
   ],
 })
-export class AttendanceCalendarComponent implements OnChanges {
+export class AttendanceCalendarComponent {
   private entityMapper = inject(EntityMapperService);
   private formDialog = inject(FormDialogService);
   private analyticsService = inject(AnalyticsService);
   private attendanceService = inject(AttendanceService);
   private readonly destroyRef = inject(DestroyRef);
 
-  @Input() records: EventWithAttendance[] = [];
-  @Input() highlightForChild: string;
-  @Input() activity: Entity;
+  records = input<EventWithAttendance[]>([]);
+  highlightForChild = input<string>();
+  activity = input<Entity>();
 
-  @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
-  minDate: Date;
-  maxDate: Date;
+  readonly calendar = viewChild<MatCalendar<Date>>(MatCalendar);
 
-  selectedDate: moment.Moment;
-  selectedEvent: EventWithAttendance;
-  selectedEventAttendance: AttendanceItem;
-  selectedEventAttendanceOriginal: AttendanceItem;
-  selectedEventStats: AttendanceStats;
+  private readonly _recordDates = computed(() =>
+    this.records()
+      .map((e) => e.date)
+      .filter((d): d is Date => !!d)
+      .map((d) => moment(d)),
+  );
+  minDate = computed<Date | undefined>(() => {
+    const dates = this._recordDates();
+    return dates.length > 0
+      ? moment.min(dates).startOf("month").toDate()
+      : undefined;
+  });
+  maxDate = computed<Date | undefined>(() => {
+    const dates = this._recordDates();
+    return dates.length > 0
+      ? moment.max(dates).endOf("month").toDate()
+      : undefined;
+  });
+
+  selectedDate = signal<moment.Moment | undefined>(undefined);
+  selectedEvent = computed(() =>
+    this.records().find((e) => this.selectedDate()?.isSame(e.date, "day")),
+  );
+  selectedEventStats = computed(() =>
+    this.selectedEvent()?.getAttendanceStats(),
+  );
+  selectedEventAttendance = signal<AttendanceItem | undefined>(undefined);
+  private selectedEventAttendanceOriginal: AttendanceItem | undefined;
 
   statusControl = new FormControl<ConfigurableEnumValue>(null);
   statusFieldConfig: FormFieldConfig = {
@@ -101,13 +123,45 @@ export class AttendanceCalendarComponent implements OnChanges {
   };
 
   constructor() {
+    // Update calendar's visible month when date range changes
+    effect(() => {
+      const maxDate = this.maxDate();
+      const calendar = this.calendar();
+      if (calendar && maxDate) {
+        calendar.activeDate = maxDate;
+      }
+    });
+
+    // Sync attendance state when selected event or highlighted child changes
+    effect(() => {
+      const event = this.selectedEvent();
+      const childId = this.highlightForChild();
+      if (event && childId) {
+        const attendance = untracked(() =>
+          this.ensureParticipantInAttendance(event, childId),
+        );
+        this.selectedEventAttendance.set(attendance);
+        this.selectedEventAttendanceOriginal = attendance.copy();
+        this.statusControl.setValue(attendance.status ?? null, {
+          emitEvent: false,
+        });
+      } else {
+        this.selectedEventAttendance.set(undefined);
+        this.selectedEventAttendanceOriginal = undefined;
+        this.statusControl.setValue(null, { emitEvent: false });
+      }
+    });
+
     this.statusControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((status) => {
-        if (this.selectedEventAttendance) {
+        const attendance = this.selectedEventAttendance();
+        if (attendance) {
           const normalizedStatus: AttendanceStatusType =
             (status as AttendanceStatusType) ?? NullAttendanceStatusType;
-          this.selectedEventAttendance.status = normalizedStatus;
+          const updatedAttendance = attendance.copy();
+          updatedAttendance.status = normalizedStatus;
+          this.selectedEventAttendance.set(updatedAttendance);
           this.save().catch((error) =>
             Logging.warn("Could not save attendance status change", error),
           );
@@ -127,9 +181,9 @@ export class AttendanceCalendarComponent implements OnChanges {
     return item;
   }
 
-  get selectedEventParticipantCount(): number {
-    return this.selectedEvent ? this.selectedEvent.attendanceItems.length : 0;
-  }
+  selectedEventParticipantCount = computed(
+    () => this.selectedEvent()?.attendanceItems.length ?? 0,
+  );
 
   highlightDate = (cellDate: Date): MatCalendarCellCssClasses => {
     const cellMoment = moment(cellDate);
@@ -137,18 +191,18 @@ export class AttendanceCalendarComponent implements OnChanges {
       "attendance-calendar-date-general": true,
     };
 
-    if (this.selectedDate) {
+    if (this.selectedDate()) {
       classes["attendance-calendar-date-selected"] = cellMoment.isSame(
-        this.selectedDate,
+        this.selectedDate(),
         "day",
       );
     }
 
-    const event = this.records.find((e) => cellMoment.isSame(e.date, "day"));
-    if (event && this.highlightForChild) {
+    const event = this.records().find((e) => cellMoment.isSame(e.date, "day"));
+    if (event && this.highlightForChild()) {
       // coloring for individual child
       const eventAttendance = event.getAttendanceForParticipant(
-        this.highlightForChild,
+        this.highlightForChild(),
       );
 
       if (!eventAttendance?.status?.id) {
@@ -163,7 +217,7 @@ export class AttendanceCalendarComponent implements OnChanges {
         eventAttendance?.remarks && eventAttendance?.remarks !== "";
     }
 
-    if (event && !this.highlightForChild) {
+    if (event && !this.highlightForChild()) {
       // coloring based on averages across all children
       const stats = event.getAttendanceStats();
 
@@ -181,104 +235,56 @@ export class AttendanceCalendarComponent implements OnChanges {
     return classes;
   };
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("records")) {
-      this.updateDateRange();
-      if (this.selectedDate) {
-        this.selectDay(this.selectedDate.toDate());
-      }
-    }
-  }
-
-  /**
-   * restrict period available for user navigation to the months for which events are given
-   * @private
-   */
-  private updateDateRange() {
-    const dates: Moment[] = this.records
-      .map((e) => e.date)
-      .filter((d): d is Date => !!d)
-      .map((d) => moment(d));
-    if (dates.length === 0) {
-      this.minDate = undefined;
-      this.maxDate = undefined;
-      return;
-    }
-    this.minDate = moment.min(dates).startOf("month").toDate();
-    this.maxDate = moment.max(dates).endOf("month").toDate();
-
-    if (this.calendar) {
-      // it is only possible to update the active date (i.e. which month is visible)
-      // to ensure the calendar initially displays the current month maxDate is propagated.
-      setTimeout(() => (this.calendar.activeDate = this.maxDate));
-    }
-  }
-
-  get hasAverage(): boolean {
-    return !Number.isNaN(this.selectedEventStats.average);
-  }
+  hasAverage = computed(() => {
+    return !Number.isNaN(this.selectedEventStats()?.average);
+  });
 
   selectDay(newDate?: Date) {
-    if (!newDate) {
-      this.selectedDate = undefined;
-      this.selectedEvent = undefined;
-      this.selectedEventAttendance = undefined;
-      this.selectedEventAttendanceOriginal = undefined;
-      this.selectedEventStats = undefined;
-    } else {
-      this.selectedDate = moment(newDate);
-      this.selectedEvent = this.records.find((e) =>
-        this.selectedDate.isSame(e.date, "day"),
-      );
-      if (this.selectedEvent && this.highlightForChild) {
-        this.selectedEventAttendance = this.ensureParticipantInAttendance(
-          this.selectedEvent,
-          this.highlightForChild,
-        );
-        this.statusControl.setValue(
-          this.selectedEventAttendance.status ?? null,
-          { emitEvent: false },
-        );
-      }
-      // clone attendance information to allow detecting and reverting changes
-      this.selectedEventAttendanceOriginal = Object.assign(
-        {},
-        this.selectedEventAttendanceOriginal,
-      );
-      if (this.selectedEvent) {
-        this.selectedEventStats = this.selectedEvent.getAttendanceStats();
-      }
+    this.selectedDate.set(newDate ? moment(newDate) : undefined);
 
+    if (newDate) {
       this.analyticsService.eventTrack("calendar_select_date", {
         category: "Attendance",
-        label: this.selectedEvent ? "with event" : "without event",
+        label: this.selectedEvent() ? "with event" : "without event",
       });
     }
 
-    this.calendar.updateTodaysDate();
+    this.calendar()?.updateTodaysDate();
   }
 
   async save() {
+    const attendance = this.selectedEventAttendance();
+    const original = this.selectedEventAttendanceOriginal;
     if (
-      this.selectedEventAttendance.status ===
-        this.selectedEventAttendanceOriginal.status &&
-      this.selectedEventAttendance.remarks ===
-        this.selectedEventAttendanceOriginal.remarks
+      attendance?.status === original?.status &&
+      attendance?.remarks === original?.remarks
     ) {
       // don't write unchanged object
       return;
     }
 
-    await this.entityMapper.save(this.selectedEvent.entity);
+    await this.entityMapper.save(this.selectedEvent().entity);
 
     this.analyticsService.eventTrack("calendar_save_event_changes", {
       category: "Attendance",
     });
   }
 
+  onRemarksChange(remarks: string) {
+    const att = this.selectedEventAttendance();
+    if (!att) return;
+    const updatedAttendance = att.copy();
+    updatedAttendance.remarks = remarks;
+    this.selectedEventAttendance.set(updatedAttendance);
+  }
+
   createNewEvent() {
+    const activity = this.activity();
+    if (!activity) {
+      return;
+    }
     this.attendanceService
-      .createEventForActivity(this.activity, this.selectedDate.toDate())
+      .createEventForActivity(activity, this.selectedDate().toDate())
       .then((note) => {
         this.formDialog.openView(note.entity);
       });

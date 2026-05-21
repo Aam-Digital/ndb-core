@@ -1,37 +1,36 @@
-import {
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  signal,
-  SimpleChanges,
-  ViewEncapsulation,
-  ChangeDetectionStrategy,
-} from "@angular/core";
-import { Note } from "../model/note";
-import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
-import { ConfigService } from "../../../core/config/config.service";
-import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
-import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatMenuModule } from "@angular/material/menu";
-import { ExportDialogComponent } from "../../../core/export/export-dialog/export-dialog.component";
-import { Angulartics2Module } from "angulartics2";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  ViewEncapsulation,
+} from "@angular/core";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
-import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
-import { FieldGroup } from "../../../core/entity-details/form/field-group";
-import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
-import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
+import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Angulartics2Module } from "angulartics2";
+import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
+import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
+import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
-import { NoteDetailsConfig } from "./note-details-config.interface";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
+import { ConfigService } from "../../../core/config/config.service";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
+import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
+import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
+import { EntityConstructor } from "../../../core/entity/model/entity";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
+import { ExportDialogComponent } from "../../../core/export/export-dialog/export-dialog.component";
+import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
+import { Note } from "../model/note";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -58,74 +57,89 @@ import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteDetailsComponent
-  extends AbstractEntityDetailsComponent
-  implements OnChanges, NoteDetailsConfig
-{
+export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
   private readonly dialog = inject(MatDialog);
 
-  @Input() declare entity: Note;
-  override entityConstructor = Note;
+  override readonly entityConstructor = computed<EntityConstructor>(() => Note);
 
   /** export format for notes to be used for downloading the individual details */
-  exportConfig: ExportColumnConfig[];
+  readonly exportConfig = computed<ExportColumnConfig[]>(
+    () =>
+      this.configService.getConfig<{ config: EntityListConfig }>("view:note")
+        ?.config.exportConfig,
+  );
 
   private readonly defaultFormConfig = getDefaultNoteDetailsConfig();
-  @Input() topForm = this.defaultFormConfig.topForm;
-  @Input() middleForm = this.defaultFormConfig.middleForm;
-  @Input() bottomForm = this.defaultFormConfig.bottomForm;
+  topForm = input(this.defaultFormConfig.topForm);
+  middleForm = input(this.defaultFormConfig.middleForm);
+  bottomForm = input(this.defaultFormConfig.bottomForm);
 
-  topFieldGroups: FieldGroup[];
-  middleFieldGroups: FieldGroup[];
-  bottomFieldGroups: FieldGroup[];
+  readonly topFieldGroups = computed(() =>
+    this.topForm().map((f) => ({ fields: [f] })),
+  );
+  readonly middleFieldGroups = computed(() => [{ fields: this.middleForm() }]);
+  readonly bottomFieldGroups = computed(() => [{ fields: this.bottomForm() }]);
 
-  form: EntityForm<Note>;
-  tmpEntity = signal<Note | undefined>(undefined);
+  readonly form = signal<EntityForm<Note> | undefined>(undefined);
+  readonly tmpEntity = signal<Note | undefined>(undefined);
 
-  override async ngOnChanges(changes: SimpleChanges) {
-    this.exportConfig = this.configService.getConfig<{
-      config: EntityListConfig;
-    }>("view:note")?.config.exportConfig;
+  constructor() {
+    super();
 
-    await super.ngOnChanges(changes);
+    effect((onCleanup) => {
+      const entity = this.entity();
+      this.topForm();
+      this.middleForm();
+      this.bottomForm();
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.initForm(entity as Note, () => cancelled);
+    });
 
-    await this.initForm();
+    // Subscribe to form value changes; onCleanup tears down stale subscription on re-init.
+    effect((onCleanup) => {
+      const currentForm = this.form();
+      const entity = this.entity() as Note;
+      if (!currentForm || !entity) return;
+      const sub = currentForm.formGroup.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value) => {
+          this.tmpEntity.set(Object.assign(entity.copy(), value));
+        });
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   openExportDialog() {
-    const dateStr = this.entity.date
-      ? this.entity.date.toISOString().split("T")[0]
-      : "";
-    const filename = `event_${this.entity.toString()?.replaceAll(" ", "-")}_${dateStr}`;
+    const entity = this.entity() as Note;
+    const dateStr = entity?.date ? entity.date.toISOString().split("T")[0] : "";
+    const filename = `event_${entity?.toString()?.replaceAll(" ", "-")}_${dateStr}`;
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: [this.entity],
-        exportConfig: this.exportConfig,
+        allEntities: entity ? [entity] : [],
+        exportConfig: this.exportConfig(),
         filename,
       },
     });
   }
 
-  private async initForm() {
-    if (!this.entity) return;
+  private async initForm(
+    entity: Note,
+    isCancelled: () => boolean = () => false,
+  ) {
+    if (!entity) return;
 
-    this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
-    this.middleFieldGroups = [{ fields: this.middleForm }];
-    this.bottomFieldGroups = [{ fields: this.bottomForm }];
-
-    this.form = await this.entityFormService.createEntityForm(
-      this.middleForm.concat(this.topForm, this.bottomForm),
-      this.entity,
+    const newForm = await this.entityFormService.createEntityForm(
+      this.middleForm().concat(this.topForm(), this.bottomForm()),
+      entity,
     );
 
-    // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
-    this.tmpEntity.set(this.entity.copy());
-    this.form.formGroup.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        this.tmpEntity.set(Object.assign(this.entity.copy(), value));
-      });
+    if (isCancelled()) return;
+    this.tmpEntity.set(entity.copy());
+    this.form.set(newForm); // triggers the valueChanges effect
   }
 }

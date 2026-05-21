@@ -63,9 +63,14 @@ describe("EditExternalProfileLinkComponent", () => {
 
     fixture = TestBed.createComponent(EditExternalProfileLinkComponent);
     component = fixture.componentInstance;
-    component.entity = entity;
+    fixture.componentRef.setInput("entity", entity);
 
-    formGroup = setupCustomFormControlEditComponent(component);
+    formGroup = setupCustomFormControlEditComponent(
+      component,
+      "testProperty",
+      {},
+      fixture,
+    );
 
     fixture.detectChanges();
   });
@@ -84,7 +89,7 @@ describe("EditExternalProfileLinkComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockDialog.open).toHaveBeenCalled();
-      expect(component.externalProfile).toEqual(mockMatch);
+      expect(component.externalProfile()).toEqual(mockMatch);
       expect(component.formControl.value).toEqual(mockMatch.id);
       expect(component.formControl.dirty).toBe(true);
     } finally {
@@ -113,10 +118,13 @@ describe("EditExternalProfileLinkComponent", () => {
   it("should pass the current state if edited form/entity to the search dialog", async () => {
     vi.useFakeTimers();
     try {
-      component.entity = TestEntity.create({
-        name: "original name",
-        other: "foo",
-      });
+      fixture.componentRef.setInput(
+        "entity",
+        TestEntity.create({
+          name: "original name",
+          other: "foo",
+        }),
+      );
       (component.formControl.parent as FormGroup).addControl(
         "name",
         new FormControl("name"),
@@ -165,7 +173,7 @@ describe("EditExternalProfileLinkComponent", () => {
       expect(mockSkillApi.getExternalProfileById).toHaveBeenCalledWith(
         mockProfile.id,
       );
-      expect(component.externalProfile).toEqual(mockProfile);
+      expect(component.externalProfile()).toEqual(mockProfile);
     } finally {
       vi.useRealTimers();
     }
@@ -185,8 +193,8 @@ describe("EditExternalProfileLinkComponent", () => {
       await vi.advanceTimersByTimeAsync(10000);
 
       expect(mockSkillApi.getExternalProfileById).toHaveBeenCalled();
-      expect(component.externalProfile).toBeUndefined();
-      expect(component.externalProfileError).toBe(true);
+      expect(component.externalProfile()).toBeUndefined();
+      expect(component.externalProfileError()).toBe(true);
     } finally {
       vi.useRealTimers();
     }

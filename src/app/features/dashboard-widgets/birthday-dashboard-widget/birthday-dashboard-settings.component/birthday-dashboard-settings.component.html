@@ -6,15 +6,15 @@
         matInput
         type="number"
         min="1"
-        [(ngModel)]="localConfig.threshold"
-        (ngModelChange)="onThresholdChange()"
+        [ngModel]="threshold()"
+        (ngModelChange)="threshold.set($event)"
       />
     </mat-form-field>
   </div>
 
   <div>
     <h3 i18n>Birthdays / Anniversaries to show</h3>
-    @for (pair of entityPropertyPairs; track $index; let i = $index) {
+    @for (pair of entityPropertyPairs(); track $index; let i = $index) {
       <div class="margin-bottom-regular position-relative">
         <div class="flex-row align-center gap-regular">
           <mat-form-field
@@ -25,7 +25,7 @@
             <app-entity-type-select
               [ngModel]="pair.entityType"
               (ngModelChange)="onEntityTypeChange($event, i)"
-              [options]="entityTypeOptionsPerRow[i]"
+              [options]="entityTypeOptionsPerRow()[i]"
               [required]="true"
             ></app-entity-type-select>
           </mat-form-field>
@@ -44,7 +44,7 @@
             [entityType]="pair.entityType"
             [ngModel]="pair.property"
             (ngModelChange)="onPropertyChange($event, i)"
-            [hideOption]="hideNonBirthdayFieldsForRow(i)"
+            [hideOption]="hideOptionsPerRow()[i]"
             [required]="true"
           ></app-entity-field-select>
         </mat-form-field>
@@ -53,14 +53,14 @@
     <div
       matTooltip="There are no additional fields with datatype 'date of birth (date + age)'."
       i18n-matTooltip
-      [matTooltipDisabled]="canAddMorePairs"
+      [matTooltipDisabled]="canAddMorePairs()"
       matTooltipPosition="before"
     >
       <button
         mat-button
         color="accent"
         (click)="addPair()"
-        [disabled]="!canAddMorePairs"
+        [disabled]="!canAddMorePairs()"
       >
         <fa-icon
           class="button-icon margin-sides-small"
@@ -70,7 +70,7 @@
       </button>
     </div>
 
-    @if (!isFormValid) {
+    @if (!isFormValid()) {
       <div class="margin-top-regular validation-error">
         <fa-icon icon="exclamation-triangle"></fa-icon>
         <span i18n

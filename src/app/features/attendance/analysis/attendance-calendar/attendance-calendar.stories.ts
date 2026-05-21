@@ -52,9 +52,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<AttendanceCalendarComponent> = (
-  args: AttendanceCalendarComponent,
-) => ({
+const Template: StoryFn<AttendanceCalendarComponent> = (args) => ({
   component: AttendanceCalendarComponent,
   props: args,
 });

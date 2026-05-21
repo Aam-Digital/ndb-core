@@ -57,7 +57,7 @@ describe("ImportantNotesDashboardComponent", () => {
 
       let actualNotes;
       of(mockNotes)
-        .pipe(map((d) => component.dataMapper(d)))
+        .pipe(map((d) => component.dataMapper()(d)))
         .subscribe((data) => (actualNotes = data));
       await vi.advanceTimersByTimeAsync(0);
       expect(actualNotes).toEqual(expectedNotes);

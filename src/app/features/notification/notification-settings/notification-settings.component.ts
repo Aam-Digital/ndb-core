@@ -145,7 +145,8 @@ export class NotificationSettingsComponent implements OnInit {
       );
     }
 
-    await this.saveNotificationConfig(config);
+    const saved = await this.saveNotificationConfig(config);
+    if (!saved) return;
     this.alertService.addInfo(
       $localize`Initial notification settings created and saved.`,
     );
@@ -165,43 +166,59 @@ export class NotificationSettingsComponent implements OnInit {
     // we do not add "push" channel to this.notificationConfig.channels
   }
 
-  private async saveNotificationConfig(config: NotificationConfig) {
+  private async saveNotificationConfig(
+    config: NotificationConfig,
+  ): Promise<boolean> {
     try {
       await this.entityMapper.save(config);
+      return true;
     } catch (err) {
       Logging.error(err.message);
+      return false;
     }
   }
 
   addNewNotificationRule() {
-    const config = this.notificationConfig();
     const newRule: NotificationRule = {
       notificationType: "entity_change",
       entityType: undefined,
-      channels: config.channels, // by default, use the global channels
+      channels: this.notificationConfig().channels, // by default, use the global channels
       conditions: {},
       enabled: true,
     };
 
-    if (!config.notificationRules) {
-      config.notificationRules = [];
-    }
-    config.notificationRules = [...config.notificationRules, newRule];
-    this.notificationConfig.set(config);
-    this.unsavedChanges.pending = true;
+    this.notificationConfig.update((config) => {
+      const clone = Object.assign(
+        Object.create(Object.getPrototypeOf(config)),
+        config,
+      );
+      clone.notificationRules = [...(config.notificationRules ?? []), newRule];
+      return clone;
+    });
+    this.unsavedChanges.pending.set(true);
   }
 
   updateNotificationRule(
     notificationRule: NotificationRule,
     updatedRule: NotificationRule,
   ) {
-    Object.assign(notificationRule, updatedRule);
-    this.unsavedChanges.pending = true;
+    this.notificationConfig.update((config) => {
+      const clone = Object.assign(
+        Object.create(Object.getPrototypeOf(config)),
+        config,
+      );
+      clone.notificationRules = (config.notificationRules ?? []).map((rule) =>
+        rule === notificationRule ? { ...rule, ...updatedRule } : rule,
+      );
+      return clone;
+    });
+    this.unsavedChanges.pending.set(true);
   }
 
   async saveSettings() {
-    await this.saveNotificationConfig(this.notificationConfig());
-    this.unsavedChanges.pending = false;
+    const saved = await this.saveNotificationConfig(this.notificationConfig());
+    if (!saved) return;
+    this.unsavedChanges.pending.set(false);
     this.alertService.addInfo($localize`Notification settings saved.`);
   }
 
@@ -211,13 +228,21 @@ export class NotificationSettingsComponent implements OnInit {
       $localize`Are you sure you want to remove this notification rule?`,
     );
     if (confirmed) {
-      const config = this.notificationConfig();
-      config.notificationRules = config.notificationRules.filter(
-        (_, i) => i !== index,
+      this.notificationConfig.update((config) => {
+        const clone = Object.assign(
+          Object.create(Object.getPrototypeOf(config)),
+          config,
+        );
+        clone.notificationRules = (config.notificationRules ?? []).filter(
+          (_, i) => i !== index,
+        );
+        return clone;
+      });
+      const saved = await this.saveNotificationConfig(
+        this.notificationConfig(),
       );
-      this.notificationConfig.set(config);
-      await this.saveNotificationConfig(config);
-      this.unsavedChanges.pending = false;
+      if (!saved) return false;
+      this.unsavedChanges.pending.set(false);
       return true;
     }
     return false;

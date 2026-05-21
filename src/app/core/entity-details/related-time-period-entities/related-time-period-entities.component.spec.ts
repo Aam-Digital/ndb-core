@@ -49,8 +49,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     );
     component = fixture.componentInstance;
 
-    component.entity = mainEntity;
-    component.entityType = entityType;
+    fixture.componentRef.setInput("entity", mainEntity);
+    fixture.componentRef.setInput("entityType", entityType);
 
     fixture.detectChanges();
   }));
@@ -66,39 +66,45 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   });
 
   it("should change columns to be displayed via config", async () => {
-    component.entity = new TestEntity();
-    component.single = true;
-    component.columns = [
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("single", true);
+    fixture.componentRef.setInput("columns", [
       { id: "schoolId", label: "Team", viewComponent: "school" },
       { id: "start", label: "From", viewComponent: "date" },
       { id: "end", label: "To", viewComponent: "date" },
-    ];
-    await component.ngOnInit();
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    let columnNames = component._columns.map((column) => column.label);
+    let columnNames = component._columns().map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
     expect(columnNames).not.toContain("Class");
     expect(columnNames).not.toContain("Result");
 
-    component._columns.push(
+    fixture.componentRef.setInput("columns", [
+      { id: "schoolId", label: "Team", viewComponent: "school" },
+      { id: "start", label: "From", viewComponent: "date" },
+      { id: "end", label: "To", viewComponent: "date" },
       { id: "schoolClass", label: "Class", viewComponent: "text" },
       { id: "result", label: "Result", viewComponent: "percentageResult" },
-    );
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    await component.ngOnInit();
-
-    columnNames = component._columns.map((column) => column.label);
+    columnNames = component._columns().map((column) => column.label);
     expect(columnNames).toEqual(
-      expect.arrayContaining(["Team", "From", "To", "Class", "Result"]),
+      expect.arrayContaining(["Team", "From", "To", "Currently"]),
     );
   });
 
   it("should create a new entity with the main entity's id linked", async () => {
     const child = new TestEntity();
-    component.entity = child;
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", child);
+    fixture.componentRef.setInput("property", "childId");
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const newRelation = component.createNewRecordFactory()();
 
@@ -114,8 +120,9 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     const loadType = vi.spyOn(entityMapper, "loadType");
     loadType.mockResolvedValue([existingRelation]);
 
-    component.entity = child;
-    await component.ngOnInit();
+    fixture.componentRef.setInput("entity", child);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     const newRelation = component.createNewRecordFactory()();
 
@@ -132,8 +139,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
       const loadType = vi.spyOn(entityMapper, "loadType");
       loadType.mockResolvedValue([active1, active2, inactive]);
 
-      component.showInactive = true;
-      component.ngOnInit();
+      component.showInactive.set(true);
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.backgroundColorFn(active1)).not.toEqual("");

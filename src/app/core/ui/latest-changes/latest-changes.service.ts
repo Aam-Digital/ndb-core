@@ -56,16 +56,17 @@ export class LatestChangesService {
     const releasesUpToCurrentVersion = releases.filter(
       (r) => this.compareVersion(r.tag_name, currentVersion) <= 0,
     );
-    if (releasesUpToCurrentVersion.length < 1) {
-      return [];
-    }
 
     if (previousVersion) {
+      if (releasesUpToCurrentVersion.length < 1) {
+        return [];
+      }
       return releasesUpToCurrentVersion
         .filter((r) => this.compareVersion(r.tag_name, previousVersion) > 0)
         .sort((a, b) => this.compareVersion(b.tag_name, a.tag_name));
     } else {
-      return [releasesUpToCurrentVersion[0]];
+      // Show current version's release; fall back to latest if version not found in GitHub releases
+      return [releasesUpToCurrentVersion[0] ?? releases[0]].filter(Boolean);
     }
   }
 

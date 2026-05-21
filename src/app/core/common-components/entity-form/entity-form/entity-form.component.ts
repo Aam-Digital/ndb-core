@@ -5,10 +5,11 @@ import {
 import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 import {
   Component,
+  computed,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  input,
+  signal,
   ViewEncapsulation,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -47,9 +48,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
     EntityFieldEditComponent,
   ],
 })
-export class EntityFormComponent<
-  T extends Entity = Entity,
-> implements OnChanges {
+export class EntityFormComponent<T extends Entity = Entity> {
   private entityMapper = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
@@ -60,80 +59,94 @@ export class EntityFormComponent<
   /**
    * The entity which should be displayed and edited
    */
-  @Input() entity: T;
+  entity = input<T>();
 
-  @Input() fieldGroups: FieldGroup[];
+  fieldGroups = input<FieldGroup[]>();
 
-  @Input() form: EntityForm<T>;
+  form = input<EntityForm<T>>();
 
   /**
    * Whether the component should use a grid layout or just rows
    */
-  @Input() gridLayout = true;
+  gridLayout = input<boolean>(true);
 
   /**
    * Whether the fields should use the max width of the container
    */
-  @Input() fullWidth = false;
+  fullWidth = input<boolean>(false);
+
+  readonly entityState = signal<T | undefined>(undefined);
+  readonly isEntityLocked = computed(() => !!this.entityState()?.anonymized);
+
+  /** Field groups filtered by the current user's permissions */
+  readonly filteredFieldGroups = computed<FieldGroup[]>(() => {
+    const groups = this.fieldGroups();
+    const entity = this.entityState();
+    if (!groups || !entity) return groups ?? [];
+    return this.filterFieldGroupsByPermissions(groups, entity);
+  });
 
   private initialFormValues: any;
   private changesSubscription: Subscription;
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.fieldGroups) {
-      this.fieldGroups = this.filterFieldGroupsByPermissions(
-        this.fieldGroups,
-        this.entity,
-      );
-    }
+  constructor() {
+    effect(() => {
+      this.entityState.set(this.entity());
+    });
 
-    if (changes.entity && this.entity) {
+    effect((onCleanup) => {
+      const entity = this.entityState();
+      if (!entity) return;
       this.changesSubscription?.unsubscribe();
-      this.changesSubscription = this.entityMapper
-        .receiveUpdates(this.entity.getConstructor())
+      const sub = this.entityMapper
+        .receiveUpdates(entity.getConstructor())
         .pipe(
-          filter(({ entity }) => entity.getId() === this.entity.getId()),
+          filter(({ entity: e }) => e.getId() === entity.getId()),
           filter(({ type }) => type !== "remove"),
           untilDestroyed(this),
         )
-        .subscribe(({ entity }) => this.applyChanges(entity));
-    }
+        .subscribe(({ entity: updated }) => this.applyChanges(updated as T));
+      this.changesSubscription = sub;
+      onCleanup(() => sub.unsubscribe());
+    });
 
-    if (changes.form && this.form) {
-      this.initialFormValues = this.form.formGroup.getRawValue();
-      this.disableForLockedEntity();
-      this.subscribeForAutomatingStatusUpdates();
-    }
-  }
+    effect((onCleanup) => {
+      const form = this.form();
+      if (!form) return;
+      this.initialFormValues = form.formGroup.getRawValue();
+      if (this.isEntityLocked()) {
+        form.formGroup.disable();
+      }
 
-  private formStateSubscription: Subscription;
-  private subscribeForAutomatingStatusUpdates() {
-    if (this.formStateSubscription) {
-      this.formStateSubscription.unsubscribe();
-    }
-
-    this.formStateSubscription = this.form.onFormStateChange
-      .pipe(
-        untilDestroyed(this),
-        filter((event) => event instanceof EntityFormSavedEvent),
-      )
-      .subscribe(async (event: EntityFormSavedEvent) => {
-        await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
-          event.newEntity,
-          event.previousEntity,
-        );
-      });
+      const sub = form.onFormStateChange
+        .pipe(
+          untilDestroyed(this),
+          filter((event) => event instanceof EntityFormSavedEvent),
+        )
+        .subscribe(async (event: EntityFormSavedEvent) => {
+          await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
+            event.newEntity,
+            event.previousEntity,
+          );
+        });
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   private async applyChanges(externallyUpdatedEntity: T) {
+    const inputEntity = this.entity();
+
     if (this.formIsUpToDate(externallyUpdatedEntity)) {
-      Object.assign(this.entity, externallyUpdatedEntity);
+      if (inputEntity) {
+        Object.assign(inputEntity, externallyUpdatedEntity);
+      }
+      this.entityState.set(externallyUpdatedEntity);
       return;
     }
 
     const userEditedFields = Object.entries(
-      this.form.formGroup.getRawValue(),
-    ).filter(([key]) => this.form.formGroup.controls[key].dirty);
+      this.form().formGroup.getRawValue(),
+    ).filter(([key]) => this.form().formGroup.controls[key].dirty);
     let userEditsWithoutConflicts = userEditedFields.filter(([key]) =>
       // no conflict with updated values
       this.entityEqualsFormValue(
@@ -153,19 +166,22 @@ export class EntityFormComponent<
     }
 
     // apply update to all pristine (not user-edited) fields and update base entity (to avoid conflicts when saving)
-    Object.assign(this.entity, externallyUpdatedEntity);
+    if (inputEntity) {
+      Object.assign(inputEntity, externallyUpdatedEntity);
+    }
+    this.entityState.set(externallyUpdatedEntity);
     Object.assign(this.initialFormValues, externallyUpdatedEntity);
-    this.form.formGroup.reset(externallyUpdatedEntity as any);
+    this.form().formGroup.reset(externallyUpdatedEntity as any);
 
     // re-apply user-edited fields
     userEditsWithoutConflicts.forEach(([key, value]) => {
-      this.form.formGroup.get(key).setValue(value);
-      this.form.formGroup.get(key).markAsDirty();
+      this.form().formGroup.get(key).setValue(value);
+      this.form().formGroup.get(key).markAsDirty();
     });
   }
 
   private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this.form.formGroup.getRawValue()).every(
+    return Object.entries(this.form().formGroup.getRawValue()).every(
       ([key, value]) => this.entityEqualsFormValue(entity[key], value),
     );
   }
@@ -177,16 +193,16 @@ export class EntityFormComponent<
     const action = entity.isNew ? "create" : "read";
 
     return fieldGroups
-      .map((group) => {
-        group.fields = group.fields.filter((field) =>
+      .map((group) => ({
+        ...group,
+        fields: group.fields.filter((field) =>
           this.ability.can(
             action,
             entity,
             typeof field === "string" ? field : field.id,
           ),
-        );
-        return group;
-      })
+        ),
+      }))
       .filter((group) => group.fields.length > 0);
   }
 
@@ -198,15 +214,5 @@ export class EntityFormComponent<
       entityValue === formValue ||
       JSON.stringify(entityValue) === JSON.stringify(formValue)
     );
-  }
-
-  /**
-   * Disable the form for certain states of the entity, like it being already anonymized.
-   * @private
-   */
-  private disableForLockedEntity() {
-    if (this.entity?.anonymized) {
-      this.form.formGroup.disable();
-    }
   }
 }

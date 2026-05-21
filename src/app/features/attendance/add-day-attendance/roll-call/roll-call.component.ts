@@ -170,13 +170,18 @@ export class RollCallComponent {
 
   readonly participants = signal<Entity[]>([]);
   readonly inactiveParticipants = signal<Entity[]>([]);
+  readonly isInitializing = signal(false);
 
   readonly isFirst = computed(() => this.currentIndex() === 0);
   readonly isLast = computed(
     () => this.currentIndex() === this.participants().length - 1,
   );
   readonly isFinished = computed(
-    () => this.currentIndex() >= this.participants().length,
+    () =>
+      !!this.event() &&
+      !this.eventResource.isLoading() &&
+      !this.isInitializing() &&
+      this.currentIndex() >= this.participants().length,
   );
 
   constructor() {
@@ -199,9 +204,14 @@ export class RollCallComponent {
    * Initialize participant data for the current event entity.
    */
   private async initializeForEvent() {
-    this.loadAttendanceStatusTypes();
-    await this.loadParticipants();
-    this.setInitialIndex();
+    this.isInitializing.set(true);
+    try {
+      this.loadAttendanceStatusTypes();
+      await this.loadParticipants();
+      this.setInitialIndex();
+    } finally {
+      this.isInitializing.set(false);
+    }
   }
 
   /**
@@ -353,7 +363,7 @@ export class RollCallComponent {
       attendance.status = status;
     }
     this.isDirty.set(true);
-    this.unsavedChanges.pending = true;
+    this.unsavedChanges.pending.set(true);
 
     this.goToParticipantWithIndex(this.currentIndex() + 1);
   }
@@ -392,7 +402,7 @@ export class RollCallComponent {
             text: $localize`:Discard changes made to a form:Discard`,
             click: (): boolean => {
               this.isDirty.set(false);
-              this.unsavedChanges.pending = false;
+              this.unsavedChanges.pending.set(false);
               this.location.back();
               return false;
             },
@@ -411,7 +421,7 @@ export class RollCallComponent {
       try {
         await this.entityMapper.save(entity);
         this.isDirty.set(false);
-        this.unsavedChanges.pending = false;
+        this.unsavedChanges.pending.set(false);
       } catch (e) {
         Logging.warn("Could not save attendance event", e);
         this.confirmationDialog.getConfirmation(
@@ -424,7 +434,9 @@ export class RollCallComponent {
   }
 
   showDetails() {
-    this.formDialog.openView(this.event()?.entity);
+    const entity = this.event()?.entity;
+    if (!entity) return;
+    this.formDialog.openView(entity);
   }
 
   async includeInactive() {

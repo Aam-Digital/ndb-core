@@ -1,27 +1,10 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import {
   Component,
+  computed,
   inject,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
-  signal,
+  input,
+  resource,
 } from "@angular/core";
 import { MarkdownPageModule } from "../markdown-page.module";
 import { RouteTarget } from "../../../route-target";
@@ -38,26 +21,28 @@ import { MarkdownContent } from "../markdown-content";
   templateUrl: "./markdown-page.component.html",
   imports: [MarkdownPageModule],
 })
-export class MarkdownPageComponent implements OnInit {
+export class MarkdownPageComponent {
   /** filepath to be loaded as markdown */
-  @Input() markdownFile?: string;
+  markdownFile = input<string>();
   /** markdown entity content to be displayed */
-  @Input() markdownEntityId?: string;
+  markdownEntityId = input<string>();
 
-  markdownContent = signal<string>("");
+  private readonly entityMapper = inject(EntityMapperService);
 
-  private entityMapper = inject(EntityMapperService);
-
-  async ngOnInit(): Promise<void> {
-    if (this.markdownEntityId) {
+  readonly markdownContentResource = resource({
+    params: () => this.markdownEntityId(),
+    loader: async ({ params: markdownEntityId }) => {
+      if (!markdownEntityId) return "";
       const markdownEntity = await this.entityMapper.load(
         MarkdownContent,
-        this.markdownEntityId,
+        markdownEntityId,
       );
+      return markdownEntity?.content ?? "";
+    },
+  });
 
-      if (markdownEntity) {
-        this.markdownContent.set(markdownEntity.content);
-      }
-    }
-  }
+  /** markdown content string for template use */
+  readonly markdownContent = computed(
+    () => this.markdownContentResource.value() ?? "",
+  );
 }

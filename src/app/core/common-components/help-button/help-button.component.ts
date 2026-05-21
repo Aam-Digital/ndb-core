@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -15,8 +15,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   imports: [FontAwesomeModule, MatButtonModule, MatTooltipModule],
 })
 export class HelpButtonComponent {
-  /**
-   * Help text to be displayed
-   */
-  @Input() text: string;
+  /** Help text to be displayed */
+  text = input<string>();
 }

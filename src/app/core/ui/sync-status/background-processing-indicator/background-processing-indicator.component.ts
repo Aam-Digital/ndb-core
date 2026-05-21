@@ -1,20 +1,20 @@
 import {
+  computed,
   Component,
+  effect,
   inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild,
   ChangeDetectionStrategy,
+  input,
+  signal,
+  viewChild,
 } from "@angular/core";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { Observable } from "rxjs";
-import { map, startWith } from "rxjs/operators";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { switchMap } from "rxjs/operators";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { AsyncPipe } from "@angular/common";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -25,7 +25,6 @@ import { DatabaseResolverService } from "../../../database/database-resolver.ser
  * A dumb component handling presentation of the sync indicator icon
  * and an additional details dropdown listing all currently running background processes.
  */
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-background-processing-indicator",
@@ -35,31 +34,68 @@ import { DatabaseResolverService } from "../../../database/database-resolver.ser
     MatButtonModule,
     MatBadgeModule,
     MatMenuModule,
-    AsyncPipe,
     MatProgressSpinnerModule,
     FontAwesomeModule,
     MatTooltipModule,
     MatDividerModule,
   ],
 })
-export class BackgroundProcessingIndicatorComponent
-  implements OnInit, OnDestroy
-{
+export class BackgroundProcessingIndicatorComponent {
   /** details on current background processes to be displayed to user */
-  @Input() backgroundProcesses: Observable<BackgroundProcessState[]>;
-  filteredProcesses: Observable<BackgroundProcessState[]>;
-  taskCounterObservable: Observable<number>;
-  allTasksFinished: Observable<boolean>;
+  backgroundProcesses = input.required<Observable<BackgroundProcessState[]>>();
 
   /** whether processes of with the same title shall be summarized into one line */
-  @Input() summarize: boolean = true;
-  wasClosed: boolean = false;
+  summarize = input(true);
+  wasClosed = signal(false);
 
   private readonly dbResolver = inject(DatabaseResolverService);
+  private readonly currentProcesses = toSignal(
+    toObservable(this.backgroundProcesses).pipe(
+      switchMap((processes) => processes),
+    ),
+    { initialValue: [] as BackgroundProcessState[] },
+  );
+
+  filteredProcesses = computed(() =>
+    this.summarizeProcesses(this.currentProcesses()),
+  );
+  taskCounter = computed(
+    () => this.filteredProcesses().filter((process) => process.pending).length,
+  );
+  allTasksFinished = computed(() => this.taskCounter() === 0);
 
   /** handle to programmatically open/close the details dropdown */
-  @ViewChild(MatMenuTrigger) taskListDropdownTrigger: MatMenuTrigger;
+  taskListDropdownTrigger = viewChild(MatMenuTrigger);
   private openMenuTimeout: ReturnType<typeof setTimeout> | undefined;
+
+  private readonly taskCounterEffect = effect((onCleanup) => {
+    const amount = this.taskCounter();
+    const taskListDropdownTrigger = this.taskListDropdownTrigger();
+
+    if (amount === 0) {
+      if (this.openMenuTimeout) {
+        clearTimeout(this.openMenuTimeout);
+      }
+      taskListDropdownTrigger?.closeMenu();
+      this.wasClosed.set(false);
+    } else {
+      if (!this.wasClosed()) {
+        // Need to wait for the change cycle that shows the sync button.
+        if (this.openMenuTimeout) {
+          clearTimeout(this.openMenuTimeout);
+        }
+        this.openMenuTimeout = setTimeout(() =>
+          taskListDropdownTrigger?.openMenu(),
+        );
+      }
+    }
+
+    onCleanup(() => {
+      if (this.openMenuTimeout) {
+        clearTimeout(this.openMenuTimeout);
+      }
+    });
+  });
 
   /**
    * Clear sync checkpoints and trigger a full re-sync.
@@ -68,43 +104,12 @@ export class BackgroundProcessingIndicatorComponent
     await this.dbResolver.resetSync();
   }
 
-  ngOnInit() {
-    this.filteredProcesses = this.backgroundProcesses.pipe(
-      map((processes) => this.summarizeProcesses(processes)),
-    );
-    this.taskCounterObservable = this.filteredProcesses.pipe(
-      map((processes) => processes.filter((p) => p.pending).length),
-    );
-    this.allTasksFinished = this.taskCounterObservable.pipe(
-      startWith(0),
-      map((tc) => tc === 0),
-    );
-    this.taskCounterObservable
-      .pipe(untilDestroyed(this))
-      .subscribe((amount) => {
-        if (amount === 0) {
-          if (this.openMenuTimeout) {
-            clearTimeout(this.openMenuTimeout);
-          }
-          this.taskListDropdownTrigger?.closeMenu();
-        } else {
-          if (!this.wasClosed) {
-            // need to wait for change cycle that shows sync button
-            if (this.openMenuTimeout) {
-              clearTimeout(this.openMenuTimeout);
-            }
-            this.openMenuTimeout = setTimeout(() =>
-              this.taskListDropdownTrigger?.openMenu(),
-            );
-          }
-        }
-      });
+  markWasClosed(): void {
+    this.wasClosed.set(true);
   }
 
-  ngOnDestroy() {
-    if (this.openMenuTimeout) {
-      clearTimeout(this.openMenuTimeout);
-    }
+  closeTaskListDropdown(): void {
+    this.taskListDropdownTrigger()?.closeMenu();
   }
 
   private combineProcesses(
@@ -120,7 +125,7 @@ export class BackgroundProcessingIndicatorComponent
   private summarizeProcesses(
     processes: BackgroundProcessState[],
   ): BackgroundProcessState[] {
-    if (!this.summarize) {
+    if (!this.summarize()) {
       return processes;
     }
     const accumulator: BackgroundProcessState[] = [];

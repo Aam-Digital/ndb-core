@@ -1,17 +1,16 @@
 import {
-  ChangeDetectorRef,
   Component,
-  EventEmitter,
+  computed,
   inject,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
+  resource,
   ChangeDetectionStrategy,
+  input,
+  output,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
@@ -33,58 +32,48 @@ import { MatDialogRef } from "@angular/material/dialog";
     Angulartics2Module,
     DisableEntityOperationDirective,
     MatTooltipModule,
+    FaDynamicIconComponent,
   ],
 })
-export class EntityActionsMenuComponent implements OnChanges {
+export class EntityActionsMenuComponent {
   private entityActionsMenuService = inject(EntityActionsMenuService);
   protected viewContext = inject(ViewComponentContext, { optional: true });
   private readonly dialogRef = inject(MatDialogRef, { optional: true });
-  private readonly cdr = inject(ChangeDetectorRef);
-
-  @Input() entity: Entity;
+  entity = input<Entity>();
 
   /**
    * whether the "delete" action will trigger a navigation back to the parent list.
    * This is useful when the entity is deleted from a fullscreen detail view but not for an overlay.
    */
-  @Input() navigateOnDelete: boolean = false;
+  navigateOnDelete = input<boolean>(false);
 
-  @Output() actionTriggered = new EventEmitter<string>();
+  actionTriggered = output<string>();
 
   /**
    * The actions being displayed as menu items.
    */
-  actions: EntityAction[];
+  private readonly actionsResource = resource({
+    params: () => this.entity(),
+    loader: ({ params: entity }) =>
+      entity
+        ? this.entityActionsMenuService.getActionsForSingle(entity)
+        : Promise.resolve([]),
+  });
+  readonly actions = computed(() => this.actionsResource.value() ?? []);
 
   /**
    * Whether some buttons should be displayed directly, outside the three-dot menu in dialog views.
    */
-  @Input() showExpanded?: boolean;
-
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (changes.entity) {
-      await this.filterAvailableActions();
-    }
-  }
-
-  private async filterAvailableActions() {
-    if (!this.entity) {
-      this.actions = [];
-      this.cdr.markForCheck();
-      return;
-    }
-
-    const allActions = await this.entityActionsMenuService.getActionsForSingle(
-      this.entity,
-    );
-    this.actions = allActions;
-    this.cdr.markForCheck();
-  }
+  showExpanded = input<boolean | undefined>();
 
   async executeAction(action: EntityAction) {
+    const entity = this.entity();
+    if (!entity) {
+      return;
+    }
     const result = await action.execute(
-      this.entity,
-      this.navigateOnDelete && !this.viewContext?.isDialog,
+      entity,
+      this.navigateOnDelete() && !this.viewContext?.isDialog,
     );
     if (result) {
       this.actionTriggered.emit(action.action);
@@ -98,6 +87,6 @@ export class EntityActionsMenuComponent implements OnChanges {
         this.dialogRef.close();
       }
     }
-    setTimeout(() => this.filterAvailableActions());
+    this.actionsResource.reload();
   }
 }

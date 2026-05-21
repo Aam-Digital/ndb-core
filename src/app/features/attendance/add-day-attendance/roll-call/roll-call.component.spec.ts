@@ -22,6 +22,7 @@ import {
   entityRegistry,
 } from "#src/app/core/entity/database-entity.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { signal } from "@angular/core";
 
 const PRESENT = {
   id: "PRESENT",
@@ -104,7 +105,10 @@ describe("RollCallComponent", () => {
               .mockName("ConfirmationDialogService.getDiscardConfirmation"),
           },
         },
-        { provide: UnsavedChangesService, useValue: { pending: false } },
+        {
+          provide: UnsavedChangesService,
+          useValue: { pending: signal(false) },
+        },
         {
           provide: AttendanceService,
           useValue: {
@@ -260,6 +264,38 @@ describe("RollCallComponent", () => {
     component.finish();
 
     expect(location.back).toHaveBeenCalled();
+  });
+
+  it("should not be finished while event or participants are not yet loaded", async () => {
+    fixture.componentRef.setInput("eventEntity", undefined);
+    await stabilize();
+    expect(component.isFinished()).toBe(false);
+
+    fixture.componentRef.setInput(
+      "eventEntity",
+      new EventWithAttendance(
+        Note.create(new Date()),
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    );
+    await stabilize();
+    component.isInitializing.set(true);
+    fixture.detectChanges();
+    expect(component.isFinished()).toBe(false);
+  });
+
+  it("should not call openView if event entity is undefined when showDetails is called", async () => {
+    fixture.componentRef.setInput("eventEntity", undefined);
+    await stabilize();
+
+    const formDialog = TestBed.inject(FormDialogService);
+    component.showDetails();
+
+    expect(formDialog.openView).not.toHaveBeenCalled();
   });
 
   it("isn't dirty initially", () => {

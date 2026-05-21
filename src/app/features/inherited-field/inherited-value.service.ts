@@ -348,7 +348,7 @@ export class InheritedValueService extends DefaultValueStrategy {
     } catch (error) {
       Logging.warn(
         "InheritedValueService could not load source entity for inherited field",
-        entityId,
+        { entityId },
         error,
       );
       return undefined;

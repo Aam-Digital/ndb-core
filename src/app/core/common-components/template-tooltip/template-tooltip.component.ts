@@ -1,14 +1,12 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
-  HostBinding,
-  Input,
   NgZone,
-  Output,
   TemplateRef,
   inject,
   ChangeDetectionStrategy,
+  input,
+  output,
 } from "@angular/core";
 import {
   animate,
@@ -32,7 +30,8 @@ import { NgTemplateOutlet } from "@angular/common";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: TemplateTooltipComponent.SELECTOR,
-  template: '<ng-container *ngTemplateOutlet="contentTemplate"></ng-container>',
+  template:
+    '<ng-container *ngTemplateOutlet="contentTemplate()"></ng-container>',
   styleUrls: ["./template-tooltip.component.scss"],
   animations: [
     trigger("appear", [
@@ -51,22 +50,19 @@ import { NgTemplateOutlet } from "@angular/common";
       transition(":enter", [animate("100ms")]),
     ]),
   ],
+  host: {
+    "[@appear]": "true",
+  },
   imports: [NgTemplateOutlet],
 })
 export class TemplateTooltipComponent {
   static readonly SELECTOR = "app-template-tooltip";
-  /**
-   * This provides finer control on the content to be visible on the tooltip
-   * This template will be injected in ToolTipRenderer directive in the consumer template
-   * <ng-template #template>
-   *  content.....
-   * </ng-template>
-   */
-  @Input() contentTemplate: TemplateRef<any>;
 
-  @Output() hide = new EventEmitter<void>();
+  contentTemplate = input<TemplateRef<any>>();
 
-  @Output() show = new EventEmitter<void>();
+  hide = output<void>();
+
+  show = output<void>();
 
   constructor() {
     const zone = inject(NgZone);
@@ -74,9 +70,7 @@ export class TemplateTooltipComponent {
 
     zone.runOutsideAngular(() => {
       el.nativeElement.addEventListener("mouseenter", () => this.show.emit());
-      el.nativeElement.addEventListener("mouseleave", (ev) => this.hide.emit());
+      el.nativeElement.addEventListener("mouseleave", () => this.hide.emit());
     });
   }
-
-  @HostBinding("@appear") animation = true;
 }

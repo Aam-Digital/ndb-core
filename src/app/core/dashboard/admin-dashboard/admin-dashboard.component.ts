@@ -5,11 +5,12 @@ import {
 } from "@angular/cdk/drag-drop";
 import { Location } from "@angular/common";
 import {
-  Component,
-  inject,
-  Input,
-  OnInit,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -58,10 +59,23 @@ import { IconButtonComponent } from "#src/app/core/common-components/icon-button
     "../../dashboard/dashboard/dashboard.component.scss",
   ],
 })
-export class AdminDashboardComponent implements OnInit {
-  @Input() dashboardViewId: string;
+export class AdminDashboardComponent {
+  dashboardViewId = input.required<string>();
 
-  dashboardConfig: DashboardConfig;
+  private readonly dashboardViewConfigKey = computed(
+    () => PREFIX_VIEW_CONFIG + this.dashboardViewId(),
+  );
+
+  private readonly dashboardViewConfig = computed(
+    () =>
+      this.configService.getConfig(this.dashboardViewConfigKey()) as
+        | DynamicComponentConfig<DashboardConfig>
+        | undefined,
+  );
+
+  dashboardConfig = linkedSignal(() =>
+    structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
+  );
 
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);
@@ -69,26 +83,13 @@ export class AdminDashboardComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly widgetRegistry = inject(DashboardWidgetRegistryService);
 
-  ngOnInit() {
-    this.loadDashboardViewConfig();
-  }
-
-  private loadDashboardViewConfig() {
-    const viewConfig: DynamicComponentConfig<DashboardConfig> =
-      this.configService.getConfig(PREFIX_VIEW_CONFIG + this.dashboardViewId);
-
-    this.dashboardConfig = JSON.parse(JSON.stringify(viewConfig?.config)) || {
-      widgets: [],
-    };
-  }
-
-  drop(event: CdkDragDrop<any[]>) {
+  drop(event: CdkDragDrop<DynamicComponentConfig[]>) {
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        this.dashboardConfig.widgets,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      this.dashboardConfig.update((config) => {
+        const widgets = [...config.widgets];
+        moveItemInArray(widgets, event.previousIndex, event.currentIndex);
+        return { ...config, widgets };
+      });
     }
   }
 
@@ -103,8 +104,10 @@ export class AdminDashboardComponent implements OnInit {
       settingsComponent,
     );
     if (updatedConfig) {
-      this.dashboardConfig.widgets[idx] = updatedConfig;
-      this.dashboardConfig.widgets = [...this.dashboardConfig.widgets];
+      this.dashboardConfig.update((config) => ({
+        ...config,
+        widgets: config.widgets.map((w, i) => (i === idx ? updatedConfig : w)),
+      }));
     }
   }
 
@@ -127,7 +130,10 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   removeWidget(index: number) {
-    this.dashboardConfig.widgets.splice(index, 1);
+    this.dashboardConfig.update((config) => ({
+      ...config,
+      widgets: config.widgets.filter((_, i) => i !== index),
+    }));
   }
 
   async addNewWidget() {
@@ -138,8 +144,19 @@ export class AdminDashboardComponent implements OnInit {
     });
 
     const selectedWidget = await firstValueFrom(dialogRef.afterClosed());
-    if (selectedWidget) {
-      this.dashboardConfig.widgets.push(selectedWidget);
+    if (!selectedWidget) return;
+
+    this.dashboardConfig.update((config) => ({
+      ...config,
+      widgets: [...config.widgets, selectedWidget],
+    }));
+
+    // Open settings dialog when no config was pre-filled, so user can set required fields
+    const hasNoConfig =
+      !selectedWidget.config || Object.keys(selectedWidget.config).length === 0;
+    if (hasNoConfig) {
+      const newIndex = this.dashboardConfig().widgets.length - 1;
+      await this.editWidget(selectedWidget, newIndex);
     }
   }
 
@@ -152,11 +169,10 @@ export class AdminDashboardComponent implements OnInit {
 
     const updatedViewConfig: DynamicComponentConfig<DashboardConfig> = {
       component: "Dashboard",
-      config: this.dashboardConfig,
+      config: this.dashboardConfig(),
     };
 
-    currentConfig[PREFIX_VIEW_CONFIG + this.dashboardViewId] =
-      updatedViewConfig;
+    currentConfig[this.dashboardViewConfigKey()] = updatedViewConfig;
 
     await this.configService.saveConfig(currentConfig);
 

@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { RelatedEntitiesWithSummaryComponent } from "./related-entities-with-summary.component";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../entity/model/entity-update";
-import { DatabaseField } from "../../entity/database-field.decorator";
-import { Entity } from "../../entity/model/entity";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../entity/model/entity";
+import { UpdatedEntity } from "../../entity/model/entity-update";
+import { RelatedEntitiesWithSummaryComponent } from "./related-entities-with-summary.component";
 
 describe("RelatedEntitiesWithSummaryComponent", () => {
   let component: RelatedEntitiesWithSummaryComponent;
@@ -53,41 +53,49 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RelatedEntitiesWithSummaryComponent);
     component = fixture.componentInstance;
-    component.entity = primaryEntity;
-    component.entityType = TestEntityWithAmount.ENTITY_TYPE;
+    fixture.componentRef.setInput("entity", primaryEntity);
+    fixture.componentRef.setInput(
+      "entityType",
+      TestEntityWithAmount.ENTITY_TYPE,
+    );
 
-    component.summaries = {
+    fixture.componentRef.setInput("summaries", {
       countProperty: "amount",
       groupBy: "category",
       total: true,
       average: true,
-    };
+    });
 
     fixture.detectChanges();
   });
+
+  function getSummary() {
+    return (component as any).summary() as { sum: string; avg: string };
+  }
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
   it("produces an empty summary when there are no records", () => {
-    component.data = [];
-    component.updateSummary(component.data);
-    expect(component.summarySum).toHaveLength(0);
-    expect(component.summaryAvg).toHaveLength(0);
+    component.data.set([]);
+    component.updateSummary([]);
+    expect(getSummary().sum).toHaveLength(0);
+    expect(getSummary().avg).toHaveLength(0);
   });
 
   function setRecordsAndGenerateSummary(
     ...records: Partial<TestEntityWithAmount>[]
   ) {
-    component.data = records.map(TestEntityWithAmount.create);
-    component.updateSummary(component.data);
+    const data = records.map(TestEntityWithAmount.create);
+    component.data.set(data);
+    component.updateSummary(data);
   }
 
   it("produces a singleton summary when there is a single record", () => {
     setRecordsAndGenerateSummary({ category: "PENCIL", amount: 1 });
-    expect(component.summarySum).toEqual(`PENCIL: 1`);
-    expect(component.summaryAvg).toEqual(`PENCIL: 1`);
+    expect(getSummary().sum).toEqual(`PENCIL: 1`);
+    expect(getSummary().avg).toEqual(`PENCIL: 1`);
   });
 
   it("produces a summary of all records when they are all different", () => {
@@ -96,18 +104,20 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { category: "PAPER", amount: 1 },
       { amount: 1 },
     );
-    expect(component.summarySum).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
-    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
+    expect(getSummary().sum).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
+    expect(getSummary().avg).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
   });
 
   it("produces a singly summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
-    component.data = [{ amount: 1 }, { amount: 5 }] as any[];
-    delete component.summaries.groupBy;
-    component.summaries.countProperty = "amount";
-    component.updateSummary(component.data);
+    const plainData = [{ amount: 1 }, { amount: 5 }] as any[];
+    component.data.set(plainData);
+    const summaries = component.summaries();
+    delete summaries.groupBy;
+    summaries.countProperty = "amount";
+    component.updateSummary(plainData);
 
-    expect(component.summarySum).toEqual(`6`);
-    expect(component.summaryAvg).toEqual(`3`);
+    expect(getSummary().sum).toEqual(`6`);
+    expect(getSummary().avg).toEqual(`3`);
   });
 
   it("produces a summary of all records when there are duplicates", () => {
@@ -117,47 +127,50 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(`PENCIL: 4, PAPER: 1`);
-    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1`);
+    expect(getSummary().sum).toEqual(`PENCIL: 4, PAPER: 1`);
+    expect(getSummary().avg).toEqual(`PENCIL: 2, PAPER: 1`);
   });
 
   it("produces summary of all records when average is false and total is true", () => {
-    component.summaries.total = true;
-    component.summaries.average = false;
+    const summaries = component.summaries();
+    summaries.total = true;
+    summaries.average = false;
     setRecordsAndGenerateSummary(
       { category: "PENCIL", amount: 1 },
       { category: "PAPER", amount: 1 },
       { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(`PENCIL: 4, PAPER: 1`);
-    expect(component.summaryAvg).toEqual(``);
+    expect(getSummary().sum).toEqual(`PENCIL: 4, PAPER: 1`);
+    expect(getSummary().avg).toEqual("");
   });
 
   it("produces summary of all records when average is true and total is false", () => {
-    component.summaries.total = false;
-    component.summaries.average = true;
+    const summaries = component.summaries();
+    summaries.total = false;
+    summaries.average = true;
     setRecordsAndGenerateSummary(
       { category: "PENCIL", amount: 1 },
       { category: "PAPER", amount: 1 },
       { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(``);
-    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1`);
+    expect(getSummary().sum).toEqual("");
+    expect(getSummary().avg).toEqual(`PENCIL: 2, PAPER: 1`);
   });
 
   it("does not produces summary of all records when both average and total are false", () => {
-    component.summaries.total = false;
-    component.summaries.average = false;
+    const summaries = component.summaries();
+    summaries.total = false;
+    summaries.average = false;
     setRecordsAndGenerateSummary(
       { category: "PENCIL", amount: 1 },
       { category: "PAPER", amount: 1 },
       { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(``);
-    expect(component.summaryAvg).toEqual(``);
+    expect(getSummary().sum).toEqual("");
+    expect(getSummary().avg).toEqual("");
   });
 
   it("produces summary of all records when both average and total are true", () => {
@@ -167,8 +180,8 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(`PENCIL: 4, PAPER: 1`);
-    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1`);
+    expect(getSummary().sum).toEqual(`PENCIL: 4, PAPER: 1`);
+    expect(getSummary().avg).toEqual(`PENCIL: 2, PAPER: 1`);
   });
 
   it("loads all data associated with the given ref and updates the summary", async () => {
@@ -183,15 +196,15 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
         "loadType",
       ).mockResolvedValue(data);
 
-      component.entity = new TestEntity("22");
-      component.ngOnInit();
+      fixture.componentRef.setInput("entity", new TestEntity("22"));
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data);
+      component.updateSummary(component.data());
 
-      expect(component.summarySum).toEqual(`PENCIL: 1, PAPER: 2`);
-      expect(component.data).toEqual(data);
+      expect(getSummary().sum).toEqual(`PENCIL: 1, PAPER: 2`);
+      expect(component.data()).toEqual(data);
     } finally {
       vi.useRealTimers();
     }
@@ -200,7 +213,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   it("should update the summary when entity updates are received", async () => {
     vi.useFakeTimers();
     try {
-      component.ngOnInit();
+      fixture.componentRef.setInput("entity", new TestEntity("22"));
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
@@ -212,30 +225,30 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       updates.next({ entity: update1, type: "new" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data);
+      component.updateSummary(component.data());
 
-      expect(component.data).toEqual([update1]);
-      expect(component.summarySum).toBe(`PENCIL: 1`);
+      expect(component.data()).toEqual([update1]);
+      expect(getSummary().sum).toBe(`PENCIL: 1`);
 
       const update2 = update1.copy() as TestEntityWithAmount;
       update2.amount = 2;
       updates.next({ entity: update2, type: "update" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data);
+      component.updateSummary(component.data());
 
-      expect(component.data).toEqual([update2]);
-      expect(component.summarySum).toBe(`PENCIL: 2`);
+      expect(component.data()).toEqual([update2]);
+      expect(getSummary().sum).toBe(`PENCIL: 2`);
 
       const unrelatedUpdate = update1.copy() as TestEntityWithAmount;
       unrelatedUpdate.reference = "different-ref";
       updates.next({ entity: unrelatedUpdate, type: "new" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data);
+      component.updateSummary(component.data());
       // No change
-      expect(component.data).toEqual([update2]);
-      expect(component.summarySum).toBe(`PENCIL: 2`);
+      expect(component.data()).toEqual([update2]);
+      expect(getSummary().sum).toBe(`PENCIL: 2`);
     } finally {
       vi.useRealTimers();
     }

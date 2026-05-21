@@ -1,14 +1,14 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { ViewDirective } from "../../../entity/default-datatype/view.directive";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DisplayDateComponent } from "../../date/display-date/display-date.component";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-month",
   template: `<app-display-date
-    [value]="value"
+    [value]="value()"
     config="MMM y"
-    [displayAsAnonymized]="isPartiallyAnonymized"
+    [displayAsAnonymized]="isPartiallyAnonymized()"
   ></app-display-date>`,
   imports: [DisplayDateComponent],
 })

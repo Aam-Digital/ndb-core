@@ -1,12 +1,12 @@
 <div class="flex-row gap-small">
   <mat-select
-    [value]="selectedOption"
+    [value]="selectedOption()"
     (valueChange)="onOptionSelected($event)"
     class="select-box"
     placeholder="Select inheritance option"
     i18n-placeholder
   >
-    @for (option of availableOptions; track option) {
+    @for (option of availableOptions(); track option) {
       <mat-option [value]="option" [matTooltip]="option.tooltip">
         <div class="flex-row gap-small align-items-center">
           @if (option.type === "inherit") {
@@ -35,7 +35,7 @@
     }
   </mat-select>
 
-  @if (value?.sourceReferenceField) {
+  @if (selectedOption()?.sourceReferenceField) {
     <button
       mat-stroked-button
       class="configure-button"

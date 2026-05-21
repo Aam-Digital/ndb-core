@@ -43,6 +43,7 @@ describe("AdminDashboardComponent", () => {
 
     fixture = TestBed.createComponent(AdminDashboardComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("dashboardViewId", "Dashboard");
     fixture.detectChanges();
   });
 
@@ -57,6 +58,6 @@ describe("AdminDashboardComponent", () => {
     } as any);
 
     await component.addNewWidget();
-    expect(component.dashboardConfig.widgets).toContain(newWidget);
+    expect(component.dashboardConfig().widgets).toContain(newWidget);
   });
 });

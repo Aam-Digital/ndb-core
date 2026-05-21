@@ -45,7 +45,7 @@ describe("AdminNoteDetailsComponent", () => {
 
     fixture = TestBed.createComponent(AdminNoteDetailsComponent);
     component = fixture.componentInstance;
-    component.entityConstructor = TestNote;
+    fixture.componentRef.setInput("entityConstructor", TestNote);
   });
 
   it("should create", () => {
@@ -53,6 +53,9 @@ describe("AdminNoteDetailsComponent", () => {
   });
 
   it("should update the config when onNoteDetailsConfigChange is called", () => {
+    const emittedConfig = vi.fn();
+    component.configChange.subscribe(emittedConfig);
+
     const mockFormConfig: FormConfig = {
       fieldGroups: [
         { fields: ["date", "warningLevel"], header: "Top Form" } as FieldGroup,
@@ -62,7 +65,8 @@ describe("AdminNoteDetailsComponent", () => {
     };
     component.onNoteDetailsConfigChange(mockFormConfig);
 
-    expect(component.config).toEqual({
+    expect(component.noteDetailsConfig()).toEqual(mockFormConfig);
+    expect(emittedConfig).toHaveBeenCalledWith({
       topForm: ["date", "warningLevel"],
       middleForm: ["subject"],
       bottomForm: ["children"],

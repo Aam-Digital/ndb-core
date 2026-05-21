@@ -17,15 +17,15 @@
     </button>
   </div>
 
-  @if (isConditionalMode) {
+  @if (isConditionalMode()) {
     <div class="conditional-sections flex-column gap-regular padding-regular">
       @for (section of conditionalColorSections; track $index) {
         <app-conditional-color-section
           [section]="section"
-          [entityConstructor]="entityConstructor"
+          [entityConstructor]="entityConstructor()"
           (colorChange)="updateConditionalSectionColor($index, $event)"
           (deleteSection)="deleteConditionalColorSection($index)"
-          (conditionChange)="onConditionChange()"
+          (conditionChange)="onConditionChange(section, $event)"
         ></app-conditional-color-section>
       }
     </div>

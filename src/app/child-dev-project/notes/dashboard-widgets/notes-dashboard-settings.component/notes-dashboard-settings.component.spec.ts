@@ -14,11 +14,14 @@ describe("NotesDashboardSettingsComponent", () => {
     fixture = TestBed.createComponent(NotesDashboardSettingsComponent);
     component = fixture.componentInstance;
 
-    component.formControl = new FormControl({
-      sinceDays: 28,
-      fromBeginningOfWeek: false,
-      mode: "with-recent-notes",
-    });
+    fixture.componentRef.setInput(
+      "formControl",
+      new FormControl({
+        sinceDays: 28,
+        fromBeginningOfWeek: false,
+        mode: "with-recent-notes",
+      }),
+    );
 
     fixture.detectChanges();
   });

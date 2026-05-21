@@ -1,21 +1,21 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
   input,
   Input,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
 } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
-import { EntityConstructor } from "../model/entity";
-import { EntityRegistry } from "../database-entity.decorator";
-import { EntitySchema } from "../schema/entity-schema";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { EntityRegistry } from "../database-entity.decorator";
+import { EntityConstructor } from "../model/entity";
+import { EntitySchema } from "../schema/entity-schema";
 
 /**
  * Dropdown field offering all fields of a given entity type
@@ -43,7 +43,8 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
 
   @Input() override multi?: boolean;
 
-  @Input() override hideOption: (option: FormFieldConfig) => boolean;
+  @Input() override hideOption: (option: FormFieldConfig) => boolean = () =>
+    false;
 
   /**
    * Whether to show the internal _id field in the dropdown.
@@ -78,6 +79,11 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
     super();
     effect(() => {
       this.options = this.fieldOptions();
+      // Manually trigger ngOnChanges so that any already-set value is re-applied
+      // to mark the correct options as selected.
+      // (Setting `this.options` directly doesn't go through Angular's @Input binding,
+      // so ngOnChanges would not be called automatically.)
+      this.ngOnChanges({ options: true } as any);
     });
   }
 

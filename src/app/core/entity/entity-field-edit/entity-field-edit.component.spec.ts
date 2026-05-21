@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ComponentRegistry } from "../../../dynamic-components";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Entity } from "../model/entity";
 import { EntityFieldEditComponent } from "./entity-field-edit.component";
 
@@ -10,6 +11,7 @@ describe("EntityFieldEditComponent", () => {
   let fixture: ComponentFixture<EntityFieldEditComponent>;
 
   let mockFormService: any;
+  let mockSchemaService: any;
   const mockField = { id: "testField" };
 
   beforeEach(() => {
@@ -18,10 +20,15 @@ describe("EntityFieldEditComponent", () => {
     };
     mockFormService.extendFormFieldConfig.mockReturnValue(mockField);
 
+    mockSchemaService = {
+      getComponent: vi.fn().mockReturnValue(undefined),
+    };
+
     TestBed.configureTestingModule({
       imports: [EntityFieldEditComponent],
       providers: [
         { provide: EntityFormService, useValue: mockFormService },
+        { provide: EntitySchemaService, useValue: mockSchemaService },
         ComponentRegistry,
       ],
     });
@@ -31,24 +38,23 @@ describe("EntityFieldEditComponent", () => {
   });
 
   it("should use EntityFormService to extend field config", () => {
-    component.field = "testField";
-    component.entity = new Entity();
+    fixture.componentRef.setInput("field", "testField");
+    fixture.componentRef.setInput("entity", new Entity());
 
-    component.ngOnChanges({ field: true as any });
-
+    // Read the signal to trigger the lazy computation
+    expect(component._field()).toEqual(mockField);
     expect(mockFormService.extendFormFieldConfig).toHaveBeenCalledWith(
       "testField",
       Entity,
     );
-    expect(component._field).toEqual(mockField);
   });
 
   it("should silently hide if no entity with constructor is given", () => {
-    component.field = "testField";
-    component.entity = undefined;
+    fixture.componentRef.setInput("field", "testField");
+    fixture.componentRef.setInput("entity", undefined);
 
-    component.ngOnChanges({ field: true as any });
-
-    expect(component).toBeTruthy();
+    const result = component._field();
+    expect(result).toBeDefined();
+    expect(mockFormService.extendFormFieldConfig).not.toHaveBeenCalled();
   });
 });

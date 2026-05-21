@@ -13,7 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<NotFoundComponent> = (args: NotFoundComponent) => ({
+const Template: StoryFn<NotFoundComponent> = (args) => ({
   component: NotFoundComponent,
   props: args,
 });

@@ -15,9 +15,12 @@ describe("ShortcutDashboardSettingsComponent", () => {
     fixture = TestBed.createComponent(ShortcutDashboardSettingsComponent);
     component = fixture.componentInstance;
 
-    component.formControl = new FormControl({
-      shortcuts: [],
-    });
+    fixture.componentRef.setInput(
+      "formControl",
+      new FormControl({
+        shortcuts: [],
+      }),
+    );
 
     fixture.detectChanges();
   });

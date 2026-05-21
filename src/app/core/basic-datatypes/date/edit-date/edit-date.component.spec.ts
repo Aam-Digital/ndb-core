@@ -24,7 +24,7 @@ describe("EditDateComponent", () => {
 
     fixture = TestBed.createComponent(EditDateComponent);
     component = fixture.componentInstance;
-    setupCustomFormControlEditComponent(component);
+    setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
     fixture.detectChanges();
   });
 
