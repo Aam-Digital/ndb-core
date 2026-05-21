@@ -16,6 +16,11 @@ export async function initEnvironmentConfig() {
     environment: environment.production ? "production" : "development",
   });
 
+  // Public-form routes must run in online-only mode. Apply this regardless
+  // of whether config.json was loaded — in dev, the config.json fetch may
+  // return early without calling the post-load hooks.
+  applyPublicFormSession();
+
   await initKeycloakConfigToEnvironment();
 
   await initFirebaseConfigToEnvironment();
@@ -85,6 +90,17 @@ function applyOnlineOnlyPreference() {
     environment.session_type_choice !== false &&
     localStorage.getItem("session_online_only") === "true"
   ) {
+    environment.session_type = SessionType.online;
+  }
+}
+
+/**
+ * Force online-only mode when bootstrapping a public-form route, so the
+ * database factory creates a RemotePouchDatabase from the first lazy access
+ * rather than a SyncedPouchDatabase that would never be initialized.
+ */
+function applyPublicFormSession() {
+  if (window.location.pathname.startsWith("/public-form/")) {
     environment.session_type = SessionType.online;
   }
 }
