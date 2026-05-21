@@ -1437,5 +1437,6 @@
   "7584312201752292621": "Latest Changes:",
   "6488622213810377133": "powered by",
   "750863538901962642": "Upload a raw configuration file and overwrite the current system configuration. Accepts a single config object or an array of config documents.",
-  "7516236516227197736": "Upload failed: {$PH}"
+  "7516236516227197736": "Upload failed: {$PH}",
+  "690427411501906292": "Offline sync disabled — loading data directly from server"
 }

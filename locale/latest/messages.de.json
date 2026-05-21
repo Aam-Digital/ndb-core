@@ -1437,5 +1437,6 @@
   "7584312201752292621": "Neueste Änderungen:",
   "6488622213810377133": "angetrieben von",
   "750863538901962642": "Laden Sie eine unformatierte Konfigurationsdatei hoch und überschreiben Sie die aktuelle Systemkonfiguration. Akzeptiert ein einzelnes Konfigurationsobjekt oder ein Array von Konfigurationsdokumenten.",
-  "7516236516227197736": "Upload fehlgeschlagen: {$PH}"
+  "7516236516227197736": "Upload fehlgeschlagen: {$PH}",
+  "690427411501906292": "Offline sync disabled — loading data directly from server"
 }
