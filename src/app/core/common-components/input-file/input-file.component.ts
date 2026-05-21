@@ -41,6 +41,9 @@ export class InputFileComponent<T = any> {
   parsedData: ParsedData<T>;
   formControl = new FormControl();
 
+  private lastFileContent?: string;
+  private lastFilename?: string;
+
   async loadFile($event: Event): Promise<void> {
     this.formControl.reset();
 
@@ -49,8 +52,38 @@ export class InputFileComponent<T = any> {
       this.formControl.setValue(file.name);
 
       const fileContent = await readFile(file);
+      this.lastFileContent = fileContent;
+      this.lastFilename = file.name;
       this.parsedData = this.parseContent(fileContent, file.name);
 
+      this.fileLoad.emit(this.parsedData);
+    } catch (errors) {
+      this.formControl.setErrors(errors);
+      this.formControl.markAsTouched();
+    }
+  }
+
+  /**
+   * Re-parse the previously loaded CSV file using the given delimiter and
+   * re-emit `fileLoad`. Useful when PapaParse's auto-detection picked the
+   * wrong column separator and the user manually overrides it, without
+   * forcing them to re-upload the file.
+   *
+   * No-op when no file has been loaded yet or `fileType` is not `csv`.
+   *
+   * @param delimiter the column delimiter to parse the cached file content with
+   */
+  reparseWithDelimiter(delimiter: string): void {
+    if (this.lastFileContent === undefined || this.fileType() !== "csv") {
+      return;
+    }
+    try {
+      this.parsedData = this.parseContent(
+        this.lastFileContent,
+        this.lastFilename,
+        delimiter,
+      );
+      this.formControl.setErrors(null);
       this.fileLoad.emit(this.parsedData);
     } catch (errors) {
       this.formControl.setErrors(errors);
@@ -75,16 +108,33 @@ export class InputFileComponent<T = any> {
     return file;
   }
 
-  private parseContent(fileContent: string, filename?: string) {
+  private parseContent(
+    fileContent: string,
+    filename?: string,
+    explicitDelimiter?: string,
+  ) {
     let result;
 
     if (this.fileType() === "csv") {
-      const papaParsed = this.papa.parse(fileContent, {
+      const papaConfig: {
+        header: boolean;
+        dynamicTyping: boolean;
+        skipEmptyLines: boolean;
+        delimiter?: string;
+      } = {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
-      });
-      result = { data: papaParsed.data, fields: papaParsed.meta.fields };
+      };
+      if (explicitDelimiter !== undefined) {
+        papaConfig.delimiter = explicitDelimiter;
+      }
+      const papaParsed = this.papa.parse(fileContent, papaConfig);
+      result = {
+        data: papaParsed.data,
+        fields: papaParsed.meta.fields,
+        detectedDelimiter: papaParsed.meta.delimiter,
+      };
     } else if (this.fileType() === "json") {
       result = { data: JSON.parse(fileContent) };
     }
@@ -110,4 +160,7 @@ export interface ParsedData<T = any[]> {
   /** meta information listing the fields contained in data objects */
   fields?: string[];
   filename?: string;
+
+  /** the CSV column delimiter that was used (auto-detected by PapaParse or explicitly chosen) */
+  detectedDelimiter?: string;
 }
