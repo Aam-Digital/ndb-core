@@ -74,17 +74,14 @@ describe("ImportHistoryComponent", () => {
   });
 
   it("should load all previous imports, sorted by date", async () => {
-    vi.useFakeTimers();
-    try {
-      mockEntityMapper.loadType.mockResolvedValue([testImport1, testImport2]);
+    mockEntityMapper.loadType.mockResolvedValue([testImport1, testImport2]);
 
-      component.ngOnInit();
-      await vi.advanceTimersByTimeAsync(0);
+    fixture = TestBed.createComponent(ImportHistoryComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await Promise.resolve();
 
-      expect(component.previousImports()).toEqual([testImport2, testImport1]);
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(component.previousImports()).toEqual([testImport2, testImport1]);
   });
 
   it("should ask for confirmation before undo action", async () => {

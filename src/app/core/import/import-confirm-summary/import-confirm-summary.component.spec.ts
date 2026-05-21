@@ -78,7 +78,7 @@ describe("ImportConfirmSummaryComponent", () => {
       expect(mockDialogRef.close).toHaveBeenCalledWith({
         completedImport: testImportResult,
       });
-      expect(component.importInProgress).toBe(false);
+      expect(component.importInProgress()).toBe(false);
       expect(mockDialogRef.disableClose).toBe(false);
     } finally {
       vi.useRealTimers();
@@ -91,7 +91,7 @@ describe("ImportConfirmSummaryComponent", () => {
 
     await component.executeImport();
 
-    expect(component.importInProgress).toBe(false);
+    expect(component.importInProgress()).toBe(false);
     expect(mockDialogRef.disableClose).toBe(false);
     expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
     expect(mockDialogRef.close).toHaveBeenCalledWith({
@@ -105,7 +105,7 @@ describe("ImportConfirmSummaryComponent", () => {
 
     await component.executeImport();
 
-    expect(component.importInProgress).toBe(false);
+    expect(component.importInProgress()).toBe(false);
     expect(mockDialogRef.disableClose).toBe(false);
     expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
     expect(mockDialogRef.close).toHaveBeenCalledWith({

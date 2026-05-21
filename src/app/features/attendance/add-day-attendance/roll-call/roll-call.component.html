@@ -13,8 +13,21 @@
   }
 </div>
 
-@if (eventResource.isLoading()) {
+@if (eventResource.isLoading() || isInitializing()) {
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+@if (!eventResource.isLoading() && !event()) {
+  <p i18n="Error message when attendance event could not be loaded">
+    Event could not be loaded. Please go back and try again.
+  </p>
+  <button
+    mat-raised-button
+    (click)="finish()"
+    i18n="Back button after event load failure"
+  >
+    Back to Overview
+  </button>
 }
 
 <!-- Individual Student's Page -->
