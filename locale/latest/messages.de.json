@@ -1208,7 +1208,6 @@
   "5821736857580772724": "Laden Sie alle Daten der Datenbank in einem Format herunter, das als Tabellenkalkulation geöffnet werden kann.",
   "9039488683057466276": "Öffnen Sie die Rohkonfigurationsdatei, um erweiterte technische Anpassungen vorzunehmen.",
   "6059382317623645673": "Laden Sie die Konfigurationsdatei im technischen Datenformat herunter.",
-  "5151681129139869812": "Laden Sie eine Konfigurationsdatei hoch und überschreiben Sie die aktuelle Systemkonfiguration.",
   "5725222777133529835": "Stellen Sie den Datenbankdienst in der Entwicklerkonsole des Browsers für erweiterte administrative Aufgaben zur Verfügung.",
   "5297521822102947331": "Löschen Sie alle Daten in der Datenbank.",
   "765619416137395805": "Alle Datenbankeinträge anzeigen, die nicht synchronisiert werden konnten, weil mehrere Benutzer den Eintrag gleichzeitig im Offline-Modus bearbeitet haben.",
@@ -1436,5 +1435,7 @@
   "931272690246720471": " Event could not be loaded. Please go back and try again. ",
   "5193604694578359259": " Aam Digital is open-source software, available under {$START_LINK}www.github.com/Aam-Digital{$CLOSE_LINK}. It is developed and maintained mainly by Aam Digital GmbH ({$START_LINK_1}www.aam-digital.com{$CLOSE_LINK}) offering specific hosting, consultancy, training and feature development. Aam Digital is recognized as {$START_LINK_2}Digital Public Good{$CLOSE_LINK}. ",
   "7584312201752292621": "Latest Changes:",
-  "6488622213810377133": "powered by"
+  "6488622213810377133": "powered by",
+  "750863538901962642": "Upload a raw configuration file and overwrite the current system configuration. Accepts a single config object or an array of config documents.",
+  "7516236516227197736": "Upload failed: {$PH}"
 }
