@@ -16,18 +16,25 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
   private paginatorRef: MatPaginator;
   override set paginator(paginator: MatPaginator) {
     this.paginatorRef = paginator;
-    this.paginatorRef.page.subscribe((val) => {
-      this.entityMapper
-        .loadType(this.entityType, {
-          limit: val.pageSize + 1,
-          skip: val.pageIndex * val.pageSize,
-        })
-        .then((res) => {
-          super.data = res.map((record) => ({ record })).slice(0, val.pageSize);
-          // TODO get total amount of elements
-          this.paginatorRef.length = val.pageSize * val.pageIndex + res.length;
-        });
+    this.paginatorRef.initialized.subscribe(() => {
+      this.loadData(this.paginatorRef.pageSize, this.paginatorRef.pageIndex);
     });
+    this.paginatorRef.page.subscribe((val) => {
+      this.loadData(val.pageSize, val.pageIndex);
+    });
+  }
+
+  private loadData(pageSize: number, pageIndex: number) {
+    this.entityMapper
+      .loadType(this.entityType, {
+        limit: pageSize + 1,
+        skip: pageSize * pageIndex,
+      })
+      .then((res) => {
+        super.data = res.map((record) => ({ record })).slice(0, pageSize);
+        // TODO get total amount of elements
+        this.paginatorRef.length = pageSize * pageIndex + res.length;
+      });
   }
 
   override set data(data: TableRow<T>[]) {
