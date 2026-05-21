@@ -52,6 +52,7 @@ import { NotificationComponent } from "../../../features/notification/notificati
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
 import { SetupService } from "app/core/setup/setup.service";
 import { AssistantButtonComponent } from "../../setup/assistant-button/assistant-button.component";
+import { PoweredByComponent } from "./powered-by/powered-by.component";
 import { filter, map } from "rxjs/operators";
 import { BehaviorSubject } from "rxjs";
 import { LoginStateSubject } from "../../session/session-type";
@@ -89,6 +90,7 @@ import { SessionSubject } from "../../session/auth/session-info";
     NotificationComponent,
     GotoThirdPartySystemComponent,
     AssistantButtonComponent,
+    PoweredByComponent,
     AsyncPipe,
   ],
 })
