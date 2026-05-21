@@ -11,18 +11,13 @@ import {
   output,
   QueryList,
   signal,
-  ViewChild,
+  ViewChild
 } from "@angular/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
-import {
-  MatColumnDef,
-  MatTable,
-  MatTableDataSource,
-  MatTableModule,
-} from "@angular/material/table";
+import { MatColumnDef, MatTable, MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { Router } from "@angular/router";
 import { EntityFieldEditComponent } from "../../entity/entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entity-field-label.component";
@@ -34,21 +29,16 @@ import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-  toFormFieldConfig,
-} from "../entity-form/FormConfig";
+import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
 import { tableSort } from "./table-sort/table-sort";
-import {
-  EntitiesTableSelectionStore,
-  shouldSkipRowInteraction,
-} from "./entities-table-selection";
+import { EntitiesTableSelectionStore, shouldSkipRowInteraction } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
+import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/paginated-data-source";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -76,6 +66,7 @@ import { EntitiesTableSortStore } from "./entities-table-sort.store";
 export class EntitiesTableComponent<
   T extends Entity,
 > implements AfterContentInit {
+  private readonly entityMapper = inject(EntityMapperService);
   private readonly formDialog = inject(FormDialogService);
   private readonly router = inject(Router);
   private readonly filterService = inject(FilterService);
@@ -190,7 +181,7 @@ export class EntitiesTableComponent<
   readonly isLoading = signal(true);
 
   // --- Material DataSource (for paginator interop) ---
-  readonly recordsDataSource = this.createDataSource();
+  recordsDataSource: MatTableDataSource<TableRow<T>>;
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
@@ -235,8 +226,12 @@ export class EntitiesTableComponent<
 
     // Sync sorted rows to Material DataSource
     effect(() => {
-      this.recordsDataSource.data = this.sortStore.sortedRows();
+      // this.recordsDataSource.data = this.sortStore.sortedRows();
     });
+
+    effect(() => {
+      this.recordsDataSource = this.createDataSource();
+    })
 
     // Track loading state
     effect(() => {
@@ -315,7 +310,11 @@ export class EntitiesTableComponent<
   }
 
   private createDataSource() {
-    const dataSource = new MatTableDataSource<TableRow<T>>();
+    console.log("datatype", this.entityType());
+    const dataSource = new PaginatedDataSource<T>(
+      this.entityType(),
+      this.entityMapper,
+    );
     dataSource.sortData = (data, sort) =>
       tableSort<T, keyof T>(data, {
         active: (sort.active as keyof T) ?? "",
