@@ -15,12 +15,37 @@
 ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<h1 mat-dialog-title>Latest Changes</h1>
+<div mat-dialog-title>
+  <h1 class="title-name">Aam Digital</h1>
+  <div class="title-description" i18n>
+    Aam Digital is open-source software, available under
+    <a
+      href="https://github.com/Aam-Digital"
+      target="_blank"
+      rel="noopener noreferrer"
+      >www.github.com/Aam-Digital</a
+    >. It is developed and maintained mainly by Aam Digital GmbH (<a
+      href="https://www.aam-digital.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      >www.aam-digital.com</a
+    >) offering specific hosting, consultancy, training and feature development.
+    Aam Digital is recognized as
+    <a
+      href="https://www.digitalpublicgoods.net/"
+      target="_blank"
+      rel="noopener noreferrer"
+      >Digital Public Good</a
+    >.
+  </div>
+</div>
 
 <mat-dialog-content #changelogContainer>
+  <h2 i18n>Latest Changes:</h2>
+
   @for (changelog of changelogs(); track changelog.tag_name) {
     <div class="changelog-entry-container">
-      <h2>{{ changelog?.name || noChangelogAvailable }}</h2>
+      <h3>{{ changelog?.name || noChangelogAvailable }}</h3>
       <div class="padding-bottom-regular">
         <span
           ><fa-icon icon="calendar-alt"></fa-icon>
