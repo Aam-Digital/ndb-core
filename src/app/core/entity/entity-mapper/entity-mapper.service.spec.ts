@@ -104,11 +104,11 @@ describe("EntityMapperService", () => {
   });
 
   it("should allow to load entities with pagination", async () => {
-    let entities = await entityMapper.loadPaginated(Entity, { limit: 1 });
+    let entities = await entityMapper.loadType(Entity, { limit: 1 });
     expect(entities).toHaveLength(1);
-    entities = await entityMapper.loadPaginated(Entity, { limit: 3 });
+    entities = await entityMapper.loadType(Entity, { limit: 3 });
     expect(entities).toHaveLength(2);
-    entities = await entityMapper.loadPaginated(Entity, { limit: 3, skip: 1 });
+    entities = await entityMapper.loadType(Entity, { limit: 3, skip: 1 });
     expect(entities).toHaveLength(1);
   });
 

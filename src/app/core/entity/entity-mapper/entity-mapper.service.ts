@@ -68,16 +68,6 @@ export class EntityMapperService {
     return this.transformToEntityFormat(result, ctor);
   }
 
-  public async loadPaginated<T extends Entity>(
-    entityType: EntityConstructor<T> | string,
-    options?: { limit?: number; skip?: number },
-  ): Promise<T[]> {
-    const ctor = this.resolveConstructor(entityType);
-    const db = this.dbResolver.getDatabase(ctor.DATABASE);
-    const records = await db.getAll(ctor.ENTITY_TYPE, options);
-    return records.map((record) => this.transformToEntityFormat(record, ctor));
-  }
-
   /**
    * Load all entities from the database of the given type (for example a list of entities of the type User).
    * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
@@ -85,15 +75,17 @@ export class EntityMapperService {
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
    * or the registered name of that class.
+   * @param options Further options for the database query, such as pagination
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
+    options: { skip?: number; limit?: number } = {},
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
     const records = await this.dbResolver
       .getDatabase(ctor.DATABASE)
-      .getAll(ctor.ENTITY_TYPE + ":");
+      .getAll(ctor.ENTITY_TYPE + ":", options);
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 
