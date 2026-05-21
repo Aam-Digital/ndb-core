@@ -29,6 +29,7 @@ import { environment } from "#src/environments/environment";
 import moment from "moment";
 import { AdminOverviewService } from "./admin-overview.service";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -65,6 +66,7 @@ export class AdminOverviewComponent {
   public templates: MenuItem[] = [];
   public configurationMenuItems: MenuItem[] = [];
   expandedSection = computed(() => this.sectionStateService.getExpanded());
+  isUploadingConfig = signal(false);
 
   isSaasEnvironment: boolean;
 
@@ -115,8 +117,40 @@ export class AdminOverviewComponent {
   }
 
   async uploadConfigFile(inputEvent: Event) {
-    const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
-    await this.configService.saveConfig(JSON.parse(loadedFile));
+    this.isUploadingConfig.set(true);
+    try {
+      const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
+      const parsed = JSON.parse(loadedFile);
+      if (Array.isArray(parsed)) {
+        const entities = parsed
+          .map((doc) => {
+            try {
+              return this.entityMapper.entityFromRawDoc(doc);
+            } catch (e) {
+              Logging.warn(
+                "Skipping unknown entity type during config upload",
+                doc["_id"],
+                e,
+              );
+              return null;
+            }
+          })
+          .filter(Boolean);
+        await this.entityMapper.saveAll(entities, true);
+      } else {
+        await this.configService.saveConfig(parsed);
+      }
+      this.snackBar.open($localize`Configuration updated`, undefined, {
+        duration: 3000,
+      });
+    } catch (e) {
+      Logging.error("Failed to upload configuration", e);
+      this.snackBar.open($localize`Upload failed: ${e.message}`, undefined, {
+        duration: 5000,
+      });
+    } finally {
+      this.isUploadingConfig.set(false);
+    }
   }
 
   editConfig() {
