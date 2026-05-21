@@ -1433,5 +1433,8 @@
   "adminNoteDetails.bottomFormHeader": "Bottom Form",
   "4566201598079129347": "add element",
   "8928798545994192560": "Failed to load user account",
-  "931272690246720471": " Event could not be loaded. Please go back and try again. "
+  "931272690246720471": " Event could not be loaded. Please go back and try again. ",
+  "5193604694578359259": " Aam Digital is open-source software, available under {$START_LINK}www.github.com/Aam-Digital{$CLOSE_LINK}. It is developed and maintained mainly by Aam Digital GmbH ({$START_LINK_1}www.aam-digital.com{$CLOSE_LINK}) offering specific hosting, consultancy, training and feature development. Aam Digital is recognized as {$START_LINK_2}Digital Public Good{$CLOSE_LINK}. ",
+  "7584312201752292621": "Latest Changes:",
+  "6488622213810377133": "powered by"
 }
