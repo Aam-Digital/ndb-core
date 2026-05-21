@@ -58,4 +58,13 @@ describe("ImportSelectFileComponent", () => {
 
     expect(component.selectedDelimiter()).toBe(",");
   });
+
+  it("should append an auto-detected delimiter to the dropdown options when it's outside the defaults", () => {
+    expect(component.separatorOptions()).toEqual([",", ";", "|"]);
+
+    component.onFileLoad({ data: [{ x: 1 }], detectedDelimiter: "\t" });
+
+    expect(component.selectedDelimiter()).toBe("\t");
+    expect(component.separatorOptions()).toEqual([",", ";", "|", "\t"]);
+  });
 });

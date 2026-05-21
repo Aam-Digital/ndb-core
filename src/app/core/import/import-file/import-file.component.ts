@@ -5,6 +5,7 @@ import {
   ViewChild,
   ChangeDetectionStrategy,
   signal,
+  computed,
 } from "@angular/core";
 import {
   InputFileComponent,
@@ -39,21 +40,35 @@ export class ImportFileComponent {
   data: ParsedData<any>;
   readonly selectedDelimiter = signal<string | undefined>(undefined);
 
-  readonly separatorOptions: string[] = [",", ";", "|"];
+  private readonly defaultSeparatorOptions: string[] = [",", ";", "|"];
+
+  /**
+   * Dropdown options: the project-supported defaults plus the
+   * auto-detected delimiter if PapaParse picked something outside the
+   * defaults (e.g. tab, ASCII control chars). This keeps the dropdown
+   * in sync with the actual delimiter used to parse the file, so the
+   * user always sees and can override the real value.
+   */
+  readonly separatorOptions = computed<string[]>(() => {
+    const detected = this.selectedDelimiter();
+    if (detected && !this.defaultSeparatorOptions.includes(detected)) {
+      return [...this.defaultSeparatorOptions, detected];
+    }
+    return this.defaultSeparatorOptions;
+  });
 
   @ViewChild(InputFileComponent) inputFileField: InputFileComponent;
 
   /**
    * Handle a freshly parsed file emitted by the input-file child.
-   * Pre-selects the column-separator dropdown to the auto-detected delimiter,
-   * falling back to comma if the detected value isn't one of the supported
-   * options, and forwards the parsed data to the parent step.
+   * Pre-selects the column-separator dropdown to the auto-detected
+   * delimiter (which may be outside the defaults — the dropdown will
+   * include it automatically via `separatorOptions`). Falls back to
+   * comma only when nothing was detected.
    */
   onFileLoad(parsedData: ParsedData<any>) {
     this.data = parsedData;
-    const detected = parsedData.detectedDelimiter;
-    const known = this.separatorOptions.includes(detected);
-    this.selectedDelimiter.set(known ? detected : ",");
+    this.selectedDelimiter.set(parsedData.detectedDelimiter || ",");
     this.dataLoaded.emit(parsedData);
   }
 

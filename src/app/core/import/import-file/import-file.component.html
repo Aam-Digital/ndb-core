@@ -20,7 +20,7 @@
         <app-basic-autocomplete
           [ngModel]="selectedDelimiter()"
           (ngModelChange)="onSeparatorChange($event)"
-          [options]="separatorOptions"
+          [options]="separatorOptions()"
         ></app-basic-autocomplete>
       </mat-form-field>
       <app-help-button
