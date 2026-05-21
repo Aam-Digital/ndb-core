@@ -80,6 +80,8 @@ export class SyncStatusComponent {
         title: $localize`Offline sync disabled — loading data directly from server`,
         pending: false,
       });
+      this._backgroundProcesses.next(currentProcesses);
+      return;
     } else {
       currentProcesses.push({
         title: $localize`Database up-to-date`,

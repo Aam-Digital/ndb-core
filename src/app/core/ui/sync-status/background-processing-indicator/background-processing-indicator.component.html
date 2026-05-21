@@ -23,31 +23,28 @@
       </div>
     }
 
-    @if (filteredProcesses().length > 1) {
-      <div class="mat-subtitle-2 details-line multiline">
-        {{ consolidatedMessage() }}
-      </div>
-    } @else {
-      @for (process of filteredProcesses(); track process.title) {
-        <div
-          class="flex-row gap-small align-center mat-subtitle-2 details-line"
-        >
-          <div>
-            @if (process.pending) {
-              <mat-spinner [diameter]="20"></mat-spinner>
-            }
-            @if (!process.pending) {
-              <fa-icon icon="check" class="process-checkmark"></fa-icon>
-            }
-          </div>
-          <div class="truncate-text">
-            {{ process.title }}
-            @if (process.details) {
-              <span>({{ process.details }})</span>
-            }
-          </div>
+    @for (process of filteredProcesses(); track process.title) {
+      <div
+        class="flex-row gap-small align-center mat-subtitle-2 details-line"
+        [class.online-only-message]="
+          !showManualSync() && filteredProcesses().length === 1
+        "
+      >
+        <div>
+          @if (process.pending) {
+            <mat-spinner [diameter]="20"></mat-spinner>
+          }
+          @if (!process.pending) {
+            <fa-icon icon="check" class="process-checkmark"></fa-icon>
+          }
         </div>
-      }
+        <div>
+          {{ process.title }}
+          @if (process.details) {
+            <span class="truncate-text">({{ process.details }})</span>
+          }
+        </div>
+      </div>
     }
 
     <div class="full-width flex-row align-center gap-small">

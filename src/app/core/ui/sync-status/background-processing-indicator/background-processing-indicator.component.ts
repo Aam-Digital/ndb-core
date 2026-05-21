@@ -62,23 +62,6 @@ export class BackgroundProcessingIndicatorComponent {
     this.summarizeProcesses(this.currentProcesses()),
   );
 
-  /** consolidated multi-line message combining current processes when appropriate */
-  consolidatedMessage = computed(() => {
-    const procs = this.filteredProcesses();
-    if (!procs || procs.length === 0) return "";
-    // If only a single process is present, show it as-is
-    if (procs.length === 1) return procs[0].title;
-
-    // For multiple processes, remove indexing entries to avoid noisy messages
-    const visible = procs.filter((p) => !/index/i.test(p.title));
-    if (visible.length === 0) {
-      // fallback to first process if all were indexing
-      return procs[0].title;
-    }
-    // Join titles into a single readable block separated by line breaks
-    return visible.map((p) => p.title).join(". \n");
-  });
-
   /** whether to show the manual sync button (hide in pure online-only mode) */
   showManualSync = computed(
     () => environment.session_type !== SessionType.online,
