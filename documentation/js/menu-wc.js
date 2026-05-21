@@ -1380,6 +1380,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/PillComponent.html" data-type="entity-link" >PillComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/PoweredByComponent.html" data-type="entity-link" >PoweredByComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/PrimaryActionComponent.html" data-type="entity-link" >PrimaryActionComponent</a>
                             </li>
                             <li class="link">
