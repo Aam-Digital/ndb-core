@@ -233,6 +233,10 @@ and loaded. This is not to be used to mock database/anything related to the Sche
                                 <a href="#saveAll" >saveAll</a>
                             </li>
                             <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#entityFromRawDoc" >entityFromRawDoc</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Protected</span>
                                 <a href="#resolveConstructor" >resolveConstructor</a>
                             </li>
@@ -1323,6 +1327,84 @@ for testing and debugging.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="entityFromRawDoc"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>entityFromRawDoc</b></span>
+                        <a href="#entityFromRawDoc"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>entityFromRawDoc(doc: Record<string | unknown>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:94</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Reconstruct an Entity instance from a raw serialized document (e.g. from a JSON export).
+The entity type is detected from the <code>_id</code> prefix of the document.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>doc</td>
+                                            <td>
+                                                        <code>Record&lt;string | unknown&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="resolveConstructor"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -1347,7 +1429,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:225</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:235</a></code>
 </div>
                         </td>
                     </tr>
@@ -1430,7 +1512,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:256</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:266</a></code>
 </div>
                         </td>
                     </tr>

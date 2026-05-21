@@ -170,6 +170,10 @@ simply treat them as normal javascript class instances without worrying about da
                         <ul class="index-list">
                             <li>
                                     <span class="modifier">Public</span>
+                                <a href="#entityFromRawDoc" >entityFromRawDoc</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
                                 <a href="#load" >load</a>
                             </li>
@@ -223,6 +227,78 @@ simply treat them as normal javascript class instances without worrying about da
     <h3 id="methods">
         Methods
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityFromRawDoc"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>entityFromRawDoc</b></span>
+                        <a href="#entityFromRawDoc"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>entityFromRawDoc(doc: Record<string | unknown>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:94</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Reconstruct an Entity instance from a raw serialized document (e.g. from a JSON export).
+The entity type is detected from the <code>_id</code> prefix of the document.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>doc</td>
+                                            <td>
+                                                        <code>Record&lt;string | unknown&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -437,8 +513,8 @@ or the registered name of that class.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="119"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:119</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="129"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:129</a></div>
                         </td>
                     </tr>
 
@@ -531,8 +607,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="218"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:218</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="228"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:228</a></div>
                         </td>
                     </tr>
 
@@ -615,8 +691,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="225"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:225</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="235"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:235</a></div>
                         </td>
                     </tr>
 
@@ -693,8 +769,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="147"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:147</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="157"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:157</a></div>
                         </td>
                     </tr>
 
@@ -802,8 +878,8 @@ if a conflict occurs without the forceUpdate flag being set, the save will fail,
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="173"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:173</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:183</a></div>
                         </td>
                     </tr>
 
@@ -905,8 +981,8 @@ if a conflict occurs without the forceUpdate flag being set, the save will fail,
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="256"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:256</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="266"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:266</a></div>
                         </td>
                     </tr>
 
@@ -1028,6 +1104,16 @@ export class EntityMapperService {
       .getDatabase(ctor.DATABASE)
       .getAll(ctor.ENTITY_TYPE + &quot;:&quot;);
     return records.map((rec) &#x3D;&gt; this.transformToEntityFormat(rec, ctor));
+  }
+
+  /**
+   * Reconstruct an Entity instance from a raw serialized document (e.g. from a JSON export).
+   * The entity type is detected from the &#x60;_id&#x60; prefix of the document.
+   */
+  public entityFromRawDoc(doc: Record&lt;string, unknown&gt;): Entity {
+    const typePrefix &#x3D; (doc[&quot;_id&quot;] as string)?.split(&quot;:&quot;)[0];
+    const ctor &#x3D; this.registry.get(typePrefix);
+    return this.transformToEntityFormat(doc, ctor);
   }
 
   private transformToEntityFormat&lt;T extends Entity&gt;(
