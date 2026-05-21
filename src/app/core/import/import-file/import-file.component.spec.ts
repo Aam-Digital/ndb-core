@@ -35,4 +35,27 @@ describe("ImportSelectFileComponent", () => {
     expect(component.data).toBeUndefined();
     expect(component.inputFileField.formControl.getRawValue()).toEqual(null);
   });
+
+  it("should ask the input-file to re-parse when the user changes the delimiter", () => {
+    component.onFileLoad({ data: [{ x: 1 }], detectedDelimiter: "," });
+    const reparseSpy = vi.spyOn(
+      component.inputFileField,
+      "reparseWithDelimiter",
+    );
+
+    component.onSeparatorChange(";");
+
+    expect(component.selectedDelimiter()).toBe(";");
+    expect(reparseSpy).toHaveBeenCalledWith(";");
+  });
+
+  it("should reset the selected delimiter to the new auto-detected value when another file is loaded", () => {
+    component.onFileLoad({ data: [{ x: 1 }], detectedDelimiter: "," });
+    component.onSeparatorChange(";");
+    expect(component.selectedDelimiter()).toBe(";");
+
+    component.onFileLoad({ data: [{ y: 2 }], detectedDelimiter: "," });
+
+    expect(component.selectedDelimiter()).toBe(",");
+  });
 });
