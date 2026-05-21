@@ -83,6 +83,7 @@ export class InputFileComponent<T = any> {
         this.lastFilename,
         delimiter,
       );
+      this.formControl.setErrors(null);
       this.fileLoad.emit(this.parsedData);
     } catch (errors) {
       this.formControl.setErrors(errors);
