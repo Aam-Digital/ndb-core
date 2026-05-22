@@ -116,7 +116,7 @@ export class ImportComponent {
     this.rawData = data.data;
     this.updateImportSettings({ filename: data.filename });
 
-    if (this.importSettings().columnMapping) {
+    if (this.importSettings().columnMapping?.some((m) => m.propertyName)) {
       this.alertService.addInfo(
         $localize`:alert info after file load:Column Mappings have been reset`,
       );

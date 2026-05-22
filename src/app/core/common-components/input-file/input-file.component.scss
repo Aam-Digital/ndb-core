@@ -1,0 +1,39 @@
+.input-file-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.sheet-picker {
+  min-width: 320px;
+}
+
+.sheet-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.sheet-option-name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet-option-meta {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+
+.sheet-option-outlier {
+  color: #f57c00;
+
+  .sheet-option-meta {
+    color: #f57c00;
+  }
+}

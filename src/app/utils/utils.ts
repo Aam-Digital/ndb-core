@@ -137,6 +137,16 @@ export function readFile(file: Blob): Promise<string> {
   });
 }
 
+export function readFileAsArrayBuffer(file: Blob): Promise<ArrayBuffer> {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", () =>
+      resolve(fileReader.result as ArrayBuffer),
+    );
+    fileReader.readAsArrayBuffer(file);
+  });
+}
+
 export function compareEnums(
   a: ConfigurableEnumValue,
   b: ConfigurableEnumValue,
