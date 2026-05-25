@@ -7,7 +7,8 @@
   align-items: start;
 }
 
-.export-available, .export-selected {
+.export-available,
+.export-selected {
   padding: 0.5rem 0.75rem;
 }
 
@@ -19,11 +20,11 @@
 }
 
 .selected-list {
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 4px;
   min-height: 6rem;
   padding: 0.5rem;
-  background: rgba(0,0,0,0.02);
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .selected-item {
