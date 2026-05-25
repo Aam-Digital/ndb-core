@@ -65,6 +65,15 @@
               : 0
           "
         ></mat-progress-bar>
+
+        @if (isBulk()) {
+          <p class="hint" i18n>
+            Multiple files will be downloaded. If only the first one arrives,
+            your browser may be blocking the rest — check your address bar, the
+            top of this page, or your browser's site settings to allow multiple
+            downloads from this site.
+          </p>
+        }
       }
 
       @default {
@@ -95,8 +104,10 @@
           }
           @if (isBulk()) {
             <p class="hint" i18n>
-              If files are missing, check your browser's download prompt to
-              allow multiple downloads from this site.
+              If only the first file downloaded, your browser may be blocking
+              the rest. Check your address bar, the top of this page, or your
+              browser's site settings to allow multiple downloads from this
+              site, then run the bulk action again.
             </p>
           }
         </div>
