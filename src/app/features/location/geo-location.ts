@@ -13,7 +13,9 @@ export interface GeoLocation {
   country?: string;
 }
 
-export function enrichGeoLocation(location: GeoLocation | undefined): GeoLocation | undefined {
+export function enrichGeoLocation(
+  location: GeoLocation | undefined,
+): GeoLocation | undefined {
   if (!location?.geoLookup) {
     return location;
   }

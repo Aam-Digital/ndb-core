@@ -160,7 +160,8 @@ export class GeoService {
       // populate common top-level address parts for easier templating
       result.road = addr.road ?? undefined;
       result.house_number = addr.house_number ?? undefined;
-      result.postcode = addr.postcode != null ? String(addr.postcode) : undefined;
+      result.postcode =
+        addr.postcode != null ? String(addr.postcode) : undefined;
       result.city = this.getCity(addr) || undefined;
       result.country = addr.country ?? undefined;
     }
