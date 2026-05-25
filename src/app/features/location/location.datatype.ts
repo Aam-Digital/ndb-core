@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { lastValueFrom } from "rxjs";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
-import { GeoLocation } from "./geo-location";
+import { enrichGeoLocation, GeoLocation } from "./geo-location";
 import { GeoResult, GeoService } from "./geo.service";
 import { LocationImportConfig } from "./location-import-config/location-import-config.component";
 
@@ -44,7 +44,7 @@ export class LocationDatatype extends DefaultDatatype<
       value.locationString = value.geoLookup?.display_name ?? "";
     }
 
-    return value;
+    return enrichGeoLocation(value);
   }
 
   override async importMapFunction(
@@ -65,9 +65,9 @@ export class LocationDatatype extends DefaultDatatype<
       }
     }
 
-    return {
+    return enrichGeoLocation({
       locationString: val,
       geoLookup: geoResults ? geoResults[0] : undefined,
-    };
+    });
   }
 }

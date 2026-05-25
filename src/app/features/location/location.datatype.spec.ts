@@ -50,6 +50,11 @@ describe("Schema data type: location", () => {
         lon: 2,
         display_name: "1, test address",
       },
+      road: undefined,
+      house_number: undefined,
+      postcode: undefined,
+      city: undefined,
+      country: undefined,
     };
 
     expect(service.transformToObjectFormat(oldLocationFormat as any)).toEqual(
@@ -79,11 +84,21 @@ describe("Schema data type: location", () => {
       lat: 1,
       lon: 2,
       display_name: importedAddress,
+      road: "MyStreet",
+      house_number: "21",
+      postcode: "12345",
+      city: "MyCity",
+      country: "Germany",
     };
 
     await testImportMapping(importedAddress, [locationResult], {
       locationString: importedAddress,
       geoLookup: locationResult,
+      road: "MyStreet",
+      house_number: "21",
+      postcode: "12345",
+      city: "MyCity",
+      country: "Germany",
     });
   });
 
@@ -93,6 +108,10 @@ describe("Schema data type: location", () => {
       lat: 1,
       lon: 2,
       display_name: importedAddress,
+      road: "MyStreet",
+      house_number: "21",
+      postcode: "12345",
+      city: "MyCity",
     };
 
     await testImportMapping(
@@ -101,6 +120,10 @@ describe("Schema data type: location", () => {
       {
         locationString: importedAddress,
         geoLookup: locationResult,
+        road: "MyStreet",
+        house_number: "21",
+        postcode: "12345",
+        city: "MyCity",
       },
     );
   });
@@ -171,6 +194,11 @@ describe("Schema data type: location", () => {
         lon: 2,
         display_name: "1, test address",
       },
+      road: undefined,
+      house_number: undefined,
+      postcode: undefined,
+      city: undefined,
+      country: undefined,
     };
     expect(service.transformToObjectFormat(location1)).toEqual(expected1);
 
@@ -190,7 +218,35 @@ describe("Schema data type: location", () => {
         lon: 2,
         display_name: "2, test address",
       },
+      road: undefined,
+      house_number: undefined,
+      postcode: undefined,
+      city: undefined,
+      country: undefined,
     };
     expect(service.transformToObjectFormat(location2)).toEqual(expected2);
+  });
+
+  it("should preserve top-level address parts when loading already enriched locations", () => {
+    const location: GeoLocation = {
+      locationString: "21 MyStreet, MyCity",
+      geoLookup: {
+        lat: 1,
+        lon: 2,
+        display_name: "21 MyStreet, MyCity",
+        road: "MyStreet",
+        house_number: "21",
+        postcode: "12345",
+        city: "MyCity",
+        country: "Germany",
+      },
+      road: "MyStreet",
+      house_number: "21",
+      postcode: "12345",
+      city: "MyCity",
+      country: "Germany",
+    };
+
+    expect(service.transformToObjectFormat(location)).toEqual(location);
   });
 });

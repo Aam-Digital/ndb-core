@@ -24,6 +24,12 @@ import {
 
 export interface GeoResult extends Coordinates {
   display_name: string;
+  // top-level, commonly-used address parts populated from `address` when available
+  road?: string;
+  house_number?: string;
+  postcode?: string;
+  city?: string;
+  country?: string;
 }
 
 /**
@@ -121,7 +127,7 @@ export class GeoService {
   }
 
   private getCity(addr: OpenStreetMapsSearchResult["address"]): string {
-    return addr.city ?? addr.town ?? "";
+    return addr.city ?? addr.village ?? addr.town ?? "";
   }
 
   private formatStreet(addr: OpenStreetMapsSearchResult["address"]): string {
@@ -151,6 +157,12 @@ export class GeoService {
       ].filter((x) => !!x && x !== "undefined");
 
       result.display_name = displayParts.join(", ");
+      // populate common top-level address parts for easier templating
+      result.road = addr.road ?? undefined;
+      result.house_number = addr.house_number ?? undefined;
+      result.postcode = addr.postcode != null ? String(addr.postcode) : undefined;
+      result.city = this.getCity(addr) || undefined;
+      result.country = addr.country ?? undefined;
     }
     return result;
   }
@@ -194,8 +206,9 @@ type OpenStreetMapsSearchResult = GeoResult & {
     suburb?: string;
     borough?: string;
     city?: string;
+    village?: string;
     town?: string;
-    postcode?: number;
+    postcode?: string | number;
     country?: string;
     country_code?: string;
   };

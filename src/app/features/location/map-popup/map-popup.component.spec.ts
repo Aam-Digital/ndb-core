@@ -129,12 +129,28 @@ describe("MapPopupComponent", () => {
       );
 
       const newLocation: GeoLocation = {
-        geoLookup: { lat: 1, lon: 2, display_name: "x" },
+        geoLookup: {
+          lat: 1,
+          lon: 2,
+          display_name: "x",
+          road: "Main St",
+          house_number: "42",
+          postcode: "12345",
+          city: "Berlin",
+          country: "Germany",
+        },
         locationString: "x",
       };
       component.updateLocation(newLocation);
       await vi.advanceTimersByTimeAsync(0);
-      expect(component.selectedLocation).toEqual(newLocation);
+      expect(component.selectedLocation).toEqual({
+        ...newLocation,
+        road: "Main St",
+        house_number: "42",
+        postcode: "12345",
+        city: "Berlin",
+        country: "Germany",
+      });
       expect(updatedMarkedLocations).toEqual([newLocation.geoLookup]);
 
       component.updateLocation(undefined);

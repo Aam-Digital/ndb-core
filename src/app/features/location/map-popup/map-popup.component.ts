@@ -14,7 +14,7 @@ import { GeoResult, GeoService } from "../geo.service";
 import { AddressEditComponent } from "../address-edit/address-edit.component";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
-import { GeoLocation } from "../geo-location";
+import { enrichGeoLocation, GeoLocation } from "../geo-location";
 
 export interface MapPopupConfig {
   marked?: Coordinates[];
@@ -213,17 +213,17 @@ export class MapPopupComponent {
   }
 
   updateLocation(event: GeoLocation | undefined) {
-    let updatedLocation = event;
+    let updatedLocation = enrichGeoLocation(event);
 
-    const displayName = event?.geoLookup?.display_name;
+    const displayName = updatedLocation?.geoLookup?.display_name;
     const hasManualAddress =
-      event?.locationString !== undefined &&
-      event?.locationString !== null &&
-      event?.locationString !== "";
+      updatedLocation?.locationString !== undefined &&
+      updatedLocation?.locationString !== null &&
+      updatedLocation?.locationString !== "";
 
     if (displayName && !hasManualAddress) {
       updatedLocation = {
-        ...(event ?? {}),
+        ...(updatedLocation ?? {}),
         locationString: displayName,
       };
     }

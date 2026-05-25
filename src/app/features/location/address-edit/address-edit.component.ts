@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult } from "../geo.service";
-import { GeoLocation } from "../geo-location";
+import { enrichGeoLocation, GeoLocation } from "../geo-location";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -56,7 +56,7 @@ export class AddressEditComponent {
   }
 
   updateLocation(selected: GeoLocation | undefined) {
-    this.selectedLocation.set(selected);
+    this.selectedLocation.set(enrichGeoLocation(selected));
     this.manualAddressEnabled.set(
       this.selectedLocation()?.geoLookup?.display_name !==
         this.selectedLocation()?.locationString,
@@ -78,6 +78,11 @@ export class AddressEditComponent {
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: this.selectedLocation()?.geoLookup,
+      road: this.selectedLocation()?.road,
+      house_number: this.selectedLocation()?.house_number,
+      postcode: this.selectedLocation()?.postcode,
+      city: this.selectedLocation()?.city,
+      country: this.selectedLocation()?.country,
     });
   }
 
@@ -161,6 +166,14 @@ export class AddressEditComponent {
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: value?.geoLookup,
+      road: value?.geoLookup?.road,
+      house_number: value?.geoLookup?.house_number,
+      postcode:
+        value?.geoLookup?.postcode != null
+          ? String(value.geoLookup.postcode)
+          : undefined,
+      city: value?.geoLookup?.city,
+      country: value?.geoLookup?.country,
     });
   }
 
@@ -168,6 +181,11 @@ export class AddressEditComponent {
     const newLocation: GeoLocation = {
       locationString: geoResult.display_name,
       geoLookup: geoResult,
+      road: geoResult.road,
+      house_number: geoResult.house_number,
+      postcode: geoResult.postcode,
+      city: geoResult.city,
+      country: geoResult.country,
     };
     // For GPS, we don't have user input, so just use the display name
     this.updateLocation(newLocation);
