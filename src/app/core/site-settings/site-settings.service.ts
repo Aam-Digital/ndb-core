@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { Observable, skipWhile } from "rxjs";
-import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
+import { distinctUntilChanged, map, shareReplay, take } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -11,6 +11,7 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -36,6 +37,8 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
   dateFormat = this.getPropertyObservable("dateFormat");
 
+  private entityConfigReady = inject(EntityConfigReadyService);
+
   constructor() {
     const entityMapper = inject(EntityMapperService);
 
@@ -43,10 +46,14 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.init();
 
-    super.startLoading().catch((err) => {
-      const error = new Error("Failed to load site settings", { cause: err });
-      error.name = "SiteSettingsLoadError";
-      Logging.error(error);
+    // Wait for dynamic entity schemas to be applied before loading from DB,
+    // so config-defined SiteSettings fields are transformed correctly.
+    this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() => {
+      super.startLoading().catch((err) => {
+        const error = new Error("Failed to load site settings", { cause: err });
+        error.name = "SiteSettingsLoadError";
+        Logging.error(error);
+      });
     });
   }
 
@@ -60,6 +67,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     this.subscribeColorChanges("error");
     this.subscribeDateFormatChanges();
 
+    // Apply cached branding early so login/setup screens use the latest known theme.
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
   }

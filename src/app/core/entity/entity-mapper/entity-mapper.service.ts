@@ -87,6 +87,16 @@ export class EntityMapperService {
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 
+  /**
+   * Reconstruct an Entity instance from a raw serialized document (e.g. from a JSON export).
+   * The entity type is detected from the `_id` prefix of the document.
+   */
+  public entityFromRawDoc(doc: Record<string, unknown>): Entity {
+    const typePrefix = (doc["_id"] as string)?.split(":")[0];
+    const ctor = this.registry.get(typePrefix);
+    return this.transformToEntityFormat(doc, ctor);
+  }
+
   private transformToEntityFormat<T extends Entity>(
     record: any,
     ctor: EntityConstructor<T>,

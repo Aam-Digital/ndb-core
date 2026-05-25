@@ -1,9 +1,8 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  Output,
   ChangeDetectionStrategy,
+  model,
+  signal,
 } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
@@ -31,18 +30,15 @@ import { EntityTypeSelectComponent } from "../../entity/entity-type-select/entit
 })
 export class ImportEntityTypeComponent {
   /** user selected entity type */
-  @Output() entityTypeChange = new EventEmitter<string>();
-
-  /** pre-selected entity type */
-  @Input() entityType: string;
+  entityType = model<string>();
 
   /**
    * Whether to show all, including administrative, entity types for selection.
    */
-  expertMode: boolean = false;
+  expertMode = signal(false);
 
   onSelectedTypeChange(newType) {
-    this.entityTypeChange.emit(newType);
+    this.entityType.set(newType);
   }
 
   // TODO: infer entityType automatically -> pre-select + UI explanatory text
