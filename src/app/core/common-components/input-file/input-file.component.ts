@@ -112,8 +112,13 @@ export class InputFileComponent<T = any> {
    * Re-parse the currently loaded workbook using the chosen sheet
    * and re-emit `fileLoad` with the new data. No-op for non-xlsx files
    * or when the workbook has been cleared.
+   *
+   * Accepts `string | string[]` to align with the autocomplete's `valueChange`
+   * typing; only single-select is wired, so an array is normalized to its first element.
    */
-  async onSheetChange(sheetName: string): Promise<void> {
+  async onSheetChange(value: string | string[]): Promise<void> {
+    const sheetName = Array.isArray(value) ? value[0] : value;
+    if (!sheetName) return;
     if (!this.currentWorkbook) return;
     const sheet = this.currentWorkbook.getWorksheet(sheetName);
     if (!sheet) return;
@@ -221,12 +226,17 @@ export class InputFileComponent<T = any> {
    * Converts an exceljs `Worksheet` into the same `ParsedData` shape that the
    * CSV path produces: row 1 is treated as the header and subsequent rows
    * become objects keyed by header name.
+   *
+   * Tracks each header's actual column index so empty header cells don't
+   * desynchronize the lookup when reading data rows.
    */
   private worksheetToParsedData(sheet: Worksheet): ParsedData<T> {
     const headerRow = sheet.getRow(1);
     const fields: string[] = [];
-    headerRow.eachCell({ includeEmpty: false }, (cell) => {
+    const columnIndices: number[] = [];
+    headerRow.eachCell({ includeEmpty: false }, (cell, colNumber) => {
       fields.push(String(cell.value ?? "").trim());
+      columnIndices.push(colNumber);
     });
 
     const data: any[] = [];
@@ -234,7 +244,7 @@ export class InputFileComponent<T = any> {
       if (rowNumber === 1) return;
       const record: Record<string, any> = {};
       fields.forEach((field, idx) => {
-        const cellValue = row.getCell(idx + 1).value;
+        const cellValue = row.getCell(columnIndices[idx]).value;
         record[field] = normalizeCellValue(cellValue);
       });
       data.push(record);
