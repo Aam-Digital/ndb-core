@@ -18,7 +18,7 @@ test("Import children with entity reference, date and enum column mappings", asy
 
   // Navigate to the Import page
   await page.getByRole("navigation").getByText("Import").click();
-  await expect(page.getByText("Select a .csv file")).toBeVisible();
+  await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
 
   // Step 1: Upload a CSV file
   const csvContent = [
