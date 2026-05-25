@@ -42,6 +42,8 @@ import { DuplicateRecordService } from "../duplicate-records/duplicate-records.s
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { buildExportColumnResolvers } from "../../export/download-service/download.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
@@ -114,6 +116,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
+  private entitySchemaService = inject(EntitySchemaService);
   private readonly formDialog = inject(FormDialogService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -427,11 +430,86 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   openExportDialog() {
+    const cols = this.columnsToDisplay ?? [];
+    const availableColumns = this.columns() ?? [];
+    const schema = this.entityConstructor()?.schema;
+    const toQueryKey = (query: string) =>
+      query.startsWith(".") ? query.slice(1) : query;
+
+    // Always derive preselection from currently visible list columns (active tab/group).
+    const visibleColumnsSelection = cols.map((colId) => {
+      const colConfig = availableColumns.find((c) =>
+        typeof c === "string" ? c === colId : c.id === colId,
+      );
+      let label: string | undefined = undefined;
+      if (colConfig && typeof colConfig !== "string") {
+        label = colConfig.label;
+      }
+      if (!label && schema?.has(colId)) {
+        label = schema.get(colId)?.label;
+      }
+      return { query: `.${colId}`, label } as ExportColumnConfig;
+    });
+
+    // Available columns: prioritize visible columns first so their labels win over
+    // potentially outdated static export labels for the same query key.
+    const initialExportConfig = [
+      ...visibleColumnsSelection,
+      ...(this.exportConfig() ?? []),
+    ];
+
+    const appendUnique = (
+      list: ExportColumnConfig[],
+      col: ExportColumnConfig,
+    ) => {
+      const key = toQueryKey(col.query);
+      if (!list.some((c) => toQueryKey(c.query) === key)) {
+        list.push(col);
+      }
+    };
+
+    const allAvailableColumns = (() => {
+      const result: ExportColumnConfig[] = [];
+
+      // Keep only one entry per logical field key.
+      for (const col of initialExportConfig) {
+        appendUnique(result, col);
+      }
+
+      const entitySchema = this.entityConstructor()?.schema;
+      if (!entitySchema) return result;
+
+      const resolvers = buildExportColumnResolvers(
+        entitySchema,
+        this.entitySchemaService,
+      );
+      for (const r of resolvers) {
+        const keySuffix = r.column.keySuffix ?? "";
+        // only include additional resolver columns (non-empty suffix)
+        if (keySuffix === "") continue;
+        appendUnique(result, {
+          query: `.${r.sourceFieldId}${keySuffix}`,
+          label: r.column.label,
+        });
+      }
+
+      return result;
+    })();
+
+    const visibleQueries = new Set(
+      visibleColumnsSelection.map((c) => toQueryKey(c.query)),
+    );
+    // Use references from allAvailableColumns so checkbox state and selected list stay in sync.
+    const preselectedExportConfig = allAvailableColumns.filter((c) =>
+      visibleQueries.has(toQueryKey(c.query)),
+    );
+
     this.dialog.open(ExportDialogComponent, {
       data: {
         allEntities: this.allEntities(),
         filteredData: this.filteredData,
-        exportConfig: this.exportConfig(),
+        exportConfig: allAvailableColumns,
+        preselectedExportConfig,
         filename: (this.title() ?? "").replaceAll(" ", ""),
       },
     });

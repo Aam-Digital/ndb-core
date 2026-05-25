@@ -38,6 +38,83 @@
       </mat-radio-button>
     </mat-radio-group>
   }
+
+  @if (data.exportConfig) {
+    <p i18n="Export dialog columns label">Columns</p>
+    <div class="export-columns-grid">
+      <div class="export-available">
+        <p i18n>Available columns</p>
+        @for (col of data.exportConfig; track col.query; let i = $index) {
+          <div class="export-column-row">
+            <input
+              type="checkbox"
+              [checked]="isSelected(col)"
+              (change)="toggleColumn(col)"
+              aria-label="Toggle column"
+            />
+            <span class="export-column-label">
+              {{ col.label ?? col.query }}
+            </span>
+          </div>
+        }
+        <div class="export-columns-actions">
+          <button
+            mat-raised-button
+            type="button"
+            (click)="includeAll()"
+            color="accent"
+            i18n
+          >
+            Include all columns
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="clearSelection()"
+            i18n
+          >
+            Clear selection
+          </button>
+        </div>
+      </div>
+
+      <div class="export-selected">
+        <p i18n>Selected & reorder</p>
+        <div
+          cdkDropList
+          class="selected-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          @for (
+            col of selectedExportConfig() ?? data.exportConfig;
+            track col.query;
+            let i = $index
+          ) {
+            <div class="export-column-row selected-item" cdkDrag>
+              <div cdkDragHandle>
+                <app-fa-dynamic-icon
+                  class="drag-handle"
+                  icon="grip-vertical"
+                ></app-fa-dynamic-icon>
+              </div>
+              <span class="export-column-label">
+                {{ col.label ?? col.query }}
+              </span>
+              <button
+                mat-icon-button
+                color="black"
+                aria-label="Remove column"
+                i18n-aria-label
+                (click)="toggleColumn(col)"
+              >
+                <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
 @if (downloadError()) {

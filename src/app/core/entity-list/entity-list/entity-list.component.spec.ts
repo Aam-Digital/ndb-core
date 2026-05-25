@@ -6,6 +6,7 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
@@ -275,4 +276,109 @@ describe("EntityListComponent", () => {
     }
     fixture.detectChanges();
   }
+
+  it("should open export dialog with exportConfig derived from visible columns", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      // Provide columns with labels so derived exportConfig contains labels
+      fixture.componentRef.setInput("columns", [
+        { id: "name", label: "Name", viewComponent: "DisplayText" },
+        { id: "age", label: "Age", viewComponent: "DisplayText" },
+        { id: "category", label: "Category", viewComponent: "DisplayText" },
+      ]);
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Simulate current visible columns
+      component.columnsToDisplay = ["name", "age"];
+
+      const matDialog = TestBed.inject(MatDialog);
+      const openSpy = vi
+        .spyOn(matDialog, "open")
+        .mockImplementation(
+          () => ({ afterClosed: () => ({ toPromise: async () => {} }) }) as any,
+        );
+
+      component.openExportDialog();
+
+      expect(openSpy).toHaveBeenCalled();
+      const callArgs = openSpy.mock.calls[0][1] as any;
+      expect(callArgs.data).toBeDefined();
+      const exportConfig = callArgs.data.exportConfig as any[];
+      // The initial exportConfig should include the visible columns; additional
+      // datatype-provided export columns may also be appended, so assert that
+      // the expected visible columns are present.
+      expect(exportConfig).toEqual(
+        expect.arrayContaining([
+          { query: ".name", label: "Name" },
+          { query: ".age", label: "Age" },
+        ]),
+      );
+      const preselectedExportConfig = callArgs.data.preselectedExportConfig as
+        | any[]
+        | undefined;
+      expect(preselectedExportConfig).toEqual(
+        expect.arrayContaining([
+          { query: ".name", label: "Name" },
+          { query: ".age", label: "Age" },
+        ]),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should preselect visible columns even when static exportConfig is set", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      fixture.componentRef.setInput("columns", [
+        { id: "name", label: "Name", viewComponent: "DisplayText" },
+        { id: "age", label: "Age", viewComponent: "DisplayText" },
+        { id: "category", label: "Category", viewComponent: "DisplayText" },
+      ]);
+      fixture.componentRef.setInput("exportConfig", [
+        { query: ".category", label: "Category" },
+      ]);
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      component.columnsToDisplay = ["name", "age"];
+
+      const matDialog = TestBed.inject(MatDialog);
+      const openSpy = vi
+        .spyOn(matDialog, "open")
+        .mockImplementation(
+          () => ({ afterClosed: () => ({ toPromise: async () => {} }) }) as any,
+        );
+
+      component.openExportDialog();
+
+      expect(openSpy).toHaveBeenCalled();
+      const callArgs = openSpy.mock.calls[0][1] as any;
+      const exportConfig = callArgs.data.exportConfig as any[];
+      const preselectedExportConfig = callArgs.data.preselectedExportConfig as
+        | any[]
+        | undefined;
+
+      // available columns should include configured exportConfig and visible columns
+      expect(exportConfig).toEqual(
+        expect.arrayContaining([
+          { query: ".category", label: "Category" },
+          { query: ".name", label: "Name" },
+          { query: ".age", label: "Age" },
+        ]),
+      );
+      // preselection should follow active tab columns
+      expect(preselectedExportConfig).toEqual(
+        expect.arrayContaining([
+          { query: ".name", label: "Name" },
+          { query: ".age", label: "Age" },
+        ]),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

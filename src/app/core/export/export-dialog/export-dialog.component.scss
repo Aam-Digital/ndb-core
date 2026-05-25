@@ -1,0 +1,52 @@
+@use "variables/colors";
+
+.export-columns-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.export-available, .export-selected {
+  padding: 0.5rem 0.75rem;
+}
+
+.export-column-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.25rem;
+}
+
+.selected-list {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 4px;
+  min-height: 6rem;
+  padding: 0.5rem;
+  background: rgba(0,0,0,0.02);
+}
+
+.selected-item {
+  display: flex;
+  align-items: center;
+}
+
+.drag-handle {
+  cursor: move;
+  color: colors.$accent;
+  font-size: 1rem;
+}
+
+.drag-handle:active {
+  cursor: move;
+}
+
+.export-column-label {
+  flex: 1 1 auto;
+}
+
+.export-columns-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
