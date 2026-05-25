@@ -37,10 +37,7 @@
         [valueMapper]="sheetToValue"
       >
         <ng-template let-sheet>
-          <span
-            class="sheet-option"
-            [class.sheet-option-outlier]="isOutlierSheet(sheet)"
-          >
+          <span class="sheet-option">
             <span class="sheet-option-name">{{ sheet.name }}</span>
             <span class="sheet-option-meta">
               {{ sheet.rowCount }}&nbsp;<ng-container

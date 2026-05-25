@@ -17,11 +17,19 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Workbook, Worksheet } from "exceljs";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 
+/** File extensions accepted by the input-file component. */
 export type SupportedFileType = "csv" | "json" | "xlsx";
 
+/**
+ * Lightweight description of a worksheet inside a loaded xlsx workbook,
+ * used to populate the inline sheet picker for multi-sheet files.
+ */
 export interface SheetInfo {
+  /** Worksheet name as shown to the user in the picker. */
   name: string;
+  /** Data row count, excluding the header row. */
   rowCount: number;
+  /** Number of populated columns in the worksheet. */
   columnCount: number;
 }
 
@@ -51,7 +59,16 @@ export class InputFileComponent<T = any> {
   /** returns parsed data as an object on completing load after user selects a file */
   fileLoad = output<ParsedData<T>>();
 
-  fileType = input<SupportedFileType[]>(["csv"]);
+  /**
+   * Allowed file types. Accepts a single value (legacy) or an array.
+   * String input is normalized to a single-element array.
+   */
+  fileType = input<
+    SupportedFileType[],
+    SupportedFileType | SupportedFileType[]
+  >(["csv"], {
+    transform: (value) => (Array.isArray(value) ? value : [value]),
+  });
 
   /** Sheets available in the currently loaded xlsx workbook (empty otherwise). */
   readonly availableSheets = signal<SheetInfo[]>([]);
@@ -85,13 +102,17 @@ export class InputFileComponent<T = any> {
     }
   }
 
-  isOutlierSheet(sheet: SheetInfo): boolean {
-    return sheet.columnCount < 2;
-  }
-
+  /** Display string for a sheet option in the inline picker. */
   readonly sheetToLabel = (sheet: SheetInfo) => sheet?.name;
+
+  /** Form value for a sheet option in the inline picker. */
   readonly sheetToValue = (sheet: SheetInfo) => sheet?.name;
 
+  /**
+   * Re-parse the currently loaded workbook using the chosen sheet
+   * and re-emit `fileLoad` with the new data. No-op for non-xlsx files
+   * or when the workbook has been cleared.
+   */
   async onSheetChange(sheetName: string): Promise<void> {
     if (!this.currentWorkbook) return;
     const sheet = this.currentWorkbook.getWorksheet(sheetName);
@@ -102,6 +123,7 @@ export class InputFileComponent<T = any> {
     this.fileLoad.emit(this.parsedData);
   }
 
+  /** Clears the picker state and the cached workbook reference. */
   private resetSheetState(): void {
     this.availableSheets.set([]);
     this.selectedSheet.set(null);
@@ -124,6 +146,12 @@ export class InputFileComponent<T = any> {
     return file;
   }
 
+  /**
+   * Dispatches to the right parser based on the file extension and validates
+   * that the result is non-empty before returning it.
+   *
+   * @throws `{ parsingError: string }` when the file cannot be parsed or has no rows.
+   */
   private async parseFile(file: File): Promise<ParsedData<T>> {
     const lowerName = file.name.toLowerCase();
 
@@ -146,6 +174,7 @@ export class InputFileComponent<T = any> {
     return result;
   }
 
+  /** Parses CSV text via ngx-papaparse using the first row as headers. */
   private parseCsv(fileContent: string): ParsedData<T> {
     const papaParsed = this.papa.parse(fileContent, {
       header: true,
@@ -156,10 +185,16 @@ export class InputFileComponent<T = any> {
     return { data: papaParsed.data, fields: papaParsed.meta.fields };
   }
 
+  /** Parses JSON text directly with `JSON.parse`. */
   private parseJson(fileContent: string): ParsedData<T> {
     return { data: JSON.parse(fileContent) };
   }
 
+  /**
+   * Loads an xlsx workbook via exceljs, caches it for sheet switching, and
+   * returns the first sheet as `ParsedData`. When the workbook has more than
+   * one sheet, `availableSheets` is populated so the picker is shown.
+   */
   private async parseXlsx(buffer: ArrayBuffer): Promise<ParsedData<T>> {
     const workbook = new Workbook();
     await workbook.xlsx.load(buffer);
@@ -182,6 +217,11 @@ export class InputFileComponent<T = any> {
     return this.worksheetToParsedData(sheets[0]);
   }
 
+  /**
+   * Converts an exceljs `Worksheet` into the same `ParsedData` shape that the
+   * CSV path produces: row 1 is treated as the header and subsequent rows
+   * become objects keyed by header name.
+   */
   private worksheetToParsedData(sheet: Worksheet): ParsedData<T> {
     const headerRow = sheet.getRow(1);
     const fields: string[] = [];
@@ -204,6 +244,10 @@ export class InputFileComponent<T = any> {
   }
 }
 
+/**
+ * Unwraps exceljs's rich cell value shapes (e.g. hyperlinks expose `text`,
+ * formulas expose `result`) into a primitive suitable for the import flow.
+ */
 function normalizeCellValue(value: unknown): unknown {
   if (value == null) return null;
   if (typeof value === "object" && "text" in (value as any)) {
