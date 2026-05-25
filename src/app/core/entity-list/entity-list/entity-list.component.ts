@@ -116,7 +116,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
-  private entitySchemaService = inject(EntitySchemaService);
+  private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly formDialog = inject(FormDialogService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
   private readonly cdr = inject(ChangeDetectorRef);

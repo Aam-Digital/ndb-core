@@ -5,7 +5,7 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subject } from "rxjs";
+import { Subject, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -277,6 +277,12 @@ describe("EntityListComponent", () => {
     fixture.detectChanges();
   }
 
+  function makeMatDialogRef<T = any>(result: T | null = null) {
+    return {
+      afterClosed: () => of(result),
+    } as any;
+  }
+
   it("should open export dialog with exportConfig derived from visible columns", async () => {
     vi.useFakeTimers();
     try {
@@ -296,9 +302,7 @@ describe("EntityListComponent", () => {
       const matDialog = TestBed.inject(MatDialog);
       const openSpy = vi
         .spyOn(matDialog, "open")
-        .mockImplementation(
-          () => ({ afterClosed: () => ({ toPromise: async () => {} }) }) as any,
-        );
+        .mockImplementation(() => makeMatDialogRef());
 
       component.openExportDialog();
 
@@ -349,9 +353,7 @@ describe("EntityListComponent", () => {
       const matDialog = TestBed.inject(MatDialog);
       const openSpy = vi
         .spyOn(matDialog, "open")
-        .mockImplementation(
-          () => ({ afterClosed: () => ({ toPromise: async () => {} }) }) as any,
-        );
+        .mockImplementation(() => makeMatDialogRef());
 
       component.openExportDialog();
 
