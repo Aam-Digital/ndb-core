@@ -14,11 +14,12 @@ import {
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
-  MatDialogRef,
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { RouterLink } from "@angular/router";
+import { firstValueFrom } from "rxjs";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
@@ -26,10 +27,7 @@ import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.servic
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
-import {
-  TemplateExportApiService,
-  TemplateExportResult,
-} from "../template-export-api/template-export-api.service";
+import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
 import { TemplateExport } from "../template-export.entity";
 
@@ -57,9 +55,7 @@ import { TemplateExport } from "../template-export.entity";
   styleUrl: "./template-export-selection-dialog.component.scss",
 })
 export class TemplateExportSelectionDialogComponent {
-  private dialogRef =
-    inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
-  private readonly dialogData = inject<Entity>(MAT_DIALOG_DATA, {
+  private readonly dialogData = inject<Entity | Entity[]>(MAT_DIALOG_DATA, {
     optional: true,
   });
   private templateExportApi = inject(TemplateExportApiService);
@@ -67,53 +63,82 @@ export class TemplateExportSelectionDialogComponent {
   private alertService = inject(AlertService);
   private readonly templateExportService = inject(TemplateExportService);
 
-  entity = input<Entity>();
+  entity = input<Entity | Entity[]>();
 
   templateSelectionForm: FormControl = new FormControl();
   TemplateExport = TemplateExport;
   readonly configureTemplatesRoute = signal(
     getEntityRuntimeRoute(TemplateExport),
   );
-  readonly currentEntity = computed(() => this.entity() ?? this.dialogData);
+  readonly entities = computed<Entity[]>(() => {
+    const raw = this.entity() ?? this.dialogData;
+    if (Array.isArray(raw)) return raw;
+    return raw ? [raw as Entity] : [];
+  });
+  readonly isBulk = computed(() => this.entities().length > 1);
+  readonly currentEntity = computed<Entity | undefined>(
+    () => this.entities()[0],
+  );
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
     e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
 
   loadingRequestedFile = signal<boolean>(false);
+
+  readonly phase = signal<"select" | "running" | "done" | "cancelled">(
+    "select",
+  );
+  readonly progress = signal<{ completed: number; total: number }>({
+    completed: 0,
+    total: 0,
+  });
+  readonly failures = signal<{ entity: Entity; error: unknown }[]>([]);
+  readonly cancelRequested = signal<boolean>(false);
 
   isFeatureEnabled = resource({
     loader: () =>
       this.templateExportService.isExportServerEnabled().catch(() => false),
   });
 
-  requestFile() {
+  async requestFile() {
     const templateId = this.templateSelectionForm.value;
-    const entity = this.currentEntity();
-    if (!entity) {
+    const entities = this.entities();
+    if (entities.length === 0) {
       this.alertService.addWarning(
-        $localize`Could not determine current record.`,
+        $localize`No records selected for file generation.`,
       );
       return;
     }
 
+    this.phase.set("running");
+    this.progress.set({ completed: 0, total: entities.length });
+    this.failures.set([]);
+    this.cancelRequested.set(false);
     this.loadingRequestedFile.set(true);
-    this.templateExportApi
-      .generatePdfFromTemplate(templateId, entity)
-      .subscribe({
-        error: (error) => {
-          this.alertService.addWarning(
-            $localize`Failed to generate document [${error}]`,
-          );
-          this.loadingRequestedFile.set(false);
-        },
-        next: (templateResult: TemplateExportResult) => {
-          this.downloadService.triggerDownload(
-            templateResult.file,
-            "pdf",
-            templateResult.filename ?? entity.toString(),
-          );
-          this.loadingRequestedFile.set(false);
-          this.dialogRef.close(true);
-        },
-      });
+
+    for (const entity of entities) {
+      if (this.cancelRequested()) break;
+      try {
+        const result = await firstValueFrom(
+          this.templateExportApi.generatePdfFromTemplate(templateId, entity),
+        );
+        this.downloadService.triggerDownload(
+          result.file,
+          "pdf",
+          result.filename ?? entity.toString(),
+        );
+      } catch (error) {
+        Logging.warn("Failed to generate file for entity", entity, error);
+        this.failures.update((list) => [...list, { entity, error }]);
+      } finally {
+        this.progress.update((p) => ({ ...p, completed: p.completed + 1 }));
+      }
+    }
+
+    this.loadingRequestedFile.set(false);
+    this.phase.set(this.cancelRequested() ? "cancelled" : "done");
+  }
+
+  cancel() {
+    this.cancelRequested.set(true);
   }
 }

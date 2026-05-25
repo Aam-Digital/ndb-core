@@ -250,6 +250,45 @@ export const DifferentEntityType = {
   },
 };
 
+export const BulkSelection = {
+  render: Template,
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: [
+            (() => {
+              const e = new TestEntity("bulk-1");
+              e.name = "Anna Smith";
+              return e;
+            })(),
+            (() => {
+              const e = new TestEntity("bulk-2");
+              e.name = "Ben Roy";
+              return e;
+            })(),
+            (() => {
+              const e = new TestEntity("bulk-3");
+              e.name = "Carla Diaz";
+              return e;
+            })(),
+          ],
+        },
+      ],
+    }),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Shows the dialog in bulk mode — 3 selected entities will each be exported as their own file when the user picks a template.",
+      },
+    },
+  },
+};
+
 export const FeatureServerUnavailable = {
   render: Template,
   args: {

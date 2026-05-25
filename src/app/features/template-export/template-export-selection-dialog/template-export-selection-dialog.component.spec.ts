@@ -18,8 +18,7 @@ import {
 import { ActivatedRoute } from "@angular/router";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EMPTY, delay, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { EMPTY, of, throwError } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
@@ -168,59 +167,470 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(component.templateEntityFilter(template3)).toBe(false);
   });
 
-  it("should trigger download with API response when requesting file", async () => {
-    vi.useFakeTimers();
-    try {
-      const mockResponse: TemplateExportResult = {
-        filename: "test.pdf",
-        file: new ArrayBuffer(10),
-      };
-      mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
-        of(mockResponse).pipe(delay(100)),
-      );
+  it("should normalize a single-entity dialog payload to a one-element entities array", async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
 
-      component.requestFile();
-      await vi.advanceTimersByTimeAsync(1);
-      expect(component.loadingRequestedFile()).toBe(true);
-      await vi.advanceTimersByTimeAsync(100);
-      expect(component.loadingRequestedFile()).toBe(false);
-
-      expect(
-        mockPdfGeneratorApiService.generatePdfFromTemplate,
-      ).toHaveBeenCalled();
-      expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
-        mockResponse.file,
-        "pdf",
-        mockResponse.filename,
-      );
-      expect(mockDialogRef.close).toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(component.entities()).toEqual([testEntity]);
+    expect(component.isBulk()).toBe(false);
   });
 
-  it("should disable loading but not close dialog if API request fails", async () => {
-    vi.useFakeTimers();
-    try {
-      mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
-        of(false).pipe(
-          delay(100),
-          map(() => {
-            throw new Error();
-          }),
-        ),
-      );
+  it("should expose the entities array as-is for an array dialog payload (bulk)", async () => {
+    const entityA = new TestEntity("a");
+    const entityB = new TestEntity("b");
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [
+        TemplateExportSelectionDialogComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB] },
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        {
+          provide: TemplateExportApiService,
+          useValue: mockPdfGeneratorApiService,
+        },
+        { provide: DownloadService, useValue: mockDownloadService },
+        {
+          provide: EntityAbility,
+          useValue: { cannot: vi.fn(), on: vi.fn(() => () => null) },
+        },
+        {
+          provide: EntityMapperService,
+          useValue: {
+            load: vi.fn(),
+            loadType: vi.fn().mockResolvedValue([]),
+            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
+          },
+        },
+        { provide: ActivatedRoute, useValue: null },
+        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: TemplateExportService,
+          useValue: mockTemplateExportService,
+        },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
+      ],
+    }).compileComponents();
 
-      component.requestFile();
-      await vi.advanceTimersByTimeAsync(1);
-      expect(component.loadingRequestedFile()).toBe(true);
-      await vi.advanceTimersByTimeAsync(100);
-      expect(component.loadingRequestedFile()).toBe(false);
+    const bulkFixture = TestBed.createComponent(
+      TemplateExportSelectionDialogComponent,
+    );
+    bulkFixture.detectChanges();
+    await bulkFixture.whenStable();
 
-      expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
-      expect(mockDialogRef.close).not.toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(bulkFixture.componentInstance.entities()).toEqual([
+      entityA,
+      entityB,
+    ]);
+    expect(bulkFixture.componentInstance.isBulk()).toBe(true);
+  });
+
+  it("should initialize the phase state machine to 'select' with empty progress and failures", async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.phase()).toBe("select");
+    expect(component.progress()).toEqual({ completed: 0, total: 0 });
+    expect(component.failures()).toEqual([]);
+    expect(component.cancelRequested()).toBe(false);
+  });
+
+  it("should trigger download with API response when requesting file", async () => {
+    const mockResponse: TemplateExportResult = {
+      filename: "test.pdf",
+      file: new ArrayBuffer(10),
+    };
+    mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
+      of(mockResponse),
+    );
+    component.templateSelectionForm.setValue("template-1");
+
+    await component.requestFile();
+
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate,
+    ).toHaveBeenCalled();
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+      mockResponse.file,
+      "pdf",
+      mockResponse.filename,
+    );
+    expect(component.phase()).toBe("done");
+  });
+
+  it("should not trigger download for a failed API request and record the failure", async () => {
+    mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
+      throwError(() => new Error("boom")),
+    );
+    component.templateSelectionForm.setValue("template-1");
+
+    await component.requestFile();
+
+    expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
+    expect(component.failures().length).toBe(1);
+    expect(component.failures()[0].entity).toBe(testEntity);
+    expect(component.phase()).toBe("done");
+  });
+
+  it("should request a PDF and trigger a download once per entity for bulk input", async () => {
+    const entityA = new TestEntity("a");
+    const entityB = new TestEntity("b");
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [
+        TemplateExportSelectionDialogComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB] },
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        {
+          provide: TemplateExportApiService,
+          useValue: mockPdfGeneratorApiService,
+        },
+        { provide: DownloadService, useValue: mockDownloadService },
+        {
+          provide: EntityAbility,
+          useValue: { cannot: vi.fn(), on: vi.fn(() => () => null) },
+        },
+        {
+          provide: EntityMapperService,
+          useValue: {
+            load: vi.fn(),
+            loadType: vi.fn().mockResolvedValue([]),
+            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
+          },
+        },
+        { provide: ActivatedRoute, useValue: null },
+        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: TemplateExportService,
+          useValue: mockTemplateExportService,
+        },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
+      ],
+    }).compileComponents();
+
+    const bulkFixture = TestBed.createComponent(
+      TemplateExportSelectionDialogComponent,
+    );
+    bulkFixture.detectChanges();
+    await bulkFixture.whenStable();
+    const bulkComponent = bulkFixture.componentInstance;
+    bulkComponent.templateSelectionForm.setValue("template-1");
+
+    const responseA: TemplateExportResult = {
+      filename: "a.pdf",
+      file: new ArrayBuffer(8),
+    };
+    const responseB: TemplateExportResult = {
+      filename: "b.pdf",
+      file: new ArrayBuffer(8),
+    };
+    mockPdfGeneratorApiService.generatePdfFromTemplate
+      .mockReturnValueOnce(of(responseA))
+      .mockReturnValueOnce(of(responseB));
+
+    await bulkComponent.requestFile();
+
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate,
+    ).toHaveBeenCalledTimes(2);
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls[0],
+    ).toEqual(["template-1", entityA]);
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls[1],
+    ).toEqual(["template-1", entityB]);
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalledTimes(2);
+    expect(mockDownloadService.triggerDownload).toHaveBeenNthCalledWith(
+      1,
+      responseA.file,
+      "pdf",
+      "a.pdf",
+    );
+    expect(mockDownloadService.triggerDownload).toHaveBeenNthCalledWith(
+      2,
+      responseB.file,
+      "pdf",
+      "b.pdf",
+    );
+  });
+
+  it("should show the bulk header when more than one entity is provided", async () => {
+    const entityA = new TestEntity("a");
+    const entityB = new TestEntity("b");
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [
+        TemplateExportSelectionDialogComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB] },
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        {
+          provide: TemplateExportApiService,
+          useValue: mockPdfGeneratorApiService,
+        },
+        { provide: DownloadService, useValue: mockDownloadService },
+        {
+          provide: EntityAbility,
+          useValue: { cannot: vi.fn(), on: vi.fn(() => () => null) },
+        },
+        {
+          provide: EntityMapperService,
+          useValue: {
+            load: vi.fn(),
+            loadType: vi.fn().mockResolvedValue([]),
+            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
+          },
+        },
+        { provide: ActivatedRoute, useValue: null },
+        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: TemplateExportService,
+          useValue: mockTemplateExportService,
+        },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
+      ],
+    }).compileComponents();
+
+    const bulkFixture = TestBed.createComponent(
+      TemplateExportSelectionDialogComponent,
+    );
+    bulkFixture.detectChanges();
+    await bulkFixture.whenStable();
+    bulkFixture.detectChanges();
+
+    const header = bulkFixture.nativeElement.querySelector("h2");
+    expect(header.textContent).toContain("2");
+    expect(header.textContent.toLowerCase()).toContain("record");
+  });
+
+  it("should render the done summary after generation completes", async () => {
+    mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
+      of({ filename: "x.pdf", file: new ArrayBuffer(4) }),
+    );
+    component.templateSelectionForm.setValue("template-1");
+
+    await component.requestFile();
+    fixture.detectChanges();
+
+    expect(component.phase()).toBe("done");
+    expect(
+      fixture.nativeElement.querySelector(
+        '[data-testid="template-export-summary"]',
+      ),
+    ).not.toBeNull();
+  });
+
+  it("should list failed entity names in the done summary", async () => {
+    const entityA = new TestEntity("a");
+    entityA.name = "Anna";
+    const entityB = new TestEntity("b");
+    entityB.name = "Ben";
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [
+        TemplateExportSelectionDialogComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB] },
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        {
+          provide: TemplateExportApiService,
+          useValue: mockPdfGeneratorApiService,
+        },
+        { provide: DownloadService, useValue: mockDownloadService },
+        {
+          provide: EntityAbility,
+          useValue: { cannot: vi.fn(), on: vi.fn(() => () => null) },
+        },
+        {
+          provide: EntityMapperService,
+          useValue: {
+            load: vi.fn(),
+            loadType: vi.fn().mockResolvedValue([]),
+            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
+          },
+        },
+        { provide: ActivatedRoute, useValue: null },
+        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: TemplateExportService,
+          useValue: mockTemplateExportService,
+        },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
+      ],
+    }).compileComponents();
+
+    const bulkFixture = TestBed.createComponent(
+      TemplateExportSelectionDialogComponent,
+    );
+    bulkFixture.detectChanges();
+    await bulkFixture.whenStable();
+    const bulkComponent = bulkFixture.componentInstance;
+
+    mockPdfGeneratorApiService.generatePdfFromTemplate
+      .mockReturnValueOnce(of({ filename: "a.pdf", file: new ArrayBuffer(4) }))
+      .mockReturnValueOnce(throwError(() => new Error("server error")));
+    bulkComponent.templateSelectionForm.setValue("template-1");
+
+    await bulkComponent.requestFile();
+    bulkFixture.detectChanges();
+
+    const summary = bulkFixture.nativeElement.querySelector(
+      '[data-testid="template-export-summary"]',
+    );
+    expect(summary).not.toBeNull();
+    expect(summary.textContent).toContain("Ben");
+  });
+
+  it("should stop generating further files when cancel is requested during a bulk run", async () => {
+    const entityA = new TestEntity("a");
+    const entityB = new TestEntity("b");
+    const entityC = new TestEntity("c");
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [
+        TemplateExportSelectionDialogComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB, entityC] },
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        {
+          provide: TemplateExportApiService,
+          useValue: mockPdfGeneratorApiService,
+        },
+        { provide: DownloadService, useValue: mockDownloadService },
+        {
+          provide: EntityAbility,
+          useValue: { cannot: vi.fn(), on: vi.fn(() => () => null) },
+        },
+        {
+          provide: EntityMapperService,
+          useValue: {
+            load: vi.fn(),
+            loadType: vi.fn().mockResolvedValue([]),
+            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
+          },
+        },
+        { provide: ActivatedRoute, useValue: null },
+        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: TemplateExportService,
+          useValue: mockTemplateExportService,
+        },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
+      ],
+    }).compileComponents();
+
+    const bulkFixture = TestBed.createComponent(
+      TemplateExportSelectionDialogComponent,
+    );
+    bulkFixture.detectChanges();
+    await bulkFixture.whenStable();
+    const bulkComponent = bulkFixture.componentInstance;
+
+    mockPdfGeneratorApiService.generatePdfFromTemplate.mockImplementation(
+      () => {
+        if (
+          mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls
+            .length >= 1
+        ) {
+          queueMicrotask(() => bulkComponent.cancel());
+        }
+        return of({ filename: "x.pdf", file: new ArrayBuffer(4) });
+      },
+    );
+    bulkComponent.templateSelectionForm.setValue("template-1");
+
+    await bulkComponent.requestFile();
+
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls.length,
+    ).toBeLessThan(3);
+    expect(bulkComponent.phase()).toBe("cancelled");
+    expect(bulkComponent.cancelRequested()).toBe(true);
+  });
+
+  it("should warn and skip the API when invoked with an empty entity array", async () => {
+    let warned = false;
+    const warningAlertService = {
+      addWarning: vi.fn(() => {
+        warned = true;
+      }),
+    };
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [
+        TemplateExportSelectionDialogComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: [] },
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        {
+          provide: TemplateExportApiService,
+          useValue: mockPdfGeneratorApiService,
+        },
+        { provide: DownloadService, useValue: mockDownloadService },
+        {
+          provide: EntityAbility,
+          useValue: { cannot: vi.fn(), on: vi.fn(() => () => null) },
+        },
+        {
+          provide: EntityMapperService,
+          useValue: {
+            load: vi.fn(),
+            loadType: vi.fn().mockResolvedValue([]),
+            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
+          },
+        },
+        { provide: ActivatedRoute, useValue: null },
+        { provide: AlertService, useValue: warningAlertService },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: TemplateExportService,
+          useValue: mockTemplateExportService,
+        },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
+      ],
+    }).compileComponents();
+
+    const emptyFixture = TestBed.createComponent(
+      TemplateExportSelectionDialogComponent,
+    );
+    emptyFixture.detectChanges();
+    await emptyFixture.whenStable();
+
+    emptyFixture.componentInstance.templateSelectionForm.setValue("template-1");
+    await emptyFixture.componentInstance.requestFile();
+
+    expect(warned).toBe(true);
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate,
+    ).not.toHaveBeenCalled();
   });
 });

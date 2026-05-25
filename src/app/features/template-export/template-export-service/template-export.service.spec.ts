@@ -58,6 +58,17 @@ describe("TemplateExportService", () => {
     expect(result).toBe(true);
   });
 
+  it("should open dialog with an array payload for bulk input", async () => {
+    const entities = [{ name: "A" }, { name: "B" }];
+    const result = await service.generateFile(entities);
+
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      TemplateExportSelectionDialogComponent,
+      expect.objectContaining({ data: entities }),
+    );
+    expect(result).toBe(true);
+  });
+
   it("should return true when API is reachable and export feature flag is enabled", async () => {
     const mockResponse = {
       export: { enabled: true },
