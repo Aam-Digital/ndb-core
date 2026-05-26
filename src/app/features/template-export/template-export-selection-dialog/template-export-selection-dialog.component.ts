@@ -93,6 +93,11 @@ export class TemplateExportSelectionDialogComponent {
   });
   readonly failures = signal<{ entity: Entity; error: unknown }[]>([]);
   readonly cancelRequested = signal<boolean>(false);
+  readonly failedEntityNames = computed(() =>
+    this.failures()
+      .map((f) => f.entity.toString())
+      .join(", "),
+  );
 
   isFeatureEnabled = resource({
     loader: () =>
@@ -121,7 +126,7 @@ export class TemplateExportSelectionDialogComponent {
         const result = await firstValueFrom(
           this.templateExportApi.generatePdfFromTemplate(templateId, entity),
         );
-        this.downloadService.triggerDownload(
+        await this.downloadService.triggerDownload(
           result.file,
           "pdf",
           result.filename ?? entity.toString(),

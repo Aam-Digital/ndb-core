@@ -93,14 +93,7 @@
               Generated {{ progress().total - failures().length }} of
               {{ progress().total }} files.
             </p>
-            <p i18n>
-              Failed:
-              {{
-                failures()
-                  .map((f) => f.entity.toString())
-                  .join(", ")
-              }}
-            </p>
+            <p i18n>Failed: {{ failedEntityNames() }}</p>
           }
           @if (isBulk()) {
             <p class="hint" i18n>

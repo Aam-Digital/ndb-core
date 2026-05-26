@@ -24,7 +24,7 @@ export class TemplateExportService {
    * @param entity The entity (or array of entities) providing data for the template
    * @return Boolean whether the action was successfully triggered
    */
-  async generateFile(entity: Entity | Entity[] | Object): Promise<boolean> {
+  async generateFile(entity: Entity | Entity[]): Promise<boolean> {
     this.dialog.open(TemplateExportSelectionDialogComponent, { data: entity });
 
     return true;
