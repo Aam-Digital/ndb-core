@@ -161,13 +161,10 @@ export class DatabaseResolverService {
 
     // The /public-form/ route is detected in bootstrap-environment.ts and
     // session_type is forced to "online" before Angular DI starts, so the
-    // factory already produced a RemotePouchDatabase here. We just need to
-    // init it with the anonymous-session flag so a 401 doesn't trigger the
-    // Keycloak redirect.
-    if (db instanceof RemotePouchDatabase) {
-      db.init(undefined, { unauthenticatedSession: true });
-    } else {
-      db.init();
-    }
+    // factory always produces a RemotePouchDatabase here. Init it with the
+    // anonymous-session flag so a 401 doesn't trigger the Keycloak redirect.
+    (db as RemotePouchDatabase).init(undefined, {
+      unauthenticatedSession: true,
+    });
   }
 }

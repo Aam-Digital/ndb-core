@@ -26,6 +26,7 @@ import { AdminModule } from "./core/admin/admin.module";
 import { AttendanceModule } from "./features/attendance/attendance.module";
 import { DeDuplicationModule } from "./features/de-duplication/de-duplication-module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
+import { PUBLIC_FORM_ROUTE } from "./features/public-form/public-form-routing";
 import { UnsavedChangesService } from "./core/entity-details/form/unsaved-changes.service";
 import { EntityPermissionGuard } from "./core/permissions/permission-guard/entity-permission.guard";
 import { RoutedViewComponent } from "./core/ui/routed-view/routed-view.component";
@@ -52,7 +53,7 @@ export const allRoutes: Routes = [
   { path: "support", component: SupportComponent },
   // this can't be configured in config as the config is only loaded on login
   {
-    path: "public-form",
+    path: PUBLIC_FORM_ROUTE,
     children: PublicFormModule.routes,
   },
   {
