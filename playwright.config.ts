@@ -29,6 +29,9 @@ export default defineConfig({
       {
         // Let Argos reporter handle uploads (it handles retries automatically)
         uploadToArgos: !!process.env.CI,
+        // Don't fail the e2e run if Argos upload fails (e.g. plan quota reached).
+        // Undocumented option, see https://github.com/argos-ci/argos-javascript/pull/268
+        ignoreUploadFailures: true,
       },
     ],
     [process.env.CI ? "github" : "null"],
