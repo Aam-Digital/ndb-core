@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EMPTY, of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DatabaseResolverService } from "../../../database/database-resolver.service";
 
@@ -32,7 +31,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BackgroundProcessingIndicatorComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput("backgroundProcesses", EMPTY);
+    fixture.componentRef.setInput("backgroundProcesses", []);
 
     fixture.detectChanges();
   });
@@ -54,10 +53,13 @@ describe("BackgroundProcessingIndicatorComponent", () => {
       const p2c = { title: "indexing", details: "C", pending: false };
       const p3 = { title: "completed other stuff", pending: false };
 
-      fixture.componentRef.setInput(
-        "backgroundProcesses",
-        of([p1, p2a, p2b, p2c, p3]),
-      );
+      fixture.componentRef.setInput("backgroundProcesses", [
+        p1,
+        p2a,
+        p2b,
+        p2c,
+        p3,
+      ]);
       fixture.componentRef.setInput("summarize", true);
       fixture.detectChanges();
 
@@ -82,17 +84,15 @@ describe("BackgroundProcessingIndicatorComponent", () => {
       expect(taskListDropdownTrigger).toBeTruthy();
       const closeMenuSpy = vi.spyOn(taskListDropdownTrigger, "closeMenu");
 
-      fixture.componentRef.setInput(
-        "backgroundProcesses",
-        of([{ title: "sync", pending: true }]),
-      );
+      fixture.componentRef.setInput("backgroundProcesses", [
+        { title: "sync", pending: true },
+      ]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      fixture.componentRef.setInput(
-        "backgroundProcesses",
-        of([{ title: "sync", pending: false }]),
-      );
+      fixture.componentRef.setInput("backgroundProcesses", [
+        { title: "sync", pending: false },
+      ]);
       fixture.detectChanges();
 
       expect(component.taskCounter()).toBe(0);
@@ -111,14 +111,11 @@ describe("BackgroundProcessingIndicatorComponent", () => {
       const openMenuSpy = vi.spyOn(taskListDropdownTrigger, "openMenu");
 
       component.markWasClosed();
-      fixture.componentRef.setInput(
-        "backgroundProcesses",
-        of([
-          { title: "sync", pending: true },
-          { title: "other", pending: true },
-          { title: "yet another", pending: true },
-        ]),
-      );
+      fixture.componentRef.setInput("backgroundProcesses", [
+        { title: "sync", pending: true },
+        { title: "other", pending: true },
+        { title: "yet another", pending: true },
+      ]);
       fixture.detectChanges();
 
       await vi.advanceTimersByTimeAsync(0);

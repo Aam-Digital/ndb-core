@@ -207,9 +207,10 @@
         >
       </mat-list-item>
       <mat-list-item
-        (click)="configImport.click()"
+        (click)="!isUploadingConfig() && configImport.click()"
         button
-        matTooltip="Upload a raw configuration file and overwrite the current system configuration."
+        [class.disabled]="isUploadingConfig()"
+        matTooltip="Upload a raw configuration file and overwrite the current system configuration. Accepts a single config object or an array of config documents."
         i18n-matTooltip
         matTooltipPosition="before"
       >
