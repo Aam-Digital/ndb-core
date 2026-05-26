@@ -34,9 +34,24 @@ interface TemplateRenderRequestDto {
   data: Object;
 }
 
+/**
+ * Format of API request body to render a batch of files from one template.
+ * `data` is an array of records; the backend will render each one and return a ZIP.
+ */
+interface TemplateRenderBatchRequestDto {
+  convertTo: string;
+  data: Object[];
+}
+
 export interface TemplateExportResult {
   filename: string;
   file: ArrayBuffer;
+}
+
+export interface TemplateExportBatchResult {
+  filename: string;
+  file: ArrayBuffer;
+  failedIndices: number[];
 }
 
 /**
@@ -145,6 +160,55 @@ export class TemplateExportApiService extends FileService {
           return {
             filename: fileName,
             file: res.body,
+          };
+        }),
+      );
+  }
+
+  /**
+   * Generate a bundle of files from one template for many records in a single request.
+   * The backend renders each record individually and returns the results bundled into a ZIP.
+   *
+   * @param templateEntityId The id of the TemplateExport entity
+   * @param dataList The array of data objects (typically entities) to apply to the template
+   * @return An ArrayBuffer of the ZIP and the indices (in the input array) of any failures
+   */
+  generateBatchFromTemplate(
+    templateEntityId: string,
+    dataList: Object[],
+  ): Observable<TemplateExportBatchResult> {
+    return this.httpClient
+      .post(
+        this.API_URL + "/render-batch/" + templateEntityId + "?mode=zip",
+        {
+          convertTo: "pdf",
+          data: dataList,
+        } as TemplateRenderBatchRequestDto,
+        { observe: "response", responseType: "arraybuffer" },
+      )
+      .pipe(
+        switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+          const disposition = res.headers.get("Content-Disposition");
+          const filenameMatch = disposition
+            ? decodeURIComponent(disposition).match(/filename="?([^";]+)"?/)
+            : null;
+          const filename =
+            filenameMatch && filenameMatch.length > 1
+              ? filenameMatch[1]
+              : templateEntityId.replace(":", "_") + ".zip";
+
+          const failedHeader = res.headers.get("X-Failed-Record-Indices");
+          const failedIndices = failedHeader
+            ? failedHeader
+                .split(",")
+                .map((s) => Number.parseInt(s.trim(), 10))
+                .filter((n) => Number.isFinite(n))
+            : [];
+
+          return {
+            filename,
+            file: res.body,
+            failedIndices,
           };
         }),
       );

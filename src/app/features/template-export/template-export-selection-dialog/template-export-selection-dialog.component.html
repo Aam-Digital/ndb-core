@@ -1,7 +1,5 @@
 <mat-dialog-content>
-  @if (isBulk()) {
-    <h2 i18n>Generate file for {{ entities().length }} records</h2>
-  } @else {
+  @if (!isBulk()) {
     <h2 i18n>Generate File from Template</h2>
   }
 
@@ -30,13 +28,6 @@
           >
         </p>
 
-        @if (isBulk()) {
-          <p i18n>
-            A separate file will be generated and downloaded for each selected
-            record.
-          </p>
-        }
-
         <mat-form-field class="full-width">
           <mat-label i18n>Template</mat-label>
           <app-edit-entity
@@ -52,56 +43,28 @@
 
       @case ("running") {
         <p data-testid="template-export-progress">
-          <span i18n
-            >Generating file {{ progress().completed + 1 }} of
-            {{ progress().total }}…</span
-          >
+          @if (isBulk()) {
+            <span i18n>Generating files for {{ totalRecords() }} records…</span>
+          } @else {
+            <span i18n>Generating file…</span>
+          }
         </p>
-        <mat-progress-bar
-          mode="determinate"
-          [value]="
-            progress().total
-              ? (progress().completed / progress().total) * 100
-              : 0
-          "
-        ></mat-progress-bar>
-
-        @if (isBulk()) {
-          <p class="hint" i18n>
-            Multiple files will be downloaded. If only the first one arrives,
-            your browser may be blocking the rest — check your address bar, the
-            top of this page, or your browser's site settings to allow multiple
-            downloads from this site.
-          </p>
-        }
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       }
 
       @default {
         <div data-testid="template-export-summary">
           @if (phase() === "cancelled") {
-            <p i18n>
-              Cancelled. Generated
-              {{ progress().completed - failures().length }} of
-              {{ progress().total }} files.
-            </p>
+            <p i18n>Cancelled before all files were downloaded.</p>
           } @else if (failures().length === 0) {
             <p i18n>
-              Generated {{ progress().total }} of {{ progress().total }} files.
+              Generated {{ totalRecords() }} of {{ totalRecords() }} files.
             </p>
           } @else {
             <p i18n>
-              Generated {{ progress().total - failures().length }} of
-              {{ progress().total }} files.
+              Generated {{ succeededCount() }} of {{ totalRecords() }} files.
             </p>
             <p i18n>Failed: {{ failedEntityNames() }}</p>
-          }
-          @if (isBulk()) {
-            <p class="hint" i18n>
-              If only the first file downloaded, your browser may be blocking
-              the rest. Check your address bar, the top of this page, or your
-              browser's site settings to allow multiple downloads from this
-              site, then run the bulk action again.
-            </p>
           }
         </div>
       }
@@ -115,7 +78,7 @@
       <button
         mat-raised-button
         color="accent"
-        [disabled]="!templateSelectionForm.value || loadingRequestedFile()"
+        [disabled]="!templateSelectionForm.value"
         (click)="requestFile()"
       >
         <span i18n>Generate File</span>

@@ -82,17 +82,15 @@ export class TemplateExportSelectionDialogComponent {
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
     e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
 
-  loadingRequestedFile = signal<boolean>(false);
-
   readonly phase = signal<"select" | "running" | "done" | "cancelled">(
     "select",
   );
-  readonly progress = signal<{ completed: number; total: number }>({
-    completed: 0,
-    total: 0,
-  });
+  readonly totalRecords = signal<number>(0);
   readonly failures = signal<{ entity: Entity; error: unknown }[]>([]);
   readonly cancelRequested = signal<boolean>(false);
+  readonly succeededCount = computed(
+    () => this.totalRecords() - this.failures().length,
+  );
   readonly failedEntityNames = computed(() =>
     this.failures()
       .map((f) => f.entity.toString())
@@ -115,32 +113,55 @@ export class TemplateExportSelectionDialogComponent {
     }
 
     this.phase.set("running");
-    this.progress.set({ completed: 0, total: entities.length });
+    this.totalRecords.set(entities.length);
     this.failures.set([]);
     this.cancelRequested.set(false);
-    this.loadingRequestedFile.set(true);
 
-    for (const entity of entities) {
-      if (this.cancelRequested()) break;
-      try {
+    try {
+      if (entities.length === 1) {
         const result = await firstValueFrom(
-          this.templateExportApi.generatePdfFromTemplate(templateId, entity),
+          this.templateExportApi.generatePdfFromTemplate(
+            templateId,
+            entities[0],
+          ),
         );
+        if (this.cancelRequested()) return;
         await this.downloadService.triggerDownload(
           result.file,
           "pdf",
-          result.filename ?? entity.toString(),
+          result.filename ?? entities[0].toString(),
         );
-      } catch (error) {
-        Logging.warn("Failed to generate file for entity", entity, error);
-        this.failures.update((list) => [...list, { entity, error }]);
-      } finally {
-        this.progress.update((p) => ({ ...p, completed: p.completed + 1 }));
+      } else {
+        const result = await firstValueFrom(
+          this.templateExportApi.generateBatchFromTemplate(
+            templateId,
+            entities,
+          ),
+        );
+        if (this.cancelRequested()) return;
+        await this.downloadService.triggerDownload(
+          result.file,
+          "zip",
+          result.filename,
+        );
+        this.failures.set(
+          result.failedIndices
+            .map((index) => entities[index])
+            .filter((entity): entity is Entity => entity !== undefined)
+            .map((entity) => ({
+              entity,
+              error: $localize`Server skipped this record.`,
+            })),
+        );
       }
+    } catch (error) {
+      Logging.warn("Failed to generate files", error);
+      if (!this.cancelRequested()) {
+        this.failures.set(entities.map((entity) => ({ entity, error })));
+      }
+    } finally {
+      this.phase.set(this.cancelRequested() ? "cancelled" : "done");
     }
-
-    this.loadingRequestedFile.set(false);
-    this.phase.set(this.cancelRequested() ? "cancelled" : "done");
   }
 
   cancel() {

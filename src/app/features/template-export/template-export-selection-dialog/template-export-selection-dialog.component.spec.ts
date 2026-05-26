@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/model/entity";
 import {
   TemplateExportApiService,
+  TemplateExportBatchResult,
   TemplateExportResult,
 } from "../template-export-api/template-export-api.service";
 import { DownloadService } from "../../../core/export/download-service/download.service";
@@ -18,7 +19,7 @@ import {
 import { ActivatedRoute } from "@angular/router";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EMPTY, of, throwError } from "rxjs";
+import { EMPTY, of, Subject, throwError } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
@@ -31,6 +32,7 @@ type DialogRefMock = {
 
 type TemplateExportApiServiceMock = {
   generatePdfFromTemplate: Mock;
+  generateBatchFromTemplate: Mock;
 };
 
 type DownloadServiceMock = {
@@ -56,6 +58,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
     mockPdfGeneratorApiService = {
       generatePdfFromTemplate: vi.fn(),
+      generateBatchFromTemplate: vi.fn(),
     };
     mockDownloadService = {
       triggerDownload: vi.fn(),
@@ -229,12 +232,12 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(bulkFixture.componentInstance.isBulk()).toBe(true);
   });
 
-  it("should initialize the phase state machine to 'select' with empty progress and failures", async () => {
+  it("should initialize the phase state machine to 'select' with empty totals and failures", async () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
     expect(component.phase()).toBe("select");
-    expect(component.progress()).toEqual({ completed: 0, total: 0 });
+    expect(component.totalRecords()).toBe(0);
     expect(component.failures()).toEqual([]);
     expect(component.cancelRequested()).toBe(false);
   });
@@ -276,7 +279,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(component.phase()).toBe("done");
   });
 
-  it("should request a PDF and trigger a download once per entity for bulk input", async () => {
+  it("should call the batch endpoint once with the array and trigger a single zip download for bulk input", async () => {
     const entityA = new TestEntity("a");
     const entityB = new TestEntity("b");
 
@@ -326,45 +329,37 @@ describe("TemplateExportSelectionDialogComponent", () => {
     const bulkComponent = bulkFixture.componentInstance;
     bulkComponent.templateSelectionForm.setValue("template-1");
 
-    const responseA: TemplateExportResult = {
-      filename: "a.pdf",
-      file: new ArrayBuffer(8),
+    const batchResponse: TemplateExportBatchResult = {
+      filename: "report.zip",
+      file: new ArrayBuffer(16),
+      failedIndices: [],
     };
-    const responseB: TemplateExportResult = {
-      filename: "b.pdf",
-      file: new ArrayBuffer(8),
-    };
-    mockPdfGeneratorApiService.generatePdfFromTemplate
-      .mockReturnValueOnce(of(responseA))
-      .mockReturnValueOnce(of(responseB));
+    mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
+      of(batchResponse),
+    );
 
     await bulkComponent.requestFile();
 
     expect(
       mockPdfGeneratorApiService.generatePdfFromTemplate,
-    ).toHaveBeenCalledTimes(2);
+    ).not.toHaveBeenCalled();
     expect(
-      mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls[0],
-    ).toEqual(["template-1", entityA]);
+      mockPdfGeneratorApiService.generateBatchFromTemplate,
+    ).toHaveBeenCalledTimes(1);
     expect(
-      mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls[1],
-    ).toEqual(["template-1", entityB]);
-    expect(mockDownloadService.triggerDownload).toHaveBeenCalledTimes(2);
-    expect(mockDownloadService.triggerDownload).toHaveBeenNthCalledWith(
-      1,
-      responseA.file,
-      "pdf",
-      "a.pdf",
+      mockPdfGeneratorApiService.generateBatchFromTemplate.mock.calls[0],
+    ).toEqual(["template-1", [entityA, entityB]]);
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalledTimes(1);
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+      batchResponse.file,
+      "zip",
+      "report.zip",
     );
-    expect(mockDownloadService.triggerDownload).toHaveBeenNthCalledWith(
-      2,
-      responseB.file,
-      "pdf",
-      "b.pdf",
-    );
+    expect(bulkComponent.phase()).toBe("done");
+    expect(bulkComponent.failures()).toEqual([]);
   });
 
-  it("should show the bulk header when more than one entity is provided", async () => {
+  it("should hide the single-entity header when more than one entity is provided", async () => {
     const entityA = new TestEntity("a");
     const entityB = new TestEntity("b");
 
@@ -414,8 +409,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     bulkFixture.detectChanges();
 
     const header = bulkFixture.nativeElement.querySelector("h2");
-    expect(header.textContent).toContain("2");
-    expect(header.textContent.toLowerCase()).toContain("record");
+    expect(header).toBeNull();
   });
 
   it("should render the done summary after generation completes", async () => {
@@ -486,9 +480,13 @@ describe("TemplateExportSelectionDialogComponent", () => {
     await bulkFixture.whenStable();
     const bulkComponent = bulkFixture.componentInstance;
 
-    mockPdfGeneratorApiService.generatePdfFromTemplate
-      .mockReturnValueOnce(of({ filename: "a.pdf", file: new ArrayBuffer(4) }))
-      .mockReturnValueOnce(throwError(() => new Error("server error")));
+    mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
+      of({
+        filename: "report.zip",
+        file: new ArrayBuffer(8),
+        failedIndices: [1],
+      } as TemplateExportBatchResult),
+    );
     bulkComponent.templateSelectionForm.setValue("template-1");
 
     await bulkComponent.requestFile();
@@ -499,12 +497,13 @@ describe("TemplateExportSelectionDialogComponent", () => {
     );
     expect(summary).not.toBeNull();
     expect(summary.textContent).toContain("Ben");
+    expect(bulkComponent.failures().length).toBe(1);
+    expect(bulkComponent.failures()[0].entity).toBe(entityB);
   });
 
-  it("should stop generating further files when cancel is requested during a bulk run", async () => {
+  it("should skip the download and end in cancelled phase when cancel is requested during a bulk run", async () => {
     const entityA = new TestEntity("a");
     const entityB = new TestEntity("b");
-    const entityC = new TestEntity("c");
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -514,7 +513,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB, entityC] },
+        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB] },
         { provide: MatDialogRef, useValue: mockDialogRef },
         {
           provide: TemplateExportApiService,
@@ -551,24 +550,25 @@ describe("TemplateExportSelectionDialogComponent", () => {
     await bulkFixture.whenStable();
     const bulkComponent = bulkFixture.componentInstance;
 
-    mockPdfGeneratorApiService.generatePdfFromTemplate.mockImplementation(
-      () => {
-        if (
-          mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls
-            .length >= 1
-        ) {
-          queueMicrotask(() => bulkComponent.cancel());
-        }
-        return of({ filename: "x.pdf", file: new ArrayBuffer(4) });
-      },
+    const deferred = new Subject<TemplateExportBatchResult>();
+    mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
+      deferred.asObservable(),
     );
     bulkComponent.templateSelectionForm.setValue("template-1");
 
-    await bulkComponent.requestFile();
+    const inFlight = bulkComponent.requestFile();
+    // user clicks cancel while the request is still pending
+    bulkComponent.cancel();
+    // the request eventually resolves, but the result must be discarded
+    deferred.next({
+      filename: "report.zip",
+      file: new ArrayBuffer(4),
+      failedIndices: [],
+    });
+    deferred.complete();
+    await inFlight;
 
-    expect(
-      mockPdfGeneratorApiService.generatePdfFromTemplate.mock.calls.length,
-    ).toBeLessThan(3);
+    expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
     expect(bulkComponent.phase()).toBe("cancelled");
     expect(bulkComponent.cancelRequested()).toBe(true);
   });
@@ -631,6 +631,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(warned).toBe(true);
     expect(
       mockPdfGeneratorApiService.generatePdfFromTemplate,
+    ).not.toHaveBeenCalled();
+    expect(
+      mockPdfGeneratorApiService.generateBatchFromTemplate,
     ).not.toHaveBeenCalled();
   });
 });
