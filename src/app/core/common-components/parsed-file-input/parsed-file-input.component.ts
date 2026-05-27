@@ -156,7 +156,9 @@ export class ParsedFileInputComponent<T = any> {
     );
     if (!matchedType) {
       throw {
-        fileInvalid: `Only ${allowedTypes.join(", ")} files are supported`,
+        fileInvalid: $localize`:Invalid file type error:Only ${allowedTypes.join(
+          ", ",
+        )}:fileTypes: files are supported`,
       };
     }
     return file;
@@ -188,10 +190,14 @@ export class ParsedFileInputComponent<T = any> {
     filename?: string,
   ): ParsedData<T> {
     if (!result) {
-      throw { parsingError: "File could not be parsed" };
+      throw {
+        parsingError: $localize`:File parsing error:File could not be parsed`,
+      };
     }
     if (!result.data || (result.data as { length?: number }).length === 0) {
-      throw { parsingError: "File has no content" };
+      throw {
+        parsingError: $localize`:Empty file parsing error:File has no content`,
+      };
     }
     result.filename = filename;
     return result;
