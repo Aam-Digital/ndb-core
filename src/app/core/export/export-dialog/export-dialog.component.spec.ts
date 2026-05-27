@@ -70,7 +70,7 @@ describe("ExportDialogComponent", () => {
 
   it("should pass selected subset of columns when modified", async () => {
     // remove second column from selection
-    component.selectedExportConfig.set([dialogData.exportConfig[0]]);
+    component.selectedColumnKeys.set(["name"]);
 
     await component.download();
 

@@ -5,12 +5,6 @@ import {
   signal,
 } from "@angular/core";
 import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDropList,
-  moveItemInArray,
-} from "@angular/cdk/drag-drop";
-import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
@@ -21,8 +15,8 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatRadioModule } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
 import { Logging } from "../../logging/logging.service";
+import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
-import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import {
   DownloadService,
   FileDownloadFormat,
@@ -57,10 +51,8 @@ export interface ExportDialogData {
     MatProgressBarModule,
     MatRadioModule,
     FormsModule,
+    BasicAutocompleteComponent,
     DialogCloseComponent,
-    FaDynamicIconComponent,
-    CdkDropList,
-    CdkDrag,
   ],
 })
 export class ExportDialogComponent {
@@ -73,73 +65,58 @@ export class ExportDialogComponent {
   scope = signal<"filtered" | "all">("filtered");
   isLoading = signal<boolean>(false);
   downloadError = signal<string | null>(null);
-  /** currently selected subset & order of export columns (undefined = use default passed config) */
-  selectedExportConfig = signal<ExportColumnConfig[] | undefined>(
-    this.data.preselectedExportConfig ?? this.data.exportConfig,
+
+  /** All available export column options (deduped, excludes internal fields). */
+  availableColumns: ExportColumnConfig[] = this.buildAvailableColumns();
+
+  /** Selected export column keys in the order chosen by the user (undefined = use default passed config). */
+  selectedColumnKeys = signal<string[] | undefined>(
+    (this.data.preselectedExportConfig ?? this.data.exportConfig)?.map((c) =>
+      this.normalizeQueryKey(c.query),
+    ),
   );
 
+  columnToString = (col: ExportColumnConfig) => col.label ?? col.query;
+  columnToValue = (col: ExportColumnConfig) =>
+    this.normalizeQueryKey(col.query);
+
   clearSelection() {
-    this.selectedExportConfig.set([]);
+    this.selectedColumnKeys.set([]);
+  }
+
+  includeAll() {
+    this.selectedColumnKeys.set(
+      this.availableColumns.map((c) => this.normalizeQueryKey(c.query)),
+    );
   }
 
   private normalizeQueryKey(query: string): string {
     return query.startsWith(".") ? query.slice(1) : query;
   }
 
-  isSelected(col: ExportColumnConfig): boolean {
-    const current = this.selectedExportConfig() ?? this.data.exportConfig ?? [];
-    const key = this.normalizeQueryKey(col.query);
-    return current.some((c) => this.normalizeQueryKey(c.query) === key);
-  }
-
-  includeAll() {
-    if (this.data.exportConfig) {
-      // clone to allow reordering independently
-      this.selectedExportConfig.set([...this.data.exportConfig]);
+  private buildAvailableColumns(): ExportColumnConfig[] {
+    const configs = this.data.exportConfig ?? [];
+    const out: ExportColumnConfig[] = [];
+    const seen = new Set<string>();
+    for (const c of configs) {
+      const key = this.normalizeQueryKey(c.query);
+      if (key.startsWith("_")) continue;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push(c);
+      }
     }
+    return out;
   }
 
-  toggleColumn(col: ExportColumnConfig) {
-    const current = this.selectedExportConfig() ?? this.data.exportConfig;
-    if (!current) return;
-    const key = this.normalizeQueryKey(col.query);
-    const idx = current.findIndex(
-      (c) => this.normalizeQueryKey(c.query) === key,
-    );
-    if (idx === -1) {
-      this.selectedExportConfig.set([...current, col]);
-    } else {
-      const next = [...current];
-      next.splice(idx, 1);
-      this.selectedExportConfig.set(next);
+  private columnsFromKeys(keys: string[]): ExportColumnConfig[] {
+    const byKey = new Map<string, ExportColumnConfig>();
+    for (const c of this.availableColumns) {
+      byKey.set(this.normalizeQueryKey(c.query), c);
     }
-  }
-
-  drop(event: CdkDragDrop<ExportColumnConfig[]>) {
-    const current = this.selectedExportConfig() ?? this.data.exportConfig ?? [];
-    const next = [...current];
-    moveItemInArray(next, event.previousIndex, event.currentIndex);
-    this.selectedExportConfig.set(next);
-  }
-
-  moveUp(index: number) {
-    const current = this.selectedExportConfig() ?? this.data.exportConfig;
-    if (!current) return;
-    if (index <= 0) return;
-    const next = [...current];
-    const item = next.splice(index, 1)[0];
-    next.splice(index - 1, 0, item);
-    this.selectedExportConfig.set(next);
-  }
-
-  moveDown(index: number) {
-    const current = this.selectedExportConfig() ?? this.data.exportConfig;
-    if (!current) return;
-    if (index >= current.length - 1) return;
-    const next = [...current];
-    const item = next.splice(index, 1)[0];
-    next.splice(index + 1, 0, item);
-    this.selectedExportConfig.set(next);
+    return keys
+      .map((k) => byKey.get(this.normalizeQueryKey(k)))
+      .filter((c): c is ExportColumnConfig => !!c);
   }
 
   async download() {
@@ -155,7 +132,9 @@ export class ExportDialogComponent {
         exportData,
         this.format(),
         this.data.filename,
-        this.selectedExportConfig() ?? this.data.exportConfig,
+        this.selectedColumnKeys() === undefined
+          ? this.data.exportConfig
+          : this.columnsFromKeys(this.selectedColumnKeys() ?? []),
       );
       this.dialogRef.close();
     } catch (e) {

@@ -476,11 +476,18 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         appendUnique(result, col);
       }
 
-      const entitySchema = this.entityConstructor()?.schema;
-      if (!entitySchema) return result;
+      if (!schema) return result;
+
+      // Include every field defined on the entity schema so users can choose
+      // columns that are not currently visible in the list (skip internal fields).
+      for (const [key, field] of schema.entries()) {
+        if (key.startsWith("_")) continue;
+        if (field?.isInternalField) continue;
+        appendUnique(result, { query: `.${key}`, label: field?.label });
+      }
 
       const resolvers = buildExportColumnResolvers(
-        entitySchema,
+        schema,
         this.entitySchemaService,
       );
       for (const r of resolvers) {
