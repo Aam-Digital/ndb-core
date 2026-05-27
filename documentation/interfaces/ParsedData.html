@@ -140,7 +140,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/core/common-components/input-file/input-file.component.ts</code>
+            <code>src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts</code>
         </p>
 
 
@@ -327,54 +327,99 @@
   inject,
   input,
   output,
+  signal,
+  computed,
   ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
-import { readFile } from &quot;../../../utils/utils&quot;;
+import { readFile, readFileAsArrayBuffer } from &quot;../../../utils/utils&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
 import { MatInputModule } from &quot;@angular/material/input&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { Workbook, Worksheet } from &quot;exceljs&quot;;
+import { BasicAutocompleteComponent } from &quot;../basic-autocomplete/basic-autocomplete.component&quot;;
+
+/** File extensions accepted by the parsed-file input component. */
+export type SupportedFileType &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;xlsx&quot;;
 
 /**
- * Form Field to select and parse a file.
+ * Lightweight description of a worksheet inside a loaded xlsx workbook,
+ * used to populate the inline sheet picker for multi-sheet files.
+ */
+export interface SheetInfo {
+  /** Worksheet name as shown to the user in the picker. */
+  name: string;
+  /** Data row count, excluding the header row. */
+  rowCount: number;
+  /** Number of populated columns in the worksheet. */
+  columnCount: number;
+}
+
+/**
+ * Form field to select and parse a structured data file.
  *
- * Currently only supports CSV.
+ * Supports CSV, JSON and XLSX. For multi-sheet XLSX workbooks an inline
+ * sheet selector is shown and the chosen sheet&#x27;s data is re-emitted on change.
+ * Attachment uploads use the file datatype components instead.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: &quot;app-input-file&quot;,
-  templateUrl: &quot;./input-file.component.html&quot;,
+  selector: &quot;app-parsed-file-input&quot;,
+  templateUrl: &quot;./parsed-file-input.component.html&quot;,
+  styleUrls: [&quot;./parsed-file-input.component.scss&quot;],
   imports: [
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
     FontAwesomeModule,
+    BasicAutocompleteComponent,
   ],
 })
-export class InputFileComponent&lt;T &#x3D; any&gt; {
+export class ParsedFileInputComponent&lt;T &#x3D; any&gt; {
   private papa &#x3D; inject(Papa);
 
   /** returns parsed data as an object on completing load after user selects a file */
   fileLoad &#x3D; output&lt;ParsedData&lt;T&gt;&gt;();
 
-  fileType &#x3D; input&lt;&quot;csv&quot; | &quot;json&quot;&gt;();
+  /**
+   * Allowed file types. Accepts a single value (legacy) or an array.
+   * String input is normalized to a single-element array.
+   */
+  fileType &#x3D; input&lt;
+    SupportedFileType[],
+    SupportedFileType | SupportedFileType[]
+  &gt;([&quot;csv&quot;], {
+    transform: (value) &#x3D;&gt; (Array.isArray(value) ? value : [value]),
+  });
+
+  /** Sheets available in the currently loaded xlsx workbook (empty otherwise). */
+  readonly availableSheets &#x3D; signal&lt;SheetInfo[]&gt;([]);
+  readonly selectedSheet &#x3D; signal&lt;string | null&gt;(null);
+
+  /** Comma-separated list of extensions for the file input &#x60;accept&#x60; attribute. */
+  readonly acceptAttribute &#x3D; computed(() &#x3D;&gt;
+    this.fileType()
+      .map((t) &#x3D;&gt; &quot;.&quot; + t)
+      .join(&quot;,&quot;),
+  );
 
   parsedData: ParsedData&lt;T&gt;;
   formControl &#x3D; new FormControl();
 
+  private currentWorkbook: Workbook | null &#x3D; null;
+
   async loadFile($event: Event): Promise&lt;void&gt; {
     this.formControl.reset();
+    this.resetSheetState();
 
     try {
-      const file &#x3D; this.getFileFromInputEvent($event, this.fileType());
+      const file &#x3D; this.getFileFromInputEvent($event);
       this.formControl.setValue(file.name);
 
-      const fileContent &#x3D; await readFile(file);
-      this.parsedData &#x3D; this.parseContent(fileContent, file.name);
-
+      this.parsedData &#x3D; await this.parseFile(file);
       this.fileLoad.emit(this.parsedData);
     } catch (errors) {
       this.formControl.setErrors(errors);
@@ -382,46 +427,194 @@ export class InputFileComponent&lt;T &#x3D; any&gt; {
     }
   }
 
-  private getFileFromInputEvent(
-    inputEvent: Event,
-    allowedFileType?: string,
-  ): File {
+  /** Display string for a sheet option in the inline picker. */
+  readonly sheetToLabel &#x3D; (sheet: SheetInfo) &#x3D;&gt; sheet?.name;
+
+  /** Form value for a sheet option in the inline picker. */
+  readonly sheetToValue &#x3D; (sheet: SheetInfo) &#x3D;&gt; sheet?.name;
+
+  /**
+   * Re-parse the currently loaded workbook using the chosen sheet
+   * and re-emit &#x60;fileLoad&#x60; with the new data. No-op for non-xlsx files
+   * or when the workbook has been cleared.
+   *
+   * Accepts &#x60;string | string[]&#x60; to align with the autocomplete&#x27;s &#x60;valueChange&#x60;
+   * typing; only single-select is wired, so an array is normalized to its first element.
+   */
+  async onSheetChange(value: string | string[]): Promise&lt;void&gt; {
+    const sheetName &#x3D; Array.isArray(value) ? value[0] : value;
+    if (!sheetName) return;
+    if (!this.currentWorkbook) return;
+    const sheet &#x3D; this.currentWorkbook.getWorksheet(sheetName);
+    if (!sheet) return;
+
+    try {
+      const nextParsedData &#x3D; this.finalizeParsedData(
+        this.worksheetToParsedData(sheet),
+        this.parsedData?.filename,
+      );
+      this.formControl.setErrors(null);
+      this.selectedSheet.set(sheetName);
+      this.parsedData &#x3D; nextParsedData;
+      this.fileLoad.emit(this.parsedData);
+    } catch (errors) {
+      this.formControl.setErrors(errors);
+      this.formControl.markAsTouched();
+    }
+  }
+
+  /** Clears the picker state and the cached workbook reference. */
+  private resetSheetState(): void {
+    this.availableSheets.set([]);
+    this.selectedSheet.set(null);
+    this.currentWorkbook &#x3D; null;
+  }
+
+  private getFileFromInputEvent(inputEvent: Event): File {
     const target &#x3D; inputEvent.target as HTMLInputElement;
     const file &#x3D; target.files[0];
 
-    if (
-      allowedFileType &amp;&amp;
-      !file.name.toLowerCase().endsWith(&quot;.&quot; + allowedFileType)
-    ) {
-      throw { fileInvalid: &#x60;Only ${this.fileType()} files are supported&#x60; };
+    const allowedTypes &#x3D; this.fileType();
+    const matchedType &#x3D; allowedTypes.find((t) &#x3D;&gt;
+      file.name.toLowerCase().endsWith(&quot;.&quot; + t),
+    );
+    if (!matchedType) {
+      throw {
+        fileInvalid: $localize&#x60;:Invalid file type error:Only ${allowedTypes.join(
+          &quot;, &quot;,
+        )}:fileTypes: files are supported&#x60;,
+      };
     }
-
     return file;
   }
 
-  private parseContent(fileContent: string, filename?: string) {
-    let result;
+  /**
+   * Dispatches to the right parser based on the file extension and validates
+   * that the result is non-empty before returning it.
+   *
+   * @throws &#x60;{ parsingError: string }&#x60; when the file cannot be parsed or has no rows.
+   */
+  private async parseFile(file: File): Promise&lt;ParsedData&lt;T&gt;&gt; {
+    const lowerName &#x3D; file.name.toLowerCase();
 
-    if (this.fileType() &#x3D;&#x3D;&#x3D; &quot;csv&quot;) {
-      const papaParsed &#x3D; this.papa.parse(fileContent, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-      });
-      result &#x3D; { data: papaParsed.data, fields: papaParsed.meta.fields };
-    } else if (this.fileType() &#x3D;&#x3D;&#x3D; &quot;json&quot;) {
-      result &#x3D; { data: JSON.parse(fileContent) };
+    let result: ParsedData&lt;T&gt;;
+    if (lowerName.endsWith(&quot;.csv&quot;)) {
+      result &#x3D; this.parseCsv(await readFile(file));
+    } else if (lowerName.endsWith(&quot;.json&quot;)) {
+      result &#x3D; this.parseJson(await readFile(file));
+    } else if (lowerName.endsWith(&quot;.xlsx&quot;)) {
+      result &#x3D; await this.parseXlsx(await readFileAsArrayBuffer(file));
     }
 
-    if (result &#x3D;&#x3D;&#x3D; undefined) {
-      throw { parsingError: &quot;File could not be parsed&quot; };
+    return this.finalizeParsedData(result, file.name);
+  }
+
+  private finalizeParsedData(
+    result: ParsedData&lt;T&gt;,
+    filename?: string,
+  ): ParsedData&lt;T&gt; {
+    if (!result) {
+      throw {
+        parsingError: $localize&#x60;:File parsing error:File could not be parsed&#x60;,
+      };
     }
-    if (result.data.length &#x3D;&#x3D;&#x3D; 0) {
-      throw { parsingError: &quot;File has no content&quot; };
+    if (!result.data || (result.data as { length?: number }).length &#x3D;&#x3D;&#x3D; 0) {
+      throw {
+        parsingError: $localize&#x60;:Empty file parsing error:File has no content&#x60;,
+      };
     }
     result.filename &#x3D; filename;
     return result;
   }
+
+  /** Parses CSV text via ngx-papaparse using the first row as headers. */
+  private parseCsv(fileContent: string): ParsedData&lt;T&gt; {
+    const papaParsed &#x3D; this.papa.parse(fileContent, {
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+    });
+    if (!papaParsed) return undefined;
+    return { data: papaParsed.data, fields: papaParsed.meta.fields };
+  }
+
+  /** Parses JSON text directly with &#x60;JSON.parse&#x60;. */
+  private parseJson(fileContent: string): ParsedData&lt;T&gt; {
+    return { data: JSON.parse(fileContent) };
+  }
+
+  /**
+   * Loads an xlsx workbook via exceljs, caches it for sheet switching, and
+   * returns the first sheet as &#x60;ParsedData&#x60;. When the workbook has more than
+   * one sheet, &#x60;availableSheets&#x60; is populated so the picker is shown.
+   */
+  private async parseXlsx(buffer: ArrayBuffer): Promise&lt;ParsedData&lt;T&gt;&gt; {
+    const workbook &#x3D; new Workbook();
+    await workbook.xlsx.load(buffer);
+    this.currentWorkbook &#x3D; workbook;
+
+    const sheets &#x3D; workbook.worksheets;
+    if (sheets.length &#x3D;&#x3D;&#x3D; 0) return undefined;
+
+    if (sheets.length &gt; 1) {
+      this.availableSheets.set(
+        sheets.map((s) &#x3D;&gt; ({
+          name: s.name,
+          rowCount: Math.max(0, s.actualRowCount - 1),
+          columnCount: s.actualColumnCount,
+        })),
+      );
+    }
+    this.selectedSheet.set(sheets[0].name);
+
+    return this.worksheetToParsedData(sheets[0]);
+  }
+
+  /**
+   * Converts an exceljs &#x60;Worksheet&#x60; into the same &#x60;ParsedData&#x60; shape that the
+   * CSV path produces: row 1 is treated as the header and subsequent rows
+   * become objects keyed by header name.
+   *
+   * Tracks each header&#x27;s actual column index so empty header cells don&#x27;t
+   * desynchronize the lookup when reading data rows.
+   */
+  private worksheetToParsedData(sheet: Worksheet): ParsedData&lt;T&gt; {
+    const headerRow &#x3D; sheet.getRow(1);
+    const fields: string[] &#x3D; [];
+    const columnIndices: number[] &#x3D; [];
+    headerRow.eachCell({ includeEmpty: false }, (cell, colNumber) &#x3D;&gt; {
+      fields.push(String(cell.value ?? &quot;&quot;).trim());
+      columnIndices.push(colNumber);
+    });
+
+    const data: any[] &#x3D; [];
+    sheet.eachRow({ includeEmpty: false }, (row, rowNumber) &#x3D;&gt; {
+      if (rowNumber &#x3D;&#x3D;&#x3D; 1) return;
+      const record: Record&lt;string, any&gt; &#x3D; {};
+      fields.forEach((field, idx) &#x3D;&gt; {
+        const cellValue &#x3D; row.getCell(columnIndices[idx]).value;
+        record[field] &#x3D; normalizeCellValue(cellValue);
+      });
+      data.push(record);
+    });
+
+    return { data: data as unknown as T, fields };
+  }
+}
+
+/**
+ * Unwraps exceljs&#x27;s rich cell value shapes (e.g. hyperlinks expose &#x60;text&#x60;,
+ * formulas expose &#x60;result&#x60;) into a primitive suitable for the import flow.
+ */
+function normalizeCellValue(value: unknown): unknown {
+  if (value &#x3D;&#x3D; null) return null;
+  if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; &quot;text&quot; in (value as any)) {
+    return (value as { text: string }).text;
+  }
+  if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; &quot;result&quot; in (value as any)) {
+    return (value as { result: unknown }).result;
+  }
+  return value;
 }
 
 /**

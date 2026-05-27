@@ -1287,9 +1287,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/InheritedValueButtonComponent.html" data-type="entity-link" >InheritedValueButtonComponent</a>
                             </li>
                             <li class="link">
-                                <a href="components/InputFileComponent.html" data-type="entity-link" >InputFileComponent</a>
-                            </li>
-                            <li class="link">
                                 <a href="components/JsonEditorComponent.html" data-type="entity-link" >JsonEditorComponent</a>
                             </li>
                             <li class="link">
@@ -1375,6 +1372,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/ObjectTableComponent.html" data-type="entity-link" >ObjectTableComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/ParsedFileInputComponent.html" data-type="entity-link" >ParsedFileInputComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/PillComponent.html" data-type="entity-link" >PillComponent</a>
@@ -2689,6 +2689,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/SetupWizardStep.html" data-type="entity-link" >SetupWizardStep</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/SheetInfo.html" data-type="entity-link" >SheetInfo</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ShortcutDashboardConfig.html" data-type="entity-link" >ShortcutDashboardConfig</a>

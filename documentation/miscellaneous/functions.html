@@ -520,6 +520,9 @@
                             <a href="#mockEntityMapperProvider" title="src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts" ><b>mockEntityMapperProvider</b>&nbsp;&nbsp;&nbsp;(src/.../mock-entity-mapper-service.ts)</a>
                         </li>
                         <li>
+                            <a href="#normalizeCellValue" title="src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts" ><b>normalizeCellValue</b>&nbsp;&nbsp;&nbsp;(src/.../parsed-file-input.component.ts)</a>
+                        </li>
+                        <li>
                             <a href="#normalizeDateOnly" title="src/app/core/common-components/entity-form/dynamic-form-validators/date-validators.ts" ><b>normalizeDateOnly</b>&nbsp;&nbsp;&nbsp;(src/.../date-validators.ts)</a>
                         </li>
                         <li>
@@ -560,6 +563,9 @@
                         </li>
                         <li>
                             <a href="#readFile" title="src/app/utils/utils.ts" ><b>readFile</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#readFileAsArrayBuffer" title="src/app/utils/utils.ts" ><b>readFileAsArrayBuffer</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
                         </li>
                         <li>
                             <a href="#removeFollowUpMarkerForOldNotes" title="src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts" ><b>removeFollowUpMarkerForOldNotes</b>&nbsp;&nbsp;&nbsp;(src/.../demo-note-generator.service.ts)</a>
@@ -1586,6 +1592,70 @@ Creates and assigns a new one if it doesn&#39;t exist yet.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="readFileAsArrayBuffer"></a>
+                    <span class="name">
+                        <span ><b>readFileAsArrayBuffer</b></span>
+                        <a href="#readFileAsArrayBuffer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>readFileAsArrayBuffer(file: Blob)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Read the contents of a Blob into an <code>ArrayBuffer</code>. Use this for binary
+formats (e.g. xlsx) where reading as text would corrupt the payload.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>file</td>
+                                            <td>
+                                                        <code>Blob</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ArrayBuffer&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -10668,6 +10738,68 @@ including keycloak-specific transient failures.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../classes/PublicFormConfig.html" target="_self" >PublicFormConfig</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="normalizeCellValue"></a>
+                    <span class="name">
+                        <span ><b>normalizeCellValue</b></span>
+                        <a href="#normalizeCellValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>normalizeCellValue(value)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Unwraps exceljs&#39;s rich cell value shapes (e.g. hyperlinks expose <code>text</code>,
+formulas expose <code>result</code>) into a primitive suitable for the import flow.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
 
                         </div>
                             <div class="io-description">
