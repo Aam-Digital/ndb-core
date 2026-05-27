@@ -8,9 +8,9 @@ import {
   computed,
 } from "@angular/core";
 import {
-  InputFileComponent,
+  ParsedFileInputComponent,
   ParsedData,
-} from "../../common-components/input-file/input-file.component";
+} from "../../common-components/parsed-file-input/parsed-file-input.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { FormsModule } from "@angular/forms";
@@ -26,7 +26,7 @@ import { BasicAutocompleteComponent } from "../../common-components/basic-autoco
   templateUrl: "./import-file.component.html",
   styleUrls: ["./import-file.component.scss"],
   imports: [
-    InputFileComponent,
+    ParsedFileInputComponent,
     MatFormFieldModule,
     MatExpansionModule,
     FormsModule,
@@ -57,10 +57,11 @@ export class ImportFileComponent {
     return this.defaultSeparatorOptions;
   });
 
-  @ViewChild(InputFileComponent) inputFileField: InputFileComponent;
+  @ViewChild(ParsedFileInputComponent)
+  parsedFileInputField: ParsedFileInputComponent;
 
   /**
-   * Handle a freshly parsed file emitted by the input-file child.
+   * Handle a freshly parsed file emitted by the parsed-file-input child.
    * Pre-selects the column-separator dropdown to the auto-detected
    * delimiter (which may be outside the defaults — the dropdown will
    * include it automatically via `separatorOptions`). Falls back to
@@ -74,7 +75,7 @@ export class ImportFileComponent {
 
   /**
    * Handle a user-driven change of the column-separator dropdown:
-   * remember the choice and ask the input-file to re-parse the cached
+   * remember the choice and ask the parsed-file-input to re-parse the cached
    * file content with the new delimiter (which will re-emit `dataLoaded`).
    */
   onSeparatorChange(value: string | undefined) {
@@ -82,12 +83,12 @@ export class ImportFileComponent {
       return;
     }
     this.selectedDelimiter.set(value);
-    this.inputFileField?.reparseWithDelimiter(value);
+    this.parsedFileInputField?.reparseWithDelimiter(value);
   }
 
   public reset() {
     delete this.data;
     this.selectedDelimiter.set(undefined);
-    this.inputFileField.formControl.reset();
+    this.parsedFileInputField.formControl.reset();
   }
 }

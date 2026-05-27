@@ -77,6 +77,13 @@ describe("EntityMapperService", () => {
     expect(actualEntity).toBeInstanceOf(Entity);
   }
 
+  it("reconstructs an entity instance from a raw database doc", () => {
+    const rawDoc = { _id: "TestEntity:test-1", name: "test label" };
+    const entity = entityMapper.entityFromRawDoc(rawDoc);
+    expect(entity).toBeInstanceOf(TestEntity);
+    expect(entity.getId()).toBe("TestEntity:test-1");
+  });
+
   it("loads existing entity", async () => {
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,

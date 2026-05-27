@@ -1,0 +1,15 @@
+@use "variables/colors";
+
+.sheet-picker {
+  min-width: 320px;
+}
+
+.sheet-option-name {
+  flex: 1 1 auto;
+}
+
+.sheet-option-meta {
+  color: colors.$muted;
+  font-size: 0.85em;
+  flex-shrink: 0;
+}

@@ -2,6 +2,7 @@ import { environment } from "./environments/environment";
 import { Logging } from "./app/core/logging/logging.service";
 import { FirebaseConfiguration } from "./app/features/notification/notification-config.interface";
 import { SessionType } from "./app/core/session/session-type";
+import { PUBLIC_FORM_ROUTE } from "./app/features/public-form/public-form-routing";
 
 /**
  * Overwrite environment settings with the settings from the `config.json` if present.
@@ -15,6 +16,18 @@ export async function initEnvironmentConfig() {
     dsn: environment.remoteLoggingDsn,
     environment: environment.production ? "production" : "development",
   });
+
+  // Public-form routes must run in online-only mode. Apply this regardless
+  // of whether config.json was loaded — in dev, the config.json fetch may
+  // return early without calling the post-load hooks.
+  applyPublicFormSession();
+
+  if (isPublicFormRoute()) {
+    // Anonymous public-form users don't authenticate via Keycloak and don't
+    // receive push notifications, so skip loading those configs to keep the
+    // public-form cold start fast.
+    return;
+  }
 
   await initKeycloakConfigToEnvironment();
 
@@ -87,6 +100,21 @@ function applyOnlineOnlyPreference() {
   ) {
     environment.session_type = SessionType.online;
   }
+}
+
+/**
+ * Force online-only mode when bootstrapping a public-form route, so the
+ * database factory creates a RemotePouchDatabase from the first lazy access
+ * rather than a SyncedPouchDatabase that would never be initialized.
+ */
+function applyPublicFormSession() {
+  if (isPublicFormRoute()) {
+    environment.session_type = SessionType.online;
+  }
+}
+
+function isPublicFormRoute(): boolean {
+  return window.location.pathname.startsWith(`/${PUBLIC_FORM_ROUTE}/`);
 }
 
 /**

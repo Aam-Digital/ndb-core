@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportFileComponent } from "./import-file.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ParsedData } from "../../common-components/input-file/input-file.component";
+import { ParsedData } from "../../common-components/parsed-file-input/parsed-file-input.component";
 
 describe("ImportSelectFileComponent", () => {
   let component: ImportFileComponent;
@@ -28,18 +28,20 @@ describe("ImportSelectFileComponent", () => {
 
   it("should reset all state", () => {
     component.data = { data: [{ x: 1 }, { x: 2 }] };
-    component.inputFileField.formControl.setValue("test");
+    component.parsedFileInputField.formControl.setValue("test");
 
     component.reset();
 
     expect(component.data).toBeUndefined();
-    expect(component.inputFileField.formControl.getRawValue()).toEqual(null);
+    expect(component.parsedFileInputField.formControl.getRawValue()).toEqual(
+      null,
+    );
   });
 
-  it("should ask the input-file to re-parse when the user changes the delimiter", () => {
+  it("should ask the parsed-file-input to re-parse when the user changes the delimiter", () => {
     component.onFileLoad({ data: [{ x: 1 }], detectedDelimiter: "," });
     const reparseSpy = vi.spyOn(
-      component.inputFileField,
+      component.parsedFileInputField,
       "reparseWithDelimiter",
     );
 
