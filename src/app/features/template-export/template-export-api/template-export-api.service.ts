@@ -166,20 +166,27 @@ export class TemplateExportApiService extends FileService {
   }
 
   /**
-   * Generate a bundle of files from one template for many records in a single request.
-   * The backend renders each record individually and returns the results bundled into a ZIP.
+   * Generate output from one template for many records in a single request.
+   *
+   * - `mode: "zip"` (default): the backend renders each record individually and returns
+   *   the results bundled into a ZIP; per-record failures are reported via `failedIndices`.
+   * - `mode: "combined"`: the backend forwards the whole array to the template engine and
+   *   returns a single document (for templates built with array placeholders).
    *
    * @param templateEntityId The id of the TemplateExport entity
    * @param dataList The array of data objects (typically entities) to apply to the template
-   * @return An ArrayBuffer of the ZIP and the indices (in the input array) of any failures
+   * @param mode How the backend should aggregate the output
+   * @return The generated file plus the indices of any per-record failures (ZIP mode only)
    */
   generateBatchFromTemplate(
     templateEntityId: string,
     dataList: Object[],
+    mode: "zip" | "combined" = "zip",
   ): Observable<TemplateExportBatchResult> {
+    const fallbackExtension = mode === "combined" ? ".pdf" : ".zip";
     return this.httpClient
       .post(
-        this.API_URL + "/render-batch/" + templateEntityId + "?mode=zip",
+        this.API_URL + "/render-batch/" + templateEntityId + "?mode=" + mode,
         {
           convertTo: "pdf",
           data: dataList,
@@ -195,7 +202,7 @@ export class TemplateExportApiService extends FileService {
           const filename =
             filenameMatch && filenameMatch.length > 1
               ? filenameMatch[1]
-              : templateEntityId.replace(":", "_") + ".zip";
+              : templateEntityId.replace(":", "_") + fallbackExtension;
 
           const failedHeader = res.headers.get("X-Failed-Record-Indices");
           const failedIndices = failedHeader

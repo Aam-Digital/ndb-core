@@ -219,4 +219,36 @@ describe("TemplateExportApiService", () => {
     expect(result.failedIndices).toEqual([]);
     expect(result.filename).toBe("TemplateExport_test-template-id.zip");
   });
+
+  it("should call the render-batch endpoint in combined mode with a pdf fallback filename", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    const dataList = [{ name: "A" }, { name: "B" }];
+
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(12),
+      status: 200,
+    });
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(mockResponse));
+
+    const result = await lastValueFrom(
+      service.generateBatchFromTemplate(
+        templateEntity.getId(),
+        dataList,
+        "combined",
+      ),
+    );
+
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL +
+        "/render-batch/" +
+        templateEntity.getId() +
+        "?mode=combined",
+      { convertTo: "pdf", data: dataList },
+      expect.any(Object),
+    );
+    expect(result.failedIndices).toEqual([]);
+    expect(result.filename).toBe("TemplateExport_test-template-id.pdf");
+  });
 });

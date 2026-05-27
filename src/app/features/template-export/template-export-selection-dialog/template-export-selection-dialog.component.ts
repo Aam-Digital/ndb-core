@@ -24,6 +24,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
@@ -62,6 +63,7 @@ export class TemplateExportSelectionDialogComponent {
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
   private readonly templateExportService = inject(TemplateExportService);
+  private readonly entityMapper = inject(EntityMapperService);
 
   entity = input<Entity | Entity[]>();
 
@@ -132,27 +134,33 @@ export class TemplateExportSelectionDialogComponent {
           result.filename ?? entities[0].toString(),
         );
       } else {
+        const combined = await this.shouldCombineIntoSingleFile(templateId);
         const result = await firstValueFrom(
           this.templateExportApi.generateBatchFromTemplate(
             templateId,
             entities,
+            combined ? "combined" : "zip",
           ),
         );
         if (this.cancelRequested()) return;
         await this.downloadService.triggerDownload(
           result.file,
-          "zip",
+          combined ? "pdf" : "zip",
           result.filename,
         );
-        this.failures.set(
-          result.failedIndices
-            .map((index) => entities[index])
-            .filter((entity): entity is Entity => entity !== undefined)
-            .map((entity) => ({
-              entity,
-              error: $localize`Server skipped this record.`,
-            })),
-        );
+        // combined mode is all-or-nothing (a render failure is caught below),
+        // so per-record failure indices only apply to ZIP mode
+        if (!combined) {
+          this.failures.set(
+            result.failedIndices
+              .map((index) => entities[index])
+              .filter((entity): entity is Entity => entity !== undefined)
+              .map((entity) => ({
+                entity,
+                error: $localize`Server skipped this record.`,
+              })),
+          );
+        }
       }
     } catch (error) {
       Logging.warn("Failed to generate files", error);
@@ -166,5 +174,19 @@ export class TemplateExportSelectionDialogComponent {
 
   cancel() {
     this.cancelRequested.set(true);
+  }
+
+  /**
+   * Whether the selected template is configured to combine all records into a single
+   * document (array-placeholder template) rather than a ZIP of separate files.
+   * Defaults to false if the template cannot be loaded.
+   */
+  private async shouldCombineIntoSingleFile(
+    templateId: string,
+  ): Promise<boolean> {
+    const template = await this.entityMapper
+      .load(TemplateExport, templateId)
+      .catch(() => undefined);
+    return template?.combineRecordsIntoSingleFile === true;
   }
 }

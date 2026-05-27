@@ -89,4 +89,19 @@ export class TemplateExport extends Entity {
     validators: { required: true },
   })
   targetFileName: string;
+
+  /**
+   * When generating files for multiple records at once (bulk action), produce a single
+   * combined document containing all records instead of a ZIP of separate files.
+   *
+   * Requires a template designed with array placeholders (e.g. `{d[i].name}`) and a
+   * repeating section / page break per record. Leave disabled for normal single-record
+   * templates — those produce one file per record bundled into a ZIP.
+   */
+  // Todo: Comment this after testing or may be decide
+  @DatabaseField({
+    label: $localize`:TemplateExport:Combine records into a single document`,
+    description: $localize`:TemplateExport:For bulk generation, produce one combined document for all selected records instead of a ZIP of separate files. Only enable this for templates specifically built with repeating sections / array placeholders.`,
+  })
+  combineRecordsIntoSingleFile: boolean = false;
 }

@@ -132,6 +132,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
                       },
                       "templateFile",
                       "targetFileName",
+                      "combineRecordsIntoSingleFile",
                     ],
                   },
                 ],
