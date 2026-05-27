@@ -161,4 +161,62 @@ describe("MapPopupComponent", () => {
       vi.useRealTimers();
     }
   });
+
+  it("should replace stale top-level fields when selecting a different map location", async () => {
+    vi.useFakeTimers();
+    try {
+      let updatedMarkedLocations: GeoResult[];
+      component.markedLocations.subscribe(
+        (res) => (updatedMarkedLocations = res),
+      );
+
+      // Pre-populate selectedLocation with a previous geoLookup and top-level fields
+      component.selectedLocation = {
+        geoLookup: {
+          lat: 52,
+          lon: 13,
+          display_name: "Old Place",
+          road: "Old Road",
+          postcode: "10001",
+          city: "OldCity",
+          country: "OldCountry",
+        },
+        locationString: "Old Place",
+        // top-level fields that should be replaced when a new geoLookup is selected
+        road: "Old Road",
+        postcode: "10001",
+        city: "OldCity",
+        country: "OldCountry",
+      } as any;
+
+      const mockedClick: Coordinates = { lat: 1, lon: 2 };
+      const newGeo: GeoResult = {
+        lat: mockedClick.lat,
+        lon: mockedClick.lon,
+        display_name: "New Place",
+        road: "New Road",
+        postcode: "99999",
+        city: "NewCity",
+        country: "NewCountry",
+      } as any;
+
+      mockGeoService.reverseLookup.mockReturnValue(of(newGeo));
+
+      await component.mapClicked(mockedClick);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // marked locations should reflect the new lookup
+      expect(updatedMarkedLocations).toEqual([newGeo]);
+
+      // selectedLocation should have top-level fields populated from the new geoLookup,
+      // not retain the old ones
+      expect(component.selectedLocation?.road).toBe("New Road");
+      expect(component.selectedLocation?.postcode).toBe("99999");
+      expect(component.selectedLocation?.city).toBe("NewCity");
+      expect(component.selectedLocation?.country).toBe("NewCountry");
+      expect(component.selectedLocation?.geoLookup).toEqual(newGeo);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

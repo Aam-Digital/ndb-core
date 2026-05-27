@@ -209,7 +209,7 @@ type OpenStreetMapsSearchResult = GeoResult & {
     city?: string;
     village?: string;
     town?: string;
-    postcode?: string | number;
+    postcode?: string;
     country?: string;
     country_code?: string;
   };

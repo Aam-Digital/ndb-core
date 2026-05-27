@@ -166,14 +166,6 @@ export class AddressEditComponent {
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: value?.geoLookup,
-      road: value?.geoLookup?.road,
-      house_number: value?.geoLookup?.house_number,
-      postcode:
-        value?.geoLookup?.postcode != null
-          ? String(value.geoLookup.postcode)
-          : undefined,
-      city: value?.geoLookup?.city,
-      country: value?.geoLookup?.country,
     });
   }
 
@@ -181,11 +173,6 @@ export class AddressEditComponent {
     const newLocation: GeoLocation = {
       locationString: geoResult.display_name,
       geoLookup: geoResult,
-      road: geoResult.road,
-      house_number: geoResult.house_number,
-      postcode: geoResult.postcode,
-      city: geoResult.city,
-      country: geoResult.country,
     };
     // For GPS, we don't have user input, so just use the display name
     this.updateLocation(newLocation);

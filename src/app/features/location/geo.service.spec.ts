@@ -27,7 +27,7 @@ type SearchResult = GeoResult & {
     office?: string;
     road?: string;
     house_number?: string;
-    postcode?: string | number;
+    postcode?: string;
     city?: string;
     village?: string;
     country?: string;
@@ -115,7 +115,7 @@ describe("GeoService", () => {
       amenity: "Cafe",
       road: "Main St",
       house_number: "42",
-      postcode: 12345,
+      postcode: "12345",
       city: "Berlin",
     });
     const formatted = service.reformatDisplayName(testResult);
@@ -172,7 +172,7 @@ describe("GeoService", () => {
       createSearchResult({
         road: "Rollbergstraße",
         house_number: "12",
-        postcode: 12053,
+        postcode: "12053",
         village: "Berlin",
         country: "Germany",
       }),

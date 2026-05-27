@@ -121,9 +121,11 @@ export class MapPopupComponent {
       this.geoService.reverseLookup(newCoordinates),
     );
 
-    // Only update geoLookup, keep the user's address string as-is
+    // Only update geoLookup. Do not carry over stale top-level address fields
+    // from the previously selected location — that causes conflicts where
+    // `geoLookup` points to a new place but `road/postcode/city` remain old.
     this.updateLocation({
-      ...this.selectedLocation,
+      locationString: this.selectedLocation?.locationString,
       geoLookup: geoResult,
     });
   }
