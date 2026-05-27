@@ -137,6 +137,20 @@ export function readFile(file: Blob): Promise<string> {
   });
 }
 
+/**
+ * Read the contents of a Blob into an `ArrayBuffer`. Use this for binary
+ * formats (e.g. xlsx) where reading as text would corrupt the payload.
+ */
+export function readFileAsArrayBuffer(file: Blob): Promise<ArrayBuffer> {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", () =>
+      resolve(fileReader.result as ArrayBuffer),
+    );
+    fileReader.readAsArrayBuffer(file);
+  });
+}
+
 export function compareEnums(
   a: ConfigurableEnumValue,
   b: ConfigurableEnumValue,

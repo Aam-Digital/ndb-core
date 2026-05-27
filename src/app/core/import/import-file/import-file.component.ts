@@ -6,9 +6,9 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import {
-  InputFileComponent,
+  ParsedFileInputComponent,
   ParsedData,
-} from "../../common-components/input-file/input-file.component";
+} from "../../common-components/parsed-file-input/parsed-file-input.component";
 
 /**
  * Import sub-step: Let user load a file and return parsed data.
@@ -18,13 +18,14 @@ import {
   selector: "app-import-file",
   templateUrl: "./import-file.component.html",
   styleUrls: ["./import-file.component.scss"],
-  imports: [InputFileComponent],
+  imports: [ParsedFileInputComponent],
 })
 export class ImportFileComponent {
   @Output() dataLoaded = new EventEmitter<ParsedData<any>>();
 
   data: ParsedData<any>;
-  @ViewChild(InputFileComponent) inputFileField: InputFileComponent;
+  @ViewChild(ParsedFileInputComponent)
+  parsedFileInputField: ParsedFileInputComponent;
 
   onFileLoad(parsedData: ParsedData<any>) {
     this.dataLoaded.emit(parsedData);
@@ -33,6 +34,6 @@ export class ImportFileComponent {
 
   public reset() {
     delete this.data;
-    this.inputFileField.formControl.reset();
+    this.parsedFileInputField.formControl.reset();
   }
 }

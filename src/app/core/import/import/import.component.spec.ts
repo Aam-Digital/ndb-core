@@ -4,7 +4,7 @@ import { ImportComponent } from "./import.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { ColumnMapping } from "../column-mapping";
-import { ParsedData } from "../../common-components/input-file/input-file.component";
+import { ParsedData } from "../../common-components/parsed-file-input/parsed-file-input.component";
 import { ImportMetadata } from "../import-metadata";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { Router } from "@angular/router";
