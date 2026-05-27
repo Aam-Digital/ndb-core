@@ -1,9 +1,9 @@
 <p i18n>Select a .xlsx or .csv file with data to import:</p>
 
-<app-input-file
+<app-parsed-file-input
   (fileLoad)="onFileLoad($event)"
   [fileType]="['csv', 'xlsx']"
-></app-input-file>
+></app-parsed-file-input>
 
 @if (data) {
   <div i18n>{{ data.data?.length }} rows detected for import</div>

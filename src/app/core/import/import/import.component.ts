@@ -6,7 +6,7 @@ import {
   signal,
   computed,
 } from "@angular/core";
-import { ParsedData } from "../../common-components/input-file/input-file.component";
+import { ParsedData } from "../../common-components/parsed-file-input/parsed-file-input.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";

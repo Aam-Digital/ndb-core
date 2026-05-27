@@ -17,7 +17,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Workbook, Worksheet } from "exceljs";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 
-/** File extensions accepted by the input-file component. */
+/** File extensions accepted by the parsed-file input component. */
 export type SupportedFileType = "csv" | "json" | "xlsx";
 
 /**
@@ -34,16 +34,17 @@ export interface SheetInfo {
 }
 
 /**
- * Form Field to select and parse a file.
+ * Form field to select and parse a structured data file.
  *
  * Supports CSV, JSON and XLSX. For multi-sheet XLSX workbooks an inline
  * sheet selector is shown and the chosen sheet's data is re-emitted on change.
+ * Attachment uploads use the file datatype components instead.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-input-file",
-  templateUrl: "./input-file.component.html",
-  styleUrls: ["./input-file.component.scss"],
+  selector: "app-parsed-file-input",
+  templateUrl: "./parsed-file-input.component.html",
+  styleUrls: ["./parsed-file-input.component.scss"],
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -53,7 +54,7 @@ export interface SheetInfo {
     BasicAutocompleteComponent,
   ],
 })
-export class InputFileComponent<T = any> {
+export class ParsedFileInputComponent<T = any> {
   private papa = inject(Papa);
 
   /** returns parsed data as an object on completing load after user selects a file */
@@ -123,9 +124,19 @@ export class InputFileComponent<T = any> {
     const sheet = this.currentWorkbook.getWorksheet(sheetName);
     if (!sheet) return;
 
-    this.selectedSheet.set(sheetName);
-    this.parsedData = this.worksheetToParsedData(sheet);
-    this.fileLoad.emit(this.parsedData);
+    try {
+      const nextParsedData = this.finalizeParsedData(
+        this.worksheetToParsedData(sheet),
+        this.parsedData?.filename,
+      );
+      this.formControl.setErrors(null);
+      this.selectedSheet.set(sheetName);
+      this.parsedData = nextParsedData;
+      this.fileLoad.emit(this.parsedData);
+    } catch (errors) {
+      this.formControl.setErrors(errors);
+      this.formControl.markAsTouched();
+    }
   }
 
   /** Clears the picker state and the cached workbook reference. */
@@ -169,13 +180,20 @@ export class InputFileComponent<T = any> {
       result = await this.parseXlsx(await readFileAsArrayBuffer(file));
     }
 
+    return this.finalizeParsedData(result, file.name);
+  }
+
+  private finalizeParsedData(
+    result: ParsedData<T>,
+    filename?: string,
+  ): ParsedData<T> {
     if (!result) {
       throw { parsingError: "File could not be parsed" };
     }
-    if (!result.data || result.data["length"] === 0) {
+    if (!result.data || (result.data as { length?: number }).length === 0) {
       throw { parsingError: "File has no content" };
     }
-    result.filename = file.name;
+    result.filename = filename;
     return result;
   }
 
