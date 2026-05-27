@@ -7,6 +7,7 @@ import { Observable, Subject } from "rxjs";
 import { NotificationEvent } from "app/features/notification/model/notification-event";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
+import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import {
   DbConfig,
   IndexeddbMigrationService,
@@ -153,9 +154,17 @@ export class DatabaseResolverService {
   }
 
   initDatabasesForAnonymous() {
-    if (!this.getDatabase(Entity.DATABASE).isInitialized()) {
-      // this internally only uses the remote database of the SyncedPouchDatabase instance:
-      this.getDatabase(Entity.DATABASE).init(null);
+    const db = this.getDatabase(Entity.DATABASE);
+    if (db.isInitialized()) {
+      return;
     }
+
+    // The /public-form/ route is detected in bootstrap-environment.ts and
+    // session_type is forced to "online" before Angular DI starts, so the
+    // factory always produces a RemotePouchDatabase here. Init it with the
+    // anonymous-session flag so a 401 doesn't trigger the Keycloak redirect.
+    (db as RemotePouchDatabase).init(undefined, {
+      unauthenticatedSession: true,
+    });
   }
 }
