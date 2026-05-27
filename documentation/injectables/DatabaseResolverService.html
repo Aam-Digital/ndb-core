@@ -244,8 +244,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="65"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:65</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -281,8 +281,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="50"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:50</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -352,8 +352,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="155"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:155</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:156</a></div>
                         </td>
                     </tr>
 
@@ -391,8 +391,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="98"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:98</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -464,8 +464,8 @@ i.e. configuring the access for that account after login
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="131"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:131</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="132"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:132</a></div>
                         </td>
                     </tr>
 
@@ -535,8 +535,8 @@ to avoid flooding to console with errors.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -579,8 +579,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -618,8 +618,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="85"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:85</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -660,7 +660,7 @@ forcing a full re-check on the next sync without deleting any data.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/database/database-resolver.service.ts:38</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/database/database-resolver.service.ts:39</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -692,6 +692,7 @@ import { Observable, Subject } from &quot;rxjs&quot;;
 import { NotificationEvent } from &quot;app/features/notification/model/notification-event&quot;;
 import { SyncedPouchDatabase } from &quot;./pouchdb/synced-pouch-database&quot;;
 import { PouchDatabase } from &quot;./pouchdb/pouch-database&quot;;
+import { RemotePouchDatabase } from &quot;./pouchdb/remote-pouch-database&quot;;
 import {
   DbConfig,
   IndexeddbMigrationService,
@@ -838,10 +839,18 @@ export class DatabaseResolverService {
   }
 
   initDatabasesForAnonymous() {
-    if (!this.getDatabase(Entity.DATABASE).isInitialized()) {
-      // this internally only uses the remote database of the SyncedPouchDatabase instance:
-      this.getDatabase(Entity.DATABASE).init(null);
+    const db &#x3D; this.getDatabase(Entity.DATABASE);
+    if (db.isInitialized()) {
+      return;
     }
+
+    // The /public-form/ route is detected in bootstrap-environment.ts and
+    // session_type is forced to &quot;online&quot; before Angular DI starts, so the
+    // factory always produces a RemotePouchDatabase here. Init it with the
+    // anonymous-session flag so a 401 doesn&#x27;t trigger the Keycloak redirect.
+    (db as RemotePouchDatabase).init(undefined, {
+      unauthenticatedSession: true,
+    });
   }
 }
 </code></pre>

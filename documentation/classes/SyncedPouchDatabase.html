@@ -248,12 +248,6 @@ provides functionality to sync with a remote CouchDB.</p>
                                 <a href="#resetSync" >resetSync</a>
                             </li>
                             <li>
-                                    <span class="modifier">Protected</span>
-                                    <span class="modifier"></span>
-                                    <span class="modifier">Async</span>
-                                <a href="#subscribeChanges" >subscribeChanges</a>
-                            </li>
-                            <li>
                                     <span class="modifier">Async</span>
                                 <a href="#sync" >sync</a>
                             </li>
@@ -314,6 +308,11 @@ provides functionality to sync with a remote CouchDB.</p>
                                 <a href="#shouldSkipIndexUpdate" >shouldSkipIndexUpdate</a>
                             </li>
                             <li>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#subscribeChanges" >subscribeChanges</a>
+                            </li>
+                            <li>
                                 <a href="#getAll" >getAll</a>
                             </li>
                         </ul>
@@ -337,9 +336,6 @@ provides functionality to sync with a remote CouchDB.</p>
                                 </li>
                                 <li>
                                     <a href="#localSyncState" >localSyncState</a>
-                                </li>
-                                <li>
-                                    <a href="#isInRemoteOnlyMode" >isInRemoteOnlyMode</a>
                                 </li>
                             </ul>
                         </td>
@@ -537,7 +533,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="374" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:374</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="332" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:332</a></div>
                         </td>
                     </tr>
 
@@ -898,8 +894,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="351"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:351</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="313"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:313</a></div>
                         </td>
                     </tr>
 
@@ -907,7 +903,6 @@ This change can come from the current user or remotely from the (live) synchroni
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Ensure the database is synced with the remote server.
-Resolves immediately if in remote-only mode.
 Throws <a href="../classes/NotAvailableOfflineError.html">NotAvailableOfflineError</a> if offline.
 Otherwise triggers a one-time sync and resolves when complete.</p>
 </div>
@@ -975,7 +970,7 @@ Can be used as a replication source for background migration.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>init(dbName?: string | null, remoteDbName?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>init(dbName?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, remoteDbName?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
@@ -988,7 +983,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:129</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:128</a></code>
 </div>
                         </td>
                     </tr>
@@ -996,8 +991,7 @@ Can be used as a replication source for background migration.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Initializes the PouchDB with local indexeddb as well as a remote server connection for syncing.
-               if explicitly passed as <code>null</code>, a remote-only, anonymous session is initialized</p>
+                        <div class="io-description"><p>Initializes the PouchDB with local indexeddb as well as a remote server connection for syncing.</p>
 </div>
 
                             <div class="io-description">
@@ -1016,7 +1010,7 @@ Can be used as a replication source for background migration.</p>
                                         <tr>
                                                 <td>dbName</td>
                                             <td>
-                                                        <code>string | null</code>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
 
                                             <td>
@@ -1025,8 +1019,7 @@ Can be used as a replication source for background migration.</p>
 
 
                                             <td>
-                                                    <p>local database name (for the current user);
- if explicitly passed as <code>null</code>, a remote-only, anonymous session is initialized</p>
+                                                    <p>local database name (for the current user)</p>
 
                                             </td>
                                         </tr>
@@ -1080,8 +1073,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="376"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:376</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="334"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:334</a></div>
                         </td>
                     </tr>
 
@@ -1126,7 +1119,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:268</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:235</a></code>
 </div>
                         </td>
                     </tr>
@@ -1219,7 +1212,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:280</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:247</a></code>
 </div>
                         </td>
                     </tr>
@@ -1300,8 +1293,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="336"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:336</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="303"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:303</a></div>
                         </td>
                     </tr>
 
@@ -1314,53 +1307,6 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="subscribeChanges"></a>
-                    <span class="name">
-                            <span class="modifier">Protected</span>
-                            <span class="modifier"></span>
-                            <span class="modifier">Async</span>
-                        <span ><b>subscribeChanges</b></span>
-                        <a href="#subscribeChanges"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>subscribeChanges()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/PouchDatabase.html" target="_self" >PouchDatabase</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:163</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                 </td>
@@ -1389,8 +1335,8 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="178"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:178</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="145"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:145</a></div>
                         </td>
                     </tr>
 
@@ -2469,6 +2415,52 @@ overwriting indexes created by a newer app version on a shared server.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="subscribeChanges"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>subscribeChanges</b></span>
+                        <a href="#subscribeChanges"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>subscribeChanges()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/PouchDatabase.html" target="_self" >PouchDatabase</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:307</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getAll"></a>
                     <span class="name">
                         <span ><b>getAll</b></span>
@@ -2615,39 +2607,6 @@ Useful for observing when this specific database&#39;s sync completes.</p>
 
             </tbody>
         </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="isInRemoteOnlyMode"></a>
-                        <span class="name"><b>isInRemoteOnlyMode</b><a href="#isInRemoteOnlyMode"><span class="icon ion-ios-link"></span></a></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>get</b><code>isInRemoteOnlyMode()</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="159" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:159</a></div>
-                                </td>
-                            </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-description"><p>Whether the database is currently in remote-only mode without syncing to a local PouchDB.</p>
-</div>
-
-                                <div class="io-description">
-                                    <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                                </div>
-                        </td>
-                    </tr>
-
-            </tbody>
-        </table>
 </section>
     </div>
 
@@ -2777,28 +2736,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   /**
    * Initializes the PouchDB with local indexeddb as well as a remote server connection for syncing.
-   * @param dbName local database name (for the current user);
-   *                if explicitly passed as &#x60;null&#x60;, a remote-only, anonymous session is initialized
+   * @param dbName local database name (for the current user)
    * @param remoteDbName (optional) remote database name (if different from local browser database name)
    */
-  override init(dbName?: string | null, remoteDbName?: string) {
-    if (dbName &#x3D;&#x3D;&#x3D; null) {
-      Logging.debug(
-        &quot;Initializing remote-only session for database&quot;,
-        this.dbName,
-      );
+  override init(dbName?: string, remoteDbName?: string) {
+    super.init(dbName ?? this.dbName, undefined, true);
 
-      this.remoteDatabase.init(null, { unauthenticatedSession: true });
-
-      // use the remote database as internal database driver
-      this.pouchDB &#x3D; this.remoteDatabase.getPouchDB();
-      this.databaseInitialized.complete();
-    } else {
-      super.init(dbName ?? this.dbName, undefined, true);
-
-      // keep remote database on default name (e.g. &quot;app&quot; instead of &quot;user_uuid-app&quot;)
-      this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
-    }
+    // keep remote database on default name (e.g. &quot;app&quot; instead of &quot;user_uuid-app&quot;)
+    this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
   }
 
   private async logSyncContext() {
@@ -2806,25 +2751,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
     Logging.addContext(&quot;Aam Digital sync&quot;, {
       &quot;last sync completed&quot;: lastSyncTime,
     });
-  }
-
-  /**
-   * Whether the database is currently in remote-only mode without syncing to a local PouchDB.
-   */
-  public get isInRemoteOnlyMode(): boolean {
-    return this.pouchDB &#x3D;&#x3D;&#x3D; this.remoteDatabase.getPouchDB();
-  }
-
-  protected override async subscribeChanges() {
-    // if in remote-only mode, forward remote database changes to this changes feed
-    if (this.isInRemoteOnlyMode) {
-      this.remoteDatabase
-        .changes()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((change) &#x3D;&gt; this.changesFeed.next(change));
-    } else {
-      super.subscribeChanges();
-    }
   }
 
   /**
@@ -2989,25 +2915,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Uses &#x60;checkpoint: false&#x60; once so PouchDB ignores previous checkpoints for this run.
    */
   async resetSync(): Promise&lt;void&gt; {
-    if (this.isInRemoteOnlyMode) {
-      return;
-    }
-
     Logging.debug(&#x60;triggering full re-sync for &quot;${this.dbName}&quot;&#x60;);
     await this.sync({ checkpoint: false });
   }
 
   /**
    * Ensure the database is synced with the remote server.
-   * Resolves immediately if in remote-only mode.
    * Throws {@link NotAvailableOfflineError} if offline.
    * Otherwise triggers a one-time sync and resolves when complete.
    */
   async ensureSynced(): Promise&lt;void&gt; {
-    if (this.isInRemoteOnlyMode) {
-      return;
-    }
-
     if (!this.navigator.onLine) {
       throw new NotAvailableOfflineError(
         &quot;Failed to ensure synced. Cannot sync database while offline.&quot;,

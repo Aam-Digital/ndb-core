@@ -145,6 +145,9 @@
                             <a href="#applyOnlineOnlyPreference" title="src/bootstrap-environment.ts" ><b>applyOnlineOnlyPreference</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</a>
                         </li>
                         <li>
+                            <a href="#applyPublicFormSession" title="src/bootstrap-environment.ts" ><b>applyPublicFormSession</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</a>
+                        </li>
+                        <li>
                             <a href="#applyRangeSelection" title="src/app/core/common-components/entities-table/entities-table-selection.ts" ><b>applyRangeSelection</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-selection.ts)</a>
                         </li>
                         <li>
@@ -467,6 +470,9 @@
                         </li>
                         <li>
                             <a href="#isManualItemWithoutLink" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" ><b>isManualItemWithoutLink</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isPublicFormRoute" title="src/bootstrap-environment.ts" ><b>isPublicFormRoute</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</a>
                         </li>
                         <li>
                             <a href="#isRetryableNetworkError" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" ><b>isRetryableNetworkError</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</a>
@@ -1850,6 +1856,37 @@ LoginComponent ran, the wrong DB class would already have been instantiated.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="applyPublicFormSession"></a>
+                    <span class="name">
+                        <span ><b>applyPublicFormSession</b></span>
+                        <a href="#applyPublicFormSession"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>applyPublicFormSession()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Force online-only mode when bootstrapping a public-form route, so the
+database factory creates a RemotePouchDatabase from the first lazy access
+rather than a SyncedPouchDatabase that would never be initialized.</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="initConfigJsonToEnvironment"></a>
                     <span class="name">
                         <span ><b>initConfigJsonToEnvironment</b></span>
@@ -1960,6 +1997,37 @@ Please add assets/firebase-config.json with your own Firebase config</p>
                         <div class="io-description"><p>Load Keycloak server URL from assets/keycloak.json into environment</p>
 </div>
 
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isPublicFormRoute"></a>
+                    <span class="name">
+                        <span ><b>isPublicFormRoute</b></span>
+                        <a href="#isPublicFormRoute"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isPublicFormRoute()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
                 </td>
             </tr>
         </tbody>
