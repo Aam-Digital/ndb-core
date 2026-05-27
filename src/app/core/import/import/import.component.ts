@@ -6,7 +6,7 @@ import {
   signal,
   computed,
 } from "@angular/core";
-import { ParsedData } from "../../common-components/input-file/input-file.component";
+import { ParsedData } from "../../common-components/parsed-file-input/parsed-file-input.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";
@@ -116,7 +116,7 @@ export class ImportComponent {
     this.rawData = data.data;
     this.updateImportSettings({ filename: data.filename });
 
-    if (this.importSettings().columnMapping) {
+    if (this.importSettings().columnMapping?.some((m) => m.propertyName)) {
       this.alertService.addInfo(
         $localize`:alert info after file load:Column Mappings have been reset`,
       );
