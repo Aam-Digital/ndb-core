@@ -350,7 +350,6 @@
   "2120530309769865545": "Sélectionnez le type de cible d’importation:",
   "7231054395430410068": "Importer en tant que",
   "793619946657035541": "Mode Expert",
-  "4518357326640436030": "Sélectionnez un fichier .csv avec les données à importer:",
   "3937316276738368320": "{$INTERPOLATION} lignes détectées pour l'importation",
   "1284150753043743823": "Importations précédentes",
   "6375746665146474586": " importé par {$START_TAG_APP_ENTITY_BLOCK}{$CLOSE_TAG_APP_ENTITY_BLOCK} à {$INTERPOLATION} ",
@@ -1438,5 +1437,12 @@
   "6488622213810377133": "powered by",
   "750863538901962642": "Upload a raw configuration file and overwrite the current system configuration. Accepts a single config object or an array of config documents.",
   "7516236516227197736": "Upload failed: {$PH}",
-  "690427411501906292": "Offline sync disabled — loading data directly from server"
+  "690427411501906292": "Offline sync disabled — loading data directly from server",
+  "2479388840534737755": "Sheet",
+  "4606149525185499759": "{VAR_PLURAL, plural, =1 {row} other {rows}}",
+  "1918738125392726455": "{VAR_PLURAL, plural, =1 {col} other {cols}}",
+  "6401041142388917372": "Only {$fileTypes} files are supported",
+  "90329795879868449": "File could not be parsed",
+  "4054880988022132753": "File has no content",
+  "1269233703889410883": "Select a .xlsx or .csv file with data to import:"
 }
