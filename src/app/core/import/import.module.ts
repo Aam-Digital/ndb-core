@@ -37,12 +37,14 @@ export class ImportModule {
       .filter((a) => !a.expertOnly); // hide advanced actions for simplicity
 
     for (const importAction of importActions) {
+      const label = this.importAdditionalService.createActionLabel(
+        importAction,
+        true,
+      );
       actions.push({
         action: JSON.stringify(importAction),
-        label: this.importAdditionalService.createActionLabel(
-          importAction,
-          true,
-        ),
+        label,
+        tooltip: label,
         icon: "file-import",
         execute: () =>
           this.router.navigate(["import"], {
