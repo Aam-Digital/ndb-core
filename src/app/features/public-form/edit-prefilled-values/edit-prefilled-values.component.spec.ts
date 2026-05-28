@@ -88,6 +88,17 @@ describe("EditPrefilledValuesComponent", () => {
     expect(component.prefilledValueSettings.disabled).toBe(false);
   });
 
+  it("should be invalid when config has null value payload (e.g. static mode with empty input)", () => {
+    component.addPrefilledFields();
+    component.prefilledValues.at(0).get("field").setValue("name");
+    component.prefilledValues
+      .at(0)
+      .get("defaultValue")
+      .setValue({ mode: "static", config: { value: null } });
+
+    expect(component.prefilledValueSettings.invalid).toBe(true);
+  });
+
   it("should be invalid when default value is cleared (null) after being set", () => {
     component.addPrefilledFields();
     component.prefilledValues.at(0).get("field").setValue("name");

@@ -46,6 +46,14 @@ const defaultValueCompleteValidator: ValidatorFn = (
   if (val.mode && !val.config) {
     return { incompleteDefaultValue: true };
   }
+  if (
+    val.config &&
+    typeof val.config === "object" &&
+    "value" in val.config &&
+    (val.config as { value: unknown }).value == null
+  ) {
+    return { incompleteDefaultValue: true };
+  }
   return null;
 };
 

@@ -41,7 +41,7 @@
           }
           <button
             mat-icon-button
-            [disabled]="formControl.disabled"
+            [disabled]="isDisabled()"
             (click)="removePrefilledFields(i)"
             matTooltip="Remove default value"
             i18n-matTooltip
