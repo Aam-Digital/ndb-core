@@ -140,7 +140,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/core/import/import-additional-settings/import-additional-settings.component.ts</code>
+            <code>src/app/core/import/import-additional-settings.ts</code>
         </p>
 
 
@@ -219,56 +219,8 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  model,
-} from &quot;@angular/core&quot;;
-import { MatExpansionModule } from &quot;@angular/material/expansion&quot;;
-import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
-import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
-import { HelpButtonComponent } from &quot;../../common-components/help-button/help-button.component&quot;;
-import { BasicAutocompleteComponent } from &quot;../../common-components/basic-autocomplete/basic-autocomplete.component&quot;;
-import { FormsModule } from &quot;@angular/forms&quot;;
-
-export interface ImportAdditionalSettings {
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface ImportAdditionalSettings {
   multiValueSeparator?: string;
-}
-
-/**
- * Import sub-step: Let user configure additional import settings.
- */
-@Component({
-  selector: &quot;app-import-additional-settings&quot;,
-  templateUrl: &quot;./import-additional-settings.component.html&quot;,
-  styleUrls: [&quot;./import-additional-settings.component.scss&quot;],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatTooltipModule,
-    HelpButtonComponent,
-    BasicAutocompleteComponent,
-    FormsModule,
-  ],
-})
-export class ImportAdditionalSettingsComponent {
-  entityType &#x3D; input&lt;string&gt;();
-
-  settings &#x3D; model&lt;ImportAdditionalSettings&gt;({});
-
-  get multiValueSeparator(): string {
-    return this.settings()?.multiValueSeparator ?? &quot;,&quot;;
-  }
-
-  set multiValueSeparator(value: string) {
-    this.settings.update((s) &#x3D;&gt; ({ ...s, multiValueSeparator: value }));
-  }
-
-  readonly separatorOptions: string[] &#x3D; [&quot;,&quot;, &quot;;&quot;];
-
-  createCustomSeparator &#x3D; async (input: string) &#x3D;&gt; input;
 }
 </code></pre>
     </div>

@@ -1251,9 +1251,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ImportAdditionalActionsComponent.html" data-type="entity-link" >ImportAdditionalActionsComponent</a>
                             </li>
                             <li class="link">
-                                <a href="components/ImportAdditionalSettingsComponent.html" data-type="entity-link" >ImportAdditionalSettingsComponent</a>
-                            </li>
-                            <li class="link">
                                 <a href="components/ImportantNotesDashboardComponent.html" data-type="entity-link" >ImportantNotesDashboardComponent</a>
                             </li>
                             <li class="link">
