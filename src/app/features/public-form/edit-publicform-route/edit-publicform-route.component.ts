@@ -27,10 +27,10 @@ import { PublicFormConfig } from "../public-form-config";
 
 const noSpecialUrlChars: ValidatorFn = (control: AbstractControl) => {
   const value: string = control.value;
-  if (value && /[/?#%&+\\]/.test(value)) {
+  if (value && /[ /?#%&+\\]/.test(value)) {
     return {
       pattern: {
-        errorMessage: $localize`The link ID must not contain special characters like / ? # % & + \\`,
+        errorMessage: $localize`The link ID must not contain spaces or special characters like / ? # % & + \\`,
       },
     };
   }

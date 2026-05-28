@@ -33,7 +33,7 @@ describe("EditPublicformRouteComponent", () => {
     formControl.setValue("valid-id");
     expect(formControl.valid).toBe(true);
 
-    for (const char of ["/", "?", "#", "%", "&", "+", "\\"]) {
+    for (const char of ["/", "?", "#", "%", "&", "+", "\\", " "]) {
       formControl.setValue("id" + char + "test");
       expect(formControl.valid).toBe(false);
       expect(formControl.errors?.["pattern"]).toBeTruthy();

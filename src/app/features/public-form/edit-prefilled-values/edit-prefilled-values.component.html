@@ -1,6 +1,6 @@
 <div
   class="defaultvalue-container padding-regular margin-bottom-small"
-  [class.disabled]="formControl.disabled"
+  [class.disabled]="isDisabled()"
 >
   <form [formGroup]="prefilledValueSettings">
     <div formArrayName="prefilledValue">
@@ -14,7 +14,7 @@
           class="flex-row flex-wrap align-center gap-regular padding-regular margin-top-regular mat-elevation-z2 container"
         >
           <div class="flex-row align-center">
-            <mat-form-field class="full-width-field">
+            <mat-form-field class="full-width-field" floatLabel="always">
               <mat-label i18n>Field</mat-label>
               <app-entity-field-select
                 [entityType]="entityConstructor"
@@ -59,7 +59,7 @@
       class="add-new-defaultvalue-button"
       color="accent"
       (click)="addPrefilledFields()"
-      [disabled]="formControl.disabled || prefilledValues.invalid"
+      [disabled]="isDisabled() || prefilledValues.invalid"
       matTooltip="Add a fixed value for another field"
       i18n-matTooltip
     >
