@@ -87,6 +87,10 @@ export class ParsedFileInputComponent<T = any> {
 
   private currentWorkbook: Workbook | null = null;
 
+  /** Cached text of the last loaded CSV, kept so the delimiter can be changed without re-upload. */
+  private lastCsvContent?: string;
+  private lastCsvFilename?: string;
+
   async loadFile($event: Event): Promise<void> {
     this.formControl.reset();
     this.resetSheetState();
@@ -139,11 +143,41 @@ export class ParsedFileInputComponent<T = any> {
     }
   }
 
-  /** Clears the picker state and the cached workbook reference. */
+  /**
+   * Re-parse the previously loaded CSV file using the given delimiter and
+   * re-emit `fileLoad`. Useful when PapaParse's auto-detection picked the
+   * wrong column separator and the user manually overrides it, without
+   * forcing them to re-upload the file.
+   *
+   * No-op when no CSV file has been loaded yet (the cache is only populated
+   * for CSV files).
+   *
+   * @param delimiter the column delimiter to parse the cached file content with
+   */
+  reparseWithDelimiter(delimiter: string): void {
+    if (this.lastCsvContent === undefined) {
+      return;
+    }
+    try {
+      this.parsedData = this.finalizeParsedData(
+        this.parseCsv(this.lastCsvContent, delimiter),
+        this.lastCsvFilename,
+      );
+      this.formControl.setErrors(null);
+      this.fileLoad.emit(this.parsedData);
+    } catch (errors) {
+      this.formControl.setErrors(errors);
+      this.formControl.markAsTouched();
+    }
+  }
+
+  /** Clears the picker state, the cached workbook and the cached CSV content. */
   private resetSheetState(): void {
     this.availableSheets.set([]);
     this.selectedSheet.set(null);
     this.currentWorkbook = null;
+    this.lastCsvContent = undefined;
+    this.lastCsvFilename = undefined;
   }
 
   private getFileFromInputEvent(inputEvent: Event): File {
@@ -175,7 +209,10 @@ export class ParsedFileInputComponent<T = any> {
 
     let result: ParsedData<T>;
     if (lowerName.endsWith(".csv")) {
-      result = this.parseCsv(await readFile(file));
+      const fileContent = await readFile(file);
+      this.lastCsvContent = fileContent;
+      this.lastCsvFilename = file.name;
+      result = this.parseCsv(fileContent);
     } else if (lowerName.endsWith(".json")) {
       result = this.parseJson(await readFile(file));
     } else if (lowerName.endsWith(".xlsx")) {
@@ -203,15 +240,36 @@ export class ParsedFileInputComponent<T = any> {
     return result;
   }
 
-  /** Parses CSV text via ngx-papaparse using the first row as headers. */
-  private parseCsv(fileContent: string): ParsedData<T> {
-    const papaParsed = this.papa.parse(fileContent, {
+  /**
+   * Parses CSV text via ngx-papaparse using the first row as headers.
+   *
+   * When `explicitDelimiter` is given it overrides PapaParse's auto-detection;
+   * otherwise the auto-detected delimiter is reported back via `detectedDelimiter`.
+   */
+  private parseCsv(
+    fileContent: string,
+    explicitDelimiter?: string,
+  ): ParsedData<T> {
+    const papaConfig: {
+      header: boolean;
+      dynamicTyping: boolean;
+      skipEmptyLines: boolean;
+      delimiter?: string;
+    } = {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
-    });
+    };
+    if (explicitDelimiter !== undefined) {
+      papaConfig.delimiter = explicitDelimiter;
+    }
+    const papaParsed = this.papa.parse(fileContent, papaConfig);
     if (!papaParsed) return undefined;
-    return { data: papaParsed.data, fields: papaParsed.meta.fields };
+    return {
+      data: papaParsed.data,
+      fields: papaParsed.meta.fields,
+      detectedDelimiter: papaParsed.meta.delimiter,
+    };
   }
 
   /** Parses JSON text directly with `JSON.parse`. */
@@ -303,4 +361,7 @@ export interface ParsedData<T = any[]> {
   /** meta information listing the fields contained in data objects */
   fields?: string[];
   filename?: string;
+
+  /** the CSV column delimiter that was used (auto-detected by PapaParse or explicitly chosen) */
+  detectedDelimiter?: string;
 }

@@ -16,7 +16,7 @@ import { MatInputModule } from "@angular/material/input";
 import { EntityFieldSelectComponent } from "../../../entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
-import { ImportAdditionalSettings } from "../../import-additional-settings/import-additional-settings.component";
+import { ImportAdditionalSettings } from "../../import-additional-settings";
 
 /**
  * Component to edit a single imported column's mapping to an entity field

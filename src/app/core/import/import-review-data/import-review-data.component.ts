@@ -20,7 +20,7 @@ import {
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
 import { ImportExistingSettings, ImportMetadata } from "../import-metadata";
-import { ImportAdditionalSettings } from "../import-additional-settings/import-additional-settings.component";
+import { ImportAdditionalSettings } from "../import-additional-settings";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";

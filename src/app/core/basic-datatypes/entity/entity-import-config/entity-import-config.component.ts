@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
-import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
+import { ImportAdditionalSettings } from "../../../import/import-additional-settings";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";

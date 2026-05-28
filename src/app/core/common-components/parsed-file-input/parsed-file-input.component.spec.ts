@@ -28,6 +28,7 @@ describe("ParsedFileInputComponent", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it("should create", () => {
@@ -58,6 +59,36 @@ describe("ParsedFileInputComponent", () => {
 
     await component.loadFile(mockFileEvent({ name: "file.csv" }));
     expect(component.formControl.invalid).toBe(true);
+  });
+
+  it("should expose the auto-detected CSV delimiter in parsedData", async () => {
+    mockFileReader("name,age\nAlice,30");
+    await component.loadFile(mockFileEvent({ name: "file.csv" }));
+    expect(component.parsedData.detectedDelimiter).toBe(",");
+
+    mockFileReader("name;age\nAlice;30");
+    await component.loadFile(mockFileEvent({ name: "file.csv" }));
+    expect(component.parsedData.detectedDelimiter).toBe(";");
+  });
+
+  it("should re-parse with explicit delimiter when auto-detection picks wrong", async () => {
+    // file uses ; but we'll force re-parse with that delimiter
+    mockFileReader("name;age\nAlice;30");
+
+    await component.loadFile(mockFileEvent({ name: "file.csv" }));
+    component.reparseWithDelimiter(";");
+
+    expect(component.parsedData.detectedDelimiter).toBe(";");
+    expect(component.parsedData.fields).toEqual(["name", "age"]);
+    expect(component.parsedData.data).toEqual([{ name: "Alice", age: 30 }]);
+  });
+
+  it("should ignore reparse before any file has been loaded", () => {
+    expect(component.parsedData).toBeUndefined();
+
+    component.reparseWithDelimiter(";");
+
+    expect(component.parsedData).toBeUndefined();
   });
 
   it("keeps the parsed filename when switching xlsx sheets", async () => {
