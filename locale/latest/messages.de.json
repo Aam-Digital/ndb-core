@@ -1175,8 +1175,6 @@
   "8992972844308357220": "Das angegebene Format kann nicht alle Datumsangaben verarbeiten.",
   "9195188695728229921": "Suchfelder",
   "3643866539136239218": "Suche zurücksetzen",
-  "7849105337498256773": "Zusätzliche Einstellungen [optional]",
-  "3731792956453823731": "Konfigurieren Sie zusätzliche Einstellungen für den Importvorgang.\nWählen Sie zunächst oben einen Importtyp aus, um diesen Abschnitt zu aktivieren.",
   "4776806173794348537": "Trennzeichen für Werte mit Mehrfach-Nennung",
   "5214813694492768491": "Welches Zeichen wird verwendet, um mehrere Werte in einer einzelnen Spaltenzelle für Array-Felder (z. B. Mehrfachauswahloptionen wie \"Apfel, Birne\") zu trennen?",
   "5688462374174490321": "Mehr laden ",
@@ -1444,5 +1442,8 @@
   "6401041142388917372": "Only {$fileTypes} files are supported",
   "90329795879868449": "File could not be parsed",
   "4054880988022132753": "File has no content",
-  "1269233703889410883": "Select a .xlsx or .csv file with data to import:"
+  "1269233703889410883": "Select a .xlsx or .csv file with data to import:",
+  "2980688108457243770": "Advanced options",
+  "3772625973719966120": "Column separator",
+  "2656073815006025296": "The character that separates columns in your CSV file.\n              It is auto-detected from your file - only change this if the columns appear incorrect after import."
 }
