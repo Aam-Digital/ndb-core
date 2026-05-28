@@ -6,6 +6,8 @@ import {
   ChangeDetectionStrategy,
   signal,
   computed,
+  input,
+  model,
 } from "@angular/core";
 import {
   ParsedFileInputComponent,
@@ -16,6 +18,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { FormsModule } from "@angular/forms";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
+import { ImportAdditionalSettings } from "../import-additional-settings";
 
 /**
  * Import sub-step: Let user load a file and return parsed data.
@@ -35,6 +38,9 @@ import { BasicAutocompleteComponent } from "../../common-components/basic-autoco
   ],
 })
 export class ImportFileComponent {
+  entityType = input<string>();
+  additionalSettings = model<ImportAdditionalSettings>({});
+
   @Output() dataLoaded = new EventEmitter<ParsedData<any>>();
 
   data: ParsedData<any>;
@@ -59,6 +65,21 @@ export class ImportFileComponent {
 
   @ViewChild(ParsedFileInputComponent)
   parsedFileInputField: ParsedFileInputComponent;
+
+  readonly multiValueSeparatorOptions: string[] = [",", ";"];
+
+  get multiValueSeparator(): string {
+    return this.additionalSettings()?.multiValueSeparator ?? ",";
+  }
+
+  set multiValueSeparator(value: string) {
+    this.additionalSettings.update((settings) => ({
+      ...settings,
+      multiValueSeparator: value,
+    }));
+  }
+
+  createCustomSeparator = async (input: string) => input;
 
   /**
    * Handle a freshly parsed file emitted by the parsed-file-input child.
