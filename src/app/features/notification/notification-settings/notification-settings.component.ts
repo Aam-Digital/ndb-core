@@ -58,6 +58,7 @@ import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved
 export class NotificationSettingsComponent implements OnInit {
   notificationConfig = signal<NotificationConfig>(null);
   isFeatureEnabled = signal<boolean>(false);
+  isEmailFeatureEnabled = signal<boolean>(false);
   isBrowserSupported = signal<boolean>(false);
   isPushNotificationEnabled = signal<boolean>(false);
 
@@ -79,6 +80,9 @@ export class NotificationSettingsComponent implements OnInit {
   async ngOnInit() {
     this.isFeatureEnabled.set(
       await this.notificationService.isNotificationServerEnabled(),
+    );
+    this.isEmailFeatureEnabled.set(
+      await this.notificationService.isEmailNotificationEnabled(),
     );
 
     this.isBrowserSupported.set(
@@ -152,6 +156,18 @@ export class NotificationSettingsComponent implements OnInit {
     );
 
     return config;
+  }
+
+  toggleEmailChannel(event: MatSlideToggleChange) {
+    this.notificationConfig.update((config) => {
+      const clone = Object.assign(
+        Object.create(Object.getPrototypeOf(config)),
+        config,
+      );
+      clone.channels = { ...config.channels, email: event.checked };
+      return clone;
+    });
+    this.unsavedChanges.pending.set(true);
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {

@@ -77,6 +77,20 @@ export class NotificationService {
   }
 
   /**
+   * Check if the email notification channel is enabled in the backend.
+   */
+  async isEmailNotificationEnabled(): Promise<boolean> {
+    return firstValueFrom(
+      this.httpClient
+        .get(environment.API_PROXY_PREFIX + "/actuator/features")
+        .pipe(
+          map((res) => res?.["notification.email"]?.enabled ?? false),
+          catchError(() => of(false)),
+        ),
+    );
+  }
+
+  /**
    * Request a token device from firebase and register it in aam-backend
    */
   registerDevice(): void {
