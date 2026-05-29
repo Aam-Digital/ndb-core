@@ -265,12 +265,13 @@ export class ImportModule {
       .filter((a) &#x3D;&gt; !a.expertOnly); // hide advanced actions for simplicity
 
     for (const importAction of importActions) {
+      const label &#x3D; this.importAdditionalService.createActionLabel(
+        importAction,
+        true,
+      );
       actions.push({
         action: JSON.stringify(importAction),
-        label: this.importAdditionalService.createActionLabel(
-          importAction,
-          true,
-        ),
+        label,
         icon: &quot;file-import&quot;,
         execute: () &#x3D;&gt;
           this.router.navigate([&quot;import&quot;], {
