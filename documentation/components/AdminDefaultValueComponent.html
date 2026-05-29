@@ -411,7 +411,7 @@ to let users configure different defaultValue modes for an Entity field.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/core/default-values/admin-default-value/admin-default-value.component.ts:108</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/default-values/admin-default-value/admin-default-value.component.ts:106</a></div>
                             </td>
                         </tr>
 
@@ -750,7 +750,7 @@ to let users configure different defaultValue modes for an Entity field.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:128</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:127</a></code>
 </div>
                         </td>
                     </tr>
@@ -1356,9 +1356,7 @@ to let users configure different defaultValue modes for an Entity field.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>toSignal(this.modeControl.valueChanges, {
-    initialValue: this.modeControl.value,
-  })</code>
+                        <i>Default value : </i><code>signal&lt;DefaultValueMode | null&gt;(null)</code>
                     </td>
                 </tr>
                     <tr>
@@ -1949,8 +1947,8 @@ to let users configure different defaultValue modes for an Entity field.</p>
   ChangeDetectionStrategy,
   input,
   resource,
+  signal,
 } from &quot;@angular/core&quot;;
-import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
 import { DefaultValueConfig, DefaultValueMode } from &quot;../default-value-config&quot;;
 import {
   MatError,
@@ -2047,17 +2045,16 @@ export class AdminDefaultValueComponent extends CustomFormControlDirective&lt;De
 
   modes &#x3D; computed(() &#x3D;&gt; this.modesResource.value() ?? []);
 
-  selectedMode &#x3D; toSignal(this.modeControl.valueChanges, {
-    initialValue: this.modeControl.value,
-  });
+  selectedMode &#x3D; signal&lt;DefaultValueMode | null&gt;(null);
 
   constructor() {
     super();
     this.syncFormWithValue(this.value);
 
-    this.form
-      .get(&quot;mode&quot;)
-      ?.valueChanges.subscribe(() &#x3D;&gt; this.form.get(&quot;config&quot;)?.setValue(null));
+    this.form.get(&quot;mode&quot;)?.valueChanges.subscribe((mode) &#x3D;&gt; {
+      this.selectedMode.set(mode);
+      this.form.get(&quot;config&quot;)?.setValue(null);
+    });
 
     this.form.get(&quot;config&quot;)?.valueChanges.subscribe((value) &#x3D;&gt; {
       if (!this.form.get(&quot;mode&quot;)?.getRawValue() &amp;&amp; !!value) {
@@ -2085,6 +2082,7 @@ export class AdminDefaultValueComponent extends CustomFormControlDirective&lt;De
     ) {
       this.form.setValue(newFormValue, { emitEvent: false });
       this.form.updateValueAndValidity({ emitEvent: false });
+      this.selectedMode.set(newFormValue.mode);
     }
   }
 

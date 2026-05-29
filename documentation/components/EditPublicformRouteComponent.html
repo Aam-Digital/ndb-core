@@ -1919,10 +1919,10 @@ import { PublicFormConfig } from &quot;../public-form-config&quot;;
 
 const noSpecialUrlChars: ValidatorFn &#x3D; (control: AbstractControl) &#x3D;&gt; {
   const value: string &#x3D; control.value;
-  if (value &amp;&amp; /[/?#%&amp;+\\]/.test(value)) {
+  if (value &amp;&amp; !/^[a-zA-Z\d\-_]+$/.test(value)) {
     return {
       pattern: {
-        errorMessage: $localize&#x60;The link ID must not contain special characters like / ? # % &amp; + \\&#x60;,
+        errorMessage: $localize&#x60;The link ID may only contain lowercase letters, digits, hyphens and underscores&#x60;,
       },
     };
   }
