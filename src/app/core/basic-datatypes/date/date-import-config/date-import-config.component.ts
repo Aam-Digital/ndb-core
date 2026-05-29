@@ -6,7 +6,7 @@ import {
 } from "@angular/core";
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
-import { ImportAdditionalSettings } from "../../../import/import-additional-settings/import-additional-settings.component";
+import { ImportAdditionalSettings } from "../../../import/import-additional-settings";
 import { MatDialog } from "@angular/material/dialog";
 import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
 import { DateImportDialogComponent } from "./date-import-dialog.component";
