@@ -89,4 +89,8 @@ export class EntityActionsMenuComponent {
     }
     this.actionsResource.reload();
   }
+
+  protected getActionTooltip(action: EntityAction): string {
+    return action.tooltip || action.label;
+  }
 }
