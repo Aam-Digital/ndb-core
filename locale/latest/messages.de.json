@@ -1290,7 +1290,6 @@
   "2999993832814935436": "Farbe auswählen",
   "8028490661906534915": "Bitte geben Sie einen gültigen Hexadezimal-Farbcode ein (z. B. #ff0000).",
   "1195692991106066960": "Benachrichtigungseinstellungen gespeichert.",
-  "7456247463242961477": "Die Link-ID darf keine Sonderzeichen wie / ? # % & + \\ enthalten.",
   "8024176361057345546": "+{$INTERPOLATION} mehr ",
   "7128105921090370602": "Button deaktivieren",
   "8913412788629110330": "Einige Felder sind ungültig. Bitte überprüfen Sie das Formular und senden Sie es erneut ab: ",
@@ -1445,5 +1444,6 @@
   "1269233703889410883": "Select a .xlsx or .csv file with data to import:",
   "2980688108457243770": "Advanced options",
   "3772625973719966120": "Column separator",
-  "2656073815006025296": "The character that separates columns in your CSV file.\n              It is auto-detected from your file - only change this if the columns appear incorrect after import."
+  "2656073815006025296": "The character that separates columns in your CSV file.\n              It is auto-detected from your file - only change this if the columns appear incorrect after import.",
+  "8525512429465590996": "The link ID may only contain lowercase letters, digits, hyphens and underscores"
 }
