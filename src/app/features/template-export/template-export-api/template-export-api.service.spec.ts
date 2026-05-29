@@ -167,7 +167,7 @@ describe("TemplateExportApiService", () => {
     );
   });
 
-  it("should call the render-batch endpoint with the array and parse Content-Disposition + failed indices", async () => {
+  it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataList = [{ name: "A" }, { name: "B" }, { name: "C" }];
 
@@ -175,7 +175,6 @@ describe("TemplateExportApiService", () => {
       body: new ArrayBuffer(20),
       headers: new HttpHeaders({
         "Content-Disposition": 'attachment; filename="report.zip"',
-        "X-Failed-Record-Indices": "1",
       }),
       status: 200,
     });
@@ -190,7 +189,6 @@ describe("TemplateExportApiService", () => {
     expect(result).toEqual({
       filename: "report.zip",
       file: mockResponse.body,
-      failedIndices: [1],
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
       service.API_URL + "/render-batch/" + templateEntity.getId() + "?mode=zip",
@@ -202,7 +200,7 @@ describe("TemplateExportApiService", () => {
     );
   });
 
-  it("should default to no failures and a fallback filename when batch response omits headers", async () => {
+  it("should fall back to a .zip filename when batch response omits headers in zip mode", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const mockResponse = new HttpResponse({
       body: new ArrayBuffer(4),
@@ -216,11 +214,10 @@ describe("TemplateExportApiService", () => {
       service.generateBatchFromTemplate(templateEntity.getId(), [{}, {}]),
     );
 
-    expect(result.failedIndices).toEqual([]);
     expect(result.filename).toBe("TemplateExport_test-template-id.zip");
   });
 
-  it("should call the render-batch endpoint in combined mode with a pdf fallback filename", async () => {
+  it("should call the render-batch endpoint in combined mode with a .pdf fallback filename", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataList = [{ name: "A" }, { name: "B" }];
 
@@ -248,7 +245,6 @@ describe("TemplateExportApiService", () => {
       { convertTo: "pdf", data: dataList },
       expect.any(Object),
     );
-    expect(result.failedIndices).toEqual([]);
     expect(result.filename).toBe("TemplateExport_test-template-id.pdf");
   });
 });

@@ -19,7 +19,7 @@ import {
 import { ActivatedRoute } from "@angular/router";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EMPTY, of, Subject, throwError } from "rxjs";
+import { EMPTY, of, throwError } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
@@ -239,7 +239,6 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(component.phase()).toBe("select");
     expect(component.totalRecords()).toBe(0);
     expect(component.failures()).toEqual([]);
-    expect(component.cancelRequested()).toBe(false);
   });
 
   it("should trigger download with API response when requesting file", async () => {
@@ -332,7 +331,6 @@ describe("TemplateExportSelectionDialogComponent", () => {
     const batchResponse: TemplateExportBatchResult = {
       filename: "report.zip",
       file: new ArrayBuffer(16),
-      failedIndices: [],
     };
     mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
       of(batchResponse),
@@ -359,11 +357,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(bulkComponent.failures()).toEqual([]);
   });
 
-  it("should use combined mode and download a single PDF when the template combines records", async () => {
+  it("should use combined mode and download a single PDF when the user enables the combine-into-single-PDF checkbox", async () => {
     const entityA = new TestEntity("a");
     const entityB = new TestEntity("b");
-    const combinedTemplate = new TemplateExport("template-combined");
-    combinedTemplate.combineRecordsIntoSingleFile = true;
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -387,7 +383,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
         {
           provide: EntityMapperService,
           useValue: {
-            load: vi.fn().mockResolvedValue(combinedTemplate),
+            load: vi.fn().mockResolvedValue(undefined),
             loadType: vi.fn().mockResolvedValue([]),
             receiveUpdates: vi.fn().mockReturnValue(EMPTY),
           },
@@ -409,12 +405,12 @@ describe("TemplateExportSelectionDialogComponent", () => {
     bulkFixture.detectChanges();
     await bulkFixture.whenStable();
     const bulkComponent = bulkFixture.componentInstance;
-    bulkComponent.templateSelectionForm.setValue("template-combined");
+    bulkComponent.templateSelectionForm.setValue("template-1");
+    bulkComponent.setCombineIntoSinglePdf(true);
 
     const combinedResponse: TemplateExportBatchResult = {
       filename: "combined.pdf",
       file: new ArrayBuffer(16),
-      failedIndices: [],
     };
     mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
       of(combinedResponse),
@@ -424,7 +420,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
     expect(
       mockPdfGeneratorApiService.generateBatchFromTemplate.mock.calls[0],
-    ).toEqual(["template-combined", [entityA, entityB], "combined"]);
+    ).toEqual(["template-1", [entityA, entityB], "combined"]);
     expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
       combinedResponse.file,
       "pdf",
@@ -503,7 +499,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     ).not.toBeNull();
   });
 
-  it("should list failed entity names in the done summary", async () => {
+  it("should mark all selected entities as failed when the bulk request errors out", async () => {
     const entityA = new TestEntity("a");
     entityA.name = "Anna";
     const entityB = new TestEntity("b");
@@ -555,96 +551,21 @@ describe("TemplateExportSelectionDialogComponent", () => {
     const bulkComponent = bulkFixture.componentInstance;
 
     mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
-      of({
-        filename: "report.zip",
-        file: new ArrayBuffer(8),
-        failedIndices: [1],
-      } as TemplateExportBatchResult),
+      throwError(() => new Error("Cannot process more than 200 documents")),
     );
     bulkComponent.templateSelectionForm.setValue("template-1");
 
     await bulkComponent.requestFile();
     bulkFixture.detectChanges();
 
+    expect(bulkComponent.phase()).toBe("done");
+    expect(bulkComponent.failures().length).toBe(2);
     const summary = bulkFixture.nativeElement.querySelector(
       '[data-testid="template-export-summary"]',
     );
     expect(summary).not.toBeNull();
+    expect(summary.textContent).toContain("Anna");
     expect(summary.textContent).toContain("Ben");
-    expect(bulkComponent.failures().length).toBe(1);
-    expect(bulkComponent.failures()[0].entity).toBe(entityB);
-  });
-
-  it("should skip the download and end in cancelled phase when cancel is requested during a bulk run", async () => {
-    const entityA = new TestEntity("a");
-    const entityB = new TestEntity("b");
-
-    TestBed.resetTestingModule();
-    await TestBed.configureTestingModule({
-      imports: [
-        TemplateExportSelectionDialogComponent,
-        FontAwesomeTestingModule,
-        NoopAnimationsModule,
-      ],
-      providers: [
-        { provide: MAT_DIALOG_DATA, useValue: [entityA, entityB] },
-        { provide: MatDialogRef, useValue: mockDialogRef },
-        {
-          provide: TemplateExportApiService,
-          useValue: mockPdfGeneratorApiService,
-        },
-        { provide: DownloadService, useValue: mockDownloadService },
-        {
-          provide: EntityAbility,
-          useValue: { cannot: vi.fn(), on: vi.fn(() => () => null) },
-        },
-        {
-          provide: EntityMapperService,
-          useValue: {
-            load: vi.fn().mockResolvedValue(undefined),
-            loadType: vi.fn().mockResolvedValue([]),
-            receiveUpdates: vi.fn().mockReturnValue(EMPTY),
-          },
-        },
-        { provide: ActivatedRoute, useValue: null },
-        { provide: AlertService, useValue: { addWarning: vi.fn() } },
-        { provide: EntityRegistry, useValue: entityRegistry },
-        {
-          provide: TemplateExportService,
-          useValue: mockTemplateExportService,
-        },
-        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
-      ],
-    }).compileComponents();
-
-    const bulkFixture = TestBed.createComponent(
-      TemplateExportSelectionDialogComponent,
-    );
-    bulkFixture.detectChanges();
-    await bulkFixture.whenStable();
-    const bulkComponent = bulkFixture.componentInstance;
-
-    const deferred = new Subject<TemplateExportBatchResult>();
-    mockPdfGeneratorApiService.generateBatchFromTemplate.mockReturnValue(
-      deferred.asObservable(),
-    );
-    bulkComponent.templateSelectionForm.setValue("template-1");
-
-    const inFlight = bulkComponent.requestFile();
-    // user clicks cancel while the request is still pending
-    bulkComponent.cancel();
-    // the request eventually resolves, but the result must be discarded
-    deferred.next({
-      filename: "report.zip",
-      file: new ArrayBuffer(4),
-      failedIndices: [],
-    });
-    deferred.complete();
-    await inFlight;
-
-    expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
-    expect(bulkComponent.phase()).toBe("cancelled");
-    expect(bulkComponent.cancelRequested()).toBe(true);
   });
 
   it("should warn and skip the API when invoked with an empty entity array", async () => {

@@ -51,7 +51,6 @@ export interface TemplateExportResult {
 export interface TemplateExportBatchResult {
   filename: string;
   file: ArrayBuffer;
-  failedIndices: number[];
 }
 
 /**
@@ -168,15 +167,15 @@ export class TemplateExportApiService extends FileService {
   /**
    * Generate output from one template for many records in a single request.
    *
-   * - `mode: "zip"` (default): the backend renders each record individually and returns
-   *   the results bundled into a ZIP; per-record failures are reported via `failedIndices`.
-   * - `mode: "combined"`: the backend forwards the whole array to the template engine and
-   *   returns a single document (for templates built with array placeholders).
+   * Both modes go through the template engine's native batch rendering — the backend
+   * just forwards the request:
+   * - `mode: "zip"` (default): N independent files packaged in a ZIP archive.
+   * - `mode: "combined"`: N rendered files merged into a single multi-page PDF.
    *
    * @param templateEntityId The id of the TemplateExport entity
    * @param dataList The array of data objects (typically entities) to apply to the template
    * @param mode How the backend should aggregate the output
-   * @return The generated file plus the indices of any per-record failures (ZIP mode only)
+   * @return The generated file (ZIP or PDF) and a derived filename
    */
   generateBatchFromTemplate(
     templateEntityId: string,
@@ -204,18 +203,9 @@ export class TemplateExportApiService extends FileService {
               ? filenameMatch[1]
               : templateEntityId.replace(":", "_") + fallbackExtension;
 
-          const failedHeader = res.headers.get("X-Failed-Record-Indices");
-          const failedIndices = failedHeader
-            ? failedHeader
-                .split(",")
-                .map((s) => Number.parseInt(s.trim(), 10))
-                .filter((n) => Number.isFinite(n))
-            : [];
-
           return {
             filename,
             file: res.body,
-            failedIndices,
           };
         }),
       );

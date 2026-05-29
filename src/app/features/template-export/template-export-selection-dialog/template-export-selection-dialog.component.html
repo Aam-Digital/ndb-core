@@ -39,6 +39,17 @@
             i18n-placeholder
           ></app-edit-entity>
         </mat-form-field>
+
+        @if (isBulk()) {
+          <mat-checkbox
+            data-testid="combine-into-single-pdf"
+            [checked]="combineIntoSinglePdf()"
+            (change)="setCombineIntoSinglePdf($event.checked)"
+            i18n
+          >
+            Combine all records into a single PDF
+          </mat-checkbox>
+        }
       }
 
       @case ("running") {
@@ -54,9 +65,7 @@
 
       @default {
         <div data-testid="template-export-summary">
-          @if (phase() === "cancelled") {
-            <p i18n>Cancelled before all files were downloaded.</p>
-          } @else if (failures().length === 0) {
+          @if (failures().length === 0) {
             <p i18n>
               Generated {{ totalRecords() }} of {{ totalRecords() }} files.
             </p>
@@ -87,7 +96,7 @@
     }
 
     @case ("running") {
-      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+      <!-- no actions while rendering -->
     }
 
     @default {

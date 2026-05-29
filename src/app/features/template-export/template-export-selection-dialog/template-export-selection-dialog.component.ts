@@ -9,6 +9,7 @@ import {
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -24,7 +25,6 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
@@ -51,6 +51,7 @@ import { TemplateExport } from "../template-export.entity";
     FeatureDisabledInfoComponent,
     ReactiveFormsModule,
     MatFormFieldModule,
+    MatCheckboxModule,
   ],
   templateUrl: "./template-export-selection-dialog.component.html",
   styleUrl: "./template-export-selection-dialog.component.scss",
@@ -63,7 +64,6 @@ export class TemplateExportSelectionDialogComponent {
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
   private readonly templateExportService = inject(TemplateExportService);
-  private readonly entityMapper = inject(EntityMapperService);
 
   entity = input<Entity | Entity[]>();
 
@@ -84,12 +84,16 @@ export class TemplateExportSelectionDialogComponent {
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
     e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
 
-  readonly phase = signal<"select" | "running" | "done" | "cancelled">(
-    "select",
-  );
+  readonly phase = signal<"select" | "running" | "done">("select");
   readonly totalRecords = signal<number>(0);
   readonly failures = signal<{ entity: Entity; error: unknown }[]>([]);
-  readonly cancelRequested = signal<boolean>(false);
+
+  /**
+   * User-controlled toggle (bulk only): when on, the backend returns a single combined
+   * multi-page PDF instead of a ZIP of N independent files.
+   */
+  readonly combineIntoSinglePdf = signal<boolean>(false);
+
   readonly succeededCount = computed(
     () => this.totalRecords() - this.failures().length,
   );
@@ -104,6 +108,10 @@ export class TemplateExportSelectionDialogComponent {
       this.templateExportService.isExportServerEnabled().catch(() => false),
   });
 
+  setCombineIntoSinglePdf(value: boolean) {
+    this.combineIntoSinglePdf.set(value);
+  }
+
   async requestFile() {
     const templateId = this.templateSelectionForm.value;
     const entities = this.entities();
@@ -117,7 +125,6 @@ export class TemplateExportSelectionDialogComponent {
     this.phase.set("running");
     this.totalRecords.set(entities.length);
     this.failures.set([]);
-    this.cancelRequested.set(false);
 
     try {
       if (entities.length === 1) {
@@ -127,14 +134,13 @@ export class TemplateExportSelectionDialogComponent {
             entities[0],
           ),
         );
-        if (this.cancelRequested()) return;
         await this.downloadService.triggerDownload(
           result.file,
           "pdf",
           result.filename ?? entities[0].toString(),
         );
       } else {
-        const combined = await this.shouldCombineIntoSingleFile(templateId);
+        const combined = this.combineIntoSinglePdf();
         const result = await firstValueFrom(
           this.templateExportApi.generateBatchFromTemplate(
             templateId,
@@ -142,51 +148,17 @@ export class TemplateExportSelectionDialogComponent {
             combined ? "combined" : "zip",
           ),
         );
-        if (this.cancelRequested()) return;
         await this.downloadService.triggerDownload(
           result.file,
           combined ? "pdf" : "zip",
           result.filename,
         );
-        // combined mode is all-or-nothing (a render failure is caught below),
-        // so per-record failure indices only apply to ZIP mode
-        if (!combined) {
-          this.failures.set(
-            result.failedIndices
-              .map((index) => entities[index])
-              .filter((entity): entity is Entity => entity !== undefined)
-              .map((entity) => ({
-                entity,
-                error: $localize`Server skipped this record.`,
-              })),
-          );
-        }
       }
     } catch (error) {
       Logging.warn("Failed to generate files", error);
-      if (!this.cancelRequested()) {
-        this.failures.set(entities.map((entity) => ({ entity, error })));
-      }
+      this.failures.set(entities.map((entity) => ({ entity, error })));
     } finally {
-      this.phase.set(this.cancelRequested() ? "cancelled" : "done");
+      this.phase.set("done");
     }
-  }
-
-  cancel() {
-    this.cancelRequested.set(true);
-  }
-
-  /**
-   * Whether the selected template is configured to combine all records into a single
-   * document (array-placeholder template) rather than a ZIP of separate files.
-   * Defaults to false if the template cannot be loaded.
-   */
-  private async shouldCombineIntoSingleFile(
-    templateId: string,
-  ): Promise<boolean> {
-    const template = await this.entityMapper
-      .load(TemplateExport, templateId)
-      .catch(() => undefined);
-    return template?.combineRecordsIntoSingleFile === true;
   }
 }
