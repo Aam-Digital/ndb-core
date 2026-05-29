@@ -56,4 +56,31 @@ describe("EntityActionsMenuComponent", () => {
       vi.useRealTimers();
     }
   });
+
+  it("uses the action label as tooltip if no explicit tooltip is set", () => {
+    const testAction: EntityAction = {
+      action: "test_action_without_tooltip",
+      label: "Test Action Without Tooltip",
+      icon: "test_icon",
+      primaryAction: true,
+      execute: () => null,
+      availableFor: "all",
+    };
+
+    expect(component["getActionTooltip"](testAction)).toBe(testAction.label);
+  });
+
+  it("uses an explicit tooltip instead of the action label", () => {
+    const testAction: EntityAction = {
+      action: "test_action_with_tooltip",
+      label: "Test Action With Tooltip",
+      tooltip: "Custom tooltip",
+      icon: "test_icon",
+      primaryAction: true,
+      execute: () => null,
+      availableFor: "all",
+    };
+
+    expect(component["getActionTooltip"](testAction)).toBe(testAction.tooltip);
+  });
 });

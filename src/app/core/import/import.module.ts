@@ -44,7 +44,6 @@ export class ImportModule {
       actions.push({
         action: JSON.stringify(importAction),
         label,
-        tooltip: label,
         icon: "file-import",
         execute: () =>
           this.router.navigate(["import"], {
