@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NotificationLinkComponent } from "./notification-link.component";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
 import {
   EntityRegistry,
   entityRegistry,
@@ -10,6 +10,7 @@ import {
   mockEntityMapperProvider,
 } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { BehaviorSubject } from "rxjs";
 import { NotificationEvent } from "../model/notification-event";
 
 describe("NotificationLinkComponent", () => {
@@ -17,12 +18,19 @@ describe("NotificationLinkComponent", () => {
   let fixture: ComponentFixture<NotificationLinkComponent>;
   let router: Router;
   let entityMapper: MockEntityMapperService;
-  let paramMapGet: ReturnType<typeof vi.fn>;
-  let queryParamMapGet: ReturnType<typeof vi.fn>;
+  let paramMap$: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
+
+  const createComponent = (id?: string, runEffects = true) => {
+    paramMap$.next(convertToParamMap(id ? { id } : {}));
+    fixture = TestBed.createComponent(NotificationLinkComponent);
+    component = fixture.componentInstance;
+    if (runEffects) {
+      fixture.detectChanges();
+    }
+  };
 
   beforeEach(async () => {
-    paramMapGet = vi.fn();
-    queryParamMapGet = vi.fn();
+    paramMap$ = new BehaviorSubject(convertToParamMap({}));
 
     await TestBed.configureTestingModule({
       imports: [NotificationLinkComponent],
@@ -32,10 +40,7 @@ describe("NotificationLinkComponent", () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: {
-              paramMap: { get: paramMapGet },
-              queryParamMap: { get: queryParamMapGet },
-            },
+            paramMap: paramMap$,
           },
         },
       ],
@@ -46,94 +51,87 @@ describe("NotificationLinkComponent", () => {
       EntityMapperService,
     ) as MockEntityMapperService;
     vi.spyOn(router, "navigate").mockResolvedValue(true);
-
-    fixture = TestBed.createComponent(NotificationLinkComponent);
-    component = fixture.componentInstance;
   });
 
   it("should create", () => {
+    createComponent();
+
     expect(component).toBeTruthy();
   });
 
-  it("should navigate immediately without DB load when entityType query param is present", async () => {
-    paramMapGet.mockReturnValue("notif-123");
-    queryParamMapGet.mockImplementation((key: string) => {
-      if (key === "entityType") return "UnknownType"; // triggers /user-account via buildEntityUrl
-      return null;
-    });
-    vi.spyOn(entityMapper, "load").mockReturnValue(new Promise(() => {}));
-
-    await component.ngOnInit();
+  it("should navigate to user-account when notification id is missing", async () => {
+    createComponent();
+    await fixture.whenStable();
 
     expect(router.navigate).toHaveBeenCalledWith(["/user-account"]);
   });
 
-  it("should navigate to user-account when entityType is not registered", async () => {
-    paramMapGet.mockReturnValue("notif-123");
-    queryParamMapGet.mockImplementation((key: string) => {
-      if (key === "entityType") return "UnknownEntityType";
-      return null;
-    });
-
-    await component.ngOnInit();
-
-    expect(router.navigate).toHaveBeenCalledWith(["/user-account"]);
-  });
-
-  it("should load notification event and navigate to entity URL when no query params", async () => {
-    paramMapGet.mockReturnValue("notif-123");
-    queryParamMapGet.mockReturnValue(null);
-
+  it("should load notification event and navigate to action URL", async () => {
     const event = new NotificationEvent("notif-123");
     event.actionURL = "/entity-url";
     vi.spyOn(entityMapper, "load").mockResolvedValue(event as any);
     vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
-
-    await component.ngOnInit();
+    createComponent(undefined, false);
+    await (component as any).loadAndNavigate("notif-123");
 
     expect(router.navigate).toHaveBeenCalledWith(["/entity-url"]);
+    expect(entityMapper.save).toHaveBeenCalledWith(
+      expect.objectContaining({ readStatus: true }),
+    );
+  });
+
+  it("should navigate using context entity URL when available", async () => {
+    const event = new NotificationEvent("notif-123");
+    event.context = {
+      entityType: "NotificationEvent",
+      entityId: "NotificationEvent:notif-123",
+    };
+    vi.spyOn(entityMapper, "load").mockResolvedValue(event as any);
+    vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
+    createComponent(undefined, false);
+    await (component as any).loadAndNavigate("notif-123");
+
+    expect(router.navigate).toHaveBeenCalledWith([
+      "/c/notificationevent/NotificationEvent:notif-123",
+    ]);
   });
 
   it("should navigate to user-account when notification load throws an error", async () => {
-    paramMapGet.mockReturnValue("notif-123");
-    queryParamMapGet.mockReturnValue(null);
     vi.spyOn(entityMapper, "load").mockRejectedValue(new Error("not found"));
-
-    await component.ngOnInit();
+    createComponent(undefined, false);
+    await (component as any).loadAndNavigate("notif-123");
 
     expect(router.navigate).toHaveBeenCalledWith(["/user-account"]);
   });
 
   it("should navigate to user-account when notification load times out", async () => {
     vi.useFakeTimers();
-    paramMapGet.mockReturnValue("notif-123");
-    queryParamMapGet.mockReturnValue(null);
-    vi.spyOn(entityMapper, "load").mockReturnValue(new Promise(() => {}));
+    try {
+      vi.spyOn(entityMapper, "load").mockReturnValue(new Promise(() => {}));
+      createComponent(undefined, false);
 
-    const initPromise = component.ngOnInit();
-    await vi.advanceTimersByTimeAsync(5000);
-    await initPromise;
-    vi.useRealTimers();
+      const navigationPromise = (component as any).loadAndNavigate("notif-123");
+      await vi.advanceTimersByTimeAsync(5000);
+      await navigationPromise;
 
-    expect(router.navigate).toHaveBeenCalledWith(["/user-account"]);
+      expect(router.navigate).toHaveBeenCalledWith(["/user-account"]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it("should mark notification as read after navigating via query params", async () => {
-    paramMapGet.mockReturnValue("notif-123");
-    queryParamMapGet.mockImplementation((key: string) => {
-      if (key === "entityType") return "UnknownType";
-      return null;
+  it("should mark notification as read during id-based redirect", async () => {
+    const event = Object.assign(new NotificationEvent("notif-123"), {
+      readStatus: false,
+      actionURL: "/target",
     });
-    vi.spyOn(entityMapper, "load").mockResolvedValue(
-      Object.assign(new NotificationEvent("notif-123"), {
-        readStatus: false,
-      }) as any,
-    );
+    vi.spyOn(entityMapper, "load").mockResolvedValue(event as any);
     vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
+    createComponent(undefined, false);
+    await (component as any).loadAndNavigate("notif-123");
 
-    await component.ngOnInit();
-    await new Promise((r) => setTimeout(r, 0)); // flush microtasks for background markAsRead
-
-    expect(entityMapper.save).toHaveBeenCalled();
+    expect(entityMapper.save).toHaveBeenCalledWith(
+      expect.objectContaining({ readStatus: true }),
+    );
   });
 });

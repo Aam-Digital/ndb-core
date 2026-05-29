@@ -7,9 +7,9 @@ export class NotificationModule {
     {
       path: ":id",
       loadComponent: () =>
-        import(
-          "./notification-link/notification-link.component"
-        ).then((c) => c.NotificationLinkComponent),
+        import("./notification-link/notification-link.component").then(
+          (c) => c.NotificationLinkComponent,
+        ),
     },
   ];
 }
