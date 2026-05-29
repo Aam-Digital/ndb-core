@@ -27,7 +27,7 @@ import { PublicFormConfig } from "../public-form-config";
 
 const noSpecialUrlChars: ValidatorFn = (control: AbstractControl) => {
   const value: string = control.value;
-  if (value && !/^[a-z\d\-_]+$/.test(value)) {
+  if (value && !/^[a-zA-Z\d\-_]+$/.test(value)) {
     return {
       pattern: {
         errorMessage: $localize`The link ID may only contain lowercase letters, digits, hyphens and underscores`,

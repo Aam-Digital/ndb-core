@@ -46,7 +46,6 @@ describe("EditPublicformRouteComponent", () => {
       "id test",
       "id@test",
       "id!test",
-      "UPPERCASE",
       "id.test",
     ]) {
       formControl.setValue(id);
