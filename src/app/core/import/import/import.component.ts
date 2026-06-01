@@ -27,7 +27,6 @@ import { ImportReviewDataComponent } from "../import-review-data/import-review-d
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { RouteTarget } from "../../../route-target";
 import { ImportMatchExistingComponent } from "../update-existing/import-match-existing/import-match-existing.component";
-import { ImportAdditionalSettingsComponent } from "../import-additional-settings/import-additional-settings.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 
 /**
@@ -48,7 +47,6 @@ import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common
     EntityTypeLabelPipe,
     ImportEntityTypeComponent,
     MatExpansionModule,
-    ImportAdditionalSettingsComponent,
     ImportAdditionalActionsComponent,
     ImportMatchExistingComponent,
     MatButtonModule,
