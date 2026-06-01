@@ -64,7 +64,7 @@ export class TemplateExportSelectionDialogComponent {
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
-  private dialogRef = inject(
+  private readonly dialogRef = inject(
     MatDialogRef<TemplateExportSelectionDialogComponent>,
   );
   private readonly templateExportService = inject(TemplateExportService);
