@@ -53,6 +53,12 @@
         [multi]="true"
         [reorder]="true"
       ></app-basic-autocomplete>
+
+      @if (selectedColumnCount() === 0) {
+        <mat-hint i18n="Hint shown when no export columns are selected">
+          Select at least one column to download.
+        </mat-hint>
+      }
     </mat-form-field>
 
     <div class="export-columns-actions">
@@ -80,7 +86,7 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="isLoading()"
+    [disabled]="isLoading() || selectedColumnCount() === 0"
     (click)="download()"
     i18n="Download button"
   >

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from "@angular/core";
@@ -76,6 +77,14 @@ export class ExportDialogComponent {
     ),
   );
 
+  selectedColumnCount = computed(() => {
+    const keys = this.selectedColumnKeys();
+    if (keys !== undefined) {
+      return keys.length;
+    }
+    return this.availableColumns.length;
+  });
+
   columnToString = (col: ExportColumnConfig) => col.label ?? col.query;
   columnToValue = (col: ExportColumnConfig) =>
     this.normalizeQueryKey(col.query);
@@ -120,6 +129,13 @@ export class ExportDialogComponent {
   }
 
   async download() {
+    if (this.selectedColumnCount() === 0) {
+      this.downloadError.set(
+        $localize`Please select at least one column before downloading.`,
+      );
+      return;
+    }
+
     this.isLoading.set(true);
     this.downloadError.set(null);
     await new Promise<void>((resolve) => setTimeout(resolve));
