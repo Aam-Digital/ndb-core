@@ -12,6 +12,7 @@ import {
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DatabaseField } from "../../entity/database-field.decorator";
+import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
 
 describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
@@ -30,6 +31,15 @@ describe("ImportAdditionalService", () => {
       isArray: true, // this must take multiple values so that a whole import can be linked
     })
     participants: string[];
+  }
+
+  @DatabaseEntity("AttendanceEvent")
+  class AttendanceEvent extends Entity {
+    @DatabaseField({
+      dataType: "attendance",
+      isArray: true,
+    })
+    participants: AttendanceItem[];
   }
 
   @DatabaseEntity("RelationshipEntity")
@@ -236,6 +246,77 @@ describe("ImportAdditionalService", () => {
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([relations[2]], false, true);
+  });
+
+  it("should wrap imported entity IDs as AttendanceItems when linking to attendance field", async () => {
+    const testEvent = new AttendanceEvent("evt1");
+    testEvent.participants = [];
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.save(testEvent);
+
+    const testImportSettings: ImportSettings = {
+      entityType: ImportedEntity.ENTITY_TYPE,
+      columnMapping: undefined,
+      additionalActions: [
+        {
+          mode: "direct",
+          targetType: AttendanceEvent.ENTITY_TYPE,
+          targetProperty: "participants",
+          targetId: testEvent.getId(),
+          sourceType: ImportedEntity.ENTITY_TYPE,
+        },
+      ],
+    };
+    await service.executeImport(testEntities, testImportSettings);
+
+    const eventAfter = await entityMapper.load(
+      AttendanceEvent,
+      testEvent.getId(),
+    );
+    expect(eventAfter.participants).toHaveLength(2);
+    expect(eventAfter.participants[0]).toBeInstanceOf(AttendanceItem);
+    expect(eventAfter.participants[0].participant).toBe("ImportedEntity:1");
+    expect(eventAfter.participants[1]).toBeInstanceOf(AttendanceItem);
+    expect(eventAfter.participants[1].participant).toBe("ImportedEntity:2");
+  });
+
+  it("should remove participants from attendance field by participant ID when undoing import", async () => {
+    const testEvent = new AttendanceEvent("evt2");
+    const item1 = new AttendanceItem();
+    item1.participant = "ImportedEntity:1";
+    const item2 = new AttendanceItem();
+    item2.participant = "ImportedEntity:2";
+    const item3 = new AttendanceItem();
+    item3.participant = "ImportedEntity:3";
+    testEvent.participants = [item1, item2, item3];
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.save(testEvent);
+
+    const importMeta = new ImportMetadata();
+    importMeta.config = {
+      entityType: ImportedEntity.ENTITY_TYPE,
+      columnMapping: undefined,
+      additionalActions: [
+        {
+          mode: "direct",
+          targetType: AttendanceEvent.ENTITY_TYPE,
+          targetProperty: "participants",
+          targetId: testEvent.getId(),
+          sourceType: ImportedEntity.ENTITY_TYPE,
+        },
+      ],
+    };
+    importMeta.createdEntities = ["ImportedEntity:1", "ImportedEntity:2"];
+
+    await service.undoImport(importMeta);
+
+    const eventAfter = await entityMapper.load(
+      AttendanceEvent,
+      testEvent.getId(),
+    );
+    expect(eventAfter.participants).toHaveLength(1);
+    expect(eventAfter.participants[0].participant).toBe("ImportedEntity:3");
   });
 
   it("should handle array of target types", () => {
