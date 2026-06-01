@@ -50,7 +50,7 @@ export class AddressEditComponent {
 
   manualAddressEnabled = signal(false);
 
-  private geoService = inject(GeoService);
+  private readonly geoService = inject(GeoService);
 
   enableManualAddressEditing() {
     this.manualAddressEnabled.set(true);
