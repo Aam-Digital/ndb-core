@@ -25,6 +25,7 @@ import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
 import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 import type { Mock } from "vitest";
+import { By } from "@angular/platform-browser";
 
 type DialogRefMock = {
   close: Mock;
@@ -39,6 +40,11 @@ type DownloadServiceMock = {
   triggerDownload: Mock;
 };
 
+type AlertServiceMock = {
+  addInfo: Mock;
+  addWarning: Mock;
+};
+
 type TemplateExportServiceMock = {
   isExportServerEnabled: Mock;
 };
@@ -50,6 +56,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
   let mockDialogRef: DialogRefMock;
   let mockPdfGeneratorApiService: TemplateExportApiServiceMock;
   let mockDownloadService: DownloadServiceMock;
+  let mockAlertService: AlertServiceMock;
   let mockTemplateExportService: TemplateExportServiceMock;
   let testEntity: Entity;
 
@@ -62,6 +69,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
     };
     mockDownloadService = {
       triggerDownload: vi.fn(),
+    };
+    mockAlertService = {
+      addInfo: vi.fn(),
+      addWarning: vi.fn(),
     };
     mockDialogRef = {
       close: vi.fn(),
@@ -103,12 +114,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           },
         },
         { provide: ActivatedRoute, useValue: null },
-        {
-          provide: AlertService,
-          useValue: {
-            addWarning: vi.fn(),
-          },
-        },
+        { provide: AlertService, useValue: mockAlertService },
         {
           provide: EntityRegistry,
           useValue: entityRegistry,
@@ -137,6 +143,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(
       fixture.nativeElement.querySelector(".feature-disabled-box"),
     ).toBeNull();
+    expect(
+      fixture.debugElement.query(By.css("mat-form-field")).componentInstance
+        .floatLabel,
+    ).toBe("always");
   });
 
   it("should show feature-disabled info when export feature is disabled", async () => {
@@ -209,7 +219,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           },
         },
         { provide: ActivatedRoute, useValue: null },
-        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: AlertService, useValue: mockAlertService },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: TemplateExportService,
@@ -261,7 +271,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
       "pdf",
       mockResponse.filename,
     );
-    expect(component.phase()).toBe("done");
+    expect(mockAlertService.addInfo).toHaveBeenCalledWith(
+      "Generated 1 of 1 files.",
+    );
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 
   it("should not trigger download for a failed API request and record the failure", async () => {
@@ -276,6 +289,8 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(component.failures().length).toBe(1);
     expect(component.failures()[0].entity).toBe(testEntity);
     expect(component.phase()).toBe("done");
+    expect(mockAlertService.addInfo).not.toHaveBeenCalled();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
   it("should call the batch endpoint once with the array and trigger a single zip download for bulk input", async () => {
@@ -310,7 +325,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           },
         },
         { provide: ActivatedRoute, useValue: null },
-        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: AlertService, useValue: mockAlertService },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: TemplateExportService,
@@ -353,8 +368,11 @@ describe("TemplateExportSelectionDialogComponent", () => {
       "zip",
       "report.zip",
     );
-    expect(bulkComponent.phase()).toBe("done");
     expect(bulkComponent.failures()).toEqual([]);
+    expect(mockAlertService.addInfo).toHaveBeenCalledWith(
+      "Generated 2 of 2 files.",
+    );
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 
   it("should use combined mode and download a single PDF when the user enables the combine-into-single-PDF checkbox", async () => {
@@ -389,7 +407,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           },
         },
         { provide: ActivatedRoute, useValue: null },
-        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: AlertService, useValue: mockAlertService },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: TemplateExportService,
@@ -426,7 +444,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
       "pdf",
       "combined.pdf",
     );
-    expect(bulkComponent.phase()).toBe("done");
+    expect(mockAlertService.addInfo).toHaveBeenCalledWith(
+      "Generated 2 of 2 files.",
+    );
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 
   it("should hide the single-entity header when more than one entity is provided", async () => {
@@ -461,7 +482,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           },
         },
         { provide: ActivatedRoute, useValue: null },
-        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: AlertService, useValue: mockAlertService },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: TemplateExportService,
@@ -482,7 +503,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(header).toBeNull();
   });
 
-  it("should render the done summary after generation completes", async () => {
+  it("should close the dialog without rendering a done summary after generation completes", async () => {
     mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
       of({ filename: "x.pdf", file: new ArrayBuffer(4) }),
     );
@@ -491,12 +512,12 @@ describe("TemplateExportSelectionDialogComponent", () => {
     await component.requestFile();
     fixture.detectChanges();
 
-    expect(component.phase()).toBe("done");
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
     expect(
       fixture.nativeElement.querySelector(
         '[data-testid="template-export-summary"]',
       ),
-    ).not.toBeNull();
+    ).toBeNull();
   });
 
   it("should mark all selected entities as failed when the bulk request errors out", async () => {
@@ -533,7 +554,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
           },
         },
         { provide: ActivatedRoute, useValue: null },
-        { provide: AlertService, useValue: { addWarning: vi.fn() } },
+        { provide: AlertService, useValue: mockAlertService },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: TemplateExportService,
@@ -566,6 +587,8 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(summary).not.toBeNull();
     expect(summary.textContent).toContain("Anna");
     expect(summary.textContent).toContain("Ben");
+    expect(mockAlertService.addInfo).not.toHaveBeenCalled();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
   it("should warn and skip the API when invoked with an empty entity array", async () => {

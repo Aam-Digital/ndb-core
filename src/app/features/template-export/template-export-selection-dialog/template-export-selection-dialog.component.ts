@@ -15,6 +15,7 @@ import {
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
+  MatDialogRef,
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatProgressBar } from "@angular/material/progress-bar";
@@ -63,6 +64,9 @@ export class TemplateExportSelectionDialogComponent {
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);
+  private dialogRef = inject(
+    MatDialogRef<TemplateExportSelectionDialogComponent>,
+  );
   private readonly templateExportService = inject(TemplateExportService);
 
   entity = input<Entity | Entity[]>();
@@ -154,10 +158,14 @@ export class TemplateExportSelectionDialogComponent {
           result.filename,
         );
       }
+      this.dialogRef.close(true);
+
+      this.alertService.addInfo(
+        $localize`Generated ${entities.length} of ${entities.length} files.`,
+      );
     } catch (error) {
       Logging.warn("Failed to generate files", error);
       this.failures.set(entities.map((entity) => ({ entity, error })));
-    } finally {
       this.phase.set("done");
     }
   }
