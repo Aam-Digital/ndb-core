@@ -1,11 +1,7 @@
 import { tableSort } from "./table-sort";
 import moment from "moment";
 import { Entity } from "../../../entity/model/entity";
-import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
-import {
-  ConfigurableEnumConfig,
-  ConfigurableEnumValue,
-} from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { ConfigurableEnumConfig } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("TableSort", () => {
   class E extends Entity {
@@ -47,11 +43,11 @@ describe("TableSort", () => {
     testSort(values);
   });
 
-  it("should sort configurable with an ordinal value based on their ordinal value", () => {
-    const values: Ordering.Config<ConfigurableEnumValue> = [
-      { id: "first", label: "X", _ordinal: 0 },
-      { id: "second", label: "Cgt", _ordinal: 1 },
+  it("should leave datatype-specific ordering to sortValueFns", () => {
+    const values: ConfigurableEnumConfig = [
       { id: "third", label: "876", _ordinal: 2 },
+      { id: "second", label: "Cgt", _ordinal: 1 },
+      { id: "first", label: "X", _ordinal: 0 },
     ];
     testSort(values);
   });
@@ -87,6 +83,26 @@ describe("TableSort", () => {
       sortValueFns,
     });
     expect(result.map((r) => r.record.key.length)).toEqual([1, 2, 3]);
+  });
+
+  it("should pass the record to sortValueFns for virtual columns", () => {
+    const rows = [3, 1, 2].map((age) => ({
+      record: Object.assign(new E(undefined), { dateOfBirth: { age } }),
+    }));
+    const sortValueFns = {
+      virtualAge: (
+        _value: unknown,
+        record?: E & { dateOfBirth: { age: number } },
+      ) => record?.dateOfBirth.age,
+    };
+
+    const result = tableSort([...rows], {
+      direction: "asc",
+      active: "virtualAge" as keyof E,
+      sortValueFns,
+    });
+
+    expect(result.map((r) => r.record.dateOfBirth.age)).toEqual([1, 2, 3]);
   });
 
   function testSort(

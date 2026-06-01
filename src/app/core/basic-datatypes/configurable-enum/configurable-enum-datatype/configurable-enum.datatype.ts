@@ -3,6 +3,7 @@ import { ConfigurableEnumService } from "../configurable-enum.service";
 import { Injectable, inject } from "@angular/core";
 import { DiscreteDatatype } from "../../discrete/discrete.datatype";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
+import { Ordering } from "../configurable-enum-ordering";
 
 @Injectable()
 export class ConfigurableEnumDatatype extends DiscreteDatatype<
@@ -47,6 +48,12 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
     }
 
     return enumOption;
+  }
+
+  override sortValue(fieldValue: ConfigurableEnumValue): number | undefined {
+    return Ordering.hasOrdinalValue(fieldValue)
+      ? fieldValue._ordinal
+      : undefined;
   }
 
   /**

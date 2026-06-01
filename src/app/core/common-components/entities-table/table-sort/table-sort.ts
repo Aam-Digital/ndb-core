@@ -1,6 +1,5 @@
 import { getReadableValue } from "../value-accessor/value-accessor";
 import { Entity } from "../../../entity/model/entity";
-import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { TableRow } from "../table-row";
 
 /**
@@ -19,7 +18,10 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   }: {
     direction: "asc" | "desc" | "";
     active: PROPERTY | "";
-    sortValueFns?: Record<string, (v: any) => number | string | undefined>;
+    sortValueFns?: Record<
+      string,
+      (value: unknown, record: OBJECT) => number | string | undefined
+    >;
   },
 ): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
@@ -49,28 +51,18 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
 function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   obj: OBJECT,
   key: PROPERTY,
-  sortValueFns?: Record<string, (v: any) => number | string | undefined>,
+  sortValueFns?: Record<
+    string,
+    (value: unknown, record: OBJECT) => number | string | undefined
+  >,
 ): number | string | Symbol {
   let value = obj[key];
 
-  const customSortValue = sortValueFns?.[String(key)]?.(value);
+  const customSortValue = sortValueFns?.[String(key)]?.(value, obj);
   if (customSortValue !== undefined) {
     return customSortValue;
   }
 
-  // Special handling for Age columns
-  if (value === undefined && key === "age") {
-    // default assuming dateOfBirth field
-    key = "age_dateOfBirth" as any;
-  }
-  if (value === undefined && String(key).startsWith("age_")) {
-    const fieldKey = String(key).replace("age_", "");
-    return obj[fieldKey]?.age;
-  }
-
-  if (Ordering.hasOrdinalValue(value)) {
-    return value._ordinal;
-  }
   value = getReadableValue(value);
   if (value instanceof Date) {
     return value.getTime() + "";
