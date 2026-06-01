@@ -202,7 +202,7 @@ like creating secondary relationship entities.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:35</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:37</a></div>
                             </td>
                         </tr>
 
@@ -235,8 +235,8 @@ like creating secondary relationship entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="297"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:297</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="322"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:322</a></div>
                         </td>
                     </tr>
 
@@ -331,8 +331,8 @@ like creating secondary relationship entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="159"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:159</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="161"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:161</a></div>
                         </td>
                     </tr>
 
@@ -413,8 +413,8 @@ linking entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="131"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:131</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -483,8 +483,8 @@ linking entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="140"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:140</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="142"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:142</a></div>
                         </td>
                     </tr>
 
@@ -556,8 +556,8 @@ linking entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="180"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:180</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="182"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -624,6 +624,8 @@ import { FormFieldConfig } from &quot;../../common-components/entity-form/FormCo
 import { ConfigService } from &quot;../../config/config.service&quot;;
 import { Note } from &quot;../../../child-dev-project/notes/model/note&quot;;
 import { Todo } from &quot;../../../features/todos/model/todo&quot;;
+import { AttendanceItem } from &quot;../../../features/attendance/model/attendance-item&quot;;
+import { AttendanceDatatype } from &quot;../../../features/attendance/model/attendance.datatype&quot;;
 import { EntityRelationsService } from &quot;../../entity/entity-mapper/entity-relations.service&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
 import { EntityConfigReadyService } from &quot;../../entity/entity-config-ready.service&quot;;
@@ -871,12 +873,24 @@ export class ImportAdditionalService {
       action.targetType,
       action.targetId,
     );
-    const ids &#x3D; entitiesToBeLinked.map((e) &#x3D;&gt; e.getId());
 
     if (!targetEntity[action.targetProperty]) {
       targetEntity[action.targetProperty] &#x3D; [];
     }
-    targetEntity[action.targetProperty].push(...ids);
+
+    const fieldSchema &#x3D; targetEntity.getSchema().get(action.targetProperty);
+    if (fieldSchema?.dataType &#x3D;&#x3D;&#x3D; AttendanceDatatype.dataType) {
+      const attendanceItems &#x3D; entitiesToBeLinked.map((e) &#x3D;&gt; {
+        const item &#x3D; new AttendanceItem();
+        item.participant &#x3D; e.getId();
+        return item;
+      });
+      targetEntity[action.targetProperty].push(...attendanceItems);
+    } else {
+      const ids &#x3D; entitiesToBeLinked.map((e) &#x3D;&gt; e.getId());
+      targetEntity[action.targetProperty].push(...ids);
+    }
+
     return this.entityMapper.save(targetEntity);
   }
 
@@ -894,9 +908,20 @@ export class ImportAdditionalService {
       action.targetType,
       action.targetId,
     );
-    targetEntity[action.targetProperty] &#x3D; targetEntity[
-      action.targetProperty
-    ]?.filter((e) &#x3D;&gt; !entitiesToBeUnlinked.includes(e));
+
+    const fieldSchema &#x3D; targetEntity.getSchema().get(action.targetProperty);
+    if (fieldSchema?.dataType &#x3D;&#x3D;&#x3D; AttendanceDatatype.dataType) {
+      targetEntity[action.targetProperty] &#x3D; targetEntity[
+        action.targetProperty
+      ]?.filter(
+        (e: AttendanceItem) &#x3D;&gt; !entitiesToBeUnlinked.includes(e.participant),
+      );
+    } else {
+      targetEntity[action.targetProperty] &#x3D; targetEntity[
+        action.targetProperty
+      ]?.filter((e) &#x3D;&gt; !entitiesToBeUnlinked.includes(e));
+    }
+
     return this.entityMapper.save(targetEntity);
   }
 
