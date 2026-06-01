@@ -10,11 +10,11 @@ import { BehaviorSubject, firstValueFrom, Observable, Subject } from "rxjs";
 import { MapComponent } from "../map/map.component";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { GeoResult, GeoService } from "../geo.service";
+import { OpenStreetMapsSearchResult, GeoService } from "../geo.service";
 import { AddressEditComponent } from "../address-edit/address-edit.component";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
-import { enrichGeoLocation, GeoLocation } from "../geo-location";
+import { GeoLocation } from "../geo-location";
 
 export interface MapPopupConfig {
   marked?: Coordinates[];
@@ -64,7 +64,7 @@ export class MapPopupComponent {
   private geoService = inject(GeoService);
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  markedLocations: BehaviorSubject<GeoResult[]>;
+  markedLocations: BehaviorSubject<OpenStreetMapsSearchResult[]>;
   helpText: string = $localize`Search an address or click on the map directly to select a different location`;
 
   selectedLocation: GeoLocation;
@@ -74,8 +74,8 @@ export class MapPopupComponent {
   constructor() {
     const data = this.data;
 
-    this.markedLocations = new BehaviorSubject<GeoResult[]>(
-      (data.marked as GeoResult[]) ?? [],
+    this.markedLocations = new BehaviorSubject<OpenStreetMapsSearchResult[]>(
+      (data.marked as OpenStreetMapsSearchResult[]) ?? [],
     );
     this.selectedLocation = data.selectedLocation;
     this.lastSavedLocation = data.selectedLocation
@@ -117,7 +117,7 @@ export class MapPopupComponent {
     if (this.data.disabled || !newCoordinates) {
       return;
     }
-    const geoResult: GeoResult = await firstValueFrom(
+    const geoResult: OpenStreetMapsSearchResult = await firstValueFrom(
       this.geoService.reverseLookup(newCoordinates),
     );
 
@@ -215,7 +215,7 @@ export class MapPopupComponent {
   }
 
   updateLocation(event: GeoLocation | undefined) {
-    let updatedLocation = enrichGeoLocation(event);
+    let updatedLocation = this.geoService.enrichGeoLocation(event);
 
     const displayName = updatedLocation?.geoLookup?.display_name;
     const hasManualAddress =

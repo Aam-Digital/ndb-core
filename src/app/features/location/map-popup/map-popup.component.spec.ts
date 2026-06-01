@@ -5,10 +5,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { of, Subject } from "rxjs";
 import { Coordinates } from "../coordinates";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { GeoResult, GeoService } from "../geo.service";
+import { OpenStreetMapsSearchResult, GeoService } from "../geo.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { GeoLocation } from "../geo-location";
+import { GeoLocation, enrichGeoLocation } from "../geo-location";
 
 describe("MapPopupComponent", () => {
   let component: MapPopupComponent;
@@ -22,6 +22,9 @@ describe("MapPopupComponent", () => {
     mockGeoService = {
       lookup: vi.fn(),
       reverseLookup: vi.fn(),
+      enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
+        enrichGeoLocation(loc),
+      ),
     };
     mockGeoService.reverseLookup.mockReturnValue(
       of({
@@ -58,7 +61,7 @@ describe("MapPopupComponent", () => {
   it("should set new location upon map clicks (if enabled)", async () => {
     vi.useFakeTimers();
     try {
-      let updatedLocations: GeoResult[];
+      let updatedLocations: OpenStreetMapsSearchResult[];
       component.markedLocations.subscribe((res) => (updatedLocations = res));
 
       const mockedClick: Coordinates = { lat: 1, lon: 2 };
@@ -74,10 +77,10 @@ describe("MapPopupComponent", () => {
       component.mapClicked(mockedClick);
       await vi.advanceTimersByTimeAsync(0);
 
-      const expectedAfterFirstClick: GeoResult = {
+      const expectedAfterFirstClick: OpenStreetMapsSearchResult = {
         ...mockedClick,
         display_name: "[selected on map: 1 - 2]",
-      };
+      } as OpenStreetMapsSearchResult;
       expect(updatedLocations).toEqual([expectedAfterFirstClick]);
       expect(component.selectedLocation).toEqual({
         geoLookup: expectedAfterFirstClick,
@@ -99,7 +102,7 @@ describe("MapPopupComponent", () => {
   it("should set new location upon map clicks with reverse-lookup of address", async () => {
     vi.useFakeTimers();
     try {
-      let updatedLocations: GeoResult[];
+      let updatedLocations: OpenStreetMapsSearchResult[];
       component.markedLocations.subscribe((res) => (updatedLocations = res));
 
       const mockedClick: Coordinates = { lat: 1, lon: 2 };
@@ -123,7 +126,7 @@ describe("MapPopupComponent", () => {
   it("should update location if received from address search", async () => {
     vi.useFakeTimers();
     try {
-      let updatedMarkedLocations: GeoResult[];
+      let updatedMarkedLocations: OpenStreetMapsSearchResult[];
       component.markedLocations.subscribe(
         (res) => (updatedMarkedLocations = res),
       );
@@ -133,12 +136,14 @@ describe("MapPopupComponent", () => {
           lat: 1,
           lon: 2,
           display_name: "x",
-          road: "Main St",
-          house_number: "42",
-          postcode: "12345",
-          city: "Berlin",
-          country: "Germany",
-        },
+          address: {
+            road: "Main St",
+            house_number: "42",
+            postcode: "12345",
+            city: "Berlin",
+            country: "Germany",
+          },
+        } as OpenStreetMapsSearchResult,
         locationString: "x",
       };
       component.updateLocation(newLocation);
@@ -165,7 +170,7 @@ describe("MapPopupComponent", () => {
   it("should replace stale top-level fields when selecting a different map location", async () => {
     vi.useFakeTimers();
     try {
-      let updatedMarkedLocations: GeoResult[];
+      let updatedMarkedLocations: OpenStreetMapsSearchResult[];
       component.markedLocations.subscribe(
         (res) => (updatedMarkedLocations = res),
       );
@@ -176,11 +181,13 @@ describe("MapPopupComponent", () => {
           lat: 52,
           lon: 13,
           display_name: "Old Place",
-          road: "Old Road",
-          postcode: "10001",
-          city: "OldCity",
-          country: "OldCountry",
-        },
+          address: {
+            road: "Old Road",
+            postcode: "10001",
+            city: "OldCity",
+            country: "OldCountry",
+          },
+        } as OpenStreetMapsSearchResult,
         locationString: "Old Place",
         // top-level fields that should be replaced when a new geoLookup is selected
         road: "Old Road",
@@ -190,15 +197,17 @@ describe("MapPopupComponent", () => {
       } as any;
 
       const mockedClick: Coordinates = { lat: 1, lon: 2 };
-      const newGeo: GeoResult = {
+      const newGeo: OpenStreetMapsSearchResult = {
         lat: mockedClick.lat,
         lon: mockedClick.lon,
         display_name: "New Place",
-        road: "New Road",
-        postcode: "99999",
-        city: "NewCity",
-        country: "NewCountry",
-      } as any;
+        address: {
+          road: "New Road",
+          postcode: "99999",
+          city: "NewCity",
+          country: "NewCountry",
+        },
+      } as OpenStreetMapsSearchResult;
 
       mockGeoService.reverseLookup.mockReturnValue(of(newGeo));
 

@@ -1,11 +1,11 @@
-import { GeoResult } from "./geo.service";
+import { OpenStreetMapsSearchResult } from "./geo.service";
 
 /**
  * A location both as custom string and an optional geo location lookup.
  */
 export interface GeoLocation {
   locationString?: string;
-  geoLookup?: GeoResult;
+  geoLookup?: OpenStreetMapsSearchResult;
   road?: string;
   house_number?: string;
   postcode?: string;
@@ -16,20 +16,21 @@ export interface GeoLocation {
 export function enrichGeoLocation(
   location: GeoLocation | undefined,
 ): GeoLocation | undefined {
-  if (!location?.geoLookup) {
-    return location;
-  }
+  if (!location?.geoLookup) return location;
+
+  const addr = location.geoLookup.address;
+  if (!addr) return location;
+
+  const getCity = () => addr.city ?? addr.village ?? addr.town ?? undefined;
+  const formatPostcode = () =>
+    addr.postcode != null ? String(addr.postcode) : undefined;
 
   return {
     ...location,
-    road: location.road ?? location.geoLookup.road,
-    house_number: location.house_number ?? location.geoLookup.house_number,
-    postcode:
-      location.postcode ??
-      (location.geoLookup.postcode != null
-        ? String(location.geoLookup.postcode)
-        : undefined),
-    city: location.city ?? location.geoLookup.city,
-    country: location.country ?? location.geoLookup.country,
+    road: location.road ?? addr.road,
+    house_number: location.house_number ?? addr.house_number,
+    postcode: location.postcode ?? formatPostcode(),
+    city: location.city ?? getCity(),
+    country: location.country ?? addr.country,
   };
 }

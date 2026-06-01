@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { GeoResult, GeoService } from "./geo.service";
+import { OpenStreetMapsSearchResult, GeoService } from "./geo.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { ConfigService } from "../../core/config/config.service";
 import { firstValueFrom, of, Subject, throwError } from "rxjs";
@@ -21,7 +21,7 @@ type HttpClientMock = {
   get: Mock;
 };
 
-type SearchResult = GeoResult & {
+type SearchResult = OpenStreetMapsSearchResult & {
   address: {
     amenity?: string;
     office?: string;
@@ -120,10 +120,10 @@ describe("GeoService", () => {
     });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Cafe, Main St 42, 12345 Berlin");
-    expect(formatted.road).toBe("Main St");
-    expect(formatted.house_number).toBe("42");
-    expect(formatted.postcode).toBe("12345");
-    expect(formatted.city).toBe("Berlin");
+    expect(formatted.address?.road).toBe("Main St");
+    expect(formatted.address?.house_number).toBe("42");
+    expect(formatted.address?.postcode).toBe("12345");
+    expect(formatted.address?.city).toBe("Berlin");
   });
 
   it("should format with office and city only", () => {
@@ -133,7 +133,7 @@ describe("GeoService", () => {
     });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Company HQ, Munich");
-    expect(formatted.city).toBe("Munich");
+    expect(formatted.address?.city).toBe("Munich");
   });
 
   it("should handle missing address gracefully", () => {
@@ -163,7 +163,7 @@ describe("GeoService", () => {
     });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Village Road, 99999 Smallville");
-    expect(formatted.city).toBe("Smallville");
+    expect(formatted.address?.city).toBe("Smallville");
   });
 
   it("should normalize address parts on lookup results for PDF templating", async () => {
@@ -183,11 +183,11 @@ describe("GeoService", () => {
 
     expect(response).toHaveLength(1);
     expect(response[0].display_name).toBe("Rollbergstraße 12, 12053 Berlin");
-    expect(response[0].road).toBe("Rollbergstraße");
-    expect(response[0].house_number).toBe("12");
-    expect(response[0].postcode).toBe("12053");
-    expect(response[0].city).toBe("Berlin");
-    expect(response[0].country).toBe("Germany");
+    expect(response[0].address?.road).toBe("Rollbergstraße");
+    expect(response[0].address?.house_number).toBe("12");
+    expect(response[0].address?.postcode).toBe("12053");
+    expect(response[0].address?.city).toBe("Berlin");
+    expect(response[0].address?.country).toBe("Germany");
   });
 
   it("should return cached result on repeated lookup without additional HTTP request", () => {

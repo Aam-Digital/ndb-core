@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { of, throwError } from "rxjs";
-import { GeoLocation } from "./geo-location";
-import { GeoResult, GeoService } from "./geo.service";
+import { GeoLocation, enrichGeoLocation } from "./geo-location";
+import { OpenStreetMapsSearchResult, GeoService } from "./geo.service";
 import { LocationDatatype } from "./location.datatype";
 
 describe("Schema data type: location", () => {
@@ -11,6 +11,9 @@ describe("Schema data type: location", () => {
   beforeEach(() => {
     mockGeoService = {
       lookup: vi.fn(),
+      enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
+        enrichGeoLocation(loc),
+      ),
     };
 
     TestBed.configureTestingModule({
@@ -30,7 +33,8 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
     };
 
     expect(service.transformToObjectFormat(location)).toEqual(location);
@@ -38,18 +42,20 @@ describe("Schema data type: location", () => {
   });
 
   it("should transform old (legacy) format to new format during loading", async () => {
-    const oldLocationFormat: GeoResult = {
+    const oldLocationFormat: OpenStreetMapsSearchResult = {
       lat: 1,
       lon: 2,
       display_name: "1, test address",
-    };
+      address: {},
+    } as OpenStreetMapsSearchResult;
     const newLocationFormat: GeoLocation = {
       locationString: "1, test address",
       geoLookup: {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
       road: undefined,
       house_number: undefined,
       postcode: undefined,
@@ -67,7 +73,7 @@ describe("Schema data type: location", () => {
 
   async function testImportMapping(
     importedValue: string,
-    mockedLookup: GeoResult[],
+    mockedLookup: OpenStreetMapsSearchResult[],
     expectedResult: GeoLocation,
   ) {
     mockGeoService.lookup.mockReturnValue(of(mockedLookup));
@@ -80,16 +86,18 @@ describe("Schema data type: location", () => {
 
   it("should import lookup location data when importing address string", async () => {
     const importedAddress = "21 MyStreet, MyCity";
-    const locationResult: GeoResult = {
+    const locationResult: OpenStreetMapsSearchResult = {
       lat: 1,
       lon: 2,
       display_name: importedAddress,
-      road: "MyStreet",
-      house_number: "21",
-      postcode: "12345",
-      city: "MyCity",
-      country: "Germany",
-    };
+      address: {
+        road: "MyStreet",
+        house_number: "21",
+        postcode: "12345",
+        city: "MyCity",
+        country: "Germany",
+      },
+    } as OpenStreetMapsSearchResult;
 
     await testImportMapping(importedAddress, [locationResult], {
       locationString: importedAddress,
@@ -104,15 +112,17 @@ describe("Schema data type: location", () => {
 
   it("should import first lookup location when importing address string resulting in multiple results", async () => {
     const importedAddress = "21 MyStreet, MyCity";
-    const locationResult: GeoResult = {
+    const locationResult: OpenStreetMapsSearchResult = {
       lat: 1,
       lon: 2,
       display_name: importedAddress,
-      road: "MyStreet",
-      house_number: "21",
-      postcode: "12345",
-      city: "MyCity",
-    };
+      address: {
+        road: "MyStreet",
+        house_number: "21",
+        postcode: "12345",
+        city: "MyCity",
+      },
+    } as OpenStreetMapsSearchResult;
 
     await testImportMapping(
       importedAddress,
@@ -185,7 +195,8 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
     };
     const expected1: GeoLocation = {
       locationString: "1, test address",
@@ -193,7 +204,8 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
       road: undefined,
       house_number: undefined,
       postcode: undefined,
@@ -208,6 +220,7 @@ describe("Schema data type: location", () => {
           lat: 1,
           lon: 2,
           display_name: "2, test address",
+          address: {},
         },
       },
     };
@@ -217,7 +230,8 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "2, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
       road: undefined,
       house_number: undefined,
       postcode: undefined,
@@ -234,12 +248,14 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "21 MyStreet, MyCity",
-        road: "MyStreet",
-        house_number: "21",
-        postcode: "12345",
-        city: "MyCity",
-        country: "Germany",
-      },
+        address: {
+          road: "MyStreet",
+          house_number: "21",
+          postcode: "12345",
+          city: "MyCity",
+          country: "Germany",
+        },
+      } as OpenStreetMapsSearchResult,
       road: "MyStreet",
       house_number: "21",
       postcode: "12345",

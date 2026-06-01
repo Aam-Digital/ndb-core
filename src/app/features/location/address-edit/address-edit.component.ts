@@ -6,10 +6,11 @@ import {
   signal,
   viewChild,
   ChangeDetectionStrategy,
+  inject,
 } from "@angular/core";
 import { AddressSearchComponent } from "../address-search/address-search.component";
-import { GeoResult } from "../geo.service";
-import { enrichGeoLocation, GeoLocation } from "../geo-location";
+import { GeoResult, GeoService } from "../geo.service";
+import { GeoLocation } from "../geo-location";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -49,6 +50,8 @@ export class AddressEditComponent {
 
   manualAddressEnabled = signal(false);
 
+  private geoService = inject(GeoService);
+
   enableManualAddressEditing() {
     this.manualAddressEnabled.set(true);
     // switch focus only after input has been enabled
@@ -56,7 +59,7 @@ export class AddressEditComponent {
   }
 
   updateLocation(selected: GeoLocation | undefined) {
-    this.selectedLocation.set(enrichGeoLocation(selected));
+    this.selectedLocation.set(this.geoService.enrichGeoLocation(selected));
     this.manualAddressEnabled.set(
       this.selectedLocation()?.geoLookup?.display_name !==
         this.selectedLocation()?.locationString,
