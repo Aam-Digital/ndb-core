@@ -1431,7 +1431,7 @@
   "931272690246720471": "Die Veranstaltung konnte nicht geladen werden. Bitte gehen Sie zurück und versuchen Sie es erneut. ",
   "5193604694578359259": "Aam Digital ist Open-Source-Software und unter {$START_LINK}www.github.com/Aam-Digital{$CLOSE_LINK} verfügbar. Die Software wird hauptsächlich von der Aam Digital GmbH ({$START_LINK_1}www.aam-digital.com{$CLOSE_LINK}) entwickelt und gepflegt, die Hosting, Beratung, Schulungen und die Entwicklung neuer Funktionen anbietet. Aam Digital ist als  {$START_LINK_2}Digital Public Good{$CLOSE_LINK} anerkannt. ",
   "7584312201752292621": "Neueste Änderungen:",
-  "6488622213810377133": "angetrieben von",
+  "6488622213810377133": "powered by",
   "750863538901962642": "Laden Sie eine unformatierte Konfigurationsdatei hoch und überschreiben Sie die aktuelle Systemkonfiguration. Akzeptiert ein einzelnes Konfigurationsobjekt oder ein Array von Konfigurationsdokumenten.",
   "7516236516227197736": "Upload fehlgeschlagen: {$PH}",
   "690427411501906292": "Offline-Synchronisierung deaktiviert – Daten werden direkt vom Server geladen",
