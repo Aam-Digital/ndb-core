@@ -15,6 +15,21 @@ import { NotificationEvent } from "./model/notification-event";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 /**
+ * Status of a backend feature, as reported by the `/actuator/features` endpoint.
+ */
+interface FeatureFlag {
+  enabled: boolean;
+}
+
+/**
+ * Feature flags from the `/actuator/features` endpoint.
+ * Sub-features are nested under their parent feature (e.g. `notification.email`).
+ */
+type FeatureFlags = Record<string, FeatureFlag> & {
+  notification?: FeatureFlag & { email?: FeatureFlag };
+};
+
+/**
  * Handles the interaction with Cloud Messaging.
  * It manages the retrieval of Cloud Messaging Notification token, listens for incoming messages, and sends notifications
  * to users. The service also provides methods to create cloud messaging payloads and communicate with the
@@ -38,13 +53,13 @@ export class NotificationService {
     loader: async () => {
       try {
         return await firstValueFrom(
-          this.httpClient.get<Record<string, { enabled: boolean }>>(
+          this.httpClient.get<FeatureFlags>(
             environment.API_PROXY_PREFIX + "/actuator/features",
           ),
         );
       } catch (err) {
         Logging.debug("Notification API not available", err);
-        return {} as Record<string, { enabled: boolean }>;
+        return {} as FeatureFlags;
       }
     },
   });
@@ -55,7 +70,7 @@ export class NotificationService {
 
   readonly isEmailNotificationEnabled = computed(
     () =>
-      this.featureFlagsResource.value()?.["notification.email"]?.enabled ??
+      this.featureFlagsResource.value()?.["notification"]?.email?.enabled ??
       false,
   );
 
