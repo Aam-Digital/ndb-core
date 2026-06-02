@@ -86,6 +86,6 @@ export class NotificationLinkComponent {
     const url = event.context?.entityType
       ? this.buildEntityUrl(event.context.entityType, event.context.entityId)
       : event.actionURL;
-    await this.router.navigate([url || fallback]);
+    await this.router.navigateByUrl(url || fallback);
   }
 }

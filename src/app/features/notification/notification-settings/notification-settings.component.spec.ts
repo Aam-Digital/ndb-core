@@ -1,3 +1,4 @@
+import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import {
   MatSlideToggle,
@@ -45,10 +46,10 @@ type NotificationServiceMock = Pick<
   | "unregisterDevice"
   | "testNotification"
 > & {
-  isNotificationServerEnabled: Mock;
-  isEmailNotificationEnabled: Mock;
-  isPushNotificationSupported: Mock;
-  hasNotificationPermissionGranted: Mock;
+  isNotificationServerEnabled: WritableSignal<boolean>;
+  isEmailNotificationEnabled: WritableSignal<boolean>;
+  isPushNotificationSupported: WritableSignal<boolean>;
+  hasNotificationPermissionGranted: WritableSignal<boolean>;
   isDeviceRegistered: Mock;
   loadNotificationConfig: Mock;
   registerDevice: Mock;
@@ -73,10 +74,10 @@ describe("NotificationSettingComponent", () => {
 
   beforeEach(async () => {
     mockNotificationService = {
-      isNotificationServerEnabled: vi.fn(),
-      isEmailNotificationEnabled: vi.fn(),
-      isPushNotificationSupported: vi.fn(),
-      hasNotificationPermissionGranted: vi.fn(),
+      isNotificationServerEnabled: signal(true),
+      isEmailNotificationEnabled: signal(true),
+      isPushNotificationSupported: signal(true),
+      hasNotificationPermissionGranted: signal(true),
       isDeviceRegistered: vi.fn(),
       loadNotificationConfig: vi.fn(),
       registerDevice: vi.fn(),
@@ -87,16 +88,6 @@ describe("NotificationSettingComponent", () => {
       getConfirmation: vi.fn(),
     };
 
-    mockNotificationService.isNotificationServerEnabled.mockReturnValue(
-      Promise.resolve(true),
-    );
-    mockNotificationService.isEmailNotificationEnabled.mockReturnValue(
-      Promise.resolve(true),
-    );
-    mockNotificationService.isPushNotificationSupported.mockReturnValue(true);
-    mockNotificationService.hasNotificationPermissionGranted.mockReturnValue(
-      true,
-    );
     mockNotificationService.isDeviceRegistered.mockReturnValue(
       Promise.resolve(true),
     );
@@ -145,9 +136,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should set isFeatureEnabled to false when notification server is disabled", async () => {
-    mockNotificationService.isNotificationServerEnabled.mockReturnValue(
-      Promise.resolve(false),
-    );
+    mockNotificationService.isNotificationServerEnabled.set(false);
 
     await component.ngOnInit();
 
@@ -155,7 +144,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should set isBrowserSupported to false when push notifications are not supported", async () => {
-    mockNotificationService.isPushNotificationSupported.mockReturnValue(false);
+    mockNotificationService.isPushNotificationSupported.set(false);
 
     await component.ngOnInit();
 
@@ -283,9 +272,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should set isEmailFeatureEnabled to false when backend email feature is disabled", async () => {
-    mockNotificationService.isEmailNotificationEnabled.mockReturnValue(
-      Promise.resolve(false),
-    );
+    mockNotificationService.isEmailNotificationEnabled.set(false);
 
     await component.ngOnInit();
     fixture.detectChanges();
@@ -311,10 +298,12 @@ describe("NotificationSettingComponent", () => {
 
   it("should disable email channel in config and mark changes pending when toggled off", async () => {
     await component.ngOnInit();
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
     component.toggleEmailChannel({ checked: true } as MatSlideToggleChange);
 
     component.toggleEmailChannel({ checked: false } as MatSlideToggleChange);
 
     expect(component.notificationConfig().channels?.["email"]).toBe(false);
+    expect(unsavedChanges.pending()).toBe(true);
   });
 });

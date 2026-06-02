@@ -1,9 +1,9 @@
-import { inject, Injectable } from "@angular/core";
+import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { AngularFireMessaging } from "@angular/fire/compat/messaging";
-import { firstValueFrom, mergeMap, of, Subscription } from "rxjs";
+import { firstValueFrom, mergeMap, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
 import { catchError, map } from "rxjs/operators";
@@ -34,6 +34,31 @@ export class NotificationService {
 
   private tokenSubscription: Subscription | undefined = undefined;
 
+  private readonly featureFlagsResource = resource({
+    loader: async () => {
+      try {
+        return await firstValueFrom(
+          this.httpClient.get<Record<string, { enabled: boolean }>>(
+            environment.API_PROXY_PREFIX + "/actuator/features",
+          ),
+        );
+      } catch (err) {
+        Logging.debug("Notification API not available", err);
+        return {} as Record<string, { enabled: boolean }>;
+      }
+    },
+  });
+
+  readonly isNotificationServerEnabled = computed(
+    () => this.featureFlagsResource.value()?.["notification"]?.enabled ?? false,
+  );
+
+  readonly isEmailNotificationEnabled = computed(
+    () =>
+      this.featureFlagsResource.value()?.["notification.email"]?.enabled ??
+      false,
+  );
+
   private readonly NOTIFICATION_API_URL =
     environment.API_PROXY_PREFIX + "/v1/notification";
 
@@ -52,41 +77,6 @@ export class NotificationService {
     return this.entityMapper.load<NotificationConfig>(
       NotificationConfig,
       userId,
-    );
-  }
-
-  /**
-   * Check if API module is actually available / enabled.
-   */
-  async isNotificationServerEnabled(): Promise<boolean> {
-    return firstValueFrom(
-      this.httpClient
-        .get(environment.API_PROXY_PREFIX + "/actuator/features")
-        .pipe(
-          map((res) => {
-            return res?.["notification"]?.enabled ?? false;
-          }),
-          catchError((err) => {
-            // if aam-services backend is not running --> 502
-            // if aam-services Notification API disabled --> 404
-            Logging.debug("Notification API not available", err);
-            return of(false);
-          }),
-        ),
-    );
-  }
-
-  /**
-   * Check if the email notification channel is enabled in the backend.
-   */
-  async isEmailNotificationEnabled(): Promise<boolean> {
-    return firstValueFrom(
-      this.httpClient
-        .get(environment.API_PROXY_PREFIX + "/actuator/features")
-        .pipe(
-          map((res) => res?.["notification.email"]?.enabled ?? false),
-          catchError(() => of(false)),
-        ),
     );
   }
 
@@ -309,29 +299,15 @@ export class NotificationService {
     });
   }
 
+  readonly isPushNotificationSupported = signal("Notification" in window);
+
   /**
    * user given the notification permission to browser or not
    * @returns boolean
    */
-  hasNotificationPermissionGranted(): boolean {
-    if (!this.isPushNotificationSupported()) {
-      return false;
-    }
-
-    switch (Notification.permission) {
-      case "granted":
-        return true;
-      case "denied":
-        return false;
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * Check if Notification API is supported in this browser
-   */
-  isPushNotificationSupported() {
-    return "Notification" in window;
-  }
+  readonly hasNotificationPermissionGranted = computed(
+    () =>
+      this.isPushNotificationSupported() &&
+      Notification.permission === "granted",
+  );
 }

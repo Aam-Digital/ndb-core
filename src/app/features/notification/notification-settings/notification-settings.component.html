@@ -185,11 +185,8 @@
               [checked]="notificationConfig()?.channels?.['email']"
               [disabled]="!isEmailFeatureEnabled()"
               class="indented-item"
-              [matTooltip]="
-                isEmailFeatureEnabled()
-                  ? ''
-                  : 'Email notifications are not enabled in this deployment'
-              "
+              [matTooltipDisabled]="isEmailFeatureEnabled()"
+              matTooltip="Email notifications are not enabled in this system. Please contact your system administrator for more information."
               i18n-matTooltip
             />
             <span i18n>Email</span>
