@@ -13,6 +13,8 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 import { ConfigService } from "../../config/config.service";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Todo } from "../../../features/todos/model/todo";
+import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
+import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
 import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
 import { asArray } from "../../../utils/asArray";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
@@ -260,12 +262,24 @@ export class ImportAdditionalService {
       action.targetType,
       action.targetId,
     );
-    const ids = entitiesToBeLinked.map((e) => e.getId());
 
     if (!targetEntity[action.targetProperty]) {
       targetEntity[action.targetProperty] = [];
     }
-    targetEntity[action.targetProperty].push(...ids);
+
+    const fieldSchema = targetEntity.getSchema().get(action.targetProperty);
+    if (fieldSchema?.dataType === AttendanceDatatype.dataType) {
+      const attendanceItems = entitiesToBeLinked.map((e) => {
+        const item = new AttendanceItem();
+        item.participant = e.getId();
+        return item;
+      });
+      targetEntity[action.targetProperty].push(...attendanceItems);
+    } else {
+      const ids = entitiesToBeLinked.map((e) => e.getId());
+      targetEntity[action.targetProperty].push(...ids);
+    }
+
     return this.entityMapper.save(targetEntity);
   }
 
@@ -283,9 +297,20 @@ export class ImportAdditionalService {
       action.targetType,
       action.targetId,
     );
-    targetEntity[action.targetProperty] = targetEntity[
-      action.targetProperty
-    ]?.filter((e) => !entitiesToBeUnlinked.includes(e));
+
+    const fieldSchema = targetEntity.getSchema().get(action.targetProperty);
+    if (fieldSchema?.dataType === AttendanceDatatype.dataType) {
+      targetEntity[action.targetProperty] = targetEntity[
+        action.targetProperty
+      ]?.filter(
+        (e: AttendanceItem) => !entitiesToBeUnlinked.includes(e.participant),
+      );
+    } else {
+      targetEntity[action.targetProperty] = targetEntity[
+        action.targetProperty
+      ]?.filter((e) => !entitiesToBeUnlinked.includes(e));
+    }
+
     return this.entityMapper.save(targetEntity);
   }
 
