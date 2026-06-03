@@ -244,7 +244,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:40</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:42</a></div>
                             </td>
                         </tr>
 
@@ -277,8 +277,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="166"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:166</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="217"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:217</a></div>
                         </td>
                     </tr>
 
@@ -352,8 +352,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="60"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:60</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -545,7 +545,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:40</a></div>
                         </td>
                     </tr>
 
@@ -577,7 +577,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:27</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:29</a></div>
                         </td>
                     </tr>
 
@@ -608,7 +608,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:36</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -639,7 +639,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:39</a></div>
                         </td>
                     </tr>
 
@@ -674,7 +674,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:28</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:30</a></div>
                         </td>
                     </tr>
 
@@ -705,7 +705,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:35</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:37</a></div>
                         </td>
                     </tr>
 
@@ -736,7 +736,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -807,6 +807,8 @@ import { EntitySchemaService } from &quot;../entity/schema/entity-schema.service
 import { availableLocales } from &quot;../language/languages&quot;;
 import { ConfigurableEnumService } from &quot;../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
 import { EntityConfigReadyService } from &quot;../entity/entity-config-ready.service&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { hasRemoteSession } from &quot;../session/session-type&quot;;
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -841,6 +843,10 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
 
     this.init();
 
+    // Try an immediate best-effort load for login/anonymous screens. Some
+    // systems allow unauthenticated read access to SiteSettings.
+    this.tryLoadEarly();
+
     // Wait for dynamic entity schemas to be applied before loading from DB,
     // so config-defined SiteSettings fields are transformed correctly.
     this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() &#x3D;&gt; {
@@ -850,6 +856,51 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
         Logging.error(error);
       });
     });
+  }
+
+  private tryLoadEarly() {
+    this.tryLoadFromAnonymousRemote().catch((err) &#x3D;&gt; {
+      // This is optional and can fail pre-login (e.g. no anonymous read access).
+      Logging.debug(&quot;SiteSettingsService: early load skipped&quot;, err);
+    });
+  }
+
+  private async tryLoadFromAnonymousRemote() {
+    if (!hasRemoteSession(environment.session_type)) {
+      return;
+    }
+
+    if (typeof navigator !&#x3D;&#x3D; &quot;undefined&quot; &amp;&amp; !navigator.onLine) {
+      return;
+    }
+
+    const documentId &#x3D; encodeURIComponent(this.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+    const url &#x3D; &#x60;${environment.DB_PROXY_PREFIX}/${SiteSettings.DATABASE}/${documentId}&#x60;;
+    const response &#x3D; await fetch(url, {
+      headers: { &quot;ngsw-bypass&quot;: &quot;true&quot; },
+    });
+
+    if (!response.ok) {
+      // Pre-login access may be unavailable by design. Keep this best-effort only.
+      if (
+        response.status &#x3D;&#x3D;&#x3D; 401 ||
+        response.status &#x3D;&#x3D;&#x3D; 403 ||
+        response.status &#x3D;&#x3D;&#x3D; 404
+      ) {
+        return;
+      }
+      Logging.warn(
+        &#x60;SiteSettingsService: anonymous fetch returned status ${response.status}&#x60;,
+      );
+      return;
+    }
+
+    const rawSettings &#x3D; await response.json();
+    const settings &#x3D; this.schemaService.loadDataIntoEntity(
+      new SiteSettings(),
+      rawSettings,
+    );
+    this.entityUpdated.next(settings);
   }
 
   init() {
