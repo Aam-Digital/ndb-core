@@ -50,6 +50,12 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
     return enumOption;
   }
 
+  /**
+   * Sort enum values by their configured ordinal position rather than
+   * alphabetically by their label, so the order matches the admin configuration.
+   * Falls back to default sorting for enums without an ordinal position.
+   * See `src/app/core/basic-datatypes/README.md` for details on custom sorting.
+   */
   override sortValue(fieldValue: ConfigurableEnumValue): number | undefined {
     return Ordering.hasOrdinalValue(fieldValue)
       ? fieldValue._ordinal

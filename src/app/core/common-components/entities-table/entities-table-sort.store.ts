@@ -15,7 +15,7 @@ import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../entity-form/FormConfig";
 import { TableRow } from "./table-row";
-import { tableSort } from "./table-sort/table-sort";
+import { SortValueFns, tableSort } from "./table-sort/table-sort";
 import { TableStateUrlService } from "./table-state-url.service";
 
 type ReadSignal<T> = () => T;
@@ -89,14 +89,9 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
    * Datatypes that override `sortValue` provide custom sort logic;
    * others return `undefined` and fall back to default sorting in `tableSort`.
    */
-  readonly sortValueFns = computed<
-    Record<string, (value: unknown, record: T) => number | string | undefined>
-  >(() => {
+  readonly sortValueFns = computed<SortValueFns<T>>(() => {
     if (!this.context) return {};
-    const fns: Record<
-      string,
-      (value: unknown, record: T) => number | string | undefined
-    > = {};
+    const fns: SortValueFns<T> = {};
     for (const col of this.context.columns()) {
       const datatype = this.schemaService.getDatatypeOrDefault(
         col.dataType,

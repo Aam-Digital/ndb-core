@@ -3,6 +3,16 @@ import { Entity } from "../../../entity/model/entity";
 import { TableRow } from "../table-row";
 
 /**
+ * Map of column id to a function that derives the value used for sorting that column.
+ * Each function receives the raw column value and the full record, and returns a
+ * comparable value or `undefined` to fall back to default sorting in {@link tableSort}.
+ */
+export type SortValueFns<OBJECT> = Record<
+  string,
+  (value: unknown, record: OBJECT) => number | string | undefined
+>;
+
+/**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>
  * @param data The data of the data source
  * @param direction direction "asc", "desc" or "" meaning none
@@ -18,10 +28,7 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   }: {
     direction: "asc" | "desc" | "";
     active: PROPERTY | "";
-    sortValueFns?: Record<
-      string,
-      (value: unknown, record: OBJECT) => number | string | undefined
-    >;
+    sortValueFns?: SortValueFns<OBJECT>;
   },
 ): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
@@ -51,10 +58,7 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
 function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   obj: OBJECT,
   key: PROPERTY,
-  sortValueFns?: Record<
-    string,
-    (value: unknown, record: OBJECT) => number | string | undefined
-  >,
+  sortValueFns?: SortValueFns<OBJECT>,
 ): number | string | Symbol {
   let value = obj[key];
 

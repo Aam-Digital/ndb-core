@@ -43,11 +43,16 @@ describe("TableSort", () => {
     testSort(values);
   });
 
-  it("should leave datatype-specific ordering to sortValueFns", () => {
+  it("should sort enums by label, not _ordinal, when no sortValueFns is given", () => {
+    // `tableSort` itself no longer interprets `_ordinal`; ordinal-based sorting is
+    // provided by the enum datatype via `sortValueFns` (see entities-table-sort.store).
+    // Here the `_ordinal` values are intentionally reversed relative to the labels:
+    // the expected ascending order follows the labels (Apple, Mango, Zebra), which
+    // confirms the ordinal is ignored.
     const values: ConfigurableEnumConfig = [
-      { id: "third", label: "876", _ordinal: 2 },
-      { id: "second", label: "Cgt", _ordinal: 1 },
-      { id: "first", label: "X", _ordinal: 0 },
+      { id: "apple", label: "Apple", _ordinal: 2 },
+      { id: "mango", label: "Mango", _ordinal: 1 },
+      { id: "zebra", label: "Zebra", _ordinal: 0 },
     ];
     testSort(values);
   });
