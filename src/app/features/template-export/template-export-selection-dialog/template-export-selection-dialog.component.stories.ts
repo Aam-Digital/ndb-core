@@ -8,6 +8,7 @@ import {
 } from "@storybook/angular";
 import { of, throwError } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -59,20 +60,35 @@ const mockTemplateExportService = {
 };
 
 const mockTemplateExportApiService = {
-  generatePdfFromTemplate: (templateId: string, entity: any) => {
+  generatePdfFromTemplate: (template: TemplateExport, entity: any) => {
     // Simulate successful generation
     return of({
       file: new Blob(["mock pdf content"], { type: "application/pdf" }),
-      filename: `${entity.name}_${templateId}.pdf`,
+      filename: `${entity.name}_${template.title}.pdf`,
+    });
+  },
+  generateBatchFromTemplate: (
+    template: TemplateExport,
+    entities: any[],
+    mode: "zip" | "combined" = "zip",
+  ) => {
+    return of({
+      file: new Blob([`mock ${mode} content for ${entities.length} entities`], {
+        type: mode === "combined" ? "application/pdf" : "application/zip",
+      }),
+      filename: `${template.title}.${mode === "combined" ? "pdf" : "zip"}`,
     });
   },
 };
 
 const mockTemplateExportApiServiceError = {
-  generatePdfFromTemplate: (templateId: string, entity: any) => {
-    // Simulate error
-    return throwError(() => new Error("Failed to generate PDF"));
-  },
+  generatePdfFromTemplate: (_template: TemplateExport, _entity: any) =>
+    throwError(() => new Error("Failed to generate PDF")),
+  generateBatchFromTemplate: (
+    _template: TemplateExport,
+    _entities: any[],
+    _mode?: "zip" | "combined",
+  ) => throwError(() => new Error("Failed to generate batch")),
 };
 
 const mockDownloadService = {
@@ -82,8 +98,20 @@ const mockDownloadService = {
 };
 
 const mockAlertService = {
+  addInfo: (message: string) => {
+    console.info("Alert:", message);
+  },
   addWarning: (message: string) => {
     console.warn("Alert:", message);
+  },
+};
+
+const mockEntityMapperService = {
+  load: (_type: typeof TemplateExport, id: string) => {
+    const found = mockTemplateExports.find(
+      (t) => t.getId() === id || t.getId(true) === id,
+    );
+    return Promise.resolve(found ?? mockTemplateExports[0]);
   },
 };
 
@@ -128,6 +156,10 @@ export default {
         {
           provide: AlertService,
           useValue: mockAlertService,
+        },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapperService,
         },
       ],
     }),
