@@ -125,17 +125,17 @@ export class TemplateExportApiService extends FileService {
 
   /**
    * Generate a PDF applying actual data to an existing template.
-   * @param templateEntityId The id of the TemplateExport entity (not the template ID of the PDF API)
+   * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
    * @return An array buffer of the generated PDF
    */
   generatePdfFromTemplate(
-    templateEntityId: string,
+    template: TemplateExport,
     data: Object,
   ): Observable<TemplateExportResult> {
     return this.httpClient
       .post(
-        this.API_URL + "/render/" + templateEntityId,
+        this.API_URL + "/render/" + template.getId(),
         {
           convertTo: "pdf",
           data: data,
@@ -149,12 +149,10 @@ export class TemplateExportApiService extends FileService {
             res.headers.get("Content-Disposition"),
           ).match(/filename="(.+)"/);
 
-          let fileName: string;
-          if (filenameMatch && filenameMatch.length > 1) {
-            fileName = filenameMatch[1];
-          } else {
-            fileName = templateEntityId.replace(":", "_");
-          }
+          const fileName =
+            filenameMatch && filenameMatch.length > 1
+              ? filenameMatch[1]
+              : template.title;
 
           return {
             filename: fileName,
@@ -172,20 +170,20 @@ export class TemplateExportApiService extends FileService {
    * - `mode: "zip"` (default): N independent files packaged in a ZIP archive.
    * - `mode: "combined"`: N rendered files merged into a single multi-page PDF.
    *
-   * @param templateEntityId The id of the TemplateExport entity
+   * @param template The TemplateExport entity to render
    * @param dataList The array of data objects (typically entities) to apply to the template
    * @param mode How the backend should aggregate the output
    * @return The generated file (ZIP or PDF) and a derived filename
    */
   generateBatchFromTemplate(
-    templateEntityId: string,
+    template: TemplateExport,
     dataList: Object[],
     mode: "zip" | "combined" = "zip",
   ): Observable<TemplateExportBatchResult> {
     const fallbackExtension = mode === "combined" ? ".pdf" : ".zip";
     return this.httpClient
       .post(
-        this.API_URL + "/render-batch/" + templateEntityId + "?mode=" + mode,
+        this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
         {
           convertTo: "pdf",
           data: dataList,
@@ -201,7 +199,7 @@ export class TemplateExportApiService extends FileService {
           const filename =
             filenameMatch && filenameMatch.length > 1
               ? filenameMatch[1]
-              : templateEntityId.replace(":", "_") + fallbackExtension;
+              : template.title + fallbackExtension;
 
           return {
             filename,

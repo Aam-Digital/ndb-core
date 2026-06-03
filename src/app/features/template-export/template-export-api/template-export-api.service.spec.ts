@@ -120,7 +120,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
+      service.generatePdfFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
@@ -137,8 +137,9 @@ describe("TemplateExportApiService", () => {
     );
   });
 
-  it("should request a generated file from API with default fileName", async () => {
+  it("should request a generated file from API with default fileName derived from the template title", async () => {
     const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "My Welcome Letter";
     const dataEntity = { name: "abc" };
 
     const mockResponse = new HttpResponse({
@@ -150,11 +151,11 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
+      service.generatePdfFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
-      filename: "TemplateExport_test-template-id",
+      filename: "My Welcome Letter",
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -183,7 +184,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generateBatchFromTemplate(templateEntity.getId(), dataList),
+      service.generateBatchFromTemplate(templateEntity, dataList),
     );
 
     expect(result).toEqual({
@@ -200,8 +201,9 @@ describe("TemplateExportApiService", () => {
     );
   });
 
-  it("should fall back to a .zip filename when batch response omits headers in zip mode", async () => {
+  it("should fall back to a title-based .zip filename when batch response omits headers in zip mode", async () => {
     const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "Welcome Letter";
     const mockResponse = new HttpResponse({
       body: new ArrayBuffer(4),
       status: 200,
@@ -211,14 +213,15 @@ describe("TemplateExportApiService", () => {
     );
 
     const result = await lastValueFrom(
-      service.generateBatchFromTemplate(templateEntity.getId(), [{}, {}]),
+      service.generateBatchFromTemplate(templateEntity, [{}, {}]),
     );
 
-    expect(result.filename).toBe("TemplateExport_test-template-id.zip");
+    expect(result.filename).toBe("Welcome Letter.zip");
   });
 
-  it("should call the render-batch endpoint in combined mode with a .pdf fallback filename", async () => {
+  it("should call the render-batch endpoint in combined mode with a title-based .pdf fallback filename", async () => {
     const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "Welcome Letter";
     const dataList = [{ name: "A" }, { name: "B" }];
 
     const mockResponse = new HttpResponse({
@@ -230,11 +233,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generateBatchFromTemplate(
-        templateEntity.getId(),
-        dataList,
-        "combined",
-      ),
+      service.generateBatchFromTemplate(templateEntity, dataList, "combined"),
     );
 
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -245,6 +244,6 @@ describe("TemplateExportApiService", () => {
       { convertTo: "pdf", data: dataList },
       expect.any(Object),
     );
-    expect(result.filename).toBe("TemplateExport_test-template-id.pdf");
+    expect(result.filename).toBe("Welcome Letter.pdf");
   });
 });

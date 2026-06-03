@@ -26,6 +26,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
@@ -68,6 +69,7 @@ export class TemplateExportSelectionDialogComponent {
     MatDialogRef<TemplateExportSelectionDialogComponent>,
   );
   private readonly templateExportService = inject(TemplateExportService);
+  private readonly entityMapper = inject(EntityMapperService);
 
   entity = input<Entity | Entity[]>();
 
@@ -112,10 +114,6 @@ export class TemplateExportSelectionDialogComponent {
       this.templateExportService.isExportServerEnabled().catch(() => false),
   });
 
-  setCombineIntoSinglePdf(value: boolean) {
-    this.combineIntoSinglePdf.set(value);
-  }
-
   async requestFile() {
     const templateId = this.templateSelectionForm.value;
     const entities = this.entities();
@@ -131,12 +129,11 @@ export class TemplateExportSelectionDialogComponent {
     this.failures.set([]);
 
     try {
+      const template = await this.entityMapper.load(TemplateExport, templateId);
+
       if (entities.length === 1) {
         const result = await firstValueFrom(
-          this.templateExportApi.generatePdfFromTemplate(
-            templateId,
-            entities[0],
-          ),
+          this.templateExportApi.generatePdfFromTemplate(template, entities[0]),
         );
         await this.downloadService.triggerDownload(
           result.file,
@@ -147,7 +144,7 @@ export class TemplateExportSelectionDialogComponent {
         const combined = this.combineIntoSinglePdf();
         const result = await firstValueFrom(
           this.templateExportApi.generateBatchFromTemplate(
-            templateId,
+            template,
             entities,
             combined ? "combined" : "zip",
           ),

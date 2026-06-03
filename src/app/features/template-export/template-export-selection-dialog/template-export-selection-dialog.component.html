@@ -44,7 +44,7 @@
           <mat-checkbox
             data-testid="combine-into-single-pdf"
             [checked]="combineIntoSinglePdf()"
-            (change)="setCombineIntoSinglePdf($event.checked)"
+            (change)="combineIntoSinglePdf.set($event.checked)"
             i18n
           >
             Combine all records into a single PDF
