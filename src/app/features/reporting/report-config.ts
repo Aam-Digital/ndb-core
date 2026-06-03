@@ -26,9 +26,10 @@ class ReportConfig extends Entity {
   @DatabaseField() mode?: string;
 
   /**
-   * version of ReportConfig syntax. Just relevant for SqlReports
+   * version of ReportConfig syntax. Just relevant for SqlReports.
+   * Omitted for canonical configs (backend normalizes legacy v1 docs on read).
    */
-  @DatabaseField() version?: number = 1;
+  @DatabaseField() version?: number;
 
   /**
    * (sql v1 only) list of arguments needed for the sql query. Placeholder "?" will be replaced.
@@ -39,7 +40,7 @@ class ReportConfig extends Entity {
   @DatabaseField() aggregationDefinitions: any[];
 
   /** (sql v1 only) the definition to calculate the report */
-  @DatabaseField() aggregationDefinition: string | undefined;
+  @DatabaseField() aggregationDefinition?: string;
 
   /**
    *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
@@ -109,19 +110,19 @@ export interface SqlReport extends ReportConfig {
   mode: "sql";
 
   /**
-   * version of the ReportConfiguration, currently 1 or 2
+   * Legacy version field. Omitted in canonical configs; backend normalizes on read.
    */
-  version: number;
+  version?: number;
 
   /**
-   * a valid SQL SELECT statements, can contain "?" placeholder for arguments (only v1)
+   * (v1 only) a valid SQL SELECT statement, can contain "?" or "$name" placeholders
    */
-  aggregationDefinition: string;
+  aggregationDefinition?: string;
 
   /**
-   * a list of arguments, passed into the sql statement (only v1)
+   * (v1 only) list of argument names passed into the sql statement
    */
-  neededArgs: string[];
+  neededArgs?: string[];
 
   /**
    * see ReportConfig docs
