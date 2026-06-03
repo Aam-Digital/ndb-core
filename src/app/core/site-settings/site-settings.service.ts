@@ -12,6 +12,8 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
+import { environment } from "../../../environments/environment";
+import { hasRemoteSession } from "../session/session-type";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -46,6 +48,10 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.init();
 
+    // Try an immediate best-effort load for login/anonymous screens. Some
+    // systems allow unauthenticated read access to SiteSettings.
+    this.tryLoadEarly();
+
     // Wait for dynamic entity schemas to be applied before loading from DB,
     // so config-defined SiteSettings fields are transformed correctly.
     this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() => {
@@ -55,6 +61,51 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
         Logging.error(error);
       });
     });
+  }
+
+  private tryLoadEarly() {
+    this.tryLoadFromAnonymousRemote().catch((err) => {
+      // This is optional and can fail pre-login (e.g. no anonymous read access).
+      Logging.debug("SiteSettingsService: early load skipped", err);
+    });
+  }
+
+  private async tryLoadFromAnonymousRemote() {
+    if (!hasRemoteSession(environment.session_type)) {
+      return;
+    }
+
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      return;
+    }
+
+    const documentId = encodeURIComponent(this.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+    const url = `${environment.DB_PROXY_PREFIX}/${SiteSettings.DATABASE}/${documentId}`;
+    const response = await fetch(url, {
+      headers: { "ngsw-bypass": "true" },
+    });
+
+    if (!response.ok) {
+      // Pre-login access may be unavailable by design. Keep this best-effort only.
+      if (
+        response.status === 401 ||
+        response.status === 403 ||
+        response.status === 404
+      ) {
+        return;
+      }
+      Logging.warn(
+        `SiteSettingsService: anonymous fetch returned status ${response.status}`,
+      );
+      return;
+    }
+
+    const rawSettings = await response.json();
+    const settings = this.schemaService.loadDataIntoEntity(
+      new SiteSettings(),
+      rawSettings,
+    );
+    this.entityUpdated.next(settings);
   }
 
   init() {
