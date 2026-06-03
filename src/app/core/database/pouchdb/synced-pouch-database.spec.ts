@@ -335,65 +335,16 @@ describe("SyncedPouchDatabase", () => {
     }
   });
 
-  it("should emit changes from the remoteDatabase changes feed if in remote-only mode", async () => {
-    vi.useFakeTimers();
-    try {
-      // Initialize service in remote-only mode by passing null as dbName
-      service.init(null);
-      await vi.advanceTimersByTimeAsync(0);
-
-      // Create a spy on the remoteDatabase to simulate changes
-      const remoteChanges = new Subject();
-      const remoteDatabase = service["remoteDatabase"];
-      vi.spyOn(remoteDatabase, "changes").mockReturnValue(remoteChanges);
-
-      // Set up a spy to capture emitted changes
-      const changesSpy = vi.fn();
-      service.changes().subscribe(changesSpy);
-      await vi.advanceTimersByTimeAsync(0);
-
-      // Emit a change from the remote database
-      const mockChange = { id: "test-doc", seq: 1 };
-      remoteChanges.next(mockChange);
-      await vi.advanceTimersByTimeAsync(0);
-
-      // Verify the change was forwarded to the service's changes feed
-      expect(changesSpy).toHaveBeenCalledWith(mockChange);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
   it("should trigger one full sync run without checkpoints", async () => {
     const syncSpy = vi.spyOn(service, "sync").mockResolvedValue({} as any);
-    vi.spyOn(service, "isInRemoteOnlyMode", "get").mockReturnValue(false);
 
     await service.resetSync();
 
     expect(syncSpy).toHaveBeenCalledWith({ checkpoint: false });
   });
 
-  it("should skip resetSync if only remote", async () => {
-    const syncSpy = vi.spyOn(service, "sync").mockResolvedValue({} as any);
-    vi.spyOn(service, "isInRemoteOnlyMode", "get").mockReturnValue(true);
-
-    await service.resetSync();
-
-    expect(syncSpy).not.toHaveBeenCalled();
-  });
-
-  it("ensureSynced should resolve without syncing in remote-only mode", async () => {
-    const syncSpy = vi.spyOn(service, "sync").mockResolvedValue({} as any);
-    vi.spyOn(service, "isInRemoteOnlyMode", "get").mockReturnValue(true);
-
-    await service.ensureSynced();
-
-    expect(syncSpy).not.toHaveBeenCalled();
-  });
-
   it("ensureSynced should throw NotAvailableOfflineError when offline", async () => {
     vi.spyOn(service, "sync").mockResolvedValue({} as any);
-    vi.spyOn(service, "isInRemoteOnlyMode", "get").mockReturnValue(false);
     mockNavigator.onLine = false;
 
     await expect(service.ensureSynced()).rejects.toThrowError(
@@ -401,12 +352,11 @@ describe("SyncedPouchDatabase", () => {
     );
   });
 
-  it("ensureSynced should call sync when online and not remote-only", async () => {
+  it("ensureSynced should call sync when online", async () => {
     const syncSpy = vi.spyOn(service, "sync").mockImplementation(async () => {
       service["syncState"].next(SyncState.COMPLETED);
       return {} as any;
     });
-    vi.spyOn(service, "isInRemoteOnlyMode", "get").mockReturnValue(false);
     mockNavigator.onLine = true;
 
     await service.ensureSynced();
@@ -419,7 +369,6 @@ describe("SyncedPouchDatabase", () => {
       service["syncState"].next(SyncState.UNSYNCED);
       return {} as any;
     });
-    vi.spyOn(service, "isInRemoteOnlyMode", "get").mockReturnValue(false);
     mockNavigator.onLine = true;
 
     await expect(service.ensureSynced()).rejects.toThrowError(

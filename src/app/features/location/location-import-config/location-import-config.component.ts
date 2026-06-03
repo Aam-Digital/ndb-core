@@ -6,7 +6,7 @@ import {
 } from "@angular/core";
 import { ColumnMapping } from "../../../core/import/column-mapping";
 import { EntityConstructor } from "../../../core/entity/model/entity";
-import { ImportAdditionalSettings } from "../../../core/import/import-additional-settings/import-additional-settings.component";
+import { ImportAdditionalSettings } from "../../../core/import/import-additional-settings";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";

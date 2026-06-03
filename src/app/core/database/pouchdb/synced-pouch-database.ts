@@ -122,28 +122,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   /**
    * Initializes the PouchDB with local indexeddb as well as a remote server connection for syncing.
-   * @param dbName local database name (for the current user);
-   *                if explicitly passed as `null`, a remote-only, anonymous session is initialized
+   * @param dbName local database name (for the current user)
    * @param remoteDbName (optional) remote database name (if different from local browser database name)
    */
-  override init(dbName?: string | null, remoteDbName?: string) {
-    if (dbName === null) {
-      Logging.debug(
-        "Initializing remote-only session for database",
-        this.dbName,
-      );
+  override init(dbName?: string, remoteDbName?: string) {
+    super.init(dbName ?? this.dbName, undefined, true);
 
-      this.remoteDatabase.init(null, { unauthenticatedSession: true });
-
-      // use the remote database as internal database driver
-      this.pouchDB = this.remoteDatabase.getPouchDB();
-      this.databaseInitialized.complete();
-    } else {
-      super.init(dbName ?? this.dbName, undefined, true);
-
-      // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
-      this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
-    }
+    // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
+    this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
   }
 
   private async logSyncContext() {
@@ -151,25 +137,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
     Logging.addContext("Aam Digital sync", {
       "last sync completed": lastSyncTime,
     });
-  }
-
-  /**
-   * Whether the database is currently in remote-only mode without syncing to a local PouchDB.
-   */
-  public get isInRemoteOnlyMode(): boolean {
-    return this.pouchDB === this.remoteDatabase.getPouchDB();
-  }
-
-  protected override async subscribeChanges() {
-    // if in remote-only mode, forward remote database changes to this changes feed
-    if (this.isInRemoteOnlyMode) {
-      this.remoteDatabase
-        .changes()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((change) => this.changesFeed.next(change));
-    } else {
-      super.subscribeChanges();
-    }
   }
 
   /**
@@ -334,25 +301,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Uses `checkpoint: false` once so PouchDB ignores previous checkpoints for this run.
    */
   async resetSync(): Promise<void> {
-    if (this.isInRemoteOnlyMode) {
-      return;
-    }
-
     Logging.debug(`triggering full re-sync for "${this.dbName}"`);
     await this.sync({ checkpoint: false });
   }
 
   /**
    * Ensure the database is synced with the remote server.
-   * Resolves immediately if in remote-only mode.
    * Throws {@link NotAvailableOfflineError} if offline.
    * Otherwise triggers a one-time sync and resolves when complete.
    */
   async ensureSynced(): Promise<void> {
-    if (this.isInRemoteOnlyMode) {
-      return;
-    }
-
     if (!this.navigator.onLine) {
       throw new NotAvailableOfflineError(
         "Failed to ensure synced. Cannot sync database while offline.",

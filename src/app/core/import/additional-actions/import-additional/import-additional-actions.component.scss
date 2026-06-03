@@ -1,3 +1,13 @@
+.action-field {
+  // larger grow ratio: the action label is the longest text in the row
+  flex: 3 1 280px;
+}
+
+.record-field {
+  flex: 2 1 220px;
+  min-width: 200px;
+}
+
 .action-add-button {
   margin: auto 0;
 }

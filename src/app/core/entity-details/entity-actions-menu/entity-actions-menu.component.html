@@ -12,7 +12,7 @@
         angulartics2On="click"
         [angularticsCategory]="entity()?.getType()"
         [angularticsAction]="'entity_' + a.action"
-        [matTooltip]="a.tooltip"
+        [matTooltip]="getActionTooltip(a)"
       >
         <app-fa-dynamic-icon
           class="standard-icon-with-text color-accent"
@@ -48,7 +48,7 @@
           angulartics2On="click"
           [angularticsCategory]="entity()?.getType()"
           [angularticsAction]="'entity_' + a.action"
-          [matTooltip]="a.tooltip"
+          [matTooltip]="getActionTooltip(a)"
           matTooltipPosition="before"
         >
           <app-fa-dynamic-icon

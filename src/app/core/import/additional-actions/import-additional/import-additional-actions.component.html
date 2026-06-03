@@ -66,8 +66,8 @@
         }
       </div>
 
-      <div class="flex-row gap-regular">
-        <mat-form-field class="full-width">
+      <div class="flex-row flex-wrap align-start gap-regular">
+        <mat-form-field class="action-field">
           <mat-label i18n="Label for linked entity type input"
             >Link all imported records to:
           </mat-label>
@@ -79,7 +79,7 @@
           ></app-basic-autocomplete>
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field class="record-field">
           <mat-label i18n>for record</mat-label>
           <app-edit-entity
             formControlName="targetId"

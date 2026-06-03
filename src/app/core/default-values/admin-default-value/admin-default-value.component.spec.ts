@@ -138,4 +138,17 @@ describe("AdminDefaultValueComponent", () => {
     expect(component.form.get("mode").value).toEqual("dynamic");
     expect(component.form.get("config").value).toEqual({ value: "Test value" });
   });
+
+  it("should update selectedMode signal when writeValue sets a mode without emitting events", () => {
+    component.writeValue({ mode: "dynamic", config: { value: "$now" } });
+    fixture.detectChanges();
+    expect(component.selectedMode()).toBe("dynamic");
+  });
+
+  it("should update selectedMode signal back to null when writeValue clears the value", () => {
+    component.writeValue({ mode: "dynamic", config: { value: "$now" } });
+    component.writeValue(null);
+    fixture.detectChanges();
+    expect(component.selectedMode()).toBeNull();
+  });
 });

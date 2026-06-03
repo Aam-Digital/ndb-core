@@ -1,0 +1,64 @@
+<input
+  #fileInput
+  type="file"
+  style="display: none"
+  [attr.accept]="acceptAttribute()"
+  (change)="loadFile($event)"
+/>
+<div class="flex-row flex-wrap align-start gap-regular">
+  <mat-form-field>
+    <mat-label i18n="Label for file select input">Select file</mat-label>
+    <input
+      matInput
+      readonly
+      [formControl]="formControl"
+      i18n-placeholder="placeholder for file-input"
+      placeholder="No file selected"
+      (click)="fileInput.click()"
+    />
+    <button mat-icon-button matIconSuffix (click)="fileInput.click()">
+      <fa-icon icon="upload"></fa-icon>
+    </button>
+    @if (formControl.invalid) {
+      <mat-error>{{
+        formControl.errors.fileInvalid || formControl.errors.parsingError
+      }}</mat-error>
+    }
+  </mat-form-field>
+
+  @if (availableSheets().length > 1) {
+    <mat-form-field class="sheet-picker">
+      <mat-label i18n="Label for xlsx sheet selector">Sheet</mat-label>
+      <app-basic-autocomplete
+        [value]="selectedSheet()"
+        (valueChange)="onSheetChange($event)"
+        [options]="availableSheets()"
+        [optionToString]="sheetToLabel"
+        [valueMapper]="sheetToValue"
+      >
+        <ng-template let-sheet>
+          <span
+            class="flex-row align-center justify-space-between gap-regular full-width"
+          >
+            <span class="truncate-text sheet-option-name">{{
+              sheet.name
+            }}</span>
+            <span class="sheet-option-meta">
+              {{ sheet.rowCount }}&nbsp;<ng-container
+                i18n="Row count label in xlsx sheet picker"
+                >{sheet.rowCount, plural, =1 {row} other {rows}}</ng-container
+              >
+              &middot; {{ sheet.columnCount }}&nbsp;<ng-container
+                i18n="Column count label in xlsx sheet picker"
+                >{sheet.columnCount, plural,
+                  =1 {col}
+                  other {cols}
+                }</ng-container
+              >
+            </span>
+          </span>
+        </ng-template>
+      </app-basic-autocomplete>
+    </mat-form-field>
+  }
+</div>
