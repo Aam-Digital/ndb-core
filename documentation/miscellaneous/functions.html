@@ -574,6 +574,9 @@
                             <a href="#resizeImage" title="src/app/features/file/file-utils.ts" ><b>resizeImage</b>&nbsp;&nbsp;&nbsp;(src/.../file-utils.ts)</a>
                         </li>
                         <li>
+                            <a href="#resolveAgeSourceField" title="src/app/core/common-components/entities-table/entities-table-sort.store.ts" ><b>resolveAgeSourceField</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-sort.store.ts)</a>
+                        </li>
+                        <li>
                             <a href="#resourceWithRetention" title="src/app/utils/resourceWithRetention.ts" ><b>resourceWithRetention</b>&nbsp;&nbsp;&nbsp;(src/.../resourceWithRetention.ts)</a>
                         </li>
                         <li>
@@ -2690,6 +2693,72 @@ Date-like columns default to descending order.</p>
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resolveAgeSourceField"></a>
+                    <span class="name">
+                        <span ><b>resolveAgeSourceField</b></span>
+                        <a href="#resolveAgeSourceField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>resolveAgeSourceField(column: <a href="../interfaces/FormFieldConfig.html" target="_self">FormFieldConfig</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Resolve the source field for virtual <code>DisplayAge</code> columns.</p>
+<p>These columns display an age from another field, e.g. <code>age</code> reads
+<code>record.dateOfBirth.age</code>, so datatype sorting cannot use the column value directly.
+The legacy <code>age</code> and <code>age_&lt;field&gt;</code> conventions remain supported for existing configs.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>column</td>
+                                            <td>
+                                                            <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>    <h3>src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -4434,7 +4503,7 @@ Used for filter evaluation and conditional color matching.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getComparableValue(obj: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/OBJECT" target="_blank">OBJECT</a>, key: PROPERTY, sortValueFns?: Record)</code>
+<code>getComparableValue(obj: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/OBJECT" target="_blank">OBJECT</a>, key: PROPERTY, sortValueFns?: <a href="../miscellaneous/typealiases.html#SortValueFns" target="_self">SortValueFns</a>)</code>
                 </td>
             </tr>
 
@@ -4483,7 +4552,7 @@ Used for filter evaluation and conditional color matching.</p>
                                         <tr>
                                                 <td>sortValueFns</td>
                                             <td>
-                                                        <code>Record</code>
+                                                            <code><a href="../miscellaneous/typealiases.html#SortValueFns" target="_self" >SortValueFns</a></code>
                                             </td>
 
                                             <td>
@@ -4519,7 +4588,7 @@ Used for filter evaluation and conditional color matching.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>tableSort(data, __namedParameters: {direction: "asc" | "desc" | string, active: PROPERTY | string, sortValueFns: Record<string | number | string | undefined>})</code>
+<code>tableSort(data, __namedParameters: {direction: "asc" | "desc" | string, active: PROPERTY | string, sortValueFns: <a href="../miscellaneous/typealiases.html#SortValueFns" target="_self">SortValueFns&lt;OBJECT&gt;</a>})</code>
                 </td>
             </tr>
 
@@ -4594,7 +4663,7 @@ Used for filter evaluation and conditional color matching.</p>
                                         <tr>
                                                 <td>sortValueFns</td>
                                             <td>
-                                                        <code>Record&lt;string | number | string | undefined&gt;</code>
+                                                            <code><a href="../miscellaneous/typealiases.html#SortValueFns" target="_self" >SortValueFns&lt;OBJECT&gt;</a></code>
                                             </td>
 
                                             <td>

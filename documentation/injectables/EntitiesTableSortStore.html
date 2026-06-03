@@ -225,7 +225,7 @@ and URL query-param persistence.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="122" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:122</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="126" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:126</a></div>
                             </td>
                         </tr>
 
@@ -258,8 +258,8 @@ and URL query-param persistence.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="162"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:162</a></div>
                         </td>
                     </tr>
 
@@ -327,8 +327,8 @@ and URL query-param persistence.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="153"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:153</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="157"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:157</a></div>
                         </td>
                     </tr>
 
@@ -553,7 +553,7 @@ inferred from columns when no explicit sort has been set.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:108</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-sort.store.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -624,17 +624,21 @@ inferred from columns when no explicit sort has been set.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed&lt;
-    Record&lt;string, (v: any) &#x3D;&gt; number | string | undefined&gt;
-  &gt;(() &#x3D;&gt; {
+                        <i>Default value : </i><code>computed&lt;SortValueFns&lt;T&gt;&gt;(() &#x3D;&gt; {
     if (!this.context) return {};
-    const fns: Record&lt;string, (v: any) &#x3D;&gt; number | string | undefined&gt; &#x3D; {};
+    const fns: SortValueFns&lt;T&gt; &#x3D; {};
     for (const col of this.context.columns()) {
       const datatype &#x3D; this.schemaService.getDatatypeOrDefault(
         col.dataType,
         true,
       );
-      fns[col.id] &#x3D; (v) &#x3D;&gt; datatype.sortValue(v);
+      const ageSourceField &#x3D; resolveAgeSourceField(col);
+      fns[col.id] &#x3D; (value, record) &#x3D;&gt; {
+        if (value &#x3D;&#x3D;&#x3D; undefined &amp;&amp; ageSourceField) {
+          return record[ageSourceField]?.age;
+        }
+        return datatype?.sortValue(value);
+      };
     }
     return fns;
   })</code>
@@ -680,7 +684,7 @@ import { Entity } from &quot;../../entity/model/entity&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { FormFieldConfig } from &quot;../entity-form/FormConfig&quot;;
 import { TableRow } from &quot;./table-row&quot;;
-import { tableSort } from &quot;./table-sort/table-sort&quot;;
+import { SortValueFns, tableSort } from &quot;./table-sort/table-sort&quot;;
 import { TableStateUrlService } from &quot;./table-state-url.service&quot;;
 
 type ReadSignal&lt;T&gt; &#x3D; () &#x3D;&gt; T;
@@ -754,17 +758,21 @@ export class EntitiesTableSortStore&lt;T extends Entity &#x3D; Entity&gt; {
    * Datatypes that override &#x60;sortValue&#x60; provide custom sort logic;
    * others return &#x60;undefined&#x60; and fall back to default sorting in &#x60;tableSort&#x60;.
    */
-  readonly sortValueFns &#x3D; computed&lt;
-    Record&lt;string, (v: any) &#x3D;&gt; number | string | undefined&gt;
-  &gt;(() &#x3D;&gt; {
+  readonly sortValueFns &#x3D; computed&lt;SortValueFns&lt;T&gt;&gt;(() &#x3D;&gt; {
     if (!this.context) return {};
-    const fns: Record&lt;string, (v: any) &#x3D;&gt; number | string | undefined&gt; &#x3D; {};
+    const fns: SortValueFns&lt;T&gt; &#x3D; {};
     for (const col of this.context.columns()) {
       const datatype &#x3D; this.schemaService.getDatatypeOrDefault(
         col.dataType,
         true,
       );
-      fns[col.id] &#x3D; (v) &#x3D;&gt; datatype.sortValue(v);
+      const ageSourceField &#x3D; resolveAgeSourceField(col);
+      fns[col.id] &#x3D; (value, record) &#x3D;&gt; {
+        if (value &#x3D;&#x3D;&#x3D; undefined &amp;&amp; ageSourceField) {
+          return record[ageSourceField]?.age;
+        }
+        return datatype?.sortValue(value);
+      };
     }
     return fns;
   });
@@ -895,6 +903,29 @@ export function inferDefaultSort(
   }
 
   return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
+}
+
+/**
+ * Resolve the source field for virtual &#x60;DisplayAge&#x60; columns.
+ *
+ * These columns display an age from another field, e.g. &#x60;age&#x60; reads
+ * &#x60;record.dateOfBirth.age&#x60;, so datatype sorting cannot use the column value directly.
+ * The legacy &#x60;age&#x60; and &#x60;age_&lt;field&gt;&#x60; conventions remain supported for existing configs.
+ */
+function resolveAgeSourceField(column: FormFieldConfig): string | undefined {
+  if (
+    column.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayAge&quot; &amp;&amp;
+    typeof column.additional &#x3D;&#x3D;&#x3D; &quot;string&quot;
+  ) {
+    return column.additional;
+  }
+  if (column.id &#x3D;&#x3D;&#x3D; &quot;age&quot;) {
+    return &quot;dateOfBirth&quot;;
+  }
+  if (column.id.startsWith(&quot;age_&quot;)) {
+    return column.id.slice(&quot;age_&quot;.length);
+  }
+  return undefined;
 }
 
 /**

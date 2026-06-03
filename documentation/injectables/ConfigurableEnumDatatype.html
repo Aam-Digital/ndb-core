@@ -201,6 +201,10 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier"></span>
+                                <a href="#sortValue" >sortValue</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Public</span>
                                 <a href="#transformToDatabaseFormat" >transformToDatabaseFormat</a>
                             </li>
@@ -231,9 +235,6 @@
                             <li>
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
                             </li>
-                            <li>
-                                <a href="#sortValue" >sortValue</a>
-                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -252,6 +253,86 @@
     <h3 id="methods">
         Methods
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortValue"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>sortValue</b></span>
+                        <a href="#sortValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sortValue(fieldValue: <a href="../interfaces/ConfigurableEnumValue.html" target="_self">ConfigurableEnumValue</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:59</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sort enum values by their configured ordinal position rather than
+alphabetically by their label, so the order matches the admin configuration.
+Falls back to default sorting for enums without an ordinal position.
+See <code>src/app/core/basic-datatypes/README.md</code> for details on custom sorting.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldValue</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ConfigurableEnumValue.html" target="_self" >ConfigurableEnumValue</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>number | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -280,7 +361,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:24</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:25</a></code>
 </div>
                         </td>
                     </tr>
@@ -362,7 +443,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:33</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:34</a></code>
 </div>
                         </td>
                     </tr>
@@ -1008,84 +1089,6 @@ allowing the datatype to normalize or fill in required settings.</p>
             </tr>
         </tbody>
     </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="sortValue"></a>
-                    <span class="name">
-                        <span ><b>sortValue</b></span>
-                        <a href="#sortValue"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>sortValue(_fieldValue: <a href="../classes/Entity.html" target="_self">EntityType</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:253</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Return a comparable primitive for sorting this field&#39;s value in a list column.
-Return <code>undefined</code> to fall through to the default sort logic.
-Override this in datatypes that store arrays or complex objects where the
-raw value cannot be sorted meaningfully.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>_fieldValue</td>
-                                            <td>
-                                                            <code><a href="../classes/Entity.html" target="_self" >EntityType</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>number | string | undefined</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 </section>
             <section data-compodoc="block-properties">
     
@@ -1124,7 +1127,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:14</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:15</a></code>
 </div>
                         </td>
                     </tr>
@@ -1165,7 +1168,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:18</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:19</a></code>
 </div>
                         </td>
                     </tr>
@@ -1205,7 +1208,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:15</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:16</a></code>
 </div>
                         </td>
                     </tr>
@@ -1246,7 +1249,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:17</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:18</a></code>
 </div>
                         </td>
                     </tr>
@@ -1350,6 +1353,7 @@ import { ConfigurableEnumService } from &quot;../configurable-enum.service&quot;
 import { Injectable, inject } from &quot;@angular/core&quot;;
 import { DiscreteDatatype } from &quot;../../discrete/discrete.datatype&quot;;
 import { ConfigurableEnumValue } from &quot;../configurable-enum.types&quot;;
+import { Ordering } from &quot;../configurable-enum-ordering&quot;;
 
 @Injectable()
 export class ConfigurableEnumDatatype extends DiscreteDatatype&lt;
@@ -1394,6 +1398,18 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype&lt;
     }
 
     return enumOption;
+  }
+
+  /**
+   * Sort enum values by their configured ordinal position rather than
+   * alphabetically by their label, so the order matches the admin configuration.
+   * Falls back to default sorting for enums without an ordinal position.
+   * See &#x60;src/app/core/basic-datatypes/README.md&#x60; for details on custom sorting.
+   */
+  override sortValue(fieldValue: ConfigurableEnumValue): number | undefined {
+    return Ordering.hasOrdinalValue(fieldValue)
+      ? fieldValue._ordinal
+      : undefined;
   }
 
   /**

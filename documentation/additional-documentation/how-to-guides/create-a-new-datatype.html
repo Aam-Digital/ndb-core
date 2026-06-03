@@ -184,6 +184,19 @@ export class MyCustomDatatype extends DefaultDatatype&lt;SpecialObject, string&g
     return SpecialValueParserForDifferentImportFormats(value);
   }
 }</code></pre></div><p>Please also refer to the extensive JsDoc code comments in the <code>DefaultDatatype</code> class.</p>
+<h2>Customizing how values are sorted in tables</h2>
+<p>By default, table columns are sorted on the readable value of the field.
+Some datatypes store arrays or complex objects whose raw value cannot be compared meaningfully,
+or want to sort by some metadata rather than the displayed text.</p>
+<p>Override the <code>sortValue</code> method to return a comparable primitive (a <code>number</code> or <code>string</code>)
+for a given field value. Return <code>undefined</code> to fall back to the default sort logic.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">override sortValue(value: SpecialObject): number | string | undefined {
+  // e.g. sort configurable enums by their configured ordinal position
+  // rather than alphabetically by their label
+  return value?._ordinal;
+}</code></pre></div><p><code>EntitiesTableComponent</code> builds a map of these <code>sortValue</code> functions per column
+and passes them to <code>tableSort</code>, so any datatype-specific ordering you define here
+is automatically applied wherever the type is used in a sortable list.</p>
 <h2>Registering the new Datatype</h2>
 <p>Provide your datatype service using Angular dependency injection:
 <code>{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true },</code></p>
