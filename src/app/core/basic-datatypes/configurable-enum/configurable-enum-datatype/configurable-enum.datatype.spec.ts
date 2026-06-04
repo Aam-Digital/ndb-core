@@ -72,6 +72,18 @@ describe("Schema data type: configurable-enum", () => {
     expect(rawData.option).toEqual(testOptionKey);
   });
 
+  it("returns the ordinal enum position as sort value", () => {
+    expect(
+      dataType.sortValue({ id: "TEST_1", label: "Category 1", _ordinal: 3 }),
+    ).toBe(3);
+  });
+
+  it("falls back to default sorting for enums without an ordinal position", () => {
+    expect(dataType.sortValue({ id: "TEST_1", label: "Category 1" })).toBe(
+      undefined,
+    );
+  });
+
   it("converts keys to full enum value objects for entity format", () => {
     const entity = new TestEntity();
 
