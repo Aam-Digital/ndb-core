@@ -22,7 +22,10 @@ import {
   DownloadService,
   FileDownloadFormat,
 } from "../download-service/download.service";
-import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
+import {
+  ExportColumnConfig,
+  normalizeQueryKey,
+} from "../data-transformation-service/export-column-config";
 
 export interface ExportDialogData {
   /** All records (unfiltered, permissions-limited) */
@@ -73,7 +76,7 @@ export class ExportDialogComponent {
   /** Selected export column keys in the order chosen by the user (undefined = use default passed config). */
   selectedColumnKeys = signal<string[] | undefined>(
     (this.data.preselectedExportConfig ?? this.data.exportConfig)?.map((c) =>
-      this.normalizeQueryKey(c.query),
+      normalizeQueryKey(c.query),
     ),
   );
 
@@ -86,8 +89,7 @@ export class ExportDialogComponent {
   });
 
   columnToString = (col: ExportColumnConfig) => col.label ?? col.query;
-  columnToValue = (col: ExportColumnConfig) =>
-    this.normalizeQueryKey(col.query);
+  columnToValue = (col: ExportColumnConfig) => normalizeQueryKey(col.query);
 
   clearSelection() {
     this.selectedColumnKeys.set([]);
@@ -95,20 +97,18 @@ export class ExportDialogComponent {
 
   includeAll() {
     this.selectedColumnKeys.set(
-      this.availableColumns.map((c) => this.normalizeQueryKey(c.query)),
+      this.availableColumns.map((c) => normalizeQueryKey(c.query)),
     );
   }
 
-  private normalizeQueryKey(query: string): string {
-    return query.startsWith(".") ? query.slice(1) : query;
-  }
+  // using shared normalizeQueryKey()
 
   private buildAvailableColumns(): ExportColumnConfig[] {
     const configs = this.data.exportConfig ?? [];
     const out: ExportColumnConfig[] = [];
     const seen = new Set<string>();
     for (const c of configs) {
-      const key = this.normalizeQueryKey(c.query);
+      const key = normalizeQueryKey(c.query);
       if (key.startsWith("_")) continue;
       if (!seen.has(key)) {
         seen.add(key);
@@ -121,10 +121,10 @@ export class ExportDialogComponent {
   private columnsFromKeys(keys: string[]): ExportColumnConfig[] {
     const byKey = new Map<string, ExportColumnConfig>();
     for (const c of this.availableColumns) {
-      byKey.set(this.normalizeQueryKey(c.query), c);
+      byKey.set(normalizeQueryKey(c.query), c);
     }
     return keys
-      .map((k) => byKey.get(this.normalizeQueryKey(k)))
+      .map((k) => byKey.get(normalizeQueryKey(k)))
       .filter((c): c is ExportColumnConfig => !!c);
   }
 

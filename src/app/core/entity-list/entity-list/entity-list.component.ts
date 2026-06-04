@@ -43,7 +43,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { buildExportColumnResolvers } from "../../export/download-service/download.service";
+import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
@@ -117,6 +117,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     optional: true,
   });
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly exportColumnsService = inject(ExportColumnsService);
   private readonly formDialog = inject(FormDialogService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -433,83 +434,14 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     const cols = this.columnsToDisplay ?? [];
     const availableColumns = this.columns() ?? [];
     const schema = this.entityConstructor()?.schema;
-    const toQueryKey = (query: string) =>
-      query.startsWith(".") ? query.slice(1) : query;
 
-    // Always derive preselection from currently visible list columns (active tab/group).
-    const visibleColumnsSelection = cols.map((colId) => {
-      const colConfig = availableColumns.find((c) =>
-        typeof c === "string" ? c === colId : c.id === colId,
-      );
-      let label: string | undefined = undefined;
-      if (colConfig && typeof colConfig !== "string") {
-        label = colConfig.label;
-      }
-      if (!label && schema?.has(colId)) {
-        label = schema.get(colId)?.label;
-      }
-      return { query: `.${colId}`, label } as ExportColumnConfig;
-    });
-
-    // Available columns: prioritize visible columns first so their labels win over
-    // potentially outdated static export labels for the same query key.
-    const initialExportConfig = [
-      ...visibleColumnsSelection,
-      ...(this.exportConfig() ?? []),
-    ];
-
-    const appendUnique = (
-      list: ExportColumnConfig[],
-      col: ExportColumnConfig,
-    ) => {
-      const key = toQueryKey(col.query);
-      if (!list.some((c) => toQueryKey(c.query) === key)) {
-        list.push(col);
-      }
-    };
-
-    const allAvailableColumns = (() => {
-      const result: ExportColumnConfig[] = [];
-
-      // Keep only one entry per logical field key.
-      for (const col of initialExportConfig) {
-        appendUnique(result, col);
-      }
-
-      if (!schema) return result;
-
-      // Include every field defined on the entity schema so users can choose
-      // columns that are not currently visible in the list (skip internal fields).
-      for (const [key, field] of schema.entries()) {
-        if (key.startsWith("_")) continue;
-        if (field?.isInternalField) continue;
-        appendUnique(result, { query: `.${key}`, label: field?.label });
-      }
-
-      const resolvers = buildExportColumnResolvers(
+    const { allAvailableColumns, preselectedExportConfig } =
+      this.exportColumnsService.buildExportColumns({
         schema,
-        this.entitySchemaService,
-      );
-      for (const r of resolvers) {
-        const keySuffix = r.column.keySuffix ?? "";
-        // only include additional resolver columns (non-empty suffix)
-        if (keySuffix === "") continue;
-        appendUnique(result, {
-          query: `.${r.sourceFieldId}${keySuffix}`,
-          label: r.column.label,
-        });
-      }
-
-      return result;
-    })();
-
-    const visibleQueries = new Set(
-      visibleColumnsSelection.map((c) => toQueryKey(c.query)),
-    );
-    // Use references from allAvailableColumns so checkbox state and selected list stay in sync.
-    const preselectedExportConfig = allAvailableColumns.filter((c) =>
-      visibleQueries.has(toQueryKey(c.query)),
-    );
+        visibleColIds: cols,
+        availableColumns,
+        exportConfig: this.exportConfig(),
+      });
 
     this.dialog.open(ExportDialogComponent, {
       data: {
