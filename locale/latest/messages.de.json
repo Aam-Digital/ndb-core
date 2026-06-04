@@ -682,7 +682,6 @@
   "2286125960560188437": " Wir laden Ihre Systemkonfiguration herunter und richten alles ein. Die Anwendung ist in Kürze bereit ...\n",
   "2375260419993138758": "URL",
   "6258204389259741887": "Zusätzlich zum eigentlichen Importieren der Daten können Sie auch weitere Aktionen definieren, die dann für alle importierten Einträge ausgeführt werden.\n        (z.B. können Sie alle importierten Kinder einer bestimmten Schule zuweisen).\n        Diese Funktion muss nicht verwendet werden.\n        Wählen Sie zunächst einen Typ oben aus, um diesen Bereich zu aktivieren.\n        Falls Sie Fragen haben konsultieren Sie die Benutzungsanleitungen, Videos oder den Support.",
-  "399391272249108022": " Ungültiges Format für ID. Nur Buchstaben, Zahlen und _ sind hier erlaubt.",
   "9135593508528332150": "Alle importierten Daten verknüpfen mit: ",
   "3438523043140289820": "für Datensatz",
   "4457142953029193050": " Keine besonderen Aktionen für das Importieren von {$INTERPOLATION} Daten verfügbar. ",
@@ -1445,5 +1444,6 @@
   "2980688108457243770": "Erweiterte Optionen",
   "3772625973719966120": "Spalten-Trennzeichen",
   "2656073815006025296": "Das Trennzeichen für Spalten in Ihrer CSV-Datei.\nEs wird automatisch aus Ihrer Datei erkannt - ändern Sie es nur, wenn die Spalten nach dem Import fehlerhaft angezeigt werden.",
-  "8525512429465590996": "Die Link-ID darf nur Kleinbuchstaben, Ziffern, Bindestriche und Unterstriche enthalten."
+  "8525512429465590996": "Die Link-ID darf nur Kleinbuchstaben, Ziffern, Bindestriche und Unterstriche enthalten.",
+  "6220457741237530569": " Invalid ID: must start with a letter or number, and may only contain letters, numbers, and underscores."
 }

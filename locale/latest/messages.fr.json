@@ -682,7 +682,6 @@
   "2286125960560188437": " Nous téléchargeons la configuration de votre système et mettons les choses en place. L'application sera prête dans quelques instants ...\n",
   "2375260419993138758": "URL",
   "6258204389259741887": "En plus de créer de nouveaux enregistrements directement pour les données importées, vous pouvez également définir des actions supplémentaires\n(par exemple, pour que tous les enregistrements importés deviennent membres d'une activité ou d'un groupe existant).\nIl s'agit d'une fonctionnalité avancée que vous n'êtes pas obligé d'utiliser.\nSélectionnez d'abord un type d'importation ci-dessus pour activer cette section.\nEn cas de doute, veuillez vous référer aux guides d'utilisation, aux vidéos ou au contact d'assistance.",
-  "399391272249108022": " Modèle d'identification non valide. Seuls les lettres, les chiffres et les traits de soulignement sont autorisés.",
   "9135593508528332150": "Lier toutes les données importées à: ",
   "3438523043140289820": "pour l'enregistrement",
   "4457142953029193050": " Aucune action d'importation spéciale n'est disponible pour l'importation d'enregistrements «{$INTERPOLATION}». ",
@@ -1445,5 +1444,6 @@
   "2980688108457243770": "Advanced options",
   "3772625973719966120": "Column separator",
   "2656073815006025296": "The character that separates columns in your CSV file.\n              It is auto-detected from your file - only change this if the columns appear incorrect after import.",
-  "8525512429465590996": "The link ID may only contain lowercase letters, digits, hyphens and underscores"
+  "8525512429465590996": "The link ID may only contain lowercase letters, digits, hyphens and underscores",
+  "6220457741237530569": " Invalid ID: must start with a letter or number, and may only contain letters, numbers, and underscores."
 }
