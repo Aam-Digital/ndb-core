@@ -125,7 +125,7 @@
       },
       {
         "title": "Create a New Datatype",
-        "file": "how-to-guides/create-new-datatype.md"
+        "file": "../../src/app/core/basic-datatypes/README.md"
       },
       {
         "title": "Create a Report",
