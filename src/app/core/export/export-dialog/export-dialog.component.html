@@ -61,7 +61,7 @@
       }
     </mat-form-field>
 
-    <div class="export-columns-actions">
+    <div class="flex-row gap-small margin-top-small">
       <button
         mat-raised-button
         type="button"
@@ -86,7 +86,9 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="isLoading() || selectedColumnCount() === 0"
+    [disabled]="
+      isLoading() || (data.exportConfig && selectedColumnCount() === 0)
+    "
     (click)="download()"
     i18n="Download button"
   >

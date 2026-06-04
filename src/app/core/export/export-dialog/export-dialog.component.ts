@@ -129,7 +129,8 @@ export class ExportDialogComponent {
   }
 
   async download() {
-    if (this.selectedColumnCount() === 0) {
+    // Only block when an explicit exportConfig was provided (columns UI visible).
+    if (this.data.exportConfig && this.selectedColumnCount() === 0) {
       this.downloadError.set(
         $localize`Please select at least one column before downloading.`,
       );
