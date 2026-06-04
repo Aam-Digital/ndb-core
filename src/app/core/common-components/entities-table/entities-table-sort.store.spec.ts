@@ -29,6 +29,18 @@ describe("applySortingRules", () => {
     expect(columns.find((c) => c.id === "tags")?.noSorting).toBe(true);
     expect(columns.find((c) => c.id === "age")?.noSorting).toBe(undefined);
   });
+
+  it("allows array sorting when the datatype provides custom sort logic", () => {
+    const customSortDatatype = new DefaultDatatype();
+    customSortDatatype.sortValue = (values: unknown[]) => values.length;
+
+    const [column] = applySortingRules(
+      [toFormFieldConfig({ id: "tags", isArray: true, dataType: "custom" })],
+      () => customSortDatatype,
+    );
+
+    expect(column.noSorting).toBeUndefined();
+  });
 });
 
 describe("inferDefaultSort", () => {
