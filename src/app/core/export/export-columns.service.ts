@@ -11,7 +11,7 @@ export interface BuildExportColumnsOptions {
   schema: Map<string, any> | undefined;
   visibleColIds: string[];
   availableColumns: Array<string | ExportColumnConfig | FormFieldConfig>;
-  exportConfig?: ExportColumnConfig[] | undefined;
+  exportConfig?: ExportColumnConfig[];
 }
 
 export interface BuildExportColumnsResult {
@@ -47,13 +47,11 @@ export class ExportColumnsService {
         });
 
         let label: string | undefined = undefined;
-        if (isFormFieldConfig(colConfig)) {
-          label = colConfig.label;
-        } else if (isExportColumnConfig(colConfig)) {
+        if (isFormFieldConfig(colConfig) || isExportColumnConfig(colConfig)) {
           label = colConfig.label;
         }
 
-        if (!label && schema && schema.has(colId)) {
+        if (!label && schema?.has(colId)) {
           label = schema.get(colId)?.label;
         }
 
