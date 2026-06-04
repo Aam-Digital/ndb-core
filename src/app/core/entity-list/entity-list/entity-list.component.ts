@@ -449,6 +449,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         filteredData: this.filteredData,
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
+        columnGroups: this.columnGroups(),
         filename: (this.title() ?? "").replaceAll(" ", ""),
       },
     });

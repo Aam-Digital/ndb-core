@@ -12,6 +12,7 @@ import {
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatRadioModule } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
@@ -26,6 +27,7 @@ import {
   ExportColumnConfig,
   normalizeQueryKey,
 } from "../data-transformation-service/export-column-config";
+import { ColumnGroupsConfig } from "../../entity-list/EntityListConfig";
 
 export interface ExportDialogData {
   /** All records (unfiltered, permissions-limited) */
@@ -38,6 +40,7 @@ export interface ExportDialogData {
   exportConfig?: ExportColumnConfig[];
   preselectedExportConfig?: ExportColumnConfig[];
   filename: string;
+  columnGroups?: ColumnGroupsConfig;
 }
 
 /**
@@ -52,6 +55,7 @@ export interface ExportDialogData {
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatSelectModule,
     MatProgressBarModule,
     MatRadioModule,
     FormsModule,
@@ -79,6 +83,24 @@ export class ExportDialogComponent {
       normalizeQueryKey(c.query),
     ),
   );
+
+  /** Column groups passed from the list (admin-configured) */
+  columnGroups = this.data.columnGroups;
+
+  /** Currently selected column group name (if any) */
+  selectedGroupName = signal<string | undefined>(
+    this.columnGroups && this.columnGroups.groups.length > 0
+      ? this.columnGroups.groups[0].name
+      : undefined,
+  );
+
+  applyColumnGroup(groupName?: string) {
+    if (!groupName || !this.columnGroups) return;
+    const grp = this.columnGroups.groups.find((g) => g.name === groupName);
+    if (!grp) return;
+    // Map group columns to normalized keys and set selection
+    this.selectedColumnKeys.set(grp.columns.map((c) => normalizeQueryKey(c)));
+  }
 
   selectedColumnCount = computed(() => {
     const keys = this.selectedColumnKeys();

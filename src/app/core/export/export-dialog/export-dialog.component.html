@@ -40,6 +40,21 @@
   }
 
   @if (data.exportConfig) {
+    @if (columnGroups) {
+      <mat-form-field class="full-width">
+        <mat-label i18n="Export dialog presets label">Presets</mat-label>
+        <mat-select
+          [ngModel]="selectedGroupName()"
+          (ngModelChange)="
+            selectedGroupName.set($event); applyColumnGroup($event)
+          "
+        >
+          @for (g of columnGroups.groups; track g.name) {
+            <mat-option [value]="g.name">{{ g.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
     <mat-form-field floatLabel="always" class="full-width">
       <mat-label i18n="Export dialog columns label">Columns</mat-label>
       <app-basic-autocomplete
