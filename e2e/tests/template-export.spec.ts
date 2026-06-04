@@ -7,10 +7,16 @@ const CHILD_NAME = "<TEMPLATE EXPORT CHILD>";
 test("Template-export action opens the Generate File dialog", async ({
   page,
 }) => {
-  // Stub the export feature/availability check so the dialog renders its
-  // selection UI instead of an error state. Returning a 200 for any call
-  // to /api/v1/export/* is enough — the dialog only needs the feature
-  // flag to resolve.
+  // Stub the export feature/availability check so the dialog reaches its
+  // selection phase (and therefore renders the "Generate File from Template"
+  // heading, which only shows while phase === "select").
+  await page.route("**/actuator/features", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ export: { enabled: true } }),
+    }),
+  );
   await page.route("**/api/v1/export/**", (route) =>
     route.fulfill({
       status: 200,
