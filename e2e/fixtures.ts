@@ -62,15 +62,21 @@ export const test = base.extend<{ forEachTest: void }>({
   ],
 });
 
+const ARGOS_BASE_CSS =
+  // Hide Material tooltips, which can appear from prior hover interactions and cause flaky screenshots
+  ".mat-mdc-tooltip { display: none !important; }";
+
 export async function argosScreenshot(
   page: Page,
   name: string,
   options?: ArgosScreenshotOptions,
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
+    const { argosCSS, ...restOptions } = options || {};
     await argosScreenshotBase(page, name, {
       fullPage: true,
-      ...(options || {}),
+      argosCSS: argosCSS ? `${ARGOS_BASE_CSS}\n${argosCSS}` : ARGOS_BASE_CSS,
+      ...restOptions,
     });
   }
 }
