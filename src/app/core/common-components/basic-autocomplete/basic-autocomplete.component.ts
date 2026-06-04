@@ -42,7 +42,6 @@ import {
   MatChipRemove,
   MatChipRow,
 } from "@angular/material/chips";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import {
   CdkDragDrop,
@@ -56,6 +55,9 @@ import {
   ViewportRuler,
 } from "@angular/cdk/scrolling";
 import { EMPTY, fromEvent, merge } from "rxjs";
+import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
+
+export { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * Configuration for a single "Add new [label]" entry in the autocomplete dropdown.
@@ -92,7 +94,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   MatChipInput,
   MatChipGrid,
   MatChipRow,
-  FaIconComponent,
+  FaDynamicIconComponent,
   MatTooltip,
   MatChipRemove,
   DragDropModule,
@@ -282,6 +284,15 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() display: "text" | "chips" | "none" = "text";
 
   /**
+   * Derived display mode. Reorderable multi-select uses chips without mutating the public input.
+   */
+  get effectiveDisplay(): "text" | "chips" | "none" {
+    return this.multi && this.reorder && this.display === "text"
+      ? "chips"
+      : this.display;
+  }
+
+  /**
    * display the search input rather than the selected elements only
    * (when the form field gets focused).
    */
@@ -411,20 +422,26 @@ export class BasicAutocompleteComponent<O, V = O>
     });
   }
 
-  drop(event: CdkDragDrop<any[]>) {
-    if (event.previousContainer === event.container) {
-      const reordered = [...this.autocompleteOptions()];
-      moveItemInArray(reordered, event.previousIndex, event.currentIndex);
-      this.autocompleteOptions.set(reordered);
+  dropChips(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer !== event.container) {
+      return;
     }
-    this._selectedOptions.set(
-      this.autocompleteOptions().filter((o) => o.selected),
-    );
+
+    const selectedOptions = [...this._selectedOptions()];
+    moveItemInArray(selectedOptions, event.previousIndex, event.currentIndex);
+
+    const selectedSet = new Set(selectedOptions);
+    this._options = [
+      ...selectedOptions,
+      ...this._options.filter((option) => !selectedSet.has(option)),
+    ];
+
     if (this.multi) {
-      this.value = this._selectedOptions().map((o) => o.asValue);
+      this.value = selectedOptions.map((option) => option.asValue);
     } else {
       this.value = undefined;
     }
+
     this.setInitialInputValue();
     this.onChange(this.value);
     this.showAutocomplete(this.autocompleteForm.value);
@@ -434,7 +451,11 @@ export class BasicAutocompleteComponent<O, V = O>
     if (this.multi && this.retainSearchValue) {
       // reset the search value to previously entered text to help user selecting multiple similar options without retyping filter text
       this.autocompleteForm.setValue(this.retainSearchValue);
-    } else if (this.multi && this.display === "text" && this.displayText) {
+    } else if (
+      this.multi &&
+      this.effectiveDisplay === "text" &&
+      this.displayText
+    ) {
       // keep selected items visible when the multi-select input is focused/opened
       this.autocompleteForm.setValue(this.displayText);
     } else {
@@ -469,7 +490,9 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
     const filterText =
-      this.multi && this.display === "text" && inputText === this.displayText
+      this.multi &&
+      this.effectiveDisplay === "text" &&
+      inputText === this.displayText
         ? ""
         : inputText;
 
@@ -503,6 +526,15 @@ export class BasicAutocompleteComponent<O, V = O>
       filteredOptions = filteredOptions.slice(0, this.maxOptionsToDisplay);
     } else {
       this.hasMoreOptions.set(false);
+    }
+
+    if (this.multi && this.reorder) {
+      const selectedOrder = this._selectedOptions();
+      const selectedSet = new Set(selectedOrder);
+      filteredOptions = [
+        ...selectedOrder.filter((option) => filteredOptions.includes(option)),
+        ...filteredOptions.filter((option) => !selectedSet.has(option)),
+      ];
     }
 
     return filteredOptions;

@@ -62,6 +62,43 @@ em {
   border-radius: 4px;
 }
 
+.chip-drop-list.cdk-drop-list-dragging .chip:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.chip-preview {
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  cursor: grabbing;
+}
+
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  cursor: move;
+  opacity: 0.5;
+}
+
+.drag-handle:hover {
+  opacity: 1;
+}
+
+::ng-deep .cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+::ng-deep .cdk-drag-placeholder {
+  opacity: 0;
+}
+
+::ng-deep .cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
 // Fix for double scrollbars when field/option labels are long
 // ensure all options have consistent 48px height for virtual scroll calculations
 ::ng-deep .mat-mdc-autocomplete-panel .mat-mdc-option {
