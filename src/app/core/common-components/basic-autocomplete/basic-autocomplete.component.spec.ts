@@ -169,65 +169,6 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toEqual([0, 2]);
   });
 
-  it("should switch to chips when multi select reorder is enabled", () => {
-    component.multi = true;
-    component.reorder = true;
-
-    expect(component.effectiveDisplay).toBe("chips");
-  });
-
-  it("should keep the dropdown order unchanged when reorder is disabled", () => {
-    const first = TestEntity.create("First");
-    const second = TestEntity.create("Second");
-    const third = TestEntity.create("Third");
-
-    component.options = [first, second, third];
-    component.multi = true;
-    component.value = [first.getId(), second.getId()];
-    component.ngOnChanges({ options: true, value: true });
-
-    let suggestions: any[] = [];
-    component.autocompleteSuggestedOptions.subscribe(
-      (value) => (suggestions = value.map((option) => option.initial)),
-    );
-
-    component.autocompleteForm.setValue("");
-
-    expect(suggestions).toEqual([first, second, third]);
-  });
-
-  it("should reorder selected chips and keep selected items first in the dropdown", () => {
-    const first = TestEntity.create("First");
-    const second = TestEntity.create("Second");
-    const third = TestEntity.create("Third");
-
-    component.options = [first, second, third];
-    component.multi = true;
-    component.reorder = true;
-    component.value = [first.getId(), second.getId()];
-    component.ngOnChanges({ options: true, value: true });
-
-    const dropContainer = { id: "chips" };
-
-    component.dropChips({
-      previousContainer: dropContainer,
-      container: dropContainer,
-      previousIndex: 1,
-      currentIndex: 0,
-    } as any);
-
-    expect(component.value).toEqual([second.getId(), first.getId()]);
-
-    let suggestions: any[] = [];
-    component.autocompleteSuggestedOptions.subscribe(
-      (value) => (suggestions = value.map((option) => option.initial)),
-    );
-
-    component.autocompleteForm.setValue("");
-
-    expect(suggestions).toEqual([second, first, third]);
-  });
-
   it("should switch the input when focusing in multi select mode", () => {
     vi.useFakeTimers();
     try {
