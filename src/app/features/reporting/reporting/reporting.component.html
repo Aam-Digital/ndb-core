@@ -109,14 +109,14 @@
   <app-report-row [rows]="data()"></app-report-row>
 }
 
-@if (
-  data()?.length > 0 &&
-  (mode() === "exporting" ||
-    (mode() === "sql" && currentReport()?.version !== 2))
-) {
+@if (data()?.length > 0 && mode() === "exporting") {
   <app-object-table [objects]="data()"></app-object-table>
 }
 
-@if (data()?.length > 0 && mode() === "sql" && currentReport()?.version === 2) {
+@if (data()?.length > 0 && mode() === "sql" && !isHierarchicalReport()) {
+  <app-object-table [objects]="sqlTableRows()"></app-object-table>
+}
+
+@if (data()?.length > 0 && mode() === "sql" && isHierarchicalReport()) {
   <app-sql-v2-table [reportData]="data()"></app-sql-v2-table>
 }
