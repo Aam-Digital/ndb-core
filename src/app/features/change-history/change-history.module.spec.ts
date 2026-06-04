@@ -12,7 +12,7 @@ import { Entity } from "../../core/entity/model/entity";
 import { DatabaseFactoryService } from "../../core/database/database-factory.service";
 
 class InternalEntity extends Entity {
-  static override isInternalEntity = true;
+  static override readonly isInternalEntity = true;
 }
 
 let registered: EntityAction[];

@@ -26,7 +26,7 @@ function setup(docs: any[] = [], canRead = true) {
 }
 
 class InternalEntity extends Entity {
-  static override isInternalEntity = true;
+  static override readonly isInternalEntity = true;
 }
 
 function savedEntity(ctor = Entity): Entity {

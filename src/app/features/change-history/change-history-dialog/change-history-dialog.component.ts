@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnInit,
   signal,
 } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
@@ -57,7 +58,7 @@ export interface ChangeHistoryDialogData {
   styleUrls: ["./change-history-dialog.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChangeHistoryDialogComponent {
+export class ChangeHistoryDialogComponent implements OnInit {
   /** Open the change-history dialog for an entity (single source of sizing/data). */
   static open(
     dialog: MatDialog,
@@ -81,7 +82,7 @@ export class ChangeHistoryDialogComponent {
   /** true when the audit db could not be read (not enabled / no access) */
   readonly loadError = signal(false);
 
-  constructor() {
+  ngOnInit() {
     void this.load();
   }
 

@@ -6,8 +6,8 @@ import { Entity } from "../../../core/entity/model/entity";
 import { ChangeEvent } from "../change-history.types";
 
 class TestEntity extends Entity {
-  static override label = "Test";
-  static override icon = "child" as any;
+  static override readonly label = "Test";
+  static override readonly icon = "child" as any;
 }
 
 let getHistory: ReturnType<typeof vi.fn>;
