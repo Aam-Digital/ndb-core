@@ -1,0 +1,69 @@
+@if (!entity()?.isNew) {
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    matTooltip="Change history"
+    i18n-matTooltip="Change history tooltip"
+    aria-label="Change history"
+    i18n-aria-label
+  >
+    <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+  </button>
+}
+
+<mat-menu #menu="matMenu" class="last-edited-menu">
+  <div
+    class="menu-content flex-column gap-x-small padding-regular"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="menu-title" i18n="Change history popover title">
+      Change history
+    </div>
+
+    @if (updated()) {
+      <div class="flex-row gap-small">
+        <app-fa-dynamic-icon
+          class="meta-icon"
+          icon="pen-to-square"
+        ></app-fa-dynamic-icon>
+        <div>
+          <div class="meta-line flex-row align-center gap-x-small flex-wrap">
+            <span i18n="Change history">Last updated by</span>
+            <app-entity-block [entityId]="updated().by"></app-entity-block>
+          </div>
+          <div class="hint-text">
+            {{ updated().at | customDate: "short" }} ·
+            {{ updated().at | notificationTime | async }}
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (created()) {
+      <div class="flex-row gap-small">
+        <app-fa-dynamic-icon
+          class="meta-icon"
+          icon="circle-plus"
+        ></app-fa-dynamic-icon>
+        <div>
+          <div class="meta-line flex-row align-center gap-x-small flex-wrap">
+            <span i18n="Change history">Created by</span>
+            <app-entity-block [entityId]="created().by"></app-entity-block>
+          </div>
+          <div class="hint-text">{{ created().at | customDate: "short" }}</div>
+        </div>
+      </div>
+    }
+
+    @if (canViewHistory()) {
+      <button
+        mat-button
+        class="view-history-link full-width justify-content-center gap-small margin-top-small"
+        (click)="viewHistory()"
+      >
+        <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+        <span i18n="View change history link">View change history</span>
+      </button>
+    }
+  </div>
+</mat-menu>

@@ -35,6 +35,9 @@
   </div>
 
   <app-view-actions>
+    <app-entity-last-edited-info
+      [entity]="entity()"
+    ></app-entity-last-edited-info>
     <app-dialog-buttons [form]="$any(form())" [entity]="entity()">
       <button mat-menu-item (click)="openExportDialog()">
         <fa-icon

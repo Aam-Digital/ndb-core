@@ -27,6 +27,7 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
 import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
+import { EntityLastEditedInfoComponent } from "../../../features/change-history/entity-last-edited-info/entity-last-edited-info.component";
 import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 
 /**
@@ -56,6 +57,7 @@ import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
     DynamicComponentDirective,
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
+    EntityLastEditedInfoComponent,
     FaDynamicIconComponent,
     RouterLink,
     CommonModule,

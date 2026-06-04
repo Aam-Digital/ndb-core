@@ -1,0 +1,93 @@
+@use "variables/colors";
+@use "variables/sizes";
+@use "variables/breakpoints";
+
+// design-specific light info-blue to differentiate the expanded panel
+$history-open-bg: #f1f6fb;
+
+.history-hints {
+  font-size: 0.85em;
+
+  p {
+    margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: sizes.$x-small;
+    }
+  }
+}
+
+.empty-state {
+  padding: sizes.$large sizes.$regular;
+  text-align: center;
+}
+
+// card-style expansion panels: each panel is a separated, elevated card with a
+// border and spacing between them; the expanded header gets a light-blue tint
+.timeline {
+  display: block;
+
+  ::ng-deep .mat-expansion-panel {
+    margin-bottom: sizes.$small;
+    border: 1px solid colors.$grey-medium;
+    border-radius: 6px;
+    // even, soft shadow on all sides (override Material's bottom-heavy elevation)
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.08);
+
+    // tint the whole open card (header + body) to differentiate it
+    &.mat-expanded {
+      background: $history-open-bg;
+    }
+  }
+
+  ::ng-deep .mat-expansion-panel-header {
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+.event-header {
+  .user {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .when {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: colors.$text-secondary;
+    margin-right: sizes.$regular;
+    flex-shrink: 0;
+
+    .relative {
+      color: colors.$muted;
+      font-size: 0.85em;
+    }
+  }
+}
+
+// on narrow screens the fixed-height header overlaps; let it grow and wrap the
+// date onto its own line below the badge + author
+@media (max-width: breakpoints.$sm) {
+  .timeline ::ng-deep .mat-expansion-panel-header {
+    height: auto !important;
+    padding-top: sizes.$small;
+    padding-bottom: sizes.$small;
+  }
+
+  .event-header ::ng-deep mat-panel-title {
+    flex-wrap: wrap;
+  }
+
+  .event-header .when {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: sizes.$small;
+    margin-right: 0;
+  }
+}
+

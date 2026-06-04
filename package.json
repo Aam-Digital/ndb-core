@@ -60,6 +60,7 @@
     "firebase": "^12.14.0",
     "hammerjs": "^2.0.8",
     "json-query": "^2.2.2",
+    "jsondiffpatch": "^0.7.6",
     "keycloak-angular": "^21.0.0",
     "keycloak-js": "^26.2.4",
     "leaflet": "^1.9.4",

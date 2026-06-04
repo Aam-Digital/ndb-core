@@ -24,6 +24,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
+import { EntityLastEditedInfoComponent } from "../../../features/change-history/entity-last-edited-info/entity-last-edited-info.component";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
@@ -51,6 +52,7 @@ import { Note } from "../model/note";
     DialogButtonsComponent,
     MatMenuModule,
     EntityArchivedInfoComponent,
+    EntityLastEditedInfoComponent,
     ViewTitleComponent,
     MatProgressBar,
     ViewActionsComponent,

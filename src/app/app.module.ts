@@ -96,6 +96,7 @@ import { TemplateExportModule } from "./features/template-export/template-export
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
 import { BulkEditModule } from "./features/bulk-edit/bulk-edit.module";
+import { ChangeHistoryModule } from "./features/change-history/change-history.module";
 import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotificationService } from "./features/notification/notification.service";
 import { AngularFireModule } from "@angular/fire/compat";
@@ -153,6 +154,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     TemplateExportModule,
     SkillModule,
     BulkEditModule,
+    ChangeHistoryModule,
     DeDuplicationModule,
     DemoDataModule,
     EmailClientServiceModule,
