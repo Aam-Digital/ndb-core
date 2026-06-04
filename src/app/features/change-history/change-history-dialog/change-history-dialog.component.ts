@@ -82,11 +82,7 @@ export class ChangeHistoryDialogComponent implements OnInit {
   /** true when the audit db could not be read (not enabled / no access) */
   readonly loadError = signal(false);
 
-  ngOnInit() {
-    void this.load();
-  }
-
-  private async load() {
+  async ngOnInit() {
     try {
       this.events.set(await this.service.getHistory(this.entity));
     } catch {
