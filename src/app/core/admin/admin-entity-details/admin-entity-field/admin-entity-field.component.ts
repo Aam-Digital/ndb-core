@@ -167,7 +167,10 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private initSettings() {
     this.fieldIdForm = this.fb.control(this.data.entitySchemaField.id, {
-      validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
+      validators: [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9][a-zA-Z0-9_]*$/),
+      ],
       asyncValidators: [
         uniquePropertyValidator({
           getExistingValues: async () =>

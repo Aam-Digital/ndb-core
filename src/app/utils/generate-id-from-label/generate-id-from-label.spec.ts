@@ -7,14 +7,11 @@ describe("generateIdFromLabel", () => {
       ["Name", "name"],
       ["FirstName", "firstName"],
       ["name of", "nameOf"],
-      ["test's name", "test_sName"],
+      ["test's name", "testsName"],
       ["name 123", "name123"],
       ["123 name", "123Name"], // this is possible in JavaScript
       ["trailing space ", "trailingSpace"],
-      [
-        "special chars !@#$%^&*()_+{}|:\"<>?`-=[]\\;',./",
-        "specialChars_______________________________",
-      ],
+      ["special chars !@#$%^&*()_+{}|:\"<>?`-=[]\\;',./", "specialChars"],
     ];
 
     for (const testCase of labelIdPairs) {
