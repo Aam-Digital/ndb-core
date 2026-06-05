@@ -141,6 +141,80 @@ describe("RemotePouchDatabase tests", () => {
     expect(callCount).toBe(1);
   });
 
+  it("should retry AbortError for GET requests", async () => {
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    (database as any).FETCH_TIMEOUT_MS = 60000;
+
+    const abortError = new DOMException("Fetch is aborted", "AbortError");
+
+    let callCount = 0;
+    (PouchDB.fetch as Mock).mockImplementation(async () => {
+      callCount++;
+      if (callCount < 2) {
+        throw abortError;
+      }
+      return new Response("{}", { status: HttpStatusCode.Ok });
+    });
+
+    const result = await (database as any).fetchWithTransientRetry(
+      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+      { method: "GET", headers: new Headers() },
+    );
+
+    expect(callCount).toBe(2);
+    expect(result.status).toBe(HttpStatusCode.Ok);
+  });
+
+  it("should not retry write operations on any transient error (avoids create-then-unauthorized-update)", async () => {
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    (database as any).FETCH_TIMEOUT_MS = 60000;
+
+    const transientErrors = [
+      new DOMException("Fetch is aborted", "AbortError"),
+      new TypeError("Failed to fetch"), // e.g. ERR_NETWORK_CHANGED
+    ];
+
+    for (const method of ["PUT", "POST", "DELETE"]) {
+      for (const err of transientErrors) {
+        let callCount = 0;
+        (PouchDB.fetch as Mock).mockImplementation(async () => {
+          callCount++;
+          throw err;
+        });
+
+        await expect(
+          (database as any).fetchWithTransientRetry(
+            `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+            { method, headers: new Headers() },
+          ),
+        ).rejects.toBe(err);
+
+        // writes are never auto-retried — the server may have already committed
+        expect(callCount).toBe(1);
+      }
+    }
+  });
+
+  it("should not impose the abort timeout on write operations", async () => {
+    // a tiny timeout would abort almost immediately if it were applied to writes
+    (database as any).FETCH_TIMEOUT_MS = 0;
+
+    let capturedOpts: any;
+    (PouchDB.fetch as Mock).mockImplementation(async (_url, opts) => {
+      capturedOpts = opts;
+      return new Response("{}", { status: HttpStatusCode.Ok });
+    });
+
+    const result = await (database as any).fetchWithTransientRetry(
+      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+      { method: "PUT", headers: new Headers() },
+    );
+
+    expect(result.status).toBe(HttpStatusCode.Ok);
+    // no AbortController signal is attached to writes, so a slow write is not aborted
+    expect(capturedOpts?.signal).toBeUndefined();
+  });
+
   it("should use periodic polling for changes feed instead of live long-polling", async () => {
     vi.useFakeTimers();
     try {
