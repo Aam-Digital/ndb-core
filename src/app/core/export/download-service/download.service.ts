@@ -53,7 +53,7 @@ export function buildExportColumnResolvers(
   return resolvers;
 }
 
-export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx";
+export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx" | "zip";
 
 /**
  * This service allows to start a download process from the browser.
@@ -139,6 +139,8 @@ export class DownloadService {
         return this.createXlsx(data);
       case "pdf":
         return new Blob([data], { type: "application/pdf" });
+      case "zip":
+        return new Blob([data], { type: "application/zip" });
       default:
         Logging.warn(`Not supported format: ${format}`);
         return new Blob([""]);
