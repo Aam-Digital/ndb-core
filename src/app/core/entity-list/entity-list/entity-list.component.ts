@@ -42,7 +42,6 @@ import { DuplicateRecordService } from "../duplicate-records/duplicate-records.s
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -116,7 +115,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
-  private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly exportColumnsService = inject(ExportColumnsService);
   private readonly formDialog = inject(FormDialogService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
