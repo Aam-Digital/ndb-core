@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# Claude Code worktrees (local only, must never be committed as submodules)
+.claude/worktrees/
+
 /src/assets/config.json
 /src/assets/firebase-config.json
 /src/assets/child-photos
