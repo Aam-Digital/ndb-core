@@ -1,6 +1,6 @@
-import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
+import { DemoEntityStore } from "../../../../core/demo-data/generic/demo-entity-store";
 import { faker } from "../../../../core/demo-data/faker";
 import { heightRangeForAge, weightRangeForAge } from "./height-weight";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -12,7 +12,7 @@ import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-
  */
 @Injectable()
 export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
-  private demoChildren = inject(DemoChildGenerator);
+  private entityStore = inject(DemoEntityStore);
 
   override requiredEntityTypes = ["HealthCheck"];
 
@@ -32,7 +32,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   public generateEntities(): Entity[] {
     const data = [];
 
-    for (const child of this.demoChildren.entities) {
+    for (const child of this.entityStore.get("Child")) {
       data.push(...this.generateHealthCheckHistoryForChild(child));
     }
 

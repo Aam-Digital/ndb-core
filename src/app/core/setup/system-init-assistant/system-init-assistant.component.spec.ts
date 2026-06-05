@@ -21,6 +21,8 @@ import {
   DemoDataService,
   DemoDataServiceConfig,
 } from "../../demo-data/demo-data.service";
+import { GenericDemoDataEngine } from "../../demo-data/generic/generic-demo-data-engine";
+import { ValuePoolLoader } from "../../demo-data/generic/value-pool-loader";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -41,6 +43,8 @@ describe("SystemInitAssistantComponent", () => {
         DemoDataInitializerService,
         DemoDataService,
         DemoDataServiceConfig,
+        { provide: GenericDemoDataEngine, useValue: { linkEntityReferences: vi.fn() } },
+        { provide: ValuePoolLoader, useValue: { load: vi.fn().mockResolvedValue(undefined) } },
         LoginStateSubject,
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: KeycloakAuthService, useValue: {} },

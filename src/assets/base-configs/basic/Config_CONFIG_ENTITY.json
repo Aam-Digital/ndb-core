@@ -521,6 +521,15 @@
           }
         }
       }
+    },
+    "demoData": {
+      "Child": {
+        "count": 30,
+        "fields": {
+          "dropoutDate": { "nullProbability": 0.8 }
+        }
+      },
+      "School": { "count": 5 }
     }
   }
 }

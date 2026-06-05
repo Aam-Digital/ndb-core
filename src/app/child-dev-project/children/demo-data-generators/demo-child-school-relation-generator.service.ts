@@ -1,10 +1,9 @@
-import { DemoChildGenerator } from "./demo-child-generator.service";
-import { DemoSchoolGenerator } from "./demo-school-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { faker } from "../../../core/demo-data/faker";
 import { Entity } from "../../../core/entity/model/entity";
+import { DemoEntityStore } from "../../../core/demo-data/generic/demo-entity-store";
 
 /**
  * Generate ChildSchoolRelation entities linking a child to a school for a specific year.
@@ -15,8 +14,7 @@ import { Entity } from "../../../core/entity/model/entity";
 export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSchoolRelation> {
   override requiredEntityTypes = ["ChildSchoolRelation"];
 
-  private demoChildren = inject(DemoChildGenerator);
-  private demoSchools = inject(DemoSchoolGenerator);
+  private entityStore = inject(DemoEntityStore);
 
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
@@ -34,7 +32,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   generateEntities(): ChildSchoolRelation[] {
     const data = [];
 
-    for (const child of this.demoChildren.entities) {
+    for (const child of this.entityStore.get("Child")) {
       data.push(...this.generateChildSchoolRecordsForChild(child));
     }
 
@@ -95,11 +93,11 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
    */
   private selectNextSchool(currentSchool: Entity) {
     if (!currentSchool) {
-      return faker.helpers.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.entityStore.get("School"));
     }
 
     if (faker.number.int(100) > 75) {
-      return faker.helpers.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.entityStore.get("School"));
     } else {
       return currentSchool;
     }

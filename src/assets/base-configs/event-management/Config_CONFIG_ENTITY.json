@@ -1183,6 +1183,12 @@
         ]
       },
       "_id": "view:participantSurvey"
+    },
+    "demoData": {
+      "Participant": { "count": 50 },
+      "Project": { "count": 8 },
+      "Event": { "count": 20 },
+      "Participant2Event": { "count": 150 }
     }
   }
 }

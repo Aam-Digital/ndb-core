@@ -1407,6 +1407,16 @@
         ]
       },
       "_id": "view:event/:id"
+    },
+    "demoData": {
+      "Child": {
+        "count": 120,
+        "fields": {
+          "motherTongue": { "valuePool": ["Hindi", "Hindi", "Hindi", "Urdu", "Bengali", "Bengali"] },
+          "dropoutDate": { "nullProbability": 0.8 }
+        }
+      },
+      "School": { "count": 8 }
     }
   }
 }

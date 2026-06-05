@@ -1,6 +1,6 @@
-import { DemoChildGenerator } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoDataGenerator } from "#src/app/core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
+import { DemoEntityStore } from "#src/app/core/demo-data/generic/demo-entity-store";
 import { faker } from "#src/app/core/demo-data/faker";
 import { DemoUserGeneratorService } from "#src/app/core/user/demo-user-generator.service";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
@@ -18,7 +18,7 @@ import { AttendanceDatatype } from "../model/attendance.datatype";
  */
 @Injectable()
 export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
-  private demoChildren = inject(DemoChildGenerator);
+  private entityStore = inject(DemoEntityStore);
   private demoUser = inject(DemoUserGeneratorService);
   private attendanceService = inject(AttendanceService);
 
@@ -40,7 +40,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
 
   generateEntities(): Entity[] {
     const data: Entity[] = [];
-    const children = this.demoChildren.entities.filter((c) => c.isActive);
+    const children = this.entityStore.get("Child").filter((c) => c.isActive);
 
     for (const typeSettings of this.attendanceService.eventTypeSettings) {
       if (!typeSettings.activityType) continue;

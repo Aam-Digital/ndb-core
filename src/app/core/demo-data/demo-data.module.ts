@@ -21,8 +21,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
-import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { DemoSchoolGenerator } from "../../child-dev-project/children/demo-data-generators/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
 import { DemoActivityGeneratorService } from "#src/app/features/attendance/demo-data/demo-activity-generator.service";
 import { DemoActivityEventsGeneratorService } from "#src/app/features/attendance/demo-data/demo-activity-events-generator.service";
@@ -33,11 +31,27 @@ import { DemoHealthCheckGeneratorService } from "../../child-dev-project/childre
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
+import { GenericDemoDataEngine } from "./generic/generic-demo-data-engine";
+import { DemoEntityStore } from "./generic/demo-entity-store";
+import { DemoValueService } from "./generic/demo-value.service";
+import { DEMO_VALUE_GENERATOR } from "./generic/demo-value-generator";
+import { ValuePoolLoader } from "./generic/value-pool-loader";
+import {
+  BooleanDemoValueGenerator,
+  ConfigurableEnumDemoValueGenerator,
+  DateDemoValueGenerator,
+  DateOnlyDemoValueGenerator,
+  DateWithAgeDemoValueGenerator,
+  MonthDemoValueGenerator,
+  NumberDemoValueGenerator,
+  SchemaEmbedDemoValueGenerator,
+  StringDemoValueGenerator,
+} from "./generic/core-demo-value-generators";
 
 const demoDataGeneratorProviders = [
+  // Engine must be first so retained generators can read its entity store
+  { provide: GenericDemoDataEngine, useClass: GenericDemoDataEngine },
   ...DemoUserGeneratorService.provider(),
-  ...DemoChildGenerator.provider({ count: 120 }),
-  ...DemoSchoolGenerator.provider({ count: 8 }),
   ...DemoChildSchoolRelationGenerator.provider(),
   ...DemoActivityGeneratorService.provider(),
   ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
@@ -60,31 +74,61 @@ const demoDataGeneratorProviders = [
 ];
 
 /**
- * Generate realist mock entities for testing and demo purposes.
+ * Generate realistic mock entities for testing and demo purposes.
  *
  * Import this module in the root AppModule to automatically write demo data into the database on loading of the module.
- * You need to pass providers for {@link DemoDataGenerator} implementations to the `forRoot()` method to register them.
  *
- *```javascript
- *  DemoDataModule.forRoot([
- *    ...DemoChildGenerator.provider({count: 150}),
- *    { provide: DemoUserGeneratorService, useClass: DemoUserGeneratorService }
- *   ])
- * ```
+ * The `GenericDemoDataEngine` reads entity schemas and a `demoData` spec from the active
+ * `Config:CONFIG_ENTITY` document to generate entities for any configured entity type.
+ * Retained, scenario-specific generators (notes, ASER, attendance, …) run after the engine
+ * and read its generated entities from `DemoEntityStore`.
  *
- * In addition to importing the `DemoDataModule` you need to call the {@link DemoDataService}'s `publishDemoData()` method
- * to actually start the data generation.
- * Use `DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(this.dialog);` passing a `MatDialog` service
- * to display a dialog box to the user and automatically handle the data generation.
- *
- * To implement your own demo data generator, refer to the How-To Guides:
- * - [How to Generate Demo Data]{@link /additional-documentation/how-to-guides/generate-demo-data.html}
+ * Feature/plugin modules can contribute their own value generator for custom datatypes:
+ * `{ provide: DEMO_VALUE_GENERATOR, useClass: MyDemoValueGenerator, multi: true }`
  */
 @NgModule({
   imports: [MatProgressBarModule, MatDialogModule],
   providers: [
     DemoDataInitializerService,
     DemoDataService,
+    GenericDemoDataEngine,
+    DemoEntityStore,
+    DemoValueService,
+    ValuePoolLoader,
+    // Core per-datatype demo value generators
+    {
+      provide: DEMO_VALUE_GENERATOR,
+      useClass: ConfigurableEnumDemoValueGenerator,
+      multi: true,
+    },
+    { provide: DEMO_VALUE_GENERATOR, useClass: StringDemoValueGenerator, multi: true },
+    { provide: DEMO_VALUE_GENERATOR, useClass: DateDemoValueGenerator, multi: true },
+    {
+      provide: DEMO_VALUE_GENERATOR,
+      useClass: DateOnlyDemoValueGenerator,
+      multi: true,
+    },
+    {
+      provide: DEMO_VALUE_GENERATOR,
+      useClass: DateWithAgeDemoValueGenerator,
+      multi: true,
+    },
+    { provide: DEMO_VALUE_GENERATOR, useClass: MonthDemoValueGenerator, multi: true },
+    {
+      provide: DEMO_VALUE_GENERATOR,
+      useClass: BooleanDemoValueGenerator,
+      multi: true,
+    },
+    {
+      provide: DEMO_VALUE_GENERATOR,
+      useClass: NumberDemoValueGenerator,
+      multi: true,
+    },
+    {
+      provide: DEMO_VALUE_GENERATOR,
+      useClass: SchemaEmbedDemoValueGenerator,
+      multi: true,
+    },
     {
       provide: DemoDataServiceConfig,
       useValue: { dataGeneratorProviders: demoDataGeneratorProviders },

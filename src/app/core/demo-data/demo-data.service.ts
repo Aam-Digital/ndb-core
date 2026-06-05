@@ -27,6 +27,8 @@ import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { ConfigService } from "../config/config.service";
 import { firstValueFrom } from "rxjs";
+import { GenericDemoDataEngine } from "./generic/generic-demo-data-engine";
+import { ValuePoolLoader } from "./generic/value-pool-loader";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -57,6 +59,8 @@ export class DemoDataService {
   private injector = inject(Injector);
   private config = inject(DemoDataServiceConfig);
   private configService = inject(ConfigService);
+  private engine = inject(GenericDemoDataEngine);
+  private valuePoolLoader = inject(ValuePoolLoader);
 
   /** All registered demo data generator services */
   readonly dataGenerators: DemoDataGenerator<any>[] = [];
@@ -82,10 +86,17 @@ export class DemoDataService {
     // Let config subscribers (e.g. EntityConfigService, AttendanceService) process the config
     await new Promise((resolve) => setTimeout(resolve));
 
+    // Pre-load per-language value pools so the engine can use them synchronously
+    await this.valuePoolLoader.load();
+
     // completely generate all data (i.e. call every generator) before starting to save the data
     // to allow generators to delete unwanted entities of other generators before they are saved
     // (e.g. the DropoutChildGenerator should be able to delete Attendance records of the Child after its dropout date)
     this.dataGenerators.forEach((generator) => generator.entities);
+
+    // Fill entity-reference fields (Pass 2) after all entities are generated but before saving,
+    // so references can be resolved across all generated entity types.
+    this.engine.linkEntityReferences();
 
     // save the generated data
     for (const generator of this.dataGenerators) {

@@ -1,6 +1,6 @@
-import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable, inject } from "@angular/core";
+import { DemoEntityStore } from "../../../core/demo-data/generic/demo-entity-store";
 import { Note } from "../model/note";
 import { faker } from "../../../core/demo-data/faker";
 import { noteIndividualStories } from "./notes_individual-stories";
@@ -27,7 +27,7 @@ export class DemoNoteConfig {
 @Injectable()
 export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   private config = inject(DemoNoteConfig);
-  private demoChildren = inject(DemoChildGenerator);
+  private entityStore = inject(DemoEntityStore);
   private demoUsers = inject(DemoUserGeneratorService);
 
   /**
@@ -49,7 +49,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
   public generateEntities(): Note[] {
     return generateNotes({
-      children: this.demoChildren.entities,
+      children: this.entityStore.get("Child"),
       authors: this.demoUsers.entities,
       minNotesPerChild: this.config.minNotesPerChild,
       maxNotesPerChild: this.config.maxNotesPerChild,

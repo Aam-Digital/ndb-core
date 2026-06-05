@@ -1,6 +1,6 @@
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
-import { DemoChildGenerator } from "../demo-child-generator.service";
+import { DemoEntityStore } from "../../../../core/demo-data/generic/demo-entity-store";
 import { faker } from "../../../../core/demo-data/faker";
 import { ratingAnswers } from "./rating-answers";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -13,7 +13,7 @@ export class DemoHistoricalDataConfig {
 
 @Injectable()
 export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
-  private childrenGenerator = inject(DemoChildGenerator);
+  private entityStore = inject(DemoEntityStore);
   private config = inject(DemoHistoricalDataConfig);
 
   override requiredEntityTypes = ["HistoricalEntityData"];
@@ -36,7 +36,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
       .map(([id, field]) => id);
 
     const entities: Entity[] = [];
-    for (const child of this.childrenGenerator.entities) {
+    for (const child of this.entityStore.get("Child")) {
       const countOfData =
         faker.number.int(this.config.maxCountAttributes) +
         this.config.minCountAttributes;

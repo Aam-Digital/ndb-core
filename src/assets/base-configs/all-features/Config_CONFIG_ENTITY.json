@@ -2000,6 +2000,17 @@
           }
         }
       }
+    },
+    "demoData": {
+      "Child": {
+        "count": 60,
+        "fields": {
+          "motherTongue": { "valuePool": ["Hindi", "Hindi", "Urdu", "Bengali"] },
+          "dropoutDate": { "nullProbability": 0.8 }
+        }
+      },
+      "School": { "count": 4 },
+      "Event": { "count": 15 }
     }
   }
 }

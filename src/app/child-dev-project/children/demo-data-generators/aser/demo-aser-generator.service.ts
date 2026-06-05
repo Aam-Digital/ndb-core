@@ -1,6 +1,6 @@
-import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { inject, Injectable } from "@angular/core";
+import { DemoEntityStore } from "../../../../core/demo-data/generic/demo-entity-store";
 import { faker } from "../../../../core/demo-data/faker";
 import { mathLevels, readingLevels } from "./skill-levels";
 import { WarningLevel } from "../../../warning-level";
@@ -14,7 +14,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
  */
 @Injectable()
 export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
-  private demoChildren = inject(DemoChildGenerator);
+  private entityStore = inject(DemoEntityStore);
 
   override requiredEntityTypes = ["Aser"];
 
@@ -31,7 +31,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
   public generateEntities(): Entity[] {
     const data = [];
 
-    for (const child of this.demoChildren.entities) {
+    for (const child of this.entityStore.get("Child")) {
       data.push(...this.generateAserResultsForChild(child));
     }
 

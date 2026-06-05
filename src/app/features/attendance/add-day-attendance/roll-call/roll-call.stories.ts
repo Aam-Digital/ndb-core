@@ -1,5 +1,5 @@
 import { RollCallComponent } from "./roll-call.component";
-import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils";
 import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";

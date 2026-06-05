@@ -3,15 +3,15 @@ import { TestBed } from "@angular/core/testing";
 import { DemoDataService, DemoDataServiceConfig } from "./demo-data.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { AlertService } from "../alerts/alert.service";
-import {
-  DemoChildConfig,
-  DemoChildGenerator,
-} from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { DemoDataGenerator } from "./demo-data-generator";
+import { Injectable } from "@angular/core";
 import { Database } from "../database/database";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { ConfigService } from "../config/config.service";
 import { of } from "rxjs";
+import { GenericDemoDataEngine } from "./generic/generic-demo-data-engine";
+import { ValuePoolLoader } from "./generic/value-pool-loader";
 import type { Mock } from "vitest";
 
 type EntityMapperMock = Pick<EntityMapperService, "saveAll"> & {
@@ -21,6 +21,13 @@ type EntityMapperMock = Pick<EntityMapperService, "saveAll"> & {
 type DatabaseMock = Pick<Database, "isEmpty"> & {
   isEmpty: Mock;
 };
+
+@Injectable()
+class MockGenerator extends DemoDataGenerator<any> {
+  protected generateEntities(): any[] {
+    return [{ _id: "mock:1" }];
+  }
+}
 
 describe("DemoDataService", () => {
   let mockEntityMapper: EntityMapperMock;
@@ -36,8 +43,7 @@ describe("DemoDataService", () => {
     };
     mockDatabase.isEmpty.mockResolvedValue(true);
     mockGeneratorsProviders = [
-      { provide: DemoChildGenerator, useClass: DemoChildGenerator },
-      { provide: DemoChildConfig, useValue: { count: 10 } },
+      { provide: MockGenerator, useClass: MockGenerator },
     ];
 
     TestBed.configureTestingModule({
@@ -46,9 +52,7 @@ describe("DemoDataService", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper },
         {
           provide: AlertService,
-          useValue: {
-            addWarning: vi.fn(),
-          },
+          useValue: { addWarning: vi.fn() },
         },
         {
           provide: DemoDataServiceConfig,
@@ -61,6 +65,14 @@ describe("DemoDataService", () => {
         {
           provide: ConfigService,
           useValue: { configUpdates: of({}) },
+        },
+        {
+          provide: GenericDemoDataEngine,
+          useValue: { linkEntityReferences: vi.fn() },
+        },
+        {
+          provide: ValuePoolLoader,
+          useValue: { load: vi.fn().mockResolvedValue(undefined) },
         },
         mockGeneratorsProviders,
         EntityRegistry,

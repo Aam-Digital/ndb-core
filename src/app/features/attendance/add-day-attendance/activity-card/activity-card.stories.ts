@@ -1,7 +1,7 @@
 import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
-import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child.utils";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
