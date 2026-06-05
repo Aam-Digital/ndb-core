@@ -1,56 +1,113 @@
 <mat-dialog-content>
-  <h2 i18n>Generate File from Template</h2>
-
   @if (isFeatureEnabled.value() !== true) {
     <app-feature-disabled-info
       featureName="Export API"
       [featureEnabled]="isFeatureEnabled.value()"
     ></app-feature-disabled-info>
   } @else {
-    <p>
-      <span i18n>
-        Select the template based on which to generate a file for the current
-        record or
-      </span>
-      <a
-        [routerLink]="configureTemplatesRoute()"
-        *appDisabledEntityOperation="{
-          entity: TemplateExport,
-          operation: 'update',
-        }"
-        matDialogClose
-        i18n
-        >configure available templates</a
-      >
-    </p>
+    @switch (phase()) {
+      @case ("select") {
+        <h2 i18n>Generate File from Template</h2>
+        <p>
+          <span i18n>
+            Select the template based on which to generate a file for the
+            current record or
+          </span>
+          <a
+            [routerLink]="configureTemplatesRoute()"
+            *appDisabledEntityOperation="{
+              entity: TemplateExport,
+              operation: 'update',
+            }"
+            matDialogClose
+            i18n
+            >configure available templates</a
+          >
+        </p>
 
-    <mat-form-field class="full-width">
-      <mat-label i18n>Template</mat-label>
-      <app-edit-entity
-        [formControl]="templateSelectionForm"
-        [entityType]="TemplateExport.ENTITY_TYPE"
-        [additionalFilter]="templateEntityFilter"
-        [disableCreateNew]="true"
-        placeholder="Select a file template"
-        i18n-placeholder
-      ></app-edit-entity>
-    </mat-form-field>
+        <mat-form-field class="full-width" floatLabel="always">
+          <mat-label i18n>Template</mat-label>
+          <app-edit-entity
+            [formControl]="templateSelectionForm"
+            [entityType]="TemplateExport.ENTITY_TYPE"
+            [additionalFilter]="templateEntityFilter"
+            [disableCreateNew]="true"
+            placeholder="Select a file template"
+            i18n-placeholder
+          ></app-edit-entity>
+        </mat-form-field>
+
+        @if (isBulk()) {
+          <mat-radio-group
+            [value]="combineIntoSinglePdf()"
+            (change)="combineIntoSinglePdf.set($event.value)"
+            class="flex-column"
+          >
+            <mat-radio-button [value]="false" i18n>
+              Create .zip file with multiple PDFs
+            </mat-radio-button>
+            <mat-radio-button
+              data-testid="combine-into-single-pdf"
+              [value]="true"
+              i18n
+            >
+              Combine all records into a single PDF
+            </mat-radio-button>
+          </mat-radio-group>
+        }
+      }
+
+      @case ("running") {
+        <p data-testid="template-export-progress">
+          @if (isBulk()) {
+            <span i18n>Generating files for {{ totalRecords() }} records…</span>
+          } @else {
+            <span i18n>Generating file…</span>
+          }
+        </p>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+
+      @default {
+        <div data-testid="template-export-summary">
+          @if (failures().length === 0) {
+            <p i18n>
+              Generated {{ totalRecords() }} of {{ totalRecords() }} files.
+            </p>
+          } @else {
+            <p i18n>
+              Generated {{ succeededCount() }} of {{ totalRecords() }} files.
+            </p>
+            <p i18n>Failed: {{ failedEntityNames() }}</p>
+          }
+        </div>
+      }
+    }
   }
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button
-    mat-raised-button
-    color="accent"
-    [disabled]="!templateSelectionForm.value || loadingRequestedFile()"
-    (click)="requestFile()"
-  >
-    <span i18n>Generate File</span>
-
-    @if (loadingRequestedFile()) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  @switch (phase()) {
+    @case ("select") {
+      <button
+        mat-raised-button
+        color="accent"
+        [disabled]="!templateSelectionForm.value"
+        (click)="requestFile()"
+      >
+        <span i18n>Generate File</span>
+      </button>
+      <button mat-stroked-button i18n [matDialogClose]="false">Cancel</button>
     }
-  </button>
 
-  <button mat-stroked-button i18n [matDialogClose]="false">Cancel</button>
+    @case ("running") {
+      <!-- no actions while rendering -->
+    }
+
+    @default {
+      <button mat-raised-button color="accent" [matDialogClose]="true" i18n>
+        Close
+      </button>
+    }
+  }
 </mat-dialog-actions>
