@@ -722,8 +722,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="263"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:263</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="281"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:281</a></div>
                         </td>
                     </tr>
 
@@ -871,7 +871,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:269</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:287</a></code>
 </div>
                         </td>
                     </tr>
@@ -948,7 +948,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:292</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:310</a></code>
 </div>
                         </td>
                     </tr>
@@ -2318,10 +2318,11 @@ export class RemotePouchDatabase extends PouchDatabase {
   private readonly TRANSIENT_ERROR_DELAY_MS &#x3D; 2000;
 
   /**
-   * Per-request timeout in ms. If the server sends no response within this
-   * window, the fetch is aborted. This prevents long-idle connections from
-   * being killed unpredictably by Chrome (ERR_NETWORK_CHANGED) or proxies.
-   * PouchDB will retry from its last checkpoint on abort.
+   * Per-request timeout in ms for READ requests only. If the server sends no
+   * response within this window, the read fetch is aborted (and retried). This
+   * prevents long-idle connections from being killed unpredictably by Chrome
+   * (ERR_NETWORK_CHANGED) or proxies. Writes are never aborted or retried — see
+   * fetchWithTransientRetry.
    */
   private readonly FETCH_TIMEOUT_MS &#x3D; 15000;
 
@@ -2405,11 +2406,28 @@ export class RemotePouchDatabase extends PouchDatabase {
    * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED)
    * and a per-request timeout to abort long-idle connections cleanly.
    * Network errors manifest as TypeErrors from the Fetch API.
+   *
+   * Only safe/idempotent read methods (GET, HEAD) get the abort timeout and the
+   * transient-error retry. Non-idempotent writes (PUT, POST, DELETE) are run
+   * exactly once with no client-side timeout: a write may have already committed
+   * on the server even when the client never sees the response, so aborting or
+   * retrying it can turn a &quot;create&quot; into a forbidden &quot;update&quot; (the public role is
+   * create-only) or create a duplicate — surfacing as spurious &quot;unauthorized&quot;
+   * errors. Letting the write run to completion ensures the client reliably
+   * learns the new &#x60;_rev&#x60;.
    */
   private async fetchWithTransientRetry(
     url: string,
     opts: RequestInit,
   ): Promise&lt;Response&gt; {
+    const method &#x3D; (opts.method ?? &quot;GET&quot;).toUpperCase();
+    const isSafeMethod &#x3D; method &#x3D;&#x3D;&#x3D; &quot;GET&quot; || method &#x3D;&#x3D;&#x3D; &quot;HEAD&quot;;
+
+    if (!isSafeMethod) {
+      // Write: run once, to completion, without abort timeout or retry.
+      return PouchDB.fetch(url, opts);
+    }
+
     for (let attempt &#x3D; 0; ; attempt++) {
       const controller &#x3D; new AbortController();
       const timeoutId &#x3D; setTimeout(

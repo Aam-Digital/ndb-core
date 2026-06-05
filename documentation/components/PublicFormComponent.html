@@ -304,8 +304,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="124"
-                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:124</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -637,6 +637,15 @@ export class PublicFormComponent&lt;E extends Entity&gt; implements OnInit {
     }
     try {
       for (const entry of this.entityFormEntries()) {
+        // Skip entries that were already saved in a previous submit attempt.
+        // After a successful save the entity has a &#x60;_rev&#x60; (isNew &#x3D;&#x3D;&#x3D; false).
+        // Re-saving it would be treated as an &quot;update&quot; — which the &quot;public&quot;
+        // role is not permitted to do (it only has &quot;create&quot;) — and would also
+        // risk creating a duplicate. This makes a retry after a partially
+        // successful submission resume cleanly instead of failing.
+        if (entry.entity &amp;&amp; !entry.entity.isNew) {
+          continue;
+        }
         entry.entity.created &#x3D; new UpdateMetadata(formMetadataBy);
         await this.entityFormService.saveChanges(entry.form, entry.entity);
       }
