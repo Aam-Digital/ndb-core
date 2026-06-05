@@ -238,8 +238,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="154"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:154</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:156</a></div>
                         </td>
                     </tr>
 
@@ -315,8 +315,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="168"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:168</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:170</a></div>
                         </td>
                     </tr>
 
@@ -386,8 +386,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="195"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:195</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="197"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:197</a></div>
                         </td>
                     </tr>
 
@@ -706,7 +706,7 @@ export function buildExportColumnResolvers(
   return resolvers;
 }
 
-export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot; | &quot;xlsx&quot;;
+export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot; | &quot;xlsx&quot; | &quot;zip&quot;;
 
 /**
  * This service allows to start a download process from the browser.
@@ -792,6 +792,8 @@ export class DownloadService {
         return this.createXlsx(data);
       case &quot;pdf&quot;:
         return new Blob([data], { type: &quot;application/pdf&quot; });
+      case &quot;zip&quot;:
+        return new Blob([data], { type: &quot;application/zip&quot; });
       default:
         Logging.warn(&#x60;Not supported format: ${format}&#x60;);
         return new Blob([&quot;&quot;]);

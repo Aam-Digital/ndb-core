@@ -687,13 +687,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/TemplateExportModule.html" data-type="entity-link" >TemplateExportModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' }>
+                                        'data-bs-target="#injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' :
-                                        'id="xs-injectables-links-module-TemplateExportModule-66c1529a6a8470546cdff000a060d0940d71cc1a8b9a85b408b78ac814203b78308f6fa640b7b5acc6f3769c00baef94a97962b4e11db1d6e6f9d0ac7c927c40"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' :
+                                        'id="xs-injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' }>
                                         <li class="link">
                                             <a href="injectables/TemplateExportFileDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >TemplateExportFileDatatype</a>
                                         </li>
@@ -2706,7 +2706,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/TableRow.html" data-type="entity-link" >TableRow</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/TemplateExportBatchResult.html" data-type="entity-link" >TemplateExportBatchResult</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/TemplateExportResult.html" data-type="entity-link" >TemplateExportResult</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/TemplateRenderBatchRequestDto.html" data-type="entity-link" >TemplateRenderBatchRequestDto</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateRenderRequestDto.html" data-type="entity-link" >TemplateRenderRequestDto</a>

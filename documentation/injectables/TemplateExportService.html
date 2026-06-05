@@ -202,22 +202,23 @@ generate files based on a file template from an entity.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>generateFile(entity: <a href="../classes/Entity.html" target="_self">Entity | Object</a>)</code>
+                    <code>generateFile(entity: <a href="../classes/Entity.html" target="_self">Entity | Entity[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="26"
-                                    class="link-to-prism">src/app/features/template-export/template-export-service/template-export.service.ts:26</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/features/template-export/template-export-service/template-export.service.ts:27</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Open a dialog for the user to select a template and generate a file from it for the given entity.</p>
+                        <div class="io-description"><p>Open a dialog for the user to select a template and generate a file from it
+for the given entity, or for each entity in an array (bulk mode).</p>
 </div>
 
                             <div class="io-description">
@@ -236,7 +237,7 @@ generate files based on a file template from an entity.</p>
                                         <tr>
                                                 <td>entity</td>
                                             <td>
-                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | Object</a></code>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | Entity[]</a></code>
                                             </td>
 
                                             <td>
@@ -245,7 +246,7 @@ generate files based on a file template from an entity.</p>
 
 
                                             <td>
-                                                    <p>The entity or other data object to provide placeholder values for the template</p>
+                                                    <p>The entity (or array of entities) providing data for the template</p>
 
                                             </td>
                                         </tr>
@@ -257,7 +258,7 @@ generate files based on a file template from an entity.</p>
 
                         </div>
                             <div class="io-description">
-                                <p>Boolean whether the action was successfully completed</p>
+                                <p>Boolean whether the action was successfully triggered</p>
 
                             </div>
                 </td>
@@ -286,8 +287,8 @@ generate files based on a file template from an entity.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/features/template-export/template-export-service/template-export.service.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">src/app/features/template-export/template-export-service/template-export.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -330,11 +331,12 @@ export class TemplateExportService {
   private readonly httpClient &#x3D; inject(HttpClient);
 
   /**
-   * Open a dialog for the user to select a template and generate a file from it for the given entity.
-   * @param entity The entity or other data object to provide placeholder values for the template
-   * @return Boolean whether the action was successfully completed
+   * Open a dialog for the user to select a template and generate a file from it
+   * for the given entity, or for each entity in an array (bulk mode).
+   * @param entity The entity (or array of entities) providing data for the template
+   * @return Boolean whether the action was successfully triggered
    */
-  async generateFile(entity: Entity | Object): Promise&lt;boolean&gt; {
+  async generateFile(entity: Entity | Entity[]): Promise&lt;boolean&gt; {
     this.dialog.open(TemplateExportSelectionDialogComponent, { data: entity });
 
     return true;

@@ -116,7 +116,7 @@
   <li class="breadcrumb-item">Interfaces</li>
   <li class="breadcrumb-item"
   >
-  TemplateRenderRequestDto</li>
+  TemplateExportBatchResult</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -144,14 +144,6 @@
         </p>
 
 
-            <p class="comment">
-                <h3>Description</h3>
-            </p>
-            <p class="comment">
-                <p>Format of API request body to render a PDF from a template.
-TemplateId is provided via URL path.</p>
-
-            </p>
 
 
         <section data-compodoc="block-index">
@@ -167,15 +159,15 @@ TemplateId is provided via URL path.</p>
                         <td class="col-md-4">
                             <ul class="index-list">
                                 <li>
-                                        <a href="#convertTo" 
+                                        <a href="#file" 
 >
-                                            convertTo
+                                            file
                                         </a>
                                 </li>
                                 <li>
-                                        <a href="#data" 
+                                        <a href="#filename" 
 >
-                                            data
+                                            filename
                                         </a>
                                 </li>
                             </ul>
@@ -193,9 +185,9 @@ TemplateId is provided via URL path.</p>
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="convertTo"></a>
-                                        <span class="name "><b>convertTo</b>
-                                            <a href="#convertTo">
+                                        <a name="file"></a>
+                                        <span class="name "><b>file</b>
+                                            <a href="#file">
                                                 <span class="icon ion-ios-link"></span>
                                             </a>
                                         </span>
@@ -203,7 +195,40 @@ TemplateId is provided via URL path.</p>
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>convertTo:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                        <code>file:     <code>ArrayBuffer</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>ArrayBuffer</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="filename"></a>
+                                        <span class="name "><b>filename</b>
+                                            <a href="#filename">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>filename:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 </code>
                                     </td>
                                 </tr>
@@ -220,51 +245,6 @@ TemplateId is provided via URL path.</p>
 
 
 
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-description"><p>target file type (e.g. &quot;pdf&quot;)</p>
-</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="data"></a>
-                                        <span class="name "><b>data</b>
-                                            <a href="#data">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>data:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank" >Object</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank" >Object</a></code>
-
-                                        </td>
-                                    </tr>
-
-
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-description"><p>The data used to fill placeholders in the template.</p>
-</div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -520,7 +500,7 @@ export class TemplateExportApiService extends FileService {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'TemplateRenderRequestDto.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'TemplateExportBatchResult.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

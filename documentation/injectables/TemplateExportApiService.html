@@ -210,6 +210,9 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                <a href="#generateBatchFromTemplate" >generateBatchFromTemplate</a>
+                            </li>
+                            <li>
                                 <a href="#generatePdfFromTemplate" >generatePdfFromTemplate</a>
                             </li>
                             <li>
@@ -258,6 +261,127 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="generateBatchFromTemplate"></a>
+                    <span class="name">
+                        <span ><b>generateBatchFromTemplate</b></span>
+                        <a href="#generateBatchFromTemplate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generateBatchFromTemplate(template: <a href="../classes/TemplateExport.html" target="_self">TemplateExport</a>, dataList: Object[], mode: "zip" | "combined")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="178"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:178</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Generate output from one template for many records in a single request.</p>
+<p>Both modes go through the template engine&#39;s native batch rendering — the backend
+just forwards the request:</p>
+<ul>
+<li><code>mode: &quot;zip&quot;</code> (default): N independent files packaged in a ZIP archive.</li>
+<li><code>mode: &quot;combined&quot;</code>: N rendered files merged into a single multi-page PDF.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>template</td>
+                                            <td>
+                                                            <code><a href="../classes/TemplateExport.html" target="_self" >TemplateExport</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The TemplateExport entity to render</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>dataList</td>
+                                            <td>
+                                                        <code>Object[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The array of data objects (typically entities) to apply to the template</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>mode</td>
+                                            <td>
+                                                        <code>&quot;zip&quot; | &quot;combined&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;zip&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>How the backend should aggregate the output</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/TemplateExportBatchResult.html" target="_self" >Observable&lt;TemplateExportBatchResult&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The generated file (ZIP or PDF) and a derived filename</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="generatePdfFromTemplate"></a>
                     <span class="name">
                         <span ><b>generatePdfFromTemplate</b></span>
@@ -267,15 +391,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>generatePdfFromTemplate(templateEntityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, data: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank">Object</a>)</code>
+<code>generatePdfFromTemplate(template: <a href="../classes/TemplateExport.html" target="_self">TemplateExport</a>, data: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank">Object</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="118"
-                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:118</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="132"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:132</a></div>
                         </td>
                     </tr>
 
@@ -299,9 +423,9 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>templateEntityId</td>
+                                                <td>template</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                            <code><a href="../classes/TemplateExport.html" target="_self" >TemplateExport</a></code>
                                             </td>
 
                                             <td>
@@ -310,7 +434,7 @@
 
 
                                             <td>
-                                                    <p>The id of the TemplateExport entity (not the template ID of the PDF API)</p>
+                                                    <p>The TemplateExport entity to render</p>
 
                                             </td>
                                         </tr>
@@ -374,7 +498,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:85</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:99</a></code>
 </div>
                         </td>
                     </tr>
@@ -459,7 +583,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:92</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:106</a></code>
 </div>
                         </td>
                     </tr>
@@ -544,7 +668,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:103</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:117</a></code>
 </div>
                         </td>
                     </tr>
@@ -617,7 +741,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:97</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:111</a></code>
 </div>
                         </td>
                     </tr>
@@ -702,7 +826,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:64</a></code>
+                                <div class="io-line">Defined in         <code><a href="../injectables/FileService.html#source" target="_self" >FileService:78</a></code>
 </div>
                         </td>
                     </tr>
@@ -997,7 +1121,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:51</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -1321,7 +1445,21 @@ interface TemplateRenderRequestDto {
   data: Object;
 }
 
+/**
+ * Format of API request body to render a batch of files from one template.
+ * &#x60;data&#x60; is an array of records; the backend will render each one and return a ZIP.
+ */
+interface TemplateRenderBatchRequestDto {
+  convertTo: string;
+  data: Object[];
+}
+
 export interface TemplateExportResult {
+  filename: string;
+  file: ArrayBuffer;
+}
+
+export interface TemplateExportBatchResult {
   filename: string;
   file: ArrayBuffer;
 }
@@ -1398,17 +1536,17 @@ export class TemplateExportApiService extends FileService {
 
   /**
    * Generate a PDF applying actual data to an existing template.
-   * @param templateEntityId The id of the TemplateExport entity (not the template ID of the PDF API)
+   * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
    * @return An array buffer of the generated PDF
    */
   generatePdfFromTemplate(
-    templateEntityId: string,
+    template: TemplateExport,
     data: Object,
   ): Observable&lt;TemplateExportResult&gt; {
     return this.httpClient
       .post(
-        this.API_URL + &quot;/render/&quot; + templateEntityId,
+        this.API_URL + &quot;/render/&quot; + template.getId(),
         {
           convertTo: &quot;pdf&quot;,
           data: data,
@@ -1422,15 +1560,60 @@ export class TemplateExportApiService extends FileService {
             res.headers.get(&quot;Content-Disposition&quot;),
           ).match(/filename&#x3D;&quot;(.+)&quot;/);
 
-          let fileName: string;
-          if (filenameMatch &amp;&amp; filenameMatch.length &gt; 1) {
-            fileName &#x3D; filenameMatch[1];
-          } else {
-            fileName &#x3D; templateEntityId.replace(&quot;:&quot;, &quot;_&quot;);
-          }
+          const fileName &#x3D;
+            filenameMatch &amp;&amp; filenameMatch.length &gt; 1
+              ? filenameMatch[1]
+              : template.title;
 
           return {
             filename: fileName,
+            file: res.body,
+          };
+        }),
+      );
+  }
+
+  /**
+   * Generate output from one template for many records in a single request.
+   *
+   * Both modes go through the template engine&#x27;s native batch rendering — the backend
+   * just forwards the request:
+   * - &#x60;mode: &quot;zip&quot;&#x60; (default): N independent files packaged in a ZIP archive.
+   * - &#x60;mode: &quot;combined&quot;&#x60;: N rendered files merged into a single multi-page PDF.
+   *
+   * @param template The TemplateExport entity to render
+   * @param dataList The array of data objects (typically entities) to apply to the template
+   * @param mode How the backend should aggregate the output
+   * @return The generated file (ZIP or PDF) and a derived filename
+   */
+  generateBatchFromTemplate(
+    template: TemplateExport,
+    dataList: Object[],
+    mode: &quot;zip&quot; | &quot;combined&quot; &#x3D; &quot;zip&quot;,
+  ): Observable&lt;TemplateExportBatchResult&gt; {
+    const fallbackExtension &#x3D; mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;;
+    return this.httpClient
+      .post(
+        this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
+        {
+          convertTo: &quot;pdf&quot;,
+          data: dataList,
+        } as TemplateRenderBatchRequestDto,
+        { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
+      )
+      .pipe(
+        switchMap(async (res: HttpResponse&lt;ArrayBuffer&gt;) &#x3D;&gt; {
+          const disposition &#x3D; res.headers.get(&quot;Content-Disposition&quot;);
+          const filenameMatch &#x3D; disposition
+            ? decodeURIComponent(disposition).match(/filename&#x3D;&quot;?([^&quot;;]+)&quot;?/)
+            : null;
+          const filename &#x3D;
+            filenameMatch &amp;&amp; filenameMatch.length &gt; 1
+              ? filenameMatch[1]
+              : template.title + fallbackExtension;
+
+          return {
+            filename,
             file: res.body,
           };
         }),

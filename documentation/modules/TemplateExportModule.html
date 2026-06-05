@@ -278,7 +278,8 @@ export class TemplateExportModule {
         icon: &quot;print&quot;,
         tooltip: $localize&#x60;:entity context menu tooltip:Create a file based on a selected template.&#x60;,
         permission: &quot;read&quot;,
-        execute: async (e: Entity) &#x3D;&gt; templateExportService.generateFile(e),
+        execute: async (e: Entity | Entity[]) &#x3D;&gt;
+          templateExportService.generateFile(e),
         visible: async () &#x3D;&gt; {
           const session &#x3D; sessionSubject.value;
           if (!session) return false;
