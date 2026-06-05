@@ -38,14 +38,22 @@
         </mat-form-field>
 
         @if (isBulk()) {
-          <mat-checkbox
-            data-testid="combine-into-single-pdf"
-            [checked]="combineIntoSinglePdf()"
-            (change)="combineIntoSinglePdf.set($event.checked)"
-            i18n
+          <mat-radio-group
+            [value]="combineIntoSinglePdf()"
+            (change)="combineIntoSinglePdf.set($event.value)"
+            class="flex-column"
           >
-            Combine all records into a single PDF
-          </mat-checkbox>
+            <mat-radio-button [value]="false" i18n>
+              Create .zip file with multiple PDFs
+            </mat-radio-button>
+            <mat-radio-button
+              data-testid="combine-into-single-pdf"
+              [value]="true"
+              i18n
+            >
+              Combine all records into a single PDF
+            </mat-radio-button>
+          </mat-radio-group>
         }
       }
 

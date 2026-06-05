@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
-import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatRadioModule } from "@angular/material/radio";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -53,7 +53,7 @@ import { TemplateExport } from "../template-export.entity";
     FeatureDisabledInfoComponent,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatCheckboxModule,
+    MatRadioModule,
   ],
   templateUrl: "./template-export-selection-dialog.component.html",
   styleUrl: "./template-export-selection-dialog.component.scss",
