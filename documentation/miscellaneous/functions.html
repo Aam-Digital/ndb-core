@@ -529,6 +529,9 @@
                             <a href="#normalizeEntityAdditional" title="src/app/core/basic-datatypes/entity/entity.datatype.ts" ><b>normalizeEntityAdditional</b>&nbsp;&nbsp;&nbsp;(src/.../entity.datatype.ts)</a>
                         </li>
                         <li>
+                            <a href="#normalizeQueryKey" title="src/app/core/export/data-transformation-service/export-column-config.ts" ><b>normalizeQueryKey</b>&nbsp;&nbsp;&nbsp;(src/.../export-column-config.ts)</a>
+                        </li>
+                        <li>
                             <a href="#normalizeRoutePath" title="src/app/core/config/dynamic-routing/route-paths.ts" ><b>normalizeRoutePath</b>&nbsp;&nbsp;&nbsp;(src/.../route-paths.ts)</a>
                         </li>
                         <li>
@@ -11005,6 +11008,72 @@ Ensures both numbers and strings are treated consistently.</p>
                             <div class="io-description">
                                 <p>The normalized value as a string.</p>
 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/export/data-transformation-service/export-column-config.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="normalizeQueryKey"></a>
+                    <span class="name">
+                        <span ><b>normalizeQueryKey</b></span>
+                        <a href="#normalizeQueryKey"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>normalizeQueryKey(query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Normalize a query key used in export column configs.
+Strips a leading dot if present so callers can compare logical field keys.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>

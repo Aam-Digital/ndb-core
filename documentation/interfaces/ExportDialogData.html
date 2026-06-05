@@ -166,6 +166,13 @@
                                 </li>
                                 <li>
                                             <span class="modifier">Optional</span>
+                                        <a href="#columnGroups" 
+>
+                                            columnGroups
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
                                         <a href="#exportConfig" 
 >
                                             exportConfig
@@ -182,6 +189,13 @@
                                         <a href="#filteredData" 
 >
                                             filteredData
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#preselectedExportConfig" 
+>
+                                            preselectedExportConfig
                                         </a>
                                 </li>
                             </ul>
@@ -232,6 +246,44 @@
 </div>
                                 </td>
                             </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="columnGroups"></a>
+                                        <span class="name "><b>columnGroups</b>
+                                            <a href="#columnGroups">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>columnGroups:         <code><a href="../interfaces/ColumnGroupsConfig.html" target="_self" >ColumnGroupsConfig</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/ColumnGroupsConfig.html" target="_self" >ColumnGroupsConfig</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -350,6 +402,44 @@ When omitted, the scope selector is hidden and allEntities are exported directly
                             </tr>
                         </tbody>
                     </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="preselectedExportConfig"></a>
+                                        <span class="name "><b>preselectedExportConfig</b>
+                                            <a href="#preselectedExportConfig">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>preselectedExportConfig:         <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
             </section>
     </div>
 
@@ -358,6 +448,7 @@ When omitted, the scope selector is hidden and allEntities are exported directly
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from &quot;@angular/core&quot;;
@@ -368,16 +459,22 @@ import {
 } from &quot;@angular/material/dialog&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatSelectModule } from &quot;@angular/material/select&quot;;
 import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
 import { MatRadioModule } from &quot;@angular/material/radio&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { BasicAutocompleteComponent } from &quot;../../common-components/basic-autocomplete/basic-autocomplete.component&quot;;
 import { DialogCloseComponent } from &quot;../../common-components/dialog-close/dialog-close.component&quot;;
 import {
   DownloadService,
   FileDownloadFormat,
 } from &quot;../download-service/download.service&quot;;
-import { ExportColumnConfig } from &quot;../data-transformation-service/export-column-config&quot;;
+import {
+  ExportColumnConfig,
+  normalizeQueryKey,
+} from &quot;../data-transformation-service/export-column-config&quot;;
+import { ColumnGroupsConfig } from &quot;../../entity-list/EntityListConfig&quot;;
 
 export interface ExportDialogData {
   /** All records (unfiltered, permissions-limited) */
@@ -388,7 +485,9 @@ export interface ExportDialogData {
    */
   filteredData?: any[];
   exportConfig?: ExportColumnConfig[];
+  preselectedExportConfig?: ExportColumnConfig[];
   filename: string;
+  columnGroups?: ColumnGroupsConfig;
 }
 
 /**
@@ -397,14 +496,17 @@ export interface ExportDialogData {
 @Component({
   selector: &quot;app-export-dialog&quot;,
   templateUrl: &quot;./export-dialog.component.html&quot;,
+  styleUrls: [&quot;./export-dialog.component.scss&quot;],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatSelectModule,
     MatProgressBarModule,
     MatRadioModule,
     FormsModule,
+    BasicAutocompleteComponent,
     DialogCloseComponent,
   ],
 })
@@ -419,7 +521,91 @@ export class ExportDialogComponent {
   isLoading &#x3D; signal&lt;boolean&gt;(false);
   downloadError &#x3D; signal&lt;string | null&gt;(null);
 
+  /** All available export column options (deduped, excludes internal fields). */
+  availableColumns: ExportColumnConfig[] &#x3D; this.buildAvailableColumns();
+
+  /** Selected export column keys in the order chosen by the user (undefined &#x3D; use default passed config). */
+  selectedColumnKeys &#x3D; signal&lt;string[] | undefined&gt;(
+    (this.data.preselectedExportConfig ?? this.data.exportConfig)?.map((c) &#x3D;&gt;
+      normalizeQueryKey(c.query),
+    ),
+  );
+
+  /** Column groups passed from the list (admin-configured) */
+  columnGroups &#x3D; this.data.columnGroups;
+
+  /** Currently selected column group name (if any) */
+  selectedGroupName &#x3D; signal&lt;string | undefined&gt;(
+    this.columnGroups &amp;&amp; this.columnGroups.groups.length &gt; 0
+      ? this.columnGroups.groups[0].name
+      : undefined,
+  );
+
+  applyColumnGroup(groupName?: string) {
+    if (!groupName || !this.columnGroups) return;
+    const grp &#x3D; this.columnGroups.groups.find((g) &#x3D;&gt; g.name &#x3D;&#x3D;&#x3D; groupName);
+    if (!grp) return;
+    // Map group columns to normalized keys and set selection
+    this.selectedColumnKeys.set(grp.columns.map((c) &#x3D;&gt; normalizeQueryKey(c)));
+  }
+
+  selectedColumnCount &#x3D; computed(() &#x3D;&gt; {
+    const keys &#x3D; this.selectedColumnKeys();
+    if (keys !&#x3D;&#x3D; undefined) {
+      return keys.length;
+    }
+    return this.availableColumns.length;
+  });
+
+  columnToString &#x3D; (col: ExportColumnConfig) &#x3D;&gt; col.label ?? col.query;
+  columnToValue &#x3D; (col: ExportColumnConfig) &#x3D;&gt; normalizeQueryKey(col.query);
+
+  clearSelection() {
+    this.selectedColumnKeys.set([]);
+  }
+
+  includeAll() {
+    this.selectedColumnKeys.set(
+      this.availableColumns.map((c) &#x3D;&gt; normalizeQueryKey(c.query)),
+    );
+  }
+
+  // using shared normalizeQueryKey()
+
+  private buildAvailableColumns(): ExportColumnConfig[] {
+    const configs &#x3D; this.data.exportConfig ?? [];
+    const out: ExportColumnConfig[] &#x3D; [];
+    const seen &#x3D; new Set&lt;string&gt;();
+    for (const c of configs) {
+      const key &#x3D; normalizeQueryKey(c.query);
+      if (key.startsWith(&quot;_&quot;)) continue;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push(c);
+      }
+    }
+    return out;
+  }
+
+  private columnsFromKeys(keys: string[]): ExportColumnConfig[] {
+    const byKey &#x3D; new Map&lt;string, ExportColumnConfig&gt;();
+    for (const c of this.availableColumns) {
+      byKey.set(normalizeQueryKey(c.query), c);
+    }
+    return keys
+      .map((k) &#x3D;&gt; byKey.get(normalizeQueryKey(k)))
+      .filter((c): c is ExportColumnConfig &#x3D;&gt; !!c);
+  }
+
   async download() {
+    // Only block when an explicit exportConfig was provided (columns UI visible).
+    if (this.data.exportConfig &amp;&amp; this.selectedColumnCount() &#x3D;&#x3D;&#x3D; 0) {
+      this.downloadError.set(
+        $localize&#x60;Please select at least one column before downloading.&#x60;,
+      );
+      return;
+    }
+
     this.isLoading.set(true);
     this.downloadError.set(null);
     await new Promise&lt;void&gt;((resolve) &#x3D;&gt; setTimeout(resolve));
@@ -432,7 +618,9 @@ export class ExportDialogComponent {
         exportData,
         this.format(),
         this.data.filename,
-        this.data.exportConfig,
+        this.selectedColumnKeys() &#x3D;&#x3D;&#x3D; undefined
+          ? this.data.exportConfig
+          : this.columnsFromKeys(this.selectedColumnKeys() ?? []),
       );
       this.dialogRef.close();
     } catch (e) {

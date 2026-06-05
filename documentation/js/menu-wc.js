@@ -1995,6 +1995,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/EscoApiService.html" data-type="entity-link" >EscoApiService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/ExportColumnsService.html" data-type="entity-link" >ExportColumnsService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/ExternalProfileDatatype.html" data-type="entity-link" >ExternalProfileDatatype</a>
                                 </li>
                                 <li class="link">
@@ -2263,6 +2266,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/BooleanFilterConfig.html" data-type="entity-link" >BooleanFilterConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/BuildExportColumnsOptions.html" data-type="entity-link" >BuildExportColumnsOptions</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/BuildExportColumnsResult.html" data-type="entity-link" >BuildExportColumnsResult</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/BulkEditAction.html" data-type="entity-link" >BulkEditAction</a>
