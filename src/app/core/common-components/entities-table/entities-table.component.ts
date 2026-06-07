@@ -193,7 +193,7 @@ export class EntitiesTableComponent<
   });
 
   // --- Loading state ---
-  readonly isLoading = signal(true);
+  readonly isLoading = signal(false);
 
   // --- Material DataSource (for paginator interop) ---
   recordsDataSource: MatTableDataSource<TableRow<T>>;

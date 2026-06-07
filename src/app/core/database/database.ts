@@ -94,7 +94,8 @@ export abstract class Database {
   abstract find(
     prefix: string,
     query: any,
-    options?: { limit?: number; skip?: number },
+    limit?: number,
+    skip?: number,
   ): Promise<any>;
 
   /**

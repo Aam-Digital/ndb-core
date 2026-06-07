@@ -29,7 +29,7 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
     this.paginatorRef = paginator;
     this.paginatorRef.initialized.subscribe(() => {
       this.pageSize = this.paginatorRef.pageSize;
-      this.pageSize = this.paginatorRef.pageIndex;
+      this.pageIndex = this.paginatorRef.pageIndex;
       this.loadData();
     });
     this.paginatorRef.page.subscribe((val) => {
@@ -41,10 +41,12 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
 
   private loadData() {
     this.entityMapper
-      .findType(this.entityType, this._dataFilter, {
-        limit: this.pageSize + 1,
-        skip: this.pageSize * this.pageIndex,
-      })
+      .findType(
+        this.entityType,
+        this._dataFilter,
+        this.pageSize + 1,
+        this.pageSize * this.pageIndex,
+      )
       .then((res) => {
         super.data = res.map((record) => ({ record })).slice(0, this.pageSize);
         // TODO get total amount of elements
