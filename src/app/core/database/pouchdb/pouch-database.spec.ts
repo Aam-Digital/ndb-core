@@ -327,6 +327,9 @@ describe("PouchDatabase tests", () => {
 
     docs = await database.find("User", { num: { $gt: 1 } });
     expect(docs).toHaveLength(2);
+
+    docs = await database.find("User", {}, { limit: 2, skip: 1 });
+    expect(docs.map((doc) => doc.num)).toEqual([2, 3]);
   });
 
   describe("purge", () => {

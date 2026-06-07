@@ -368,13 +368,17 @@ export class PouchDatabase extends Database {
     this.databaseInitialized = new Subject();
   }
 
-  find(prefix = "", query = {}): Promise<any> {
+  find(
+    prefix = "",
+    query = {},
+    options: { limit?: number; skip?: number } = {},
+  ): Promise<any> {
     const entityQuery = {
       _id: { $lt: `${prefix}:\ufff0`, $gte: `${prefix}:` },
       ...query,
     };
     return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.find({ selector: entityQuery }))
+      .then((pouchDB) => pouchDB.find({ selector: entityQuery, ...options }))
       .then((res) => res.docs)
       .catch((err) => {
         throw new DatabaseException(err);
