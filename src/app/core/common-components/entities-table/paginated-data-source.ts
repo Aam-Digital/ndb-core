@@ -4,6 +4,7 @@ import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
   TableRow<T>
@@ -11,6 +12,16 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
   private sortRef: MatSort;
   override set sort(sort: MatSort) {
     this.sortRef = sort;
+  }
+
+  private _dataFilter: DataFilter<T>;
+  set dataFiler(filter: DataFilter<T>) {
+    // TODO isActive filter is not possible as this is not saved to database
+    delete filter["isActive"];
+    this.entityMapper.findType(this.entityType, filter).then((res) => {
+      super.data = res.map((record) => ({ record }));
+    });
+    this._dataFilter = filter;
   }
 
   private paginatorRef: MatPaginator;

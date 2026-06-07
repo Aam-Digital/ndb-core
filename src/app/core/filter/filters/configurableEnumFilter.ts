@@ -18,7 +18,7 @@ export class ConfigurableEnumFilter<
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
-        filter: { [name + ".id"]: enumValue.id } as DataFilter<T>,
+        filter: { [name]: enumValue.id } as DataFilter<T>,
       })),
       ...invalidOptions,
     ];

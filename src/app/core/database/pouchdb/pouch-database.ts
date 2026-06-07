@@ -375,6 +375,7 @@ export class PouchDatabase extends Database {
     };
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.find({ selector: entityQuery }))
+      .then((res) => res.docs)
       .catch((err) => {
         throw new DatabaseException(err);
       });

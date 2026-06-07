@@ -322,11 +322,11 @@ describe("PouchDatabase tests", () => {
     );
     await database.put({ _id: "OtherEntity:4", num: 4 });
 
-    let res = await database.find("User", {});
-    expect(res.docs).toHaveLength(3);
+    let docs = await database.find("User", {});
+    expect(docs).toHaveLength(3);
 
-    res = await database.find("User", { num: { $gt: 1 } });
-    expect(res.docs).toHaveLength(2);
+    docs = await database.find("User", { num: { $gt: 1 } });
+    expect(docs).toHaveLength(2);
   });
 
   describe("purge", () => {
