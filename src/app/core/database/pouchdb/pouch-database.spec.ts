@@ -316,6 +316,19 @@ describe("PouchDatabase tests", () => {
     expect(docs).toHaveLength(1);
   });
 
+  it("should allow to use mango queries", async () => {
+    await Promise.all(
+      [1, 2, 3].map((num) => database.put({ _id: `User:${num}`, num })),
+    );
+    await database.put({ _id: "OtherEntity:4", num: 4 });
+
+    let res = await database.find("User", {});
+    expect(res.docs).toHaveLength(3);
+
+    res = await database.find("User", { num: { $gt: 1 } });
+    expect(res.docs).toHaveLength(2);
+  });
+
   describe("purge", () => {
     it("should purge doc and emit changes deletion event", async () => {
       await database.put({ _id: "Child:2", name: "test" });

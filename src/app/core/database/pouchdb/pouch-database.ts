@@ -2,6 +2,7 @@ import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
+import pouchdbFind from "pouchdb-find";
 import { NgZone } from "@angular/core";
 import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
@@ -13,6 +14,7 @@ import { NotificationEvent } from "#src/app/features/notification/model/notifica
 
 // Register the newer "indexeddb" adapter alongside the default "idb" adapter
 PouchDB.plugin(indexeddbAdapter);
+PouchDB.plugin(pouchdbFind);
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -364,6 +366,18 @@ export class PouchDatabase extends Database {
     this.pouchDB = undefined;
     // keep this.changesFeed because some services are already subscribed to this reference
     this.databaseInitialized = new Subject();
+  }
+
+  find(prefix = "", query = {}): Promise<any> {
+    const entityQuery = {
+      _id: { $lt: `${prefix}:\ufff0`, $gte: `${prefix}:` },
+      ...query,
+    };
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) => pouchDB.find({ selector: entityQuery }))
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
