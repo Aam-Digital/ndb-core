@@ -18,6 +18,7 @@ export class ConfigurableEnumFilter<
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
+        // TODO this needs to support both in-memory filter as well as database
         filter: { [name]: enumValue.id } as DataFilter<T>,
       })),
       ...invalidOptions,

@@ -93,11 +93,12 @@ export class EntityMapperService {
   public async findType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     filter: DataFilter<T>,
+    options: { skip?: number; limit?: number } = {},
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
     const records = await this.dbResolver
       .getDatabase(ctor.DATABASE)
-      .find(ctor.ENTITY_TYPE, filter);
+      .find(ctor.ENTITY_TYPE, filter, options);
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 

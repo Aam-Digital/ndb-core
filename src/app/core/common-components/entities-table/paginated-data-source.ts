@@ -14,37 +14,41 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
     this.sortRef = sort;
   }
 
-  private _dataFilter: DataFilter<T>;
+  private _dataFilter: DataFilter<T> = {};
   set dataFiler(filter: DataFilter<T>) {
     // TODO isActive filter is not possible as this is not saved to database
     delete filter["isActive"];
-    this.entityMapper.findType(this.entityType, filter).then((res) => {
-      super.data = res.map((record) => ({ record }));
-    });
     this._dataFilter = filter;
+    this.loadData();
   }
 
+  private pageSize: number;
+  private pageIndex: number;
   private paginatorRef: MatPaginator;
   override set paginator(paginator: MatPaginator) {
     this.paginatorRef = paginator;
     this.paginatorRef.initialized.subscribe(() => {
-      this.loadData(this.paginatorRef.pageSize, this.paginatorRef.pageIndex);
+      this.pageSize = this.paginatorRef.pageSize;
+      this.pageSize = this.paginatorRef.pageIndex;
+      this.loadData();
     });
     this.paginatorRef.page.subscribe((val) => {
-      this.loadData(val.pageSize, val.pageIndex);
+      this.pageSize = val.pageSize;
+      this.pageIndex = val.pageIndex;
+      this.loadData();
     });
   }
 
-  private loadData(pageSize: number, pageIndex: number) {
+  private loadData() {
     this.entityMapper
-      .loadType(this.entityType, {
-        limit: pageSize + 1,
-        skip: pageSize * pageIndex,
+      .findType(this.entityType, this._dataFilter, {
+        limit: this.pageSize + 1,
+        skip: this.pageSize * this.pageIndex,
       })
       .then((res) => {
-        super.data = res.map((record) => ({ record })).slice(0, pageSize);
+        super.data = res.map((record) => ({ record })).slice(0, this.pageSize);
         // TODO get total amount of elements
-        this.paginatorRef.length = pageSize * pageIndex + res.length;
+        this.paginatorRef.length = this.pageSize * this.pageIndex + res.length;
       });
   }
 
