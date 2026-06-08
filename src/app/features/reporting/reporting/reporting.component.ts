@@ -20,7 +20,7 @@ import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { ReportEntity } from "../report-config";
+import { isHierarchicalReport, ReportEntity } from "../report-config";
 import {
   ReportCalculation,
   ReportCalculationError,
@@ -89,6 +89,10 @@ export class ReportingComponent {
   mode = computed<ReportEntity["mode"]>(
     () => this.currentReport()?.mode ?? "reporting",
   );
+  /** whether the current SQL report renders as a hierarchical group/count table */
+  isHierarchicalReport = computed(() =>
+    isHierarchicalReport(this.currentReport()),
+  );
 
   isLoading = signal(false);
   isError = signal(false);
@@ -103,6 +107,21 @@ export class ReportingComponent {
   });
 
   data = signal<any[]>([]);
+  /**
+   * Flat rows for the tabular `object-table` renderer.
+   *
+   * The backend wraps each query's result rows in an outer array (e.g. `[[ {..}, {..} ]]`),
+   * so a single-query (tabular) report arrives one level too deep. Flatten that wrapping
+   * into a plain row list; the hierarchical renderer keeps the nested shape via `flattenData`.
+   */
+  sqlTableRows = computed<any[]>(() => this.unwrapTabularRows(this.data()));
+
+  private unwrapTabularRows(data: any[]): any[] {
+    return (data ?? []).flatMap((item) =>
+      Array.isArray(item) ? item : [item],
+    );
+  }
+
   exportableData = computed<any>(() => {
     const data = this.data();
     if (data.length === 0) return undefined;
@@ -173,11 +192,11 @@ export class ReportingComponent {
     data: any[],
     report: ReportEntity | undefined,
   ): any {
-    return report?.version == 1
-      ? data
-      : this.sqlReportService.getCsvforV2(
+    return isHierarchicalReport(report)
+      ? this.sqlReportService.getCsvforV2(
           this.sqlReportService.flattenData(data),
-        );
+        )
+      : this.unwrapTabularRows(data);
   }
 
   private async getReportResults(
@@ -252,8 +271,7 @@ export class ReportingComponent {
       title: report.title,
       mode: report.mode,
     };
-    // explicitly map the relevant properties
-    if (report.version) reportDetails.version = report.version;
+    // explicitly map the relevant properties (canonical only; version is deprecated)
     if (report.reportDefinition)
       reportDetails.reportDefinition = report.reportDefinition;
     if (report.aggregationDefinition)

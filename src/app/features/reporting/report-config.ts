@@ -26,11 +26,13 @@ class ReportConfig extends Entity {
   @DatabaseField() mode?: string;
 
   /**
-   * version of ReportConfig syntax. Just relevant for SqlReports
+   * @deprecated (will be removed completely after server-side migration)
+   * Omitted for canonical configs (backend normalizes legacy v1 docs on read).
    */
-  @DatabaseField() version?: number = 1;
+  @DatabaseField() version?: number;
 
   /**
+   * @deprecated (will be removed completely after server-side migration)
    * (sql v1 only) list of arguments needed for the sql query. Placeholder "?" will be replaced.
    */
   @DatabaseField() neededArgs?: string[] = [];
@@ -38,8 +40,11 @@ class ReportConfig extends Entity {
   /** (reporting/exporting only, in browser reports) the definitions to calculate the report's aggregations */
   @DatabaseField() aggregationDefinitions: any[];
 
-  /** (sql v1 only) the definition to calculate the report */
-  @DatabaseField() aggregationDefinition: string | undefined;
+  /**
+   * @deprecated (will be removed completely after server-side migration)
+   * (sql v1 only) the definition to calculate the report
+   */
+  @DatabaseField() aggregationDefinition?: string;
 
   /**
    *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
@@ -109,19 +114,22 @@ export interface SqlReport extends ReportConfig {
   mode: "sql";
 
   /**
-   * version of the ReportConfiguration, currently 1 or 2
+   * @deprecated (will be removed completely after server-side migration)
+   * Legacy version field. Omitted in canonical configs; backend normalizes on read.
    */
-  version: number;
+  version?: number;
 
   /**
-   * a valid SQL SELECT statements, can contain "?" placeholder for arguments (only v1)
+   * @deprecated (will be removed completely after server-side migration)
+   * (v1 only) a valid SQL SELECT statement, can contain "?" or "$name" placeholders
    */
-  aggregationDefinition: string;
+  aggregationDefinition?: string;
 
   /**
-   * a list of arguments, passed into the sql statement (only v1)
+   * @deprecated (will be removed completely after server-side migration)
+   * (v1 only) list of argument names passed into the sql statement
    */
-  neededArgs: string[];
+  neededArgs?: string[];
 
   /**
    * see ReportConfig docs
@@ -134,4 +142,26 @@ export interface SqlReport extends ReportConfig {
    *  see ReportConfig docs
    */
   reportDefinition: ReportDefinitionDto[];
+}
+
+/**
+ * Whether a report's results should be rendered as a hierarchical group/count
+ * table (`sql-v2-table`) rather than a flat tabular table (`object-table`).
+ *
+ * Derived purely from the canonical config structure (no version flag):
+ * a report is hierarchical when its `reportDefinition` contains a group
+ * (`groupTitle`) or more than one top-level item; otherwise it is tabular.
+ * Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.
+ */
+export function isHierarchicalReport(
+  report: ReportEntity | undefined,
+): boolean {
+  const reportDefinition = report?.reportDefinition;
+  if (!reportDefinition?.length) {
+    return false;
+  }
+  return (
+    reportDefinition.length > 1 ||
+    reportDefinition.some((item) => !!item.groupTitle)
+  );
 }
