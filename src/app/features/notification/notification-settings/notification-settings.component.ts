@@ -66,9 +66,7 @@ export class NotificationSettingsComponent implements OnInit {
 
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
-  readonly accountEmail = toSignal(
-    this.sessionInfo.pipe(map((s) => s?.email)),
-  );
+  readonly accountEmail = toSignal(this.sessionInfo.pipe(map((s) => s?.email)));
   private readonly userEntity = inject(CurrentUserSubject);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly notificationService = inject(NotificationService);
