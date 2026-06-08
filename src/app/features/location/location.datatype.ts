@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { lastValueFrom } from "rxjs";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { GeoLocation } from "./geo-location";
-import { GeoResult, GeoService } from "./geo.service";
+import { OpenStreetMapsSearchResult, GeoService } from "./geo.service";
 import { LocationImportConfig } from "./location-import-config/location-import-config.component";
 
 @Injectable()
@@ -31,20 +31,22 @@ export class LocationDatatype extends DefaultDatatype<
       !value.hasOwnProperty("geoLookup")
     ) {
       value = {
-        geoLookup: value as unknown as GeoResult,
+        geoLookup: value as unknown as OpenStreetMapsSearchResult,
       };
     }
 
     // fix errors from broken migrations
     while (value?.geoLookup && "geoLookup" in value.geoLookup) {
-      value.geoLookup = (value.geoLookup as { geoLookup: GeoResult }).geoLookup;
+      value.geoLookup = (
+        value.geoLookup as { geoLookup: OpenStreetMapsSearchResult }
+      ).geoLookup;
     }
 
     if (!value.locationString) {
       value.locationString = value.geoLookup?.display_name ?? "";
     }
 
-    return value;
+    return this.geoService.enrichGeoLocation(value);
   }
 
   override async importMapFunction(
@@ -56,7 +58,7 @@ export class LocationDatatype extends DefaultDatatype<
       return undefined;
     }
 
-    let geoResults: GeoResult[] | undefined;
+    let geoResults: OpenStreetMapsSearchResult[] | undefined;
     if (!additional?.skipAddressLookup) {
       try {
         geoResults = await lastValueFrom(this.geoService.lookup(val));
@@ -65,9 +67,9 @@ export class LocationDatatype extends DefaultDatatype<
       }
     }
 
-    return {
+    return this.geoService.enrichGeoLocation({
       locationString: val,
       geoLookup: geoResults ? geoResults[0] : undefined,
-    };
+    });
   }
 }

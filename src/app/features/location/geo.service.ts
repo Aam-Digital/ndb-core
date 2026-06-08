@@ -21,6 +21,7 @@ import {
   map,
   tap,
 } from "rxjs/operators";
+import { enrichGeoLocation, GeoLocation } from "./geo-location";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -44,10 +45,10 @@ export class GeoService {
     email: environment.email,
   };
 
-  private readonly cache = new Map<string, GeoResult[]>();
+  private readonly cache = new Map<string, OpenStreetMapsSearchResult[]>();
   private readonly lookupQueue$ = new Subject<{
     term: string;
-    resolve: ReplaySubject<GeoResult[]>;
+    resolve: ReplaySubject<OpenStreetMapsSearchResult[]>;
   }>();
 
   constructor() {
@@ -89,16 +90,18 @@ export class GeoService {
    * Results are cached and requests are throttled to ≤1/sec per Nominatim policy.
    * @param searchTerm e.g. `Rollbergstraße Berlin`
    */
-  lookup(searchTerm: string): Observable<GeoResult[]> {
+  lookup(searchTerm: string): Observable<OpenStreetMapsSearchResult[]> {
     if (this.cache.has(searchTerm)) {
       return of(this.cache.get(searchTerm));
     }
-    const resolve = new ReplaySubject<GeoResult[]>(1);
+    const resolve = new ReplaySubject<OpenStreetMapsSearchResult[]>(1);
     this.lookupQueue$.next({ term: searchTerm, resolve });
     return resolve.asObservable();
   }
 
-  private fetchLookup(searchTerm: string): Observable<GeoResult[]> {
+  private fetchLookup(
+    searchTerm: string,
+  ): Observable<OpenStreetMapsSearchResult[]> {
     this.analytics.eventTrack("lookup_executed", {
       category: "Map",
       value: searchTerm.length,
@@ -119,9 +122,8 @@ export class GeoService {
         ),
       );
   }
-
   private getCity(addr: OpenStreetMapsSearchResult["address"]): string {
-    return addr.city ?? addr.town ?? "";
+    return addr.city ?? addr.village ?? addr.town ?? "";
   }
 
   private formatStreet(addr: OpenStreetMapsSearchResult["address"]): string {
@@ -141,7 +143,9 @@ export class GeoService {
     return "";
   }
 
-  reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
+  reformatDisplayName(
+    result: OpenStreetMapsSearchResult,
+  ): OpenStreetMapsSearchResult {
     const addr = result?.address;
     if (addr) {
       const displayParts = [
@@ -149,6 +153,12 @@ export class GeoService {
         this.formatStreet(addr),
         this.formatPostcodeCity(addr),
       ].filter((x) => !!x && x !== "undefined");
+
+      // Ensure a normalized `city` field for downstream consumers (use village/town as fallback)
+      const city = this.getCity(addr);
+      if (city && !addr.city) {
+        addr.city = city;
+      }
 
       result.display_name = displayParts.join(", ");
     }
@@ -159,11 +169,14 @@ export class GeoService {
    * Returns the location at the provided coordinates
    * @param coordinates of a place (`lat` and `lon`)
    */
-  reverseLookup(coordinates: Coordinates): Observable<GeoResult> {
-    const fallback: GeoResult = {
+  reverseLookup(
+    coordinates: Coordinates,
+  ): Observable<OpenStreetMapsSearchResult> {
+    const fallback: OpenStreetMapsSearchResult = {
       display_name: $localize`[selected coordinates: ${coordinates.lat} - ${coordinates.lon}]`,
       ...coordinates,
-    };
+      address: undefined,
+    } as OpenStreetMapsSearchResult;
 
     this.analytics.eventTrack("reverse_lookup_executed", {
       category: "Map",
@@ -182,10 +195,20 @@ export class GeoService {
         catchError(() => of(fallback)),
       );
   }
+
+  /**
+   * Enriches a GeoLocation with top-level address parts derived from its `geoLookup`.
+   * Provided on the service so callers do not need to import the helper.
+   */
+  enrichGeoLocation(
+    location: GeoLocation | undefined,
+  ): GeoLocation | undefined {
+    return enrichGeoLocation(location);
+  }
 }
 
-type OpenStreetMapsSearchResult = GeoResult & {
-  address: {
+export type OpenStreetMapsSearchResult = GeoResult & {
+  address?: {
     amenity?: string;
     office?: string;
     house_number?: string;
@@ -194,8 +217,9 @@ type OpenStreetMapsSearchResult = GeoResult & {
     suburb?: string;
     borough?: string;
     city?: string;
+    village?: string;
     town?: string;
-    postcode?: number;
+    postcode?: string;
     country?: string;
     country_code?: string;
   };
