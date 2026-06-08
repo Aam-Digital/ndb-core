@@ -100,10 +100,11 @@ export class RemotePouchDatabase extends PouchDatabase {
   private readonly TRANSIENT_ERROR_DELAY_MS = 2000;
 
   /**
-   * Per-request timeout in ms. If the server sends no response within this
-   * window, the fetch is aborted. This prevents long-idle connections from
-   * being killed unpredictably by Chrome (ERR_NETWORK_CHANGED) or proxies.
-   * PouchDB will retry from its last checkpoint on abort.
+   * Per-request timeout in ms for READ requests only. If the server sends no
+   * response within this window, the read fetch is aborted (and retried). This
+   * prevents long-idle connections from being killed unpredictably by Chrome
+   * (ERR_NETWORK_CHANGED) or proxies. Writes are never aborted or retried — see
+   * fetchWithTransientRetry.
    */
   private readonly FETCH_TIMEOUT_MS = 15000;
 
@@ -187,11 +188,28 @@ export class RemotePouchDatabase extends PouchDatabase {
    * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED)
    * and a per-request timeout to abort long-idle connections cleanly.
    * Network errors manifest as TypeErrors from the Fetch API.
+   *
+   * Only safe/idempotent read methods (GET, HEAD) get the abort timeout and the
+   * transient-error retry. Non-idempotent writes (PUT, POST, DELETE) are run
+   * exactly once with no client-side timeout: a write may have already committed
+   * on the server even when the client never sees the response, so aborting or
+   * retrying it can turn a "create" into a forbidden "update" (the public role is
+   * create-only) or create a duplicate — surfacing as spurious "unauthorized"
+   * errors. Letting the write run to completion ensures the client reliably
+   * learns the new `_rev`.
    */
   private async fetchWithTransientRetry(
     url: string,
     opts: RequestInit,
   ): Promise<Response> {
+    const method = (opts.method ?? "GET").toUpperCase();
+    const isSafeMethod = method === "GET" || method === "HEAD";
+
+    if (!isSafeMethod) {
+      // Write: run once, to completion, without abort timeout or retry.
+      return PouchDB.fetch(url, opts);
+    }
+
     for (let attempt = 0; ; attempt++) {
       const controller = new AbortController();
       const timeoutId = setTimeout(

@@ -19,11 +19,12 @@ export class TemplateExportService {
   private readonly httpClient = inject(HttpClient);
 
   /**
-   * Open a dialog for the user to select a template and generate a file from it for the given entity.
-   * @param entity The entity or other data object to provide placeholder values for the template
-   * @return Boolean whether the action was successfully completed
+   * Open a dialog for the user to select a template and generate a file from it
+   * for the given entity, or for each entity in an array (bulk mode).
+   * @param entity The entity (or array of entities) providing data for the template
+   * @return Boolean whether the action was successfully triggered
    */
-  async generateFile(entity: Entity | Object): Promise<boolean> {
+  async generateFile(entity: Entity | Entity[]): Promise<boolean> {
     this.dialog.open(TemplateExportSelectionDialogComponent, { data: entity });
 
     return true;

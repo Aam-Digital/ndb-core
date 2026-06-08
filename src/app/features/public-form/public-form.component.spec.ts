@@ -5,6 +5,7 @@ import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PublicFormConfig } from "./public-form-config";
 import { ActivatedRoute, Router } from "@angular/router";
+import { FormGroup } from "@angular/forms";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
@@ -208,6 +209,45 @@ describe("PublicFormComponent", () => {
       expect(
         component.entityFormEntries()[0].form.formGroup.get("name").value,
       ).toEqual("some name");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should skip already-saved entries on re-submit but still save the not-yet-saved ones", async () => {
+    vi.useFakeTimers();
+    try {
+      initComponent();
+      await vi.advanceTimersByTimeAsync(0);
+      const saveSpy = vi.spyOn(
+        TestBed.inject(EntityFormService),
+        "saveChanges",
+      );
+      saveSpy.mockResolvedValue(undefined);
+
+      // Simulate a partially-successful multi-entity submission being retried:
+      // the first entry was already saved (has a _rev, isNew === false), the
+      // second entry still needs saving.
+      const savedEntry = component.entityFormEntries()[0];
+      savedEntry.entity._rev = "1-abc";
+      const unsavedEntry = {
+        ...savedEntry,
+        entity: new TestEntity(),
+        form: { formGroup: new FormGroup({}) } as any,
+      };
+      component.entityFormEntries.set([savedEntry, unsavedEntry]);
+
+      await component.submit();
+      await vi.advanceTimersByTimeAsync(0);
+
+      // the already-saved entity must be skipped (avoids a forbidden "update"
+      // for the create-only public role, and avoids creating a duplicate),
+      // while the not-yet-saved entity is still saved
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      expect(saveSpy).toHaveBeenCalledWith(
+        unsavedEntry.form,
+        unsavedEntry.entity,
+      );
     } finally {
       vi.useRealTimers();
     }
