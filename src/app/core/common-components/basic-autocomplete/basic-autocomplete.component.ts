@@ -57,8 +57,6 @@ import {
 import { EMPTY, fromEvent, merge } from "rxjs";
 import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
 
-export { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
-
 /**
  * Configuration for a single "Add new [label]" entry in the autocomplete dropdown.
  * Pass an array of these via `[createOptions]` to show one create option per entity type.
