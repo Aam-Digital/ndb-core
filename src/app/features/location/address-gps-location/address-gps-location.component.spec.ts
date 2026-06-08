@@ -15,6 +15,7 @@ describe("AddressGpsLocationComponent", () => {
     mockGeoService = {
       lookup: vi.fn(),
       reverseLookup: vi.fn(),
+      enrichGeoLocation: vi.fn((loc: any) => loc),
     };
     mockGeoService.reverseLookup.mockReturnValue(
       of({

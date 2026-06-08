@@ -15,7 +15,7 @@ import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../entity-form/FormConfig";
 import { TableRow } from "./table-row";
-import { tableSort } from "./table-sort/table-sort";
+import { SortValueFns, tableSort } from "./table-sort/table-sort";
 import { TableStateUrlService } from "./table-state-url.service";
 
 type ReadSignal<T> = () => T;
@@ -89,17 +89,21 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
    * Datatypes that override `sortValue` provide custom sort logic;
    * others return `undefined` and fall back to default sorting in `tableSort`.
    */
-  readonly sortValueFns = computed<
-    Record<string, (v: any) => number | string | undefined>
-  >(() => {
+  readonly sortValueFns = computed<SortValueFns<T>>(() => {
     if (!this.context) return {};
-    const fns: Record<string, (v: any) => number | string | undefined> = {};
+    const fns: SortValueFns<T> = {};
     for (const col of this.context.columns()) {
       const datatype = this.schemaService.getDatatypeOrDefault(
         col.dataType,
         true,
       );
-      fns[col.id] = (v) => datatype.sortValue(v);
+      const ageSourceField = resolveAgeSourceField(col);
+      fns[col.id] = (value, record) => {
+        if (value === undefined && ageSourceField) {
+          return record[ageSourceField]?.age;
+        }
+        return datatype?.sortValue(value);
+      };
     }
     return fns;
   });
@@ -230,6 +234,29 @@ export function inferDefaultSort(
   }
 
   return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
+}
+
+/**
+ * Resolve the source field for virtual `DisplayAge` columns.
+ *
+ * These columns display an age from another field, e.g. `age` reads
+ * `record.dateOfBirth.age`, so datatype sorting cannot use the column value directly.
+ * The legacy `age` and `age_<field>` conventions remain supported for existing configs.
+ */
+function resolveAgeSourceField(column: FormFieldConfig): string | undefined {
+  if (
+    column.viewComponent === "DisplayAge" &&
+    typeof column.additional === "string"
+  ) {
+    return column.additional;
+  }
+  if (column.id === "age") {
+    return "dateOfBirth";
+  }
+  if (column.id.startsWith("age_")) {
+    return column.id.slice("age_".length);
+  }
+  return undefined;
 }
 
 /**

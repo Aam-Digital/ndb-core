@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AddressSearchComponent } from "./address-search.component";
-import { GeoResult, GeoService } from "../geo.service";
+import { OpenStreetMapsSearchResult, GeoService } from "../geo.service";
+import { enrichGeoLocation, GeoLocation } from "../geo-location";
 import { HarnessLoader, TestElement } from "@angular/cdk/testing";
 import { of, throwError } from "rxjs";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
@@ -20,13 +21,16 @@ describe("AddressSearchComponent", () => {
   let component: AddressSearchComponent;
   let fixture: ComponentFixture<AddressSearchComponent>;
 
-  let mockGeoService: GeoServiceMock;
+  let mockGeoService: any;
   let loader: HarnessLoader;
 
   beforeEach(async () => {
     mockGeoService = {
       lookup: vi.fn(),
       reverseLookup: vi.fn(),
+      enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
+        enrichGeoLocation(loc),
+      ),
     };
     mockGeoService.lookup.mockReturnValue(of([]));
 
@@ -52,7 +56,12 @@ describe("AddressSearchComponent", () => {
   it("should only lookup results after 1s of not typing", async () => {
     vi.useFakeTimers();
     try {
-      const location: GeoResult = { lat: 0, lon: 0, display_name: "testRes" };
+      const location: OpenStreetMapsSearchResult = {
+        lat: 0,
+        lon: 0,
+        display_name: "testRes",
+        address: {},
+      } as OpenStreetMapsSearchResult;
       mockGeoService.lookup.mockReturnValue(of([location]));
       let options;
       component.filteredOptions.subscribe((res) => (options = res));
@@ -111,7 +120,10 @@ describe("AddressSearchComponent", () => {
 
   it("should emit new location if value is selected and clear search field", async () => {
     const input = await loader.getHarness(MatInputHarness);
-    const selected = { display_name: "selected" } as GeoResult;
+    const selected = {
+      display_name: "selected",
+      address: {},
+    } as OpenStreetMapsSearchResult;
     vi.spyOn(component.locationSelected, "emit");
 
     component["lastUserInput"] = "";

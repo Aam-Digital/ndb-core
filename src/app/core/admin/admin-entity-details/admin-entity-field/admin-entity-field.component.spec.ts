@@ -462,4 +462,16 @@ describe("AdminEntityFieldComponent", () => {
       uniqueProperty: expect.any(String),
     });
   });
+
+  it("should reject a field ID starting with underscore", async () => {
+    component.fieldIdForm.setValue("_invalid");
+    await fixture.whenStable();
+    expect(component.fieldIdForm.errors).toEqual({
+      pattern: expect.anything(),
+    });
+
+    component.fieldIdForm.setValue("valid_id");
+    await fixture.whenStable();
+    expect(component.fieldIdForm.errors).toBeNull();
+  });
 });
