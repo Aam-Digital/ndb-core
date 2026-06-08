@@ -120,7 +120,7 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
+      service.generatePdfFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
@@ -137,8 +137,9 @@ describe("TemplateExportApiService", () => {
     );
   });
 
-  it("should request a generated file from API with default fileName", async () => {
+  it("should request a generated file from API with default fileName derived from the template title", async () => {
     const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "My Welcome Letter";
     const dataEntity = { name: "abc" };
 
     const mockResponse = new HttpResponse({
@@ -150,11 +151,11 @@ describe("TemplateExportApiService", () => {
       .mockReturnValue(of(mockResponse));
 
     const result = await lastValueFrom(
-      service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
+      service.generatePdfFromTemplate(templateEntity, dataEntity),
     );
 
     expect(result).toEqual({
-      filename: "TemplateExport_test-template-id",
+      filename: "My Welcome Letter",
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
@@ -165,5 +166,84 @@ describe("TemplateExportApiService", () => {
       },
       expect.any(Object),
     );
+  });
+
+  it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    const dataList = [{ name: "A" }, { name: "B" }, { name: "C" }];
+
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(20),
+      headers: new HttpHeaders({
+        "Content-Disposition": 'attachment; filename="report.zip"',
+      }),
+      status: 200,
+    });
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(mockResponse));
+
+    const result = await lastValueFrom(
+      service.generateBatchFromTemplate(templateEntity, dataList),
+    );
+
+    expect(result).toEqual({
+      filename: "report.zip",
+      file: mockResponse.body,
+    });
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render-batch/" + templateEntity.getId() + "?mode=zip",
+      {
+        convertTo: "pdf",
+        data: dataList,
+      },
+      expect.any(Object),
+    );
+  });
+
+  it("should fall back to a title-based .zip filename when batch response omits headers in zip mode", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "Welcome Letter";
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(4),
+      status: 200,
+    });
+    vi.spyOn(TestBed.inject(HttpClient), "post").mockReturnValue(
+      of(mockResponse),
+    );
+
+    const result = await lastValueFrom(
+      service.generateBatchFromTemplate(templateEntity, [{}, {}]),
+    );
+
+    expect(result.filename).toBe("Welcome Letter.zip");
+  });
+
+  it("should call the render-batch endpoint in combined mode with a title-based .pdf fallback filename", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "Welcome Letter";
+    const dataList = [{ name: "A" }, { name: "B" }];
+
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(12),
+      status: 200,
+    });
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(mockResponse));
+
+    const result = await lastValueFrom(
+      service.generateBatchFromTemplate(templateEntity, dataList, "combined"),
+    );
+
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL +
+        "/render-batch/" +
+        templateEntity.getId() +
+        "?mode=combined",
+      { convertTo: "pdf", data: dataList },
+      expect.any(Object),
+    );
+    expect(result.filename).toBe("Welcome Letter.pdf");
   });
 });

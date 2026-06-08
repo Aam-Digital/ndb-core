@@ -261,6 +261,43 @@ The following MCP servers are available in `.vscode/mcp.json`:
 | `sentry`          | Production error data, issue investigation               |
 | `github`          | Issues, PRs, comments, diffs, repository context         |
 
+## Git Worktrees
+
+Claude Code creates git worktrees under `.claude/worktrees/` for isolated task branches.
+This directory is listed in `.gitignore` and **must never be committed**.
+
+### Creating a worktree
+
+```bash
+git worktree add .claude/worktrees/<branch-name> <branch-name>
+```
+
+### Setting up node_modules in the worktree
+
+Worktrees share git history but not `node_modules`. Symlink from the main repo to avoid a
+full reinstall (works as long as the branch has the same dependencies):
+
+```bash
+ln -s "$(git rev-parse --show-toplevel)/node_modules" \
+      "$(git rev-parse --show-toplevel)/.claude/worktrees/<branch-name>/node_modules"
+```
+
+If the branch has different dependencies, do a full install inside the worktree instead:
+
+```bash
+npm ci --prefix .claude/worktrees/<branch-name>
+```
+
+### Staging safety
+
+`.claude/worktrees/` is in `.gitignore`, so `git add .` will not pick up worktree directories
+once that entry is committed. If you ever create worktrees outside this path, be aware that git
+treats directories containing a `.git` file as gitlinks (mode `160000`) and will stage them as
+phantom submodules — breaking CI's `git submodule foreach`. In that case, stage files explicitly
+by name and remove any gitlink entries with `git rm --cached <path>`.
+
+---
+
 ## Common Commands
 
 - `npm run start` - Development server

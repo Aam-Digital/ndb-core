@@ -141,6 +141,7 @@ describe("EntitiesTableComponent", () => {
     notes[1].category = { id: "3", label: "C", _ordinal: 1 };
     notes[2].category = { id: "2", label: "Z", _ordinal: 0 };
     notes[3].category = { id: "1", label: "AB", _ordinal: 2 };
+    fixture.componentRef.setInput("entityType", Note);
     fixture.componentRef.setInput("records", notes);
     fixture.componentRef.setInput("sortBy", {
       active: "category",
@@ -152,6 +153,37 @@ describe("EntitiesTableComponent", () => {
       ._orderData(component.recordsDataSource.data)
       .map((note) => note.record.getId(true));
     expect(sortedIds).toEqual(["note-2", "note-1", "note-3", "note-0"]);
+  });
+
+  it("should sort virtual age columns using their configured source field", () => {
+    const youngest = TestEntity.create("youngest");
+    youngest.dateOfBirth = new DateWithAge(
+      moment().subtract(5, "years").toDate(),
+    );
+    const oldest = TestEntity.create("oldest");
+    oldest.dateOfBirth = new DateWithAge(
+      moment().subtract(15, "years").toDate(),
+    );
+
+    fixture.componentRef.setInput("customColumns", [
+      {
+        id: "years",
+        viewComponent: "DisplayAge",
+        additional: "dateOfBirth",
+      },
+    ]);
+    fixture.componentRef.setInput("columnsToDisplay", ["years"]);
+    fixture.componentRef.setInput("records", [oldest, youngest]);
+    fixture.componentRef.setInput("sortBy", {
+      active: "years",
+      direction: "asc",
+    });
+    fixture.detectChanges();
+
+    const sortedNames = component.recordsDataSource
+      ._orderData(component.recordsDataSource.data)
+      .map((row) => row.record["name"]);
+    expect(sortedNames).toEqual(["youngest", "oldest"]);
   });
 
   it("should notify when an entity is clicked", async () => {

@@ -8,50 +8,20 @@ There are currently two systems available to generate reports, both using the sa
 - SQL-based queries executed server-side using the SQS server
 - (legacy) client-side generator using the aggregation & query syntax below
 
-# SQL Reports
+## SQL Reports
 
-For this feature, we have integrated the (optional) [structured-query-service (SQS)](https://neighbourhood.ie/products-and-services/structured-query-server)
-(this creates a read-only copy of the data in the CouchDB and allows to run Sqlite queries against it).
-SQS enables the possibility to create SQL based queries in reports.
-
+This feature requires the [aam-services backend](https://github.com/Aam-Digital/aam-services).
+It is based on [structured-query-service (SQS)](https://neighbourhood.ie/products-and-services/structured-query-server)
+(this creates a read-only copy of the data in the CouchDB and allows to run SQLite queries against it).
+SQS enables the possibility to create SQL-based queries in reports.
 The SQS image is not available as open source and needs a licence. It is pulled from a private container registry.
 
-## Using Copilot to generate SQL Queries
+Follow the instructions on the _aam-services_ repository to set up and enable the API.
 
-```javascript
-// copy the full Config:CONFIG_ENTITY doc from the database
-// and use the following code to extract the entities as context for Copilot
-entities = Object.entries(x.data)
-  .filter(([k, v]) => k.startsWith("entity:"))
-  .map(([k, v]) => v);
-```
+### Using AI agents to generate SQL Queries
 
-Use the following prompt sample (for "v1" SQL reports, which have multiple columns as output):
-
-```text
-The database schema is defined in the entities.json file:
-[ "entity:<TYPE>", { attributes: { "<FIELD_NAME>": { ...FIELD_DETAILS } }}].
-
-- <TYPE> matches the table name in SQL.
-- <FIELD_NAME> matches the column name within that table.
-
-For some queries there are example snippets available: https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?tab=t.0#heading=h.fgg5yam3yaf1
-
-
-Write a native SQL query (SQLite), no Angular or Typescript code.
-Output both a formatted SQL and also as a
-single line for easier copying (using single instead of double quotes; no semicolon at end).
-
-The query should output the following:
-
-All equipments with the following columns:
-- Description of Item
-- Specifications
-```
-
-## Deployment
-
-To activate it for an application, simply activate "aam-backend-service" profile (`COMPOSE_PROFILES=aam-backend-service`) in the applications `.env` file and run `docker compose up -d`.
+LLMs like ChatGPT or Claude can generate report queries for you.
+We have a [guide / context document for this](https://docs.google.com/document/d/13yxJkqqoA9tBTbld65Y1FYA51l0W057m4D1wvoCILeQ/edit?usp=sharing).
 
 ## Configuration
 
@@ -73,14 +43,17 @@ Some useful SQL query snippets for Aam Digital contexts are collected here: [Aam
   "_id": "ReportConfig:test-report",
   "title": "Test Report",
   "mode": "sql",
-  "aggregationDefinition": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c",
-  "neededArgs": []
+  "reportDefinition": [
+    {
+      "query": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c"
+    }
+  ]
 }
 ```
 
 #### SQL Report With Arguments
 
-Additional arguments for the query (like a from and to date parameter) can be used in the SQL query directly using "?". The "neededArgs" array defines what arguments are filled for the "?" placeholders in the given order.
+Use named placeholders in the SQL query (for example `$startDate` and `$endDate`) and map these args via `transformations`.
 
 ```json
 // app/ReportConfig:test-report
@@ -88,12 +61,59 @@ Additional arguments for the query (like a from and to date parameter) can be us
   "_id": "ReportConfig:test-report",
   "title": "Test Report",
   "mode": "sql",
-  "aggregationDefinition": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE created_at BETWEEN ? AND ?",
-  "neededArgs": ["from", "to"]
+  "transformations": {
+    "startDate": ["SQL_FROM_DATE"],
+    "endDate": ["SQL_TO_DATE"]
+  },
+  "reportDefinition": [
+    {
+      "query": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE created_at BETWEEN $startDate AND $endDate"
+    }
+  ]
 }
 ```
 
-# JSON-Query Reports (legacy)
+#### Nested SQL Report (Grouped)
+
+`reportDefinition` supports nested groups. Each item is either:
+
+- a query item: `{ "query": "SELECT ..." }`
+- or a group item: `{ "groupTitle": "...", "items": [...] }`
+
+Groups can contain queries and other groups recursively.
+
+The hierarchical SQL view is rendered as a `Name` + `Count` table.
+That means each row should represent one metric value (typically a single numeric column such as `COUNT(*) as count`).
+If a query returns multiple columns, only one value is shown as the row value and the other fields are used as row label details.
+
+```json
+// app/ReportConfig:test-report-grouped
+{
+  "_id": "ReportConfig:test-report-grouped",
+  "title": "Test Report Grouped",
+  "mode": "sql",
+  "reportDefinition": [
+    {
+      "query": "SELECT COUNT(*) as count FROM Child c"
+    },
+    {
+      "groupTitle": "By School Type",
+      "items": [
+        {
+          "query": "SELECT COUNT(*) as count FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 0"
+        },
+        {
+          "query": "SELECT COUNT(*) as count FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 1"
+        }
+      ]
+    }
+  ]
+}
+```
+
+In the UI, grouped SQL reports are rendered as a hierarchical report view, while single-query SQL reports are shown as a flat table.
+
+### JSON-Query Reports (legacy)
 
 #### Aggregation structure
 

@@ -34,7 +34,21 @@ interface TemplateRenderRequestDto {
   data: Object;
 }
 
+/**
+ * Format of API request body to render a batch of files from one template.
+ * `data` is an array of records; the backend will render each one and return a ZIP.
+ */
+interface TemplateRenderBatchRequestDto {
+  convertTo: string;
+  data: Object[];
+}
+
 export interface TemplateExportResult {
+  filename: string;
+  file: ArrayBuffer;
+}
+
+export interface TemplateExportBatchResult {
   filename: string;
   file: ArrayBuffer;
 }
@@ -111,17 +125,17 @@ export class TemplateExportApiService extends FileService {
 
   /**
    * Generate a PDF applying actual data to an existing template.
-   * @param templateEntityId The id of the TemplateExport entity (not the template ID of the PDF API)
+   * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
    * @return An array buffer of the generated PDF
    */
   generatePdfFromTemplate(
-    templateEntityId: string,
+    template: TemplateExport,
     data: Object,
   ): Observable<TemplateExportResult> {
     return this.httpClient
       .post(
-        this.API_URL + "/render/" + templateEntityId,
+        this.API_URL + "/render/" + template.getId(),
         {
           convertTo: "pdf",
           data: data,
@@ -135,15 +149,60 @@ export class TemplateExportApiService extends FileService {
             res.headers.get("Content-Disposition"),
           ).match(/filename="(.+)"/);
 
-          let fileName: string;
-          if (filenameMatch && filenameMatch.length > 1) {
-            fileName = filenameMatch[1];
-          } else {
-            fileName = templateEntityId.replace(":", "_");
-          }
+          const fileName =
+            filenameMatch && filenameMatch.length > 1
+              ? filenameMatch[1]
+              : template.title;
 
           return {
             filename: fileName,
+            file: res.body,
+          };
+        }),
+      );
+  }
+
+  /**
+   * Generate output from one template for many records in a single request.
+   *
+   * Both modes go through the template engine's native batch rendering — the backend
+   * just forwards the request:
+   * - `mode: "zip"` (default): N independent files packaged in a ZIP archive.
+   * - `mode: "combined"`: N rendered files merged into a single multi-page PDF.
+   *
+   * @param template The TemplateExport entity to render
+   * @param dataList The array of data objects (typically entities) to apply to the template
+   * @param mode How the backend should aggregate the output
+   * @return The generated file (ZIP or PDF) and a derived filename
+   */
+  generateBatchFromTemplate(
+    template: TemplateExport,
+    dataList: Object[],
+    mode: "zip" | "combined" = "zip",
+  ): Observable<TemplateExportBatchResult> {
+    const fallbackExtension = mode === "combined" ? ".pdf" : ".zip";
+    return this.httpClient
+      .post(
+        this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
+        {
+          convertTo: "pdf",
+          data: dataList,
+        } as TemplateRenderBatchRequestDto,
+        { observe: "response", responseType: "arraybuffer" },
+      )
+      .pipe(
+        switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+          const disposition = res.headers.get("Content-Disposition");
+          const filenameMatch = disposition
+            ? decodeURIComponent(disposition).match(/filename="?([^";]+)"?/)
+            : null;
+          const filename =
+            filenameMatch && filenameMatch.length > 1
+              ? filenameMatch[1]
+              : template.title + fallbackExtension;
+
+          return {
+            filename,
             file: res.body,
           };
         }),
