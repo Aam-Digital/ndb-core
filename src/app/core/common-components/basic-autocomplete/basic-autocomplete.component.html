@@ -29,7 +29,7 @@
       (cdkDropListDropped)="dropChips($event)"
       class="chip-drop-list"
     >
-      @for (item of _selectedOptions(); track item.asString) {
+      @for (item of _selectedOptions(); track item.asValue) {
         <mat-chip-row
           cdkDrag
           [cdkDragDisabled]="!reorder"

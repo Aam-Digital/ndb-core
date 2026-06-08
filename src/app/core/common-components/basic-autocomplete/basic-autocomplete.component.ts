@@ -430,11 +430,7 @@ export class BasicAutocompleteComponent<O, V = O>
     const selectedOptions = [...this._selectedOptions()];
     moveItemInArray(selectedOptions, event.previousIndex, event.currentIndex);
 
-    const selectedSet = new Set(selectedOptions);
-    this._options = [
-      ...selectedOptions,
-      ...this._options.filter((option) => !selectedSet.has(option)),
-    ];
+    this._options = this.orderSelectedFirst(this._options, selectedOptions);
 
     if (this.multi) {
       this.value = selectedOptions.map((option) => option.asValue);
@@ -529,15 +525,24 @@ export class BasicAutocompleteComponent<O, V = O>
     }
 
     if (this.multi && this.reorder) {
-      const selectedOrder = this._selectedOptions();
-      const selectedSet = new Set(selectedOrder);
-      filteredOptions = [
-        ...selectedOrder.filter((option) => filteredOptions.includes(option)),
-        ...filteredOptions.filter((option) => !selectedSet.has(option)),
-      ];
+      filteredOptions = this.orderSelectedFirst(
+        filteredOptions,
+        this._selectedOptions(),
+      );
     }
 
     return filteredOptions;
+  }
+
+  private orderSelectedFirst(
+    options: SelectableOption<O, V>[],
+    selected: SelectableOption<O, V>[],
+  ): SelectableOption<O, V>[] {
+    const selectedSet = new Set(selected);
+    return [
+      ...selected.filter((option) => options.includes(option)),
+      ...options.filter((option) => !selectedSet.has(option)),
+    ];
   }
 
   /**
