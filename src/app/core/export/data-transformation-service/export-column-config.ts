@@ -31,3 +31,11 @@ export interface ExportColumnConfig {
    */
   groupBy?: { label: string; property: string };
 }
+
+/**
+ * Normalize a query key used in export column configs.
+ * Strips a leading dot if present so callers can compare logical field keys.
+ */
+export function normalizeQueryKey(query: string): string {
+  return query.startsWith(".") ? query.slice(1) : query;
+}

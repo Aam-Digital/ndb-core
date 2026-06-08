@@ -100,6 +100,15 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
     try {
       for (const entry of this.entityFormEntries()) {
+        // Skip entries that were already saved in a previous submit attempt.
+        // After a successful save the entity has a `_rev` (isNew === false).
+        // Re-saving it would be treated as an "update" — which the "public"
+        // role is not permitted to do (it only has "create") — and would also
+        // risk creating a duplicate. This makes a retry after a partially
+        // successful submission resume cleanly instead of failing.
+        if (entry.entity && !entry.entity.isNew) {
+          continue;
+        }
         entry.entity.created = new UpdateMetadata(formMetadataBy);
         await this.entityFormService.saveChanges(entry.form, entry.entity);
       }

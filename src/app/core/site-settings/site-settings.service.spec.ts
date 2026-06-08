@@ -14,6 +14,8 @@ import { EntityAbility } from "../permissions/ability/entity-ability";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { Config } from "../config/config";
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
+import { environment } from "../../../environments/environment";
+import { SessionType } from "../session/session-type";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -125,9 +127,10 @@ describe("SiteSettingsService", () => {
 
   it("should init settings from localStorage during startup", async () => {
     vi.useFakeTimers();
+    let localStorageGetItemSpy: ReturnType<typeof vi.spyOn>;
     try {
       const settings = SiteSettings.create({ siteName: "local storage test" });
-      const localStorageGetItemSpy = vi.spyOn(Storage.prototype, "getItem");
+      localStorageGetItemSpy = vi.spyOn(Storage.prototype, "getItem");
       localStorageGetItemSpy.mockReturnValue(JSON.stringify(settings));
 
       const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
@@ -137,7 +140,72 @@ describe("SiteSettingsService", () => {
 
       expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
     } finally {
+      localStorageGetItemSpy?.mockRestore();
       vi.useRealTimers();
+    }
+  });
+
+  it("should load site settings via anonymous fetch before entity config setup completes", async () => {
+    localStorage.clear();
+    TestBed.resetTestingModule();
+    const originalSessionType = environment.session_type;
+    const originalOnlineDescriptor = Object.getOwnPropertyDescriptor(
+      window.navigator,
+      "onLine",
+    );
+
+    environment.session_type = SessionType.synced;
+    const anonymousSettings = {
+      _id: "SiteSettings:global",
+      siteName: "anonymous branding",
+    };
+
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(
+        new Response(JSON.stringify(anonymousSettings), { status: 200 }),
+      );
+
+    Object.defineProperty(window.navigator, "onLine", {
+      value: true,
+      configurable: true,
+    });
+
+    TestBed.configureTestingModule({
+      imports: [CoreTestingModule, ConfigurableEnumModule],
+      providers: [
+        ...mockEntityMapperProvider([new Config(Config.CONFIG_KEY, {})]),
+        EntityAbility,
+      ],
+    });
+
+    try {
+      const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
+
+      TestBed.inject(SiteSettingsService);
+      await vi.waitFor(() => {
+        expect(fetchSpy).toHaveBeenCalled();
+      });
+
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "/db/app/SiteSettings%3Aglobal",
+        expect.objectContaining({
+          headers: { "ngsw-bypass": "true" },
+        }),
+      );
+      await vi.waitFor(() => {
+        expect(titleSpy).toHaveBeenCalledWith(anonymousSettings.siteName);
+      });
+    } finally {
+      fetchSpy.mockRestore();
+      if (originalOnlineDescriptor) {
+        Object.defineProperty(
+          window.navigator,
+          "onLine",
+          originalOnlineDescriptor,
+        );
+      }
+      environment.session_type = originalSessionType;
     }
   });
 });

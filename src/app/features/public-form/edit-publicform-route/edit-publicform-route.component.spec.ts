@@ -27,14 +27,28 @@ describe("EditPublicformRouteComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should be invalid when link ID contains special URL characters like /", () => {
+  it("should be valid for lowercase letters, digits, hyphens and underscores", () => {
     const formControl = component.formControl;
 
-    formControl.setValue("valid-id");
-    expect(formControl.valid).toBe(true);
+    for (const id of ["valid-id", "form_1", "abc123", "my-form_v2"]) {
+      formControl.setValue(id);
+      expect(formControl.valid).toBe(true);
+    }
+  });
 
-    for (const char of ["/", "?", "#", "%", "&", "+", "\\"]) {
-      formControl.setValue("id" + char + "test");
+  it("should be invalid for any character outside the allow-list", () => {
+    const formControl = component.formControl;
+
+    for (const id of [
+      "id/test",
+      "id?test",
+      "id#test",
+      "id test",
+      "id@test",
+      "id!test",
+      "id.test",
+    ]) {
+      formControl.setValue(id);
       expect(formControl.valid).toBe(false);
       expect(formControl.errors?.["pattern"]).toBeTruthy();
     }

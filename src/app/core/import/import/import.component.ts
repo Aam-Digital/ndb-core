@@ -6,7 +6,7 @@ import {
   signal,
   computed,
 } from "@angular/core";
-import { ParsedData } from "../../common-components/input-file/input-file.component";
+import { ParsedData } from "../../common-components/parsed-file-input/parsed-file-input.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";
@@ -27,7 +27,6 @@ import { ImportReviewDataComponent } from "../import-review-data/import-review-d
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { RouteTarget } from "../../../route-target";
 import { ImportMatchExistingComponent } from "../update-existing/import-match-existing/import-match-existing.component";
-import { ImportAdditionalSettingsComponent } from "../import-additional-settings/import-additional-settings.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 
 /**
@@ -48,7 +47,6 @@ import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common
     EntityTypeLabelPipe,
     ImportEntityTypeComponent,
     MatExpansionModule,
-    ImportAdditionalSettingsComponent,
     ImportAdditionalActionsComponent,
     ImportMatchExistingComponent,
     MatButtonModule,
@@ -116,7 +114,7 @@ export class ImportComponent {
     this.rawData = data.data;
     this.updateImportSettings({ filename: data.filename });
 
-    if (this.importSettings().columnMapping) {
+    if (this.importSettings().columnMapping?.some((m) => m.propertyName)) {
       this.alertService.addInfo(
         $localize`:alert info after file load:Column Mappings have been reset`,
       );
