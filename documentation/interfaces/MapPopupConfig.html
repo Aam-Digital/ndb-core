@@ -611,7 +611,7 @@ import { BehaviorSubject, firstValueFrom, Observable, Subject } from &quot;rxjs&
 import { MapComponent } from &quot;../map/map.component&quot;;
 import { AsyncPipe } from &quot;@angular/common&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
-import { GeoResult, GeoService } from &quot;../geo.service&quot;;
+import { OpenStreetMapsSearchResult, GeoService } from &quot;../geo.service&quot;;
 import { AddressEditComponent } from &quot;../address-edit/address-edit.component&quot;;
 import { ConfirmationDialogService } from &quot;../../../core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { LocationProperties } from &quot;../map/map-properties-popup/map-properties-popup.component&quot;;
@@ -665,7 +665,7 @@ export class MapPopupComponent {
   private geoService &#x3D; inject(GeoService);
   private confirmationDialog &#x3D; inject(ConfirmationDialogService);
 
-  markedLocations: BehaviorSubject&lt;GeoResult[]&gt;;
+  markedLocations: BehaviorSubject&lt;OpenStreetMapsSearchResult[]&gt;;
   helpText: string &#x3D; $localize&#x60;Search an address or click on the map directly to select a different location&#x60;;
 
   selectedLocation: GeoLocation;
@@ -675,8 +675,8 @@ export class MapPopupComponent {
   constructor() {
     const data &#x3D; this.data;
 
-    this.markedLocations &#x3D; new BehaviorSubject&lt;GeoResult[]&gt;(
-      (data.marked as GeoResult[]) ?? [],
+    this.markedLocations &#x3D; new BehaviorSubject&lt;OpenStreetMapsSearchResult[]&gt;(
+      (data.marked as OpenStreetMapsSearchResult[]) ?? [],
     );
     this.selectedLocation &#x3D; data.selectedLocation;
     this.lastSavedLocation &#x3D; data.selectedLocation
@@ -718,13 +718,15 @@ export class MapPopupComponent {
     if (this.data.disabled || !newCoordinates) {
       return;
     }
-    const geoResult: GeoResult &#x3D; await firstValueFrom(
+    const geoResult: OpenStreetMapsSearchResult &#x3D; await firstValueFrom(
       this.geoService.reverseLookup(newCoordinates),
     );
 
-    // Only update geoLookup, keep the user&#x27;s address string as-is
+    // Only update geoLookup. Do not carry over stale top-level address fields
+    // from the previously selected location — that causes conflicts where
+    // &#x60;geoLookup&#x60; points to a new place but &#x60;road/postcode/city&#x60; remain old.
     this.updateLocation({
-      ...this.selectedLocation,
+      locationString: this.selectedLocation?.locationString,
       geoLookup: geoResult,
     });
   }
@@ -814,17 +816,17 @@ export class MapPopupComponent {
   }
 
   updateLocation(event: GeoLocation | undefined) {
-    let updatedLocation &#x3D; event;
+    let updatedLocation &#x3D; this.geoService.enrichGeoLocation(event);
 
-    const displayName &#x3D; event?.geoLookup?.display_name;
+    const displayName &#x3D; updatedLocation?.geoLookup?.display_name;
     const hasManualAddress &#x3D;
-      event?.locationString !&#x3D;&#x3D; undefined &amp;&amp;
-      event?.locationString !&#x3D;&#x3D; null &amp;&amp;
-      event?.locationString !&#x3D;&#x3D; &quot;&quot;;
+      updatedLocation?.locationString !&#x3D;&#x3D; undefined &amp;&amp;
+      updatedLocation?.locationString !&#x3D;&#x3D; null &amp;&amp;
+      updatedLocation?.locationString !&#x3D;&#x3D; &quot;&quot;;
 
     if (displayName &amp;&amp; !hasManualAddress) {
       updatedLocation &#x3D; {
-        ...(event ?? {}),
+        ...(updatedLocation ?? {}),
         locationString: displayName,
       };
     }

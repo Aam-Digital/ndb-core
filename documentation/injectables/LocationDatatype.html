@@ -276,7 +276,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:52</a></code>
 </div>
                         </td>
                     </tr>
@@ -1351,7 +1351,7 @@ during import.</p>
 import { lastValueFrom } from &quot;rxjs&quot;;
 import { DefaultDatatype } from &quot;../../core/entity/default-datatype/default.datatype&quot;;
 import { GeoLocation } from &quot;./geo-location&quot;;
-import { GeoResult, GeoService } from &quot;./geo.service&quot;;
+import { OpenStreetMapsSearchResult, GeoService } from &quot;./geo.service&quot;;
 import { LocationImportConfig } from &quot;./location-import-config/location-import-config.component&quot;;
 
 @Injectable()
@@ -1380,20 +1380,22 @@ export class LocationDatatype extends DefaultDatatype&lt;
       !value.hasOwnProperty(&quot;geoLookup&quot;)
     ) {
       value &#x3D; {
-        geoLookup: value as unknown as GeoResult,
+        geoLookup: value as unknown as OpenStreetMapsSearchResult,
       };
     }
 
     // fix errors from broken migrations
     while (value?.geoLookup &amp;&amp; &quot;geoLookup&quot; in value.geoLookup) {
-      value.geoLookup &#x3D; (value.geoLookup as { geoLookup: GeoResult }).geoLookup;
+      value.geoLookup &#x3D; (
+        value.geoLookup as { geoLookup: OpenStreetMapsSearchResult }
+      ).geoLookup;
     }
 
     if (!value.locationString) {
       value.locationString &#x3D; value.geoLookup?.display_name ?? &quot;&quot;;
     }
 
-    return value;
+    return this.geoService.enrichGeoLocation(value);
   }
 
   override async importMapFunction(
@@ -1405,7 +1407,7 @@ export class LocationDatatype extends DefaultDatatype&lt;
       return undefined;
     }
 
-    let geoResults: GeoResult[] | undefined;
+    let geoResults: OpenStreetMapsSearchResult[] | undefined;
     if (!additional?.skipAddressLookup) {
       try {
         geoResults &#x3D; await lastValueFrom(this.geoService.lookup(val));
@@ -1414,10 +1416,10 @@ export class LocationDatatype extends DefaultDatatype&lt;
       }
     }
 
-    return {
+    return this.geoService.enrichGeoLocation({
       locationString: val,
       geoLookup: geoResults ? geoResults[0] : undefined,
-    };
+    });
   }
 }
 </code></pre>

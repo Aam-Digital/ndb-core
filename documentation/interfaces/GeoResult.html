@@ -242,6 +242,7 @@ import {
   map,
   tap,
 } from &quot;rxjs/operators&quot;;
+import { enrichGeoLocation, GeoLocation } from &quot;./geo-location&quot;;
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -265,10 +266,10 @@ export class GeoService {
     email: environment.email,
   };
 
-  private readonly cache &#x3D; new Map&lt;string, GeoResult[]&gt;();
+  private readonly cache &#x3D; new Map&lt;string, OpenStreetMapsSearchResult[]&gt;();
   private readonly lookupQueue$ &#x3D; new Subject&lt;{
     term: string;
-    resolve: ReplaySubject&lt;GeoResult[]&gt;;
+    resolve: ReplaySubject&lt;OpenStreetMapsSearchResult[]&gt;;
   }&gt;();
 
   constructor() {
@@ -310,16 +311,18 @@ export class GeoService {
    * Results are cached and requests are throttled to ≤1/sec per Nominatim policy.
    * @param searchTerm e.g. &#x60;Rollbergstraße Berlin&#x60;
    */
-  lookup(searchTerm: string): Observable&lt;GeoResult[]&gt; {
+  lookup(searchTerm: string): Observable&lt;OpenStreetMapsSearchResult[]&gt; {
     if (this.cache.has(searchTerm)) {
       return of(this.cache.get(searchTerm));
     }
-    const resolve &#x3D; new ReplaySubject&lt;GeoResult[]&gt;(1);
+    const resolve &#x3D; new ReplaySubject&lt;OpenStreetMapsSearchResult[]&gt;(1);
     this.lookupQueue$.next({ term: searchTerm, resolve });
     return resolve.asObservable();
   }
 
-  private fetchLookup(searchTerm: string): Observable&lt;GeoResult[]&gt; {
+  private fetchLookup(
+    searchTerm: string,
+  ): Observable&lt;OpenStreetMapsSearchResult[]&gt; {
     this.analytics.eventTrack(&quot;lookup_executed&quot;, {
       category: &quot;Map&quot;,
       value: searchTerm.length,
@@ -340,9 +343,8 @@ export class GeoService {
         ),
       );
   }
-
   private getCity(addr: OpenStreetMapsSearchResult[&quot;address&quot;]): string {
-    return addr.city ?? addr.town ?? &quot;&quot;;
+    return addr.city ?? addr.village ?? addr.town ?? &quot;&quot;;
   }
 
   private formatStreet(addr: OpenStreetMapsSearchResult[&quot;address&quot;]): string {
@@ -362,7 +364,9 @@ export class GeoService {
     return &quot;&quot;;
   }
 
-  reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
+  reformatDisplayName(
+    result: OpenStreetMapsSearchResult,
+  ): OpenStreetMapsSearchResult {
     const addr &#x3D; result?.address;
     if (addr) {
       const displayParts &#x3D; [
@@ -370,6 +374,12 @@ export class GeoService {
         this.formatStreet(addr),
         this.formatPostcodeCity(addr),
       ].filter((x) &#x3D;&gt; !!x &amp;&amp; x !&#x3D;&#x3D; &quot;undefined&quot;);
+
+      // Ensure a normalized &#x60;city&#x60; field for downstream consumers (use village/town as fallback)
+      const city &#x3D; this.getCity(addr);
+      if (city &amp;&amp; !addr.city) {
+        addr.city &#x3D; city;
+      }
 
       result.display_name &#x3D; displayParts.join(&quot;, &quot;);
     }
@@ -380,11 +390,14 @@ export class GeoService {
    * Returns the location at the provided coordinates
    * @param coordinates of a place (&#x60;lat&#x60; and &#x60;lon&#x60;)
    */
-  reverseLookup(coordinates: Coordinates): Observable&lt;GeoResult&gt; {
-    const fallback: GeoResult &#x3D; {
+  reverseLookup(
+    coordinates: Coordinates,
+  ): Observable&lt;OpenStreetMapsSearchResult&gt; {
+    const fallback: OpenStreetMapsSearchResult &#x3D; {
       display_name: $localize&#x60;[selected coordinates: ${coordinates.lat} - ${coordinates.lon}]&#x60;,
       ...coordinates,
-    };
+      address: undefined,
+    } as OpenStreetMapsSearchResult;
 
     this.analytics.eventTrack(&quot;reverse_lookup_executed&quot;, {
       category: &quot;Map&quot;,
@@ -403,10 +416,20 @@ export class GeoService {
         catchError(() &#x3D;&gt; of(fallback)),
       );
   }
+
+  /**
+   * Enriches a GeoLocation with top-level address parts derived from its &#x60;geoLookup&#x60;.
+   * Provided on the service so callers do not need to import the helper.
+   */
+  enrichGeoLocation(
+    location: GeoLocation | undefined,
+  ): GeoLocation | undefined {
+    return enrichGeoLocation(location);
+  }
 }
 
-type OpenStreetMapsSearchResult &#x3D; GeoResult &amp; {
-  address: {
+export type OpenStreetMapsSearchResult &#x3D; GeoResult &amp; {
+  address?: {
     amenity?: string;
     office?: string;
     house_number?: string;
@@ -415,8 +438,9 @@ type OpenStreetMapsSearchResult &#x3D; GeoResult &amp; {
     suburb?: string;
     borough?: string;
     city?: string;
+    village?: string;
     town?: string;
-    postcode?: number;
+    postcode?: string;
     country?: string;
     country_code?: string;
   };

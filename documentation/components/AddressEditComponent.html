@@ -324,7 +324,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:48</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:49</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -351,7 +351,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:43</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:44</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -381,7 +381,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:43</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:44</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -420,8 +420,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="69"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -457,8 +457,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -494,8 +494,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="167"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:167</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:175</a></div>
                         </td>
                     </tr>
 
@@ -563,8 +563,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="127"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:127</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="135"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -630,8 +630,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -697,8 +697,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="70"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:70</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="73"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -774,7 +774,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -795,9 +795,10 @@
   signal,
   viewChild,
   ChangeDetectionStrategy,
+  inject,
 } from &quot;@angular/core&quot;;
 import { AddressSearchComponent } from &quot;../address-search/address-search.component&quot;;
-import { GeoResult } from &quot;../geo.service&quot;;
+import { GeoResult, GeoService } from &quot;../geo.service&quot;;
 import { GeoLocation } from &quot;../geo-location&quot;;
 import { MatFormField, MatHint, MatLabel } from &quot;@angular/material/form-field&quot;;
 import { MatInput } from &quot;@angular/material/input&quot;;
@@ -838,6 +839,8 @@ export class AddressEditComponent {
 
   manualAddressEnabled &#x3D; signal(false);
 
+  private readonly geoService &#x3D; inject(GeoService);
+
   enableManualAddressEditing() {
     this.manualAddressEnabled.set(true);
     // switch focus only after input has been enabled
@@ -845,7 +848,7 @@ export class AddressEditComponent {
   }
 
   updateLocation(selected: GeoLocation | undefined) {
-    this.selectedLocation.set(selected);
+    this.selectedLocation.set(this.geoService.enrichGeoLocation(selected));
     this.manualAddressEnabled.set(
       this.selectedLocation()?.geoLookup?.display_name !&#x3D;&#x3D;
         this.selectedLocation()?.locationString,
@@ -867,6 +870,11 @@ export class AddressEditComponent {
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: this.selectedLocation()?.geoLookup,
+      road: this.selectedLocation()?.road,
+      house_number: this.selectedLocation()?.house_number,
+      postcode: this.selectedLocation()?.postcode,
+      city: this.selectedLocation()?.city,
+      country: this.selectedLocation()?.country,
     });
   }
 
