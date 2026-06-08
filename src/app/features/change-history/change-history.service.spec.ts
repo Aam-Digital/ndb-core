@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import {
-  CHANGE_AUDIT_SUBJECT,
+  AUDIT_RECORD_SUBJECT,
   ChangeHistoryService,
 } from "./change-history.service";
 import { DatabaseFactoryService } from "../../core/database/database-factory.service";
@@ -41,7 +41,7 @@ function rawDoc(
   diff: any = { name: ["A", "B"] },
 ): any {
   return {
-    _id: `ChangeAudit:Entity:1:${ts}:1-a`,
+    _id: `AuditRecord:Entity:1:${ts}:1-a`,
     entityId: "Entity:1",
     operation,
     timestamp: ts,
@@ -51,14 +51,14 @@ function rawDoc(
   };
 }
 
-it("queries the audit db with the entity's ChangeAudit prefix", async () => {
+it("queries the audit db with the entity's AuditRecord prefix", async () => {
   const service = setup([rawDoc("2026-06-03T10:00:00.000Z")]);
   const entity = new Entity("1");
 
   await service.getHistory(entity);
 
   expect(dbFactory.createRemoteDatabase).toHaveBeenCalledWith("app-audit");
-  expect(mockDb.getAll).toHaveBeenCalledWith(`ChangeAudit:${entity.getId()}:`);
+  expect(mockDb.getAll).toHaveBeenCalledWith(`AuditRecord:${entity.getId()}:`);
 });
 
 it("returns normalized events newest-first", async () => {
@@ -95,13 +95,13 @@ it("propagates errors when the audit db is unavailable", async () => {
   await expect(service.getHistory(new Entity("1"))).rejects.toThrow();
 });
 
-it("allows viewing history for a saved entity when ChangeAudit read is granted", () => {
+it("allows viewing history for a saved entity when AuditRecord read is granted", () => {
   const service = setup([], true);
   expect(service.canViewHistory(savedEntity())).toBe(true);
-  expect(abilityCan).toHaveBeenCalledWith("read", CHANGE_AUDIT_SUBJECT);
+  expect(abilityCan).toHaveBeenCalledWith("read", AUDIT_RECORD_SUBJECT);
 });
 
-it("denies viewing history when ChangeAudit read is denied", () => {
+it("denies viewing history when AuditRecord read is denied", () => {
   const service = setup([], false);
   expect(service.canViewHistory(savedEntity())).toBe(false);
 });

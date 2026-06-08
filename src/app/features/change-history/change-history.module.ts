@@ -5,7 +5,7 @@ import { Entity } from "../../core/entity/model/entity";
 import { ChangeHistoryService } from "./change-history.service";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog/change-history-dialog.component";
 
-export { CHANGE_AUDIT_SUBJECT } from "./change-history.service";
+export { AUDIT_RECORD_SUBJECT } from "./change-history.service";
 
 function asSingle(entity: Entity | Entity[]): Entity | undefined {
   return Array.isArray(entity) ? entity[0] : entity;

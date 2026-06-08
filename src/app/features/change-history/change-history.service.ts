@@ -7,7 +7,7 @@ import { ChangeEvent } from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
 
 /** CASL subject the audit records are keyed under (see replication-backend #4026). */
-export const CHANGE_AUDIT_SUBJECT = "ChangeAudit";
+export const AUDIT_RECORD_SUBJECT = "AuditRecord";
 
 /**
  * Reads an entity's change history from the audit database recorded by the
@@ -15,7 +15,7 @@ export const CHANGE_AUDIT_SUBJECT = "ChangeAudit";
  *
  * The audit database `<db>-audit` is opened as a read-only remote database and
  * queried on demand per entity (it grows unboundedly, so it is never synced
- * locally). Records are keyed `ChangeAudit:<entityId>:<ts>:<rev>`, so a single
+ * locally). Records are keyed `AuditRecord:<entityId>:<ts>:<rev>`, so a single
  * `_id` prefix range query returns one entity's full history with no extra
  * index.
  */
@@ -46,7 +46,7 @@ export class ChangeHistoryService {
    * not-enabled state).
    */
   async getHistory(entity: Entity): Promise<ChangeEvent[]> {
-    const prefix = `ChangeAudit:${entity.getId()}:`;
+    const prefix = `AuditRecord:${entity.getId()}:`;
     const docs = await this.getAuditDb().getAll(prefix);
     return buildChangeEvents(docs as RawAuditDoc[]);
   }
@@ -54,7 +54,7 @@ export class ChangeHistoryService {
   /**
    * Whether the current user may view the change history of this entity.
    * Hidden for new/internal entities and, when the permission engine is
-   * present, gated on read access to the `ChangeAudit` subject. Shared by both
+   * present, gated on read access to the `AuditRecord` subject. Shared by both
    * entry points (the entity-actions menu and the last-edited widget) so they
    * cannot drift.
    */
@@ -62,6 +62,6 @@ export class ChangeHistoryService {
     if (!entity || entity.isNew || entity.getConstructor().isInternalEntity) {
       return false;
     }
-    return !this.ability || this.ability.can("read", CHANGE_AUDIT_SUBJECT);
+    return !this.ability || this.ability.can("read", AUDIT_RECORD_SUBJECT);
   }
 }

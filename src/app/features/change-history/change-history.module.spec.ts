@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
 import {
-  CHANGE_AUDIT_SUBJECT,
+  AUDIT_RECORD_SUBJECT,
   ChangeHistoryModule,
 } from "./change-history.module";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog/change-history-dialog.component";
@@ -70,13 +70,13 @@ it("opens the change-history dialog on execute", async () => {
   );
 });
 
-it("is visible for a saved entity when ChangeAudit read is granted", async () => {
+it("is visible for a saved entity when AuditRecord read is granted", async () => {
   const action = setup();
   expect(await action.visible(savedEntity())).toBe(true);
-  expect(abilityCan).toHaveBeenCalledWith("read", CHANGE_AUDIT_SUBJECT);
+  expect(abilityCan).toHaveBeenCalledWith("read", AUDIT_RECORD_SUBJECT);
 });
 
-it("is hidden when ChangeAudit read is denied", async () => {
+it("is hidden when AuditRecord read is denied", async () => {
   const action = setup();
   abilityCan.mockReturnValue(false);
   expect(await action.visible(savedEntity())).toBe(false);

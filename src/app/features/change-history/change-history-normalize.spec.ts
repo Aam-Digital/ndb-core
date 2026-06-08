@@ -6,7 +6,7 @@ import {
 
 function doc(partial: Partial<RawAuditDoc>): RawAuditDoc {
   return {
-    _id: `ChangeAudit:Child:1:${partial.timestamp}:${partial.rev}`,
+    _id: `AuditRecord:Child:1:${partial.timestamp}:${partial.rev}`,
     entityId: "Child:1",
     operation: "update",
     timestamp: "2026-06-03T10:00:00.000Z",

@@ -36,7 +36,7 @@ async function render(
 
 function event(partial: Partial<ChangeEvent>): ChangeEvent {
   return {
-    id: "ChangeAudit:Test:1:t:1-a",
+    id: "AuditRecord:Test:1:t:1-a",
     at: new Date(),
     by: "User:1",
     action: "updated",
