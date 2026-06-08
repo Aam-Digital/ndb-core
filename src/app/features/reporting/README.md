@@ -13,14 +13,14 @@ There are currently two systems available to generate reports, both using the sa
 This feature requires the [aam-services backend](https://github.com/Aam-Digital/aam-services).
 It is based on [structured-query-service (SQS)](https://neighbourhood.ie/products-and-services/structured-query-server)
 (this creates a read-only copy of the data in the CouchDB and allows to run SQLite queries against it).
-SQS enables the possibility to create SQL based queries in reports.
+SQS enables the possibility to create SQL-based queries in reports.
 The SQS image is not available as open source and needs a licence. It is pulled from a private container registry.
 
 Follow the instructions on the _aam-services_ repository to set up and enable the API.
 
 ### Using AI agents to generate SQL Queries
 
-LLMs like ChatGPT or Cluade can generate Report queries for you.
+LLMs like ChatGPT or Claude can generate report queries for you.
 We have a [guide / context document for this](https://docs.google.com/document/d/13yxJkqqoA9tBTbld65Y1FYA51l0W057m4D1wvoCILeQ/edit?usp=sharing).
 
 ## Configuration
