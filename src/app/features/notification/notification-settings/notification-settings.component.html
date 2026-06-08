@@ -195,6 +195,11 @@
               i18n-text
             ></app-help-button>
           </div>
+          @if (accountEmail()) {
+            <div class="indented-item mat-hint" i18n>
+              Notifications will be sent to {{ accountEmail() }}
+            </div>
+          }
         </div>
       </div>
     </div>
