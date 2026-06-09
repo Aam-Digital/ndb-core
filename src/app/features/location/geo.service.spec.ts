@@ -51,7 +51,7 @@ describe("GeoService", () => {
   let mockHttp: HttpClientMock;
 
   beforeEach(() => {
-    environment.email = "some@mail.com";
+    environment.webmaster_email = "some@mail.com";
     mockHttp = {
       get: vi.fn(),
     };
@@ -92,6 +92,20 @@ describe("GeoService", () => {
         addressdetails: 1,
       },
     });
+  });
+
+  it("should omit the email param when no email is configured", () => {
+    environment.webmaster_email = undefined;
+    // defaultOptions is evaluated in the field initializer, so build a fresh
+    // instance after clearing the configured email.
+    const serviceWithoutEmail = TestBed.runInInjectionContext(
+      () => new GeoService(),
+    );
+
+    serviceWithoutEmail.lookup("someSearch").subscribe();
+
+    const sentParams = mockHttp.get.mock.calls[0][1].params;
+    expect("email" in sentParams).toBe(false);
   });
 
   it("should track requests in analytics service", () => {
