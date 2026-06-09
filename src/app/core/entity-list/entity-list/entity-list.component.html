@@ -30,18 +30,16 @@
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
-      @if (!!allEntities()) {
-        <app-filter
-          class="flex-row gap-regular flex-wrap"
-          [filterConfig]="filters()"
-          [entityType]="entityConstructor()!"
-          [entities]="allEntities()"
-          [useUrlQueryParams]="true"
-          [(filterObj)]="filterObj"
-          [filterString]="filterString"
-          (filterStringChange)="filterString = $event; applyFilter($event)"
-        ></app-filter>
-      }
+      <app-filter
+        class="flex-row gap-regular flex-wrap"
+        [filterConfig]="filters()"
+        [entityType]="entityConstructor()!"
+        [entities]="allEntities()"
+        [useUrlQueryParams]="true"
+        [(filterObj)]="filterObj"
+        [filterString]="filterString"
+        (filterStringChange)="filterString = $event; applyFilter($event)"
+      ></app-filter>
     </div>
 
     <!-- Tab Groups-->

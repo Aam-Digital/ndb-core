@@ -261,7 +261,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
     if (!this.allEntities()) {
       // if no entities are passed as input, by default load all entities of the type
-      await this.loadEntities();
+      // await this.loadEntities();
     } else {
       this.cdr.markForCheck();
     }
@@ -311,7 +311,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
             );
           if (!inProgress) {
             // reload the list once
-            this.allEntities.set(await this.getEntities());
+            // this.allEntities.set(await this.getEntities());
             this.cdr.markForCheck();
             // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
             setTimeout(() => {

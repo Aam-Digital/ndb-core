@@ -302,6 +302,36 @@ describe("PouchDatabase tests", () => {
     await expect(database.isEmpty()).resolves.toEqual(false);
   });
 
+  it("should allow to fetch docs with pagination", async () => {
+    await Promise.all(
+      [1, 2, 3].map((id) =>
+        database.put({ _id: `User:${id}`, name: `User ${id}` }),
+      ),
+    );
+    let docs = await database.getAll("User:", { limit: 2 });
+    expect(docs).toHaveLength(2);
+    docs = await database.getAll("User:", { limit: 4 });
+    expect(docs).toHaveLength(3);
+    docs = await database.getAll("User:", { limit: 4, skip: 2 });
+    expect(docs).toHaveLength(1);
+  });
+
+  it("should allow to use mango queries", async () => {
+    await Promise.all(
+      [1, 2, 3].map((num) => database.put({ _id: `User:${num}`, num })),
+    );
+    await database.put({ _id: "OtherEntity:4", num: 4 });
+
+    let docs = await database.find("User", {});
+    expect(docs).toHaveLength(3);
+
+    docs = await database.find("User", { num: { $gt: 1 } });
+    expect(docs).toHaveLength(2);
+
+    docs = await database.find("User", {}, 2, 1);
+    expect(docs.map((doc) => doc.num)).toEqual([2, 3]);
+  });
+
   describe("purge", () => {
     it("should purge doc and emit changes deletion event", async () => {
       await database.put({ _id: "Child:2", name: "test" });

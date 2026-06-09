@@ -103,6 +103,15 @@ describe("EntityMapperService", () => {
     expectEntity(entity2, existingEntity2);
   });
 
+  it("should allow to load entities with pagination", async () => {
+    let entities = await entityMapper.loadType(Entity, { limit: 1 });
+    expect(entities).toHaveLength(1);
+    entities = await entityMapper.loadType(Entity, { limit: 3 });
+    expect(entities).toHaveLength(2);
+    entities = await entityMapper.loadType(Entity, { limit: 3, skip: 1 });
+    expect(entities).toHaveLength(1);
+  });
+
   it("rejects promise when loading nonexistent entity", async () => {
     return entityMapper.load<Entity>(Entity, "nonexistent_id").catch((err) => {
       expect(err, '"not found" error not defined').toBeDefined();

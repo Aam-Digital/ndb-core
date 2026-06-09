@@ -1,10 +1,10 @@
 import {
-  Component,
-  ViewChild,
   ChangeDetectionStrategy,
+  Component,
   effect,
   input,
   signal,
+  ViewChild,
 } from "@angular/core";
 import {
   MatPaginator,
