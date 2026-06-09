@@ -466,6 +466,9 @@
                             <a href="#isGeoLocation" title="src/app/core/common-components/entities-table/value-accessor/value-accessor.ts" ><b>isGeoLocation</b>&nbsp;&nbsp;&nbsp;(src/.../value-accessor.ts)</a>
                         </li>
                         <li>
+                            <a href="#isHierarchicalReport" title="src/app/features/reporting/report-config.ts" ><b>isHierarchicalReport</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</a>
+                        </li>
+                        <li>
                             <a href="#isInheritanceSourceReferenceField" title="src/app/core/import/import-inheritance-warning.util.ts" ><b>isInheritanceSourceReferenceField</b>&nbsp;&nbsp;&nbsp;(src/.../import-inheritance-warning.util.ts)</a>
                         </li>
                         <li>
@@ -10684,6 +10687,72 @@ Can be configured to validate different properties (id, label, etc.) with option
                             <div class="io-description">
                                 <p>An async validator function</p>
 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/reporting/report-config.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isHierarchicalReport"></a>
+                    <span class="name">
+                        <span ><b>isHierarchicalReport</b></span>
+                        <a href="#isHierarchicalReport"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isHierarchicalReport(report)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether a report&#39;s results should be rendered as a hierarchical group/count
+table (<code>sql-v2-table</code>) rather than a flat tabular table (<code>object-table</code>).</p>
+<p>Derived purely from the canonical config structure (no version flag):
+a report is hierarchical when its <code>reportDefinition</code> contains a group
+(<code>groupTitle</code>) or more than one top-level item; otherwise it is tabular.
+Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>report</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>

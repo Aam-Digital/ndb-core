@@ -399,18 +399,13 @@ export class SelectReportComponent {
     const report &#x3D; this.selectedReport();
     if (!report) return false;
     if (report.mode !&#x3D;&#x3D; &quot;sql&quot;) return true;
-    if (report.version &#x3D;&#x3D; 1 || report.version &#x3D;&#x3D; undefined) {
-      return (
-        report.neededArgs.indexOf(&quot;from&quot;) !&#x3D;&#x3D; -1 ||
-        report.neededArgs.indexOf(&quot;to&quot;) !&#x3D;&#x3D; -1
-      );
-    } else if (report.version &#x3D;&#x3D; 2) {
-      return (
-        !!report.transformations[&quot;startDate&quot;] ||
-        !!report.transformations[&quot;endDate&quot;]
-      );
-    }
-    return false;
+    // v1 configs use neededArgs; v2/canonical use transformations
+    return (
+      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;from&quot; || a &#x3D;&#x3D;&#x3D; &quot;startDate&quot;) ||
+      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;to&quot; || a &#x3D;&#x3D;&#x3D; &quot;endDate&quot;) ||
+      !!report.transformations?.[&quot;startDate&quot;] ||
+      !!report.transformations?.[&quot;endDate&quot;]
+    );
   });
 
   dateRangeFilterConfig &#x3D; computed&lt;DateFilter&lt;any&gt; | undefined&gt;(() &#x3D;&gt; {

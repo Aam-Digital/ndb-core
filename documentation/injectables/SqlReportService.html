@@ -424,8 +424,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="324"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:324</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="325"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:325</a></div>
                         </td>
                     </tr>
 
@@ -952,8 +952,9 @@ export class SqlReportService {
     from: Date,
     to: Date,
   ): boolean {
-    let argFrom &#x3D; value.args[&quot;from&quot;];
-    let argTo &#x3D; value.args[&quot;to&quot;];
+    // Backend stores args as &quot;startDate&quot;/&quot;endDate&quot; (canonical); legacy calculations may use &quot;from&quot;/&quot;to&quot;
+    const argFrom &#x3D; value.args[&quot;startDate&quot;] ?? value.args[&quot;from&quot;];
+    const argTo &#x3D; value.args[&quot;endDate&quot;] ?? value.args[&quot;to&quot;];
 
     if (!argFrom || !argTo) {
       return false;
