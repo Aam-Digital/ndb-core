@@ -2,8 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
-  signal,
+  linkedSignal,
+  resource,
+  untracked,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
@@ -57,47 +58,45 @@ import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
 })
-export class NotificationSettingsComponent implements OnInit {
-  notificationConfig = signal<NotificationConfig>(null);
-  isFeatureEnabled = signal<boolean>(false);
-  isEmailFeatureEnabled = signal<boolean>(false);
-  isBrowserSupported = signal<boolean>(false);
-  isPushNotificationEnabled = signal<boolean>(false);
-
+export class NotificationSettingsComponent {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
-  readonly accountEmail = toSignal(this.sessionInfo.pipe(map((s) => s?.email)));
   private readonly userEntity = inject(CurrentUserSubject);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly notificationService = inject(NotificationService);
   private readonly alertService = inject(AlertService);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
 
+  readonly accountEmail = toSignal(this.sessionInfo.pipe(map((s) => s?.email)));
+  readonly isFeatureEnabled =
+    this.notificationService.isNotificationServerEnabled;
+  readonly isEmailFeatureEnabled =
+    this.notificationService.isEmailNotificationEnabled;
+  readonly isBrowserSupported =
+    this.notificationService.isPushNotificationSupported;
+
+  private readonly notificationConfigResource = resource({
+    loader: () => untracked(() => this.loadNotificationConfig()),
+  });
+  notificationConfig = linkedSignal(
+    () => this.notificationConfigResource.value() ?? null,
+  );
+
+  private readonly isDeviceRegisteredResource = resource({
+    loader: async () =>
+      untracked(() =>
+        this.notificationService.hasNotificationPermissionGranted(),
+      ) && (await this.notificationService.isDeviceRegistered()),
+  });
+  isPushNotificationEnabled = linkedSignal(
+    () => this.isDeviceRegisteredResource.value() ?? false,
+  );
+
   /**
    * Get the logged-in user id
    */
   private get userId() {
     return this.sessionInfo.value?.id;
-  }
-
-  async ngOnInit() {
-    this.isFeatureEnabled.set(
-      await this.notificationService.isNotificationServerEnabled(),
-    );
-    this.isEmailFeatureEnabled.set(
-      await this.notificationService.isEmailNotificationEnabled(),
-    );
-
-    this.isBrowserSupported.set(
-      this.notificationService.isPushNotificationSupported(),
-    );
-
-    this.notificationConfig.set(await this.loadNotificationConfig());
-
-    this.isPushNotificationEnabled.set(
-      this.notificationService.hasNotificationPermissionGranted() &&
-        (await this.notificationService.isDeviceRegistered()),
-    );
   }
 
   private async loadNotificationConfig() {
