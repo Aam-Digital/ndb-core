@@ -7,6 +7,10 @@ function throwHttpError(res: Response): never {
   throw error;
 }
 
+function shouldTryAltPath(status: number): boolean {
+  return status === 404 || status === 405;
+}
+
 /**
  * Standalone CouchDB client for server-side CLI/admin use.
  *
@@ -55,7 +59,7 @@ export class Couchdb {
     const path = `${db}/_all_docs`;
 
     let res = await this.post_(`${this.baseUrl}/couchdb/${path}`, body);
-    if (!res.ok) {
+    if (!res.ok && shouldTryAltPath(res.status)) {
       res = await this.post_(`${this.baseUrl}/${path}`, body);
     }
     if (!res.ok) throwHttpError(res);
@@ -66,14 +70,19 @@ export class Couchdb {
   async putAll(docs: unknown[], db = "app"): Promise<unknown> {
     const path = `${db}/_bulk_docs`;
     let res = await this.post_(`${this.baseUrl}/couchdb/${path}`, { docs });
-    if (!res.ok) {
+    if (!res.ok && shouldTryAltPath(res.status)) {
       res = await this.post_(`${this.baseUrl}/${path}`, { docs });
     }
     if (!res.ok) throwHttpError(res);
     return res.json();
   }
 
-  async put(path: string, data: unknown, db?: string): Promise<unknown> {
+  async put(
+    path: string,
+    data: unknown,
+    db?: string,
+    headers?: Record<string, string>,
+  ): Promise<unknown> {
     if (!path.startsWith("/")) path = "/" + path;
     if (db) path = `/${db}${path}`;
 
@@ -82,11 +91,12 @@ export class Couchdb {
       headers: {
         Authorization: this.authHeader,
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify(data),
     };
     let res = await fetch(`${this.baseUrl}/couchdb${path}`, opts);
-    if (!res.ok) {
+    if (!res.ok && shouldTryAltPath(res.status)) {
       res = await fetch(`${this.baseUrl}${path}`, opts);
     }
     if (!res.ok) throwHttpError(res);
@@ -97,7 +107,7 @@ export class Couchdb {
   async post(path: string, data: unknown): Promise<unknown> {
     if (!path.startsWith("/")) path = "/" + path;
     let res = await this.post_(`${this.baseUrl}/couchdb${path}`, data);
-    if (!res.ok) {
+    if (!res.ok && shouldTryAltPath(res.status)) {
       res = await this.post_(`${this.baseUrl}${path}`, data);
     }
     if (!res.ok) throwHttpError(res);

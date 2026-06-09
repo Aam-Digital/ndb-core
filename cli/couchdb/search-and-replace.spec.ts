@@ -126,4 +126,18 @@ describe("editEntities", () => {
     expect(result).toEqual([]);
     expect(couchdb.put).not.toHaveBeenCalled();
   });
+
+  it("fails before writing if any transformed JSON is invalid", async () => {
+    const docs = [
+      { _id: "Child:1", name: "ok" },
+      { _id: "Child:2", name: "break-me" },
+    ];
+    const couchdb = makeStubCouchdb(docs);
+
+    await expect(
+      editEntities(couchdb, '"name":"break-me"', '"name":"unterminated', "Child", false),
+    ).rejects.toThrow();
+
+    expect(couchdb.put).not.toHaveBeenCalled();
+  });
 });

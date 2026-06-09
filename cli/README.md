@@ -33,7 +33,7 @@ npm run --silent cli -- statistics --format csv > stats.csv
 
 - Node.js 18+
 - An ndb-core checkout
-- `credentials.json` in the repo root (see below)
+- `cli/credentials.json` in your checkout (see below; repo root is also supported as a fallback)
 
 ## Quick start
 

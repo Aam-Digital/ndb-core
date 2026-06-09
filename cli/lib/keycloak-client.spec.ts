@@ -36,6 +36,7 @@ describe("KeycloakClient", () => {
     expect(params.get("client_id")).toBe("admin-cli");
     expect(params.get("username")).toBe("admin");
     expect(params.get("password")).toBe("secret");
+    expect(opts.signal).toBeDefined();
   });
 
   it("getUsersFromKeycloak fetches enabled users for org and returns array", async () => {
@@ -52,6 +53,7 @@ describe("KeycloakClient", () => {
     expect((opts.headers as Record<string, string>)["Authorization"]).toBe(
       "Bearer tok123",
     );
+    expect(opts.signal).toBeDefined();
   });
 
   it("throws with readable message when KEYCLOAK_URL is not set", async () => {
@@ -62,4 +64,13 @@ describe("KeycloakClient", () => {
       /Keycloak URL not configured/,
     );
   });
+  it("throws with readable message when KEYCLOAK_ADMIN_PASSWORD is not set", async () => {
+    vi.stubEnv("KEYCLOAK_ADMIN_PASSWORD", "");
+    const { getKeycloakToken } = await import("./keycloak-client");
+
+    await expect(getKeycloakToken()).rejects.toThrow(
+      /Keycloak admin password not configured/,
+    );
+  });
+
 });

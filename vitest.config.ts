@@ -1,5 +1,8 @@
 import { defineConfig } from "vitest/config";
 import { resolve } from "path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   resolve: {
@@ -9,7 +12,7 @@ export default defineConfig({
   },
   test: {
     include: ["cli/**/*.spec.ts"],
-    passWithNoTests: true,
+    passWithNoTests: false,
     globals: true,
     environment: "node",
   },

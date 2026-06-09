@@ -22,7 +22,8 @@ export const latestConfigFormats: MigrationDefinition = {
           warnings: ["Config document not found"],
         };
       }
-      ctx.log.error(`Failed to load config document: ${error}`);
+      const message = error instanceof Error ? error.message : String(error);
+      ctx.log.error(`Failed to load config document: ${message}`);
       throw error;
     }
 

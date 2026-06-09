@@ -63,7 +63,7 @@ export class TrackedMigrationContext implements MigrationContext {
       return;
     }
     try {
-      await this.couchdb.put(path, data, db);
+      await this.couchdb.put(path, data, db, headers as Record<string, string>);
       this.succeeded++;
     } catch (e: unknown) {
       this.failed++;
@@ -79,7 +79,8 @@ export class TrackedMigrationContext implements MigrationContext {
     let oldData: unknown;
     try {
       oldData = await this.couchdb.get(path, db);
-    } catch {
+    } catch (error: unknown) {
+      if (!is404Error(error)) throw error;
       this.log.verbose(`+ ${path} (new document)`);
       return;
     }
@@ -129,5 +130,6 @@ function truncate(str: string | undefined, max = 200): string {
 }
 
 export function is404Error(error: unknown): boolean {
-  return (error as { response?: { status?: number } }).response?.status === 404;
+  const e = error as { status?: number; response?: { status?: number } };
+  return e.status === 404 || e.response?.status === 404;
 }

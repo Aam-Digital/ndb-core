@@ -58,6 +58,43 @@ describe("getCredentials", () => {
     expect(result.orgs[0].url).toBe("custom.host.example");
   });
 
+  it("throws if an org has neither explicit url nor name", async () => {
+    const raw = JSON.stringify([{ password: "pw" }]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+
+    expect(() => getCredentials()).toThrow(/must define either "url" or "name"/);
+  });
+
+  it("throws when DOMAIN is missing and org has no explicit url", async () => {
+    vi.stubEnv("DOMAIN", "");
+    const raw = JSON.stringify([{ name: "org", password: "pw" }]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+
+    expect(() => getCredentials()).toThrow(/DOMAIN env var is required/);
+  });
+
+  it("throws when password is missing", async () => {
+    const raw = JSON.stringify([{ name: "org" }]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+
+    expect(() => getCredentials()).toThrow(/missing "password"/);
+  });
+
   it("trims whitespace from category", async () => {
     const raw = JSON.stringify([
       { name: "org", password: "pw", category: "  prod  " },

@@ -81,4 +81,39 @@ describe("Couchdb", () => {
       response: { status: 409 },
     });
   });
+
+  it("PUT retries alternate path only for endpoint status (404/405)", async () => {
+    const { Couchdb } = await import("./couchdb-client");
+    const db = new Couchdb("x.example.com", "pw");
+    mockFetch.mockResolvedValueOnce(makeJsonResponse({}, 404));
+    mockFetch.mockResolvedValueOnce(makeJsonResponse({ ok: true }, 201));
+
+    await db.put("/app/Doc:1", { _id: "Doc:1" });
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockFetch.mock.calls[0][0]).toContain("/db/couchdb/");
+    expect(mockFetch.mock.calls[1][0]).toContain("/db/app/Doc:1");
+  });
+
+  it("PUT does not retry alternate path for non-endpoint errors", async () => {
+    const { Couchdb } = await import("./couchdb-client");
+    const db = new Couchdb("x.example.com", "pw");
+    mockFetch.mockResolvedValueOnce(makeJsonResponse({}, 500));
+
+    await expect(db.put("/app/Doc:1", { _id: "Doc:1" })).rejects.toMatchObject({
+      status: 500,
+    });
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("PUT forwards extra headers when provided", async () => {
+    const { Couchdb } = await import("./couchdb-client");
+    const db = new Couchdb("x.example.com", "pw");
+    mockFetch.mockResolvedValueOnce(makeJsonResponse({ ok: true }, 201));
+
+    await db.put("/app/Doc:1", { _id: "Doc:1" }, undefined, { "If-Match": "3-a" });
+
+    const opts = mockFetch.mock.calls[0][1] as RequestInit;
+    expect((opts.headers as Record<string, string>)["If-Match"]).toBe("3-a");
+  });
 });

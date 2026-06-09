@@ -257,8 +257,12 @@ program
       let users: unknown[] = [];
       let usersError = false;
       try {
+        const parsedUrl = new URL(
+          org.url.includes("://") ? org.url : `https://${org.url}`,
+        );
+        const realm = parsedUrl.hostname.split(".")[0];
         users = await getUsersFromKeycloak(
-          org.url.split(".")[0],
+          realm,
           token,
           keycloak,
         );

@@ -30,12 +30,24 @@ export class OrgRunner {
           results.push({ org, reachable: true });
         }
       } catch (e: unknown) {
-        const detail = e instanceof Error ? e.message : String(e);
+        const status =
+          typeof e === "object" &&
+          e !== null &&
+          "status" in e &&
+          typeof (e as { status: unknown }).status === "number"
+            ? (e as { status: number }).status
+            : undefined;
+        const detail =
+          e instanceof Error
+            ? e.message
+            : typeof e === "string"
+              ? e
+              : JSON.stringify(e);
         results.push({
           org,
           reachable: false,
-          failureReason: "network",
-          errorDetail: detail,
+          failureReason: status === 401 || status === 403 ? "auth" : "network",
+          errorDetail: status ? `HTTP ${status}: ${detail}` : detail,
         });
       }
     }

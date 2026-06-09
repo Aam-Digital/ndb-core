@@ -20,7 +20,7 @@ function seedForMigration(id: string): Record<string, unknown> {
 
 describe("All registered migrations are idempotent", () => {
   test.each(migrations.map((m) => [m.id, m]))(
-    'migration "%s" second run reports no-change',
+    'migration "%s" second run makes no state change',
     async (_id, migration) => {
       const seed = seedForMigration(migration.id);
       const result = await runIdempotencyCheck(migration, seed);

@@ -28,10 +28,14 @@ export async function editEntities(
     return matched.map((doc) => ({ _id: doc._id }));
   }
 
-  const results: { _id: string }[] = [];
-  for (const doc of matched) {
+  const transformed = matched.map((doc) => {
     const replaced = JSON.stringify(doc).replace(replaceRegex, replaceString);
-    await couchdb.put(`/app/${doc._id}`, JSON.parse(replaced));
+    return { _id: doc._id, body: JSON.parse(replaced) };
+  });
+
+  const results: { _id: string }[] = [];
+  for (const doc of transformed) {
+    await couchdb.put(`/app/${doc._id}`, doc.body);
     results.push({ _id: doc._id });
   }
   return results;

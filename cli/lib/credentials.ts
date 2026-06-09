@@ -55,13 +55,45 @@ export function getCredentials(credentialsPath?: string): CredentialsFile {
     : (parsed as { keycloak?: KeycloakConfig }).keycloak;
 
   const domain = process.env["DOMAIN"] ?? "";
-  const orgs = rawOrgs.map((c) => ({
-    url: c.url ?? `${c.name}.${domain}`,
-    name: c.name,
-    password: c.password,
-    username: c.username,
-    category: c.category?.trim() ?? "",
-  }));
+  const orgs = rawOrgs.map((c, index) => {
+    if (!c.password) {
+      throw new Error(
+        `Invalid credentials: org at index ${index} is missing "password".`,
+      );
+    }
+
+    const explicitUrl = c.url?.trim();
+    const name = c.name?.trim();
+
+    if (explicitUrl) {
+      return {
+        url: explicitUrl,
+        name,
+        password: c.password,
+        username: c.username,
+        category: c.category?.trim() ?? "",
+      };
+    }
+
+    if (!name) {
+      throw new Error(
+        `Invalid credentials: org at index ${index} must define either "url" or "name".`,
+      );
+    }
+    if (!domain) {
+      throw new Error(
+        `Invalid credentials: DOMAIN env var is required when org "${name}" has no explicit "url".`,
+      );
+    }
+
+    return {
+      url: `${name}.${domain}`,
+      name,
+      password: c.password,
+      username: c.username,
+      category: c.category?.trim() ?? "",
+    };
+  });
 
   return { orgs, keycloak };
 }
