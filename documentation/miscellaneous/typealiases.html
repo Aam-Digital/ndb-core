@@ -217,7 +217,7 @@
                             <a href="#IsDesktop" title="src/app/utils/media/screen-size-observer.service.ts" ><b>IsDesktop</b>&nbsp;&nbsp;&nbsp;(src/.../screen-size-observer.service.ts)</a>
                         </li>
                         <li>
-                            <a href="#LegacyOrFilterConfig" title="src/app/core/config/config.service.ts" ><b>LegacyOrFilterConfig</b>&nbsp;&nbsp;&nbsp;(src/.../config.service.ts)</a>
+                            <a href="#LegacyOrFilterConfig" title="src/app/core/config/config-migrations.ts" ><b>LegacyOrFilterConfig</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</a>
                         </li>
                         <li>
                             <a href="#LocationProperties" title="src/app/features/location/map/map-properties-popup/map-properties-popup.component.ts" ><b>LocationProperties</b>&nbsp;&nbsp;&nbsp;(src/.../map-properties-popup.component.ts)</a>
@@ -235,7 +235,7 @@
                             <a href="#OpenStreetMapsSearchResult" title="src/app/features/location/geo.service.ts" ><b>OpenStreetMapsSearchResult</b>&nbsp;&nbsp;&nbsp;(src/.../geo.service.ts)</a>
                         </li>
                         <li>
-                            <a href="#OrFilterCondition" title="src/app/core/config/config.service.ts" ><b>OrFilterCondition</b>&nbsp;&nbsp;&nbsp;(src/.../config.service.ts)</a>
+                            <a href="#OrFilterCondition" title="src/app/core/config/config-migrations.ts" ><b>OrFilterCondition</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</a>
                         </li>
                         <li>
                             <a href="#PositionState" title="src/app/features/attendance/add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component.ts" ><b>PositionState</b>&nbsp;&nbsp;&nbsp;(src/.../roll-call-tab.component.ts)</a>
@@ -1021,7 +1021,7 @@ a boolean way:</p>
             </tr>
         </tbody>
     </table>
-</section>    <h3>src/app/core/config/config.service.ts</h3>
+</section>    <h3>src/app/core/config/config-migrations.ts</h3>
     <section data-compodoc="block-typealias">
     <table class="table table-sm table-bordered">
         <tbody>
@@ -1045,15 +1045,6 @@ a boolean way:</p>
                 <td class="col-md-4">
                     <a name="OrFilterCondition"></a>
                     <span class="name "><b>OrFilterCondition</b><a href="#OrFilterCondition"><span class="icon ion-ios-link"></span></a></span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Migrate legacy &quot;.id&quot; filter keys in OR clauses to the current filter format.
-Example:
-{ $or: [{ &quot;projectStatus.id&quot;: &quot;A&quot; }, { &quot;projectStatus.id&quot;: &quot;B&quot; }] }
-  -&gt; { $or: [{ projectStatus: &quot;A&quot; }, { projectStatus: &quot;B&quot; }] }</p>
-</div>
                 </td>
             </tr>
             <tr>

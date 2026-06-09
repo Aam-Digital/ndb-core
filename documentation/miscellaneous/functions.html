@@ -142,6 +142,9 @@
                             <a href="#addTooltip" title="src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts" ><b>addTooltip</b>&nbsp;&nbsp;&nbsp;(src/.../link-external-profile-dialog.component.ts)</a>
                         </li>
                         <li>
+                            <a href="#applyConfigMigrations" title="src/app/core/config/config-migrations.ts" ><b>applyConfigMigrations</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</a>
+                        </li>
+                        <li>
                             <a href="#applyOnlineOnlyPreference" title="src/bootstrap-environment.ts" ><b>applyOnlineOnlyPreference</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</a>
                         </li>
                         <li>
@@ -595,7 +598,7 @@
                             <a href="#reuseFirstAsync" title="src/app/utils/reuse-first-async.ts" ><b>reuseFirstAsync</b>&nbsp;&nbsp;&nbsp;(src/.../reuse-first-async.ts)</a>
                         </li>
                         <li>
-                            <a href="#rewriteNavMenuLinks" title="src/app/core/config/config.service.ts" ><b>rewriteNavMenuLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config.service.ts)</a>
+                            <a href="#rewriteNavMenuLinks" title="src/app/core/config/config-migrations.ts" ><b>rewriteNavMenuLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</a>
                         </li>
                         <li>
                             <a href="#serviceProvider" title="src/app/utils/utils.ts" ><b>serviceProvider</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
@@ -1881,6 +1884,157 @@ The use case is, when multiple services extend the same class and one of these s
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/config/config-migrations.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applyConfigMigrations"></a>
+                    <span class="name">
+                        <span ><b>applyConfigMigrations</b></span>
+                        <a href="#applyConfigMigrations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>applyConfigMigrations(doc: E)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Apply all config migrations to a plain JSON document.
+Returns the migrated document as a plain object (no Angular entity re-hydration).
+Used by the admin CLI; ConfigService wraps this and also applies defaultConfigs.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>doc</td>
+                                            <td>
+                                                        <code>E</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>E</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rewriteNavMenuLinks"></a>
+                    <span class="name">
+                        <span ><b>rewriteNavMenuLinks</b></span>
+                        <a href="#rewriteNavMenuLinks"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>rewriteNavMenuLinks(items, oldLink: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, newLink: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>items</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>oldLink</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>newLink</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>any[]</code>
 
                         </div>
                             <div class="io-description">
@@ -3312,90 +3466,6 @@ may be undefined or null. In this event, the entities-array is returned as is.</
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="rewriteNavMenuLinks"></a>
-                    <span class="name">
-                        <span ><b>rewriteNavMenuLinks</b></span>
-                        <a href="#rewriteNavMenuLinks"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>rewriteNavMenuLinks(items, oldLink: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, newLink: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>items</td>
-                                            <td>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>oldLink</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>newLink</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>any[]</code>
 
                         </div>
                             <div class="io-description">
