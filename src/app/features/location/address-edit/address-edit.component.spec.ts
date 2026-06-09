@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AddressEditComponent } from "./address-edit.component";
-import { GeoResult, GeoService } from "../geo.service";
+import { OpenStreetMapsSearchResult, GeoService } from "../geo.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { GeoLocation } from "../geo-location";
+import { GeoLocation, enrichGeoLocation } from "../geo-location";
 import type { Mock } from "vitest";
 
 type GeoServiceMock = Pick<GeoService, "lookup" | "reverseLookup"> & {
@@ -25,7 +25,7 @@ describe("AddressEditComponent", () => {
   let component: AddressEditComponent;
   let fixture: ComponentFixture<AddressEditComponent>;
 
-  let mockGeoService: GeoServiceMock;
+  let mockGeoService: any;
   let mockConfirmationDialog: ConfirmationDialogMock;
 
   beforeEach(async () => {
@@ -36,6 +36,9 @@ describe("AddressEditComponent", () => {
     mockGeoService = {
       lookup: vi.fn(),
       reverseLookup: vi.fn(),
+      enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
+        enrichGeoLocation(loc),
+      ),
     };
     mockGeoService.lookup.mockReturnValue(of([]));
 
@@ -80,10 +83,56 @@ describe("AddressEditComponent", () => {
     );
   });
 
+  it("should preserve top-level address parts when editing the manual address", async () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "lookup address",
+      geoLookup: {
+        lat: 1,
+        lon: 1,
+        display_name: "lookup address",
+        address: {
+          road: "Main St",
+          house_number: "42",
+          postcode: "12345",
+          city: "Berlin",
+          country: "Germany",
+        },
+      } as OpenStreetMapsSearchResult,
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+
+    component.updateLocationString("manual address line");
+
+    expect(component.selectedLocation()).toEqual({
+      locationString: "manual address line",
+      geoLookup: {
+        lat: 1,
+        lon: 1,
+        display_name: "lookup address",
+        address: {
+          road: "Main St",
+          house_number: "42",
+          postcode: "12345",
+          city: "Berlin",
+          country: "Germany",
+        },
+      } as OpenStreetMapsSearchResult,
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+  });
+
   it("should also remove geoLocation when manual address is deleted", async () => {
     fixture.componentRef.setInput("selectedLocation", {
       locationString: "manual address",
-      geoLookup: {} as GeoResult,
+      geoLookup: {} as OpenStreetMapsSearchResult,
     });
 
     component.updateLocationString("");
@@ -94,16 +143,31 @@ describe("AddressEditComponent", () => {
   it("should update manual address with suggested address and append extra details if present", async () => {
     vi.useFakeTimers();
     try {
-      const SAMPLE_GEO_RESULT: GeoResult = {
+      const SAMPLE_GEO_RESULT: OpenStreetMapsSearchResult = {
         lat: 1,
         lon: 1,
         display_name: "lookup address",
-      };
+        address: {},
+      } as OpenStreetMapsSearchResult;
 
       // Case 1: Extra details present
       const selectedWithExtra: GeoLocation = {
         locationString: SAMPLE_GEO_RESULT.display_name,
-        geoLookup: SAMPLE_GEO_RESULT,
+        geoLookup: {
+          ...SAMPLE_GEO_RESULT,
+          address: {
+            road: "Main St",
+            house_number: "42",
+            postcode: "12345",
+            city: "Berlin",
+            country: "Germany",
+          },
+        } as OpenStreetMapsSearchResult,
+        road: "Main St",
+        house_number: "42",
+        postcode: "12345",
+        city: "Berlin",
+        country: "Germany",
       };
 
       fixture.componentRef.setInput("selectedLocation", {
@@ -119,7 +183,21 @@ describe("AddressEditComponent", () => {
 
       expect(component.selectedLocation()).toEqual({
         locationString: "lookup address\nManual",
-        geoLookup: SAMPLE_GEO_RESULT,
+        geoLookup: {
+          ...SAMPLE_GEO_RESULT,
+          address: {
+            road: "Main St",
+            house_number: "42",
+            postcode: "12345",
+            city: "Berlin",
+            country: "Germany",
+          },
+        } as OpenStreetMapsSearchResult,
+        road: "Main St",
+        house_number: "42",
+        postcode: "12345",
+        city: "Berlin",
+        country: "Germany",
       });
 
       // Case 2: No extra details, user input matches suggestion
@@ -136,7 +214,21 @@ describe("AddressEditComponent", () => {
 
       expect(component.selectedLocation()).toEqual({
         locationString: "lookup address",
-        geoLookup: SAMPLE_GEO_RESULT,
+        geoLookup: {
+          ...SAMPLE_GEO_RESULT,
+          address: {
+            road: "Main St",
+            house_number: "42",
+            postcode: "12345",
+            city: "Berlin",
+            country: "Germany",
+          },
+        } as OpenStreetMapsSearchResult,
+        road: "Main St",
+        house_number: "42",
+        postcode: "12345",
+        city: "Berlin",
+        country: "Germany",
       });
     } finally {
       vi.useRealTimers();

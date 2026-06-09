@@ -384,17 +384,46 @@ describe("ReportingComponent", () => {
     expect(component.data()).toEqual([]);
   });
 
-  it("should return raw data for version 1 SQL reports", () => {
-    const mockData = [
+  it("should unwrap backend row-wrapping for non-hierarchical (tabular) SQL reports", () => {
+    const rows = [
       { child_gender: "M", child_name: "child1" },
       { child_gender: "X", child_name: "child2" },
     ];
 
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
+    report.reportDefinition = [{ query: "SELECT child_gender, child_name" }];
+
+    // backend wraps each query's rows in an outer array: [[ {...}, {...} ]]
+    const result = component["getSqlExportableData"]([rows], report);
+
+    expect(result).toEqual(rows);
+  });
+
+  it("should expose unwrapped tabular rows for the object table", () => {
+    const rows = [{ child_name: "child1" }, { child_name: "child2" }];
+
+    component.data.set([rows]);
+
+    expect(component.sqlTableRows()).toEqual(rows);
+  });
+
+  it("should return CSV for hierarchical (grouped) SQL reports", () => {
+    const mockData = [{ value: 5 }];
+    const flattened = [{ label: "Group A", result: 5, level: 0 }];
+    mockSqlReportService.flattenData.mockReturnValue(flattened);
+    mockSqlReportService.getCsvforV2.mockReturnValue("csv-output");
+
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
+    report.reportDefinition = [
+      { groupTitle: "Group A", items: [{ query: "SELECT count(*)" }] },
+    ];
 
     const result = component["getSqlExportableData"](mockData, report);
 
-    expect(result).toEqual(mockData);
+    expect(mockSqlReportService.flattenData).toHaveBeenCalledWith(mockData);
+    expect(mockSqlReportService.getCsvforV2).toHaveBeenCalledWith(flattened);
+    expect(result).toBe("csv-output");
   });
 });
