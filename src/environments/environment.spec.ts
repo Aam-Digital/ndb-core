@@ -10,7 +10,7 @@ export const environment = {
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
   demo_mode: false,
   session_type: SessionType.mock,
-  email: undefined,
+  webmaster_email: undefined,
   userAdminApi: "http://localhost:8080",
   realm: "test-realm",
   DB_PROXY_PREFIX: "/db",
