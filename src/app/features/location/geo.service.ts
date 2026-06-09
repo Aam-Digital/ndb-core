@@ -44,7 +44,9 @@ export class GeoService {
     addressdetails: 1,
     // Only include the email param when configured — sending `email=undefined`
     // (the literal string) violates Nominatim usage policy.
-    ...(environment.webmaster_email ? { email: environment.webmaster_email } : {}),
+    ...(environment.webmaster_email
+      ? { email: environment.webmaster_email }
+      : {}),
   };
 
   private readonly cache = new Map<string, OpenStreetMapsSearchResult[]>();
