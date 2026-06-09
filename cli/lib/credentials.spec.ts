@@ -24,7 +24,7 @@ describe("getCredentials", () => {
     const { getCredentials } = await import("./credentials");
     const result = getCredentials();
 
-    expect(result).toEqual([
+    expect(result.orgs).toEqual([
       {
         url: "demo.aam-digital.com",
         name: "demo",
@@ -40,6 +40,7 @@ describe("getCredentials", () => {
         category: "staging",
       },
     ]);
+    expect(result.keycloak).toBeUndefined();
   });
 
   it("uses explicit url field when present, ignoring name + DOMAIN", async () => {
@@ -54,7 +55,7 @@ describe("getCredentials", () => {
     const { getCredentials } = await import("./credentials");
     const result = getCredentials();
 
-    expect(result[0].url).toBe("custom.host.example");
+    expect(result.orgs[0].url).toBe("custom.host.example");
   });
 
   it("trims whitespace from category", async () => {
@@ -69,7 +70,24 @@ describe("getCredentials", () => {
     const { getCredentials } = await import("./credentials");
     const result = getCredentials();
 
-    expect(result[0].category).toBe("prod");
+    expect(result.orgs[0].category).toBe("prod");
+  });
+
+  it("parses object format with keycloak config and orgs array", async () => {
+    const raw = JSON.stringify({
+      keycloak: { url: "https://kc.example.com", adminPassword: "kc-secret" },
+      orgs: [{ name: "demo", password: "pw" }],
+    });
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+    const result = getCredentials();
+
+    expect(result.keycloak).toEqual({ url: "https://kc.example.com", adminPassword: "kc-secret" });
+    expect(result.orgs[0].name).toBe("demo");
   });
 
   it("throws a readable error when no credentials file is found", async () => {
@@ -94,7 +112,7 @@ describe("getCredentials", () => {
         expect.objectContaining({ encoding: "utf-8" }),
       );
       expect(fs.readFileSync).not.toHaveBeenCalled();
-      expect(result[0].password).toBe("s3cr3t");
+      expect(result.orgs[0].password).toBe("s3cr3t");
     });
 
     it("prefers the encrypted file over plaintext when both resolve", async () => {
@@ -109,7 +127,7 @@ describe("getCredentials", () => {
 
       expect(childProcess.execFileSync).toHaveBeenCalled();
       expect(fs.readFileSync).not.toHaveBeenCalled();
-      expect(result[0].password).toBe("enc");
+      expect(result.orgs[0].password).toBe("enc");
     });
 
     it("gives a clear error when age is not installed", async () => {

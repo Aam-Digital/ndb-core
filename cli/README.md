@@ -12,17 +12,22 @@ npm run cli -- migrate --help
 npm run cli -- migrate run --help
 ```
 
-| Command | Description |
-| --- | --- |
-| `check` | Verify connectivity to all (or selected) orgs |
-| `migrate list` | List all available migrations |
-| `migrate run <id>` | Run a migration (preview → confirm → apply) |
-| `couchdb search <regex>` | Find entity documents matching a regex |
-| `couchdb edit <regex> <replace>` | Regex replace inside entity documents |
-| `couchdb conflicts` | List conflicted documents |
-| `statistics` | Print entity and user counts per org |
+| Command                          | Description                                   |
+| -------------------------------- | --------------------------------------------- |
+| `check`                          | Verify connectivity to all (or selected) orgs |
+| `migrate list`                   | List all available migrations                 |
+| `migrate run <id>`               | Run a migration (preview → confirm → apply)   |
+| `couchdb search <regex>`         | Find entity documents matching a regex        |
+| `couchdb edit <regex> <replace>` | Regex replace inside entity documents         |
+| `couchdb conflicts`              | List conflicted documents                     |
+| `statistics`                     | Print entity and user counts per org          |
 
-The `statistics` command requires Keycloak env vars: `KEYCLOAK_URL` and `KEYCLOAK_ADMIN_PASSWORD`.
+The `statistics` command requires Keycloak credentials (see below).
+It supports `--format csv` for spreadsheet export — use `npm run --silent` to suppress npm's script header when redirecting to a file:
+
+```bash
+npm run --silent cli -- statistics --format csv > stats.csv
+```
 
 ## Prerequisites
 
@@ -39,16 +44,27 @@ npm run cli -- --help
 
 ## credentials.json
 
-Place a `credentials.json` in the `cli/` folder of your ndb-core checkout (it is git-ignored). Shape:
+Place a `credentials.json` in the `cli/` folder of your ndb-core checkout (it is git-ignored).
 
 ```json
-[
-  { "name": "myorg", "password": "secret" },
-  { "name": "another", "url": "custom.host.example.com", "password": "secret2", "category": "prod" }
-]
+{
+  "orgs": [
+    { "name": "myorg", "password": "secret" },
+    {
+      "name": "another",
+      "url": "custom.host.example.com",
+      "password": "secret2",
+      "category": "prod"
+    }
+  ],
+  "keycloak": {
+    "url": "https://keycloak.aam-digital.com",
+    "adminPassword": "kc-admin-password"
+  }
+}
 ```
 
-Fields:
+Org fields:
 
 | Field      | Required | Description                                        |
 | ---------- | -------- | -------------------------------------------------- |
@@ -59,6 +75,8 @@ Fields:
 | `category` | no       | Used with `--category` to filter org subsets       |
 
 If `url` is omitted, the CLI builds it as `<name>.<DOMAIN>` where `DOMAIN` is read from the environment.
+
+The `keycloak` block is required by the `statistics` command. As a fallback, set `KEYCLOAK_URL` and `KEYCLOAK_ADMIN_PASSWORD` env vars instead.
 
 ### Generating credentials.json on the server
 

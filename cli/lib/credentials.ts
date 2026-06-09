@@ -11,6 +11,16 @@ export interface SystemCredentials {
   category: string;
 }
 
+export interface KeycloakConfig {
+  url: string;
+  adminPassword: string;
+}
+
+export interface CredentialsFile {
+  orgs: SystemCredentials[];
+  keycloak?: KeycloakConfig;
+}
+
 type RawCredential = {
   url?: string;
   name?: string;
@@ -22,28 +32,38 @@ type RawCredential = {
 /** Files with this suffix are decrypted on the fly with `age` (passphrase-based). */
 const ENCRYPTED_SUFFIX = ".age";
 
-export function getCredentials(credentialsPath?: string): SystemCredentials[] {
+export function getCredentials(credentialsPath?: string): CredentialsFile {
   const path = credentialsPath ?? resolveCredentialsPath();
   const content = path.endsWith(ENCRYPTED_SUFFIX)
     ? decryptWithAge(path)
     : readFileSync(path, "utf-8");
 
-  let raw: RawCredential[];
+  let parsed: unknown;
   try {
-    raw = JSON.parse(content);
+    parsed = JSON.parse(content);
   } catch (e: unknown) {
     throw new Error(
       `Failed to parse credentials from ${path}: ${e instanceof Error ? e.message : String(e)}`,
     );
   }
+
+  const rawOrgs: RawCredential[] = Array.isArray(parsed)
+    ? parsed
+    : (parsed as { orgs?: RawCredential[] }).orgs ?? [];
+  const keycloak: KeycloakConfig | undefined = Array.isArray(parsed)
+    ? undefined
+    : (parsed as { keycloak?: KeycloakConfig }).keycloak;
+
   const domain = process.env["DOMAIN"] ?? "";
-  return raw.map((c) => ({
+  const orgs = rawOrgs.map((c) => ({
     url: c.url ?? `${c.name}.${domain}`,
     name: c.name,
     password: c.password,
     username: c.username,
     category: c.category?.trim() ?? "",
   }));
+
+  return { orgs, keycloak };
 }
 
 /**

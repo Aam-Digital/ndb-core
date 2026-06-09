@@ -18,6 +18,7 @@ export interface OrgStatistics {
   name: string;
   users: number;
   entities: Record<string, { all: number; active: number }>;
+  error?: boolean;
 }
 
 async function upsertStatisticsView(couchdb: Couchdb): Promise<void> {
@@ -42,7 +43,10 @@ async function upsertStatisticsView(couchdb: Couchdb): Promise<void> {
 export async function getOrgStatistics(
   couchdb: Couchdb,
   users: unknown[],
+  usersError = false,
 ): Promise<OrgStatistics> {
+  let hasError = usersError;
+
   await upsertStatisticsView(couchdb);
 
   const statsAll = await couchdb
@@ -54,6 +58,7 @@ export async function getOrgStatistics(
         "Couldn't get statistics (entities_all) from CouchDB for",
         couchdb.url,
       );
+      hasError = true;
       return [] as { key: string; value: number }[];
     });
 
@@ -66,6 +71,7 @@ export async function getOrgStatistics(
         "Couldn't get statistics (entities_active) from CouchDB for",
         couchdb.url,
       );
+      hasError = true;
       return [] as { key: string; value: number }[];
     });
 
@@ -81,7 +87,7 @@ export async function getOrgStatistics(
     }
   }
 
-  return { name: couchdb.url, users: users.length, entities };
+  return { name: couchdb.url, users: users.length, entities, error: hasError || undefined };
 }
 
 export function formatStatisticsCsv(stats: OrgStatistics[]): string {
@@ -97,12 +103,17 @@ export function formatStatisticsCsv(stats: OrgStatistics[]): string {
   const rows = stats.map((stat) => {
     const flat: Record<string, number | string> = {
       name: stat.name,
-      users: stat.users,
+      users: stat.error ? "-" : stat.users,
     };
     for (const entityType of allEntityTypes) {
-      const counts = stat.entities[entityType] ?? { all: 0, active: 0 };
-      flat[`${entityType}_all`] = counts.all;
-      flat[`${entityType}_active`] = counts.active;
+      if (stat.error) {
+        flat[`${entityType}_all`] = "-";
+        flat[`${entityType}_active`] = "-";
+      } else {
+        const counts = stat.entities[entityType] ?? { all: 0, active: 0 };
+        flat[`${entityType}_all`] = counts.all;
+        flat[`${entityType}_active`] = counts.active;
+      }
     }
     return flat;
   });

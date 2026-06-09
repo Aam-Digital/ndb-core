@@ -38,8 +38,9 @@ program
   .description("Check connectivity to all (or selected) orgs")
   .action(async () => {
     const opts = program.opts();
-    const orgs = resolveOrgs(opts);
-    if (!orgs) return process.exit(2);
+    const creds = loadCredentials(opts);
+    if (!creds) return process.exit(2);
+    const { orgs } = creds;
     const runner = new OrgRunner();
 
     const results = await runner.checkConnectivity(orgs);
@@ -79,8 +80,9 @@ migrateCmd
       return process.exit(2);
     }
 
-    const orgs = resolveOrgs(opts);
-    if (!orgs) return process.exit(2);
+    const creds = loadCredentials(opts);
+    if (!creds) return process.exit(2);
+    const { orgs } = creds;
     const runner = new OrgRunner();
     const logger = new ConsoleLogger(!!opts.verbose);
 
@@ -154,8 +156,9 @@ couchdbCmd
   .requiredOption("--type <type>", "Entity type prefix (e.g. Child)")
   .action(async (regex: string, cmdOpts) => {
     const opts = { ...program.opts(), ...cmdOpts };
-    const orgs = resolveOrgs(opts);
-    if (!orgs) return process.exit(2);
+    const creds = loadCredentials(opts);
+    if (!creds) return process.exit(2);
+    const { orgs } = creds;
 
     const results = await runForAllOrgs(orgs, async (couchdb) =>
       searchEntities(couchdb, regex, cmdOpts.type as string),
@@ -171,8 +174,9 @@ couchdbCmd
   .option("--yes", "Skip confirmation")
   .action(async (regex: string, replace: string, cmdOpts) => {
     const opts = { ...program.opts(), ...cmdOpts };
-    const orgs = resolveOrgs(opts);
-    if (!orgs) return process.exit(2);
+    const creds = loadCredentials(opts);
+    if (!creds) return process.exit(2);
+    const { orgs } = creds;
 
     // Dry-run preview first
     const preview = await runForAllOrgs(orgs, async (couchdb) =>
@@ -211,8 +215,9 @@ couchdbCmd
   .description("List conflicted documents across all orgs")
   .action(async () => {
     const opts = program.opts();
-    const orgs = resolveOrgs(opts);
-    if (!orgs) return process.exit(2);
+    const creds = loadCredentials(opts);
+    if (!creds) return process.exit(2);
+    const { orgs } = creds;
 
     const results = await runForAllOrgs(orgs, (couchdb) => getConflicts(couchdb));
     console.log(JSON.stringify(results, null, 2));
@@ -226,12 +231,13 @@ program
   .option("--format <fmt>", "Output format: json or csv", "json")
   .action(async (cmdOpts) => {
     const opts = { ...program.opts(), ...cmdOpts };
-    const orgs = resolveOrgs(opts);
-    if (!orgs) return process.exit(2);
+    const credentials = loadCredentials(opts);
+    if (!credentials) return process.exit(2);
+    const { orgs, keycloak } = credentials;
 
     let token: string;
     try {
-      token = await getKeycloakToken();
+      token = await getKeycloakToken(keycloak);
     } catch (e: unknown) {
       console.error(
         "Failed to get Keycloak token:",
@@ -243,14 +249,19 @@ program
     const stats = [];
     for (const org of orgs) {
       const couchdb = new Couchdb(org.url, org.password, org.username);
-      const users = await getUsersFromKeycloak(
-        org.url.split(".")[0],
-        token,
-      ).catch(() => {
+      let users: unknown[] = [];
+      let usersError = false;
+      try {
+        users = await getUsersFromKeycloak(
+          org.url.split(".")[0],
+          token,
+          keycloak,
+        );
+      } catch {
         console.warn("Couldn't get users from Keycloak for", org.url);
-        return [];
-      });
-      stats.push(await getOrgStatistics(couchdb, users));
+        usersError = true;
+      }
+      stats.push(await getOrgStatistics(couchdb, users, usersError));
     }
 
     if (opts.format === "csv") {
@@ -266,20 +277,20 @@ program.parse(process.argv);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function resolveOrgs(opts: {
+function loadCredentials(opts: {
   credentials?: string;
   org?: string;
   category?: string;
-}): SystemCredentials[] | null {
-  let all: SystemCredentials[];
+}): { orgs: SystemCredentials[]; keycloak: ReturnType<typeof getCredentials>["keycloak"] } | null {
+  let file: ReturnType<typeof getCredentials>;
   try {
-    all = getCredentials(opts.credentials);
+    file = getCredentials(opts.credentials);
   } catch (e: unknown) {
     console.error(e instanceof Error ? e.message : String(e));
     return null;
   }
 
-  const orgs = OrgRunner.filterOrgs(all, opts);
+  const orgs = OrgRunner.filterOrgs(file.orgs, opts);
   if (orgs.length === 0) {
     const filter = opts.org
       ? `--org "${opts.org}"`
@@ -289,7 +300,7 @@ function resolveOrgs(opts: {
     console.error(`\nNo orgs matched ${filter}.\n`);
     return null;
   }
-  return orgs;
+  return { orgs, keycloak: file.keycloak };
 }
 
 async function askConfirmation(question: string): Promise<boolean> {
