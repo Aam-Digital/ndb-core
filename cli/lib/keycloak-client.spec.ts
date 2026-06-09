@@ -58,6 +58,8 @@ describe("KeycloakClient", () => {
     vi.stubEnv("KEYCLOAK_URL", "");
     const { getKeycloakToken } = await import("./keycloak-client");
 
-    await expect(getKeycloakToken()).rejects.toThrow(/Keycloak URL not configured/);
+    await expect(getKeycloakToken()).rejects.toThrow(
+      /Keycloak URL not configured/,
+    );
   });
 });

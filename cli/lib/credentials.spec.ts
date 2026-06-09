@@ -86,7 +86,10 @@ describe("getCredentials", () => {
     const { getCredentials } = await import("./credentials");
     const result = getCredentials();
 
-    expect(result.keycloak).toEqual({ url: "https://kc.example.com", adminPassword: "kc-secret" });
+    expect(result.keycloak).toEqual({
+      url: "https://kc.example.com",
+      adminPassword: "kc-secret",
+    });
     expect(result.orgs[0].name).toBe("demo");
   });
 

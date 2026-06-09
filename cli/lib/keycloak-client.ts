@@ -1,9 +1,15 @@
 import type { KeycloakConfig } from "./credentials.js";
 
-export async function getKeycloakToken(config?: KeycloakConfig): Promise<string> {
+export async function getKeycloakToken(
+  config?: KeycloakConfig,
+): Promise<string> {
   const url = config?.url ?? process.env["KEYCLOAK_URL"];
-  const password = config?.adminPassword ?? process.env["KEYCLOAK_ADMIN_PASSWORD"];
-  if (!url) throw new Error("Keycloak URL not configured (set keycloak.url in credentials.json or KEYCLOAK_URL env)");
+  const password =
+    config?.adminPassword ?? process.env["KEYCLOAK_ADMIN_PASSWORD"];
+  if (!url)
+    throw new Error(
+      "Keycloak URL not configured (set keycloak.url in credentials.json or KEYCLOAK_URL env)",
+    );
 
   const params = new URLSearchParams();
   params.set("username", "admin");
@@ -21,7 +27,9 @@ export async function getKeycloakToken(config?: KeycloakConfig): Promise<string>
   );
   if (!res.ok) {
     const errBody = await res.text();
-    throw new Error(`Keycloak token request failed (${res.status}): ${errBody}`);
+    throw new Error(
+      `Keycloak token request failed (${res.status}): ${errBody}`,
+    );
   }
   const data = (await res.json()) as { access_token: string };
   return data.access_token;
@@ -33,14 +41,19 @@ export async function getUsersFromKeycloak(
   config?: KeycloakConfig,
 ): Promise<unknown[]> {
   const url = config?.url ?? process.env["KEYCLOAK_URL"];
-  if (!url) throw new Error("Keycloak URL not configured (set keycloak.url in credentials.json or KEYCLOAK_URL env)");
+  if (!url)
+    throw new Error(
+      "Keycloak URL not configured (set keycloak.url in credentials.json or KEYCLOAK_URL env)",
+    );
 
   const res = await fetch(`${url}/admin/realms/${org}/users?enabled=true`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) {
     const errBody = await res.text();
-    throw new Error(`Keycloak users request failed for realm "${org}" (${res.status}): ${errBody}`);
+    throw new Error(
+      `Keycloak users request failed for realm "${org}" (${res.status}): ${errBody}`,
+    );
   }
   return res.json() as Promise<unknown[]>;
 }

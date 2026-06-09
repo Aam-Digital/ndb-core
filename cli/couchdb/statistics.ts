@@ -87,7 +87,12 @@ export async function getOrgStatistics(
     }
   }
 
-  return { name: couchdb.url, users: users.length, entities, error: hasError || undefined };
+  return {
+    name: couchdb.url,
+    users: users.length,
+    entities,
+    error: hasError || undefined,
+  };
 }
 
 export function formatStatisticsCsv(stats: OrgStatistics[]): string {

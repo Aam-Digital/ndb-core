@@ -49,7 +49,7 @@ export function getCredentials(credentialsPath?: string): CredentialsFile {
 
   const rawOrgs: RawCredential[] = Array.isArray(parsed)
     ? parsed
-    : (parsed as { orgs?: RawCredential[] }).orgs ?? [];
+    : ((parsed as { orgs?: RawCredential[] }).orgs ?? []);
   const keycloak: KeycloakConfig | undefined = Array.isArray(parsed)
     ? undefined
     : (parsed as { keycloak?: KeycloakConfig }).keycloak;
@@ -80,10 +80,7 @@ function decryptWithAge(path: string): string {
       stdio: ["inherit", "pipe", "inherit"],
     });
   } catch (e: unknown) {
-    if (
-      e instanceof Error &&
-      (e as NodeJS.ErrnoException).code === "ENOENT"
-    ) {
+    if (e instanceof Error && (e as NodeJS.ErrnoException).code === "ENOENT") {
       throw new Error(
         `Could not run 'age' to decrypt ${path}. Install it first ` +
           `(e.g. 'sudo apt install age' or 'brew install age'). See cli/README.md.`,

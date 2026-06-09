@@ -5,7 +5,10 @@ import { getConflicts } from "./couchdb/conflicts.js";
 import { editEntities, searchEntities } from "./couchdb/search-and-replace.js";
 import { formatStatisticsCsv, getOrgStatistics } from "./couchdb/statistics.js";
 import { getCredentials } from "./lib/credentials.js";
-import { getKeycloakToken, getUsersFromKeycloak } from "./lib/keycloak-client.js";
+import {
+  getKeycloakToken,
+  getUsersFromKeycloak,
+} from "./lib/keycloak-client.js";
 import { ConsoleLogger } from "./migration/console-logger.js";
 import { failedMigrationResult } from "./migration/migration-definition.js";
 import {
@@ -219,7 +222,9 @@ couchdbCmd
     if (!creds) return process.exit(2);
     const { orgs } = creds;
 
-    const results = await runForAllOrgs(orgs, (couchdb) => getConflicts(couchdb));
+    const results = await runForAllOrgs(orgs, (couchdb) =>
+      getConflicts(couchdb),
+    );
     console.log(JSON.stringify(results, null, 2));
   });
 
@@ -281,7 +286,10 @@ function loadCredentials(opts: {
   credentials?: string;
   org?: string;
   category?: string;
-}): { orgs: SystemCredentials[]; keycloak: ReturnType<typeof getCredentials>["keycloak"] } | null {
+}): {
+  orgs: SystemCredentials[];
+  keycloak: ReturnType<typeof getCredentials>["keycloak"];
+} | null {
   let file: ReturnType<typeof getCredentials>;
   try {
     file = getCredentials(opts.credentials);
