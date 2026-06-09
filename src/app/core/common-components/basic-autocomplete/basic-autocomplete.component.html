@@ -4,7 +4,7 @@
     <input
       [id]="id"
       [hidden]="isInSearchMode() || effectiveDisplay === 'none'"
-      [disabled]="_disabled"
+      [disabled]="!enabled()"
       matInput
       style="text-overflow: ellipsis; width: calc(100% - 50px)"
       (focusin)="showAutocomplete()"
@@ -15,7 +15,7 @@
   } @else {
     <input
       [hidden]="true"
-      [disabled]="_disabled"
+      [disabled]="!enabled()"
       matInput
       (focusin)="showAutocomplete()"
       (focusout)="showAutocomplete()"
@@ -33,7 +33,7 @@
         <mat-chip-row
           cdkDrag
           [cdkDragDisabled]="!reorder"
-          [editable]="!_disabled"
+          [editable]="enabled()"
           class="chip"
           [style.background-color]="item.asValue?.['color']"
         >
@@ -42,7 +42,7 @@
             [ngTemplateOutletContext]="{ $implicit: item }"
           ></ng-template>
 
-          @if (!_disabled) {
+          @if (enabled()) {
             <button matChipRemove (click)="unselect(item)">
               <app-fa-dynamic-icon
                 i18n-matTooltip="

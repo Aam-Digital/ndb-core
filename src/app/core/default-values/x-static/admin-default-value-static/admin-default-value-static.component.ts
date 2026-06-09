@@ -43,10 +43,10 @@ export class AdminDefaultValueStaticComponent extends CustomFormControlDirective
     id: "defaultValueId", // overwrite the id with a static temporary one for our isolated form control here
   }));
 
-  formControl = new FormControl<unknown>(null);
+  internalControl = new FormControl<unknown>(null);
   staticvalueForm: EntityForm<Entity> = {
     formGroup: new FormGroup({
-      defaultValueId: this.formControl,
+      defaultValueId: this.internalControl,
     }),
   } as unknown as EntityForm<Entity>;
 
@@ -54,18 +54,18 @@ export class AdminDefaultValueStaticComponent extends CustomFormControlDirective
 
   constructor() {
     super();
-    this.formControl.setValue(this.getInternalValue(this.value), {
+    this.internalControl.setValue(this.getInternalValue(this.value), {
       emitEvent: false,
     });
 
-    this.formControl.valueChanges.subscribe((v) => this.emitNewValue(v));
+    this.internalControl.valueChanges.subscribe((v) => this.emitNewValue(v));
 
     this.ngControl?.valueChanges?.subscribe(
       (newValue: DefaultValueConfigStatic) => {
-        this.formControl.setValue(this.getInternalValue(newValue), {
+        this.internalControl.setValue(this.getInternalValue(newValue), {
           emitEvent: false,
         });
-        setTimeout(() => this.formControl.updateValueAndValidity(), 0);
+        setTimeout(() => this.internalControl.updateValueAndValidity(), 0);
       },
     );
   }
@@ -78,10 +78,10 @@ export class AdminDefaultValueStaticComponent extends CustomFormControlDirective
 
     const internalValue = this.getInternalValue(value);
     if (
-      JSON.stringify(this.formControl.value) !== JSON.stringify(internalValue)
+      JSON.stringify(this.internalControl.value) !== JSON.stringify(internalValue)
     ) {
-      this.formControl.setValue(internalValue, { emitEvent: false });
-      setTimeout(() => this.formControl.updateValueAndValidity(), 0);
+      this.internalControl.setValue(internalValue, { emitEvent: false });
+      setTimeout(() => this.internalControl.updateValueAndValidity(), 0);
     }
   }
 

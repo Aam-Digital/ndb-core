@@ -5,7 +5,7 @@ import {
   input,
   InputSignal,
 } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import {} from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -50,10 +50,6 @@ export class EditTodoCompletionComponent
   private readonly entityFormService = inject(EntityFormService);
   private readonly todoService = inject(TodoService);
   private readonly dialogRef? = inject(MatDialogRef, { optional: true });
-
-  get formControl(): FormControl<TodoCompletion> {
-    return this.ngControl.control as FormControl<TodoCompletion>;
-  }
 
   async completeTodo() {
     if (this.formControl.parent?.dirty) {
