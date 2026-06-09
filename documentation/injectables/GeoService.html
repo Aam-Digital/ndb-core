@@ -195,7 +195,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/features/location/geo.service.ts:52</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/features/location/geo.service.ts:56</a></div>
                             </td>
                         </tr>
 
@@ -228,8 +228,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="203"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:203</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:207</a></div>
                         </td>
                     </tr>
 
@@ -298,8 +298,8 @@ Provided on the service so callers do not need to import the helper.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="93"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:93</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:97</a></div>
                         </td>
                     </tr>
 
@@ -373,8 +373,8 @@ Results are cached and requests are throttled to ≤1/sec per Nominatim policy.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="146"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:146</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:150</a></div>
                         </td>
                     </tr>
 
@@ -440,8 +440,8 @@ Results are cached and requests are throttled to ≤1/sec per Nominatim policy.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="172"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:172</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="176"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:176</a></div>
                         </td>
                     </tr>
 
@@ -544,7 +544,11 @@ export class GeoService {
   private defaultOptions &#x3D; {
     format: &quot;json&quot;,
     addressdetails: 1,
-    email: environment.email,
+    // Only include the email param when configured — sending &#x60;email&#x3D;undefined&#x60;
+    // (the literal string) violates Nominatim usage policy.
+    ...(environment.webmaster_email
+      ? { email: environment.webmaster_email }
+      : {}),
   };
 
   private readonly cache &#x3D; new Map&lt;string, OpenStreetMapsSearchResult[]&gt;();

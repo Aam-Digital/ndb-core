@@ -4784,7 +4784,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
     &quot;https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399&quot;,
   demo_mode: true,
   session_type: SessionType.mock,
-  email: undefined,
+  webmaster_email: undefined,
   userAdminApi: undefined,
   realm: undefined,
   DB_PROXY_PREFIX: &quot;/db&quot;,
@@ -4838,7 +4838,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
 
   demo_mode: true,
   session_type: SessionType.mock,
-  email: undefined,
+  /** Contact email for the webmaster/operator of this instance, used e.g. as Nominatim usage-policy email. Set via config.json on production. */
+  webmaster_email: undefined,
 
   /** Keycloak API for user management */
   userAdminApi: undefined, // loaded from &#x60;assets/keycloak.json&#x60; during bootstrap
