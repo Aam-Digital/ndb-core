@@ -179,8 +179,8 @@ const migrateShortcutDashboardLinks: ConfigMigration = (key, configPart) => {
         widget.component === "ShortcutDashboard" &&
         Array.isArray(widget.config?.shortcuts)
       ) {
-        widget.config.shortcuts = widget.config.shortcuts.map(
-          (shortcut: any) => migrateShortcutItem(shortcut, entityBasePaths),
+        widget.config.shortcuts = widget.config.shortcuts.map((shortcut: any) =>
+          migrateShortcutItem(shortcut, entityBasePaths),
         );
       }
     }
