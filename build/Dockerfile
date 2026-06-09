@@ -24,5 +24,6 @@ ENV CSP="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: blob: https://*.
 # RESOLVER is the first IPv4 nameserver from /etc/resolv.conf, used so nginx can
 # re-resolve the Nominatim upstream at runtime with IPv6 disabled (see default.conf).
 CMD export RESOLVER=$(awk '$$1=="nameserver" && $$2 !~ /:/ {print $$2; exit}' /etc/resolv.conf) &&\
+    if [ -z "$RESOLVER" ]; then export RESOLVER=8.8.8.8; fi &&\
     envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$RESOLVER $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
