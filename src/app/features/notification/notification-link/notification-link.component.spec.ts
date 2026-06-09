@@ -102,7 +102,7 @@ describe("NotificationLinkComponent", () => {
       await vi.advanceTimersByTimeAsync(1);
 
       expect(router.navigateByUrl).toHaveBeenCalledWith(
-        "/c/notificationevent/NotificationEvent:notif-123",
+        "/c/notificationevent/notif-123",
       );
     } finally {
       vi.useRealTimers();

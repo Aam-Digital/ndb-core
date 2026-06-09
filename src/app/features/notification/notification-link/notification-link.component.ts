@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { getEntityRuntimeRoute } from "app/core/entity/entity-config.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "app/core/entity/model/entity";
 import { map } from "rxjs/operators";
 import { NotificationEvent } from "../model/notification-event";
 
@@ -48,11 +49,19 @@ export class NotificationLinkComponent {
     void this.loadAndNavigate(this.notificationId());
   });
 
+  private normalizeEntityId(entityType: string, entityId: string): string {
+    return Entity.extractEntityIdFromId(
+      Entity.createPrefixedId(entityType, entityId),
+    );
+  }
+
   private buildEntityUrl(entityType: string, entityId?: string | null): string {
     if (!this.entityRegistry.has(entityType)) return "";
     const entityCtr = this.entityRegistry.get(entityType);
     let url = getEntityRuntimeRoute(entityCtr);
-    if (entityId) url += `/${entityId}`;
+    if (entityId) {
+      url += `/${this.normalizeEntityId(entityType, entityId)}`;
+    }
     return url;
   }
 
