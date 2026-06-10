@@ -4,12 +4,12 @@ import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
 import {
   EntityRegistry,
   entityRegistry,
-} from "app/core/entity/database-entity.decorator";
+} from "#src/app/core/entity/database-entity.decorator";
 import {
   MockEntityMapperService,
   mockEntityMapperProvider,
-} from "app/core/entity/entity-mapper/mock-entity-mapper-service";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+} from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BehaviorSubject } from "rxjs";
 import { NotificationEvent } from "../model/notification-event";
 
@@ -72,9 +72,7 @@ describe("NotificationLinkComponent", () => {
     try {
       const event = new NotificationEvent("notif-123");
       event.actionURL = "/entity-url";
-      vi.spyOn(entityMapper, "load").mockResolvedValue(
-        event as unknown as NotificationEvent,
-      );
+      vi.spyOn(entityMapper, "load").mockResolvedValue(event);
       vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
       createComponent("notif-123");
       await vi.advanceTimersByTimeAsync(1);
