@@ -28,10 +28,7 @@ The base class implements the `MatFormFieldControl` and `ControlValueAccessor` c
   providers: [{ provide: MatFormFieldControl, useExisting: EditTextComponent }],
 })
 // implement EditComponent for components loaded via DynamicEditComponent
-export class EditTextComponent
-  extends CustomFormControlDirective<string>
-  implements EditComponent
-{
+export class EditTextComponent extends CustomFormControlDirective<string> implements EditComponent {
   formFieldConfig = input<FormFieldConfig>();
 }
 ```
