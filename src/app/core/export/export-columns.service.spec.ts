@@ -66,10 +66,10 @@ describe("ExportColumnsService", () => {
     const idColumn = allAvailableColumns.find(
       (c) => normalizeQueryKey(c.query) === "schoolId",
     );
-    expect(idColumn.label).toBe("School (ID)");
+    expect(idColumn.label).toBe("School (internal id)");
   });
 
-  it("should preselect the age column (not the date) for a virtual DisplayAge column", () => {
+  it("should preselect both the age and date columns for a virtual DisplayAge column", () => {
     const { preselectedExportConfig } = service.buildExportColumns({
       schema: ExportColumnsTestEntity.schema,
       visibleColIds: ["age"],
@@ -84,31 +84,32 @@ describe("ExportColumnsService", () => {
     });
 
     expect(queryKeys(preselectedExportConfig)).toContain("dateOfBirth_age");
-    expect(queryKeys(preselectedExportConfig)).not.toContain("dateOfBirth");
-    // the preselected column uses the label shown in the list view
+    expect(queryKeys(preselectedExportConfig)).toContain("dateOfBirth");
+    // the primary (age) column uses the label shown in the list view
     const ageColumn = preselectedExportConfig.find(
       (c) => normalizeQueryKey(c.query) === "dateOfBirth_age",
     );
     expect(ageColumn.label).toBe("Age");
   });
 
-  it("should preselect only the readable column (not the raw id) for a visible entity field", () => {
-    const { allAvailableColumns, preselectedExportConfig } =
-      service.buildExportColumns({
-        schema: ExportColumnsTestEntity.schema,
-        visibleColIds: ["schoolId"],
-        availableColumns: [],
-      });
+  it("should preselect both the readable name and the raw id for a visible entity field", () => {
+    const { preselectedExportConfig } = service.buildExportColumns({
+      schema: ExportColumnsTestEntity.schema,
+      visibleColIds: ["schoolId"],
+      availableColumns: [],
+    });
 
     expect(queryKeys(preselectedExportConfig)).toContain("schoolId_readable");
-    expect(queryKeys(preselectedExportConfig)).not.toContain("schoolId");
-    // the raw id column stays available for manual selection
-    expect(queryKeys(allAvailableColumns)).toContain("schoolId");
-    // the readable column uses the plain field label, not the "(readable)" suffix
+    expect(queryKeys(preselectedExportConfig)).toContain("schoolId");
+    // the readable column uses the plain field label, the raw id is distinct
     const readableColumn = preselectedExportConfig.find(
       (c) => normalizeQueryKey(c.query) === "schoolId_readable",
     );
+    const idColumn = preselectedExportConfig.find(
+      (c) => normalizeQueryKey(c.query) === "schoolId",
+    );
     expect(readableColumn.label).toBe("School");
+    expect(idColumn.label).toBe("School (internal id)");
   });
 
   it("should preselect the raw value for a visible plain field", () => {

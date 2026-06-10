@@ -311,11 +311,10 @@ describe("EntityListComponent", () => {
       expect(queries(available)).toEqual(
         expect.arrayContaining([".name", ".ref", ".ref_readable"]),
       );
-      // a visible entity field preselects its readable name, not the raw id
+      // a visible entity field preselects both its readable name and raw id
       expect(queries(preselected)).toEqual(
-        expect.arrayContaining([".name", ".ref_readable"]),
+        expect.arrayContaining([".name", ".ref", ".ref_readable"]),
       );
-      expect(queries(preselected)).not.toContain(".ref");
       // columns of non-visible fields are not preselected
       expect(queries(preselected)).not.toContain(".other");
     } finally {

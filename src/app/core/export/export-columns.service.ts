@@ -71,17 +71,17 @@ export class ExportColumnsService {
         const base = fieldColumns.find((c) => c.keySuffix === "");
         const baseCol = base && columnById.get(base.columnId);
         if (baseCol) {
-          baseCol.label = `${baseCol.label}${$localize`:export id column suffix: (ID)`}`;
+          baseCol.label = `${baseCol.label}${$localize`:export id column suffix: (internal id)`}`;
         }
       }
     }
 
-    // For each visible list column preselect the single most useful export
-    // column of its underlying field: the human-readable name for entity
-    // references, the derived value for virtual display columns (e.g. the age
-    // for a `DisplayAge` column), otherwise the raw field value. The remaining
-    // columns (e.g. the raw entity id) stay available for manual selection.
-    // The preselected column keeps the label shown in the list view so the
+    // For each visible list column preselect ALL export columns of its
+    // underlying field, so e.g. an entity field exports both its readable name
+    // and its raw id by default (the "usual additional columns" of #4057).
+    // The primary column (the human-readable name for entity references, the
+    // derived value for virtual display columns such as a `DisplayAge` column,
+    // otherwise the raw value) keeps the label shown in the list view so the
     // export header matches what the user sees (e.g. "Age", "School").
     const preselectedKeys = new Set<string>();
     for (const colId of visibleColIds) {
@@ -93,20 +93,19 @@ export class ExportColumnsService {
       const fieldColumns = columnsByField.get(fieldId);
       if (!fieldColumns?.length) continue;
 
+      for (const c of fieldColumns) preselectedKeys.add(c.columnId);
+
       const base = fieldColumns.find((c) => c.keySuffix === "");
       const readable = fieldColumns.find((c) => c.keySuffix === "_readable");
       const derived = fieldColumns.find((c) => c.keySuffix !== "");
 
-      const chosen = isVirtual ? (derived ?? base) : (readable ?? base);
-      if (!chosen) continue;
-      preselectedKeys.add(chosen.columnId);
-
+      const primary = isVirtual ? (derived ?? base) : (readable ?? base);
       const visibleLabel = this.getVisibleLabel(
         colId,
         schema,
         availableColumns,
       );
-      const col = columnById.get(chosen.columnId);
+      const col = primary && columnById.get(primary.columnId);
       if (visibleLabel && col) col.label = visibleLabel;
     }
 
