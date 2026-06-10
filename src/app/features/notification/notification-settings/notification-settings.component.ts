@@ -282,14 +282,6 @@ function generateDefaultNotificationConfig(userId: string, userEntity: string) {
   const config = new NotificationConfig(userId);
   config.notificationRules = [
     {
-      label: $localize`:Default notification rule label:a new Child being registered`,
-      notificationType: "entity_change",
-      entityType: "Child",
-      changeType: ["created"],
-      conditions: {},
-      enabled: true,
-    },
-    {
       label: $localize`:Default notification rule label:Tasks assigned to me`,
       notificationType: "entity_change",
       entityType: "Todo",
