@@ -9,7 +9,10 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { AttendanceItem } from "./model/attendance-item";
-import { NullAttendanceStatusType } from "./model/attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "./model/attendance-status";
 
 @DatabaseEntity("AttendanceTestEntity")
 class AttendanceTestEntity extends Entity {
@@ -87,7 +90,7 @@ describe("AttendanceExportService", () => {
           id: "PRESENT",
           label: "Present",
           shortName: "P",
-          countAs: "PRESENT" as any,
+          countAs: AttendanceLogicalStatus.PRESENT,
         },
         "On time",
         "Child:child-1",
@@ -97,7 +100,7 @@ describe("AttendanceExportService", () => {
           id: "ABSENT",
           label: "Absent",
           shortName: "A",
-          countAs: "ABSENT" as any,
+          countAs: AttendanceLogicalStatus.ABSENT,
         },
         "Sick",
         "Child:child-2",
@@ -137,7 +140,7 @@ describe("AttendanceExportService", () => {
           id: "PRESENT",
           label: "Present",
           shortName: "P",
-          countAs: "PRESENT" as any,
+          countAs: AttendanceLogicalStatus.PRESENT,
         },
         "",
         "Child:child-1",
