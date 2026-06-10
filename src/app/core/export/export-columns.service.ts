@@ -59,6 +59,21 @@ export class ExportColumnsService {
           columnsByField.set(r.sourceFieldId, fieldColumns);
         }
       }
+
+      // When a field offers both a raw value and a readable column (e.g. entity
+      // references: id + name), distinguish the raw id column in the dialog so
+      // users who need the internal id can still select it on demand.
+      for (const fieldColumns of columnsByField.values()) {
+        const hasReadable = fieldColumns.some(
+          (c) => c.keySuffix === "_readable",
+        );
+        if (!hasReadable) continue;
+        const base = fieldColumns.find((c) => c.keySuffix === "");
+        const baseCol = base && columnById.get(base.columnId);
+        if (baseCol) {
+          baseCol.label = `${baseCol.label}${$localize`:export id column suffix: (ID)`}`;
+        }
+      }
     }
 
     // For each visible list column preselect the single most useful export
