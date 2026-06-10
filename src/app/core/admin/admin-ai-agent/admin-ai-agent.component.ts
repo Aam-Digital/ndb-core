@@ -10,6 +10,7 @@ import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/config
 import { ReportEntity } from "../../../features/reporting/report-config";
 import { PublicFormConfig } from "../../../features/public-form/public-form-config";
 import moment from "moment";
+import { SiteSettings } from "../../site-settings/site-settings";
 
 /**
  * Admin page providing tools to help configure Aam Digital using AI agents.
@@ -43,6 +44,7 @@ export class AdminAiAgentComponent {
     const [configurableEnums, reportConfigs, publicFormConfigs] =
       await Promise.all([
         this.entityMapper.loadType(ConfigurableEnum),
+        this.entityMapper.loadType(SiteSettings),
         this.entityMapper.loadType(ReportEntity),
         this.entityMapper.loadType(PublicFormConfig),
       ]);
