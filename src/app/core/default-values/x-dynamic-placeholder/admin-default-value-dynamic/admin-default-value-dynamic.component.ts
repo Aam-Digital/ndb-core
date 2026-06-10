@@ -27,6 +27,8 @@ export class AdminDefaultValueDynamicComponent
 
   ngOnInit() {
     this.internalControl = new FormControl(this.value?.value);
-    this.internalControl.valueChanges.subscribe((v) => (this.value = { value: v }));
+    this.internalControl.valueChanges.subscribe(
+      (v) => (this.value = { value: v }),
+    );
   }
 }

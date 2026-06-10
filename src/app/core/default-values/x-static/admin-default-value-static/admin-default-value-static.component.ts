@@ -78,7 +78,8 @@ export class AdminDefaultValueStaticComponent extends CustomFormControlDirective
 
     const internalValue = this.getInternalValue(value);
     if (
-      JSON.stringify(this.internalControl.value) !== JSON.stringify(internalValue)
+      JSON.stringify(this.internalControl.value) !==
+      JSON.stringify(internalValue)
     ) {
       this.internalControl.setValue(internalValue, { emitEvent: false });
       setTimeout(() => this.internalControl.updateValueAndValidity(), 0);

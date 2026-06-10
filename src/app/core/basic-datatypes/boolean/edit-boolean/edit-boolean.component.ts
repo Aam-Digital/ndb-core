@@ -29,5 +29,4 @@ export class EditBooleanComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-
 }

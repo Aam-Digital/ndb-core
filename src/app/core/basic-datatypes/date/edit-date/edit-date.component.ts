@@ -30,5 +30,4 @@ export class EditDateComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-
 }

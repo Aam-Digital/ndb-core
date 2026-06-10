@@ -1,5 +1,6 @@
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import {
+  DestroyRef,
   Directive,
   DoCheck,
   ElementRef,
@@ -12,6 +13,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -83,6 +85,7 @@ export abstract class CustomFormControlDirective<T>
 
   elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   errorStateMatcher = inject(ErrorStateMatcher);
+  private readonly _destroyRef = inject(DestroyRef);
   @Input() ngControl = inject(NgControl, { optional: true, self: true });
   parentForm = inject(NgForm, { optional: true });
   parentFormGroup = inject(FormGroupDirective, { optional: true });
@@ -230,15 +233,44 @@ export abstract class CustomFormControlDirective<T>
     const control = this.ngControl
       ? (this.ngControl.control as AbstractControl)
       : null;
-    (this as any).__dbg = ((this as any).__dbg ?? 0) + 1;
-    console.warn(
-      `DBG ngDoCheck n=${(this as any).__dbg} disabled=${this.disabled} val=${this.valueSignal()} ctrlDisabled=${control?.disabled} ctrlVal=${control?.value}`,
-    );
 
+    this.subscribeToControl(control);
     this.checkUpdateValue(control);
     this.checkUpdateDisabled(control);
     this.checkUpdateErrorState(control);
     this.checkUpdateRequired(control);
+  }
+
+  private _controlSubscribed = false;
+
+  /**
+   * Subscribe to the bound control's value/status streams the first time it appears
+   * (`ngControl` may be set late via `setInput`, so we cannot do this in the constructor).
+   *
+   * This keeps the reactive signals ({@link valueSignal}, {@link enabled}, {@link errorState})
+   * in sync *and* marks the OnPush view dirty when the control changes at runtime: writing a
+   * signal notifies its template consumers. Relying on {@link ngDoCheck} alone is not enough
+   * once the template consumes these signals, because `ngDoCheck` only runs while the view is
+   * already being checked — a runtime `disable()` / `setValue()` on the control would otherwise
+   * never reach the template.
+   */
+  private subscribeToControl(control: AbstractControl | null) {
+    if (this._controlSubscribed || !control) {
+      // standalone mode (no control): writeValue / the value setter drive the signals.
+      return;
+    }
+    this._controlSubscribed = true;
+
+    control.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => this.checkUpdateValue(control));
+    control.statusChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        this.checkUpdateDisabled(control);
+        this.checkUpdateErrorState(control);
+        this.checkUpdateRequired(control);
+      });
   }
 
   /** Stringified last control value seen, to detect *external* control changes. */
