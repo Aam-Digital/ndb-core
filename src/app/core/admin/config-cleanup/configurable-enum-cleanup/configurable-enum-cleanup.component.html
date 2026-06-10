@@ -112,6 +112,17 @@
                   <button
                     mat-icon-button
                     color="accent"
+                    (click)="openEnumOptions(unusedEnum.enumEntity, $event)"
+                    i18n-aria-label
+                    aria-label="Configure enum options"
+                    i18n-matTooltip
+                    matTooltip="Configure options"
+                  >
+                    <fa-icon icon="wrench"></fa-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    color="accent"
                     (click)="deleteEnum(unusedEnum)"
                     [disabled]="isDeleting(unusedEnum.enumEntity.getId(true))"
                     i18n-aria-label
