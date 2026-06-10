@@ -72,6 +72,11 @@ describe("NotificationSettingComponent", () => {
   let mockNotificationService: NotificationServiceMock;
   let mockConfirmationDialog: ConfirmationDialogMock;
 
+  const initializeComponent = async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+  };
+
   beforeEach(async () => {
     mockNotificationService = {
       isNotificationServerEnabled: signal(true),
@@ -138,7 +143,7 @@ describe("NotificationSettingComponent", () => {
   it("should set isFeatureEnabled to false when notification server is disabled", async () => {
     mockNotificationService.isNotificationServerEnabled.set(false);
 
-    await component.ngOnInit();
+    await initializeComponent();
 
     expect(component.isFeatureEnabled()).toBe(false);
   });
@@ -146,13 +151,13 @@ describe("NotificationSettingComponent", () => {
   it("should set isBrowserSupported to false when push notifications are not supported", async () => {
     mockNotificationService.isPushNotificationSupported.set(false);
 
-    await component.ngOnInit();
+    await initializeComponent();
 
     expect(component.isBrowserSupported()).toBe(false);
   });
 
   it("should add a new notification rule to the config", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     const initialLength =
       component.notificationConfig().notificationRules.length;
 
@@ -164,7 +169,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should create a new rule with default values", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
 
     component.addNewNotificationRule();
 
@@ -180,7 +185,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should update the notification rule with new values", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     component.addNewNotificationRule();
     const testRule = component.notificationConfig().notificationRules[0];
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
@@ -199,7 +204,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should mark unsaved changes pending after updating a rule", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     component.addNewNotificationRule();
     const testRule = component.notificationConfig().notificationRules[0];
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
@@ -215,7 +220,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should save the config and clear pending flag when saveSettings is called", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     component.addNewNotificationRule();
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
@@ -230,7 +235,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should remove rule when user confirms deletion", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     component.addNewNotificationRule();
     component.addNewNotificationRule();
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
@@ -249,7 +254,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should save config after removing rule", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     component.addNewNotificationRule();
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
     mockConfirmationDialog.getConfirmation.mockReturnValue(
@@ -274,8 +279,7 @@ describe("NotificationSettingComponent", () => {
   it("should set isEmailFeatureEnabled to false when backend email feature is disabled", async () => {
     mockNotificationService.isEmailNotificationEnabled.set(false);
 
-    await component.ngOnInit();
-    fixture.detectChanges();
+    await initializeComponent();
 
     const channelToggles = fixture.debugElement.queryAll(
       By.directive(MatSlideToggle),
@@ -287,7 +291,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should enable email channel in config and mark changes pending when toggled on", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
 
     component.toggleEmailChannel({ checked: true } as MatSlideToggleChange);
@@ -297,7 +301,7 @@ describe("NotificationSettingComponent", () => {
   });
 
   it("should disable email channel in config and mark changes pending when toggled off", async () => {
-    await component.ngOnInit();
+    await initializeComponent();
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
     component.toggleEmailChannel({ checked: true } as MatSlideToggleChange);
 
