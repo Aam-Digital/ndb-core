@@ -31,106 +31,148 @@ export class ExportColumnsService {
   ): BuildExportColumnsResult {
     const { schema, visibleColIds, availableColumns, exportConfig } = opts;
 
-    const visibleColumnsSelection = this.buildVisibleSelection(
-      schema,
-      visibleColIds,
-      availableColumns,
-    );
-
-    const initialExportConfig = [
-      ...visibleColumnsSelection,
-      ...(exportConfig ?? []),
-    ];
-
-    const allAvailableColumns = (() => {
-      const result: ExportColumnConfig[] = [];
-
-      for (const col of initialExportConfig) {
-        this.appendUnique(result, col);
-      }
-
-      if (!schema) return result;
-
-      for (const [key, field] of schema.entries()) {
-        if (key.startsWith("_")) continue;
-        if (field?.isInternalField) continue;
-        this.appendUnique(result, { query: `.${key}`, label: field?.label });
-      }
-
+    const allAvailableColumns: ExportColumnConfig[] = [];
+    // export column config objects keyed by their column id (for label overrides)
+    const columnById = new Map<string, ExportColumnConfig>();
+    // export columns contributed by each schema field, keyed by field id
+    const columnsByField = new Map<
+      string,
+      { columnId: string; keySuffix: string }[]
+    >();
+    if (schema) {
       const resolvers = buildExportColumnResolvers(
         schema,
         this.entitySchemaService,
       );
       for (const r of resolvers) {
         const keySuffix = r.column.keySuffix ?? "";
-        if (keySuffix === "") continue;
-        this.appendUnique(result, {
-          query: `.${r.sourceFieldId}${keySuffix}`,
+        const columnId = r.sourceFieldId + keySuffix;
+        if (columnId.startsWith("_")) continue;
+        const col: ExportColumnConfig = {
+          query: `.${columnId}`,
           label: r.column.label,
-        });
+        };
+        if (this.appendUnique(allAvailableColumns, col)) {
+          columnById.set(columnId, col);
+          const fieldColumns = columnsByField.get(r.sourceFieldId) ?? [];
+          fieldColumns.push({ columnId, keySuffix });
+          columnsByField.set(r.sourceFieldId, fieldColumns);
+        }
       }
+    }
 
-      return result;
-    })();
+    // For each visible list column preselect the single most useful export
+    // column of its underlying field: the human-readable name for entity
+    // references, the derived value for virtual display columns (e.g. the age
+    // for a `DisplayAge` column), otherwise the raw field value. The remaining
+    // columns (e.g. the raw entity id) stay available for manual selection.
+    // The preselected column keeps the label shown in the list view so the
+    // export header matches what the user sees (e.g. "Age", "School").
+    const preselectedKeys = new Set<string>();
+    for (const colId of visibleColIds) {
+      const { fieldId, isVirtual } = this.resolveUnderlyingField(
+        colId,
+        schema,
+        availableColumns,
+      );
+      const fieldColumns = columnsByField.get(fieldId);
+      if (!fieldColumns?.length) continue;
 
-    const visibleQueries = new Set(
-      visibleColumnsSelection.map((c) => normalizeQueryKey(c.query)),
-    );
+      const base = fieldColumns.find((c) => c.keySuffix === "");
+      const readable = fieldColumns.find((c) => c.keySuffix === "_readable");
+      const derived = fieldColumns.find((c) => c.keySuffix !== "");
+
+      const chosen = isVirtual ? (derived ?? base) : (readable ?? base);
+      if (!chosen) continue;
+      preselectedKeys.add(chosen.columnId);
+
+      const visibleLabel = this.getVisibleLabel(
+        colId,
+        schema,
+        availableColumns,
+      );
+      const col = columnById.get(chosen.columnId);
+      if (visibleLabel && col) col.label = visibleLabel;
+    }
+
+    // Admin-configured custom labels take precedence over the list view labels
+    // (see EntityListConfig.exportConfig).
+    for (const configured of exportConfig ?? []) {
+      if (!configured.label) continue;
+      const key = normalizeQueryKey(configured.query);
+      const match = allAvailableColumns.find(
+        (c) => normalizeQueryKey(c.query) === key,
+      );
+      if (match) match.label = configured.label;
+    }
 
     const preselectedExportConfig = allAvailableColumns.filter((c) =>
-      visibleQueries.has(normalizeQueryKey(c.query)),
+      preselectedKeys.has(normalizeQueryKey(c.query)),
     );
 
     return { allAvailableColumns, preselectedExportConfig };
   }
 
   /**
-   * Derive ExportColumnConfig entries from visible column ids. Prefer any
-   * matching `FormFieldConfig` or `ExportColumnConfig` from `availableColumns`
-   * to preserve labels and then fall back to schema labels.
+   * The label shown for a column in the list view, used so exports match what
+   * the user sees. Prefer the column's configured label, fall back to the
+   * schema field label.
    */
-  private buildVisibleSelection(
+  private getVisibleLabel(
+    colId: string,
     schema: Map<string, any> | undefined,
-    visibleColIds: string[],
     availableColumns: Array<string | ExportColumnConfig | FormFieldConfig>,
-  ): ExportColumnConfig[] {
-    return visibleColIds.map((colId) => {
-      const colConfig = availableColumns.find((c) => {
-        if (typeof c === "string") return c === colId;
-        if (this.isFormFieldConfig(c)) return c.id === colId;
-        if (this.isExportColumnConfig(c))
-          return normalizeQueryKey(c.query) === colId;
-        return false;
-      });
-
-      let label: string | undefined = undefined;
-      if (
-        this.isFormFieldConfig(colConfig) ||
-        this.isExportColumnConfig(colConfig)
-      ) {
-        label = colConfig.label;
-      }
-
-      if (!label && schema?.has(colId)) {
-        label = schema.get(colId)?.label;
-      }
-
-      return { query: `.${colId}`, label } as ExportColumnConfig;
-    });
+  ): string | undefined {
+    const colConfig = availableColumns.find(
+      (c) => this.isFormFieldConfig(c) && c.id === colId,
+    );
+    if (this.isFormFieldConfig(colConfig) && colConfig.label) {
+      return colConfig.label;
+    }
+    return schema?.get(colId)?.label;
   }
 
-  private appendUnique(list: ExportColumnConfig[], col: ExportColumnConfig) {
-    const key = normalizeQueryKey(col.query);
-    if (!list.some((c) => normalizeQueryKey(c.query) === key)) {
-      list.push(col);
+  /**
+   * Resolve the schema field a visible list column reads its data from.
+   *
+   * For most columns this is the column id itself. Virtual display columns
+   * (e.g. `DisplayAge`) read from a different field referenced via `additional`,
+   * so fall back to that when the column id is not a schema field.
+   */
+  private resolveUnderlyingField(
+    colId: string,
+    schema: Map<string, any> | undefined,
+    availableColumns: Array<string | ExportColumnConfig | FormFieldConfig>,
+  ): { fieldId: string; isVirtual: boolean } {
+    if (schema?.has(colId)) return { fieldId: colId, isVirtual: false };
+
+    const colConfig = availableColumns.find(
+      (c) => this.isFormFieldConfig(c) && c.id === colId,
+    );
+    if (
+      this.isFormFieldConfig(colConfig) &&
+      typeof colConfig.additional === "string" &&
+      schema?.has(colConfig.additional)
+    ) {
+      return { fieldId: colConfig.additional, isVirtual: true };
     }
+
+    return { fieldId: colId, isVirtual: false };
+  }
+
+  private appendUnique(
+    list: ExportColumnConfig[],
+    col: ExportColumnConfig,
+  ): boolean {
+    const key = normalizeQueryKey(col.query);
+    if (list.some((c) => normalizeQueryKey(c.query) === key)) {
+      return false;
+    }
+    list.push(col);
+    return true;
   }
 
   private isFormFieldConfig(v: unknown): v is FormFieldConfig {
     return typeof v === "object" && v !== null && "id" in v;
-  }
-
-  private isExportColumnConfig(v: unknown): v is ExportColumnConfig {
-    return typeof v === "object" && v !== null && "query" in v;
   }
 }

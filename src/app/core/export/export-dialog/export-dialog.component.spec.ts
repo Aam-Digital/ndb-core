@@ -64,7 +64,10 @@ describe("ExportDialogComponent", () => {
       dialogData.filteredData,
       "csv",
       dialogData.filename,
-      dialogData.exportConfig,
+      [
+        { query: "name", label: "Name" },
+        { query: "age", label: "Age" },
+      ],
     );
   });
 
@@ -78,7 +81,7 @@ describe("ExportDialogComponent", () => {
       dialogData.filteredData,
       "csv",
       dialogData.filename,
-      [dialogData.exportConfig[0]],
+      [{ query: "name", label: "Name" }],
     );
   });
 
@@ -92,7 +95,10 @@ describe("ExportDialogComponent", () => {
       dialogData.allEntities,
       "xlsx",
       dialogData.filename,
-      dialogData.exportConfig,
+      [
+        { query: "name", label: "Name" },
+        { query: "age", label: "Age" },
+      ],
     );
   });
 
