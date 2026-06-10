@@ -1,8 +1,9 @@
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
-import { Directive, OnInit, inject } from "@angular/core";
+import { ChangeDetectorRef, Directive, OnInit, inject } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ViewComponentContext } from "../../core/ui/abstract-view/view-component-context";
+import { filter, startWith } from "rxjs/operators";
 
 /**
  * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
@@ -26,6 +27,7 @@ export class TabStateMemoDirective implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private tab = inject(MatTabGroup);
+  private cdr = inject(ChangeDetectorRef);
   private viewContext = inject(ViewComponentContext, { optional: true });
 
   private readonly tabIndexKey = "tabIndex";
@@ -36,17 +38,31 @@ export class TabStateMemoDirective implements OnInit {
       return;
     }
 
-    // This logic is purposefully in `ngOnInit` and not in the constructor,
-    // so we can override values that are set by custom logic in the component
-    // (i.e. we override any binding to [(selectedIndex)] for the initial index)
-    const potentialNextTabIndex = parseInt(
-      this.route.snapshot.queryParamMap.get(this.tabIndexKey),
-      10,
-    );
-    if (!Number.isNaN(potentialNextTabIndex)) {
-      this.tab.selectedIndex = potentialNextTabIndex;
-      this.tab.selectedIndexChange.emit(potentialNextTabIndex);
-    }
+    // React to NavigationEnd (not just snapshot) so that navigating to
+    // ?tabIndex=N while already on this page also updates the tab.
+    // startWith(null) covers the initial load synchronously.
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        startWith(null),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        const potentialNextTabIndex = parseInt(
+          this.route.snapshot.queryParamMap.get(this.tabIndexKey),
+          10,
+        );
+        if (
+          !Number.isNaN(potentialNextTabIndex) &&
+          this.tab.selectedIndex !== potentialNextTabIndex
+        ) {
+          this.tab.selectedIndex = potentialNextTabIndex;
+          // Trigger change detection so MatTabGroup actually applies the switch.
+          // Without this, an in-app navigation that only changes the tabIndex
+          // query param updates the URL but not the visible tab (OnPush parents).
+          this.cdr.markForCheck();
+        }
+      });
     this.tab.selectedIndexChange
       .pipe(untilDestroyed(this))
       .subscribe((next) => this.updateURLQueryParams(next));
