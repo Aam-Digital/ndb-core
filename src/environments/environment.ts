@@ -34,7 +34,8 @@ export const environment = {
 
   demo_mode: true,
   session_type: SessionType.mock,
-  email: undefined,
+  /** Contact email for the webmaster/operator of this instance, used e.g. as Nominatim usage-policy email. Set via config.json on production. */
+  webmaster_email: undefined,
 
   /** Keycloak API for user management */
   userAdminApi: undefined, // loaded from `assets/keycloak.json` during bootstrap

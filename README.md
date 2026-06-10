@@ -76,6 +76,12 @@ The project is set up with a git pre-commit hook to automatically format your co
 This project is built upon [Angular](https://angular.io/).
 If you are unfamiliar with the framework and Angular CLI go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md) or use `ng help`.
 
+## Design & UX
+
+We have a Design System built in Figma with various building blocks for quick mockups:
+
+[Figma: Aam Digital - Design System](https://www.figma.com/design/oidwTceA61l9HIQWd0EQGe/Aam-Digital-%E2%80%94-Design-System--Community--?t=9ygKUCpc5nSsQxxi-0)
+
 ## Build a docker image locally
 
 Deployment on a server can be done through a docker image, our [ndb-setup project](https://github.com/Aam-Digital/ndb-setup) provides tools and a starting point to run the system using docker.

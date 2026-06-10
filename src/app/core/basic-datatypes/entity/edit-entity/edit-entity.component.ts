@@ -299,7 +299,7 @@ export class EditEntityComponent<
     const entity = await this.entityMapperService
       .load<E>(type, selectedId)
       .catch((err: any) => {
-        if (err?.status === 404) {
+        if (err?.status === 404 || err?.status === 401) {
           Logging.debug(
             "[ENTITY_SELECT] Selected entity not found.",
             selectedId,

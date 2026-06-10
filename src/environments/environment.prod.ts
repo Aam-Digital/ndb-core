@@ -13,7 +13,7 @@ export const environment = {
     "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
   demo_mode: true,
   session_type: SessionType.mock,
-  email: undefined,
+  webmaster_email: undefined,
   userAdminApi: undefined,
   realm: undefined,
   DB_PROXY_PREFIX: "/db",
