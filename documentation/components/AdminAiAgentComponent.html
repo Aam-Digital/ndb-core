@@ -277,8 +277,8 @@ No personal data is included — only structural configuration documents.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="42"
-                                    class="link-to-prism">src/app/core/admin/admin-ai-agent/admin-ai-agent.component.ts:42</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="43"
+                                    class="link-to-prism">src/app/core/admin/admin-ai-agent/admin-ai-agent.component.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -315,6 +315,7 @@ import { ConfigurableEnum } from &quot;../../basic-datatypes/configurable-enum/c
 import { ReportEntity } from &quot;../../../features/reporting/report-config&quot;;
 import { PublicFormConfig } from &quot;../../../features/public-form/public-form-config&quot;;
 import moment from &quot;moment&quot;;
+import { SiteSettings } from &quot;../../site-settings/site-settings&quot;;
 
 /**
  * Admin page providing tools to help configure Aam Digital using AI agents.
@@ -348,6 +349,7 @@ export class AdminAiAgentComponent {
     const [configurableEnums, reportConfigs, publicFormConfigs] &#x3D;
       await Promise.all([
         this.entityMapper.loadType(ConfigurableEnum),
+        this.entityMapper.loadType(SiteSettings),
         this.entityMapper.loadType(ReportEntity),
         this.entityMapper.loadType(PublicFormConfig),
       ]);
