@@ -24,6 +24,7 @@
 
           <td>
             <mat-form-field class="margin-small">
+              <mat-label i18n="Attendance Status field label">Status</mat-label>
               <app-edit-configurable-enum
                 [formControl]="getStatusControl(item.participant)"
                 [formFieldConfig]="statusFieldConfig()"
