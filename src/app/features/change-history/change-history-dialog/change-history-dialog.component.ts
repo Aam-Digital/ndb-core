@@ -18,6 +18,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { HintBoxComponent } from "../../../core/common-components/hint-box/hint-box.component";
+import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { NotificationTimePipe } from "../../notification/notification-time.pipe";
@@ -48,6 +49,7 @@ export interface ChangeHistoryDialogData {
     FaDynamicIconComponent,
     DialogCloseComponent,
     HintBoxComponent,
+    FeatureDisabledInfoComponent,
     EntityBlockComponent,
     CustomDatePipe,
     NotificationTimePipe,
@@ -79,15 +81,31 @@ export class ChangeHistoryDialogComponent implements OnInit {
 
   /** null while loading, then the loaded (possibly empty) list */
   readonly events = signal<ChangeEvent[] | null>(null);
-  /** true when the audit db could not be read (not enabled / no access) */
-  readonly loadError = signal(false);
+  /**
+   * `loading` while fetching, `ready` once loaded, `disabled` when the audit
+   * database does not exist (change logging not switched on), `error` for any
+   * other read failure (no access / connection / server issue).
+   */
+  readonly status = signal<"loading" | "ready" | "disabled" | "error">(
+    "loading",
+  );
 
   async ngOnInit() {
     try {
       this.events.set(await this.service.getHistory(this.entity));
-    } catch {
-      this.loadError.set(true);
+      this.status.set("ready");
+    } catch (err) {
       this.events.set([]);
+      this.status.set(this.isFeatureDisabled(err) ? "disabled" : "error");
     }
+  }
+
+  /**
+   * A missing audit database (404 / `not_found`) means change logging has not
+   * been enabled for this system yet; anything else is a genuine read error.
+   */
+  private isFeatureDisabled(err: unknown): boolean {
+    const e = err as { status?: number; name?: string };
+    return e?.status === 404 || e?.name === "not_found";
   }
 }

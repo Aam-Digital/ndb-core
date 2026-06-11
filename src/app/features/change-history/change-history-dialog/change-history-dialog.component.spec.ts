@@ -17,12 +17,11 @@ function evt(id: string, at: string): ChangeEvent {
 }
 
 async function render(
-  result: ChangeEvent[] | Error,
+  result: ChangeEvent[] | unknown,
 ): Promise<ComponentFixture<ChangeHistoryDialogComponent>> {
-  getHistory =
-    result instanceof Error
-      ? vi.fn().mockRejectedValue(result)
-      : vi.fn().mockResolvedValue(result);
+  getHistory = Array.isArray(result)
+    ? vi.fn().mockResolvedValue(result)
+    : vi.fn().mockRejectedValue(result);
 
   await TestBed.configureTestingModule({
     imports: [ChangeHistoryDialogComponent],
@@ -50,20 +49,27 @@ it("loads history into the events signal", async () => {
   ]);
   const c = fixture.componentInstance;
   expect(c.events()?.map((e) => e.id)).toEqual(["e3", "e2", "e1"]);
-  expect(c.loadError()).toBe(false);
+  expect(c.status()).toBe("ready");
 });
 
-it("shows the empty state (no error) when there is no history", async () => {
+it("shows the empty state (ready) when there is no history", async () => {
   const fixture = await render([]);
   const c = fixture.componentInstance;
   expect(c.events()).toEqual([]);
-  expect(c.loadError()).toBe(false);
+  expect(c.status()).toBe("ready");
 });
 
-it("flags loadError when the audit db is unavailable", async () => {
-  const fixture = await render(new Error("not_found"));
+it("reports 'disabled' when the audit db does not exist (404 / not_found)", async () => {
+  const fixture = await render({ status: 404, name: "not_found" });
   const c = fixture.componentInstance;
-  expect(c.loadError()).toBe(true);
+  expect(c.status()).toBe("disabled");
+  expect(c.events()).toEqual([]);
+});
+
+it("reports 'error' for any other read failure", async () => {
+  const fixture = await render(new Error("boom"));
+  const c = fixture.componentInstance;
+  expect(c.status()).toBe("error");
   expect(c.events()).toEqual([]);
 });
 
