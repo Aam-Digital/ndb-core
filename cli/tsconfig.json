@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "../dist/cli",
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "app/*": [
+        "../src/app/*"
+      ],
+      "#src/*": [
+        "../src/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "../src/app/core/config/config-migrations.ts"
+  ]
+}
