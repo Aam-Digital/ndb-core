@@ -85,7 +85,6 @@ export class AttendanceModule {
         await attendanceExportService.exportAttendanceList(
           singleEntity,
           field.fieldId,
-          field.label,
         );
         return true;
       },
