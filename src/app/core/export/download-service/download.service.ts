@@ -250,15 +250,23 @@ export class DownloadService {
       data.map((item) => this.mapEntityToExportRow(item, columnResolvers)),
     );
 
-    const columnKeys = selectedKeys
-      ? selectedKeys.filter((key) => columnLabels.has(key))
-      : Array.from(columnLabels.keys());
+    // Keep selected columns that have no schema resolver (e.g. runtime-attached
+    // fields like a Child's `schoolId`, or configured query-expression columns)
+    // and read their value directly from the entity, so they are not silently
+    // dropped from the export.
+    const columnKeys = selectedKeys ?? Array.from(columnLabels.keys());
     const headers = columnKeys.map(
-      (key) => labelOverrides.get(key) ?? columnLabels.get(key),
+      (key) => labelOverrides.get(key) ?? columnLabels.get(key) ?? key,
     );
     return [
       headers,
-      ...exportEntities.map((item) => columnKeys.map((key) => item[key])),
+      ...data.map((item, i) =>
+        columnKeys.map((key) =>
+          columnResolvers.has(key)
+            ? exportEntities[i][key]
+            : this.ensureCsvFriendlyValue(item[key]),
+        ),
+      ),
     ];
   }
 

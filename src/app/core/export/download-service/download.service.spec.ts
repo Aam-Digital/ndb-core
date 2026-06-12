@@ -507,6 +507,27 @@ describe("DownloadService", () => {
     expect(rows[1]).toEqual(["Alice"]);
   });
 
+  it("should export a selected column that is not a schema field from the raw entity value", async () => {
+    @DatabaseEntity("RuntimeFieldTestEntity")
+    class RuntimeFieldTestEntity extends Entity {
+      @DatabaseField({ label: "Name" })
+      name: string;
+    }
+
+    const entity = new RuntimeFieldTestEntity();
+    entity.name = "Test Person";
+    // runtime-attached property that is not part of the schema
+    (entity as any).schoolId = "School:1";
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".schoolId", label: "School" }],
+    );
+
+    expect(rows[0]).toEqual(["School"]);
+    expect(rows[1]).toEqual(["School:1"]);
+  });
+
   it("should return empty rows array for empty data in export", async () => {
     const rows = await service.prepareExportData([]);
 

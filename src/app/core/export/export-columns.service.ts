@@ -90,8 +90,27 @@ export class ExportColumnsService {
         schema,
         availableColumns,
       );
-      const fieldColumns = columnsByField.get(fieldId);
-      if (!fieldColumns?.length) continue;
+      let fieldColumns = columnsByField.get(fieldId);
+
+      // Visible columns that are not part of the schema (e.g. runtime-attached
+      // fields like a Child's `schoolId`, populated by a loaderMethod) still
+      // need to be offered and exported. Add them as a raw column.
+      if (!fieldColumns?.length) {
+        const visibleLabel = this.getVisibleLabel(
+          colId,
+          schema,
+          availableColumns,
+        );
+        const col: ExportColumnConfig = {
+          query: `.${colId}`,
+          label: visibleLabel,
+        };
+        if (this.appendUnique(allAvailableColumns, col)) {
+          columnById.set(colId, col);
+        }
+        fieldColumns = [{ columnId: colId, keySuffix: "" }];
+        columnsByField.set(colId, fieldColumns);
+      }
 
       for (const c of fieldColumns) preselectedKeys.add(c.columnId);
 

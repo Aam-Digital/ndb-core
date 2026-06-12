@@ -112,6 +112,28 @@ describe("ExportColumnsService", () => {
     expect(idColumn.label).toBe("School (internal id)");
   });
 
+  it("should offer and preselect a visible column that is not a schema field", () => {
+    // e.g. a runtime-attached field like a Child's schoolId (populated by a loaderMethod)
+    const { allAvailableColumns, preselectedExportConfig } =
+      service.buildExportColumns({
+        schema: ExportColumnsTestEntity.schema,
+        visibleColIds: ["runtimeSchool"],
+        availableColumns: [
+          {
+            id: "runtimeSchool",
+            label: "School",
+            viewComponent: "DisplayEntity",
+          },
+        ],
+      });
+
+    expect(queryKeys(allAvailableColumns)).toContain("runtimeSchool");
+    const col = preselectedExportConfig.find(
+      (c) => normalizeQueryKey(c.query) === "runtimeSchool",
+    );
+    expect(col.label).toBe("School");
+  });
+
   it("should preselect the raw value for a visible plain field", () => {
     const { preselectedExportConfig } = service.buildExportColumns({
       schema: ExportColumnsTestEntity.schema,
