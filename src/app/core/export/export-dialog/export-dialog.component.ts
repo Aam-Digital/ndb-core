@@ -123,7 +123,16 @@ export class ExportDialogComponent {
     );
   }
 
-  // using shared normalizeQueryKey()
+  /** Map selected column keys back to their full export column config (incl. label). */
+  private columnsFromKeys(keys: string[]): ExportColumnConfig[] {
+    const byKey = new Map<string, ExportColumnConfig>();
+    for (const c of this.availableColumns) {
+      byKey.set(normalizeQueryKey(c.query), c);
+    }
+    return keys
+      .map((k) => byKey.get(normalizeQueryKey(k)))
+      .filter((c): c is ExportColumnConfig => !!c);
+  }
 
   private buildAvailableColumns(): ExportColumnConfig[] {
     const configs = this.data.exportConfig ?? [];
@@ -138,16 +147,6 @@ export class ExportDialogComponent {
       }
     }
     return out;
-  }
-
-  private columnsFromKeys(keys: string[]): ExportColumnConfig[] {
-    const byKey = new Map<string, ExportColumnConfig>();
-    for (const c of this.availableColumns) {
-      byKey.set(normalizeQueryKey(c.query), c);
-    }
-    return keys
-      .map((k) => byKey.get(normalizeQueryKey(k)))
-      .filter((c): c is ExportColumnConfig => !!c);
   }
 
   async download() {
@@ -167,13 +166,14 @@ export class ExportDialogComponent {
         this.data.filteredData && this.scope() === "filtered"
           ? this.data.filteredData
           : this.data.allEntities;
+      const selectedKeys = this.selectedColumnKeys();
       await this.downloadService.triggerDownload(
         exportData,
         this.format(),
         this.data.filename,
-        this.selectedColumnKeys() === undefined
-          ? this.data.exportConfig
-          : this.columnsFromKeys(this.selectedColumnKeys() ?? []),
+        selectedKeys === undefined
+          ? undefined
+          : this.columnsFromKeys(selectedKeys),
       );
       this.dialogRef.close();
     } catch (e) {
