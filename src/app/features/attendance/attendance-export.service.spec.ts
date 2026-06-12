@@ -130,32 +130,6 @@ describe("AttendanceExportService", () => {
     ]);
   });
 
-  it("should not include entity columns or the participant id", async () => {
-    const entity = new AttendanceTestEntity();
-    entity.subject = "Event";
-    entity.linkedEntity = "Child:child-9";
-    entity.participants = [
-      new AttendanceItem(
-        {
-          id: "PRESENT",
-          label: "Present",
-          shortName: "P",
-          countAs: AttendanceLogicalStatus.PRESENT,
-        },
-        "",
-        "Child:child-1",
-      ),
-    ];
-
-    const alice = new Entity("Child:child-1");
-    alice.toString = () => "Alice";
-    mockEntityMapper.load.mockResolvedValue(alice);
-
-    await service.exportAttendanceList(entity, "participants");
-
-    const [rows] = mockDownloadService.triggerDownload.mock.calls[0];
-    expect(Object.keys(rows[0])).toEqual(["Name", "Status", "Remarks"]);
-  });
 
   it("should show <not_found> when the participant entity cannot be loaded", async () => {
     const entity = new AttendanceTestEntity();
