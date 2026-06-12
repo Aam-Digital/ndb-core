@@ -231,15 +231,15 @@ Depending on the browser and the setting this might open a popup or directly dow
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createCsv(data: any[])</code>
+                    <code>createCsv(data: any[], selectedColumns?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="156"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:156</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="148"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:148</a></div>
                         </td>
                     </tr>
 
@@ -278,6 +278,20 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                                             </td>
                                         </tr>
+                                        <tr>
+                                                <td>selectedColumns</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -308,15 +322,15 @@ Depending on the browser and the setting this might open a popup or directly dow
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createXlsx(data: any[])</code>
+                    <code>createXlsx(data: any[], selectedColumns?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="170"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:170</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="168"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:168</a></div>
                         </td>
                     </tr>
 
@@ -350,6 +364,18 @@ Depending on the browser and the setting this might open a popup or directly dow
 
 
                                         </tr>
+                                        <tr>
+                                                <td>selectedColumns</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -379,15 +405,15 @@ Depending on the browser and the setting this might open a popup or directly dow
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>prepareExportData(data: any[])</code>
+                    <code>prepareExportData(data: any[], selectedColumns?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="197"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:197</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="198"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:198</a></div>
                         </td>
                     </tr>
 
@@ -423,6 +449,18 @@ For plain objects: the first row contains the object keys as headers.</p>
 
 
                                         </tr>
+                                        <tr>
+                                                <td>selectedColumns</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -452,15 +490,15 @@ For plain objects: the first row contains the object keys as headers.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>triggerDownload(data: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, format: <a href="../miscellaneous/typealiases.html#FileDownloadFormat" target="_self">FileDownloadFormat</a>, filename: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, exportConfig?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
+                    <code>triggerDownload(data: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, format: <a href="../miscellaneous/typealiases.html#FileDownloadFormat" target="_self">FileDownloadFormat</a>, filename: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, selectedColumns?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -532,7 +570,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                                             </td>
                                         </tr>
                                         <tr>
-                                                <td>exportConfig</td>
+                                                <td>selectedColumns</td>
                                             <td>
                                                             <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
                                             </td>
@@ -543,7 +581,7 @@ For plain objects: the first row contains the object keys as headers.</p>
 
 
                                             <td>
-                                                    <p>special configuration that will be applied to the &#39;data&#39; before triggering the download</p>
+                                                    <p>optional list of export column keys to restrict (and order) the exported columns</p>
 
                                             </td>
                                         </tr>
@@ -593,7 +631,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/export/download-service/download.service.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/export/download-service/download.service.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -632,7 +670,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/export/download-service/download.service.ts:71</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/export/download-service/download.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -652,9 +690,11 @@ For plain objects: the first row contains the object keys as headers.</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
-import { ExportColumnConfig } from &quot;../data-transformation-service/export-column-config&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
-import { DataTransformationService } from &quot;../data-transformation-service/data-transformation.service&quot;;
+import {
+  ExportColumnConfig,
+  normalizeQueryKey,
+} from &quot;../data-transformation-service/export-column-config&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
 import { EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
 import { ExportColumnMapping } from &quot;app/core/entity/default-datatype/default.datatype&quot;;
@@ -714,9 +754,6 @@ export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class DownloadService {
-  private readonly dataTransformationService &#x3D; inject(
-    DataTransformationService,
-  );
   private readonly papa &#x3D; inject(Papa);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
 
@@ -730,18 +767,18 @@ export class DownloadService {
    * @param data content of the file that will be downloaded
    * @param format extension of the file that will be downloaded, support is &#x27;csv&#x27; and &#x27;json&#x27;
    * @param filename of the file that will be downloaded
-   * @param exportConfig special configuration that will be applied to the &#x27;data&#x27; before triggering the download
+   * @param selectedColumns optional list of export column keys to restrict (and order) the exported columns
    */
   async triggerDownload(
     data: any,
     format: FileDownloadFormat,
     filename: string,
-    exportConfig?: ExportColumnConfig[],
+    selectedColumns?: ExportColumnConfig[],
   ) {
     const blobData &#x3D; await this.getFormattedBlobData(
       data,
       format,
-      exportConfig,
+      selectedColumns,
     );
     const filenameWithExtension &#x3D; filename.endsWith(&quot;.&quot; + format)
       ? filename
@@ -761,24 +798,17 @@ export class DownloadService {
   private async getFormattedBlobData(
     data: any,
     format: FileDownloadFormat,
-    exportConfig?: ExportColumnConfig[],
+    selectedColumns?: ExportColumnConfig[],
   ): Promise&lt;Blob&gt; {
     let result &#x3D; &quot;&quot;;
 
-    if (exportConfig) {
-      data &#x3D; await this.dataTransformationService.transformData(
-        data,
-        exportConfig,
-      );
-    }
-
     switch (format.toLowerCase()) {
       case &quot;json&quot;:
-        result &#x3D; typeof data &#x3D;&#x3D;&#x3D; &quot;string&quot; ? data : JSON.stringify(data); // TODO: support exportConfig for json format
+        result &#x3D; typeof data &#x3D;&#x3D;&#x3D; &quot;string&quot; ? data : JSON.stringify(data); // TODO: support column selection for json format
         return new Blob([result], { type: &quot;application/json&quot; });
       case &quot;csv&quot;:
         if (Array.isArray(data)) {
-          result &#x3D; await this.createCsv(data);
+          result &#x3D; await this.createCsv(data, selectedColumns);
         } else {
           // assume raw csv data
           result &#x3D; data;
@@ -789,7 +819,7 @@ export class DownloadService {
           Logging.warn(&quot;XLSX export requires an array of records.&quot;);
           return new Blob([&quot;&quot;]);
         }
-        return this.createXlsx(data);
+        return this.createXlsx(data, selectedColumns);
       case &quot;pdf&quot;:
         return new Blob([data], { type: &quot;application/pdf&quot; });
       case &quot;zip&quot;:
@@ -806,8 +836,14 @@ export class DownloadService {
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[]): Promise&lt;string&gt; {
-    const [headers, ...rows] &#x3D; await this.prepareExportData(data);
+  async createCsv(
+    data: any[],
+    selectedColumns?: ExportColumnConfig[],
+  ): Promise&lt;string&gt; {
+    const [headers, ...rows] &#x3D; await this.prepareExportData(
+      data,
+      selectedColumns,
+    );
     return this.papa.unparse(
       { fields: headers, data: rows },
       {
@@ -820,8 +856,11 @@ export class DownloadService {
   /**
    * Creates an XLSX Blob from the input data using the shared export data preparation.
    */
-  async createXlsx(data: any[]): Promise&lt;Blob&gt; {
-    const rows &#x3D; await this.prepareExportData(data);
+  async createXlsx(
+    data: any[],
+    selectedColumns?: ExportColumnConfig[],
+  ): Promise&lt;Blob&gt; {
+    const rows &#x3D; await this.prepareExportData(data, selectedColumns);
     const wb &#x3D; new Workbook();
     const ws &#x3D; wb.addWorksheet(&quot;Export&quot;);
     for (const row of rows) {
@@ -847,7 +886,19 @@ export class DownloadService {
    * For entity data: uses schema column resolvers to produce human-readable headers and values.
    * For plain objects: the first row contains the object keys as headers.
    */
-  async prepareExportData(data: any[]): Promise&lt;any[][]&gt; {
+  async prepareExportData(
+    data: any[],
+    selectedColumns?: ExportColumnConfig[],
+  ): Promise&lt;any[][]&gt; {
+    // map of selected column key -&gt; custom label (e.g. the list view column label)
+    const selectedKeys &#x3D; selectedColumns?.map((c) &#x3D;&gt;
+      normalizeQueryKey(c.query),
+    );
+    const labelOverrides &#x3D; new Map&lt;string, string&gt;();
+    for (const c of selectedColumns ?? []) {
+      if (c.label) labelOverrides.set(normalizeQueryKey(c.query), c.label);
+    }
+
     let entityConstructor: EntityConstructor | undefined;
     if (data.length &gt; 0 &amp;&amp; typeof data[0]?.getConstructor &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
       entityConstructor &#x3D; data[0].getConstructor();
@@ -862,11 +913,15 @@ export class DownloadService {
           ]),
         ),
       );
-      const keys &#x3D;
+      const allKeys &#x3D;
         mapped.length &gt; 0
           ? Array.from(new Set(mapped.flatMap((r) &#x3D;&gt; Object.keys(r))))
           : [];
-      return [keys, ...mapped.map((r) &#x3D;&gt; keys.map((k) &#x3D;&gt; r[k]))];
+      const keys &#x3D; selectedKeys
+        ? selectedKeys.filter((k) &#x3D;&gt; allKeys.includes(k))
+        : allKeys;
+      const headers &#x3D; keys.map((k) &#x3D;&gt; labelOverrides.get(k) ?? k);
+      return [headers, ...mapped.map((r) &#x3D;&gt; keys.map((k) &#x3D;&gt; r[k]))];
     }
 
     const entitySchema &#x3D; entityConstructor.schema;
@@ -886,11 +941,23 @@ export class DownloadService {
       data.map((item) &#x3D;&gt; this.mapEntityToExportRow(item, columnResolvers)),
     );
 
-    const columnKeys &#x3D; Array.from(columnLabels.keys());
-    const headers &#x3D; Array.from(columnLabels.values());
+    // Keep selected columns that have no schema resolver (e.g. runtime-attached
+    // fields like a Child&#x27;s &#x60;schoolId&#x60;, or configured query-expression columns)
+    // and read their value directly from the entity, so they are not silently
+    // dropped from the export.
+    const columnKeys &#x3D; selectedKeys ?? Array.from(columnLabels.keys());
+    const headers &#x3D; columnKeys.map(
+      (key) &#x3D;&gt; labelOverrides.get(key) ?? columnLabels.get(key) ?? key,
+    );
     return [
       headers,
-      ...exportEntities.map((item) &#x3D;&gt; columnKeys.map((key) &#x3D;&gt; item[key])),
+      ...data.map((item, i) &#x3D;&gt;
+        columnKeys.map((key) &#x3D;&gt;
+          columnResolvers.has(key)
+            ? exportEntities[i][key]
+            : this.ensureCsvFriendlyValue(item[key]),
+        ),
+      ),
     ];
   }
 

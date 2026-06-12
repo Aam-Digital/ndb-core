@@ -205,6 +205,10 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier"></span>
+                                <a href="#getExportColumns" >getExportColumns</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
                                 <a href="#transformToObjectFormat" >transformToObjectFormat</a>
                             </li>
                             <li>
@@ -230,9 +234,6 @@
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#importMapFunction" >importMapFunction</a>
-                            </li>
-                            <li>
-                                <a href="#getExportColumns" >getExportColumns</a>
                             </li>
                             <li>
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
@@ -262,6 +263,86 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getExportColumns"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getExportColumns</b></span>
+                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:36</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Export the raw date column plus an additional, derived &quot;age&quot; column.</p>
+<p>The age is a virtual property computed from the date and is not stored on the
+entity itself, so without this dedicated column the value would be missing
+from exports (see #4057).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="transformToObjectFormat"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -286,7 +367,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:16</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:17</a></code>
 </div>
                         </td>
                     </tr>
@@ -766,87 +847,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getExportColumns"></a>
-                    <span class="name">
-                        <span ><b>getExportColumns</b></span>
-                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:232</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Export columns for a field using this datatype.</p>
-<p>Each returned column contributes a CSV header and its own value resolver.
-The returned <code>keySuffix</code> is appended to the field id to form the exported column key.</p>
-<p>The default implementation returns a single column with the raw field value.
-Readable formatting can be applied by callers during CSV transformation.
-Override this to provide custom or additional columns (e.g. entity references
-can add a human-readable name column alongside the ID column).</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>schemaField</td>
-                                            <td>
-                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="normalizeSchemaField"></a>
                     <span class="name">
                         <span ><b>normalizeSchemaField</b></span>
@@ -1044,7 +1044,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:11</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:12</a></code>
 </div>
                         </td>
                     </tr>
@@ -1083,7 +1083,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:14</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:15</a></code>
 </div>
                         </td>
                     </tr>
@@ -1123,7 +1123,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:12</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:13</a></code>
 </div>
                         </td>
                     </tr>
@@ -1265,6 +1265,7 @@ during import.</p>
 import { Injectable } from &quot;@angular/core&quot;;
 import { DateWithAge } from &quot;./dateWithAge&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
+import { ExportColumnMapping } from &quot;../../entity/default-datatype/default.datatype&quot;;
 
 /**
  * Similar to the &#x27;date-only&#x27; datatype but it uses the &#x60;DateWithAge&#x60; class which provides the &#x60;age&#x60; function.
@@ -1286,6 +1287,31 @@ export class DateWithAgeDatatype extends DateOnlyDatatype {
       return undefined;
     }
     return new DateWithAge(dateValue);
+  }
+
+  /**
+   * Export the raw date column plus an additional, derived &quot;age&quot; column.
+   *
+   * The age is a virtual property computed from the date and is not stored on the
+   * entity itself, so without this dedicated column the value would be missing
+   * from exports (see #4057).
+   */
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping[] {
+    const columns &#x3D; super.getExportColumns(schemaField);
+    if (columns.length &#x3D;&#x3D;&#x3D; 0) {
+      return columns;
+    }
+
+    return [
+      ...columns,
+      {
+        keySuffix: &quot;_age&quot;,
+        label: schemaField.label + $localize&#x60;:export age column suffix: (age)&#x60;,
+        resolveValue: (value: DateWithAge) &#x3D;&gt; value?.age,
+      },
+    ];
   }
 }
 </code></pre>
