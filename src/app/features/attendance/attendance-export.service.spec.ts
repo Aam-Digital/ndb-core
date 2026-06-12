@@ -36,7 +36,7 @@ class AttendanceTestEntity extends Entity {
   @DatabaseField({ label: "Linked Entity", dataType: "entity" })
   linkedEntity: string;
 
-  @DatabaseField({ label: "status" })
+  @DatabaseField({ label: "Status" })
   recordStatus: string;
 }
 
@@ -281,7 +281,7 @@ describe("AttendanceExportService", () => {
 
       const [rows] = mockDownloadService.triggerDownload.mock.calls[0];
       const statusColumns = Object.entries(rows[0]).filter(([key]) =>
-        key.startsWith("status"),
+        key.startsWith("Status"),
       );
 
       expect(statusColumns).toHaveLength(2);
