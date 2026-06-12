@@ -58,7 +58,15 @@ export interface ActionMeta {
   background: string;
   /** badge text/icon color */
   color: string;
+  /** optional hover tooltip explaining the action */
+  tooltip?: string;
 }
+
+/**
+ * Explanation for the synthetic "initial snapshot" entry, shown both inline in
+ * its diff and as the badge tooltip (single source of truth).
+ */
+export const BASELINE_NOTE = $localize`:Change history baseline note:Record state captured when change logging was enabled. Edits made before this point aren't recorded.`;
 
 /**
  * Display metadata per action. Orange is reserved for app chrome, so even
@@ -67,10 +75,11 @@ export interface ActionMeta {
  */
 export const ACTION_META: Record<ChangeAction, ActionMeta> = {
   baseline: {
-    icon: "flag",
-    label: $localize`:Change action badge:Baseline`,
+    icon: "clock-rotate-left",
+    label: $localize`:Change action badge:Initial snapshot`,
     background: "#ECEFF1",
     color: "#4a525c",
+    tooltip: BASELINE_NOTE,
   },
   created: {
     icon: "circle-plus",

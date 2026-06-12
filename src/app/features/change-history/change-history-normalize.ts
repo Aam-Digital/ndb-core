@@ -1,6 +1,7 @@
 import { patch } from "jsondiffpatch";
 import { isEqual } from "lodash-es";
 import {
+  BASELINE_NOTE,
   ChangeEvent,
   FieldChange,
   OPERATION_TO_ACTION,
@@ -39,8 +40,6 @@ const HIDDEN_FIELDS = new Set([
 function isHidden(field: string): boolean {
   return field.startsWith("_") || HIDDEN_FIELDS.has(field);
 }
-
-export const BASELINE_NOTE = $localize`:Change history baseline note:Record state captured when change logging was enabled. Edits made before this point aren't recorded.`;
 
 /**
  * Build the displayable change history for one entity from its raw audit docs.

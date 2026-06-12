@@ -1,8 +1,5 @@
-import {
-  BASELINE_NOTE,
-  buildChangeEvents,
-  RawAuditDoc,
-} from "./change-history-normalize";
+import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
+import { BASELINE_NOTE } from "./change-history.types";
 
 function doc(partial: Partial<RawAuditDoc>): RawAuditDoc {
   return {

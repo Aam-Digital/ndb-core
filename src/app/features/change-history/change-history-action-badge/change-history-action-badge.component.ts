@@ -4,6 +4,7 @@ import {
   computed,
   input,
 } from "@angular/core";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { actionMetaFor, ChangeAction } from "../change-history.types";
 
@@ -14,11 +15,12 @@ import { actionMetaFor, ChangeAction } from "../change-history.types";
 @Component({
   selector: "app-change-history-action-badge",
   standalone: true,
-  imports: [FaDynamicIconComponent],
+  imports: [FaDynamicIconComponent, MatTooltipModule],
   template: `<span
     class="badge"
     [style.background-color]="meta().background"
     [style.color]="meta().color"
+    [matTooltip]="meta().tooltip ?? ''"
   >
     <app-fa-dynamic-icon [icon]="meta().icon"></app-fa-dynamic-icon>
     <span class="label">{{ meta().label }}</span>

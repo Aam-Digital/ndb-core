@@ -68,8 +68,8 @@ export class ChangeHistoryDialogComponent implements OnInit {
   ): MatDialogRef<ChangeHistoryDialogComponent> {
     return dialog.open(ChangeHistoryDialogComponent, {
       data: { entity } satisfies ChangeHistoryDialogData,
-      width: "1000px",
-      maxWidth: "95vw",
+      width: "98vw",
+      maxWidth: "99vw",
     });
   }
 

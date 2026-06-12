@@ -27,7 +27,7 @@
           icon="pen-to-square"
         ></app-fa-dynamic-icon>
         <div>
-          <div class="meta-line flex-row align-center gap-x-small flex-wrap">
+          <div class="meta-line flex-column">
             <span i18n="Change history">Last updated by</span>
             <app-entity-block [entityId]="updated().by"></app-entity-block>
           </div>
@@ -46,7 +46,7 @@
           icon="circle-plus"
         ></app-fa-dynamic-icon>
         <div>
-          <div class="meta-line flex-row align-center gap-x-small flex-wrap">
+          <div class="meta-line flex-column">
             <span i18n="Change history">Created by</span>
             <app-entity-block [entityId]="created().by"></app-entity-block>
           </div>
@@ -58,10 +58,13 @@
     @if (canViewHistory()) {
       <button
         mat-button
-        class="view-history-link full-width justify-content-center gap-small margin-top-small"
+        class="view-history-link full-width justify-content-center margin-top-small"
         (click)="viewHistory()"
       >
-        <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+        <app-fa-dynamic-icon
+          class="standard-icon-with-text"
+          icon="clock-rotate-left"
+        ></app-fa-dynamic-icon>
         <span i18n="View change history link">View change history</span>
       </button>
     }
