@@ -130,7 +130,6 @@ describe("AttendanceExportService", () => {
     ]);
   });
 
-
   it("should show <not_found> when the participant entity cannot be loaded", async () => {
     const entity = new AttendanceTestEntity();
     entity.participants = [
