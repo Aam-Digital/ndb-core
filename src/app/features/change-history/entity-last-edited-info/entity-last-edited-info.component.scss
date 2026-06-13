@@ -1,0 +1,44 @@
+@use "variables/colors";
+@use "variables/sizes";
+
+// the design uses an info-blue for the change-history accent; the ndb brand
+// palette is orange, so this blue is intentionally a design-specific color
+$history-blue: #1565c0;
+$history-blue-bg: #e8f0fe;
+
+.menu-content {
+  // hug the content width, but stay within Material's 280px panel cap so no
+  // horizontal scrollbar appears (and no empty right-side gap on short content)
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 220px;
+  max-width: 280px;
+  overflow-x: hidden;
+}
+
+// The notification feature sets a global `.mat-mdc-menu-panel { min-width: 310px
+// !important }`, which leaks to every menu overlay and leaves an empty right-side
+// gap in this compact info popover. Override it for our panel only (::ng-deep so
+// it reaches the body-level overlay; higher specificity + !important to win).
+::ng-deep .last-edited-menu.mat-mdc-menu-panel {
+  min-width: 0 !important;
+}
+
+.menu-title {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.7em;
+  color: colors.$muted;
+}
+
+.meta-icon {
+  color: colors.$text-secondary;
+  margin-top: 2px;
+}
+
+// .meta-line layout (flex/align/gap/wrap) comes from utility classes
+// only the design-specific accent colors stay here
+.view-history-link {
+  color: $history-blue;
+  background: $history-blue-bg;
+}

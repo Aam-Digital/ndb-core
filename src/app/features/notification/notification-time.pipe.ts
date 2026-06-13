@@ -1,6 +1,6 @@
 /**
  * Converts a timestamp into a human-readable time format,
- * such as "Just Now", "5m", "2h", "Yesterday", "3d", or "Jan 2024".
+ * such as "Just Now", "5min", "2h", "Yesterday", "3d", or "Jan 2024".
  */
 import { OnDestroy, Pipe, PipeTransform } from "@angular/core";
 import { Observable, Subject, timer } from "rxjs";
@@ -49,7 +49,7 @@ export class NotificationTimePipe implements PipeTransform, OnDestroy {
     if (seconds < 60) {
       return $localize`Just Now`;
     } else if (minutes < 60) {
-      return $localize`${minutes}m`;
+      return $localize`${minutes}min`;
     } else if (hours < 24) {
       return $localize`${hours}h ago`;
     } else if (days === 1) {

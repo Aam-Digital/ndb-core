@@ -1,0 +1,96 @@
+<h2 mat-dialog-title class="flex-row align-center gap-small">
+  <span class="flex-grow" i18n="Change history dialog title"
+    >Change history</span
+  >
+  <app-dialog-close></app-dialog-close>
+</h2>
+
+<mat-dialog-content>
+  @if (status() === "loading") {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  } @else if (status() === "disabled") {
+    <app-feature-disabled-info
+      [featureEnabled]="false"
+      featureName="Change History"
+      i18n-featureName="Change history feature name"
+    ></app-feature-disabled-info>
+    <p class="text-secondary text-center" i18n="Change history not-synced hint">
+      If change logging has been enabled, there may simply be no changes synced
+      yet since it was switched on.
+    </p>
+  } @else if (status() === "error") {
+    <div
+      class="empty-state flex-column align-center gap-regular text-secondary"
+    >
+      <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+      <p i18n="Change history load error">
+        Couldn't load the change history. You may not have access, or there was
+        a temporary problem — please try again or contact your administrator.
+      </p>
+    </div>
+  } @else if ((events() ?? []).length === 0) {
+    <div
+      class="empty-state flex-column align-center gap-regular text-secondary"
+    >
+      <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+      <p i18n="Change history empty">No change history recorded yet.</p>
+    </div>
+  } @else {
+    <app-hint-box class="history-hints">
+      <p i18n="Change history sync hint">
+        Only changes already synced to the server are shown.
+      </p>
+      <p i18n="Change history linked-records hint">
+        Actions that link this record to another (e.g. adding a note) appear in
+        the change history of that related record, not here.
+      </p>
+    </app-hint-box>
+
+    <mat-accordion class="timeline">
+      @for (event of events() ?? []; track event.id; let isFirst = $first) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header
+            class="event-header"
+            collapsedHeight="56px"
+            expandedHeight="56px"
+          >
+            <mat-panel-title
+              class="flex-row align-center gap-regular full-width"
+            >
+              <app-change-history-action-badge
+                [action]="event.action"
+              ></app-change-history-action-badge>
+              <span class="user flex-grow">
+                @if (event.by) {
+                  <app-entity-block [entityId]="event.by"></app-entity-block>
+                }
+              </span>
+              <span class="when">
+                <span>{{ event.at | customDate: "short" }}</span>
+                @if (isFirst) {
+                  <span class="relative">{{
+                    event.at | notificationTime | async
+                  }}</span>
+                }
+              </span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <ng-template matExpansionPanelContent>
+            <app-record-diff
+              [event]="event"
+              [entityType]="entityType"
+            ></app-record-diff>
+          </ng-template>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions
+  align="end"
+  class="flex-row align-center gap-regular padding-top-small"
+>
+  <button mat-raised-button color="accent" mat-dialog-close i18n>Close</button>
+</mat-dialog-actions>
