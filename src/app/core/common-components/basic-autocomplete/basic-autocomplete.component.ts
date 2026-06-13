@@ -35,7 +35,6 @@ import {
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { auditTime, filter, map, startWith } from "rxjs/operators";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
-import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import {
   MatChipGrid,
   MatChipInput,
@@ -247,15 +246,14 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   override get disabled(): boolean {
-    return this._disabled;
+    return super.disabled;
   }
 
   override set disabled(value: boolean) {
-    this._disabled = coerceBooleanProperty(value);
-    this._disabled
+    super.disabled = value;
+    this.disabled
       ? this.autocompleteForm.disable()
       : this.autocompleteForm.enable();
-    this.stateChanges.next();
   }
 
   /**
@@ -680,7 +678,7 @@ export class BasicAutocompleteComponent<O, V = O>
       target instanceof Element
         ? target.closest(".mat-mdc-option, .mat-option")
         : null;
-    if (!this._disabled && !clickedOption) {
+    if (!this.disabled && !clickedOption) {
       this.showAutocomplete();
     }
   }

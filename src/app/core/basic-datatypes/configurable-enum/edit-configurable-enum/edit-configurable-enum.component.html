@@ -20,7 +20,7 @@
     </ng-template>
   </app-basic-autocomplete>
 
-  @if (formControl.enabled) {
+  @if (enabled()) {
     <fa-icon
       icon="caret-down"
       class="form-field-icon-suffix"
@@ -29,7 +29,7 @@
   }
 </div>
 
-@if (formControl.enabled && !!createNewOption() && canEdit()) {
+@if (enabled() && !!createNewOption() && canEdit()) {
   <fa-icon
     class="form-field-icon-suffix settings-icon"
     (click)="openSettings($event)"

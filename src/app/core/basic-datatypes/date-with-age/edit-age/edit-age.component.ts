@@ -1,12 +1,12 @@
 import { Entity } from "#src/app/core/entity/model/entity";
 import {
   Component,
+  computed,
   input,
   OnInit,
-  signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -43,7 +43,8 @@ export class EditAgeComponent
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
 
-  age = signal<number | null>(null);
+  /** The age derived from the current date value, kept reactive via the base `valueSignal`. */
+  readonly age = computed(() => this.valueSignal()?.age ?? null);
 
   override writeValue(newValue: DateWithAge | Date) {
     if (newValue instanceof Date && !(newValue instanceof DateWithAge)) {
@@ -51,23 +52,15 @@ export class EditAgeComponent
     } else {
       super.writeValue(newValue);
     }
-
-    this.age.set(this.value?.age ?? null);
   }
 
   ngOnInit() {
-    this.age.set(this.value?.age ?? this.formControl.value?.age ?? null);
-
+    // Ensure the stored value is always a DateWithAge (so `.age` is available).
+    // In EditComponent mode the value flows through the control, not writeValue.
     this.formControl.valueChanges.subscribe((newValue) => {
       if (newValue instanceof Date && !(newValue instanceof DateWithAge)) {
         this.formControl.setValue(new DateWithAge(newValue));
       }
-
-      this.age.set(this.formControl.value?.age ?? null);
     });
-  }
-
-  get formControl(): FormControl<DateWithAge> {
-    return this.ngControl.control as FormControl<DateWithAge>;
   }
 }

@@ -3,7 +3,7 @@
     #inputElement
     matInput
     [title]="placeholder"
-    [disabled]="_disabled"
+    [disabled]="!enabled()"
     readonly
     [value]="
       locationValue()?.locationString ??
@@ -33,7 +33,7 @@
         mat-icon-button
         type="button"
         class="input-action-button"
-        [disabled]="_disabled"
+        [disabled]="!enabled()"
       >
         <fa-icon icon="magnifying-glass-location"></fa-icon>
       </button>

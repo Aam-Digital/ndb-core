@@ -86,7 +86,7 @@ describe("EditEntityComponent", () => {
     await vi.waitFor(() =>
       expect((component as any).allEntities.isLoading()).toBe(false),
     );
-    component.formControl().setValue(component.formControl().value);
+    component.control().setValue(component.control().value);
     fixture.detectChanges();
     await vi.waitFor(() =>
       expect(component.availableEntitiesResource.isLoading()).toBe(false),
@@ -197,7 +197,7 @@ describe("EditEntityComponent", () => {
     );
 
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
-    component.formControl().setValue([test1Entities[0].getId()]);
+    component.control().setValue([test1Entities[0].getId()]);
     fixture.detectChanges();
 
     await refreshAvailableEntities();
@@ -273,7 +273,7 @@ describe("EditEntityComponent", () => {
   it("should show selected entities of type that is not configured", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     component
-      .formControl()
+      .control()
       .setValue([test1Entities[0].getId(), test2Entities[0].getId()]);
     fixture.detectChanges();
     await refreshAvailableEntities();
@@ -283,9 +283,9 @@ describe("EditEntityComponent", () => {
       ),
     );
 
-    expect(component.formControl().value).toHaveLength(2);
+    expect(component.control().value).toHaveLength(2);
 
-    expect(component.formControl().value).toEqual(
+    expect(component.control().value).toEqual(
       expect.arrayContaining([
         test1Entities[0].getId(),
         test2Entities[0].getId(),

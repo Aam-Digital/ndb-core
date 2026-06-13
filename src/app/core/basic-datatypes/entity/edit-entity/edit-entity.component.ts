@@ -129,7 +129,13 @@ export class EditEntityComponent<
 
   additionalFilter: InputSignal<(e: E) => boolean> = input((_) => true);
 
-  formControl: Signal<FormControl<T>> = computed(() => {
+  /**
+   * The form control bound to the inner autocomplete.
+   * Recomputed when {@link ngControl} appears (it is not a signal and may be set after
+   * first render) so we stop using the fallback control. Named `control` to avoid clashing
+   * with the base `formControl` getter.
+   */
+  control: Signal<FormControl<T>> = computed(() => {
     this.controlSourceRefresh();
     let control = this.ngControl?.control as FormControl<T>;
     if (!control) {
@@ -224,7 +230,7 @@ export class EditEntityComponent<
    * The currently selected values (IDs) of the form control.
    */
   values: Signal<string[]> = toSignal(
-    toObservable(this.formControl)
+    toObservable(this.control)
       .pipe(
         switchMap((form) => {
           // Emit both the initial value and subsequent value changes

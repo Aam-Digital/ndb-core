@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
-  OnInit,
-  signal,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatIconButton } from "@angular/material/button";
@@ -23,12 +22,10 @@ import {
   MapPopupComponent,
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Input to select and view an address on a map.
  */
-@UntilDestroy()
 @DynamicComponent("EditLocation")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,7 +50,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 })
 export class EditLocationComponent
   extends CustomFormControlDirective<GeoLocation>
-  implements EditComponent, OnInit
+  implements EditComponent
 {
   private readonly dialog = inject(MatDialog);
 
@@ -65,33 +62,15 @@ export class EditLocationComponent
   autoLookup = input<boolean>(true);
 
   /**
-   * The location value
-   * (because this.value doesn't always reflect the correct field value, probably because of the DynamicEditComponent wrapper).
+   * The current location value, derived from the form control.
+   * (Previously a manually-synced signal because `this.value` did not reflect the
+   * field value through the `DynamicEditComponent` wrapper — now handled by the base
+   * class syncing `valueSignal` from the control.)
    */
-  locationValue = signal<GeoLocation>(undefined);
-
-  override set value(v: GeoLocation) {
-    super.value = v;
-    this.locationValue.set(v);
-  }
-
-  override get value() {
-    return super.value;
-  }
-
-  ngOnInit(): void {
-    if (this.ngControl?.control) {
-      this.locationValue.set(this.ngControl.control.value);
-      this.ngControl.control.valueChanges
-        .pipe(untilDestroyed(this))
-        .subscribe((value) => {
-          this.locationValue.set(value);
-        });
-    }
-  }
+  readonly locationValue = computed(() => this.valueSignal());
 
   override onContainerClick() {
-    if (!this._disabled) {
+    if (!this.disabled) {
       this.openMap();
     }
   }
@@ -99,7 +78,7 @@ export class EditLocationComponent
   openMap() {
     const config: MapPopupConfig = {
       selectedLocation: this.locationValue(),
-      disabled: this._disabled,
+      disabled: this.disabled,
     };
 
     const ref = this.dialog.open(MapPopupComponent, {
@@ -110,7 +89,7 @@ export class EditLocationComponent
       data: config,
     });
 
-    if (!this._disabled) {
+    if (!this.disabled) {
       ref
         .afterClosed()
         .pipe(
