@@ -22,6 +22,7 @@ import { closeOnlySubmenu } from "./close-only-submenu";
 import { Router, RouterLink } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
+import { Entity } from "../../core/entity/model/entity";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { NotificationConfig } from "./model/notification-config";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
@@ -243,6 +244,12 @@ export class NotificationComponent implements OnInit {
     return actionURL;
   }
 
+  private normalizeEntityId(entityType: string, entityId: string): string {
+    return Entity.extractEntityIdFromId(
+      Entity.createPrefixedId(entityType, entityId),
+    );
+  }
+
   private generateEntityUrl(notification: NotificationEvent): string {
     let url = "";
 
@@ -250,7 +257,10 @@ export class NotificationComponent implements OnInit {
     if (entityCtr) {
       url = getEntityRuntimeRoute(entityCtr);
       if (notification.context.entityId) {
-        url += `/${notification.context.entityId}`;
+        url += `/${this.normalizeEntityId(
+          notification.context.entityType,
+          notification.context.entityId,
+        )}`;
       }
     }
 

@@ -78,25 +78,6 @@
       <div>
         <h3 class="no-margin flex-row align-center">
           <strong i18n>Where you receive notifications</strong>
-          @if (isPushNotificationEnabled()) {
-            <div
-              class="enabled-text"
-              matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
-              i18n-matTooltip
-              i18n
-            >
-              Enabled
-            </div>
-          } @else {
-            <div
-              class="disabled-text"
-              matTooltip="Push notifications are disabled. Turn them on in settings to also receive alerts outside of the app."
-              i18n-matTooltip
-              i18n
-            >
-              Disabled
-            </div>
-          }
         </h3>
         <div i18n>
           Notifications are always visible through the bell icon in the toolbar
@@ -179,15 +160,28 @@
             <p i18n>Email</p>
           </div>
 
-          <div class="flex-row gap-regular">
+          <div class="flex-row gap-regular align-center">
             <mat-slide-toggle
-              disabled
+              (change)="toggleEmailChannel($event)"
+              [checked]="notificationConfig()?.channels?.['email']"
+              [disabled]="!isEmailFeatureEnabled()"
               class="indented-item"
-              matTooltip="Not available yet"
-            ></mat-slide-toggle>
+              [matTooltipDisabled]="isEmailFeatureEnabled()"
+              matTooltip="Email notifications are not enabled in this system. Please contact your system administrator for more information."
+              i18n-matTooltip
+            />
             <span i18n>Email</span>
-            <span class="coming-soon-label" i18n>Coming Soon</span>
+            <app-help-button
+              text="Receive an email notification for each matching event, even when you are not using the app."
+              i18n-text
+            ></app-help-button>
           </div>
+          @if (accountEmail()) {
+            <div class="indented-item mat-hint" i18n>
+              Notifications will be sent to your account email
+              {{ accountEmail() }}
+            </div>
+          }
         </div>
       </div>
     </div>
