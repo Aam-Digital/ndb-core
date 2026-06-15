@@ -6,6 +6,7 @@ import {
   computed,
   ContentChild,
   DestroyRef,
+  effect,
   ElementRef,
   EventEmitter,
   input,
@@ -202,6 +203,16 @@ export class BasicAutocompleteComponent<O, V = O>
 
   autocompleteOptions: WritableSignal<SelectableOption<O, V>[]> = signal([]);
   autocompleteForm = new FormControl("");
+
+  /**
+   * Keep the inner autocomplete input's enabled state in sync with the control,
+   * reacting to the base `enabled` signal instead of overriding the `disabled` setter.
+   */
+  private readonly _syncAutocompleteFormEnabled = effect(() => {
+    this.enabled()
+      ? this.autocompleteForm.enable()
+      : this.autocompleteForm.disable();
+  });
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
     map((val) => this.updateAutocomplete(val)),
@@ -243,17 +254,6 @@ export class BasicAutocompleteComponent<O, V = O>
             ?.asString,
       )
       .join(", ");
-  }
-
-  override get disabled(): boolean {
-    return super.disabled;
-  }
-
-  override set disabled(value: boolean) {
-    super.disabled = value;
-    this.disabled
-      ? this.autocompleteForm.disable()
-      : this.autocompleteForm.enable();
   }
 
   /**
