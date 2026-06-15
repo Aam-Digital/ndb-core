@@ -14,6 +14,7 @@ export class AttendanceItem {
 
   private _status: AttendanceStatusType;
   @DatabaseField({
+    label: $localize`:Attendance status field label:Status`,
     dataType: "configurable-enum",
     additional: ATTENDANCE_STATUS_CONFIG_ID,
   })
@@ -44,7 +45,10 @@ export class AttendanceItem {
   })
   participant?: string;
 
-  @DatabaseField() remarks: string;
+  @DatabaseField({
+    label: $localize`:Attendance remarks field label:Remarks`,
+  })
+  remarks: string;
 
   constructor(
     status: AttendanceStatusType = NullAttendanceStatusType,
