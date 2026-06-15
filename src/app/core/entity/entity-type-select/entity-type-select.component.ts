@@ -1,11 +1,10 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   Input,
   input,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
@@ -29,7 +28,6 @@ export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
   EntityConstructor,
   string
 > {
-  @Input() override multi = false;
   @Input() override placeholder =
     $localize`:EntityTypeSelect placeholder:Select Record Type`;
 
@@ -46,15 +44,14 @@ export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
       .map(({ value }) => value),
   );
 
-  constructor() {
-    super();
+  protected override optionsSource = computed(() =>
+    this.availableEntityTypes(),
+  );
 
-    effect(() => {
-      this.options = this.availableEntityTypes();
-    });
-  }
-
-  override optionToString = (option: EntityConstructor) =>
-    option.label ?? option.ENTITY_TYPE;
-  override valueMapper = (option: EntityConstructor) => option.ENTITY_TYPE;
+  override optionToString = input<(option: EntityConstructor) => string>(
+    (option) => option.label ?? option.ENTITY_TYPE,
+  );
+  override valueMapper = input<(option: EntityConstructor) => string>(
+    (option) => option.ENTITY_TYPE,
+  );
 }

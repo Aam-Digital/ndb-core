@@ -6,17 +6,16 @@ import {
   computed,
   ContentChild,
   DestroyRef,
+  effect,
   ElementRef,
-  EventEmitter,
   input,
-  Input,
   inject,
-  OnChanges,
   OnInit,
-  Output,
+  output,
   signal,
   TemplateRef,
   TrackByFunction,
+  untracked,
   ViewChild,
   WritableSignal,
 } from "@angular/core";
@@ -123,7 +122,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
 })
 export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
-  implements OnChanges, OnInit, AfterViewInit
+  implements OnInit, AfterViewInit
 {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
@@ -138,14 +137,16 @@ export class BasicAutocompleteComponent<O, V = O>
   @ViewChild(CdkVirtualScrollViewport)
   virtualScrollViewport: CdkVirtualScrollViewport;
 
-  @Input() valueMapper = (option: O) =>
-    option?.["_id"] ?? (option as unknown as V);
-  @Input() optionToString = (option: O) =>
-    option?.["_label"] ?? option?.toString();
+  valueMapper = input<(option: O) => V>(
+    (option: O) => option?.["_id"] ?? (option as unknown as V),
+  );
+  optionToString = input<(option: O) => string>(
+    (option: O) => option?.["_label"] ?? option?.toString(),
+  );
   /** @deprecated Prefer `createOptions` to support one unified create flow. */
-  @Input() createOption: (input: string) => Promise<O>;
-  @Input() createOptions: CreateOptionConfig<O>[] = [];
-  @Input() hideOption: (option: O) => boolean = () => false;
+  createOption = input<(input: string) => Promise<O>>();
+  createOptions = input<CreateOptionConfig<O>[]>([]);
+  hideOption = input<(option: O) => boolean>(() => false);
 
   /**
    * Used in template to display the "Add new" option label.
@@ -156,21 +157,21 @@ export class BasicAutocompleteComponent<O, V = O>
    */
   protected createOptionDisplay(input: string): string {
     try {
-      return this.optionToString(input as unknown as O) ?? input;
+      return this.optionToString()(input as unknown as O) ?? input;
     } catch {
       return input;
     }
   }
 
   protected get availableCreateOptions(): CreateOptionConfig<O>[] {
-    if (this.createOptions.length > 0) {
-      return this.createOptions;
+    if (this.createOptions().length > 0) {
+      return this.createOptions();
     }
-    if (!this.createOption) {
+    if (!this.createOption()) {
       return [];
     }
 
-    return [{ label: "", create: this.createOption }];
+    return [{ label: "", create: this.createOption() }];
   }
 
   protected createOptionLabel(
@@ -193,12 +194,12 @@ export class BasicAutocompleteComponent<O, V = O>
   /**
    * Whether the user should be able to select multiple values.
    */
-  @Input() multi?: boolean;
+  multi = input<boolean>();
 
   /**
    * Whether the user can manually drag & drop to reorder the selected items
    */
-  @Input() reorder?: boolean;
+  reorder = input<boolean>();
 
   autocompleteOptions: WritableSignal<SelectableOption<O, V>[]> = signal([]);
   autocompleteForm = new FormControl("");
@@ -208,7 +209,7 @@ export class BasicAutocompleteComponent<O, V = O>
     startWith([] as SelectableOption<O, V>[]),
   );
   autocompleteFilterFunction: (option: O) => boolean;
-  @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
+  autocompleteFilterChange = output<(o: O) => boolean>();
 
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption = signal(false);
@@ -224,7 +225,7 @@ export class BasicAutocompleteComponent<O, V = O>
    * If more options match the current filter, a hint is shown to type to narrow results.
    * Set to 0 for no limit. Defaults to 100.
    */
-  @Input() maxOptionsToDisplay: number = 100;
+  maxOptionsToDisplay = input<number>(100);
   hasMoreOptions = signal(false);
 
   /**
@@ -264,9 +265,14 @@ export class BasicAutocompleteComponent<O, V = O>
    *
    * @param options Array of available options (can be filtered further by the `hideOption` function)
    */
-  @Input() set options(options: O[]) {
-    this._options = options.map((o) => this.toSelectableOption(o));
-  }
+  options = input<O[]>([]);
+
+  /**
+   * The source of options the dropdown displays. Defaults to the `options` input;
+   * subclasses can override this to derive options from an internal computed instead
+   * (replacing the former pattern of imperatively assigning `this.options`).
+   */
+  protected optionsSource = computed<O[]>(() => this.options());
 
   private _options: SelectableOption<O, V>[] = [];
 
@@ -280,16 +286,16 @@ export class BasicAutocompleteComponent<O, V = O>
   /**
    * Display the selected items as simple text, as chips or not at all (if used in combination with another component)
    */
-  @Input() display: "text" | "chips" | "none" = "text";
+  display = input<"text" | "chips" | "none">("text");
 
   /**
    * Derived display mode. Reorderable multi-select uses chips without mutating the public input.
    */
-  get effectiveDisplay(): "text" | "chips" | "none" {
-    return this.multi && this.reorder && this.display === "text"
+  effectiveDisplay = computed<"text" | "chips" | "none">(() =>
+    this.multi() && this.reorder() && this.display() === "text"
       ? "chips"
-      : this.display;
-  }
+      : this.display(),
+  );
 
   /**
    * display the search input rather than the selected elements only
@@ -317,6 +323,27 @@ export class BasicAutocompleteComponent<O, V = O>
     return Math.min(contentHeight, availableHeight);
   });
 
+  constructor() {
+    super();
+    // Rebuild the derived options whenever the `options` input (or the
+    // value/label mappers) change. Replaces the former `set options` setter
+    // and the `valueMapper`/`optionToString`/`options` `ngOnChanges` branches.
+    effect(() => {
+      const options = this.optionsSource();
+      // read the mapper inputs so the rebuild also reacts to their changes
+      this.valueMapper();
+      this.optionToString();
+      untracked(() => {
+        this._options = options.map((o) => this.toSelectableOption(o));
+        this.setInitialInputValue();
+        if (this.autocomplete?.panelOpen) {
+          // if new options have been added, update the visible autocomplete options
+          this.showAutocomplete(this.autocompleteForm.value);
+        }
+      });
+    });
+  }
+
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {
       this.autocompleteOptions.set(options);
@@ -328,32 +355,11 @@ export class BasicAutocompleteComponent<O, V = O>
     this.autocompleteForm.valueChanges.subscribe((value) => {
       if (
         typeof value === "string" &&
-        (this.display !== "text" || value !== this.displayText)
+        (this.display() !== "text" || value !== this.displayText)
       ) {
         this.retainSearchValue = value;
       }
     });
-  }
-
-  ngOnChanges(changes: { [key in keyof this]?: any }) {
-    if (changes.valueMapper) {
-      this._options.forEach(
-        (opt) => (opt.asValue = this.valueMapper(opt.initial)),
-      );
-    }
-    if (changes.optionToString) {
-      this._options.forEach(
-        (opt) => (opt.asString = this.optionToString(opt.initial)),
-      );
-    }
-    if (changes.value || changes.options) {
-      this.setInitialInputValue();
-
-      if (this.autocomplete?.panelOpen) {
-        // if new options have been added, make sure to update the visible autocomplete options
-        this.showAutocomplete(this.autocompleteForm.value);
-      }
-    }
   }
 
   ngAfterViewInit() {
@@ -431,7 +437,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
     this._options = this.orderSelectedFirst(this._options, selectedOptions);
 
-    if (this.multi) {
+    if (this.multi()) {
       this.value = selectedOptions.map((option) => option.asValue);
     } else {
       this.value = undefined;
@@ -443,12 +449,12 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete(valueToRevertTo?: string) {
-    if (this.multi && this.retainSearchValue) {
+    if (this.multi() && this.retainSearchValue) {
       // reset the search value to previously entered text to help user selecting multiple similar options without retyping filter text
       this.autocompleteForm.setValue(this.retainSearchValue);
     } else if (
-      this.multi &&
-      this.effectiveDisplay === "text" &&
+      this.multi() &&
+      this.effectiveDisplay() === "text" &&
       this.displayText
     ) {
       // keep selected items visible when the multi-select input is focused/opened
@@ -457,7 +463,7 @@ export class BasicAutocompleteComponent<O, V = O>
       // reset the search value to show all available options again
       this.autocompleteForm.setValue("");
     }
-    if (!this.multi) {
+    if (!this.multi()) {
       // cannot setValue to "" here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
     }
@@ -485,18 +491,18 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
     const filterText =
-      this.multi &&
-      this.effectiveDisplay === "text" &&
+      this.multi() &&
+      this.effectiveDisplay() === "text" &&
       inputText === this.displayText
         ? ""
         : inputText;
 
     let filteredOptions = this._options.filter(
-      (o) => !this.hideOption(o.initial) && !o.isHidden,
+      (o) => !this.hideOption()(o.initial) && !o.isHidden,
     );
     if (filterText) {
       this.autocompleteFilterFunction = (option) =>
-        this.optionToString(option)
+        this.optionToString()(option)
           ?.toLowerCase()
           ?.includes(filterText.toLowerCase());
       this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
@@ -514,16 +520,16 @@ export class BasicAutocompleteComponent<O, V = O>
     }
 
     if (
-      this.maxOptionsToDisplay > 0 &&
-      filteredOptions.length > this.maxOptionsToDisplay
+      this.maxOptionsToDisplay() > 0 &&
+      filteredOptions.length > this.maxOptionsToDisplay()
     ) {
       this.hasMoreOptions.set(true);
-      filteredOptions = filteredOptions.slice(0, this.maxOptionsToDisplay);
+      filteredOptions = filteredOptions.slice(0, this.maxOptionsToDisplay());
     } else {
       this.hasMoreOptions.set(false);
     }
 
-    if (this.multi && this.reorder) {
+    if (this.multi() && this.reorder()) {
       filteredOptions = this.orderSelectedFirst(
         filteredOptions,
         this._selectedOptions(),
@@ -605,7 +611,7 @@ export class BasicAutocompleteComponent<O, V = O>
     option.selected = false;
     this._selectedOptions.set(this._options.filter((o) => o.selected));
 
-    if (this.multi) {
+    if (this.multi()) {
       this.value = this._selectedOptions().map((o) => o.asValue);
     } else {
       this.value = undefined;
@@ -636,7 +642,7 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   private selectOption(option: SelectableOption<O, V>) {
-    if (this.multi) {
+    if (this.multi()) {
       option.selected = !option.selected;
       this._selectedOptions.set(this._options.filter((o) => o.selected));
       this.value = this._selectedOptions().map((o) => o.asValue);
@@ -652,8 +658,8 @@ export class BasicAutocompleteComponent<O, V = O>
   private toSelectableOption(opt: O): SelectableOption<O, V> {
     return {
       initial: opt,
-      asValue: this.valueMapper(opt),
-      asString: this.optionToString(opt),
+      asValue: this.valueMapper()(opt),
+      asString: this.optionToString()(opt),
       selected: false,
       isHidden: (opt as SelectableOption<O, V>)?.isHidden ?? false,
       isInvalid: (opt as SelectableOption<O, V>)?.isInvalid ?? false,
@@ -665,7 +671,7 @@ export class BasicAutocompleteComponent<O, V = O>
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      if (!this.multi && this.autocompleteForm.value === "") {
+      if (!this.multi() && this.autocompleteForm.value === "") {
         this.select(undefined);
       }
       this.isInSearchMode.set(false);
