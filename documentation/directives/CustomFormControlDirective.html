@@ -143,6 +143,18 @@
                 <p>Extend this base class to implement custom input controls to be used as form fields.</p>
 <p>To use in mat-form-field, add a provider to your component:
   <code>providers: [{ provide: MatFormFieldControl, useExisting: MyCustomComponent }]</code></p>
+<hr>
+<p><strong>When building a subclass you only need the &quot;Reactive API&quot; below:</strong></p>
+<ul>
+<li><a href="formControl">formControl</a> — the bound Angular <code>FormControl</code> (when used as an <code>EditComponent</code>).</li>
+<li><a href="valueSignal">valueSignal</a> — the current value as a signal (reactive, authoritative in both modes).</li>
+<li><a href="enabled">enabled</a> — whether the control is enabled, as a signal.</li>
+<li><a href="errorState">errorState</a> — whether the control currently shows an error (for <code>&lt;mat-error&gt;</code>).</li>
+</ul>
+<p>Read state through these signals in your template; do <strong>not</strong> read <code>formControl.value</code>
+or <code>formControl.enabled</code> directly (those are not reactive under OnPush).</p>
+<p>Everything below the &quot;MatFormFieldControl / ControlValueAccessor plumbing&quot; marker implements
+the Angular Material and Forms contracts and can be ignored when writing a control.</p>
 <p>also refer to available public resources on Custom Form Controls:</p>
 <ul>
 <li><a href="https://material.angular.io/guide/creating-a-custom-form-field-control">https://material.angular.io/guide/creating-a-custom-form-field-control</a></li>
@@ -177,25 +189,17 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#_disabled" >_disabled</a>
-                            </li>
-                            <li>
-                                <a href="#_value" >_value</a>
-                            </li>
-                            <li>
                                 <a href="#controlType" >controlType</a>
                             </li>
                             <li>
                                 <a href="#elementRef" >elementRef</a>
                             </li>
                             <li>
-                                <a href="#errorState" >errorState</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#enabled" >enabled</a>
                             </li>
                             <li>
                                 <a href="#errorStateMatcher" >errorStateMatcher</a>
-                            </li>
-                            <li>
-                                <a href="#focused" >focused</a>
                             </li>
                             <li>
                                 <a href="#id" >id</a>
@@ -220,7 +224,8 @@
                                 <a href="#stateChanges" >stateChanges</a>
                             </li>
                             <li>
-                                <a href="#touched" >touched</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#valueSignal" >valueSignal</a>
                             </li>
                         </ul>
                     </td>
@@ -318,7 +323,19 @@
                         <td class="col-md-4">
                             <ul class="index-list">
                                 <li>
+                                    <a href="#formControl" >formControl</a>
+                                </li>
+                                <li>
                                     <a href="#required" >required</a>
+                                </li>
+                                <li>
+                                    <a href="#focused" >focused</a>
+                                </li>
+                                <li>
+                                    <a href="#touched" >touched</a>
+                                </li>
+                                <li>
+                                    <a href="#errorState" >errorState</a>
                                 </li>
                                 <li>
                                     <a href="#empty" >empty</a>
@@ -350,7 +367,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:100</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="172" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:172</a></div>
                             </td>
                         </tr>
 
@@ -376,7 +393,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:47</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:98</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -397,7 +414,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:79</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:155</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -423,7 +440,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:40</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:91</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -444,7 +461,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:48</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="99" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:99</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -465,7 +482,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:51</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:102</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -486,7 +503,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:90</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="164" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:164</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -510,7 +527,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:100</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="172" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:172</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -543,8 +560,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="125"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:125</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="201"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:201</a></div>
                         </td>
                     </tr>
 
@@ -580,8 +597,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="120"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:120</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:196</a></div>
                         </td>
                     </tr>
 
@@ -617,8 +634,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="139"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:139</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="214"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:214</a></div>
                         </td>
                     </tr>
 
@@ -684,8 +701,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="233"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:233</a></div>
                         </td>
                     </tr>
 
@@ -751,8 +768,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="162"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:162</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="237"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:237</a></div>
                         </td>
                     </tr>
 
@@ -818,8 +835,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="132"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:132</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:207</a></div>
                         </td>
                     </tr>
 
@@ -885,8 +902,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="166"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:166</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="241"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:241</a></div>
                         </td>
                     </tr>
 
@@ -952,8 +969,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="147"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:147</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:222</a></div>
                         </td>
                     </tr>
 
@@ -1039,63 +1056,6 @@ that links the form control value to the component value</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="_disabled"></a>
-                    <span class="name">
-                        <span ><b>_disabled</b></span>
-                        <a href="#_disabled"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:88</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="_value"></a>
-                    <span class="name">
-                        <span ><b>_value</b></span>
-                        <a href="#_value"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>T</code>
-
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:98</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="controlType"></a>
                     <span class="name">
                         <span ><b>controlType</b></span>
@@ -1116,7 +1076,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:66</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="114" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:114</a></div>
                         </td>
                     </tr>
 
@@ -1147,7 +1107,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:87</a></div>
                         </td>
                     </tr>
 
@@ -1158,30 +1118,37 @@ that links the form control value to the component value</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="errorState"></a>
+                    <a name="enabled"></a>
                     <span class="name">
-                        <span ><b>errorState</b></span>
-                        <a href="#errorState"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>enabled</b></span>
+                        <a href="#enabled"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; !this._disabled())</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:65</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:80</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the control is currently enabled, as a signal (tracks <a href="disabled">disabled</a>).</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1209,38 +1176,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:39</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="focused"></a>
-                    <span class="name">
-                        <span ><b>focused</b></span>
-                        <a href="#focused"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:63</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -1271,7 +1207,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:96</a></div>
                         </td>
                     </tr>
 
@@ -1303,7 +1239,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:95</a></div>
                         </td>
                     </tr>
 
@@ -1334,7 +1270,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -1365,7 +1301,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:116</a></div>
                         </td>
                     </tr>
 
@@ -1396,7 +1332,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:41</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -1427,7 +1363,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:42</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:93</a></div>
                         </td>
                     </tr>
 
@@ -1458,7 +1394,7 @@ that links the form control value to the component value</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:62</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:113</a></div>
                         </td>
                     </tr>
 
@@ -1469,30 +1405,39 @@ that links the form control value to the component value</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="touched"></a>
+                    <a name="valueSignal"></a>
                     <span class="name">
-                        <span ><b>touched</b></span>
-                        <a href="#touched"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>valueSignal</b></span>
+                        <a href="#valueSignal"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
+                        <i>Type : </i>    <code>Signal&lt;T&gt;</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; this._value())</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:64</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:77</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The current value of the control as a signal.
+Authoritative in both modes: it reflects the bound <code>FormControl</code> (synced in <a href="ngDoCheck">ngDoCheck</a>)
+as well as <code>[(value)]</code> / <code>writeValue</code> updates.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1502,6 +1447,41 @@ that links the form control value to the component value</p>
     <h3 id="accessors">
         Accessors
     </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="formControl"></a>
+                        <span class="name"><b>formControl</b><a href="#formControl"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>formControl()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:68</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>The Angular <code>FormControl</code> bound to this component when used as an <code>EditComponent</code>
+(i.e. the control provided via <a href="ngControl">ngControl</a>). Bind it in your template with
+<code>[formControl]=&quot;formControl&quot;</code>.</p>
+</div>
+
+                                <div class="io-description">
+                                    <b>Returns : </b>    <code>FormControl&lt;T&gt;</code>
+
+                                </div>
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
         <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
@@ -1518,7 +1498,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:51</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:102</a></div>
                                 </td>
                             </tr>
 
@@ -1529,7 +1509,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:55</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:106</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1573,6 +1553,84 @@ that links the form control value to the component value</p>
             <tbody>
                 <tr>
                     <td class="col-md-4">
+                        <a name="focused"></a>
+                        <span class="name"><b>focused</b><a href="#focused"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>focused()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:133</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>Whether the control is focused, derived from the <em>live</em> DOM focus rather than a flag
+toggled by focus/blur events. This is robust: when an inner element that had focus is
+removed during a re-render the browser fires no <code>blur</code>/<code>focusout</code>, so an event-driven
+flag (or even the CDK FocusMonitor) would stay stuck <code>true</code> and leave the field showing
+a focus overlay forever. Material re-reads this getter on every change-detection pass,
+so the state self-corrects as soon as focus actually leaves.</p>
+</div>
+
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="touched"></a>
+                        <span class="name"><b>touched</b><a href="#touched"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>touched()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:138</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="errorState"></a>
+                        <span class="name"><b>errorState</b><a href="#errorState"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>errorState()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="142" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:142</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
                         <a name="empty"></a>
                         <span class="name"><b>empty</b><a href="#empty"><span class="icon ion-ios-link"></span></a></span>
                     </td>
@@ -1585,7 +1643,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="146" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:146</a></div>
                                 </td>
                             </tr>
 
@@ -1607,7 +1665,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:74</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="150" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:150</a></div>
                                 </td>
                             </tr>
 
@@ -1629,7 +1687,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:79</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:155</a></div>
                                 </td>
                             </tr>
 
@@ -1640,7 +1698,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:83</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="159" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:159</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1696,7 +1754,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:90</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="164" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:164</a></div>
                                 </td>
                             </tr>
 
@@ -1707,7 +1765,7 @@ that links the form control value to the component value</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:94</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="168" class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:168</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1754,7 +1812,9 @@ that links the form control value to the component value</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { coerceBooleanProperty } from &quot;@angular/cdk/coercion&quot;;
+import { FocusMonitor } from &quot;@angular/cdk/a11y&quot;;
 import {
+  DestroyRef,
   Directive,
   DoCheck,
   ElementRef,
@@ -1762,11 +1822,16 @@ import {
   Input,
   OnDestroy,
   Output,
+  Signal,
+  computed,
   inject,
+  signal,
 } from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 import {
   AbstractControl,
   ControlValueAccessor,
+  FormControl,
   FormGroupDirective,
   NgControl,
   NgForm,
@@ -1782,6 +1847,20 @@ import { Subject } from &quot;rxjs&quot;;
  * To use in mat-form-field, add a provider to your component:
  *   &#x60;providers: [{ provide: MatFormFieldControl, useExisting: MyCustomComponent }]&#x60;
  *
+ * ---
+ *
+ * **When building a subclass you only need the &quot;Reactive API&quot; below:**
+ * - {@link formControl} — the bound Angular &#x60;FormControl&#x60; (when used as an &#x60;EditComponent&#x60;).
+ * - {@link valueSignal} — the current value as a signal (reactive, authoritative in both modes).
+ * - {@link enabled} — whether the control is enabled, as a signal.
+ * - {@link errorState} — whether the control currently shows an error (for &#x60;&lt;mat-error&gt;&#x60;).
+ *
+ * Read state through these signals in your template; do **not** read &#x60;formControl.value&#x60;
+ * or &#x60;formControl.enabled&#x60; directly (those are not reactive under OnPush).
+ *
+ * Everything below the &quot;MatFormFieldControl / ControlValueAccessor plumbing&quot; marker implements
+ * the Angular Material and Forms contracts and can be ignored when writing a control.
+ *
  * also refer to available public resources on Custom Form Controls:
  * - https://material.angular.io/guide/creating-a-custom-form-field-control
  * - https://www.youtube.com/watch?v&#x3D;CD_t3m2WMM8
@@ -1790,8 +1869,38 @@ import { Subject } from &quot;rxjs&quot;;
 export abstract class CustomFormControlDirective&lt;T&gt;
   implements ControlValueAccessor, MatFormFieldControl&lt;T&gt;, OnDestroy, DoCheck
 {
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+  // Reactive API — USE THESE when building a custom control.
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
+  /**
+   * The Angular &#x60;FormControl&#x60; bound to this component when used as an &#x60;EditComponent&#x60;
+   * (i.e. the control provided via {@link ngControl}). Bind it in your template with
+   * &#x60;[formControl]&#x3D;&quot;formControl&quot;&#x60;.
+   */
+  get formControl(): FormControl&lt;T&gt; {
+    return this.ngControl?.control as FormControl&lt;T&gt;;
+  }
+
+  /**
+   * The current value of the control as a signal.
+   * Authoritative in both modes: it reflects the bound &#x60;FormControl&#x60; (synced in {@link ngDoCheck})
+   * as well as &#x60;[(value)]&#x60; / &#x60;writeValue&#x60; updates.
+   */
+  readonly valueSignal: Signal&lt;T&gt; &#x3D; computed(() &#x3D;&gt; this._value());
+
+  /** Whether the control is currently enabled, as a signal (tracks {@link disabled}). */
+  readonly enabled: Signal&lt;boolean&gt; &#x3D; computed(() &#x3D;&gt; !this._disabled());
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+  // MatFormFieldControl / ControlValueAccessor plumbing — framework-internal.
+  // Subclasses generally do not need to touch anything below this line.
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
   elementRef &#x3D; inject&lt;ElementRef&lt;HTMLElement&gt;&gt;(ElementRef);
   errorStateMatcher &#x3D; inject(ErrorStateMatcher);
+  private readonly _destroyRef &#x3D; inject(DestroyRef);
+  private readonly focusMonitor &#x3D; inject(FocusMonitor);
   @Input() ngControl &#x3D; inject(NgControl, { optional: true, self: true });
   parentForm &#x3D; inject(NgForm, { optional: true });
   parentFormGroup &#x3D; inject(FormGroupDirective, { optional: true });
@@ -1804,53 +1913,74 @@ export abstract class CustomFormControlDirective&lt;T&gt;
 
   @Input()
   get required() {
-    return this._required;
+    return this._required();
   }
 
   set required(req: boolean) {
-    this._required &#x3D; coerceBooleanProperty(req);
+    this._required.set(coerceBooleanProperty(req));
     this.stateChanges.next();
   }
 
-  private _required &#x3D; false;
+  private readonly _required &#x3D; signal(false);
 
   stateChanges &#x3D; new Subject&lt;void&gt;();
-  focused &#x3D; false;
-  touched &#x3D; false;
-  errorState &#x3D; false;
   controlType &#x3D; &quot;custom-control&quot;;
   onChange &#x3D; (_: any) &#x3D;&gt; {};
   onTouched &#x3D; () &#x3D;&gt; {};
 
+  /** Backing signal for the current value (single source of truth). */
+  private readonly _value &#x3D; signal&lt;T&gt;(undefined);
+  private readonly _disabled &#x3D; signal(false);
+  private readonly _touched &#x3D; signal(false);
+  private readonly _errorState &#x3D; signal(false);
+  private readonly _empty &#x3D; computed(() &#x3D;&gt; !this._value());
+
+  /**
+   * Whether the control is focused, derived from the *live* DOM focus rather than a flag
+   * toggled by focus/blur events. This is robust: when an inner element that had focus is
+   * removed during a re-render the browser fires no &#x60;blur&#x60;/&#x60;focusout&#x60;, so an event-driven
+   * flag (or even the CDK FocusMonitor) would stay stuck &#x60;true&#x60; and leave the field showing
+   * a focus overlay forever. Material re-reads this getter on every change-detection pass,
+   * so the state self-corrects as soon as focus actually leaves.
+   */
+  get focused() {
+    const host &#x3D; this.elementRef.nativeElement;
+    return !!document.activeElement &amp;&amp; host.contains(document.activeElement);
+  }
+
+  get touched() {
+    return this._touched();
+  }
+
+  get errorState() {
+    return this._errorState();
+  }
+
   get empty() {
-    return !this.value;
+    return this._empty();
   }
 
   get shouldLabelFloat() {
-    return this.focused || !this.empty;
+    return this.focused || !this._empty();
   }
 
   @Input()
   get disabled(): boolean {
-    return this._disabled;
+    return this._disabled();
   }
 
   set disabled(value: boolean) {
-    this._disabled &#x3D; coerceBooleanProperty(value);
+    this._disabled.set(coerceBooleanProperty(value));
     this.stateChanges.next();
   }
 
-  _disabled &#x3D; false;
-
   @Input() get value(): T {
-    return this._value;
+    return this._value();
   }
 
   set value(value: T) {
     this.writeValue(value, true);
   }
-
-  _value: T;
 
   @Output() valueChange &#x3D; new EventEmitter&lt;T&gt;();
 
@@ -1860,26 +1990,29 @@ export abstract class CustomFormControlDirective&lt;T&gt;
       this.ngControl.valueAccessor &#x3D; this;
     }
 
-    this.elementRef.nativeElement.addEventListener(&quot;focusin&quot;, () &#x3D;&gt;
-      this.focus(),
-    );
-    this.elementRef.nativeElement.addEventListener(&quot;focusout&quot;, () &#x3D;&gt;
-      this.blur(),
-    );
+    // Track focus via the CDK FocusMonitor instead of manual focusin/focusout
+    // listeners: it reports focus entering/leaving the whole subtree and, crucially,
+    // still emits a &quot;blurred&quot; (null) event when the currently-focused inner element
+    // is removed during a re-render — manual &#x60;focusout&#x60; is dropped in that case,
+    // which previously left the field stuck in the focused state.
+    this.focusMonitor
+      .monitor(this.elementRef, true)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((origin) &#x3D;&gt; (origin ? this.focus() : this.blur()));
   }
 
   ngOnDestroy() {
+    this.focusMonitor.stopMonitoring(this.elementRef);
     this.stateChanges.complete();
   }
 
   focus() {
-    this.focused &#x3D; true;
+    // &#x60;focused&#x60; reads live DOM focus; just notify Material to re-read its state.
     this.stateChanges.next();
   }
 
   blur() {
-    this.touched &#x3D; true;
-    this.focused &#x3D; false;
+    this._touched.set(true);
     this.onTouched();
     this.stateChanges.next();
   }
@@ -1900,9 +2033,9 @@ export abstract class CustomFormControlDirective&lt;T&gt;
    * @param notifyFormControl Whether to notify the FormControl of this change (for internal updates)
    */
   writeValue(value: T, notifyFormControl &#x3D; false): void {
-    if (JSON.stringify(value) &#x3D;&#x3D;&#x3D; JSON.stringify(this._value)) return;
+    if (JSON.stringify(value) &#x3D;&#x3D;&#x3D; JSON.stringify(this._value())) return;
 
-    this._value &#x3D; value;
+    this._value.set(value);
     if (notifyFormControl) {
       this.onChange(value);
     }
@@ -1927,9 +2060,93 @@ export abstract class CustomFormControlDirective&lt;T&gt;
       ? (this.ngControl.control as AbstractControl)
       : null;
 
+    this.subscribeToControl(control);
+    this.checkUpdateValue(control);
     this.checkUpdateDisabled(control);
     this.checkUpdateErrorState(control);
     this.checkUpdateRequired(control);
+    this.checkUpdateFocused();
+  }
+
+  /** Last focused state seen, to detect changes across ngDoCheck calls. */
+  private _lastFocused &#x3D; false;
+
+  /**
+   * Notify Material when the focused state changed without a focus/blur event reaching us
+   * (e.g. the focused inner element was removed during a re-render). The &#x60;focused&#x60; getter
+   * reads live DOM focus, but Material only re-reads it on a &#x60;stateChanges&#x60; emission, so we
+   * push one here when the value actually changed.
+   */
+  private checkUpdateFocused() {
+    const focusedNow &#x3D; this.focused;
+    if (focusedNow !&#x3D;&#x3D; this._lastFocused) {
+      this._lastFocused &#x3D; focusedNow;
+      this.stateChanges.next();
+    }
+  }
+
+  private _controlSubscribed &#x3D; false;
+
+  /**
+   * Subscribe to the bound control&#x27;s value/status streams the first time it appears
+   * (&#x60;ngControl&#x60; may be set late via &#x60;setInput&#x60;, so we cannot do this in the constructor).
+   *
+   * This keeps the reactive signals ({@link valueSignal}, {@link enabled}, {@link errorState})
+   * in sync *and* marks the OnPush view dirty when the control changes at runtime: writing a
+   * signal notifies its template consumers. Relying on {@link ngDoCheck} alone is not enough
+   * once the template consumes these signals, because &#x60;ngDoCheck&#x60; only runs while the view is
+   * already being checked — a runtime &#x60;disable()&#x60; / &#x60;setValue()&#x60; on the control would otherwise
+   * never reach the template.
+   */
+  private subscribeToControl(control: AbstractControl | null) {
+    if (this._controlSubscribed || !control) {
+      // standalone mode (no control): writeValue / the value setter drive the signals.
+      return;
+    }
+    this._controlSubscribed &#x3D; true;
+
+    control.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() &#x3D;&gt; this.checkUpdateValue(control));
+    control.statusChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() &#x3D;&gt; {
+        this.checkUpdateDisabled(control);
+        this.checkUpdateErrorState(control);
+        this.checkUpdateRequired(control);
+      });
+  }
+
+  /** Stringified last control value seen, to detect *external* control changes. */
+  private _lastControlValueJson: string | undefined;
+
+  /**
+   * Mirror the bound control&#x27;s value into {@link valueSignal}.
+   *
+   * In &#x60;EditComponent&#x60; mode the value flows through the control&#x27;s own value accessor
+   * (the inner &#x60;[formControl]&#x60; binding), so {@link writeValue} is never called on this
+   * directive — this keeps {@link valueSignal} authoritative there too.
+   *
+   * Only mirrors when the control changed *externally* (e.g. via its bound input or a form
+   * reset). It deliberately does not overwrite a value the component set on itself but that
+   * has not yet propagated to the control (e.g. when no &#x60;onChange&#x60; is registered).
+   * Inbound only: it must not emit &#x60;valueChange&#x60; / call &#x60;onChange&#x60;.
+   */
+  private checkUpdateValue(control: AbstractControl | null) {
+    if (!control) {
+      // standalone mode: writeValue / the value setter still drive _value
+      return;
+    }
+
+    const controlValueJson &#x3D; JSON.stringify(control.value);
+    if (controlValueJson &#x3D;&#x3D;&#x3D; this._lastControlValueJson) {
+      return;
+    }
+    this._lastControlValueJson &#x3D; controlValueJson;
+
+    if (controlValueJson !&#x3D;&#x3D; JSON.stringify(this._value())) {
+      this._value.set(control.value);
+    }
   }
 
   private checkUpdateDisabled(control: AbstractControl | null) {
@@ -1947,12 +2164,12 @@ export abstract class CustomFormControlDirective&lt;T&gt;
    * Taken from {@link https://github.com/angular/components/blob/a1d5614f18066c0c2dc2580c7b5099e8f68a8e74/src/material/core/common-behaviors/error-state.ts#L59}
    */
   private checkUpdateErrorState(control: AbstractControl | null) {
-    const oldState &#x3D; this.errorState;
+    const oldState &#x3D; this._errorState();
     const parent &#x3D; this.parentFormGroup || this.parentForm;
     const newState &#x3D; this.errorStateMatcher.isErrorState(control, parent);
 
     if (newState !&#x3D;&#x3D; oldState) {
-      this.errorState &#x3D; newState;
+      this._errorState.set(newState);
       this.stateChanges.next();
     }
   }

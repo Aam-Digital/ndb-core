@@ -467,6 +467,7 @@
   computed,
   ContentChild,
   DestroyRef,
+  effect,
   ElementRef,
   EventEmitter,
   input,
@@ -496,7 +497,6 @@ import {
 import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
 import { auditTime, filter, map, startWith } from &quot;rxjs/operators&quot;;
 import { CustomFormControlDirective } from &quot;./custom-form-control.directive&quot;;
-import { coerceBooleanProperty } from &quot;@angular/cdk/coercion&quot;;
 import {
   MatChipGrid,
   MatChipInput,
@@ -664,6 +664,16 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
 
   autocompleteOptions: WritableSignal&lt;SelectableOption&lt;O, V&gt;[]&gt; &#x3D; signal([]);
   autocompleteForm &#x3D; new FormControl(&quot;&quot;);
+
+  /**
+   * Keep the inner autocomplete input&#x27;s enabled state in sync with the control,
+   * reacting to the base &#x60;enabled&#x60; signal instead of overriding the &#x60;disabled&#x60; setter.
+   */
+  private readonly _syncAutocompleteFormEnabled &#x3D; effect(() &#x3D;&gt; {
+    this.enabled()
+      ? this.autocompleteForm.enable()
+      : this.autocompleteForm.disable();
+  });
   autocompleteSuggestedOptions &#x3D; this.autocompleteForm.valueChanges.pipe(
     filter((val) &#x3D;&gt; typeof val &#x3D;&#x3D;&#x3D; &quot;string&quot;),
     map((val) &#x3D;&gt; this.updateAutocomplete(val)),
@@ -705,18 +715,6 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
             ?.asString,
       )
       .join(&quot;, &quot;);
-  }
-
-  override get disabled(): boolean {
-    return this._disabled;
-  }
-
-  override set disabled(value: boolean) {
-    this._disabled &#x3D; coerceBooleanProperty(value);
-    this._disabled
-      ? this.autocompleteForm.disable()
-      : this.autocompleteForm.enable();
-    this.stateChanges.next();
   }
 
   /**
@@ -1141,7 +1139,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
       target instanceof Element
         ? target.closest(&quot;.mat-mdc-option, .mat-option&quot;)
         : null;
-    if (!this._disabled &amp;&amp; !clickedOption) {
+    if (!this.disabled &amp;&amp; !clickedOption) {
       this.showAutocomplete();
     }
   }

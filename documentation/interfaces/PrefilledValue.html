@@ -310,7 +310,6 @@ import {
   AbstractControl,
   FormArray,
   FormBuilder,
-  FormControl,
   ReactiveFormsModule,
   ValidatorFn,
   ValidationErrors,
@@ -390,12 +389,6 @@ export class EditPrefilledValuesComponent
 
   private readonly entities &#x3D; inject(EntityRegistry);
   private readonly fb &#x3D; inject(FormBuilder);
-
-  get formControl(): FormControl&lt;Record&lt;string, DefaultValueConfig&gt;&gt; {
-    return this.ngControl.control as FormControl&lt;
-      Record&lt;string, DefaultValueConfig&gt;
-    &gt;;
-  }
 
   readonly isDisabled &#x3D; signal(false);
 
