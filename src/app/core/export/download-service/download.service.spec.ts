@@ -16,6 +16,8 @@ import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { calculateAge } from "../../../utils/utils";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
+import { LocationDatatype } from "app/features/location/location.datatype";
+import { GeoService } from "app/features/location/geo.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { Papa } from "ngx-papaparse";
 import { parse, unparse } from "papaparse";
@@ -69,6 +71,15 @@ describe("DownloadService", () => {
         {
           provide: DefaultDatatype,
           useClass: AttendanceDatatype,
+          multi: true,
+        },
+        {
+          provide: GeoService,
+          useValue: { enrichGeoLocation: (loc: GeoLocation) => loc },
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: LocationDatatype,
           multi: true,
         },
         {
@@ -436,6 +447,35 @@ describe("DownloadService", () => {
     expect(rows[0]).toContain("School (readable)");
     expect(rows[1]).toContain(testSchool.getId());
     expect(rows[1]).toContain(testSchool.toString());
+  });
+
+  it("should add separate columns for each address part of a location field", async () => {
+    class XlsxLocationTestEntity extends Entity {
+      @DatabaseField({ dataType: LocationDatatype.dataType, label: "Address" })
+      address: GeoLocation;
+    }
+
+    const testEntity = new XlsxLocationTestEntity();
+    testEntity.address = {
+      locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      road: "Rollbergstraße",
+      house_number: "28A",
+      postcode: "12053",
+      city: "Berlin",
+    };
+
+    const rows = await service.prepareExportData([testEntity]);
+
+    expect(rows[0]).toContain("Address");
+    expect(rows[0]).toContain("Address (street)");
+    expect(rows[0]).toContain("Address (house number)");
+    expect(rows[0]).toContain("Address (postcode)");
+    expect(rows[0]).toContain("Address (city)");
+    expect(rows[1]).toContain("Impact Hub, Rollbergstraße 28A, 12053 Berlin");
+    expect(rows[1]).toContain("Rollbergstraße");
+    expect(rows[1]).toContain("28A");
+    expect(rows[1]).toContain("12053");
+    expect(rows[1]).toContain("Berlin");
   });
 
   it("should export a non-empty age column for date-with-age fields", async () => {
