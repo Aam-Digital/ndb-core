@@ -27,9 +27,9 @@ export const OPERATION_TO_ACTION: Record<string, ChangeAction> = {
 export interface FieldChange {
   field: string;
   /** previous raw value; empty/undefined for additions (created/baseline) */
-  from: any;
+  from: unknown;
   /** new raw value */
-  to: any;
+  to: unknown;
 }
 
 /**

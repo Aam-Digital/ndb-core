@@ -53,15 +53,16 @@ export class ChangeHistoryService {
 
   /**
    * Whether the current user may view the change history of this entity.
-   * Hidden for new/internal entities and, when the permission engine is
-   * present, gated on read access to the `AuditRecord` subject. Shared by both
-   * entry points (the entity-actions menu and the last-edited widget) so they
-   * cannot drift.
+   * Hidden for new/internal entities and gated on read access to the
+   * `AuditRecord` subject. Fails closed: if the permission engine is not
+   * available, access to this (permission-gated) audit data is denied. Shared
+   * by both entry points (the entity-actions menu and the last-edited widget)
+   * so they cannot drift.
    */
   canViewHistory(entity?: Entity): boolean {
     if (!entity || entity.isNew || entity.getConstructor().isInternalEntity) {
       return false;
     }
-    return !this.ability || this.ability.can("read", AUDIT_RECORD_SUBJECT);
+    return !!this.ability && this.ability.can("read", AUDIT_RECORD_SUBJECT);
   }
 }

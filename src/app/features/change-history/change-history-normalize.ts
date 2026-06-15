@@ -1,4 +1,4 @@
-import { patch } from "jsondiffpatch";
+import { Delta, patch } from "jsondiffpatch";
 import { isEqual } from "lodash-es";
 import {
   BASELINE_NOTE,
@@ -25,7 +25,7 @@ export interface RawAuditDoc {
    * document. For `create`: a whole-value add (`[doc]`). For `delete`: a
    * structural delta (no displayable field pairs).
    */
-  diff?: any;
+  diff?: unknown;
 }
 
 /** Doc fields that are internal/metadata and never shown as user-facing field changes. */
@@ -56,7 +56,7 @@ function isHidden(field: string): boolean {
  */
 export function buildChangeEvents(rawDocs: RawAuditDoc[]): ChangeEvent[] {
   const ordered = [...(rawDocs ?? [])].sort(byChronology);
-  let state: Record<string, any> = {};
+  let state: Record<string, unknown> = {};
   const events: ChangeEvent[] = [];
 
   for (const doc of ordered) {
@@ -100,24 +100,29 @@ function revGeneration(rev?: string): number {
 }
 
 /** the full document snapshot carried by a baseline (raw doc) or create (`[doc]`) record */
-function snapshotOf(doc: RawAuditDoc): Record<string, any> {
+function snapshotOf(doc: RawAuditDoc): Record<string, unknown> {
   const full =
     doc.operation === "create" && Array.isArray(doc.diff)
       ? doc.diff[0]
       : doc.diff;
-  return full && typeof full === "object" ? full : {};
+  return full && typeof full === "object"
+    ? (full as Record<string, unknown>)
+    : {};
 }
 
 /** apply a jsondiffpatch delta to a deep clone of the current state */
 function applyDelta(
-  state: Record<string, any>,
-  delta: any,
-): Record<string, any> {
+  state: Record<string, unknown>,
+  delta: unknown,
+): Record<string, unknown> {
   if (!delta) {
     return state;
   }
   try {
-    return patch(structuredClone(state), delta) as Record<string, any>;
+    return patch(structuredClone(state), delta as Delta) as Record<
+      string,
+      unknown
+    >;
   } catch {
     // a delta that doesn't cleanly apply (e.g. a missing-ancestor branch) must
     // not break the whole history — keep the prior state for this step
@@ -126,7 +131,7 @@ function applyDelta(
 }
 
 /** every (non-hidden) field of a snapshot rendered as an addition */
-function additions(snapshot: Record<string, any>): FieldChange[] {
+function additions(snapshot: Record<string, unknown>): FieldChange[] {
   return Object.keys(snapshot)
     .filter((field) => !isHidden(field))
     .map((field) => ({ field, from: undefined, to: snapshot[field] }));
@@ -134,8 +139,8 @@ function additions(snapshot: Record<string, any>): FieldChange[] {
 
 /** the (non-hidden) fields whose full value differs between two states */
 function fieldChanges(
-  prev: Record<string, any>,
-  next: Record<string, any>,
+  prev: Record<string, unknown>,
+  next: Record<string, unknown>,
 ): FieldChange[] {
   const fields = new Set([...Object.keys(prev), ...Object.keys(next)]);
   const changes: FieldChange[] = [];

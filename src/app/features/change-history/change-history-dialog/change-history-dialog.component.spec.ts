@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog.component";
 import { ChangeHistoryService } from "../change-history.service";
 import { Entity } from "../../../core/entity/model/entity";
@@ -7,7 +8,7 @@ import { ChangeEvent } from "../change-history.types";
 
 class TestEntity extends Entity {
   static override readonly label = "Test";
-  static override readonly icon = "child" as any;
+  static override readonly icon: IconName = "child";
 }
 
 let getHistory: ReturnType<typeof vi.fn>;
@@ -17,7 +18,8 @@ function evt(id: string, at: string): ChangeEvent {
 }
 
 async function render(
-  result: ChangeEvent[] | unknown,
+  result: ChangeEvent[] | Error | { status?: number; name?: string },
+  canView = true,
 ): Promise<ComponentFixture<ChangeHistoryDialogComponent>> {
   getHistory = Array.isArray(result)
     ? vi.fn().mockResolvedValue(result)
@@ -26,7 +28,10 @@ async function render(
   await TestBed.configureTestingModule({
     imports: [ChangeHistoryDialogComponent],
     providers: [
-      { provide: ChangeHistoryService, useValue: { getHistory } },
+      {
+        provide: ChangeHistoryService,
+        useValue: { getHistory, canViewHistory: () => canView },
+      },
       { provide: MAT_DIALOG_DATA, useValue: { entity: new TestEntity("1") } },
     ],
   })
@@ -71,6 +76,13 @@ it("reports 'error' for any other read failure", async () => {
   const c = fixture.componentInstance;
   expect(c.status()).toBe("error");
   expect(c.events()).toEqual([]);
+});
+
+it("does not fetch history and reports 'error' when the user may not view it", async () => {
+  const fixture = await render([evt("e1", "2026-06-01T10:00:00.000Z")], false);
+  const c = fixture.componentInstance;
+  expect(c.status()).toBe("error");
+  expect(getHistory).not.toHaveBeenCalled();
 });
 
 it("exposes the entity type for the diff view", async () => {

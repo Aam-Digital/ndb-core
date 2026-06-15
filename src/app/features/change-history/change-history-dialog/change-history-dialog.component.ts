@@ -91,6 +91,14 @@ export class ChangeHistoryDialogComponent implements OnInit {
   );
 
   async ngOnInit() {
+    // Defense-in-depth: both entry points already gate on canViewHistory(), but
+    // guard here too so a direct open() call cannot bypass the permission check
+    // (the backend independently enforces read access on the audit db as well).
+    if (!this.service.canViewHistory(this.entity)) {
+      this.events.set([]);
+      this.status.set("error");
+      return;
+    }
     try {
       this.events.set(await this.service.getHistory(this.entity));
       this.status.set("ready");
