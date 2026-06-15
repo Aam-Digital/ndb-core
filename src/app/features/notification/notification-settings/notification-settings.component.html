@@ -21,7 +21,7 @@
 
   <app-feature-disabled-info
     featureName="Notification API"
-    [featureEnabled]="isFeatureEnabled()"
+    [featureEnabled]="notificationService.isNotificationServerEnabled()"
   ></app-feature-disabled-info>
 
   @if (notificationConfig()) {
@@ -86,7 +86,7 @@
         </div>
       </div>
 
-      @if (!isBrowserSupported()) {
+      @if (!notificationService.isPushNotificationSupported()) {
         <div class="margin-top-large feature-disabled-box">
           <h2 i18n>
             Push notifications are currently not supported by your Browser.
@@ -129,7 +129,7 @@
               (change)="togglePushNotifications($event)"
               [checked]="isPushNotificationEnabled()"
               class="indented-item"
-              [disabled]="!isBrowserSupported()"
+              [disabled]="!notificationService.isPushNotificationSupported()"
             />
             <span i18n>Push notifications</span>
             <app-help-button
@@ -164,9 +164,9 @@
             <mat-slide-toggle
               (change)="toggleEmailChannel($event)"
               [checked]="notificationConfig()?.channels?.['email']"
-              [disabled]="!isEmailFeatureEnabled()"
+              [disabled]="!notificationService.isEmailNotificationEnabled()"
               class="indented-item"
-              [matTooltipDisabled]="isEmailFeatureEnabled()"
+              [matTooltipDisabled]="notificationService.isEmailNotificationEnabled()"
               matTooltip="Email notifications are not enabled in this system. Please contact your system administrator for more information."
               i18n-matTooltip
             />

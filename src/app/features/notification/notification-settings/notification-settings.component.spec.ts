@@ -140,22 +140,6 @@ describe("NotificationSettingComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should set isFeatureEnabled to false when notification server is disabled", async () => {
-    mockNotificationService.isNotificationServerEnabled.set(false);
-
-    await initializeComponent();
-
-    expect(component.isFeatureEnabled()).toBe(false);
-  });
-
-  it("should set isBrowserSupported to false when push notifications are not supported", async () => {
-    mockNotificationService.isPushNotificationSupported.set(false);
-
-    await initializeComponent();
-
-    expect(component.isBrowserSupported()).toBe(false);
-  });
-
   it("should add a new notification rule to the config", async () => {
     await initializeComponent();
     const initialLength =
@@ -276,7 +260,7 @@ describe("NotificationSettingComponent", () => {
     expect(mockNotificationService.testNotification).toHaveBeenCalled();
   });
 
-  it("should set isEmailFeatureEnabled to false when backend email feature is disabled", async () => {
+  it("should disable UI toggle when backend email feature is disabled", async () => {
     mockNotificationService.isEmailNotificationEnabled.set(false);
 
     await initializeComponent();
@@ -286,7 +270,6 @@ describe("NotificationSettingComponent", () => {
     );
     const emailToggle = channelToggles[2].componentInstance as MatSlideToggle;
 
-    expect(component.isEmailFeatureEnabled()).toBe(false);
     expect(emailToggle.disabled).toBe(true);
   });
 

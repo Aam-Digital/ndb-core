@@ -63,17 +63,11 @@ export class NotificationSettingsComponent {
   private readonly sessionInfo = inject(SessionSubject);
   private readonly userEntity = inject(CurrentUserSubject);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly notificationService = inject(NotificationService);
+  protected readonly notificationService = inject(NotificationService);
   private readonly alertService = inject(AlertService);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
 
   readonly accountEmail = toSignal(this.sessionInfo.pipe(map((s) => s?.email)));
-  readonly isFeatureEnabled =
-    this.notificationService.isNotificationServerEnabled;
-  readonly isEmailFeatureEnabled =
-    this.notificationService.isEmailNotificationEnabled;
-  readonly isBrowserSupported =
-    this.notificationService.isPushNotificationSupported;
 
   private readonly notificationConfigResource = resource({
     loader: () => untracked(() => this.loadNotificationConfig()),
@@ -116,7 +110,7 @@ export class NotificationSettingsComponent {
   }
 
   private async createNewNotificationConfig(): Promise<NotificationConfig> {
-    if (!this.isFeatureEnabled()) {
+    if (!this.notificationService.isNotificationServerEnabled()) {
       // do not create a new config if the API is not enabled
       return;
     }
