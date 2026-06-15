@@ -166,7 +166,9 @@
               [checked]="notificationConfig()?.channels?.['email']"
               [disabled]="!notificationService.isEmailNotificationEnabled()"
               class="indented-item"
-              [matTooltipDisabled]="notificationService.isEmailNotificationEnabled()"
+              [matTooltipDisabled]="
+                notificationService.isEmailNotificationEnabled()
+              "
               matTooltip="Email notifications are not enabled in this system. Please contact your system administrator for more information."
               i18n-matTooltip
             />
