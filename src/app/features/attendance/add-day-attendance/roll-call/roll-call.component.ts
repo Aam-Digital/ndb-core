@@ -318,11 +318,11 @@ export class RollCallComponent {
         continue;
       }
 
-      validAttendanceItems.push(attendanceItem);
       attendanceMap[participantId] = attendanceItem;
 
       if (participant.isActive) {
         active.push(participant);
+        validAttendanceItems.push(attendanceItem);
       } else {
         inactive.push(participant);
       }
@@ -445,6 +445,13 @@ export class RollCallComponent {
       $localize`This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?`,
     );
     if (confirmation) {
+      const event = this.event();
+      if (event) {
+        const inactiveItems = this.inactiveParticipants()
+          .map((p) => this.attendanceByParticipant()[p.getId()])
+          .filter((item): item is AttendanceItem => item !== undefined);
+        event.attendanceItems = [...event.attendanceItems, ...inactiveItems];
+      }
       this.participants.update((p) => [...p, ...this.inactiveParticipants()]);
       this.inactiveParticipants.set([]);
       this.sortParticipants();

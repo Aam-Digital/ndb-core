@@ -198,6 +198,34 @@ describe("RollCallComponent", () => {
     ).toBe(false);
   });
 
+  it("should exclude archived participants from event attendanceItems by default", async () => {
+    const archivedParticipant = new TestEntity("archivedChild");
+    archivedParticipant.inactive = true;
+    await TestBed.inject(EntityMapperService).save(archivedParticipant);
+
+    const note = new Note();
+    addParticipant(note, participant1);
+    addParticipant(note, archivedParticipant);
+
+    fixture.componentRef.setInput(
+      "eventEntity",
+      new EventWithAttendance(
+        note,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    );
+    await stabilize();
+
+    expect(component.participants()).toEqual([participant1]);
+    expect(component.inactiveParticipants()).toEqual([archivedParticipant]);
+    expect(note.childrenAttendance).toHaveLength(1);
+    expect(note.childrenAttendance[0].participant).toBe(participant1.getId());
+  });
+
   it("should correctly assign the attendance", async () => {
     const note = new Note("noteWithAttendance");
     addParticipant(note, participant1);
