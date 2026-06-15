@@ -20,7 +20,7 @@
     placeholder="No file selected"
     i18n-matTooltip="Tooltip show file"
     matTooltip="Show file"
-    [matTooltipDisabled]="!(initialValue && formControl.value === initialValue)"
+    [matTooltipDisabled]="!(initialValue && valueSignal() === initialValue)"
   />
 
   @if (hasControlValue() && isControlEnabled()) {

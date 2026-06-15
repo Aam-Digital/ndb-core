@@ -10,7 +10,7 @@ import {
   signal,
   ViewChild,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -76,10 +76,6 @@ export class EditFileComponent
    * If not defined, allows any file.
    */
   acceptedFileTypes: string = "*";
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 
   ngOnInit() {
     this.initialValue = this.formControl.value;

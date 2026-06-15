@@ -2,7 +2,7 @@
   <mat-select
     [value]="selectedFieldIds"
     (selectionChange)="onSelectionChange($event.value)"
-    [disabled]="formControl.disabled"
+    [disabled]="!enabled()"
     multiple
     class="flex-grow"
   >
@@ -19,7 +19,7 @@
 
   <button
     mat-icon-button
-    [disabled]="formControl.disabled"
+    [disabled]="!enabled()"
     (click)="clearSelectedEntities()"
     matTooltip="Clear selected entities"
     i18n-matTooltip

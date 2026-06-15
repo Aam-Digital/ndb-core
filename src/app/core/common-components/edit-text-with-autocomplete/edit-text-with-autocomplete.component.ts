@@ -114,10 +114,6 @@ export class EditTextWithAutocompleteComponent
   lastValue = "";
   addedFormControls = [];
 
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
-
   constructor() {
     super();
     effect(() => {
