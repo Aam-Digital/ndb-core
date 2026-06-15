@@ -59,6 +59,33 @@ describe("EditAttendanceComponent", () => {
     expect(elements).toHaveLength(2);
   });
 
+  it("should label the status and remarks fields from the embedded schema", () => {
+    const labels = fixture.debugElement
+      .queryAll(By.css("mat-label"))
+      .map((l) => l.nativeElement.textContent.trim());
+
+    expect(labels).toContain("Status");
+    expect(labels).toContain("Remarks");
+  });
+
+  it("should use the status label overwritten in the field config", () => {
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "attendance",
+      additional: {
+        participant: { dataType: "entity", additional: "TestEntity" },
+        status: { label: "Anwesenheit" },
+      },
+    });
+    fixture.detectChanges();
+
+    const labels = fixture.debugElement
+      .queryAll(By.css("mat-label"))
+      .map((l) => l.nativeElement.textContent.trim());
+
+    expect(labels).toContain("Anwesenheit");
+    expect(labels).not.toContain("Status");
+  });
+
   it("should add a participant when addParticipant is called", () => {
     component.addParticipant("child3");
     expect(attendanceForm.value).toHaveLength(3);
