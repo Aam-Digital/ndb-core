@@ -11,7 +11,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -117,14 +117,6 @@ export class EditConfigurableEnumComponent
     this.enumRefreshTick();
     return [...(this.enumEntity()?.values ?? []), ...this.invalidOptions()];
   });
-
-  get formControl(): FormControl<
-    ConfigurableEnumValue | ConfigurableEnumValue[]
-  > {
-    return this.ngControl?.control as FormControl<
-      ConfigurableEnumValue | ConfigurableEnumValue[]
-    >;
-  }
 
   ngOnInit() {
     if (this.formControl) {

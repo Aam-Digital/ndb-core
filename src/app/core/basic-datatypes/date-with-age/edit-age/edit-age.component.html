@@ -28,8 +28,8 @@
       i18n-matTooltip="Tooltip for the disabled age field"
       matTooltip="This field is read-only. Edit the date field to update the age. You can select Jan 1st if you don't know the exact date."
       class="age-help-icon"
-      [class.visible]="formControl.enabled"
-      [class.hidden]="!formControl.enabled"
+      [class.visible]="enabled()"
+      [class.hidden]="!enabled()"
     ></fa-icon>
   </div>
 </div>

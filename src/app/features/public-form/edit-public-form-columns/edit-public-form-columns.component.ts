@@ -8,7 +8,6 @@ import {
   signal,
   ViewChild,
 } from "@angular/core";
-import { FormControl } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { AdminEntityFormComponent } from "app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
@@ -59,10 +58,6 @@ export class EditPublicFormColumnsComponent
   private entities = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly publicFormsService = inject(PublicFormsService);
-
-  get formControl(): FormControl<FieldGroup[]> {
-    return this.ngControl.control as FormControl<FieldGroup[]>;
-  }
 
   ngOnInit() {
     const entity = this.entity();

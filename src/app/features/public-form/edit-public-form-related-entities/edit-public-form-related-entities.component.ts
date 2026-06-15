@@ -6,7 +6,7 @@ import {
   inject,
   input,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatOptionModule } from "@angular/material/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -49,10 +49,6 @@ export class EditPublicFormRelatedEntitiesComponent
   entity = input<Entity>();
 
   private entities = inject(EntityRegistry);
-
-  get formControl(): FormControl<string[]> {
-    return this.ngControl.control as FormControl<string[]>;
-  }
 
   get selectedFieldIds(): string[] {
     return this.formControl.value || [];

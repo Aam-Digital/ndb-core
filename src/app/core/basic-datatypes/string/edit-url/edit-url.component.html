@@ -1,6 +1,6 @@
 <div
   (click)="openLinkIfDisabled()"
-  [class.clickable]="formControl.disabled && formControl.value"
+  [class.clickable]="!enabled() && valueSignal()"
 >
   <input [formControl]="formControl" matInput type="url" />
 </div>

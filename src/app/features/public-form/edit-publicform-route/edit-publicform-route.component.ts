@@ -7,7 +7,6 @@ import {
 } from "@angular/core";
 import {
   AbstractControl,
-  FormControl,
   ReactiveFormsModule,
   ValidatorFn,
   Validators,
@@ -69,10 +68,6 @@ export class EditPublicformRouteComponent
 
   prefixValue: string;
   private fullPrefixUrl: string;
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 
   ngOnInit(): void {
     const publicFormConfig: PublicFormConfig = {
