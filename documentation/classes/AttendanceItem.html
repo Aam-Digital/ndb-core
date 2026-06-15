@@ -231,7 +231,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:47</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:51</a></div>
                             </td>
                         </tr>
 
@@ -328,7 +328,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -358,13 +358,13 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @DatabaseField()<br />
+                            @DatabaseField({label: undefined})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:47</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -428,8 +428,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="65"
+                                    class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -471,7 +471,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:20</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:21</a></div>
                                 </td>
                             </tr>
 
@@ -482,7 +482,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:24</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/features/attendance/model/attendance-item.ts:25</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -543,6 +543,7 @@ export class AttendanceItem {
 
   private _status: AttendanceStatusType;
   @DatabaseField({
+    label: $localize&#x60;:Attendance status field label:Status&#x60;,
     dataType: &quot;configurable-enum&quot;,
     additional: ATTENDANCE_STATUS_CONFIG_ID,
   })
@@ -573,7 +574,10 @@ export class AttendanceItem {
   })
   participant?: string;
 
-  @DatabaseField() remarks: string;
+  @DatabaseField({
+    label: $localize&#x60;:Attendance remarks field label:Remarks&#x60;,
+  })
+  remarks: string;
 
   constructor(
     status: AttendanceStatusType &#x3D; NullAttendanceStatusType,
