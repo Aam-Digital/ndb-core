@@ -283,21 +283,15 @@ describe("EntityListComponent", () => {
     } as any;
   }
 
-  it("should open export dialog with exportConfig derived from visible columns", async () => {
+  it("should offer all schema export columns and preselect the visible ones", async () => {
     vi.useFakeTimers();
     try {
       createComponent();
-      // Provide columns with labels so derived exportConfig contains labels
-      fixture.componentRef.setInput("columns", [
-        { id: "name", label: "Name", viewComponent: "DisplayText" },
-        { id: "age", label: "Age", viewComponent: "DisplayText" },
-        { id: "category", label: "Category", viewComponent: "DisplayText" },
-      ]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      // Simulate current visible columns
-      component.columnsToDisplay = ["name", "age"];
+      // Visible columns include a plain field and an entity-reference field
+      component.columnsToDisplay = ["name", "ref"];
 
       const matDialog = TestBed.inject(MatDialog);
       const openSpy = vi
@@ -308,47 +302,37 @@ describe("EntityListComponent", () => {
 
       expect(openSpy).toHaveBeenCalled();
       const callArgs = openSpy.mock.calls[0][1] as any;
-      expect(callArgs.data).toBeDefined();
-      const exportConfig = callArgs.data.exportConfig as any[];
-      // The initial exportConfig should include the visible columns; additional
-      // datatype-provided export columns may also be appended, so assert that
-      // the expected visible columns are present.
-      expect(exportConfig).toEqual(
-        expect.arrayContaining([
-          { query: ".name", label: "Name" },
-          { query: ".age", label: "Age" },
-        ]),
+      const available = callArgs.data.exportConfig as any[];
+      const preselected = callArgs.data.preselectedExportConfig as any[];
+      const queries = (cols: any[]) => cols.map((c) => c.query);
+
+      // available columns are derived from the schema, incl. the readable
+      // name column contributed by the entity-reference datatype
+      expect(queries(available)).toEqual(
+        expect.arrayContaining([".name", ".ref", ".ref_readable"]),
       );
-      const preselectedExportConfig = callArgs.data.preselectedExportConfig as
-        | any[]
-        | undefined;
-      expect(preselectedExportConfig).toEqual(
-        expect.arrayContaining([
-          { query: ".name", label: "Name" },
-          { query: ".age", label: "Age" },
-        ]),
+      // a visible entity field preselects both its readable name and raw id
+      expect(queries(preselected)).toEqual(
+        expect.arrayContaining([".name", ".ref", ".ref_readable"]),
       );
+      // columns of non-visible fields are not preselected
+      expect(queries(preselected)).not.toContain(".other");
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("should preselect visible columns even when static exportConfig is set", async () => {
+  it("should apply admin-configured export labels to matching columns", async () => {
     vi.useFakeTimers();
     try {
       createComponent();
-      fixture.componentRef.setInput("columns", [
-        { id: "name", label: "Name", viewComponent: "DisplayText" },
-        { id: "age", label: "Age", viewComponent: "DisplayText" },
-        { id: "category", label: "Category", viewComponent: "DisplayText" },
-      ]);
       fixture.componentRef.setInput("exportConfig", [
-        { query: ".category", label: "Category" },
+        { query: ".name", label: "Custom Name Label" },
       ]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.columnsToDisplay = ["name", "age"];
+      component.columnsToDisplay = ["name"];
 
       const matDialog = TestBed.inject(MatDialog);
       const openSpy = vi
@@ -357,28 +341,10 @@ describe("EntityListComponent", () => {
 
       component.openExportDialog();
 
-      expect(openSpy).toHaveBeenCalled();
       const callArgs = openSpy.mock.calls[0][1] as any;
-      const exportConfig = callArgs.data.exportConfig as any[];
-      const preselectedExportConfig = callArgs.data.preselectedExportConfig as
-        | any[]
-        | undefined;
-
-      // available columns should include configured exportConfig and visible columns
-      expect(exportConfig).toEqual(
-        expect.arrayContaining([
-          { query: ".category", label: "Category" },
-          { query: ".name", label: "Name" },
-          { query: ".age", label: "Age" },
-        ]),
-      );
-      // preselection should follow active tab columns
-      expect(preselectedExportConfig).toEqual(
-        expect.arrayContaining([
-          { query: ".name", label: "Name" },
-          { query: ".age", label: "Age" },
-        ]),
-      );
+      const available = callArgs.data.exportConfig as any[];
+      const nameColumn = available.find((c) => c.query === ".name");
+      expect(nameColumn.label).toBe("Custom Name Label");
     } finally {
       vi.useRealTimers();
     }

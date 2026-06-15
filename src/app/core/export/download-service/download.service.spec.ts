@@ -11,6 +11,9 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DateWithAgeDatatype } from "../../basic-datatypes/date-with-age/date-with-age.datatype";
+import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
+import { calculateAge } from "../../../utils/utils";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
@@ -66,6 +69,11 @@ describe("DownloadService", () => {
         {
           provide: DefaultDatatype,
           useClass: AttendanceDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: DateWithAgeDatatype,
           multi: true,
         },
         {
@@ -428,6 +436,96 @@ describe("DownloadService", () => {
     expect(rows[0]).toContain("School (readable)");
     expect(rows[1]).toContain(testSchool.getId());
     expect(rows[1]).toContain(testSchool.toString());
+  });
+
+  it("should export a non-empty age column for date-with-age fields", async () => {
+    @DatabaseEntity("AgeExportTestEntity")
+    class AgeExportTestEntity extends Entity {
+      @DatabaseField({ label: "Date of birth", dataType: "date-with-age" })
+      dateOfBirth: Date;
+    }
+
+    const entity = new AgeExportTestEntity();
+    entity.dateOfBirth = new DateWithAge(moment("2000-01-01").toDate());
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".dateOfBirth_age" }],
+    );
+
+    expect(rows[0]).toEqual(["Date of birth (age)"]);
+    expect(rows[1]).toEqual([calculateAge(entity.dateOfBirth as DateWithAge)]);
+  });
+
+  it("should use the provided column label as the export header", async () => {
+    @DatabaseEntity("LabelOverrideTestEntity")
+    class LabelOverrideTestEntity extends Entity {
+      @DatabaseField({ label: "Date of birth", dataType: "date-with-age" })
+      dateOfBirth: Date;
+    }
+
+    const entity = new LabelOverrideTestEntity();
+    entity.dateOfBirth = new DateWithAge(moment("2000-01-01").toDate());
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".dateOfBirth_age", label: "Age" }],
+    );
+
+    expect(rows[0]).toEqual(["Age"]);
+    expect(rows[1]).toEqual([calculateAge(entity.dateOfBirth as DateWithAge)]);
+  });
+
+  it("should restrict entity export to the selected columns only", async () => {
+    @DatabaseEntity("SelectedColumnsTestEntity")
+    class SelectedColumnsTestEntity extends Entity {
+      @DatabaseField({ label: "Full Name" })
+      fullName: string;
+      @DatabaseField({ label: "Score" })
+      score: number;
+    }
+
+    const entity = new SelectedColumnsTestEntity();
+    entity.fullName = "Test Person";
+    entity.score = 42;
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".fullName" }],
+    );
+
+    expect(rows[0]).toEqual(["Full Name"]);
+    expect(rows[1]).toEqual(["Test Person"]);
+  });
+
+  it("should restrict plain-object export to the selected columns only", async () => {
+    const data = [{ name: "Alice", age: 30 }];
+
+    const rows = await service.prepareExportData(data, [{ query: ".name" }]);
+
+    expect(rows[0]).toEqual(["name"]);
+    expect(rows[1]).toEqual(["Alice"]);
+  });
+
+  it("should export a selected column that is not a schema field from the raw entity value", async () => {
+    @DatabaseEntity("RuntimeFieldTestEntity")
+    class RuntimeFieldTestEntity extends Entity {
+      @DatabaseField({ label: "Name" })
+      name: string;
+    }
+
+    const entity = new RuntimeFieldTestEntity();
+    entity.name = "Test Person";
+    // runtime-attached property that is not part of the schema
+    (entity as any).schoolId = "School:1";
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".schoolId", label: "School" }],
+    );
+
+    expect(rows[0]).toEqual(["School"]);
+    expect(rows[1]).toEqual(["School:1"]);
   });
 
   it("should return empty rows array for empty data in export", async () => {
