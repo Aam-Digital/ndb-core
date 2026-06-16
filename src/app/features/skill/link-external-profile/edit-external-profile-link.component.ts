@@ -8,12 +8,7 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -78,10 +73,6 @@ export class EditExternalProfileLinkComponent
   externalProfile = signal<ExternalProfile | undefined>(undefined);
   externalProfileError = signal(false);
   isDisabled = signal(false);
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly skillApi: SkillApiService = inject(SkillApiService);

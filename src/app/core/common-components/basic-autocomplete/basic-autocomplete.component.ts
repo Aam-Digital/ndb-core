@@ -6,6 +6,7 @@ import {
   computed,
   ContentChild,
   DestroyRef,
+  effect,
   ElementRef,
   EventEmitter,
   input,
@@ -35,7 +36,6 @@ import {
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { auditTime, filter, map, startWith } from "rxjs/operators";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
-import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import {
   MatChipGrid,
   MatChipInput,
@@ -203,6 +203,16 @@ export class BasicAutocompleteComponent<O, V = O>
 
   autocompleteOptions: WritableSignal<SelectableOption<O, V>[]> = signal([]);
   autocompleteForm = new FormControl("");
+
+  /**
+   * Keep the inner autocomplete input's enabled state in sync with the control,
+   * reacting to the base `enabled` signal instead of overriding the `disabled` setter.
+   */
+  private readonly _syncAutocompleteFormEnabled = effect(() => {
+    this.enabled()
+      ? this.autocompleteForm.enable()
+      : this.autocompleteForm.disable();
+  });
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
     map((val) => this.updateAutocomplete(val)),
@@ -244,18 +254,6 @@ export class BasicAutocompleteComponent<O, V = O>
             ?.asString,
       )
       .join(", ");
-  }
-
-  override get disabled(): boolean {
-    return this._disabled;
-  }
-
-  override set disabled(value: boolean) {
-    this._disabled = coerceBooleanProperty(value);
-    this._disabled
-      ? this.autocompleteForm.disable()
-      : this.autocompleteForm.enable();
-    this.stateChanges.next();
   }
 
   /**
@@ -680,7 +678,7 @@ export class BasicAutocompleteComponent<O, V = O>
       target instanceof Element
         ? target.closest(".mat-mdc-option, .mat-option")
         : null;
-    if (!this._disabled && !clickedOption) {
+    if (!this.disabled && !clickedOption) {
       this.showAutocomplete();
     }
   }

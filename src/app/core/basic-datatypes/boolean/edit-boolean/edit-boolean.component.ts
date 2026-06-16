@@ -4,7 +4,7 @@ import {
   input,
   ViewEncapsulation,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
@@ -29,8 +29,4 @@ export class EditBooleanComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<boolean> {
-    return this.ngControl.control as FormControl<boolean>;
-  }
 }

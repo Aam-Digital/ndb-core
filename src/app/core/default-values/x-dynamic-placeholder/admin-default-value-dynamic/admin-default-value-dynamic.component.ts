@@ -23,10 +23,12 @@ export class AdminDefaultValueDynamicComponent
   extends CustomFormControlDirective<DefaultValueConfigDynamic>
   implements OnInit
 {
-  formControl: FormControl<string>;
+  internalControl: FormControl<string>;
 
   ngOnInit() {
-    this.formControl = new FormControl(this.value?.value);
-    this.formControl.valueChanges.subscribe((v) => (this.value = { value: v }));
+    this.internalControl = new FormControl(this.value?.value);
+    this.internalControl.valueChanges.subscribe(
+      (v) => (this.value = { value: v }),
+    );
   }
 }

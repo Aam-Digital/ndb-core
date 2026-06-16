@@ -4,7 +4,7 @@
     (click)="onContainerClick($event)"
     class="flex-grow"
     display="chips"
-    [formControl]="formControl()"
+    [formControl]="control()"
     [valueMapper]="entityToId"
     [optionToString]="accessor"
     (autocompleteFilterChange)="recalculateMatchingInactive($event)"
@@ -18,7 +18,7 @@
         <app-entity-block
           style="margin: auto"
           [entity]="item"
-          [linkDisabled]="formControl().enabled"
+          [linkDisabled]="enabled()"
         ></app-entity-block>
       }
     </ng-template>
@@ -35,7 +35,7 @@
     }
   </app-basic-autocomplete>
 
-  @if (formControl().enabled) {
+  @if (enabled()) {
     <fa-icon
       icon="caret-down"
       class="form-field-icon-suffix"

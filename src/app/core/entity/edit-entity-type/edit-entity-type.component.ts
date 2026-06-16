@@ -6,7 +6,7 @@ import {
 } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityTypeSelectComponent } from "../entity-type-select/entity-type-select.component";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
@@ -29,8 +29,4 @@ export class EditEntityTypeComponent extends CustomFormControlDirective<
 > {
   formFieldConfig = input<FormFieldConfig>();
   readonly multi = computed(() => this.formFieldConfig()?.isArray ?? false);
-
-  get formControl(): FormControl<string | string[]> {
-    return this.ngControl.control as FormControl<string | string[]>;
-  }
 }

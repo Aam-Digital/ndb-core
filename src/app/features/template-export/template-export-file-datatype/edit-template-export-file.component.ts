@@ -10,7 +10,7 @@ import {
   input,
   resource,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -51,10 +51,6 @@ export class EditTemplateExportFileComponent
 
   entity = input<Entity>();
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 
   exportServerEnabled = resource({
     loader: () =>

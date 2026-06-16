@@ -3,16 +3,15 @@
     #inputElement
     matInput
     [title]="placeholder"
-    [disabled]="_disabled"
+    [disabled]="!enabled()"
     readonly
     [value]="
-      locationValue()?.locationString ??
-      locationValue()?.geoLookup?.display_name
+      valueSignal()?.locationString ?? valueSignal()?.geoLookup?.display_name
     "
     rows="3"
   ></textarea>
 
-  @if (locationValue()?.geoLookup) {
+  @if (valueSignal()?.geoLookup) {
     <button
       (click)="openMap(); $event.stopPropagation()"
       mat-icon-button
@@ -33,7 +32,7 @@
         mat-icon-button
         type="button"
         class="input-action-button"
-        [disabled]="_disabled"
+        [disabled]="!enabled()"
       >
         <fa-icon icon="magnifying-glass-location"></fa-icon>
       </button>

@@ -4,7 +4,7 @@ import {
   input,
   ViewEncapsulation,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import {
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
   MomentDateAdapter,
@@ -68,10 +68,6 @@ export class EditMonthComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<Date> {
-    return this.ngControl.control as FormControl<Date>;
-  }
 
   setMonthAndYear(date: Moment, datepicker: MatDatepicker<Moment>) {
     this.formControl.markAsDirty();
