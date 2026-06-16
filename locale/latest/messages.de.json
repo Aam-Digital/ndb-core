@@ -1457,11 +1457,11 @@
   "709733175763691109": "Bitte wählen Sie vor dem Herunterladen mindestens eine Spalte aus.",
   "5154473551248374598": " (Alter)",
   "203486571555587997": " (interne ID)",
-  "2511254663230486245": "Email notifications are not enabled in this system. Please contact your system administrator for more information.",
-  "459660846506403690": "Receive an email notification for each matching event, even when you are not using the app.",
-  "2019745996803592690": " Notifications will be sent to your account email {$INTERPOLATION} ",
-  "6560708001470959956": "street",
-  "7227351318866100782": "house number",
-  "2321902036208707952": "postcode",
-  "9139280231181462": "city"
+  "2511254663230486245": "E-Mail-Benachrichtigungen sind in diesem System nicht aktiviert. Bitte wenden Sie sich für weitere Informationen an Ihren Systemadministrator.",
+  "459660846506403690": "Sie erhalten eine E-Mail-Benachrichtigung für jedes passende Ereignis, auch wenn Sie die App nicht verwenden.",
+  "2019745996803592690": "Benachrichtigungen werden an die E-Mail-Adresse Ihres Kontos gesendet. ",
+  "6560708001470959956": "Straße",
+  "7227351318866100782": "Hausnummer",
+  "2321902036208707952": "Postleitzahl",
+  "9139280231181462": "Stadt"
 }
