@@ -1,0 +1,632 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  FeatureFlag</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/notification/notification.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Status of a backend feature, as reported by the <code>/actuator/features</code> endpoint.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#enabled" 
+>
+                                            enabled
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="enabled"></a>
+                                        <span class="name "><b>enabled</b>
+                                            <a href="#enabled">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>enabled:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { computed, inject, Injectable, resource, signal } from &quot;@angular/core&quot;;
+import { Logging } from &quot;app/core/logging/logging.service&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import { KeycloakAuthService } from &quot;app/core/session/auth/keycloak/keycloak-auth.service&quot;;
+import { AngularFireMessaging } from &quot;@angular/fire/compat/messaging&quot;;
+import { firstValueFrom, mergeMap, Subscription } from &quot;rxjs&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { AlertService } from &quot;../../core/alerts/alert.service&quot;;
+import { catchError, map } from &quot;rxjs/operators&quot;;
+import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { NotificationConfig } from &quot;./model/notification-config&quot;;
+import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
+import { SyncedPouchDatabase } from &quot;../../core/database/pouchdb/synced-pouch-database&quot;;
+import { NotificationEvent } from &quot;./model/notification-event&quot;;
+import { DatabaseResolverService } from &quot;../../core/database/database-resolver.service&quot;;
+
+/**
+ * Status of a backend feature, as reported by the &#x60;/actuator/features&#x60; endpoint.
+ */
+interface FeatureFlag {
+  enabled: boolean;
+}
+
+/**
+ * Feature flags from the &#x60;/actuator/features&#x60; endpoint.
+ * Sub-features are nested under their parent feature (e.g. &#x60;notification.email&#x60;).
+ */
+type FeatureFlags &#x3D; Record&lt;string, FeatureFlag&gt; &amp; {
+  notification?: FeatureFlag &amp; { email?: FeatureFlag };
+};
+
+/**
+ * Handles the interaction with Cloud Messaging.
+ * It manages the retrieval of Cloud Messaging Notification token, listens for incoming messages, and sends notifications
+ * to users. The service also provides methods to create cloud messaging payloads and communicate with the
+ * cloud messaging HTTP API for sending notifications.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class NotificationService {
+  private readonly firebaseMessaging &#x3D; inject(AngularFireMessaging);
+  private readonly httpClient &#x3D; inject(HttpClient);
+  private readonly authService &#x3D; inject(KeycloakAuthService);
+  private readonly alertService &#x3D; inject(AlertService);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly sessionInfo &#x3D; inject(SessionSubject);
+  private readonly databaseResolver &#x3D; inject(DatabaseResolverService);
+
+  private tokenSubscription: Subscription | undefined &#x3D; undefined;
+
+  private readonly featureFlagsResource &#x3D; resource({
+    loader: async () &#x3D;&gt; {
+      try {
+        return await firstValueFrom(
+          this.httpClient.get&lt;FeatureFlags&gt;(
+            environment.API_PROXY_PREFIX + &quot;/actuator/features&quot;,
+          ),
+        );
+      } catch (err) {
+        Logging.debug(&quot;Notification API not available&quot;, err);
+        return {} as FeatureFlags;
+      }
+    },
+  });
+
+  readonly isNotificationServerEnabled &#x3D; computed(
+    () &#x3D;&gt; this.featureFlagsResource.value()?.[&quot;notification&quot;]?.enabled ?? false,
+  );
+
+  readonly isEmailNotificationEnabled &#x3D; computed(
+    () &#x3D;&gt;
+      this.featureFlagsResource.value()?.[&quot;notification&quot;]?.email?.enabled ??
+      false,
+  );
+
+  private readonly NOTIFICATION_API_URL &#x3D;
+    environment.API_PROXY_PREFIX + &quot;/v1/notification&quot;;
+
+  constructor() {
+    // init listening to push messages once the session (with userId) is ready
+    this.sessionInfo.subscribe((sessionInfo) &#x3D;&gt; this.init());
+  }
+
+  async init() {
+    if (await this.isDeviceRegistered()) {
+      this.listenForMessages();
+    }
+  }
+
+  async loadNotificationConfig(userId: string): Promise&lt;NotificationConfig&gt; {
+    return this.entityMapper.load&lt;NotificationConfig&gt;(
+      NotificationConfig,
+      userId,
+    );
+  }
+
+  /**
+   * Request a token device from firebase and register it in aam-backend
+   */
+  registerDevice(): void {
+    this.tokenSubscription?.unsubscribe();
+    this.tokenSubscription &#x3D; undefined;
+
+    this.tokenSubscription &#x3D; this.firebaseMessaging.requestToken.subscribe({
+      next: (token) &#x3D;&gt; {
+        if (!token) {
+          Logging.error(&quot;Could not get token for device.&quot;);
+          this.alertService.addInfo(
+            $localize&#x60;Please enable notification permissions to receive important updates.&#x60;,
+          );
+          return;
+        }
+        this.registerNotificationToken(token)
+          .then(() &#x3D;&gt; {
+            Logging.log(&quot;Device registered in aam-digital backend.&quot;);
+            this.alertService.addInfo(
+              $localize&#x60;Device registered for push notifications.&#x60;,
+            );
+            this.listenForMessages();
+          })
+          .catch((err) &#x3D;&gt; {
+            Logging.error(
+              &quot;Could not register device in aam-digital backend. Push notifications will not work.&quot;,
+              err,
+            );
+            this.alertService.addInfo(
+              $localize&#x60;Could not register device in aam-digital backend. Push notifications will not work. Please try to disable and enable again.&#x60;,
+            );
+          });
+      },
+      error: (err) &#x3D;&gt; {
+        this.tokenSubscription?.unsubscribe();
+        this.tokenSubscription &#x3D; undefined;
+        if (err.code &#x3D;&#x3D;&#x3D; 20) {
+          this.registerDevice();
+        } else {
+          this.alertService.addInfo(
+            $localize&#x60;User has rejected the authorisation request.&#x60;,
+          );
+          Logging.error(&quot;User has rejected the authorisation request.&quot;, err);
+        }
+      },
+    });
+  }
+
+  isDeviceRegistered(): Promise&lt;boolean&gt; {
+    return firstValueFrom(
+      this.firebaseMessaging.getToken
+        .pipe(
+          mergeMap((token) &#x3D;&gt; {
+            if (!token) {
+              return Promise.resolve(false);
+            }
+            const headers &#x3D; {};
+            this.authService.addAuthHeader(headers);
+
+            return this.httpClient
+              .get(this.NOTIFICATION_API_URL + &quot;/device/&quot; + token, {
+                headers,
+              })
+              .pipe(
+                map((value) &#x3D;&gt; {
+                  return value !&#x3D;&#x3D; null;
+                }),
+              );
+          }),
+        )
+        .pipe(
+          catchError((err, caught) &#x3D;&gt; {
+            return Promise.resolve(false);
+          }),
+        ),
+    );
+  }
+
+  /**
+   * Unregister a device from firebase, this will disable push notifications.
+   */
+  unregisterDevice(): void {
+    let tempToken &#x3D; null;
+    this.firebaseMessaging.getToken
+      .pipe(
+        mergeMap((token) &#x3D;&gt; {
+          tempToken &#x3D; token;
+          return this.firebaseMessaging.deleteToken(token);
+        }),
+      )
+      .subscribe({
+        next: (success: boolean) &#x3D;&gt; {
+          if (!success) {
+            this.alertService.addInfo(
+              $localize&#x60;Could not unregister device from firebase.&#x60;,
+            );
+            Logging.error(&quot;Could not unregister device from firebase.&quot;);
+            return;
+          }
+
+          this.unRegisterNotificationToken(tempToken).catch((err) &#x3D;&gt; {
+            Logging.error(&quot;Could not unregister device from aam-backend.&quot;, err);
+          });
+
+          this.alertService.addInfo(
+            $localize&#x60;Device un-registered for push notifications.&#x60;,
+          );
+        },
+        error: (err) &#x3D;&gt; {
+          Logging.error(&quot;Could not unregister device from firebase.&quot;, err);
+        },
+      });
+  }
+
+  /**
+   * Registers the device with the backend using the FCM token.
+   * @param notificationToken - The FCM token for the device.
+   * @param deviceName - The name of the device.
+   */
+  registerNotificationToken(
+    notificationToken: string,
+    deviceName: string &#x3D; &quot;web&quot;, // todo something useful here
+  ): Promise&lt;Object&gt; {
+    const payload &#x3D; { deviceToken: notificationToken, deviceName };
+    const headers &#x3D; {};
+    this.authService.addAuthHeader(headers);
+
+    return firstValueFrom(
+      this.httpClient.post(this.NOTIFICATION_API_URL + &quot;/device&quot;, payload, {
+        headers,
+      }),
+    );
+  }
+
+  /**
+   * Unregister the device with the backend using the FCM token.
+   * @param notificationToken - The FCM token for the device.
+   */
+  unRegisterNotificationToken(notificationToken: string): Promise&lt;Object&gt; {
+    const headers &#x3D; {};
+    this.authService.addAuthHeader(headers);
+
+    return firstValueFrom(
+      this.httpClient.delete(
+        this.NOTIFICATION_API_URL + &quot;/device/&quot; + notificationToken,
+        {
+          headers,
+        },
+      ),
+    );
+  }
+
+  testNotification(): Promise&lt;Object&gt; {
+    const headers &#x3D; {};
+    this.authService.addAuthHeader(headers);
+
+    return firstValueFrom(
+      this.httpClient
+        .post(this.NOTIFICATION_API_URL + &quot;/message/device-test&quot;, null, {
+          headers,
+        })
+        .pipe(
+          catchError((err) &#x3D;&gt; {
+            this.alertService.addWarning(
+              $localize&#x60;Error trying to send test notification. If this error persists, please try to disable and enable &quot;push notifications&quot; again.&#x60;,
+            );
+            throw err;
+          }),
+        ),
+    );
+  }
+
+  /**
+   * Listens for incoming Firebase Cloud Messages (FCM) in real time.
+   * Displays a browser notification when a message is received.
+   *
+   * This listener creates system notifications while the app is running
+   * (If app is not running, the firebase-messaging-sw is listening)
+   */
+  listenForMessages(): void {
+    Logging.debug(&quot;Starting to listen for Push Messages&quot;);
+    this.firebaseMessaging.messages.subscribe({
+      next: (payload) &#x3D;&gt; {
+        Logging.debug(&quot;Received Push Message&quot;, payload);
+
+        // trigger immediate sync
+        const db &#x3D; this.databaseResolver.getDatabase(
+          NotificationEvent.DATABASE,
+        );
+        if (db instanceof SyncedPouchDatabase) {
+          db.sync().catch((err) &#x3D;&gt;
+            Logging.warn(&quot;Failed sync notifications db upon push message&quot;, err),
+          );
+        }
+
+        let notification &#x3D; new Notification(payload.notification.title, {
+          body: payload.notification.body,
+          icon: &quot;/assets/icons/favicon.png&quot;,
+          data: {
+            url: window.location.protocol + &quot;//&quot; + window.location.hostname,
+            // &quot;/foo-bar/123&quot;, // todo: deep link here
+          },
+        });
+
+        notification.onclick &#x3D; (event) &#x3D;&gt; {
+          let url &#x3D; event.target[&quot;data&quot;]?.[&quot;url&quot;];
+          event.preventDefault();
+          if (url) {
+            window.open(url, &quot;_self&quot;);
+          }
+        };
+      },
+      error: (err) &#x3D;&gt; {
+        Logging.error(&quot;Error while listening for messages.&quot;, err);
+      },
+    });
+  }
+
+  readonly isPushNotificationSupported &#x3D; signal(&quot;Notification&quot; in window);
+
+  /**
+   * user given the notification permission to browser or not
+   * @returns boolean
+   */
+  readonly hasNotificationPermissionGranted &#x3D; computed(
+    () &#x3D;&gt;
+      this.isPushNotificationSupported() &amp;&amp;
+      Notification.permission &#x3D;&#x3D;&#x3D; &quot;granted&quot;,
+  );
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'FeatureFlag.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -568,6 +568,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/NotesModule.html" data-type="entity-link" >NotesModule</a>
                             </li>
                             <li class="link">
+                                <a href="modules/NotificationModule.html" data-type="entity-link" >NotificationModule</a>
+                            </li>
+                            <li class="link">
                                 <a href="modules/PermissionsModule.html" data-type="entity-link" >PermissionsModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
@@ -1360,6 +1363,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/NotificationItemComponent.html" data-type="entity-link" >NotificationItemComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/NotificationLinkComponent.html" data-type="entity-link" >NotificationLinkComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/NotificationRuleComponent.html" data-type="entity-link" >NotificationRuleComponent</a>
@@ -2488,6 +2494,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ExternalSkill.html" data-type="entity-link" >ExternalSkill</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FeatureFlag.html" data-type="entity-link" >FeatureFlag</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/FieldGroup.html" data-type="entity-link" >FieldGroup</a>

@@ -146,7 +146,11 @@ in the URL and sets the initial value to a value that was previously set.</p>
 Usage (only the directive is required, the rest is automatic):</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-none">&lt;mat-tab-group appTabStateMemo&gt;
   ...
-&lt;/mat-tab-group&gt;</code></pre></div>
+&lt;/mat-tab-group&gt;</code></pre></div><p>When tab groups are nested within the same route (e.g. an entity-details tab
+group containing a component that itself uses a tab group), each must use a
+distinct <code>tabIndexKey</code>. Otherwise they share the same query param and reset
+each other on every navigation.</p>
+
             </p>
 
 
@@ -175,9 +179,72 @@ Usage (only the directive is required, the rest is automatic):</p>
             </table>
         </section>
 
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#tabIndexKey" >tabIndexKey</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
 
 
 
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="tabIndexKey"></a>
+                        <b>tabIndexKey</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;tabIndex&quot;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/utils/tab-state/tab-state-memo.directive.ts:49</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>The query param key under which this tab group&#39;s selected index is stored.
+Override this for tab groups nested within another tab group on the same
+route so they don&#39;t clobber each other&#39;s state.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
 
 
 
@@ -188,11 +255,18 @@ Usage (only the directive is required, the rest is automatic):</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ActivatedRoute, Router } from &quot;@angular/router&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ActivatedRoute, NavigationEnd, Router } from &quot;@angular/router&quot;;
 import { MatTabGroup } from &quot;@angular/material/tabs&quot;;
-import { Directive, OnInit, inject } from &quot;@angular/core&quot;;
+import {
+  ChangeDetectorRef,
+  Directive,
+  Input,
+  OnInit,
+  inject,
+} from &quot;@angular/core&quot;;
 import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
 import { ViewComponentContext } from &quot;../../core/ui/abstract-view/view-component-context&quot;;
+import { filter, startWith } from &quot;rxjs/operators&quot;;
 
 /**
  * Memorizes the current state of a &#x60;TabGroup&#x60; (i.e. which tab currently is selected)
@@ -205,6 +279,11 @@ import { ViewComponentContext } from &quot;../../core/ui/abstract-view/view-comp
  *   ...
  * &lt;/mat-tab-group&gt;
  * &#x60;&#x60;&#x60;
+ *
+ * When tab groups are nested within the same route (e.g. an entity-details tab
+ * group containing a component that itself uses a tab group), each must use a
+ * distinct &#x60;tabIndexKey&#x60;. Otherwise they share the same query param and reset
+ * each other on every navigation.
  */
 @UntilDestroy()
 @Directive({
@@ -216,9 +295,15 @@ export class TabStateMemoDirective implements OnInit {
   private router &#x3D; inject(Router);
   private route &#x3D; inject(ActivatedRoute);
   private tab &#x3D; inject(MatTabGroup);
+  private cdr &#x3D; inject(ChangeDetectorRef);
   private viewContext &#x3D; inject(ViewComponentContext, { optional: true });
 
-  private readonly tabIndexKey &#x3D; &quot;tabIndex&quot;;
+  /**
+   * The query param key under which this tab group&#x27;s selected index is stored.
+   * Override this for tab groups nested within another tab group on the same
+   * route so they don&#x27;t clobber each other&#x27;s state.
+   */
+  @Input() tabIndexKey &#x3D; &quot;tabIndex&quot;;
 
   ngOnInit() {
     if (this.viewContext?.isDialog) {
@@ -226,17 +311,31 @@ export class TabStateMemoDirective implements OnInit {
       return;
     }
 
-    // This logic is purposefully in &#x60;ngOnInit&#x60; and not in the constructor,
-    // so we can override values that are set by custom logic in the component
-    // (i.e. we override any binding to [(selectedIndex)] for the initial index)
-    const potentialNextTabIndex &#x3D; parseInt(
-      this.route.snapshot.queryParamMap.get(this.tabIndexKey),
-      10,
-    );
-    if (!Number.isNaN(potentialNextTabIndex)) {
-      this.tab.selectedIndex &#x3D; potentialNextTabIndex;
-      this.tab.selectedIndexChange.emit(potentialNextTabIndex);
-    }
+    // React to NavigationEnd (not just snapshot) so that navigating to
+    // ?tabIndex&#x3D;N while already on this page also updates the tab.
+    // startWith(null) covers the initial load synchronously.
+    this.router.events
+      .pipe(
+        filter((e) &#x3D;&gt; e instanceof NavigationEnd),
+        startWith(null),
+        untilDestroyed(this),
+      )
+      .subscribe(() &#x3D;&gt; {
+        const potentialNextTabIndex &#x3D; parseInt(
+          this.route.snapshot.queryParamMap.get(this.tabIndexKey),
+          10,
+        );
+        if (
+          !Number.isNaN(potentialNextTabIndex) &amp;&amp;
+          this.tab.selectedIndex !&#x3D;&#x3D; potentialNextTabIndex
+        ) {
+          this.tab.selectedIndex &#x3D; potentialNextTabIndex;
+          // Trigger change detection so MatTabGroup actually applies the switch.
+          // Without this, an in-app navigation that only changes the tabIndex
+          // query param updates the URL but not the visible tab (OnPush parents).
+          this.cdr.markForCheck();
+        }
+      });
     this.tab.selectedIndexChange
       .pipe(untilDestroyed(this))
       .subscribe((next) &#x3D;&gt; this.updateURLQueryParams(next));

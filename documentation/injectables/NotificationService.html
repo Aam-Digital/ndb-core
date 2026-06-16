@@ -154,6 +154,33 @@ cloud messaging HTTP API for sending notifications.</p>
     <h3 id="index">Index</h3>
     <table class="table table-sm table-bordered index-table">
         <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hasNotificationPermissionGranted" >hasNotificationPermissionGranted</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#isEmailNotificationEnabled" >isEmailNotificationEnabled</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#isNotificationServerEnabled" >isNotificationServerEnabled</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#isPushNotificationSupported" >isPushNotificationSupported</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
 
                 <tr>
                     <td class="col-md-4">
@@ -164,21 +191,11 @@ cloud messaging HTTP API for sending notifications.</p>
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#hasNotificationPermissionGranted" >hasNotificationPermissionGranted</a>
-                            </li>
-                            <li>
                                     <span class="modifier">Async</span>
                                 <a href="#init" >init</a>
                             </li>
                             <li>
                                 <a href="#isDeviceRegistered" >isDeviceRegistered</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Async</span>
-                                <a href="#isNotificationServerEnabled" >isNotificationServerEnabled</a>
-                            </li>
-                            <li>
-                                <a href="#isPushNotificationSupported" >isPushNotificationSupported</a>
                             </li>
                             <li>
                                 <a href="#listenForMessages" >listenForMessages</a>
@@ -225,7 +242,7 @@ cloud messaging HTTP API for sending notifications.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/features/notification/notification.service.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/features/notification/notification.service.ts:78</a></div>
                             </td>
                         </tr>
 
@@ -238,49 +255,6 @@ cloud messaging HTTP API for sending notifications.</p>
     <h3 id="methods">
         Methods
     </h3>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="hasNotificationPermissionGranted"></a>
-                    <span class="name">
-                        <span ><b>hasNotificationPermissionGranted</b></span>
-                        <a href="#hasNotificationPermissionGranted"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>hasNotificationPermissionGranted()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="302"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:302</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>user given the notification permission to browser or not</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                <p>boolean</p>
-
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -303,8 +277,8 @@ cloud messaging HTTP API for sending notifications.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="45"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:45</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -340,8 +314,8 @@ cloud messaging HTTP API for sending notifications.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="128"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:128</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="147"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:147</a></div>
                         </td>
                     </tr>
 
@@ -351,86 +325,6 @@ cloud messaging HTTP API for sending notifications.</p>
 
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="isNotificationServerEnabled"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>isNotificationServerEnabled</b></span>
-                        <a href="#isNotificationServerEnabled"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>isNotificationServerEnabled()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:61</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Check if API module is actually available / enabled.</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="isPushNotificationSupported"></a>
-                    <span class="name">
-                        <span ><b>isPushNotificationSupported</b></span>
-                        <a href="#isPushNotificationSupported"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>isPushNotificationSupported()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="320"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:320</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Check if Notification API is supported in this browser</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                         </div>
                 </td>
@@ -457,8 +351,8 @@ cloud messaging HTTP API for sending notifications.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="259"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:259</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="278"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:278</a></div>
                         </td>
                     </tr>
 
@@ -501,8 +395,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="51"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:51</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="91"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:91</a></div>
                         </td>
                     </tr>
 
@@ -568,8 +462,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="101"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:101</a></div>
                         </td>
                     </tr>
 
@@ -607,8 +501,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="199"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:199</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:218</a></div>
                         </td>
                     </tr>
 
@@ -707,8 +601,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="232"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:232</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="251"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:251</a></div>
                         </td>
                     </tr>
 
@@ -744,8 +638,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="161"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:161</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="180"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:180</a></div>
                         </td>
                     </tr>
 
@@ -783,8 +677,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="218"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:218</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="237"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:237</a></div>
                         </td>
                     </tr>
 
@@ -840,17 +734,167 @@ Displays a browser notification when a message is received.</p>
         </tbody>
     </table>
 </section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasNotificationPermissionGranted"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hasNotificationPermissionGranted</b></span>
+                        <a href="#hasNotificationPermissionGranted"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt;
+      this.isPushNotificationSupported() &amp;&amp;
+      Notification.permission &#x3D;&#x3D;&#x3D; &quot;granted&quot;,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="323" class="link-to-prism">src/app/features/notification/notification.service.ts:323</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>user given the notification permission to browser or not</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isEmailNotificationEnabled"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>isEmailNotificationEnabled</b></span>
+                        <a href="#isEmailNotificationEnabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt;
+      this.featureFlagsResource.value()?.[&quot;notification&quot;]?.email?.enabled ??
+      false,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/features/notification/notification.service.ts:71</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isNotificationServerEnabled"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>isNotificationServerEnabled</b></span>
+                        <a href="#isNotificationServerEnabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; this.featureFlagsResource.value()?.[&quot;notification&quot;]?.enabled ?? false,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/notification/notification.service.ts:67</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isPushNotificationSupported"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>isPushNotificationSupported</b></span>
+                        <a href="#isPushNotificationSupported"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(&quot;Notification&quot; in window)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="317" class="link-to-prism">src/app/features/notification/notification.service.ts:317</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
 
     </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { computed, inject, Injectable, resource, signal } from &quot;@angular/core&quot;;
 import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { HttpClient } from &quot;@angular/common/http&quot;;
 import { KeycloakAuthService } from &quot;app/core/session/auth/keycloak/keycloak-auth.service&quot;;
 import { AngularFireMessaging } from &quot;@angular/fire/compat/messaging&quot;;
-import { firstValueFrom, mergeMap, of, Subscription } from &quot;rxjs&quot;;
+import { firstValueFrom, mergeMap, Subscription } from &quot;rxjs&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { AlertService } from &quot;../../core/alerts/alert.service&quot;;
 import { catchError, map } from &quot;rxjs/operators&quot;;
@@ -860,6 +904,21 @@ import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
 import { SyncedPouchDatabase } from &quot;../../core/database/pouchdb/synced-pouch-database&quot;;
 import { NotificationEvent } from &quot;./model/notification-event&quot;;
 import { DatabaseResolverService } from &quot;../../core/database/database-resolver.service&quot;;
+
+/**
+ * Status of a backend feature, as reported by the &#x60;/actuator/features&#x60; endpoint.
+ */
+interface FeatureFlag {
+  enabled: boolean;
+}
+
+/**
+ * Feature flags from the &#x60;/actuator/features&#x60; endpoint.
+ * Sub-features are nested under their parent feature (e.g. &#x60;notification.email&#x60;).
+ */
+type FeatureFlags &#x3D; Record&lt;string, FeatureFlag&gt; &amp; {
+  notification?: FeatureFlag &amp; { email?: FeatureFlag };
+};
 
 /**
  * Handles the interaction with Cloud Messaging.
@@ -881,6 +940,31 @@ export class NotificationService {
 
   private tokenSubscription: Subscription | undefined &#x3D; undefined;
 
+  private readonly featureFlagsResource &#x3D; resource({
+    loader: async () &#x3D;&gt; {
+      try {
+        return await firstValueFrom(
+          this.httpClient.get&lt;FeatureFlags&gt;(
+            environment.API_PROXY_PREFIX + &quot;/actuator/features&quot;,
+          ),
+        );
+      } catch (err) {
+        Logging.debug(&quot;Notification API not available&quot;, err);
+        return {} as FeatureFlags;
+      }
+    },
+  });
+
+  readonly isNotificationServerEnabled &#x3D; computed(
+    () &#x3D;&gt; this.featureFlagsResource.value()?.[&quot;notification&quot;]?.enabled ?? false,
+  );
+
+  readonly isEmailNotificationEnabled &#x3D; computed(
+    () &#x3D;&gt;
+      this.featureFlagsResource.value()?.[&quot;notification&quot;]?.email?.enabled ??
+      false,
+  );
+
   private readonly NOTIFICATION_API_URL &#x3D;
     environment.API_PROXY_PREFIX + &quot;/v1/notification&quot;;
 
@@ -899,27 +983,6 @@ export class NotificationService {
     return this.entityMapper.load&lt;NotificationConfig&gt;(
       NotificationConfig,
       userId,
-    );
-  }
-
-  /**
-   * Check if API module is actually available / enabled.
-   */
-  async isNotificationServerEnabled(): Promise&lt;boolean&gt; {
-    return firstValueFrom(
-      this.httpClient
-        .get(environment.API_PROXY_PREFIX + &quot;/actuator/features&quot;)
-        .pipe(
-          map((res) &#x3D;&gt; {
-            return res?.[&quot;notification&quot;]?.enabled ?? false;
-          }),
-          catchError((err) &#x3D;&gt; {
-            // if aam-services backend is not running --&gt; 502
-            // if aam-services Notification API disabled --&gt; 404
-            Logging.debug(&quot;Notification API not available&quot;, err);
-            return of(false);
-          }),
-        ),
     );
   }
 
@@ -1142,31 +1205,17 @@ export class NotificationService {
     });
   }
 
+  readonly isPushNotificationSupported &#x3D; signal(&quot;Notification&quot; in window);
+
   /**
    * user given the notification permission to browser or not
    * @returns boolean
    */
-  hasNotificationPermissionGranted(): boolean {
-    if (!this.isPushNotificationSupported()) {
-      return false;
-    }
-
-    switch (Notification.permission) {
-      case &quot;granted&quot;:
-        return true;
-      case &quot;denied&quot;:
-        return false;
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * Check if Notification API is supported in this browser
-   */
-  isPushNotificationSupported() {
-    return &quot;Notification&quot; in window;
-  }
+  readonly hasNotificationPermissionGranted &#x3D; computed(
+    () &#x3D;&gt;
+      this.isPushNotificationSupported() &amp;&amp;
+      Notification.permission &#x3D;&#x3D;&#x3D; &quot;granted&quot;,
+  );
 }
 </code></pre>
     </div>
