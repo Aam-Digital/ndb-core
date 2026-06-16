@@ -198,6 +198,10 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier"></span>
+                                <a href="#getExportColumns" >getExportColumns</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#importMapFunction" >importMapFunction</a>
                             </li>
@@ -216,9 +220,6 @@
                             <li>
                                     <span class="modifier">Static</span>
                                 <a href="#detectFieldInEntity" >detectFieldInEntity</a>
-                            </li>
-                            <li>
-                                <a href="#getExportColumns" >getExportColumns</a>
                             </li>
                             <li>
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
@@ -251,6 +252,90 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getExportColumns"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getExportColumns</b></span>
+                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:37</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Export the human-readable location string (default column) plus separate
+columns for the individual address parts (street, house number, postcode, city)
+so they can be used flexibly for mail merge and similar processes (see #3715).</p>
+<p>The address parts are read from the flat top-level fields, which
+<a href="transformToObjectFormat">transformToObjectFormat</a> / <a href="importMapFunction">importMapFunction</a> populate via
+<code>enrichGeoLocation</code> (copying <code>geoLookup.address</code> up, folding village/town
+into city and stringifying postcode). Every value reaching export is
+therefore already enriched, so no <code>geoLookup.address</code> fallback is needed.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="importMapFunction"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -276,7 +361,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:52</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:115</a></code>
 </div>
                         </td>
                     </tr>
@@ -375,7 +460,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:22</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:85</a></code>
 </div>
                         </td>
                     </tr>
@@ -738,87 +823,6 @@ forwarding their own relevant datatype identifiers.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getExportColumns"></a>
-                    <span class="name">
-                        <span ><b>getExportColumns</b></span>
-                        <a href="#getExportColumns"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>getExportColumns(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:232</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Export columns for a field using this datatype.</p>
-<p>Each returned column contributes a CSV header and its own value resolver.
-The returned <code>keySuffix</code> is appended to the field id to form the exported column key.</p>
-<p>The default implementation returns a single column with the raw field value.
-Readable formatting can be applied by callers during CSV transformation.
-Override this to provide custom or additional columns (e.g. entity references
-can add a human-readable name column alongside the ID column).</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>schemaField</td>
-                                            <td>
-                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>ExportColumnMapping[]</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="normalizeSchemaField"></a>
                     <span class="name">
                         <span ><b>normalizeSchemaField</b></span>
@@ -1130,7 +1134,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:15</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:19</a></code>
 </div>
                         </td>
                     </tr>
@@ -1169,7 +1173,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:18</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:22</a></code>
 </div>
                         </td>
                     </tr>
@@ -1208,7 +1212,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:20</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:24</a></code>
 </div>
                         </td>
                     </tr>
@@ -1248,7 +1252,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:16</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:20</a></code>
 </div>
                         </td>
                     </tr>
@@ -1287,7 +1291,7 @@ This can be set as a parameter to the <code>@DatabaseField()</code> annotation i
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:19</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:23</a></code>
 </div>
                         </td>
                     </tr>
@@ -1349,10 +1353,14 @@ during import.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 import { lastValueFrom } from &quot;rxjs&quot;;
-import { DefaultDatatype } from &quot;../../core/entity/default-datatype/default.datatype&quot;;
+import {
+  DefaultDatatype,
+  ExportColumnMapping,
+} from &quot;../../core/entity/default-datatype/default.datatype&quot;;
 import { GeoLocation } from &quot;./geo-location&quot;;
 import { OpenStreetMapsSearchResult, GeoService } from &quot;./geo.service&quot;;
 import { LocationImportConfig } from &quot;./location-import-config/location-import-config.component&quot;;
+import { EntitySchemaField } from &quot;../../core/entity/schema/entity-schema-field&quot;;
 
 @Injectable()
 export class LocationDatatype extends DefaultDatatype&lt;
@@ -1367,6 +1375,65 @@ export class LocationDatatype extends DefaultDatatype&lt;
   override editComponent &#x3D; &quot;EditLocation&quot;;
   override viewComponent &#x3D; &quot;ViewLocation&quot;;
   override importConfigComponent &#x3D; &quot;LocationImportConfig&quot;;
+
+  /**
+   * Export the human-readable location string (default column) plus separate
+   * columns for the individual address parts (street, house number, postcode, city)
+   * so they can be used flexibly for mail merge and similar processes (see #3715).
+   *
+   * The address parts are read from the flat top-level fields, which
+   * {@link transformToObjectFormat} / {@link importMapFunction} populate via
+   * &#x60;enrichGeoLocation&#x60; (copying &#x60;geoLookup.address&#x60; up, folding village/town
+   * into city and stringifying postcode). Every value reaching export is
+   * therefore already enriched, so no &#x60;geoLookup.address&#x60; fallback is needed.
+   */
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping&lt;GeoLocation&gt;[] {
+    if (!schemaField.label) {
+      return [];
+    }
+
+    const label &#x3D; schemaField.label;
+    const part &#x3D; (
+      keySuffix: string,
+      partLabel: string,
+      pick: (value: GeoLocation) &#x3D;&gt; string | undefined,
+    ): ExportColumnMapping&lt;GeoLocation&gt; &#x3D;&gt; ({
+      keySuffix,
+      label: &#x60;${label} (${partLabel})&#x60;,
+      resolveValue: (value) &#x3D;&gt; (value ? pick(value) : undefined),
+    });
+
+    return [
+      {
+        keySuffix: &quot;&quot;,
+        label,
+        // return the whole object so the CSV/XLSX transformation extracts the locationString
+        resolveValue: (value) &#x3D;&gt; value,
+      },
+      part(
+        &quot;_street&quot;,
+        $localize&#x60;:Location export column:street&#x60;,
+        (value) &#x3D;&gt; value.road,
+      ),
+      part(
+        &quot;_house_number&quot;,
+        $localize&#x60;:Location export column:house number&#x60;,
+        (value) &#x3D;&gt; value.house_number,
+      ),
+      part(
+        &quot;_postcode&quot;,
+        $localize&#x60;:Location export column:postcode&#x60;,
+        (value) &#x3D;&gt; value.postcode,
+      ),
+      part(
+        &quot;_city&quot;,
+        $localize&#x60;:Location export column:city&#x60;,
+        (value) &#x3D;&gt; value.city,
+      ),
+    ];
+  }
 
   override transformToObjectFormat(value: GeoLocation): GeoLocation {
     if (typeof value !&#x3D;&#x3D; &quot;object&quot;) {
