@@ -1,6 +1,12 @@
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
-import { ChangeDetectorRef, Directive, OnInit, inject } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Directive,
+  Input,
+  OnInit,
+  inject,
+} from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ViewComponentContext } from "../../core/ui/abstract-view/view-component-context";
 import { filter, startWith } from "rxjs/operators";
@@ -16,6 +22,11 @@ import { filter, startWith } from "rxjs/operators";
  *   ...
  * </mat-tab-group>
  * ```
+ *
+ * When tab groups are nested within the same route (e.g. an entity-details tab
+ * group containing a component that itself uses a tab group), each must use a
+ * distinct `tabIndexKey`. Otherwise they share the same query param and reset
+ * each other on every navigation.
  */
 @UntilDestroy()
 @Directive({
@@ -30,7 +41,12 @@ export class TabStateMemoDirective implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private viewContext = inject(ViewComponentContext, { optional: true });
 
-  private readonly tabIndexKey = "tabIndex";
+  /**
+   * The query param key under which this tab group's selected index is stored.
+   * Override this for tab groups nested within another tab group on the same
+   * route so they don't clobber each other's state.
+   */
+  @Input() tabIndexKey = "tabIndex";
 
   ngOnInit() {
     if (this.viewContext?.isDialog) {
