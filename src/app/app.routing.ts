@@ -25,6 +25,7 @@ import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
 import { AttendanceModule } from "./features/attendance/attendance.module";
 import { DeDuplicationModule } from "./features/de-duplication/de-duplication-module";
+import { NotificationModule } from "./features/notification/notification.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { PUBLIC_FORM_ROUTE } from "./features/public-form/public-form-routing";
 import { UnsavedChangesService } from "./core/entity-details/form/unsaved-changes.service";
@@ -80,6 +81,11 @@ export const allRoutes: Routes = [
     path: "deduplication",
     canActivate: [AuthGuard],
     children: DeDuplicationModule.routes,
+  },
+  {
+    path: "notification",
+    canActivate: [AuthGuard],
+    children: NotificationModule.routes,
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

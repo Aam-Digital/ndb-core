@@ -4,7 +4,7 @@ import {
   input,
   OnInit,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -29,10 +29,6 @@ export class EditNumberComponent
   implements OnInit, EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<number> {
-    return this.ngControl.control as FormControl<number>;
-  }
 
   ngOnInit() {
     const newValidators = [CustomNumberValidators.isNumber];
