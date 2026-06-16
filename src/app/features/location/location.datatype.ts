@@ -1,9 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { lastValueFrom } from "rxjs";
-import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
+import {
+  DefaultDatatype,
+  ExportColumnMapping,
+} from "../../core/entity/default-datatype/default.datatype";
 import { GeoLocation } from "./geo-location";
 import { OpenStreetMapsSearchResult, GeoService } from "./geo.service";
 import { LocationImportConfig } from "./location-import-config/location-import-config.component";
+import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 
 @Injectable()
 export class LocationDatatype extends DefaultDatatype<
@@ -18,6 +22,65 @@ export class LocationDatatype extends DefaultDatatype<
   override editComponent = "EditLocation";
   override viewComponent = "ViewLocation";
   override importConfigComponent = "LocationImportConfig";
+
+  /**
+   * Export the human-readable location string (default column) plus separate
+   * columns for the individual address parts (street, house number, postcode, city)
+   * so they can be used flexibly for mail merge and similar processes (see #3715).
+   *
+   * The address parts are read from the flat top-level fields, which
+   * {@link transformToObjectFormat} / {@link importMapFunction} populate via
+   * `enrichGeoLocation` (copying `geoLookup.address` up, folding village/town
+   * into city and stringifying postcode). Every value reaching export is
+   * therefore already enriched, so no `geoLookup.address` fallback is needed.
+   */
+  override getExportColumns(
+    schemaField: EntitySchemaField,
+  ): ExportColumnMapping<GeoLocation>[] {
+    if (!schemaField.label) {
+      return [];
+    }
+
+    const label = schemaField.label;
+    const part = (
+      keySuffix: string,
+      partLabel: string,
+      pick: (value: GeoLocation) => string | undefined,
+    ): ExportColumnMapping<GeoLocation> => ({
+      keySuffix,
+      label: `${label} (${partLabel})`,
+      resolveValue: (value) => (value ? pick(value) : undefined),
+    });
+
+    return [
+      {
+        keySuffix: "",
+        label,
+        // return the whole object so the CSV/XLSX transformation extracts the locationString
+        resolveValue: (value) => value,
+      },
+      part(
+        "_street",
+        $localize`:Location export column:street`,
+        (value) => value.road,
+      ),
+      part(
+        "_house_number",
+        $localize`:Location export column:house number`,
+        (value) => value.house_number,
+      ),
+      part(
+        "_postcode",
+        $localize`:Location export column:postcode`,
+        (value) => value.postcode,
+      ),
+      part(
+        "_city",
+        $localize`:Location export column:city`,
+        (value) => value.city,
+      ),
+    ];
+  }
 
   override transformToObjectFormat(value: GeoLocation): GeoLocation {
     if (typeof value !== "object") {
