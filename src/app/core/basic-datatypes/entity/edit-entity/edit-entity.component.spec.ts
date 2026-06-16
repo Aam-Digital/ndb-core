@@ -76,9 +76,14 @@ describe("EditEntityComponent", () => {
       throw Object.assign(new Error(`${id} not found`), { status: 404 });
     });
 
-    setupCustomFormControlEditComponent(component, "testProperty", {
-      additional: TestEntity.ENTITY_TYPE,
-    });
+    setupCustomFormControlEditComponent(
+      component,
+      "testProperty",
+      {
+        additional: TestEntity.ENTITY_TYPE,
+      },
+      fixture,
+    );
     component.ngControl = { control: formControl } as any;
   });
 
@@ -102,7 +107,10 @@ describe("EditEntityComponent", () => {
     expectedMulti: boolean,
   ) {
     component.multi = !expectedMulti;
-    component.formFieldConfig = { id: "test", ...formFieldConfig };
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "test",
+      ...formFieldConfig,
+    });
     component.ngOnInit();
     expect(!!component.multi).toBe(expectedMulti);
   }
