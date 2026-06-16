@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -35,6 +35,23 @@ describe("TabStateService", () => {
     await tabGroupHarness.selectTab({ label: "D" });
     await fixture.whenStable();
     expect(activatedRoute.snapshot.queryParamMap.get("tabIndex")).toBe("3");
+  });
+
+  it("should switch the selected tab when the tabIndex query param changes while mounted", async () => {
+    const tabGroupHarness = await TestbedHarnessEnvironment.harnessForFixture(
+      fixture,
+      MatTabGroupHarness,
+    );
+    const router = TestBed.inject(Router);
+
+    // simulate an in-app navigation that only changes the tabIndex query param
+    // (e.g. clicking the "Notification Settings" toolbar link while already here)
+    await router.navigate([], { queryParams: { tabIndex: 2 } });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const selected = await tabGroupHarness.getSelectedTab();
+    expect(await selected.getLabel()).toBe("C");
   });
 });
 
