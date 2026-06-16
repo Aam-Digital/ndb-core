@@ -78,7 +78,7 @@ export class EditEntityComponent<
   extends CustomFormControlDirective<T>
   implements OnInit, DoCheck, EditComponent
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   @ViewChild(BasicAutocompleteComponent)
   autocompleteComponent: BasicAutocompleteComponent<E, T>;
@@ -164,7 +164,7 @@ export class EditEntityComponent<
   entityType: Signal<string[]> = computed(() => {
     let value = this.entityTypeInput();
     if (!value || value.length === 0) {
-      value = this.formFieldConfig?.additional;
+      value = this.formFieldConfig()?.additional;
     }
 
     return asArray(value ?? []);
@@ -344,7 +344,7 @@ export class EditEntityComponent<
   }
 
   ngOnInit() {
-    this.multi = this.formFieldConfig?.isArray ?? false;
+    this.multi = this.formFieldConfig()?.isArray ?? false;
   }
 
   override ngDoCheck() {
