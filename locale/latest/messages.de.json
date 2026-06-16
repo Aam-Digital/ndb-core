@@ -1459,5 +1459,9 @@
   "203486571555587997": " (interne ID)",
   "2511254663230486245": "Email notifications are not enabled in this system. Please contact your system administrator for more information.",
   "459660846506403690": "Receive an email notification for each matching event, even when you are not using the app.",
-  "2019745996803592690": " Notifications will be sent to your account email {$INTERPOLATION} "
+  "2019745996803592690": " Notifications will be sent to your account email {$INTERPOLATION} ",
+  "6560708001470959956": "street",
+  "7227351318866100782": "house number",
+  "2321902036208707952": "postcode",
+  "9139280231181462": "city"
 }
