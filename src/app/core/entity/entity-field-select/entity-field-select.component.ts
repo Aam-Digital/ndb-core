@@ -34,11 +34,15 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   FormFieldConfig,
   string
 > {
+  // `placeholder` is part of the `MatFormFieldControl` contract (Angular Material
+  // reads it as a plain property), so it stays a decorator `@Input()` rather than a
+  // signal input; here we only override the default value.
   @Input() override placeholder: string =
     $localize`:EntityFieldSelect placeholder:Select Record Field`;
 
   override optionToString = input<(option: FormFieldConfig) => string>(
-    (option) => option.label,
+    // fall back to the id so the internal `_id` field (which has no label) is not blank
+    (option) => option.label ?? option.id,
   );
   override valueMapper = input<(option: FormFieldConfig) => string>(
     (option) => option.id,

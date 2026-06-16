@@ -28,6 +28,9 @@ export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
   EntityConstructor,
   string
 > {
+  // `placeholder` is part of the `MatFormFieldControl` contract (Angular Material
+  // reads it as a plain property), so it stays a decorator `@Input()` rather than a
+  // signal input; here we only override the default value.
   @Input() override placeholder =
     $localize`:EntityTypeSelect placeholder:Select Record Type`;
 

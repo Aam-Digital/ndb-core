@@ -332,6 +332,12 @@ export class BasicAutocompleteComponent<O, V = O>
       // read the mapper inputs so the rebuild also reacts to their changes
       this.valueMapper();
       this.optionToString();
+      // The block below is `untracked` so the effect only re-runs for the
+      // dependencies read above (options + mappers). Without it the effect
+      // would also track the signals read inside `setInitialInputValue`
+      // (e.g. the control `value`) and re-run — and rebuild the derived
+      // options — on every value change, which is both wasteful and would
+      // discard runtime-created options.
       untracked(() => {
         this._options = options.map((o) => this.toSelectableOption(o));
         this.setInitialInputValue();
