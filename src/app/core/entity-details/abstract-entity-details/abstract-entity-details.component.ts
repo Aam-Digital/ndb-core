@@ -34,6 +34,7 @@ export abstract class AbstractEntityDetailsComponent {
 
   readonly isLoading = signal(false);
   private changesSubscription: Subscription;
+  private loadedForId: string | undefined;
 
   entityType = input<string>();
   readonly entityConstructor = computed<EntityConstructor | undefined>(() =>
@@ -45,12 +46,12 @@ export abstract class AbstractEntityDetailsComponent {
 
   constructor() {
     effect((onCleanup) => {
-      if (this.entity()) {
+      const id = this.id();
+      if (!this.entityType() || !id) {
         return;
       }
 
-      const id = this.id();
-      if (!this.entityType() || !id) {
+      if (this.entity() && this.loadedForId === id) {
         return;
       }
 
@@ -99,6 +100,7 @@ export abstract class AbstractEntityDetailsComponent {
     const ctor = this.entityConstructor();
     if (!ctor) return;
 
+    this.loadedForId = id;
     this.isLoading.set(true);
     try {
       if (id === "new") {

@@ -1,6 +1,6 @@
 @if (entity()?.isNew) {
   <!-- hide while creating new task -->
-} @else if (!formControl.value) {
+} @else if (!valueSignal()) {
   <button mat-raised-button color="accent" (click)="completeTodo()">
     <app-fa-dynamic-icon
       icon="check"
@@ -11,7 +11,7 @@
 } @else {
   <div class="flex-row align-center gap-regular">
     <app-display-todo-completion
-      [value]="formControl.value"
+      [value]="valueSignal()"
     ></app-display-todo-completion>
 
     <button

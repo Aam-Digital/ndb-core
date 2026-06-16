@@ -79,7 +79,7 @@ export class AdminSearchableCheckboxComponent
   }
 
   override writeValue(value: boolean, shouldEmit = false): void {
-    const prevValue = this._value;
+    const prevValue = this.value;
     super.writeValue(value, shouldEmit);
     this.isChecked.set(!!value);
     if (this.searchableControl && prevValue !== value) {

@@ -97,10 +97,6 @@ export class EditLegacyAttendanceComponent
     return ctrl;
   }
 
-  get formControl(): FormControl<string[]> {
-    return this.ngControl.control as FormControl<string[]>;
-  }
-
   get parent() {
     return this.formControl.parent as FormGroup;
   }

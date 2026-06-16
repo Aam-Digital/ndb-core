@@ -97,8 +97,18 @@ export class EditAttendanceComponent
   statusFieldConfig = computed<FormFieldConfig>(() => ({
     id: "status",
     dataType: "configurable-enum",
+    label:
+      this.formFieldConfig()?.additional?.status?.label ??
+      AttendanceItem.schema.get("status")?.label,
     additional: this.statusEnumId(),
   }));
+
+  /** Label for the remarks field, overridable via the field config */
+  remarksLabel = computed(
+    () =>
+      this.formFieldConfig()?.additional?.remarks?.label ??
+      AttendanceItem.schema.get("remarks")?.label,
+  );
 
   /** FormFieldConfig for the internal entity autocomplete */
   participantFieldConfig = computed<FormFieldConfig>(() => ({
@@ -144,10 +154,6 @@ export class EditAttendanceComponent
   participantFilter: WritableSignal<(e: Entity) => boolean> = signal(
     () => true,
   );
-
-  get formControl(): FormControl<AttendanceItem[]> {
-    return this.ngControl.control as FormControl<AttendanceItem[]>;
-  }
 
   constructor() {
     super();

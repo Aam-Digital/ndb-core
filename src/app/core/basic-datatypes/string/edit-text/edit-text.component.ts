@@ -1,6 +1,6 @@
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
@@ -21,8 +21,4 @@ export class EditTextComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 }

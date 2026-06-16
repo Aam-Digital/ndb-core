@@ -1,6 +1,6 @@
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -30,8 +30,4 @@ export class EditDateComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<Date> {
-    return this.ngControl.control as FormControl<Date>;
-  }
 }

@@ -40,18 +40,6 @@
   border: 1px solid;
 }
 
-.disabled-text {
-  @extend .text-badge;
-  border-color: #fa222a;
-  background-color: #eba7a9;
-}
-
-.enabled-text {
-  @extend .text-badge;
-  border-color: green;
-  background-color: #beddba;
-}
-
 .indented-item {
   margin-left: sizes.$large;
 }
