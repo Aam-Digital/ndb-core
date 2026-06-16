@@ -3,7 +3,7 @@ import {
   Component,
   computed,
   inject,
-  Input,
+  input,
   LOCALE_ID,
   OnInit,
   Signal,
@@ -37,7 +37,7 @@ export class EditDateFormatComponent
   extends CustomFormControlDirective<string>
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   private readonly datePipe = new DatePipe(inject(LOCALE_ID));
   // Fixed reference date to illustrate each format: January 22, 2026
