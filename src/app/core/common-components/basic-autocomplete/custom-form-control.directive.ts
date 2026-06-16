@@ -1,4 +1,5 @@
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
+import { FocusMonitor } from "@angular/cdk/a11y";
 import {
   DestroyRef,
   Directive,
@@ -86,6 +87,7 @@ export abstract class CustomFormControlDirective<T>
   elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   errorStateMatcher = inject(ErrorStateMatcher);
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly focusMonitor = inject(FocusMonitor);
   @Input() ngControl = inject(NgControl, { optional: true, self: true });
   parentForm = inject(NgForm, { optional: true });
   parentFormGroup = inject(FormGroupDirective, { optional: true });
@@ -116,13 +118,21 @@ export abstract class CustomFormControlDirective<T>
   /** Backing signal for the current value (single source of truth). */
   private readonly _value = signal<T>(undefined);
   private readonly _disabled = signal(false);
-  private readonly _focused = signal(false);
   private readonly _touched = signal(false);
   private readonly _errorState = signal(false);
   private readonly _empty = computed(() => !this._value());
 
+  /**
+   * Whether the control is focused, derived from the *live* DOM focus rather than a flag
+   * toggled by focus/blur events. This is robust: when an inner element that had focus is
+   * removed during a re-render the browser fires no `blur`/`focusout`, so an event-driven
+   * flag (or even the CDK FocusMonitor) would stay stuck `true` and leave the field showing
+   * a focus overlay forever. Material re-reads this getter on every change-detection pass,
+   * so the state self-corrects as soon as focus actually leaves.
+   */
   get focused() {
-    return this._focused();
+    const host = this.elementRef.nativeElement;
+    return !!document.activeElement && host.contains(document.activeElement);
   }
 
   get touched() {
@@ -138,7 +148,7 @@ export abstract class CustomFormControlDirective<T>
   }
 
   get shouldLabelFloat() {
-    return this._focused() || !this._empty();
+    return this.focused || !this._empty();
   }
 
   @Input()
@@ -167,26 +177,29 @@ export abstract class CustomFormControlDirective<T>
       this.ngControl.valueAccessor = this;
     }
 
-    this.elementRef.nativeElement.addEventListener("focusin", () =>
-      this.focus(),
-    );
-    this.elementRef.nativeElement.addEventListener("focusout", () =>
-      this.blur(),
-    );
+    // Track focus via the CDK FocusMonitor instead of manual focusin/focusout
+    // listeners: it reports focus entering/leaving the whole subtree and, crucially,
+    // still emits a "blurred" (null) event when the currently-focused inner element
+    // is removed during a re-render — manual `focusout` is dropped in that case,
+    // which previously left the field stuck in the focused state.
+    this.focusMonitor
+      .monitor(this.elementRef, true)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((origin) => (origin ? this.focus() : this.blur()));
   }
 
   ngOnDestroy() {
+    this.focusMonitor.stopMonitoring(this.elementRef);
     this.stateChanges.complete();
   }
 
   focus() {
-    this._focused.set(true);
+    // `focused` reads live DOM focus; just notify Material to re-read its state.
     this.stateChanges.next();
   }
 
   blur() {
     this._touched.set(true);
-    this._focused.set(false);
     this.onTouched();
     this.stateChanges.next();
   }
@@ -239,6 +252,24 @@ export abstract class CustomFormControlDirective<T>
     this.checkUpdateDisabled(control);
     this.checkUpdateErrorState(control);
     this.checkUpdateRequired(control);
+    this.checkUpdateFocused();
+  }
+
+  /** Last focused state seen, to detect changes across ngDoCheck calls. */
+  private _lastFocused = false;
+
+  /**
+   * Notify Material when the focused state changed without a focus/blur event reaching us
+   * (e.g. the focused inner element was removed during a re-render). The `focused` getter
+   * reads live DOM focus, but Material only re-reads it on a `stateChanges` emission, so we
+   * push one here when the value actually changed.
+   */
+  private checkUpdateFocused() {
+    const focusedNow = this.focused;
+    if (focusedNow !== this._lastFocused) {
+      this._lastFocused = focusedNow;
+      this.stateChanges.next();
+    }
   }
 
   private _controlSubscribed = false;
