@@ -737,8 +737,6 @@
   "4143359484380110691": "Definieren Sie Regeln für Ereignisse, für die Sie Benachrichtigungen erhalten möchten. Sie können beliebig viele Regeln hinzufügen und einige vorübergehend deaktivieren, um diese Benachrichtigungen zu pausieren. ",
   "4518659109156428915": "Definieren Sie einen anderen Benachrichtigungstyp für Ihr Benutzerkonto",
   "7779859057193480599": "Neue Benachrichtigungsregel hinzufügen",
-  "1400147328363601102": "Push-Benachrichtigungen sind aktiviert. Sie erhalten Echtzeit-Updates zu wichtigen Aktivitäten.",
-  "2455631196031742891": "Push-Benachrichtigungen sind deaktiviert. Aktivieren Sie sie in den Einstellungen, um auch außerhalb der App Benachrichtigungen zu erhalten.",
   "7193930492633515632": "Benachrichtigungen sind immer über das Glockensymbol in der Symbolleiste oben in der Anwendung sichtbar. Sie können unten weitere Möglichkeiten zum Erhalt von Benachrichtigungen aktivieren. ",
   "200424054360142817": "Push-Benachrichtigungen werden derzeit von Ihrem Browser nicht unterstützt. ",
   "188782366693384177": "Für weitere Informationen wenden Sie sich bitte an Ihren Systemadministrator. ",
@@ -753,7 +751,6 @@
   "6999023508738940307": "Erste Benachrichtigungseinstellungen erstellt und gespeichert.",
   "2697874063201718403": "Benachrichtigungsregel löschen",
   "3173500569851728935": "Möchten Sie diese Benachrichtigungsregel wirklich entfernen?",
-  "9181790066849638690": "neues Kind registriert",
   "2949628569044050352": "Mir zugewiesene Aufgabe",
   "5449135813027171237": "Notiz, die mich betrifft",
   "3768499663881435063": "Jetzt",
@@ -776,8 +773,6 @@
   "2407583477134455772": "Gerät für Push-Benachrichtigungen abgemeldet.",
   "7774161699736482155": "Beim Senden der Testbenachrichtigung ist ein Fehler aufgetreten. Sollte der Fehler weiterhin bestehen, deaktivieren und aktivieren Sie die Push-Benachrichtigungen erneut.",
   "2003051119485827390": "Wo Benachrichtigungen empfangen",
-  "6151416851572883297": " Aktiviert ",
-  "6197665339164385071": " Deaktiviert ",
   "2613908026572744573": "Gelesene Benachrichtigungen",
   "4843991899898080020": "Ungelesene Benachrichtigungen",
   "551328263822084095": "{$PH} {$PH_1} dupliziert",
@@ -1461,5 +1456,8 @@
   "7173418716427245373": " Auswahl löschen ",
   "709733175763691109": "Bitte wählen Sie vor dem Herunterladen mindestens eine Spalte aus.",
   "5154473551248374598": " (Alter)",
-  "203486571555587997": " (interne ID)"
+  "203486571555587997": " (interne ID)",
+  "2511254663230486245": "Email notifications are not enabled in this system. Please contact your system administrator for more information.",
+  "459660846506403690": "Receive an email notification for each matching event, even when you are not using the app.",
+  "2019745996803592690": " Notifications will be sent to your account email {$INTERPOLATION} "
 }

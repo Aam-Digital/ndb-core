@@ -737,8 +737,6 @@
   "4143359484380110691": "Définissez des règles pour les événements pour lesquels vous souhaitez recevoir des notifications. Vous pouvez ajouter autant de règles que vous le souhaitez et en désactiver certaines temporairement pour suspendre ces notifications. ",
   "4518659109156428915": "Définissez un autre type de notifications pour votre compte utilisateur",
   "7779859057193480599": "Ajouter une nouvelle règle de notification",
-  "1400147328363601102": "Les notifications push sont activées. Vous recevrez des mises à jour en temps réel pour vos activités importantes.",
-  "2455631196031742891": "Les notifications push sont désactivées. Activez-les dans les paramètres pour recevoir également des alertes en dehors de l'application.",
   "7193930492633515632": "Les notifications sont toujours visibles via l'icône en forme de cloche dans la barre d'outils en haut de l'application. Vous pouvez activer d'autres moyens de recevoir des notifications ci-dessous. ",
   "200424054360142817": "Les notifications push ne sont actuellement pas prises en charge par votre navigateur. ",
   "188782366693384177": "Veuillez contacter votre administrateur système pour plus d'informations. ",
@@ -753,7 +751,6 @@
   "6999023508738940307": "Paramètres de notification initiaux créés et enregistrés.",
   "2697874063201718403": "Supprimer la règle de notification",
   "3173500569851728935": "Êtes-vous sûr de vouloir supprimer cette règle de notification ?",
-  "9181790066849638690": "un nouvel enfant en cours d'enregistrement",
   "2949628569044050352": "Tâches qui me sont assignées",
   "5449135813027171237": "Notes me concernant",
   "3768499663881435063": "Tout à l' heure",
@@ -776,8 +773,6 @@
   "2407583477134455772": "Appareil non enregistré pour les notifications push.",
   "7774161699736482155": "Erreur lors de l'envoi de la notification de test. Si cette erreur persiste, essayez de désactiver puis de réactiver les notifications push.",
   "2003051119485827390": "Où vous recevez des notifications",
-  "6151416851572883297": " Activé ",
-  "6197665339164385071": " Désactivé ",
   "2613908026572744573": "Notification lue",
   "4843991899898080020": "Notification non lue",
   "551328263822084095": "{$PH} {$PH_1} dupliqué avec succès",
@@ -1461,5 +1456,8 @@
   "7173418716427245373": " Clear selection ",
   "709733175763691109": "Please select at least one column before downloading.",
   "5154473551248374598": " (age)",
-  "203486571555587997": " (internal id)"
+  "203486571555587997": " (internal id)",
+  "2511254663230486245": "Email notifications are not enabled in this system. Please contact your system administrator for more information.",
+  "459660846506403690": "Receive an email notification for each matching event, even when you are not using the app.",
+  "2019745996803592690": " Notifications will be sent to your account email {$INTERPOLATION} "
 }
