@@ -140,11 +140,11 @@ Autocomplete
       </span>
     }
 
-    @if (!templateRef) {
+    @if (!templateRef()) {
       {{ item.asString }}
     } @else {
       <ng-template
-        [ngTemplateOutlet]="templateRef"
+        [ngTemplateOutlet]="templateRef()"
         [ngTemplateOutletContext]="{ $implicit: item.initial }"
       ></ng-template>
     }
@@ -157,7 +157,7 @@ Autocomplete
       @if (multi()) {
         <mat-checkbox [checked]="item.selected"></mat-checkbox>
       }
-      @if (!templateRef) {
+      @if (!templateRef()) {
         <span
           class="option-label"
           [class.text-truncate]="truncate"
@@ -172,7 +172,7 @@ Autocomplete
       } @else {
         <div class="option-label item-option">
           <ng-template
-            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutlet]="templateRef()"
             [ngTemplateOutletContext]="{ $implicit: item.initial }"
           ></ng-template>
         </div>
@@ -182,7 +182,7 @@ Autocomplete
 
   <!-- Create new option -->
   @if (showAddOption() && inputElement.value) {
-    @for (option of availableCreateOptions; track $index) {
+    @for (option of availableCreateOptions(); track $index) {
       <mat-option
         [value]="toCreateOptionValue(option, inputElement.value)"
         [attr.aria-label]="createOptionAriaLabel(option, inputElement.value)"

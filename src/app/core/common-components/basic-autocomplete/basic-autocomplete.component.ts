@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   computed,
-  ContentChild,
+  contentChild,
   DestroyRef,
   effect,
   ElementRef,
@@ -13,10 +13,11 @@ import {
   OnInit,
   output,
   signal,
+  Signal,
   TemplateRef,
   TrackByFunction,
   untracked,
-  ViewChild,
+  viewChild,
   WritableSignal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -128,14 +129,17 @@ export class BasicAutocompleteComponent<O, V = O>
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewportRuler = inject(ViewportRuler);
 
-  @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
-  // `_elementRef` is protected in `MapInput`
-  @ViewChild(MatInput, { static: true }) inputElement: MatInput & {
-    _elementRef: ElementRef<HTMLElement>;
-  };
-  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
-  @ViewChild(CdkVirtualScrollViewport)
-  virtualScrollViewport: CdkVirtualScrollViewport;
+  templateRef = contentChild(TemplateRef);
+  // Query the search `<input #inputElement>` by its template-ref name (read as MatInput)
+  // rather than by type: a bare `viewChild(MatInput)` would match the first MatInput in
+  // the view (the display input inside the `@if`), whereas the old `@ViewChild(MatInput,
+  // { static: true })` skipped structural content and resolved the search input.
+  // `_elementRef` is protected in `MatInput`, so widen the read type to expose it.
+  inputElement = viewChild("inputElement", { read: MatInput }) as Signal<
+    (MatInput & { _elementRef: ElementRef<HTMLElement> }) | undefined
+  >;
+  autocomplete = viewChild(MatAutocompleteTrigger);
+  virtualScrollViewport = viewChild(CdkVirtualScrollViewport);
 
   valueMapper = input<(option: O) => V>(
     (option: O) => option?.["_id"] ?? (option as unknown as V),
@@ -163,7 +167,7 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
-  protected get availableCreateOptions(): CreateOptionConfig<O>[] {
+  protected availableCreateOptions = computed<CreateOptionConfig<O>[]>(() => {
     if (this.createOptions().length > 0) {
       return this.createOptions();
     }
@@ -172,7 +176,7 @@ export class BasicAutocompleteComponent<O, V = O>
     }
 
     return [{ label: "", create: this.createOption() }];
-  }
+  });
 
   protected createOptionLabel(
     option: CreateOptionConfig<O>,
@@ -244,6 +248,9 @@ export class BasicAutocompleteComponent<O, V = O>
    */
   displayFullLengthOptionLabel = input(false);
 
+  // Kept as a getter (not a `computed`): it reads `_options`, a plain mutable array
+  // (rebuilt/reordered/pushed imperatively), so a `computed` would cache stale results
+  // unless `_options` were made a signal — a larger refactor not worth it here.
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
 
@@ -341,7 +348,7 @@ export class BasicAutocompleteComponent<O, V = O>
       untracked(() => {
         this._options = options.map((o) => this.toSelectableOption(o));
         this.setInitialInputValue();
-        if (this.autocomplete?.panelOpen) {
+        if (this.autocomplete()?.panelOpen) {
           // if new options have been added, update the visible autocomplete options
           this.showAutocomplete(this.autocompleteForm.value);
         }
@@ -353,7 +360,7 @@ export class BasicAutocompleteComponent<O, V = O>
     this.autocompleteSuggestedOptions.subscribe((options) => {
       this.autocompleteOptions.set(options);
       setTimeout(() => {
-        this.virtualScrollViewport?.checkViewportSize();
+        this.virtualScrollViewport()?.checkViewportSize();
       });
     });
     // Subscribe to the valueChanges observable to print the input value
@@ -387,7 +394,7 @@ export class BasicAutocompleteComponent<O, V = O>
    */
   public updatePanelWidth() {
     // Use closest .mat-mdc-form-field or .mat-form-field from input element
-    const fieldEl = this.inputElement?._elementRef?.nativeElement.closest(
+    const fieldEl = this.inputElement()?._elementRef?.nativeElement.closest(
       ".mat-mdc-form-field, .mat-form-field",
     ) as HTMLElement;
     const fieldWidth = fieldEl ? fieldEl.getBoundingClientRect().width : 200;
@@ -415,20 +422,20 @@ export class BasicAutocompleteComponent<O, V = O>
    * Runs twice (immediately and on next animation frame) to handle late layout updates.
    */
   private updateOpenPanelPosition(): void {
-    if (!this.autocomplete?.panelOpen) {
+    if (!this.autocomplete()?.panelOpen) {
       return;
     }
 
     this.updatePanelWidth();
-    this.autocomplete.updatePosition();
+    this.autocomplete()?.updatePosition();
 
     requestAnimationFrame(() => {
-      if (!this.autocomplete?.panelOpen) {
+      if (!this.autocomplete()?.panelOpen) {
         return;
       }
 
       this.updatePanelWidth();
-      this.autocomplete.updatePosition();
+      this.autocomplete()?.updatePosition();
     });
   }
 
@@ -477,12 +484,11 @@ export class BasicAutocompleteComponent<O, V = O>
     this.updatePanelWidth();
 
     setTimeout(() => {
-      this.inputElement.focus();
+      const inputEl = this.inputElement();
+      inputEl?.focus();
 
       // select all text for easy overwriting when typing to search for options
-      (
-        this.inputElement._elementRef.nativeElement as HTMLInputElement
-      ).select();
+      (inputEl?._elementRef.nativeElement as HTMLInputElement)?.select();
       if (valueToRevertTo) {
         this.autocompleteForm.setValue(valueToRevertTo);
       }
@@ -491,7 +497,7 @@ export class BasicAutocompleteComponent<O, V = O>
     this.isInSearchMode.set(true);
 
     // update virtual scroll as the container remains empty until the user scrolls initially
-    setTimeout(() => this.virtualScrollViewport?.checkViewportSize());
+    setTimeout(() => this.virtualScrollViewport()?.checkViewportSize());
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
@@ -593,7 +599,7 @@ export class BasicAutocompleteComponent<O, V = O>
     }
 
     if (typeof selected === "string") {
-      const defaultCreateOption = this.availableCreateOptions[0];
+      const defaultCreateOption = this.availableCreateOptions()[0];
       if (defaultCreateOption) {
         this.createFromConfig(
           this.toCreateOptionValue(defaultCreateOption, selected),

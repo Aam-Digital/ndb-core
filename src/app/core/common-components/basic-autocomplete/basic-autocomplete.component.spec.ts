@@ -155,7 +155,7 @@ describe("BasicAutocompleteComponent", () => {
     fixture.detectChanges();
 
     component.showAutocomplete();
-    component.autocomplete.openPanel();
+    component.autocomplete()!.openPanel();
     const options = await autocomplete.getOptions();
     expect(options).toHaveLength(
       3 +
@@ -165,7 +165,7 @@ describe("BasicAutocompleteComponent", () => {
 
     await options[2].click();
     // When browser is not in foreground, this doesn't happen automatically
-    component.autocomplete.openPanel();
+    component.autocomplete()!.openPanel();
     fixture.detectChanges();
     await options[1].click();
 
@@ -278,12 +278,12 @@ describe("BasicAutocompleteComponent", () => {
       fixture.componentRef.setInput("options", ["one", "two"]);
       fixture.detectChanges();
       component.showAutocomplete();
-      component.autocomplete.openPanel();
+      component.autocomplete()!.openPanel();
       fixture.detectChanges();
 
       const updatePanelWidthSpy = vi.spyOn(component, "updatePanelWidth");
       const updatePositionSpy = vi.spyOn(
-        component.autocomplete,
+        component.autocomplete()!,
         "updatePosition",
       );
       updatePanelWidthSpy.mockClear();
@@ -293,7 +293,7 @@ describe("BasicAutocompleteComponent", () => {
       vi.advanceTimersByTime(100);
       await fixture.whenStable();
 
-      expect(component.autocomplete.panelOpen).toBe(true);
+      expect(component.autocomplete()!.panelOpen).toBe(true);
       expect(updatePanelWidthSpy).toHaveBeenCalled();
       expect(updatePositionSpy).toHaveBeenCalled();
     } finally {
