@@ -2,9 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
-  signal,
+  linkedSignal,
+  resource,
+  untracked,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { map } from "rxjs";
 import {
   MatSlideToggle,
   MatSlideToggleChange,
@@ -55,42 +58,39 @@ import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
 })
-export class NotificationSettingsComponent implements OnInit {
-  notificationConfig = signal<NotificationConfig>(null);
-  isFeatureEnabled = signal<boolean>(false);
-  isBrowserSupported = signal<boolean>(false);
-  isPushNotificationEnabled = signal<boolean>(false);
-
+export class NotificationSettingsComponent {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
   private readonly userEntity = inject(CurrentUserSubject);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly notificationService = inject(NotificationService);
+  protected readonly notificationService = inject(NotificationService);
   private readonly alertService = inject(AlertService);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
+
+  readonly accountEmail = toSignal(this.sessionInfo.pipe(map((s) => s?.email)));
+
+  private readonly notificationConfigResource = resource({
+    loader: () => untracked(() => this.loadNotificationConfig()),
+  });
+  notificationConfig = linkedSignal(
+    () => this.notificationConfigResource.value() ?? null,
+  );
+
+  private readonly isDeviceRegisteredResource = resource({
+    loader: async () =>
+      untracked(() =>
+        this.notificationService.hasNotificationPermissionGranted(),
+      ) && (await this.notificationService.isDeviceRegistered()),
+  });
+  isPushNotificationEnabled = linkedSignal(
+    () => this.isDeviceRegisteredResource.value() ?? false,
+  );
 
   /**
    * Get the logged-in user id
    */
   private get userId() {
     return this.sessionInfo.value?.id;
-  }
-
-  async ngOnInit() {
-    this.isFeatureEnabled.set(
-      await this.notificationService.isNotificationServerEnabled(),
-    );
-
-    this.isBrowserSupported.set(
-      this.notificationService.isPushNotificationSupported(),
-    );
-
-    this.notificationConfig.set(await this.loadNotificationConfig());
-
-    this.isPushNotificationEnabled.set(
-      this.notificationService.hasNotificationPermissionGranted() &&
-        (await this.notificationService.isDeviceRegistered()),
-    );
   }
 
   private async loadNotificationConfig() {
@@ -110,7 +110,7 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   private async createNewNotificationConfig(): Promise<NotificationConfig> {
-    if (!this.isFeatureEnabled()) {
+    if (!this.notificationService.isNotificationServerEnabled()) {
       // do not create a new config if the API is not enabled
       return;
     }
@@ -152,6 +152,18 @@ export class NotificationSettingsComponent implements OnInit {
     );
 
     return config;
+  }
+
+  toggleEmailChannel(event: MatSlideToggleChange) {
+    this.notificationConfig.update((config) => {
+      const clone = Object.assign(
+        Object.create(Object.getPrototypeOf(config)),
+        config,
+      );
+      clone.channels = { ...config.channels, email: event.checked };
+      return clone;
+    });
+    this.unsavedChanges.pending.set(true);
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
@@ -263,14 +275,6 @@ function generateDefaultNotificationConfig(userId: string, userEntity: string) {
 
   const config = new NotificationConfig(userId);
   config.notificationRules = [
-    {
-      label: $localize`:Default notification rule label:a new Child being registered`,
-      notificationType: "entity_change",
-      entityType: "Child",
-      changeType: ["created"],
-      conditions: {},
-      enabled: true,
-    },
     {
       label: $localize`:Default notification rule label:Tasks assigned to me`,
       notificationType: "entity_change",
