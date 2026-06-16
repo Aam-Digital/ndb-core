@@ -140,8 +140,10 @@ describe("BasicAutocompleteComponent", () => {
 
   it("should disable the form if the control is disabled", () => {
     component.disabled = false;
+    fixture.detectChanges();
     expect(component.autocompleteForm.disabled).toBe(false);
     component.disabled = true;
+    fixture.detectChanges();
     expect(component.autocompleteForm.disabled).toBe(true);
   });
 

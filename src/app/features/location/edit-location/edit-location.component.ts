@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   input,
 } from "@angular/core";
@@ -61,14 +60,6 @@ export class EditLocationComponent
    */
   autoLookup = input<boolean>(true);
 
-  /**
-   * The current location value, derived from the form control.
-   * (Previously a manually-synced signal because `this.value` did not reflect the
-   * field value through the `DynamicEditComponent` wrapper — now handled by the base
-   * class syncing `valueSignal` from the control.)
-   */
-  readonly locationValue = computed(() => this.valueSignal());
-
   override onContainerClick() {
     if (!this.disabled) {
       this.openMap();
@@ -77,7 +68,7 @@ export class EditLocationComponent
 
   openMap() {
     const config: MapPopupConfig = {
-      selectedLocation: this.locationValue(),
+      selectedLocation: this.valueSignal(),
       disabled: this.disabled,
     };
 
@@ -99,7 +90,7 @@ export class EditLocationComponent
           map((result: GeoLocation[]) => result[0]),
           filter(
             (result: GeoLocation | undefined) =>
-              JSON.stringify(result) !== JSON.stringify(this.locationValue()),
+              JSON.stringify(result) !== JSON.stringify(this.valueSignal()),
           ), // nothing changed, skip
         )
         .subscribe((result: GeoLocation) => {
