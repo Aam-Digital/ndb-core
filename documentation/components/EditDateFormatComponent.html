@@ -1803,7 +1803,7 @@ as well as <code>[(value)]</code> / <code>writeValue</code> updates.</p>
   Component,
   computed,
   inject,
-  Input,
+  input,
   LOCALE_ID,
   OnInit,
   Signal,
@@ -1837,7 +1837,7 @@ export class EditDateFormatComponent
   extends CustomFormControlDirective&lt;string&gt;
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
 
   private readonly datePipe &#x3D; new DatePipe(inject(LOCALE_ID));
   // Fixed reference date to illustrate each format: January 22, 2026
