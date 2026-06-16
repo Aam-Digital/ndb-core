@@ -307,23 +307,26 @@ describe("Schema data type: location", () => {
     expect(columns[4].resolveValue(value, schemaField)).toBe("Berlin");
   });
 
-  it("should fall back to geoLookup address parts when top-level parts are missing", () => {
+  it("should export the address parts that transformToObjectFormat flattens from geoLookup", () => {
     const schemaField = {
       id: "address",
       label: "Address",
     } as EntitySchemaField;
     const columns = service.getExportColumns(schemaField);
-    const value: GeoLocation = {
+
+    // raw value as stored before enrichment: only geoLookup.address is populated,
+    // postcode is numeric and the city is a "village"
+    const value = service.transformToObjectFormat({
       locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
       geoLookup: {
         address: {
           road: "Rollbergstraße",
           house_number: "28A",
-          postcode: "12053",
-          city: "Berlin",
+          postcode: 12053,
+          village: "Berlin",
         },
-      } as OpenStreetMapsSearchResult,
-    };
+      } as unknown as OpenStreetMapsSearchResult,
+    });
 
     expect(columns[1].resolveValue(value, schemaField)).toBe("Rollbergstraße");
     expect(columns[2].resolveValue(value, schemaField)).toBe("28A");

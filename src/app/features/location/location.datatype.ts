@@ -27,6 +27,12 @@ export class LocationDatatype extends DefaultDatatype<
    * Export the human-readable location string (default column) plus separate
    * columns for the individual address parts (street, house number, postcode, city)
    * so they can be used flexibly for mail merge and similar processes (see #3715).
+   *
+   * The address parts are read from the flat top-level fields, which
+   * {@link transformToObjectFormat} / {@link importMapFunction} populate via
+   * `enrichGeoLocation` (copying `geoLookup.address` up, folding village/town
+   * into city and stringifying postcode). Every value reaching export is
+   * therefore already enriched, so no `geoLookup.address` fallback is needed.
    */
   override getExportColumns(
     schemaField: EntitySchemaField,
@@ -56,30 +62,22 @@ export class LocationDatatype extends DefaultDatatype<
       part(
         "_street",
         $localize`:Location export column:street`,
-        (value) => value.road ?? value.geoLookup?.address?.road,
+        (value) => value.road,
       ),
       part(
         "_house_number",
         $localize`:Location export column:house number`,
-        (value) => value.house_number ?? value.geoLookup?.address?.house_number,
+        (value) => value.house_number,
       ),
       part(
         "_postcode",
         $localize`:Location export column:postcode`,
-        (value) =>
-          value.postcode ??
-          (value.geoLookup?.address?.postcode != null
-            ? String(value.geoLookup.address.postcode)
-            : undefined),
+        (value) => value.postcode,
       ),
       part(
         "_city",
         $localize`:Location export column:city`,
-        (value) =>
-          value.city ??
-          value.geoLookup?.address?.city ??
-          value.geoLookup?.address?.village ??
-          value.geoLookup?.address?.town,
+        (value) => value.city,
       ),
     ];
   }
