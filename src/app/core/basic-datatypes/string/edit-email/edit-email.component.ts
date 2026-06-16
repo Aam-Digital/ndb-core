@@ -6,7 +6,6 @@ import {
   OnInit,
 } from "@angular/core";
 import {
-  FormControl,
   ReactiveFormsModule,
   Validators,
   AbstractControl,
@@ -37,10 +36,6 @@ export class EditEmailComponent
   implements EditComponent, OnInit
 {
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 
   ngOnInit() {
     this.formControl.addValidators([emailValidatorWithMessage]);

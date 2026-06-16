@@ -155,10 +155,6 @@ export class EditAttendanceComponent
     () => true,
   );
 
-  get formControl(): FormControl<AttendanceItem[]> {
-    return this.ngControl.control as FormControl<AttendanceItem[]>;
-  }
-
   constructor() {
     super();
     // Whenever a new participant is selected in the autocomplete, add them.

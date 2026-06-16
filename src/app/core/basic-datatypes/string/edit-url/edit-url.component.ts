@@ -5,7 +5,7 @@ import {
   input,
   OnInit,
 } from "@angular/core";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -27,10 +27,6 @@ export class EditUrlComponent
   implements EditComponent, OnInit
 {
   formFieldConfig = input<FormFieldConfig>();
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 
   ngOnInit() {
     this.formControl.valueChanges.subscribe((value) =>
