@@ -4787,6 +4787,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
   webmaster_email: undefined,
   userAdminApi: undefined,
   realm: undefined,
+  clientId: undefined,
   DB_PROXY_PREFIX: &quot;/db&quot;,
   API_PROXY_PREFIX: &quot;/api&quot;,
   notificationsConfig: undefined,
@@ -4845,6 +4846,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
   userAdminApi: undefined, // loaded from &#x60;assets/keycloak.json&#x60; during bootstrap
   /** Keycloak realm for user management */
   realm: undefined, // loaded from &#x60;assets/keycloak.json&#x60; during bootstrap
+  /** Keycloak client id of the app (used e.g. for the &quot;back to application&quot; link in action emails) */
+  clientId: undefined, // loaded from &#x60;assets/keycloak.json&#x60; during bootstrap
 
   /** Path for the reverse proxy that forwards to the database - configured in &#x60;default.conf&#x60; */
   DB_PROXY_PREFIX: &quot;/db&quot;,

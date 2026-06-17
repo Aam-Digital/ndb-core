@@ -282,8 +282,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="319"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:319</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="327"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:327</a></div>
                         </td>
                     </tr>
 
@@ -469,8 +469,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="332"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:332</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="340"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:340</a></div>
                         </td>
                     </tr>
 
@@ -638,7 +638,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:251</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:259</a></code>
 </div>
                         </td>
                     </tr>
@@ -681,7 +681,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:260</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:268</a></code>
 </div>
                         </td>
                     </tr>
@@ -720,8 +720,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="306"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:306</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="314"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:314</a></div>
                         </td>
                     </tr>
 
@@ -1289,6 +1289,11 @@ export class KeycloakAdminService extends UserAdminService {
 
   /**
    * Sends an email to the user with the given id, asking to perform the specified action.
+   *
+   * &#x60;client_id&#x60; is passed so that Keycloak&#x27;s &quot;Back to Application&quot; link after completing
+   * the action returns the user to the app (via the client&#x27;s configured baseUrl) instead
+   * of the Keycloak server itself. Without a client_id, Keycloak falls back to the account
+   * console on the Keycloak server.
    * @param userAccountId
    * @param action e.g. &quot;UPDATE_PASSWORD&quot;, &quot;VERIFY_EMAIL&quot;
    */
@@ -1299,6 +1304,9 @@ export class KeycloakAdminService extends UserAdminService {
       {
         headers: {
           &quot;Accept-Language&quot;: this.baseLocale,
+        },
+        params: {
+          client_id: environment.clientId as string,
         },
       },
     );
