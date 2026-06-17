@@ -20,8 +20,8 @@ function evt(id: string, at: string): ChangeEvent {
 
 async function render(opts?: {
   result?: ChangeEvent[] | Error;
-  /** backend feature flag: undefined=loading, true/false */
-  enabled?: boolean | undefined;
+  /** backend feature flag: omitted=true; explicit undefined=still-loading */
+  enabled?: boolean;
   hasPermission?: boolean;
 }): Promise<ComponentFixture<ChangeHistoryDialogComponent>> {
   const result = opts?.result ?? [];
