@@ -91,14 +91,15 @@ describe("KeycloakAdminService", () => {
       )
       .flush({});
 
-    httpTestingController
-      .expectOne(
-        (req) =>
-          req.url ===
-            `${BASE_URL}/users/${mockUser.id}/execute-actions-email` &&
-          req.method === "PUT",
-      )
-      .flush({});
+    const emailReq = httpTestingController.expectOne(
+      (req) =>
+        req.url === `${BASE_URL}/users/${mockUser.id}/execute-actions-email` &&
+        req.method === "PUT",
+    );
+    // client_id lets Keycloak resolve the app client's baseUrl for the
+    // "back to application" link (instead of falling back to the Keycloak account console)
+    expect(emailReq.request.params.get("client_id")).toBe("app");
+    emailReq.flush({});
   });
 
   it("should log debug if user does not exist in Keycloak during deletion", async () => {
