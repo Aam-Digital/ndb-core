@@ -3,6 +3,7 @@ import { of, throwError } from "rxjs";
 import { GeoLocation, enrichGeoLocation } from "./geo-location";
 import { OpenStreetMapsSearchResult, GeoService } from "./geo.service";
 import { LocationDatatype } from "./location.datatype";
+import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 
 describe("Schema data type: location", () => {
   let service: LocationDatatype;
@@ -264,5 +265,87 @@ describe("Schema data type: location", () => {
     };
 
     expect(service.transformToObjectFormat(location)).toEqual(location);
+  });
+
+  it("should not return any export columns when the field has no label", () => {
+    expect(
+      service.getExportColumns({ id: "address" } as EntitySchemaField),
+    ).toEqual([]);
+  });
+
+  it("should export the display name plus separate columns for each address part", () => {
+    const schemaField = {
+      id: "address",
+      label: "Address",
+    } as EntitySchemaField;
+    const columns = service.getExportColumns(schemaField);
+
+    expect(columns.map((c) => c.keySuffix)).toEqual([
+      "",
+      "_street",
+      "_house_number",
+      "_postcode",
+      "_city",
+    ]);
+    expect(columns[0].label).toBe("Address");
+    expect(columns.slice(1).every((c) => c.label.startsWith("Address"))).toBe(
+      true,
+    );
+
+    const value: GeoLocation = {
+      locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      road: "Rollbergstraße",
+      house_number: "28A",
+      postcode: "12053",
+      city: "Berlin",
+    };
+
+    expect(columns[0].resolveValue(value, schemaField)).toBe(value);
+    expect(columns[1].resolveValue(value, schemaField)).toBe("Rollbergstraße");
+    expect(columns[2].resolveValue(value, schemaField)).toBe("28A");
+    expect(columns[3].resolveValue(value, schemaField)).toBe("12053");
+    expect(columns[4].resolveValue(value, schemaField)).toBe("Berlin");
+  });
+
+  it("should export the address parts that transformToObjectFormat flattens from geoLookup", () => {
+    const schemaField = {
+      id: "address",
+      label: "Address",
+    } as EntitySchemaField;
+    const columns = service.getExportColumns(schemaField);
+
+    // raw value as stored before enrichment: only geoLookup.address is populated,
+    // postcode is numeric and the city is a "village"
+    const value = service.transformToObjectFormat({
+      locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      geoLookup: {
+        address: {
+          road: "Rollbergstraße",
+          house_number: "28A",
+          postcode: 12053,
+          village: "Berlin",
+        },
+      } as unknown as OpenStreetMapsSearchResult,
+    });
+
+    expect(columns[1].resolveValue(value, schemaField)).toBe("Rollbergstraße");
+    expect(columns[2].resolveValue(value, schemaField)).toBe("28A");
+    expect(columns[3].resolveValue(value, schemaField)).toBe("12053");
+    expect(columns[4].resolveValue(value, schemaField)).toBe("Berlin");
+  });
+
+  it("should resolve missing address parts to undefined", () => {
+    const schemaField = {
+      id: "address",
+      label: "Address",
+    } as EntitySchemaField;
+    const partColumns = service.getExportColumns(schemaField).slice(1);
+
+    for (const column of partColumns) {
+      expect(column.resolveValue(undefined, schemaField)).toBeUndefined();
+      expect(
+        column.resolveValue({ locationString: "x" }, schemaField),
+      ).toBeUndefined();
+    }
   });
 });
