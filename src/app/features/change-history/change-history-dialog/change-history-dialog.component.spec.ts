@@ -42,6 +42,7 @@ async function render(opts?: {
           getHistory,
           isAuditEnabled: signal(enabled),
           hasHistoryPermission: () => hasPermission,
+          loadAuditFeatureFlag: () => undefined,
         },
       },
       { provide: MAT_DIALOG_DATA, useValue: { entity: new TestEntity("1") } },

@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, resource } from "@angular/core";
+import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../core/logging/logging.service";
@@ -41,11 +41,27 @@ export class ChangeHistoryService {
   }
 
   /**
+   * Lazy trigger for the feature-flag fetch. Kept off until
+   * {@link loadAuditFeatureFlag} is called (when the change-history dialog
+   * opens), so this root service — constructed eagerly via the app module —
+   * does not fire an HTTP request at startup (which would otherwise leave unit
+   * tests' zone perpetually unstable).
+   */
+  private readonly auditFlagRequested = signal(false);
+
+  /** Trigger the (one-shot, cached) feature-flag fetch. */
+  loadAuditFeatureFlag() {
+    this.auditFlagRequested.set(true);
+  }
+
+  /**
    * Backend feature flags (same `/actuator/features` endpoint the other
-   * features use). Failure (e.g. no backend in a static deployment) resolves to
-   * empty flags, so the feature reads as disabled rather than erroring.
+   * features use). Only fetched once requested. Failure (e.g. no backend in a
+   * static deployment) resolves to empty flags, so the feature reads as
+   * disabled rather than erroring.
    */
   private readonly featureFlags = resource({
+    params: () => (this.auditFlagRequested() ? {} : undefined),
     loader: async () => {
       try {
         return await firstValueFrom(
@@ -62,11 +78,11 @@ export class ChangeHistoryService {
 
   /**
    * Whether change logging is enabled on the backend. Tri-state for
-   * {@link FeatureDisabledInfoComponent}: `undefined` while the flag is loading,
+   * {@link FeatureDisabledInfoComponent}: `undefined` until the flag has loaded,
    * then `true`/`false`.
    */
   readonly isAuditEnabled = computed<boolean | undefined>(() => {
-    if (this.featureFlags.isLoading()) {
+    if (!this.auditFlagRequested() || this.featureFlags.isLoading()) {
       return undefined;
     }
     return this.featureFlags.value()?.["audit"]?.enabled ?? false;

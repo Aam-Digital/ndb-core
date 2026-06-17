@@ -99,6 +99,8 @@ export class ChangeHistoryDialogComponent {
   private fetchStarted = false;
 
   constructor() {
+    // trigger the (lazy) backend feature-flag fetch now that the dialog is open
+    this.service.loadAuditFeatureFlag();
     // Fetch the history once we know the feature is enabled and the user is
     // permitted. Driven by the feature-flag signal so a no-backend deployment
     // resolves to "disabled" (clean notice) rather than an audit-db read error.
