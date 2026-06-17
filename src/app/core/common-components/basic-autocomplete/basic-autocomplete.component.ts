@@ -20,7 +20,7 @@ import {
   viewChild,
   WritableSignal,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { NgTemplateOutlet } from "@angular/common";
 import {
   MAT_FORM_FIELD,
@@ -205,7 +205,6 @@ export class BasicAutocompleteComponent<O, V = O>
    */
   reorder = input<boolean>();
 
-  autocompleteOptions: WritableSignal<SelectableOption<O, V>[]> = signal([]);
   autocompleteForm = new FormControl("");
 
   /**
@@ -221,6 +220,10 @@ export class BasicAutocompleteComponent<O, V = O>
     filter((val) => typeof val === "string"),
     map((val) => this.updateAutocomplete(val)),
     startWith([] as SelectableOption<O, V>[]),
+  );
+  autocompleteOptions: Signal<SelectableOption<O, V>[]> = toSignal(
+    this.autocompleteSuggestedOptions,
+    { initialValue: [] as SelectableOption<O, V>[] },
   );
   autocompleteFilterFunction: (option: O) => boolean;
   autocompleteFilterChange = output<(o: O) => boolean>();
@@ -354,15 +357,16 @@ export class BasicAutocompleteComponent<O, V = O>
         }
       });
     });
+
+    // Re-check the virtual scroll viewport whenever the visible options change
+    // (replaces the setTimeout that ran inside the former options subscription).
+    effect(() => {
+      this.autocompleteOptions();
+      setTimeout(() => this.virtualScrollViewport()?.checkViewportSize());
+    });
   }
 
   ngOnInit() {
-    this.autocompleteSuggestedOptions.subscribe((options) => {
-      this.autocompleteOptions.set(options);
-      setTimeout(() => {
-        this.virtualScrollViewport()?.checkViewportSize();
-      });
-    });
     // Subscribe to the valueChanges observable to print the input value
     this.autocompleteForm.valueChanges.subscribe((value) => {
       if (
