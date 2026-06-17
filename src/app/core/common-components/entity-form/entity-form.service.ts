@@ -283,13 +283,14 @@ export class EntityFormService {
     form: EntityFormGroup<T>,
   ) {
     const updatedEntity = entity.copy() as T;
-    for (let [key, value] of Object.entries(form.getRawValue())) {
+    for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !== null) {
         const schema = entity.getSchema().get(key);
-        if (typeof value === "string" && schema?.trim !== false) {
-          value = value.trim();
-        }
-        updatedEntity[key] = value;
+        const trimmedValue =
+          typeof value === "string" && schema?.trim !== false
+            ? value.trim()
+            : value;
+        updatedEntity[key] = trimmedValue;
       } else {
         // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
         delete updatedEntity[key];
