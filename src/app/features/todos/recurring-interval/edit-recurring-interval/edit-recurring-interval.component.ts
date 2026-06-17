@@ -7,7 +7,7 @@ import {
   linkedSignal,
   OnInit,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatOptionSelectionChange } from "@angular/material/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -70,10 +70,6 @@ export class EditRecurringIntervalComponent
 
   compareOptionFun = (a: TimeInterval, b: TimeInterval) =>
     JSON.stringify(a) === JSON.stringify(b);
-
-  get formControl(): FormControl<any> {
-    return this.ngControl.control as FormControl<any>;
-  }
 
   ngOnInit(): void {
     // re-create active custom interval if necessary

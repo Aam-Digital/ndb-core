@@ -7,6 +7,6 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
  * The inputs are passed on by the DynamicEditComponent.
  */
 export interface EditComponent {
-  formFieldConfig?: FormFieldConfig | InputSignal<FormFieldConfig | undefined>;
-  entity?: Entity | InputSignal<Entity | undefined>;
+  formFieldConfig?: InputSignal<FormFieldConfig | undefined>;
+  entity?: InputSignal<Entity | undefined>;
 }

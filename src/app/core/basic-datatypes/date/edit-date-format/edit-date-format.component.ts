@@ -3,7 +3,7 @@ import {
   Component,
   computed,
   inject,
-  Input,
+  input,
   LOCALE_ID,
   OnInit,
   Signal,
@@ -11,7 +11,7 @@ import {
   WritableSignal,
 } from "@angular/core";
 import { DatePipe } from "@angular/common";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -37,7 +37,7 @@ export class EditDateFormatComponent
   extends CustomFormControlDirective<string>
   implements EditComponent, OnInit
 {
-  @Input() formFieldConfig?: FormFieldConfig;
+  formFieldConfig = input<FormFieldConfig>();
 
   private readonly datePipe = new DatePipe(inject(LOCALE_ID));
   // Fixed reference date to illustrate each format: January 22, 2026
@@ -64,10 +64,6 @@ export class EditDateFormatComponent
       return format;
     }
   };
-
-  get formControl(): FormControl<string> {
-    return this.ngControl.control as FormControl<string>;
-  }
 
   private readonly currentValue: WritableSignal<string | null | undefined> =
     signal(undefined);
