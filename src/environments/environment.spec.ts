@@ -13,6 +13,7 @@ export const environment = {
   webmaster_email: undefined,
   userAdminApi: "http://localhost:8080",
   realm: "test-realm",
+  clientId: "app",
   DB_PROXY_PREFIX: "/db",
   API_PROXY_PREFIX: "/api",
   notificationsConfig: undefined,

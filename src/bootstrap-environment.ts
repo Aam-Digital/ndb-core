@@ -132,6 +132,7 @@ async function initKeycloakConfigToEnvironment() {
 
     environment.userAdminApi = keycloakConfig["auth-server-url"];
     environment.realm = keycloakConfig["realm"];
+    environment.clientId = keycloakConfig["resource"];
   } catch (err) {
     Logging.debug("failed to load keycloak URL for app environment", err);
   }
