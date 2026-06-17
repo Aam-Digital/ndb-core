@@ -283,7 +283,7 @@ describe("BasicAutocompleteComponent", () => {
 
       const updatePanelWidthSpy = vi.spyOn(component, "updatePanelWidth");
       const updatePositionSpy = vi.spyOn(
-        component.autocomplete()!,
+        component.autocomplete(),
         "updatePosition",
       );
       updatePanelWidthSpy.mockClear();
