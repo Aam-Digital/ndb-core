@@ -1,9 +1,9 @@
 <div matAutocompleteOrigin #autocompleteOrigin="matAutocompleteOrigin">
   <!--Display-->
-  @if (effectiveDisplay === "text" || effectiveDisplay === "none") {
+  @if (effectiveDisplay() === "text" || effectiveDisplay() === "none") {
     <input
       [id]="id"
-      [hidden]="isInSearchMode() || effectiveDisplay === 'none'"
+      [hidden]="isInSearchMode() || effectiveDisplay() === 'none'"
       [disabled]="!enabled()"
       matInput
       style="text-overflow: ellipsis; width: calc(100% - 50px)"
@@ -25,14 +25,14 @@
       #chipList
       cdkDropList
       cdkDropListOrientation="mixed"
-      [cdkDropListDisabled]="!reorder"
+      [cdkDropListDisabled]="!reorder()"
       (cdkDropListDropped)="dropChips($event)"
       class="chip-drop-list"
     >
       @for (item of _selectedOptions(); track item.asValue) {
         <mat-chip-row
           cdkDrag
-          [cdkDragDisabled]="!reorder"
+          [cdkDragDisabled]="!reorder()"
           [editable]="enabled()"
           class="chip"
           [style.background-color]="item.asValue?.['color']"
@@ -134,17 +134,17 @@ Autocomplete
   </div>
 
   <ng-template #chipContent let-item>
-    @if (reorder) {
+    @if (reorder()) {
       <span class="drag-handle color-accent" cdkDragHandle>
         <app-fa-dynamic-icon icon="grip-vertical"></app-fa-dynamic-icon>
       </span>
     }
 
-    @if (!templateRef) {
+    @if (!templateRef()) {
       {{ item.asString }}
     } @else {
       <ng-template
-        [ngTemplateOutlet]="templateRef"
+        [ngTemplateOutlet]="templateRef()"
         [ngTemplateOutletContext]="{ $implicit: item.initial }"
       ></ng-template>
     }
@@ -154,10 +154,10 @@ Autocomplete
     <div
       class="option-content flex-row disable-autocomplete-active-color align-center"
     >
-      @if (multi) {
+      @if (multi()) {
         <mat-checkbox [checked]="item.selected"></mat-checkbox>
       }
-      @if (!templateRef) {
+      @if (!templateRef()) {
         <span
           class="option-label"
           [class.text-truncate]="truncate"
@@ -172,7 +172,7 @@ Autocomplete
       } @else {
         <div class="option-label item-option">
           <ng-template
-            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutlet]="templateRef()"
             [ngTemplateOutletContext]="{ $implicit: item.initial }"
           ></ng-template>
         </div>
@@ -182,7 +182,7 @@ Autocomplete
 
   <!-- Create new option -->
   @if (showAddOption() && inputElement.value) {
-    @for (option of availableCreateOptions; track $index) {
+    @for (option of availableCreateOptions(); track $index) {
       <mat-option
         [value]="toCreateOptionValue(option, inputElement.value)"
         [attr.aria-label]="createOptionAriaLabel(option, inputElement.value)"
