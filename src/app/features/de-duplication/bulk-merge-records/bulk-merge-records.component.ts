@@ -4,8 +4,10 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   OnInit,
+  signal,
   viewChild,
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -18,6 +20,7 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatError, MatFormFieldModule } from "@angular/material/form-field";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
@@ -41,6 +44,7 @@ import { MergeAccountSectionComponent } from "./merge-account-section/merge-acco
     WarningNotOptimizedForSmallScreenComponent,
     MatFormFieldModule,
     MergeAccountSectionComponent,
+    MatSlideToggleModule,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -57,8 +61,21 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  fieldsToMerge: FormFieldConfig[] = [];
+  fieldsToMerge = signal<FormFieldConfig[]>([]);
   mergeForm: EntityForm<E>;
+
+  showOnlyDifferences = signal(false);
+
+  filteredFieldsToMerge = computed(() => {
+    if (!this.showOnlyDifferences()) return this.fieldsToMerge();
+    return this.fieldsToMerge().filter(
+      (field) =>
+        !this.valuesAreIdentical(
+          this.entitiesToMerge[0][field.id],
+          this.entitiesToMerge[1][field.id],
+        ),
+    );
+  });
 
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
@@ -79,7 +96,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   async ngOnInit(): Promise<void> {
     this.initFieldsToMerge();
     this.mergeForm = await this.entityFormService.createEntityForm(
-      this.fieldsToMerge,
+      this.fieldsToMerge(),
       this.mergedEntity,
       false,
       true,
@@ -89,6 +106,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   private initFieldsToMerge(): void {
+    const fields: FormFieldConfig[] = [];
     this.entityConstructor.schema.forEach((field, key) => {
       const hasValue = this.entitiesToMerge.some((entity) =>
         this.hasValue(entity[key]),
@@ -107,11 +125,16 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
             { id: key },
             this.entityConstructor,
           );
-        this.fieldsToMerge.push({
+        fields.push({
           ...formField,
         });
       }
     });
+    this.fieldsToMerge.set(fields);
+  }
+
+  private valuesAreIdentical(a: any, b: any): boolean {
+    return JSON.stringify(a) === JSON.stringify(b);
   }
 
   /**
