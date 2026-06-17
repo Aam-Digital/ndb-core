@@ -258,24 +258,23 @@
   ChangeDetectorRef,
   Component,
   computed,
-  ContentChild,
+  contentChild,
   DestroyRef,
   effect,
   ElementRef,
-  EventEmitter,
   input,
-  Input,
   inject,
-  OnChanges,
   OnInit,
-  Output,
+  output,
   signal,
+  Signal,
   TemplateRef,
   TrackByFunction,
-  ViewChild,
+  untracked,
+  viewChild,
   WritableSignal,
 } from &quot;@angular/core&quot;;
-import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { takeUntilDestroyed, toSignal } from &quot;@angular/core/rxjs-interop&quot;;
 import { NgTemplateOutlet } from &quot;@angular/common&quot;;
 import {
   MAT_FORM_FIELD,
@@ -378,29 +377,34 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS &#x3D; [
 })
 export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   extends CustomFormControlDirective&lt;V | V[]&gt;
-  implements OnChanges, OnInit, AfterViewInit
+  implements OnInit, AfterViewInit
 {
   private readonly cdr &#x3D; inject(ChangeDetectorRef);
   private readonly destroyRef &#x3D; inject(DestroyRef);
   private readonly viewportRuler &#x3D; inject(ViewportRuler);
 
-  @ContentChild(TemplateRef) templateRef: TemplateRef&lt;any&gt;;
-  // &#x60;_elementRef&#x60; is protected in &#x60;MapInput&#x60;
-  @ViewChild(MatInput, { static: true }) inputElement: MatInput &amp; {
-    _elementRef: ElementRef&lt;HTMLElement&gt;;
-  };
-  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
-  @ViewChild(CdkVirtualScrollViewport)
-  virtualScrollViewport: CdkVirtualScrollViewport;
+  templateRef &#x3D; contentChild(TemplateRef);
+  // Query the search &#x60;&lt;input #inputElement&gt;&#x60; by its template-ref name (read as MatInput)
+  // rather than by type: a bare &#x60;viewChild(MatInput)&#x60; would match the first MatInput in
+  // the view (the display input inside the &#x60;@if&#x60;), whereas the old &#x60;@ViewChild(MatInput,
+  // { static: true })&#x60; skipped structural content and resolved the search input.
+  // &#x60;_elementRef&#x60; is protected in &#x60;MatInput&#x60;, so widen the read type to expose it.
+  inputElement &#x3D; viewChild(&quot;inputElement&quot;, { read: MatInput }) as Signal&lt;
+    (MatInput &amp; { _elementRef: ElementRef&lt;HTMLElement&gt; }) | undefined
+  &gt;;
+  autocomplete &#x3D; viewChild(MatAutocompleteTrigger);
+  virtualScrollViewport &#x3D; viewChild(CdkVirtualScrollViewport);
 
-  @Input() valueMapper &#x3D; (option: O) &#x3D;&gt;
-    option?.[&quot;_id&quot;] ?? (option as unknown as V);
-  @Input() optionToString &#x3D; (option: O) &#x3D;&gt;
-    option?.[&quot;_label&quot;] ?? option?.toString();
+  valueMapper &#x3D; input&lt;(option: O) &#x3D;&gt; V&gt;(
+    (option: O) &#x3D;&gt; option?.[&quot;_id&quot;] ?? (option as unknown as V),
+  );
+  optionToString &#x3D; input&lt;(option: O) &#x3D;&gt; string&gt;(
+    (option: O) &#x3D;&gt; option?.[&quot;_label&quot;] ?? option?.toString(),
+  );
   /** @deprecated Prefer &#x60;createOptions&#x60; to support one unified create flow. */
-  @Input() createOption: (input: string) &#x3D;&gt; Promise&lt;O&gt;;
-  @Input() createOptions: CreateOptionConfig&lt;O&gt;[] &#x3D; [];
-  @Input() hideOption: (option: O) &#x3D;&gt; boolean &#x3D; () &#x3D;&gt; false;
+  createOption &#x3D; input&lt;(input: string) &#x3D;&gt; Promise&lt;O&gt;&gt;();
+  createOptions &#x3D; input&lt;CreateOptionConfig&lt;O&gt;[]&gt;([]);
+  hideOption &#x3D; input&lt;(option: O) &#x3D;&gt; boolean&gt;(() &#x3D;&gt; false);
 
   /**
    * Used in template to display the &quot;Add new&quot; option label.
@@ -411,22 +415,22 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
    */
   protected createOptionDisplay(input: string): string {
     try {
-      return this.optionToString(input as unknown as O) ?? input;
+      return this.optionToString()(input as unknown as O) ?? input;
     } catch {
       return input;
     }
   }
 
-  protected get availableCreateOptions(): CreateOptionConfig&lt;O&gt;[] {
-    if (this.createOptions.length &gt; 0) {
-      return this.createOptions;
+  protected availableCreateOptions &#x3D; computed&lt;CreateOptionConfig&lt;O&gt;[]&gt;(() &#x3D;&gt; {
+    if (this.createOptions().length &gt; 0) {
+      return this.createOptions();
     }
-    if (!this.createOption) {
+    if (!this.createOption()) {
       return [];
     }
 
-    return [{ label: &quot;&quot;, create: this.createOption }];
-  }
+    return [{ label: &quot;&quot;, create: this.createOption() }];
+  });
 
   protected createOptionLabel(
     option: CreateOptionConfig&lt;O&gt;,
@@ -448,14 +452,13 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   /**
    * Whether the user should be able to select multiple values.
    */
-  @Input() multi?: boolean;
+  multi &#x3D; input&lt;boolean&gt;();
 
   /**
    * Whether the user can manually drag &amp; drop to reorder the selected items
    */
-  @Input() reorder?: boolean;
+  reorder &#x3D; input&lt;boolean&gt;();
 
-  autocompleteOptions: WritableSignal&lt;SelectableOption&lt;O, V&gt;[]&gt; &#x3D; signal([]);
   autocompleteForm &#x3D; new FormControl(&quot;&quot;);
 
   /**
@@ -472,8 +475,12 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     map((val) &#x3D;&gt; this.updateAutocomplete(val)),
     startWith([] as SelectableOption&lt;O, V&gt;[]),
   );
+  autocompleteOptions: Signal&lt;SelectableOption&lt;O, V&gt;[]&gt; &#x3D; toSignal(
+    this.autocompleteSuggestedOptions,
+    { initialValue: [] as SelectableOption&lt;O, V&gt;[] },
+  );
   autocompleteFilterFunction: (option: O) &#x3D;&gt; boolean;
-  @Output() autocompleteFilterChange &#x3D; new EventEmitter&lt;(o: O) &#x3D;&gt; boolean&gt;();
+  autocompleteFilterChange &#x3D; output&lt;(o: O) &#x3D;&gt; boolean&gt;();
 
   /** whether the &quot;add new&quot; option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption &#x3D; signal(false);
@@ -489,7 +496,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
    * If more options match the current filter, a hint is shown to type to narrow results.
    * Set to 0 for no limit. Defaults to 100.
    */
-  @Input() maxOptionsToDisplay: number &#x3D; 100;
+  maxOptionsToDisplay &#x3D; input&lt;number&gt;(100);
   hasMoreOptions &#x3D; signal(false);
 
   /**
@@ -498,6 +505,9 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
    */
   displayFullLengthOptionLabel &#x3D; input(false);
 
+  // Kept as a getter (not a &#x60;computed&#x60;): it reads &#x60;_options&#x60;, a plain mutable array
+  // (rebuilt/reordered/pushed imperatively), so a &#x60;computed&#x60; would cache stale results
+  // unless &#x60;_options&#x60; were made a signal — a larger refactor not worth it here.
   get displayText() {
     const values: V[] &#x3D; Array.isArray(this.value) ? this.value : [this.value];
 
@@ -518,9 +528,14 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
    *
    * @param options Array of available options (can be filtered further by the &#x60;hideOption&#x60; function)
    */
-  @Input() set options(options: O[]) {
-    this._options &#x3D; options.map((o) &#x3D;&gt; this.toSelectableOption(o));
-  }
+  options &#x3D; input&lt;O[]&gt;([]);
+
+  /**
+   * The source of options the dropdown displays. Defaults to the &#x60;options&#x60; input;
+   * subclasses can override this to derive options from an internal computed instead
+   * (replacing the former pattern of imperatively assigning &#x60;this.options&#x60;).
+   */
+  protected optionsSource &#x3D; computed&lt;O[]&gt;(() &#x3D;&gt; this.options());
 
   private _options: SelectableOption&lt;O, V&gt;[] &#x3D; [];
 
@@ -534,16 +549,16 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   /**
    * Display the selected items as simple text, as chips or not at all (if used in combination with another component)
    */
-  @Input() display: &quot;text&quot; | &quot;chips&quot; | &quot;none&quot; &#x3D; &quot;text&quot;;
+  display &#x3D; input&lt;&quot;text&quot; | &quot;chips&quot; | &quot;none&quot;&gt;(&quot;text&quot;);
 
   /**
    * Derived display mode. Reorderable multi-select uses chips without mutating the public input.
    */
-  get effectiveDisplay(): &quot;text&quot; | &quot;chips&quot; | &quot;none&quot; {
-    return this.multi &amp;&amp; this.reorder &amp;&amp; this.display &#x3D;&#x3D;&#x3D; &quot;text&quot;
+  effectiveDisplay &#x3D; computed&lt;&quot;text&quot; | &quot;chips&quot; | &quot;none&quot;&gt;(() &#x3D;&gt;
+    this.multi() &amp;&amp; this.reorder() &amp;&amp; this.display() &#x3D;&#x3D;&#x3D; &quot;text&quot;
       ? &quot;chips&quot;
-      : this.display;
-  }
+      : this.display(),
+  );
 
   /**
    * display the search input rather than the selected elements only
@@ -571,43 +586,50 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     return Math.min(contentHeight, availableHeight);
   });
 
-  ngOnInit() {
-    this.autocompleteSuggestedOptions.subscribe((options) &#x3D;&gt; {
-      this.autocompleteOptions.set(options);
-      setTimeout(() &#x3D;&gt; {
-        this.virtualScrollViewport?.checkViewportSize();
+  constructor() {
+    super();
+    // Rebuild the derived options whenever the &#x60;options&#x60; input (or the
+    // value/label mappers) change. Replaces the former &#x60;set options&#x60; setter
+    // and the &#x60;valueMapper&#x60;/&#x60;optionToString&#x60;/&#x60;options&#x60; &#x60;ngOnChanges&#x60; branches.
+    effect(() &#x3D;&gt; {
+      const options &#x3D; this.optionsSource();
+      // read the mapper inputs so the rebuild also reacts to their changes
+      this.valueMapper();
+      this.optionToString();
+      // The block below is &#x60;untracked&#x60; so the effect only re-runs for the
+      // dependencies read above (options + mappers). Without it the effect
+      // would also track the signals read inside &#x60;setInitialInputValue&#x60;
+      // (e.g. the control &#x60;value&#x60;) and re-run — and rebuild the derived
+      // options — on every value change, which is both wasteful and would
+      // discard runtime-created options.
+      untracked(() &#x3D;&gt; {
+        this._options &#x3D; options.map((o) &#x3D;&gt; this.toSelectableOption(o));
+        this.setInitialInputValue();
+        if (this.autocomplete()?.panelOpen) {
+          // if new options have been added, update the visible autocomplete options
+          this.showAutocomplete(this.autocompleteForm.value);
+        }
       });
     });
+
+    // Re-check the virtual scroll viewport whenever the visible options change
+    // (replaces the setTimeout that ran inside the former options subscription).
+    effect(() &#x3D;&gt; {
+      this.autocompleteOptions();
+      setTimeout(() &#x3D;&gt; this.virtualScrollViewport()?.checkViewportSize());
+    });
+  }
+
+  ngOnInit() {
     // Subscribe to the valueChanges observable to print the input value
     this.autocompleteForm.valueChanges.subscribe((value) &#x3D;&gt; {
       if (
         typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
-        (this.display !&#x3D;&#x3D; &quot;text&quot; || value !&#x3D;&#x3D; this.displayText)
+        (this.display() !&#x3D;&#x3D; &quot;text&quot; || value !&#x3D;&#x3D; this.displayText)
       ) {
         this.retainSearchValue &#x3D; value;
       }
     });
-  }
-
-  ngOnChanges(changes: { [key in keyof this]?: any }) {
-    if (changes.valueMapper) {
-      this._options.forEach(
-        (opt) &#x3D;&gt; (opt.asValue &#x3D; this.valueMapper(opt.initial)),
-      );
-    }
-    if (changes.optionToString) {
-      this._options.forEach(
-        (opt) &#x3D;&gt; (opt.asString &#x3D; this.optionToString(opt.initial)),
-      );
-    }
-    if (changes.value || changes.options) {
-      this.setInitialInputValue();
-
-      if (this.autocomplete?.panelOpen) {
-        // if new options have been added, make sure to update the visible autocomplete options
-        this.showAutocomplete(this.autocompleteForm.value);
-      }
-    }
   }
 
   ngAfterViewInit() {
@@ -630,7 +652,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
    */
   public updatePanelWidth() {
     // Use closest .mat-mdc-form-field or .mat-form-field from input element
-    const fieldEl &#x3D; this.inputElement?._elementRef?.nativeElement.closest(
+    const fieldEl &#x3D; this.inputElement()?._elementRef?.nativeElement.closest(
       &quot;.mat-mdc-form-field, .mat-form-field&quot;,
     ) as HTMLElement;
     const fieldWidth &#x3D; fieldEl ? fieldEl.getBoundingClientRect().width : 200;
@@ -658,20 +680,20 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
    * Runs twice (immediately and on next animation frame) to handle late layout updates.
    */
   private updateOpenPanelPosition(): void {
-    if (!this.autocomplete?.panelOpen) {
+    if (!this.autocomplete()?.panelOpen) {
       return;
     }
 
     this.updatePanelWidth();
-    this.autocomplete.updatePosition();
+    this.autocomplete()?.updatePosition();
 
     requestAnimationFrame(() &#x3D;&gt; {
-      if (!this.autocomplete?.panelOpen) {
+      if (!this.autocomplete()?.panelOpen) {
         return;
       }
 
       this.updatePanelWidth();
-      this.autocomplete.updatePosition();
+      this.autocomplete()?.updatePosition();
     });
   }
 
@@ -685,7 +707,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
 
     this._options &#x3D; this.orderSelectedFirst(this._options, selectedOptions);
 
-    if (this.multi) {
+    if (this.multi()) {
       this.value &#x3D; selectedOptions.map((option) &#x3D;&gt; option.asValue);
     } else {
       this.value &#x3D; undefined;
@@ -697,12 +719,12 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   }
 
   showAutocomplete(valueToRevertTo?: string) {
-    if (this.multi &amp;&amp; this.retainSearchValue) {
+    if (this.multi() &amp;&amp; this.retainSearchValue) {
       // reset the search value to previously entered text to help user selecting multiple similar options without retyping filter text
       this.autocompleteForm.setValue(this.retainSearchValue);
     } else if (
-      this.multi &amp;&amp;
-      this.effectiveDisplay &#x3D;&#x3D;&#x3D; &quot;text&quot; &amp;&amp;
+      this.multi() &amp;&amp;
+      this.effectiveDisplay() &#x3D;&#x3D;&#x3D; &quot;text&quot; &amp;&amp;
       this.displayText
     ) {
       // keep selected items visible when the multi-select input is focused/opened
@@ -711,7 +733,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
       // reset the search value to show all available options again
       this.autocompleteForm.setValue(&quot;&quot;);
     }
-    if (!this.multi) {
+    if (!this.multi()) {
       // cannot setValue to &quot;&quot; here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
     }
@@ -720,12 +742,11 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     this.updatePanelWidth();
 
     setTimeout(() &#x3D;&gt; {
-      this.inputElement.focus();
+      const inputEl &#x3D; this.inputElement();
+      inputEl?.focus();
 
       // select all text for easy overwriting when typing to search for options
-      (
-        this.inputElement._elementRef.nativeElement as HTMLInputElement
-      ).select();
+      (inputEl?._elementRef.nativeElement as HTMLInputElement)?.select();
       if (valueToRevertTo) {
         this.autocompleteForm.setValue(valueToRevertTo);
       }
@@ -734,23 +755,23 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     this.isInSearchMode.set(true);
 
     // update virtual scroll as the container remains empty until the user scrolls initially
-    setTimeout(() &#x3D;&gt; this.virtualScrollViewport?.checkViewportSize());
+    setTimeout(() &#x3D;&gt; this.virtualScrollViewport()?.checkViewportSize());
   }
 
   private updateAutocomplete(inputText: string): SelectableOption&lt;O, V&gt;[] {
     const filterText &#x3D;
-      this.multi &amp;&amp;
-      this.effectiveDisplay &#x3D;&#x3D;&#x3D; &quot;text&quot; &amp;&amp;
+      this.multi() &amp;&amp;
+      this.effectiveDisplay() &#x3D;&#x3D;&#x3D; &quot;text&quot; &amp;&amp;
       inputText &#x3D;&#x3D;&#x3D; this.displayText
         ? &quot;&quot;
         : inputText;
 
     let filteredOptions &#x3D; this._options.filter(
-      (o) &#x3D;&gt; !this.hideOption(o.initial) &amp;&amp; !o.isHidden,
+      (o) &#x3D;&gt; !this.hideOption()(o.initial) &amp;&amp; !o.isHidden,
     );
     if (filterText) {
       this.autocompleteFilterFunction &#x3D; (option) &#x3D;&gt;
-        this.optionToString(option)
+        this.optionToString()(option)
           ?.toLowerCase()
           ?.includes(filterText.toLowerCase());
       this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
@@ -768,16 +789,16 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     }
 
     if (
-      this.maxOptionsToDisplay &gt; 0 &amp;&amp;
-      filteredOptions.length &gt; this.maxOptionsToDisplay
+      this.maxOptionsToDisplay() &gt; 0 &amp;&amp;
+      filteredOptions.length &gt; this.maxOptionsToDisplay()
     ) {
       this.hasMoreOptions.set(true);
-      filteredOptions &#x3D; filteredOptions.slice(0, this.maxOptionsToDisplay);
+      filteredOptions &#x3D; filteredOptions.slice(0, this.maxOptionsToDisplay());
     } else {
       this.hasMoreOptions.set(false);
     }
 
-    if (this.multi &amp;&amp; this.reorder) {
+    if (this.multi() &amp;&amp; this.reorder()) {
       filteredOptions &#x3D; this.orderSelectedFirst(
         filteredOptions,
         this._selectedOptions(),
@@ -836,7 +857,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     }
 
     if (typeof selected &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
-      const defaultCreateOption &#x3D; this.availableCreateOptions[0];
+      const defaultCreateOption &#x3D; this.availableCreateOptions()[0];
       if (defaultCreateOption) {
         this.createFromConfig(
           this.toCreateOptionValue(defaultCreateOption, selected),
@@ -859,7 +880,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     option.selected &#x3D; false;
     this._selectedOptions.set(this._options.filter((o) &#x3D;&gt; o.selected));
 
-    if (this.multi) {
+    if (this.multi()) {
       this.value &#x3D; this._selectedOptions().map((o) &#x3D;&gt; o.asValue);
     } else {
       this.value &#x3D; undefined;
@@ -890,7 +911,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   }
 
   private selectOption(option: SelectableOption&lt;O, V&gt;) {
-    if (this.multi) {
+    if (this.multi()) {
       option.selected &#x3D; !option.selected;
       this._selectedOptions.set(this._options.filter((o) &#x3D;&gt; o.selected));
       this.value &#x3D; this._selectedOptions().map((o) &#x3D;&gt; o.asValue);
@@ -906,8 +927,8 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   private toSelectableOption(opt: O): SelectableOption&lt;O, V&gt; {
     return {
       initial: opt,
-      asValue: this.valueMapper(opt),
-      asString: this.optionToString(opt),
+      asValue: this.valueMapper()(opt),
+      asString: this.optionToString()(opt),
       selected: false,
       isHidden: (opt as SelectableOption&lt;O, V&gt;)?.isHidden ?? false,
       isInvalid: (opt as SelectableOption&lt;O, V&gt;)?.isInvalid ?? false,
@@ -919,7 +940,7 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      if (!this.multi &amp;&amp; this.autocompleteForm.value &#x3D;&#x3D;&#x3D; &quot;&quot;) {
+      if (!this.multi() &amp;&amp; this.autocompleteForm.value &#x3D;&#x3D;&#x3D; &quot;&quot;) {
         this.select(undefined);
       }
       this.isInSearchMode.set(false);

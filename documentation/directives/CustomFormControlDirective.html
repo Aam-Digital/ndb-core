@@ -634,8 +634,8 @@ the Angular Material and Forms contracts and can be ignored when writing a contr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="214"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:214</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:218</a></div>
                         </td>
                     </tr>
 
@@ -701,8 +701,8 @@ the Angular Material and Forms contracts and can be ignored when writing a contr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="233"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:233</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="237"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:237</a></div>
                         </td>
                     </tr>
 
@@ -768,8 +768,8 @@ the Angular Material and Forms contracts and can be ignored when writing a contr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="237"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:237</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="241"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:241</a></div>
                         </td>
                     </tr>
 
@@ -835,8 +835,8 @@ the Angular Material and Forms contracts and can be ignored when writing a contr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="207"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:207</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="211"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:211</a></div>
                         </td>
                     </tr>
 
@@ -902,8 +902,8 @@ the Angular Material and Forms contracts and can be ignored when writing a contr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="241"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:241</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="245"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:245</a></div>
                         </td>
                     </tr>
 
@@ -969,8 +969,8 @@ the Angular Material and Forms contracts and can be ignored when writing a contr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="222"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:222</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="226"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/custom-form-control.directive.ts:226</a></div>
                         </td>
                     </tr>
 
@@ -2012,7 +2012,11 @@ export abstract class CustomFormControlDirective&lt;T&gt;
   }
 
   blur() {
-    this._touched.set(true);
+    // The FocusMonitor can emit synchronously while Angular is rendering the template
+    // (the focused element is removed during a re-render, e.g. selecting an autocomplete
+    // option closes the panel), so defer the signal write to the next microtask to avoid
+    // NG0600 (&quot;writing to signals is not allowed while Angular renders the template&quot;).
+    queueMicrotask(() &#x3D;&gt; this._touched.set(true));
     this.onTouched();
     this.stateChanges.next();
   }
