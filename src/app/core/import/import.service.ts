@@ -204,6 +204,13 @@ export class ImportService {
       return undefined;
     }
 
+    const shouldTrim =
+      importProcessingContext.importSettings.additionalSettings?.trimValues !==
+      false;
+    if (shouldTrim && typeof val === "string") {
+      val = val.trim();
+    }
+
     const schema = entity.getSchema().get(mapping.propertyName);
     if (!schema) {
       return undefined;
