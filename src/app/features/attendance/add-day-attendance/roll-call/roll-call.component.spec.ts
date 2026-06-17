@@ -45,7 +45,8 @@ describe("RollCallComponent", () => {
 
   let participant1: TestEntity,
     participant2: TestEntity,
-    participant3: TestEntity;
+    participant3: TestEntity,
+    archivedParticipant: TestEntity;
 
   let mockEnumService: any;
 
@@ -68,6 +69,8 @@ describe("RollCallComponent", () => {
     participant1 = new TestEntity("child1");
     participant2 = new TestEntity("child2");
     participant3 = new TestEntity("child3");
+    archivedParticipant = new TestEntity("archivedChild");
+    archivedParticipant.inactive = true;
 
     mockEnumService = {
       getEnumValues: vi
@@ -84,7 +87,12 @@ describe("RollCallComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        ...mockEntityMapperProvider([participant1, participant2, participant3]),
+        ...mockEntityMapperProvider([
+          participant1,
+          participant2,
+          participant3,
+          archivedParticipant,
+        ]),
         { provide: EntityRegistry, useValue: entityRegistry },
         EntitySchemaService,
         { provide: ConfigurableEnumService, useValue: mockEnumService },
@@ -196,6 +204,31 @@ describe("RollCallComponent", () => {
     expect(
       note.childrenAttendance.some((a) => a.participant === nonExistingChildId),
     ).toBe(false);
+  });
+
+  it("should exclude archived participants from event attendanceItems by default", async () => {
+    const note = new Note();
+    addParticipant(note, participant1);
+    addParticipant(note, archivedParticipant);
+
+    fixture.componentRef.setInput(
+      "eventEntity",
+      new EventWithAttendance(
+        note,
+        "childrenAttendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    );
+    await stabilize();
+
+    expect(component.participants()).toEqual([participant1]);
+    expect(component.inactiveParticipants()).toEqual([archivedParticipant]);
+    const attendanceItems = component.event()!.attendanceItems;
+    expect(attendanceItems).toHaveLength(1);
+    expect(attendanceItems[0].participant).toBe(participant1.getId());
   });
 
   it("should correctly assign the attendance", async () => {
