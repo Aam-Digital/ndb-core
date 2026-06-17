@@ -37,8 +37,11 @@ export class ChangeHistoryModule {
           }
           return false;
         },
+        // shown to every user (not permission-gated) so the feature is
+        // discoverable; the dialog itself shows a message if the user lacks
+        // access or the feature is disabled
         visible: async (entity) =>
-          this.changeHistory.canViewHistory(asSingle(entity)),
+          this.changeHistory.canSeeHistoryEntry(asSingle(entity)),
       },
     ]);
   }

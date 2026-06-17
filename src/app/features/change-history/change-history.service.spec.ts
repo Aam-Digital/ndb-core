@@ -1,4 +1,6 @@
 import { TestBed } from "@angular/core/testing";
+import { HttpClient } from "@angular/common/http";
+import { of } from "rxjs";
 import {
   AUDIT_RECORD_SUBJECT,
   ChangeHistoryService,
@@ -20,6 +22,7 @@ function setup(docs: any[] = [], canRead = true) {
       ChangeHistoryService,
       { provide: DatabaseFactoryService, useValue: dbFactory },
       { provide: EntityAbility, useValue: { can: abilityCan } },
+      { provide: HttpClient, useValue: { get: () => of({}) } },
     ],
   });
   return TestBed.inject(ChangeHistoryService);

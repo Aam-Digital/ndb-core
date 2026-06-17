@@ -1,4 +1,8 @@
-import { inject, Injectable } from "@angular/core";
+import { computed, inject, Injectable, resource } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
+import { Logging } from "../../core/logging/logging.service";
+import { environment } from "../../../environments/environment";
 import { DatabaseFactoryService } from "../../core/database/database-factory.service";
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
@@ -8,6 +12,12 @@ import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
 
 /** CASL subject the audit records are keyed under (see replication-backend #4026). */
 export const AUDIT_RECORD_SUBJECT = "AuditRecord";
+
+/** Feature flags from the backend `/actuator/features` endpoint. */
+interface FeatureFlag {
+  enabled: boolean;
+}
+type FeatureFlags = Record<string, FeatureFlag> & { audit?: FeatureFlag };
 
 /**
  * Reads an entity's change history from the audit database recorded by the
@@ -23,11 +33,44 @@ export const AUDIT_RECORD_SUBJECT = "AuditRecord";
 export class ChangeHistoryService {
   private readonly dbFactory = inject(DatabaseFactoryService);
   private readonly ability = inject(EntityAbility, { optional: true });
+  private readonly httpClient = inject(HttpClient);
 
   /** the derived audit db name, e.g. `app-audit` */
   static auditDbName(): string {
     return `${Entity.DATABASE}-audit`;
   }
+
+  /**
+   * Backend feature flags (same `/actuator/features` endpoint the other
+   * features use). Failure (e.g. no backend in a static deployment) resolves to
+   * empty flags, so the feature reads as disabled rather than erroring.
+   */
+  private readonly featureFlags = resource({
+    loader: async () => {
+      try {
+        return await firstValueFrom(
+          this.httpClient.get<FeatureFlags>(
+            environment.API_PROXY_PREFIX + "/actuator/features",
+          ),
+        );
+      } catch (err) {
+        Logging.debug("features API not available", err);
+        return {} as FeatureFlags;
+      }
+    },
+  });
+
+  /**
+   * Whether change logging is enabled on the backend. Tri-state for
+   * {@link FeatureDisabledInfoComponent}: `undefined` while the flag is loading,
+   * then `true`/`false`.
+   */
+  readonly isAuditEnabled = computed<boolean | undefined>(() => {
+    if (this.featureFlags.isLoading()) {
+      return undefined;
+    }
+    return this.featureFlags.value()?.["audit"]?.enabled ?? false;
+  });
 
   private auditDb?: Database;
 
@@ -52,17 +95,28 @@ export class ChangeHistoryService {
   }
 
   /**
-   * Whether the current user may view the change history of this entity.
-   * Hidden for new/internal entities and gated on read access to the
-   * `AuditRecord` subject. Fails closed: if the permission engine is not
-   * available, access to this (permission-gated) audit data is denied. Shared
-   * by both entry points (the entity-actions menu and the last-edited widget)
-   * so they cannot drift.
+   * Whether this entity qualifies for a change-history entry at all: a saved,
+   * non-internal record. This gates the *visibility* of the entry point and is
+   * deliberately permission-agnostic — every user should see that the feature
+   * exists (the dialog itself shows a message if they lack access).
    */
-  canViewHistory(entity?: Entity): boolean {
-    if (!entity || entity.isNew || entity.getConstructor().isInternalEntity) {
-      return false;
-    }
+  canSeeHistoryEntry(entity?: Entity): boolean {
+    return (
+      !!entity && !entity.isNew && !entity.getConstructor().isInternalEntity
+    );
+  }
+
+  /**
+   * Whether the current user may read the audit data. Fails closed: if the
+   * permission engine is not available, access to this permission-gated audit
+   * data is denied.
+   */
+  hasHistoryPermission(): boolean {
     return !!this.ability && this.ability.can("read", AUDIT_RECORD_SUBJECT);
+  }
+
+  /** Both: the entity qualifies and the user may read its audit data. */
+  canViewHistory(entity?: Entity): boolean {
+    return this.canSeeHistoryEntry(entity) && this.hasHistoryPermission();
   }
 }

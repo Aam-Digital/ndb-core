@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { signal } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog.component";
@@ -17,10 +18,17 @@ function evt(id: string, at: string): ChangeEvent {
   return { id, at: new Date(at), by: "User:1", action: "updated", changes: [] };
 }
 
-async function render(
-  result: ChangeEvent[] | Error | { status?: number; name?: string },
-  canView = true,
-): Promise<ComponentFixture<ChangeHistoryDialogComponent>> {
+async function render(opts?: {
+  result?: ChangeEvent[] | Error;
+  /** backend feature flag: undefined=loading, true/false */
+  enabled?: boolean | undefined;
+  hasPermission?: boolean;
+}): Promise<ComponentFixture<ChangeHistoryDialogComponent>> {
+  const result = opts?.result ?? [];
+  // `enabled` omitted -> true; explicitly `undefined` -> still-loading flag
+  const enabled = opts && "enabled" in opts ? opts.enabled : true;
+  const hasPermission = opts?.hasPermission ?? true;
+
   getHistory = Array.isArray(result)
     ? vi.fn().mockResolvedValue(result)
     : vi.fn().mockRejectedValue(result);
@@ -30,7 +38,11 @@ async function render(
     providers: [
       {
         provide: ChangeHistoryService,
-        useValue: { getHistory, canViewHistory: () => canView },
+        useValue: {
+          getHistory,
+          isAuditEnabled: signal(enabled),
+          hasHistoryPermission: () => hasPermission,
+        },
       },
       { provide: MAT_DIALOG_DATA, useValue: { entity: new TestEntity("1") } },
     ],
@@ -46,46 +58,48 @@ async function render(
   return fixture;
 }
 
-it("loads history into the events signal", async () => {
-  const fixture = await render([
-    evt("e3", "2026-06-03T10:00:00.000Z"),
-    evt("e2", "2026-06-02T10:00:00.000Z"),
-    evt("e1", "2026-06-01T10:00:00.000Z"),
-  ]);
+it("loads history when the feature is enabled and the user is permitted", async () => {
+  const fixture = await render({
+    result: [
+      evt("e3", "2026-06-03T10:00:00.000Z"),
+      evt("e2", "2026-06-02T10:00:00.000Z"),
+      evt("e1", "2026-06-01T10:00:00.000Z"),
+    ],
+  });
   const c = fixture.componentInstance;
   expect(c.events()?.map((e) => e.id)).toEqual(["e3", "e2", "e1"]);
-  expect(c.status()).toBe("ready");
+  expect(c.loadError()).toBe(false);
 });
 
-it("shows the empty state (ready) when there is no history", async () => {
-  const fixture = await render([]);
-  const c = fixture.componentInstance;
-  expect(c.events()).toEqual([]);
-  expect(c.status()).toBe("ready");
+it("shows the empty state when enabled, permitted and there is no history", async () => {
+  const fixture = await render({ result: [] });
+  expect(fixture.componentInstance.events()).toEqual([]);
 });
 
-it("reports 'disabled' when the audit db does not exist (404 / not_found)", async () => {
-  const fixture = await render({ status: 404, name: "not_found" });
-  const c = fixture.componentInstance;
-  expect(c.status()).toBe("disabled");
-  expect(c.events()).toEqual([]);
+it("flags loadError when the audit-db read fails", async () => {
+  const fixture = await render({ result: new Error("boom") });
+  expect(fixture.componentInstance.loadError()).toBe(true);
 });
 
-it("reports 'error' for any other read failure", async () => {
-  const fixture = await render(new Error("boom"));
-  const c = fixture.componentInstance;
-  expect(c.status()).toBe("error");
-  expect(c.events()).toEqual([]);
+it("does not fetch history when the feature is disabled", async () => {
+  const fixture = await render({ enabled: false });
+  expect(getHistory).not.toHaveBeenCalled();
+  expect(fixture.componentInstance.events()).toBeNull();
 });
 
-it("does not fetch history and reports 'error' when the user may not view it", async () => {
-  const fixture = await render([evt("e1", "2026-06-01T10:00:00.000Z")], false);
-  const c = fixture.componentInstance;
-  expect(c.status()).toBe("error");
+it("does not fetch history while the feature flag is still loading", async () => {
+  await render({ enabled: undefined });
   expect(getHistory).not.toHaveBeenCalled();
 });
 
+it("does not fetch history when the user lacks permission (but still opens)", async () => {
+  const fixture = await render({ hasPermission: false });
+  expect(getHistory).not.toHaveBeenCalled();
+  expect(fixture.componentInstance.hasPermission).toBe(false);
+  expect(fixture.componentInstance.events()).toBeNull();
+});
+
 it("exposes the entity type for the diff view", async () => {
-  const fixture = await render([]);
+  const fixture = await render();
   expect(fixture.componentInstance.entityType).toBe(TestEntity);
 });

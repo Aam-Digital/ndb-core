@@ -36,10 +36,6 @@
 
   <app-view-actions>
     <app-dialog-buttons [form]="$any(form())" [entity]="entity()">
-      <app-entity-last-edited-info
-        beforeContextMenu
-        [entity]="entity()"
-      ></app-entity-last-edited-info>
       <button mat-menu-item (click)="openExportDialog()">
         <fa-icon
           class="color-accent standard-icon-with-text"

@@ -6,85 +6,135 @@
 </h2>
 
 <mat-dialog-content>
-  @if (status() === "loading") {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  } @else if (status() === "disabled") {
-    <app-feature-disabled-info
-      [featureEnabled]="false"
-      featureName="Change History"
-      i18n-featureName="Change history feature name"
-    ></app-feature-disabled-info>
-    <p class="text-secondary text-center" i18n="Change history not-synced hint">
-      If change logging has been enabled, there may simply be no changes synced
-      yet since it was switched on.
-    </p>
-  } @else if (status() === "error") {
-    <div
-      class="empty-state flex-column align-center gap-regular text-secondary"
-    >
-      <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
-      <p i18n="Change history load error">
-        Couldn't load the change history. You may not have access, or there was
-        a temporary problem — please try again or contact your administrator.
-      </p>
-    </div>
-  } @else if ((events() ?? []).length === 0) {
-    <div
-      class="empty-state flex-column align-center gap-regular text-secondary"
-    >
-      <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
-      <p i18n="Change history empty">No change history recorded yet.</p>
-    </div>
-  } @else {
-    <app-hint-box class="history-hints">
-      <p i18n="Change history sync hint">
-        Only changes already synced to the server are shown.
-      </p>
-      <p i18n="Change history linked-records hint">
-        Actions that link this record to another (e.g. adding a note) appear in
-        the change history of that related record, not here.
-      </p>
-    </app-hint-box>
+  <!-- The entity's own created / last-updated metadata. Pure entity state, so
+       it is always shown — even when the audit history below is unavailable. -->
+  <div class="entity-meta flex-column gap-small">
+    @if (updated) {
+      <div class="flex-row gap-small">
+        <app-fa-dynamic-icon
+          class="meta-icon"
+          icon="pen-to-square"
+        ></app-fa-dynamic-icon>
+        <div>
+          <div class="meta-line flex-column">
+            <span i18n="Change history">Last updated by</span>
+            <app-entity-block [entityId]="updated.by"></app-entity-block>
+          </div>
+          <div class="hint-text">
+            {{ updated.at | customDate: "short" }} ·
+            {{ updated.at | notificationTime | async }}
+          </div>
+        </div>
+      </div>
+    }
 
-    <mat-accordion class="timeline">
-      @for (event of events() ?? []; track event.id; let isFirst = $first) {
-        <mat-expansion-panel>
-          <mat-expansion-panel-header
-            class="event-header"
-            collapsedHeight="56px"
-            expandedHeight="56px"
-          >
-            <mat-panel-title
-              class="flex-row align-center gap-regular full-width"
+    @if (created) {
+      <div class="flex-row gap-small">
+        <app-fa-dynamic-icon
+          class="meta-icon"
+          icon="circle-plus"
+        ></app-fa-dynamic-icon>
+        <div>
+          <div class="meta-line flex-column">
+            <span i18n="Change history">Created by</span>
+            <app-entity-block [entityId]="created.by"></app-entity-block>
+          </div>
+          <div class="hint-text">{{ created.at | customDate: "short" }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- feature-flag state: nothing when enabled, a disabled notice when off, a
+       loading indicator while the flag is still being fetched -->
+  <app-feature-disabled-info
+    [featureEnabled]="auditEnabled()"
+    featureName="Change History"
+    i18n-featureName="Change history feature name"
+  ></app-feature-disabled-info>
+
+  @if (auditEnabled() === true) {
+    @if (!hasPermission) {
+      <div
+        class="empty-state flex-column align-center gap-regular text-secondary"
+      >
+        <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+        <p i18n="Change history no access">
+          You don't have permission to view the detailed change history of this
+          record. The created and last-updated information above is still
+          available.
+        </p>
+      </div>
+    } @else if (events() === null) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    } @else if (loadError()) {
+      <div
+        class="empty-state flex-column align-center gap-regular text-secondary"
+      >
+        <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+        <p i18n="Change history load error">
+          Couldn't load the change history — there may be a temporary problem.
+          Please try again or contact your administrator.
+        </p>
+      </div>
+    } @else if (events().length === 0) {
+      <div
+        class="empty-state flex-column align-center gap-regular text-secondary"
+      >
+        <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
+        <p i18n="Change history empty">No change history recorded yet.</p>
+      </div>
+    } @else {
+      <app-hint-box class="history-hints">
+        <p i18n="Change history sync hint">
+          Only changes already synced to the server are shown.
+        </p>
+        <p i18n="Change history linked-records hint">
+          Actions that link this record to another (e.g. adding a note) appear
+          in the change history of that related record, not here.
+        </p>
+      </app-hint-box>
+
+      <mat-accordion class="timeline">
+        @for (event of events() ?? []; track event.id; let isFirst = $first) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header
+              class="event-header"
+              collapsedHeight="56px"
+              expandedHeight="56px"
             >
-              <app-change-history-action-badge
-                [action]="event.action"
-              ></app-change-history-action-badge>
-              <span class="user flex-grow">
-                @if (event.by) {
-                  <app-entity-block [entityId]="event.by"></app-entity-block>
-                }
-              </span>
-              <span class="when">
-                <span>{{ event.at | customDate: "short" }}</span>
-                @if (isFirst) {
-                  <span class="relative">{{
-                    event.at | notificationTime | async
-                  }}</span>
-                }
-              </span>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
+              <mat-panel-title
+                class="flex-row align-center gap-regular full-width"
+              >
+                <app-change-history-action-badge
+                  [action]="event.action"
+                ></app-change-history-action-badge>
+                <span class="user flex-grow">
+                  @if (event.by) {
+                    <app-entity-block [entityId]="event.by"></app-entity-block>
+                  }
+                </span>
+                <span class="when">
+                  <span>{{ event.at | customDate: "short" }}</span>
+                  @if (isFirst) {
+                    <span class="relative">{{
+                      event.at | notificationTime | async
+                    }}</span>
+                  }
+                </span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
 
-          <ng-template matExpansionPanelContent>
-            <app-record-diff
-              [event]="event"
-              [entityType]="entityType"
-            ></app-record-diff>
-          </ng-template>
-        </mat-expansion-panel>
-      }
-    </mat-accordion>
+            <ng-template matExpansionPanelContent>
+              <app-record-diff
+                [event]="event"
+                [entityType]="entityType"
+              ></app-record-diff>
+            </ng-template>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    }
   }
 </mat-dialog-content>
 

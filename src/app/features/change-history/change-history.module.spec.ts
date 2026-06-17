@@ -1,9 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  AUDIT_RECORD_SUBJECT,
-  ChangeHistoryModule,
-} from "./change-history.module";
+import { HttpClient } from "@angular/common/http";
+import { of } from "rxjs";
+import { ChangeHistoryModule } from "./change-history.module";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog/change-history-dialog.component";
 import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
@@ -39,6 +38,7 @@ function setup() {
         provide: DatabaseFactoryService,
         useValue: { createRemoteDatabase: vi.fn() },
       },
+      { provide: HttpClient, useValue: { get: () => of({}) } },
     ],
   });
   TestBed.inject(ChangeHistoryModule);
@@ -70,16 +70,15 @@ it("opens the change-history dialog on execute", async () => {
   );
 });
 
-it("is visible for a saved entity when AuditRecord read is granted", async () => {
+it("is visible for any saved entity (so the feature is discoverable)", async () => {
   const action = setup();
   expect(await action.visible(savedEntity())).toBe(true);
-  expect(abilityCan).toHaveBeenCalledWith("read", AUDIT_RECORD_SUBJECT);
 });
 
-it("is hidden when AuditRecord read is denied", async () => {
+it("stays visible even when AuditRecord read is denied (dialog shows the message)", async () => {
   const action = setup();
   abilityCan.mockReturnValue(false);
-  expect(await action.visible(savedEntity())).toBe(false);
+  expect(await action.visible(savedEntity())).toBe(true);
 });
 
 it("is hidden for a new (unsaved) entity", async () => {

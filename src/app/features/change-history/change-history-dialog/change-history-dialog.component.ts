@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   inject,
-  OnInit,
   signal,
 } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
@@ -60,7 +60,7 @@ export interface ChangeHistoryDialogData {
   styleUrls: ["./change-history-dialog.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChangeHistoryDialogComponent implements OnInit {
+export class ChangeHistoryDialogComponent {
   /** Open the change-history dialog for an entity (single source of sizing/data). */
   static open(
     dialog: MatDialog,
@@ -79,41 +79,47 @@ export class ChangeHistoryDialogComponent implements OnInit {
   readonly entity: Entity = this.data.entity;
   readonly entityType: EntityConstructor = this.entity.getConstructor();
 
+  /**
+   * The entity's own created / last-updated metadata. Pure entity state, so it
+   * is always shown — even when the audit history below is unavailable.
+   */
+  readonly updated = this.entity.updated;
+  readonly created = this.entity.created;
+
+  /** backend feature flag (undefined while loading, then true/false) */
+  readonly auditEnabled = this.service.isAuditEnabled;
+  /** whether the user may read the audit data */
+  readonly hasPermission = this.service.hasHistoryPermission();
+
   /** null while loading, then the loaded (possibly empty) list */
   readonly events = signal<ChangeEvent[] | null>(null);
-  /**
-   * `loading` while fetching, `ready` once loaded, `disabled` when the audit
-   * database does not exist (change logging not switched on), `error` for any
-   * other read failure (no access / connection / server issue).
-   */
-  readonly status = signal<"loading" | "ready" | "disabled" | "error">(
-    "loading",
-  );
+  /** true when the audit-db read failed despite the feature being enabled */
+  readonly loadError = signal(false);
 
-  async ngOnInit() {
-    // Defense-in-depth: both entry points already gate on canViewHistory(), but
-    // guard here too so a direct open() call cannot bypass the permission check
-    // (the backend independently enforces read access on the audit db as well).
-    if (!this.service.canViewHistory(this.entity)) {
-      this.events.set([]);
-      this.status.set("error");
-      return;
-    }
-    try {
-      this.events.set(await this.service.getHistory(this.entity));
-      this.status.set("ready");
-    } catch (err) {
-      this.events.set([]);
-      this.status.set(this.isFeatureDisabled(err) ? "disabled" : "error");
-    }
+  private fetchStarted = false;
+
+  constructor() {
+    // Fetch the history once we know the feature is enabled and the user is
+    // permitted. Driven by the feature-flag signal so a no-backend deployment
+    // resolves to "disabled" (clean notice) rather than an audit-db read error.
+    effect(() => {
+      if (
+        this.auditEnabled() === true &&
+        this.hasPermission &&
+        !this.fetchStarted
+      ) {
+        this.fetchStarted = true;
+        void this.loadHistory();
+      }
+    });
   }
 
-  /**
-   * A missing audit database (404 / `not_found`) means change logging has not
-   * been enabled for this system yet; anything else is a genuine read error.
-   */
-  private isFeatureDisabled(err: unknown): boolean {
-    const e = err as { status?: number; name?: string };
-    return e?.status === 404 || e?.name === "not_found";
+  private async loadHistory() {
+    try {
+      this.events.set(await this.service.getHistory(this.entity));
+    } catch {
+      this.loadError.set(true);
+      this.events.set([]);
+    }
   }
 }
