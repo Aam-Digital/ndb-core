@@ -199,7 +199,11 @@ export abstract class CustomFormControlDirective<T>
   }
 
   blur() {
-    this._touched.set(true);
+    // The FocusMonitor can emit synchronously while Angular is rendering the template
+    // (the focused element is removed during a re-render, e.g. selecting an autocomplete
+    // option closes the panel), so defer the signal write to the next microtask to avoid
+    // NG0600 ("writing to signals is not allowed while Angular renders the template").
+    queueMicrotask(() => this._touched.set(true));
     this.onTouched();
     this.stateChanges.next();
   }
