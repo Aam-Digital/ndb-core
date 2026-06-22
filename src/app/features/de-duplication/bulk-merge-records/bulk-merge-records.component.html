@@ -13,7 +13,7 @@
             [entityConstructor]="entityConstructor"
           />
         }
-        @for (field of fieldsToMerge; track field.id) {
+        @for (field of filteredFieldsToMerge(); track field.id) {
           <div class="label-cell">
             <strong>{{ field.label }}</strong>
           </div>
@@ -48,6 +48,12 @@
   >
     Merge
   </button>
+  <mat-slide-toggle
+    [checked]="showOnlyDifferences()"
+    (change)="showOnlyDifferences.set($event.checked)"
+  >
+    <span i18n>Only show fields with differences</span>
+  </mat-slide-toggle>
   @if (mergeForm?.formGroup.invalid) {
     <mat-error i18n>
       The data you selected to merge is invalid, please check the fields in the
