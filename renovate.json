@@ -38,8 +38,7 @@
     "npm": ">=11.0.0"
   },
   "lockFileMaintenance": {
-    "enabled": true,
-    "groupName": "weekly-non-major-updates"
+    "enabled": true
   },
   "packageRules": [
     {
@@ -69,6 +68,12 @@
       ],
       "groupName": "weekly-non-major-updates",
       "automerge": false
+    },
+    {
+      "matchUpdateTypes": [
+        "lockFileMaintenance"
+      ],
+      "groupName": "weekly-non-major-updates"
     }
   ]
 }
