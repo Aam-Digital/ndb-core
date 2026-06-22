@@ -4,6 +4,7 @@ import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { Logging } from "../../logging/logging.service";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
+import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
 
 @DatabaseEntity("ConfigurableEnum")
 export class ConfigurableEnum extends Entity {
@@ -63,8 +64,15 @@ export class ConfigurableEnum extends Entity {
       return;
     }
 
+    const id = generateIdFromLabel(newOption);
+    if (!id) {
+      // input consisted only of special characters that were stripped out,
+      // so no valid id could be generated for the option
+      throw new InvalidEnumOptionException(newOption);
+    }
+
     return {
-      id: newOption.toUpperCase(),
+      id: id,
       label: newOption,
     };
   }
@@ -76,6 +84,18 @@ export class ConfigurableEnum extends Entity {
 export class DuplicateEnumOptionException extends Error {
   constructor(newOptionInput) {
     super("Enum Option already exists");
+
+    this["newOptionInput"] = newOptionInput;
+  }
+}
+
+/**
+ * Error thrown when trying to add an option whose value does not contain any
+ * characters that can be used to generate a valid id (e.g. only special characters).
+ */
+export class InvalidEnumOptionException extends Error {
+  constructor(newOptionInput) {
+    super("Enum Option is not valid");
 
     this["newOptionInput"] = newOptionInput;
   }
