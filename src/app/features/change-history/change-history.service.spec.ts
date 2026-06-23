@@ -1,3 +1,4 @@
+import { ApplicationRef } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
@@ -122,4 +123,29 @@ it("denies viewing history for an internal entity", () => {
 it("denies viewing history when no entity is given", () => {
   const service = setup([], true);
   expect(service.canViewHistory(undefined)).toBe(false);
+});
+
+it("reads the audit feature status from the replication-backend /_features/audit endpoint (lazily)", async () => {
+  const httpGet = vi.fn().mockReturnValue(of({ enabled: true }));
+  mockDb = { getAll: vi.fn().mockResolvedValue([]) };
+  dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
+  TestBed.configureTestingModule({
+    providers: [
+      ChangeHistoryService,
+      { provide: DatabaseFactoryService, useValue: dbFactory },
+      { provide: EntityAbility, useValue: { can: () => true } },
+      { provide: HttpClient, useValue: { get: httpGet } },
+    ],
+  });
+  const service = TestBed.inject(ChangeHistoryService);
+
+  // nothing fetched until the flag is requested (avoids HTTP at app startup)
+  expect(httpGet).not.toHaveBeenCalled();
+  expect(service.isAuditEnabled()).toBeUndefined();
+
+  service.loadAuditFeatureFlag();
+  await TestBed.inject(ApplicationRef).whenStable();
+
+  expect(httpGet).toHaveBeenCalledWith("/db/_features/audit");
+  expect(service.isAuditEnabled()).toBe(true);
 });
