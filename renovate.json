@@ -2,7 +2,8 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    "group:allNonMajor"
+    "group:allNonMajor",
+    ":maintainLockFilesMonthly"
   ],
   "enabledManagers": [
     "npm"
@@ -37,16 +38,20 @@
   "constraints": {
     "npm": ">=11.0.0"
   },
-  "lockFileMaintenance": {
-    "enabled": true,
-    "groupName": "weekly-non-major-updates"
-  },
   "packageRules": [
     {
       "matchManagers": [
         "npm"
       ],
       "rangeStrategy": "bump"
+    },
+    {
+      "description": "Pin @playwright/test below 1.61.0: 1.61.0's new sync ESM loader crashes our type:module + tsx/esm e2e setup on Node 22+ (ERR_INVALID_RETURN_PROPERTY_VALUE). See microsoft/playwright#41402. Remove once a fixed release ships.",
+      "matchPackageNames": [
+        "@playwright/test",
+        "playwright"
+      ],
+      "allowedVersions": "<1.61.0"
     },
     {
       "matchUpdateTypes": [
