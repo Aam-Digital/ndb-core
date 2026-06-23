@@ -7,6 +7,7 @@ import {
 import {
   ConfigurableEnum,
   DuplicateEnumOptionException,
+  InvalidEnumOptionException,
 } from "../configurable-enum";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -28,6 +29,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import {
   CustomYesNoButtons,
+  OkButton,
   YesNoButtons,
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -253,12 +255,15 @@ export class ConfigureEnumPopupComponent {
     const lines = await this.parseInputLines(input);
 
     let skipped = 0;
+    const invalidEntries: string[] = [];
     for (const line of lines) {
       try {
         this.localEnum.addOption(line);
       } catch (err) {
         if (err instanceof DuplicateEnumOptionException) {
           skipped++;
+        } else if (err instanceof InvalidEnumOptionException) {
+          invalidEntries.push(line);
         } else {
           console.error("Failed to add option:", line, err);
         }
@@ -269,6 +274,9 @@ export class ConfigureEnumPopupComponent {
 
     if (skipped > 0) {
       this.showDuplicateSkippedMessage(skipped);
+    }
+    if (invalidEntries.length > 0) {
+      await this.showInvalidSkippedMessage(invalidEntries);
     }
   }
 
@@ -281,6 +289,16 @@ export class ConfigureEnumPopupComponent {
       $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? "y" : "ies"}.`,
       undefined,
       { duration: 3000 },
+    );
+  }
+
+  private async showInvalidSkippedMessage(invalidEntries: string[]) {
+    const count = invalidEntries.length;
+    const entriesList = invalidEntries.map((e) => `"${e}"`).join(", ");
+    await this.confirmationService.getConfirmation(
+      $localize`:@@invalidOptionsSkippedTitle:Some entries skipped`,
+      $localize`:@@invalidOptionsSkipped:Skipped ${count} entr${count === 1 ? "y" : "ies"} without usable letters or numbers for ID: ${entriesList}.`,
+      OkButton,
     );
   }
 }
