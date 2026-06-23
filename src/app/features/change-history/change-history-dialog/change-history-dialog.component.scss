@@ -12,7 +12,8 @@ $history-open-bg: #f1f6fb;
   border-bottom: 1px solid colors.$grey-medium;
 
   .meta-icon {
-    color: colors.$text-secondary;
+    // muted grey so the icons read as decorative, not clickable
+    color: colors.$muted;
     margin-top: 2px;
   }
 }
