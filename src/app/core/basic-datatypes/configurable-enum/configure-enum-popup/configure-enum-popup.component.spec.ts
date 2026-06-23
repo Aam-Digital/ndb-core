@@ -246,7 +246,7 @@ describe("ConfigureEnumPopupComponent", () => {
 
     expect(confirmationSpy).toHaveBeenCalledWith(
       expect.any(String),
-      expect.stringMatching(/Skipped 2 entries without usable/),
+      expect.stringMatching(/Skipped 2 entries without usable letters or numbers for ID/),
       expect.any(Object),
     );
   });

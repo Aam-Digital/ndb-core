@@ -255,7 +255,7 @@ export class ConfigureEnumPopupComponent {
     const lines = await this.parseInputLines(input);
 
     let skipped = 0;
-    let invalid = 0;
+    const invalidEntries: string[] = [];
     for (const line of lines) {
       try {
         this.localEnum.addOption(line);
@@ -263,7 +263,7 @@ export class ConfigureEnumPopupComponent {
         if (err instanceof DuplicateEnumOptionException) {
           skipped++;
         } else if (err instanceof InvalidEnumOptionException) {
-          invalid++;
+          invalidEntries.push(line);
         } else {
           console.error("Failed to add option:", line, err);
         }
@@ -275,8 +275,8 @@ export class ConfigureEnumPopupComponent {
     if (skipped > 0) {
       this.showDuplicateSkippedMessage(skipped);
     }
-    if (invalid > 0) {
-      await this.showInvalidSkippedMessage(invalid);
+    if (invalidEntries.length > 0) {
+      await this.showInvalidSkippedMessage(invalidEntries);
     }
   }
 
@@ -292,10 +292,12 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
-  private async showInvalidSkippedMessage(invalid: number) {
+  private async showInvalidSkippedMessage(invalidEntries: string[]) {
+    const count = invalidEntries.length;
+    const entriesList = invalidEntries.map((e) => `"${e}"`).join(", ");
     await this.confirmationService.getConfirmation(
       $localize`:@@invalidOptionsSkippedTitle:Some entries skipped`,
-      $localize`:@@invalidOptionsSkipped:Skipped ${invalid} entr${invalid === 1 ? "y" : "ies"} without usable letters or numbers for ID.`,
+      $localize`:@@invalidOptionsSkipped:Skipped ${count} entr${count === 1 ? "y" : "ies"} without usable letters or numbers for ID: ${entriesList}.`,
       OkButton,
     );
   }
