@@ -19,8 +19,6 @@ globalThis.self = globalThis;
  */
 export default defineConfig({
   testDir: "./e2e/tests",
-  // Let `tsx` take care of transforming code
-  build: { external: ["*"] },
 
   reporter: [
     ["list"],
