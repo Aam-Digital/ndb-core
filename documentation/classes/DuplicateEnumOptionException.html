@@ -170,7 +170,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.ts:76</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.ts:84</a></div>
                             </td>
                         </tr>
 
@@ -225,6 +225,7 @@ import { DatabaseEntity } from &quot;../../entity/database-entity.decorator&quot
 import { DatabaseField } from &quot;../../entity/database-field.decorator&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { ConfigurableEnumValue } from &quot;./configurable-enum.types&quot;;
+import { generateIdFromLabel } from &quot;../../../utils/generate-id-from-label/generate-id-from-label&quot;;
 
 @DatabaseEntity(&quot;ConfigurableEnum&quot;)
 export class ConfigurableEnum extends Entity {
@@ -284,8 +285,15 @@ export class ConfigurableEnum extends Entity {
       return;
     }
 
+    const id &#x3D; generateIdFromLabel(newOption);
+    if (!id) {
+      // input consisted only of special characters that were stripped out,
+      // so no valid id could be generated for the option
+      throw new InvalidEnumOptionException(newOption);
+    }
+
     return {
-      id: newOption.toUpperCase(),
+      id: id,
       label: newOption,
     };
   }
@@ -297,6 +305,18 @@ export class ConfigurableEnum extends Entity {
 export class DuplicateEnumOptionException extends Error {
   constructor(newOptionInput) {
     super(&quot;Enum Option already exists&quot;);
+
+    this[&quot;newOptionInput&quot;] &#x3D; newOptionInput;
+  }
+}
+
+/**
+ * Error thrown when trying to add an option whose value does not contain any
+ * characters that can be used to generate a valid id (e.g. only special characters).
+ */
+export class InvalidEnumOptionException extends Error {
+  constructor(newOptionInput) {
+    super(&quot;Enum Option is not valid&quot;);
 
     this[&quot;newOptionInput&quot;] &#x3D; newOptionInput;
   }

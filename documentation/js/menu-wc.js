@@ -1706,6 +1706,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/ImportProcessingContext.html" data-type="entity-link" >ImportProcessingContext</a>
                             </li>
                             <li class="link">
+                                <a href="classes/InvalidEnumOptionException.html" data-type="entity-link" >InvalidEnumOptionException</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/InvalidFormFieldError.html" data-type="entity-link" >InvalidFormFieldError</a>
                             </li>
                             <li class="link">
