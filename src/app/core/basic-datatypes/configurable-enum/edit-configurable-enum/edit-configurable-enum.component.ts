@@ -26,7 +26,10 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
-import { ConfigurableEnum } from "../configurable-enum";
+import {
+  ConfigurableEnum,
+  InvalidEnumOptionException,
+} from "../configurable-enum";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 import { ConfigureEnumPopupComponent } from "../configure-enum-popup/configure-enum-popup.component";
@@ -139,9 +142,13 @@ export class EditConfigurableEnumComponent
     try {
       addedOption = enumEntity.addOption(name);
     } catch (error) {
+      const message =
+        error instanceof InvalidEnumOptionException
+          ? $localize`Couldn't create the option "${name}" because it doesn't contain any usable characters for an ID, please include some letters or numbers. You can rename options more freely afterwards.`
+          : $localize`Couldn't create this new option. Please check if the value already exists.`;
       await this.confirmation.getConfirmation(
         $localize`Failed to create new option`,
-        $localize`Couldn't create this new option. Please check if the value already exists.`,
+        message,
         OkButton,
       );
       return undefined;
