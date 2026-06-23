@@ -13,9 +13,9 @@ import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
 /** CASL subject the audit records are keyed under (see replication-backend #4026). */
 export const AUDIT_RECORD_SUBJECT = "AuditRecord";
 
-/** Response of the replication-backend `GET /_features/audit` endpoint. */
+/** Response of the replication-backend central `GET /_features` endpoint. */
 interface AuditFeatureStatus {
-  enabled: boolean;
+  audit: { enabled: boolean };
 }
 
 /**
@@ -54,11 +54,11 @@ export class ChangeHistoryService {
   }
 
   /**
-   * Audit feature status from the replication-backend (`GET /_features/audit`,
-   * reached via the `/db` proxy). It reflects that backend's own
-   * `AUDIT_ENABLED`, so there is no separate flag to keep in sync. Only fetched
-   * once requested. Failure (e.g. no backend in a static deployment) resolves
-   * to disabled rather than erroring.
+   * Feature status from the replication-backend's central `GET /_features`
+   * endpoint (reached via the `/db` proxy). The `audit` flag reflects that
+   * backend's own `AUDIT_ENABLED`, so there is no separate flag to keep in sync.
+   * Only fetched once requested. Failure (e.g. no backend in a static
+   * deployment) resolves to disabled rather than erroring.
    */
   private readonly featureFlags = resource({
     params: () => (this.auditFlagRequested() ? {} : undefined),
@@ -66,12 +66,12 @@ export class ChangeHistoryService {
       try {
         return await firstValueFrom(
           this.httpClient.get<AuditFeatureStatus>(
-            environment.DB_PROXY_PREFIX + "/_features/audit",
+            environment.DB_PROXY_PREFIX + "/_features",
           ),
         );
       } catch (err) {
-        Logging.debug("audit feature status not available", err);
-        return { enabled: false } satisfies AuditFeatureStatus;
+        Logging.debug("feature status not available", err);
+        return { audit: { enabled: false } } satisfies AuditFeatureStatus;
       }
     },
   });
@@ -85,7 +85,7 @@ export class ChangeHistoryService {
     if (!this.auditFlagRequested() || this.featureFlags.isLoading()) {
       return undefined;
     }
-    return this.featureFlags.value()?.enabled ?? false;
+    return this.featureFlags.value()?.audit?.enabled ?? false;
   });
 
   private auditDb?: Database;

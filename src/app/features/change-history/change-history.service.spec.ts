@@ -125,8 +125,8 @@ it("denies viewing history when no entity is given", () => {
   expect(service.canViewHistory(undefined)).toBe(false);
 });
 
-it("reads the audit feature status from the replication-backend /_features/audit endpoint (lazily)", async () => {
-  const httpGet = vi.fn().mockReturnValue(of({ enabled: true }));
+it("reads the audit feature status from the replication-backend /_features endpoint (lazily)", async () => {
+  const httpGet = vi.fn().mockReturnValue(of({ audit: { enabled: true } }));
   mockDb = { getAll: vi.fn().mockResolvedValue([]) };
   dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
   TestBed.configureTestingModule({
@@ -146,6 +146,6 @@ it("reads the audit feature status from the replication-backend /_features/audit
   service.loadAuditFeatureFlag();
   await TestBed.inject(ApplicationRef).whenStable();
 
-  expect(httpGet).toHaveBeenCalledWith("/db/_features/audit");
+  expect(httpGet).toHaveBeenCalledWith("/db/_features");
   expect(service.isAuditEnabled()).toBe(true);
 });
