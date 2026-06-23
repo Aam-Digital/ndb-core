@@ -8,7 +8,7 @@
 <mat-dialog-content>
   <!-- The entity's own created / last-updated metadata. Pure entity state, so
        it is always shown — even when the audit history below is unavailable. -->
-  <div class="entity-meta flex-column gap-small">
+  <div class="entity-meta flex-row flex-wrap gap-small">
     @if (updated) {
       <div class="flex-row gap-small">
         <app-fa-dynamic-icon
