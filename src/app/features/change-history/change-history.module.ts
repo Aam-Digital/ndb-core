@@ -12,6 +12,9 @@ function asSingle(entity: Entity | Entity[]): Entity | undefined {
 }
 
 /**
+ * UI to view a full change history of entities.
+ * Requires replication-backend API feature to be enabled.
+ *
  * Registers the global "View change history" entity action, surfacing the
  * change-history dialog in the entity-details three-dot menu for every entity
  * type. No per-type configuration is needed.
