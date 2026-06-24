@@ -44,7 +44,7 @@ export class EntityBlockComponent {
   private router = inject(Router);
   // optional + module-singleton fallback so this widely-reused block never
   // crashes a host/test that didn't explicitly provide EntityRegistry
-  private registry =
+  private readonly registry =
     inject(EntityRegistry, { optional: true }) ?? entityRegistry;
   /** The entity to display directly. Takes precedence over entityId. */
   entity = input<Entity>();
