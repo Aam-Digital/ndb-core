@@ -111,15 +111,14 @@ export class ChangeHistoryService {
   }
 
   /**
-   * Whether this entity qualifies for a change-history entry at all: a saved,
-   * non-internal record. This gates the *visibility* of the entry point and is
+   * Whether this entity qualifies for a change-history entry at all: any saved
+   * record. Internal entities (e.g. PublicFormConfig) are audited too, so they
+   * also qualify. This gates the *visibility* of the entry point and is
    * deliberately permission-agnostic — every user should see that the feature
    * exists (the dialog itself shows a message if they lack access).
    */
   canSeeHistoryEntry(entity?: Entity): boolean {
-    return (
-      !!entity && !entity.isNew && !entity.getConstructor().isInternalEntity
-    );
+    return !!entity && !entity.isNew;
   }
 
   /**

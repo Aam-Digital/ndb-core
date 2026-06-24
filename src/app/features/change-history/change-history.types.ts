@@ -5,7 +5,7 @@
  * synthetic `baseline` snapshot.
  *
  * (A future "edit-mode tag" may add `imported`/`merge`; until the backend emits
- * them, `actionMetaFor` falls back to `updated`.)
+ * them, the action badge falls back to `updated`.)
  */
 export type ChangeAction = "baseline" | "created" | "updated" | "deleted";
 
@@ -50,61 +50,8 @@ export interface ChangeEvent {
   note?: string;
 }
 
-export interface ActionMeta {
-  /** FontAwesome (solid) icon name, resolved via app-fa-dynamic-icon */
-  icon: string;
-  label: string;
-  /** badge background color */
-  background: string;
-  /** badge text/icon color */
-  color: string;
-  /** optional hover tooltip explaining the action */
-  tooltip?: string;
-}
-
 /**
  * Explanation for the synthetic "initial snapshot" entry, shown both inline in
  * its diff and as the badge tooltip (single source of truth).
  */
 export const BASELINE_NOTE = $localize`:Change history baseline note:Record state captured when change logging was enabled. Edits made before this point aren't recorded.`;
-
-/**
- * Display metadata per action. Orange is reserved for app chrome, so even
- * `imported` uses an orange-tint background with deep-orange text — never the
- * brand primary fill.
- */
-export const ACTION_META: Record<ChangeAction, ActionMeta> = {
-  baseline: {
-    icon: "clock-rotate-left",
-    label: $localize`:Change action badge:Initial snapshot`,
-    background: "#ECEFF1",
-    color: "#4a525c",
-    tooltip: BASELINE_NOTE,
-  },
-  created: {
-    icon: "circle-plus",
-    label: $localize`:Change action badge:Created`,
-    background: "#E6F4EA",
-    color: "#1E6C33",
-  },
-  updated: {
-    icon: "pen-to-square",
-    label: $localize`:Change action badge:Updated`,
-    background: "#CCEFFF",
-    color: "#1565C0",
-  },
-  deleted: {
-    icon: "trash",
-    label: $localize`:Change action badge:Deleted`,
-    background: "#FBE2DE",
-    color: "#B23A2C",
-  },
-};
-
-/**
- * Resolve display metadata for an action, falling back to `updated` for any
- * unknown action.
- */
-export function actionMetaFor(action: ChangeAction): ActionMeta {
-  return ACTION_META[action] ?? ACTION_META.updated;
-}

@@ -10,40 +10,65 @@
        it is always shown — even when the audit history below is unavailable. -->
   <div class="entity-meta flex-row flex-wrap gap-small">
     @if (updated) {
-      <div class="flex-row gap-small">
-        <app-fa-dynamic-icon
-          class="meta-icon"
-          icon="pen-to-square"
-        ></app-fa-dynamic-icon>
-        <div>
-          <div class="meta-line flex-column">
-            <span i18n="Change history">Last updated by</span>
-            <app-entity-block [entityId]="updated.by"></app-entity-block>
-          </div>
-          <div class="hint-text">
-            {{ updated.at | customDate: "short" }} ·
-            {{ updated.at | notificationTime | async }}
-          </div>
-        </div>
-      </div>
+      <ng-container
+        *ngTemplateOutlet="
+          metaRow;
+          context: {
+            icon: 'pen-to-square',
+            label: lastUpdatedByLabel,
+            by: updated.by,
+            when: updatedWhen,
+          }
+        "
+      ></ng-container>
     }
 
     @if (created) {
-      <div class="flex-row gap-small">
-        <app-fa-dynamic-icon
-          class="meta-icon"
-          icon="circle-plus"
-        ></app-fa-dynamic-icon>
-        <div>
-          <div class="meta-line flex-column">
-            <span i18n="Change history">Created by</span>
-            <app-entity-block [entityId]="created.by"></app-entity-block>
-          </div>
-          <div class="hint-text">{{ created.at | customDate: "short" }}</div>
-        </div>
-      </div>
+      <ng-container
+        *ngTemplateOutlet="
+          metaRow;
+          context: {
+            icon: 'circle-plus',
+            label: createdByLabel,
+            by: created.by,
+            when: createdWhen,
+          }
+        "
+      ></ng-container>
     }
   </div>
+
+  <!-- shared layout for the created / last-updated rows -->
+  <ng-template
+    #metaRow
+    let-icon="icon"
+    let-label="label"
+    let-by="by"
+    let-when="when"
+  >
+    <div class="flex-row gap-small">
+      <app-fa-dynamic-icon
+        class="meta-icon"
+        [icon]="icon"
+      ></app-fa-dynamic-icon>
+      <div>
+        <div class="meta-line flex-column">
+          <span>{{ label }}</span>
+          <app-entity-block [entityId]="by"></app-entity-block>
+        </div>
+        <div class="hint-text">
+          <ng-container *ngTemplateOutlet="when"></ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #updatedWhen>
+    {{ updated.at | customDate: "short" }} ·
+    {{ updated.at | notificationTime | async }}
+  </ng-template>
+  <ng-template #createdWhen>
+    {{ created.at | customDate: "short" }}
+  </ng-template>
 
   <!-- feature-flag state: nothing when enabled, a disabled notice when off, a
        loading indicator while the flag is still being fetched -->

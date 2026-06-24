@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { AsyncPipe } from "@angular/common";
+import { AsyncPipe, NgTemplateOutlet } from "@angular/common";
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -41,6 +41,7 @@ export interface ChangeHistoryDialogData {
   standalone: true,
   imports: [
     AsyncPipe,
+    NgTemplateOutlet,
     MatDialogModule,
     MatButtonModule,
     MatExpansionModule,
@@ -67,8 +68,10 @@ export class ChangeHistoryDialogComponent {
   ): MatDialogRef<ChangeHistoryDialogComponent> {
     return dialog.open(ChangeHistoryDialogComponent, {
       data: { entity } satisfies ChangeHistoryDialogData,
+      // near-fullscreen for the wide diff table; maxWidth must be raised too,
+      // else Material's default maxWidth (80vw) caps the 98vw width
       width: "98vw",
-      maxWidth: "99vw",
+      maxWidth: "98vw",
     });
   }
 
@@ -84,6 +87,10 @@ export class ChangeHistoryDialogComponent {
    */
   readonly updated = this.entity.updated;
   readonly created = this.entity.created;
+
+  /** labels for the created/last-updated meta rows (shared template) */
+  protected readonly lastUpdatedByLabel = $localize`:Change history:Last updated by`;
+  protected readonly createdByLabel = $localize`:Change history:Created by`;
 
   /** backend feature flag (undefined while loading, then true/false) */
   readonly auditEnabled = this.service.isAuditEnabled;

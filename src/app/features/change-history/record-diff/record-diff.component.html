@@ -33,6 +33,9 @@
         </div>
 
         <div class="value before">
+          <span class="value-caption" i18n="Change history diff inline caption"
+            >↳ before:</span
+          >
           @if (row.hasFrom) {
             <app-entity-field-view
               [entity]="row.oldEntity"
@@ -48,6 +51,9 @@
         </div>
 
         <div class="value after">
+          <span class="value-caption" i18n="Change history diff inline caption"
+            >↳ after:</span
+          >
           @if (row.hasTo) {
             <app-entity-field-view
               [entity]="row.newEntity"

@@ -70,6 +70,14 @@ $diff-columns: 140px minmax(0, 1fr) 28px minmax(0, 1fr);
   color: colors.$muted;
 }
 
+// inline Before/After captions are only needed in the stacked narrow layout
+// (the .diff-head column captions cover the wide layout); the text lives in the
+// template so it stays translatable
+.value-caption {
+  display: none;
+  font-size: 0.85em;
+}
+
 .arrow {
   color: colors.$muted;
   text-align: center;
@@ -102,15 +110,16 @@ $diff-columns: 140px minmax(0, 1fr) 28px minmax(0, 1fr);
     display: none;
   }
 
-  .value.before::before {
-    content: "↳ before: ";
-    color: colors.$error;
-    font-size: 0.85em;
+  .value .value-caption {
+    display: inline;
+    margin-right: 2px;
   }
 
-  .value.after::before {
-    content: "↳ after: ";
+  .value.before .value-caption {
+    color: colors.$error;
+  }
+
+  .value.after .value-caption {
     color: colors.$success;
-    font-size: 0.85em;
   }
 }

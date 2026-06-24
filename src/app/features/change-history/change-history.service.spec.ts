@@ -115,9 +115,9 @@ it("denies viewing history for a new (unsaved) entity", () => {
   expect(service.canViewHistory(new Entity("1"))).toBe(false);
 });
 
-it("denies viewing history for an internal entity", () => {
+it("allows viewing history for a saved internal entity (internal entities are audited too)", () => {
   const service = setup([], true);
-  expect(service.canViewHistory(savedEntity(InternalEntity))).toBe(false);
+  expect(service.canViewHistory(savedEntity(InternalEntity))).toBe(true);
 });
 
 it("denies viewing history when no entity is given", () => {

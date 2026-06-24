@@ -2,6 +2,14 @@
   <span class="block-height">
     <mat-spinner diameter="16" class="inline-spinner"></mat-spinner>
   </span>
+} @else if (notFoundText()) {
+  <span class="block-height truncate-text inactive">
+    <app-fa-dynamic-icon
+      [icon]="notFoundIcon()"
+      class="margin-right-small"
+    ></app-fa-dynamic-icon>
+    {{ notFoundText() }}
+  </span>
 } @else {
   <span
     class="block-height truncate-text"

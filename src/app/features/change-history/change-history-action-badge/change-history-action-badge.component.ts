@@ -6,7 +6,53 @@ import {
 } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { actionMetaFor, ChangeAction } from "../change-history.types";
+import { BASELINE_NOTE, ChangeAction } from "../change-history.types";
+
+/** Display metadata for one {@link ChangeAction} badge. */
+interface ActionMeta {
+  /** FontAwesome (solid) icon name, resolved via app-fa-dynamic-icon */
+  icon: string;
+  label: string;
+  /** badge background color */
+  background: string;
+  /** badge text/icon color */
+  color: string;
+  /** optional hover tooltip explaining the action */
+  tooltip?: string;
+}
+
+/**
+ * Display metadata per action. Orange is reserved for app chrome, so even
+ * `imported` uses an orange-tint background with deep-orange text — never the
+ * brand primary fill.
+ */
+const ACTION_META: Record<ChangeAction, ActionMeta> = {
+  baseline: {
+    icon: "clock-rotate-left",
+    label: $localize`:Change action badge:Initial snapshot`,
+    background: "#ECEFF1",
+    color: "#4a525c",
+    tooltip: BASELINE_NOTE,
+  },
+  created: {
+    icon: "circle-plus",
+    label: $localize`:Change action badge:Created`,
+    background: "#E6F4EA",
+    color: "#1E6C33",
+  },
+  updated: {
+    icon: "pen-to-square",
+    label: $localize`:Change action badge:Updated`,
+    background: "#CCEFFF",
+    color: "#1565C0",
+  },
+  deleted: {
+    icon: "trash",
+    label: $localize`:Change action badge:Deleted`,
+    background: "#FBE2DE",
+    color: "#B23A2C",
+  },
+};
 
 /**
  * A small colored pill showing the icon + label of a change action
@@ -43,5 +89,8 @@ import { actionMetaFor, ChangeAction } from "../change-history.types";
 })
 export class ChangeHistoryActionBadgeComponent {
   readonly action = input.required<ChangeAction>();
-  readonly meta = computed(() => actionMetaFor(this.action()));
+  /** display metadata, falling back to `updated` for any unknown action */
+  readonly meta = computed(
+    () => ACTION_META[this.action()] ?? ACTION_META.updated,
+  );
 }

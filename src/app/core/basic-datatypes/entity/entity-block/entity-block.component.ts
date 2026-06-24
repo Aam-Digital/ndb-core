@@ -13,6 +13,10 @@ import { TemplateTooltipDirective } from "../../../common-components/template-to
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityFieldViewComponent } from "../../../entity/entity-field-view/entity-field-view.component";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../../entity/database-entity.decorator";
 import { getEntityRuntimeRoute } from "../../../entity/entity-config.service";
 import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
@@ -38,6 +42,10 @@ import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
 export class EntityBlockComponent {
   private entityMapper = inject(EntityMapperService);
   private router = inject(Router);
+  // optional + module-singleton fallback so this widely-reused block never
+  // crashes a host/test that didn't explicitly provide EntityRegistry
+  private registry =
+    inject(EntityRegistry, { optional: true }) ?? entityRegistry;
   /** The entity to display directly. Takes precedence over entityId. */
   entity = input<Entity>();
 
@@ -70,6 +78,51 @@ export class EntityBlockComponent {
   initialLoading = computed(
     () => this.entityResource.isLoading() && !this.entityResource.value(),
   );
+
+  /**
+   * True when an id was given but no entity could be resolved (and loading has
+   * settled) — e.g. the referenced record was deleted.
+   */
+  notFound = computed(
+    () =>
+      !!this.entityId() &&
+      !this.entityResource.isLoading() &&
+      !this.entityResource.value(),
+  );
+
+  /** The constructor for the id's type prefix, if registered (used for the not-found display). */
+  private readonly missingEntityType = computed(() => {
+    if (!this.notFound()) {
+      return undefined;
+    }
+    const type = Entity.extractTypeFromId(this.entityId());
+    return type && this.registry.has(type)
+      ? this.registry.get(type)
+      : undefined;
+  });
+
+  /**
+   * Fallback text shown in place of the (empty) block when {@link notFound}:
+   * `"<Type> not available"`, derived from the id's type prefix (e.g. a deleted
+   * `User` -> "User not available"). Undefined while resolvable, so existing
+   * blocks render unchanged. Falls back to a generic label for unknown types.
+   */
+  notFoundText = computed(() => {
+    if (!this.notFound()) {
+      return undefined;
+    }
+    const label =
+      this.missingEntityType()?.label ||
+      $localize`:Entity block missing reference, generic type:record`;
+    return $localize`:Entity block missing reference:${label}:entityType: not available`;
+  });
+
+  /**
+   * Icon for the not-found block: the referenced entity's *type* icon (e.g. the
+   * Child icon for a deleted child), since the entity itself is gone. Falls back
+   * to the generic block icon for unknown types.
+   */
+  notFoundIcon = computed(() => this.missingEntityType()?.icon || "diamond");
 
   entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()
