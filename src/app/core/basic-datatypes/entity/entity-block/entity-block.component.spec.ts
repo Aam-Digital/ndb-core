@@ -114,7 +114,6 @@ describe("EntityBlockComponent", () => {
     await vi.waitFor(() => expect(component.notFound()).toBe(true));
     fixture.detectChanges();
 
-    expect(component.notFoundText()).toContain("not available");
     expect(fixture.nativeElement.textContent).toContain("not available");
   });
 

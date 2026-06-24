@@ -27,6 +27,7 @@ import { ChangeHistoryService } from "../change-history.service";
 import { ChangeEvent } from "../change-history.types";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
 import { RecordDiffComponent } from "../record-diff/record-diff.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 export interface ChangeHistoryDialogData {
   entity: Entity;
@@ -46,6 +47,7 @@ export interface ChangeHistoryDialogData {
     MatButtonModule,
     MatExpansionModule,
     MatProgressBarModule,
+    MatTooltipModule,
     FaDynamicIconComponent,
     DialogCloseComponent,
     HintBoxComponent,
@@ -87,10 +89,6 @@ export class ChangeHistoryDialogComponent {
    */
   readonly updated = this.entity.updated;
   readonly created = this.entity.created;
-
-  /** labels for the created/last-updated meta rows (shared template) */
-  protected readonly lastUpdatedByLabel = $localize`:Change history:Last updated by`;
-  protected readonly createdByLabel = $localize`:Change history:Created by`;
 
   /** backend feature flag (undefined while loading, then true/false) */
   readonly auditEnabled = this.service.isAuditEnabled;

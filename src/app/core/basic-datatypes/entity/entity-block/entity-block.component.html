@@ -2,13 +2,17 @@
   <span class="block-height">
     <mat-spinner diameter="16" class="inline-spinner"></mat-spinner>
   </span>
-} @else if (notFoundText()) {
+} @else if (notFound()) {
   <span class="block-height truncate-text inactive">
     <app-fa-dynamic-icon
       [icon]="notFoundIcon()"
       class="margin-right-small"
     ></app-fa-dynamic-icon>
-    {{ notFoundText() }}
+
+    @if (missingEntityType()) {
+      {{ missingEntityType()?.label }}:
+    }
+    <span i18n="Entity block not found message">not available</span>
   </span>
 } @else {
   <span

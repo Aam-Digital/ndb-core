@@ -8,76 +8,70 @@
 <mat-dialog-content>
   <!-- The entity's own created / last-updated metadata. Pure entity state, so
        it is always shown — even when the audit history below is unavailable. -->
-  <h3 class="section-title" i18n="Change history summary section title">
-    Summary
-  </h3>
-  <app-hint-box class="history-hints">
-    <p i18n="Change history summary section note">
-      When this record was created and last edited - including recent or offline
-      changes.
-    </p>
-  </app-hint-box>
-  <div class="entity-meta flex-row flex-wrap">
+  <div
+    class="entity-meta flex-row flex-wrap"
+    matTooltip="When this record was created and last edited - including recent or offline changes."
+    i18n-matTooltip="Change history tooltip"
+  >
     @if (updated) {
-      <ng-container
-        *ngTemplateOutlet="
-          metaRow;
-          context: {
-            icon: 'pen-to-square',
-            label: lastUpdatedByLabel,
-            by: updated.by,
-            when: updatedWhen,
-          }
-        "
-      ></ng-container>
+      <div>
+        <div class="flex-row gap-small align-baseline">
+          <app-fa-dynamic-icon
+            class="meta-icon"
+            icon="pen-to-square"
+          ></app-fa-dynamic-icon>
+          <span class="meta-line flex-column" i18n="Change history">
+            Last updated
+          </span>
+        </div>
+
+        <ng-container
+          *ngTemplateOutlet="
+            lastUpdated;
+            context: {
+              by: updated.by,
+              at: updated.at,
+            }
+          "
+        ></ng-container>
+      </div>
     }
 
     @if (created) {
-      <ng-container
-        *ngTemplateOutlet="
-          metaRow;
-          context: {
-            icon: 'circle-plus',
-            label: createdByLabel,
-            by: created.by,
-            when: createdWhen,
-          }
-        "
-      ></ng-container>
-    }
-  </div>
-
-  <!-- shared layout for the created / last-updated rows -->
-  <ng-template
-    #metaRow
-    let-icon="icon"
-    let-label="label"
-    let-by="by"
-    let-when="when"
-  >
-    <div class="flex-row gap-small">
-      <app-fa-dynamic-icon
-        class="meta-icon"
-        [icon]="icon"
-      ></app-fa-dynamic-icon>
       <div>
-        <div class="meta-line flex-column">
-          <span>{{ label }}</span>
-          <app-entity-block [entityId]="by"></app-entity-block>
+        <div class="flex-row gap-small align-baseline">
+          <app-fa-dynamic-icon
+            class="meta-icon"
+            icon="circle-plus"
+          ></app-fa-dynamic-icon>
+          <span class="meta-line flex-column" i18n="Change history">
+            Created
+          </span>
         </div>
-        <div class="hint-text">
-          <ng-container *ngTemplateOutlet="when"></ng-container>
-        </div>
+
+        <ng-container
+          *ngTemplateOutlet="
+            lastUpdated;
+            context: {
+              by: created.by,
+              at: created.at,
+            }
+          "
+        ></ng-container>
       </div>
-    </div>
-  </ng-template>
-  <ng-template #updatedWhen>
-    {{ updated.at | customDate: "short" }} ·
-    {{ updated.at | notificationTime | async }}
-  </ng-template>
-  <ng-template #createdWhen>
-    {{ created.at | customDate: "short" }}
-  </ng-template>
+    }
+
+    <ng-template #lastUpdated let-by="by" let-at="at">
+      <div class="hint-text">
+        <span i18n>by</span>&nbsp;
+        <app-entity-block [entityId]="by"></app-entity-block>
+      </div>
+      <div class="hint-text">
+        {{ at | customDate: "short" }}
+        ({{ at | notificationTime | async }})
+      </div>
+    </ng-template>
+  </div>
 
   <h3 class="section-title" i18n="Change history log section title">
     Change log

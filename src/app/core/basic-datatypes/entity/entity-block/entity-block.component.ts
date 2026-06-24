@@ -91,7 +91,7 @@ export class EntityBlockComponent {
   );
 
   /** The constructor for the id's type prefix, if registered (used for the not-found display). */
-  private readonly missingEntityType = computed(() => {
+  readonly missingEntityType = computed(() => {
     if (!this.notFound()) {
       return undefined;
     }
@@ -102,38 +102,22 @@ export class EntityBlockComponent {
   });
 
   /**
-   * Fallback text shown in place of the (empty) block when {@link notFound}:
-   * `"<Type> not available"`, derived from the id's type prefix (e.g. a deleted
-   * `User` -> "User not available"). Undefined while resolvable, so existing
-   * blocks render unchanged. Falls back to a generic label for unknown types.
-   */
-  notFoundText = computed(() => {
-    if (!this.notFound()) {
-      return undefined;
-    }
-    const label =
-      this.missingEntityType()?.label ||
-      $localize`:Entity block missing reference, generic type:record`;
-    return $localize`:Entity block missing reference:${label}:entityType: not available`;
-  });
-
-  /**
    * Icon for the not-found block: the referenced entity's *type* icon (e.g. the
    * Child icon for a deleted child), since the entity itself is gone. Falls back
    * to the generic block icon for unknown types.
    */
-  notFoundIcon = computed(() => this.missingEntityType()?.icon || "diamond");
+  readonly notFoundIcon = computed(() => this.missingEntityType()?.icon || "diamond");
 
-  entityBlockConfig = computed(() => {
+  readonly entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()
       ?.toBlockDetailsAttributes;
   });
 
-  entityIcon = computed(() => {
+  readonly entityIcon = computed(() => {
     return this.entityResource.value()?.getConstructor()?.icon || "diamond";
   });
 
-  entityColor = computed(() => {
+  readonly entityColor = computed(() => {
     const entity = this.entityResource.value();
     if (!entity) return undefined;
     const colorConfig = entity.getConstructor().color;
