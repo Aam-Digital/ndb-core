@@ -34,8 +34,7 @@ export interface ChangeHistoryDialogData {
 
 /**
  * Dialog showing an entity's change history as a reverse-chronological
- * accordion timeline (one row per change). The newest row is expanded by
- * default; expanding a row reveals its field-level before -> after diff.
+ * accordion timeline.
  */
 @Component({
   selector: "app-change-history-dialog",
