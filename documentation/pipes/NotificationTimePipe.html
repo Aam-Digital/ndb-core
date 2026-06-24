@@ -284,7 +284,7 @@ export class NotificationTimePipe implements PipeTransform, OnDestroy {
     if (seconds &lt; 60) {
       return $localize&#x60;Just Now&#x60;;
     } else if (minutes &lt; 60) {
-      return $localize&#x60;${minutes}m&#x60;;
+      return $localize&#x60;${minutes}min&#x60;;
     } else if (hours &lt; 24) {
       return $localize&#x60;${hours}h ago&#x60;;
     } else if (days &#x3D;&#x3D;&#x3D; 1) {

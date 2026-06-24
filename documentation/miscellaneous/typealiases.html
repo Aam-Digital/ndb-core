@@ -142,6 +142,9 @@
                             <a href="#AsyncPromiseValidatorFn" title="src/app/core/common-components/entity-form/dynamic-form-validators/validator-types.ts" ><b>AsyncPromiseValidatorFn</b>&nbsp;&nbsp;&nbsp;(src/.../validator-types.ts)</a>
                         </li>
                         <li>
+                            <a href="#ChangeAction" title="src/app/features/change-history/change-history.types.ts" ><b>ChangeAction</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.types.ts)</a>
+                        </li>
+                        <li>
                             <a href="#ColumnConfig" title="src/app/core/common-components/entity-form/FormConfig.ts" ><b>ColumnConfig</b>&nbsp;&nbsp;&nbsp;(src/.../FormConfig.ts)</a>
                         </li>
                         <li>
@@ -393,6 +396,35 @@
             <tr>
                 <td class="col-md-4">
                     <code>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/change-history/change-history.types.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ChangeAction"></a>
+                    <span class="name "><b>ChangeAction</b><a href="#ChangeAction"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The kind of change an audit event represents. These are exactly the
+operations emitted by the audit backend (replication-backend, issue #4026):
+<code>create</code> -&gt; <code>created</code>, <code>update</code> -&gt; <code>updated</code>, <code>delete</code> -&gt; <code>deleted</code>, plus the
+synthetic <code>baseline</code> snapshot.</p>
+<p>(A future &quot;edit-mode tag&quot; may add <code>imported</code>/<code>merge</code>; until the backend emits
+them, the action badge falls back to <code>updated</code>.)</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;baseline&quot; | &quot;created&quot; | &quot;updated&quot; | &quot;deleted&quot;</code>
 </code>
                 </td>
             </tr>

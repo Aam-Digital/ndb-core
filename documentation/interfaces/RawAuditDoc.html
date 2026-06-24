@@ -1,0 +1,811 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  RawAuditDoc</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/change-history/change-history-normalize.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>The raw audit document as written by the replication-backend (issue #4026)
+into the <code>&lt;db&gt;-audit</code> database.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#_id" 
+>
+                                            _id
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#database" 
+>
+                                            database
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#diff" 
+>
+                                            diff
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#entityId" 
+>
+                                            entityId
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#operation" 
+>
+                                            operation
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#parentRev" 
+>
+                                            parentRev
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#rev" 
+>
+                                            rev
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#timestamp" 
+>
+                                            timestamp
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#user" 
+>
+                                            user
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="_id"></a>
+                                        <span class="name "><b>_id</b>
+                                            <a href="#_id">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>_id:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="database"></a>
+                                        <span class="name "><b>database</b>
+                                            <a href="#database">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>database:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="diff"></a>
+                                        <span class="name "><b>diff</b>
+                                            <a href="#diff">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>diff:     <code>unknown</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>unknown</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>For <code>update</code>: a jsondiffpatch delta. For <code>baseline</code>: the full previous
+document. For <code>create</code>: a whole-value add (<code>[doc]</code>). For <code>delete</code>: a
+structural delta (no displayable field pairs).</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="entityId"></a>
+                                        <span class="name "><b>entityId</b>
+                                            <a href="#entityId">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>entityId:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="operation"></a>
+                                        <span class="name "><b>operation</b>
+                                            <a href="#operation">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>operation:     <code>&quot;create&quot; | &quot;update&quot; | &quot;delete&quot; | &quot;baseline&quot;</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>&quot;create&quot; | &quot;update&quot; | &quot;delete&quot; | &quot;baseline&quot;</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="parentRev"></a>
+                                        <span class="name "><b>parentRev</b>
+                                            <a href="#parentRev">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>parentRev:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="rev"></a>
+                                        <span class="name "><b>rev</b>
+                                            <a href="#rev">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>rev:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="timestamp"></a>
+                                        <span class="name "><b>timestamp</b>
+                                            <a href="#timestamp">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>timestamp:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="user"></a>
+                                        <span class="name "><b>user</b>
+                                            <a href="#user">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>user:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Delta, patch } from &quot;jsondiffpatch&quot;;
+import { isEqual } from &quot;lodash-es&quot;;
+import {
+  BASELINE_NOTE,
+  ChangeEvent,
+  FieldChange,
+  OPERATION_TO_ACTION,
+} from &quot;./change-history.types&quot;;
+
+/**
+ * The raw audit document as written by the replication-backend (issue #4026)
+ * into the &#x60;&lt;db&gt;-audit&#x60; database.
+ */
+export interface RawAuditDoc {
+  _id: string;
+  entityId: string;
+  database?: string;
+  operation: &quot;create&quot; | &quot;update&quot; | &quot;delete&quot; | &quot;baseline&quot;;
+  rev?: string;
+  parentRev?: string;
+  timestamp: string;
+  user?: { id?: string; name?: string; roles?: string[] };
+  /**
+   * For &#x60;update&#x60;: a jsondiffpatch delta. For &#x60;baseline&#x60;: the full previous
+   * document. For &#x60;create&#x60;: a whole-value add (&#x60;[doc]&#x60;). For &#x60;delete&#x60;: a
+   * structural delta (no displayable field pairs).
+   */
+  diff?: unknown;
+}
+
+/** Doc fields that are internal/metadata and never shown as user-facing field changes. */
+const HIDDEN_FIELDS &#x3D; new Set([
+  &quot;_id&quot;,
+  &quot;_rev&quot;,
+  &quot;_revisions&quot;,
+  &quot;created&quot;,
+  &quot;updated&quot;,
+]);
+
+function isHidden(field: string): boolean {
+  return field.startsWith(&quot;_&quot;) || HIDDEN_FIELDS.has(field);
+}
+
+/**
+ * Build the displayable change history for one entity from its raw audit docs.
+ *
+ * A jsondiffpatch update-delta only encodes *what changed* (e.g. items added to
+ * an array by index), not the full prior value — so per-field before/after
+ * cannot be read from a single delta. Instead the full document state is
+ * replayed: starting from the &#x60;create&#x60;/&#x60;baseline&#x60; snapshot and applying each
+ * update delta in chronological order, the before/after of every field
+ * (including multi-value arrays) is the difference between consecutive full
+ * states.
+ *
+ * @returns events newest-first
+ */
+export function buildChangeEvents(rawDocs: RawAuditDoc[]): ChangeEvent[] {
+  const ordered &#x3D; [...(rawDocs ?? [])].sort(byChronology);
+  let state: Record&lt;string, unknown&gt; &#x3D; {};
+  const events: ChangeEvent[] &#x3D; [];
+
+  for (const doc of ordered) {
+    const action &#x3D; OPERATION_TO_ACTION[doc.operation] ?? &quot;updated&quot;;
+    const base &#x3D; {
+      id: doc._id,
+      at: new Date(doc.timestamp),
+      by: doc.user?.name ?? doc.user?.id ?? &quot;&quot;,
+      action,
+    };
+
+    if (doc.operation &#x3D;&#x3D;&#x3D; &quot;baseline&quot; || doc.operation &#x3D;&#x3D;&#x3D; &quot;create&quot;) {
+      const snapshot &#x3D; snapshotOf(doc);
+      state &#x3D; { ...snapshot };
+      events.push({
+        ...base,
+        changes: additions(snapshot),
+        note: action &#x3D;&#x3D;&#x3D; &quot;baseline&quot; ? BASELINE_NOTE : undefined,
+      });
+    } else if (doc.operation &#x3D;&#x3D;&#x3D; &quot;delete&quot;) {
+      events.push({ ...base, changes: [] });
+    } else {
+      const next &#x3D; applyDelta(state, doc.diff);
+      events.push({ ...base, changes: fieldChanges(state, next) });
+      state &#x3D; next;
+    }
+  }
+
+  return events.reverse();
+}
+
+/** chronological: by server timestamp, then by revision generation */
+function byChronology(a: RawAuditDoc, b: RawAuditDoc): number {
+  const byTime &#x3D;
+    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+  return byTime !&#x3D;&#x3D; 0 ? byTime : revGeneration(a.rev) - revGeneration(b.rev);
+}
+
+function revGeneration(rev?: string): number {
+  return rev ? parseInt(rev.split(&quot;-&quot;)[0], 10) || 0 : 0;
+}
+
+/** the full document snapshot carried by a baseline (raw doc) or create (&#x60;[doc]&#x60;) record */
+function snapshotOf(doc: RawAuditDoc): Record&lt;string, unknown&gt; {
+  const full &#x3D;
+    doc.operation &#x3D;&#x3D;&#x3D; &quot;create&quot; &amp;&amp; Array.isArray(doc.diff)
+      ? doc.diff[0]
+      : doc.diff;
+  return full &amp;&amp; typeof full &#x3D;&#x3D;&#x3D; &quot;object&quot;
+    ? (full as Record&lt;string, unknown&gt;)
+    : {};
+}
+
+/** apply a jsondiffpatch delta to a deep clone of the current state */
+function applyDelta(
+  state: Record&lt;string, unknown&gt;,
+  delta: unknown,
+): Record&lt;string, unknown&gt; {
+  if (!delta) {
+    return state;
+  }
+  try {
+    return patch(structuredClone(state), delta as Delta) as Record&lt;
+      string,
+      unknown
+    &gt;;
+  } catch {
+    // a delta that doesn&#x27;t cleanly apply (e.g. a missing-ancestor branch) must
+    // not break the whole history — keep the prior state for this step
+    return state;
+  }
+}
+
+/** every (non-hidden) field of a snapshot rendered as an addition */
+function additions(snapshot: Record&lt;string, unknown&gt;): FieldChange[] {
+  return Object.keys(snapshot)
+    .filter((field) &#x3D;&gt; !isHidden(field))
+    .map((field) &#x3D;&gt; ({ field, from: undefined, to: snapshot[field] }));
+}
+
+/** the (non-hidden) fields whose full value differs between two states */
+function fieldChanges(
+  prev: Record&lt;string, unknown&gt;,
+  next: Record&lt;string, unknown&gt;,
+): FieldChange[] {
+  const fields &#x3D; new Set([...Object.keys(prev), ...Object.keys(next)]);
+  const changes: FieldChange[] &#x3D; [];
+  for (const field of fields) {
+    if (isHidden(field)) {
+      continue;
+    }
+    if (!isEqual(prev[field], next[field])) {
+      changes.push({ field, from: prev[field], to: next[field] });
+    }
+  }
+  return changes;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'RawAuditDoc.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

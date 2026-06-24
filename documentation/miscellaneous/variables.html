@@ -142,6 +142,9 @@
                             <a href="#absenceRemarks" title="src/app/child-dev-project/notes/demo-data/remarks.ts" ><b>absenceRemarks</b>&nbsp;&nbsp;&nbsp;(src/.../remarks.ts)</a>
                         </li>
                         <li>
+                            <a href="#ACTION_META" title="src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts" ><b>ACTION_META</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-action-badge.component.ts)</a>
+                        </li>
+                        <li>
                             <a href="#actions" title="src/app/core/permissions/permission-types.ts" ><b>actions</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</a>
                         </li>
                         <li>
@@ -166,10 +169,16 @@
                             <a href="#attendanceComponents" title="src/app/features/attendance/attendance-components.ts" ><b>attendanceComponents</b>&nbsp;&nbsp;&nbsp;(src/.../attendance-components.ts)</a>
                         </li>
                         <li>
+                            <a href="#AUDIT_RECORD_SUBJECT" title="src/app/features/change-history/change-history.service.ts" ><b>AUDIT_RECORD_SUBJECT</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#AuthGuard" title="src/app/core/session/auth.guard.ts" ><b>AuthGuard</b>&nbsp;&nbsp;&nbsp;(src/.../auth.guard.ts)</a>
                         </li>
                         <li>
                             <a href="#availableLocales" title="src/app/core/language/languages.ts" ><b>availableLocales</b>&nbsp;&nbsp;&nbsp;(src/.../languages.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#BASELINE_NOTE" title="src/app/features/change-history/change-history.types.ts" ><b>BASELINE_NOTE</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.types.ts)</a>
                         </li>
                         <li>
                             <a href="#BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS" title="src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts" ><b>BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS</b>&nbsp;&nbsp;&nbsp;(src/.../basic-autocomplete.component.ts)</a>
@@ -311,6 +320,9 @@
                         </li>
                         <li>
                             <a href="#heightRangeForAge" title="src/app/child-dev-project/children/demo-data-generators/health-check/height-weight.ts" ><b>heightRangeForAge</b>&nbsp;&nbsp;&nbsp;(src/.../height-weight.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#HIDDEN_FIELDS" title="src/app/features/change-history/change-history-normalize.ts" ><b>HIDDEN_FIELDS</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</a>
                         </li>
                         <li>
                             <a href="#iconAliases" title="src/app/core/common-components/fa-dynamic-icon/fa-icon-utils.ts" ><b>iconAliases</b>&nbsp;&nbsp;&nbsp;(src/.../fa-icon-utils.ts)</a>
@@ -488,6 +500,9 @@
                         </li>
                         <li>
                             <a href="#OkButton" title="src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component.ts" ><b>OkButton</b>&nbsp;&nbsp;&nbsp;(src/.../confirmation-dialog.component.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#OPERATION_TO_ACTION" title="src/app/features/change-history/change-history.types.ts" ><b>OPERATION_TO_ACTION</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.types.ts)</a>
                         </li>
                         <li>
                             <a href="#PREFIX_VIEW_CONFIG" title="src/app/core/config/dynamic-routing/view-config.interface.ts" ><b>PREFIX_VIEW_CONFIG</b>&nbsp;&nbsp;&nbsp;(src/.../view-config.interface.ts)</a>
@@ -830,6 +845,69 @@ e.g. dd.MM.yyyy in DatePipe shows as 22.01.2026, but in Moment.js it would show 
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ACTION_META"></a>
+                    <span class="name">
+                        <span ><b>ACTION_META</b></span>
+                        <a href="#ACTION_META"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ActionMeta.html" target="_self" >Record&lt;ChangeAction, ActionMeta&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  baseline: {
+    icon: &quot;clock-rotate-left&quot;,
+    label: $localize&#x60;:Change action badge:Initial snapshot&#x60;,
+    background: &quot;#ECEFF1&quot;,
+    color: &quot;#4a525c&quot;,
+    tooltip: BASELINE_NOTE,
+  },
+  created: {
+    icon: &quot;circle-plus&quot;,
+    label: $localize&#x60;:Change action badge:Created&#x60;,
+    background: &quot;#E6F4EA&quot;,
+    color: &quot;#1E6C33&quot;,
+  },
+  updated: {
+    icon: &quot;pen-to-square&quot;,
+    label: $localize&#x60;:Change action badge:Updated&#x60;,
+    background: &quot;#CCEFFF&quot;,
+    color: &quot;#1565C0&quot;,
+  },
+  deleted: {
+    icon: &quot;trash&quot;,
+    label: $localize&#x60;:Change action badge:Deleted&#x60;,
+    background: &quot;#FBE2DE&quot;,
+    color: &quot;#B23A2C&quot;,
+  },
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Display metadata per action. Orange is reserved for app chrome, so even
+<code>imported</code> uses an orange-tint background with deep-orange text — never the
+brand primary fill.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1667,6 +1745,41 @@ has visited every page.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/features/change-history/change-history.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="AUDIT_RECORD_SUBJECT"></a>
+                    <span class="name">
+                        <span ><b>AUDIT_RECORD_SUBJECT</b></span>
+                        <a href="#AUDIT_RECORD_SUBJECT"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;AuditRecord&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>CASL subject the audit records are keyed under (see replication-backend #4026).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/session/auth.guard.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -1770,6 +1883,79 @@ has visited every page.</p>
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/change-history/change-history.types.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="BASELINE_NOTE"></a>
+                    <span class="name">
+                        <span ><b>BASELINE_NOTE</b></span>
+                        <a href="#BASELINE_NOTE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:Change history baseline note:Record state captured when change logging was enabled. Edits made before this point aren&#x27;t recorded.&#x60;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Explanation for the synthetic &quot;initial snapshot&quot; entry, shown both inline in
+its diff and as the badge tooltip (single source of truth).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="OPERATION_TO_ACTION"></a>
+                    <span class="name">
+                        <span ><b>OPERATION_TO_ACTION</b></span>
+                        <a href="#OPERATION_TO_ACTION"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ChangeAction" target="_self" >Record&lt;string, ChangeAction&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  create: &quot;created&quot;,
+  update: &quot;updated&quot;,
+  delete: &quot;deleted&quot;,
+  baseline: &quot;baseline&quot;,
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Maps the backend audit <code>operation</code> to the displayed <a href="../miscellaneous/typealiases.html#ChangeAction">ChangeAction</a>.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -5128,6 +5314,47 @@ The list of which env maps to which file can be found in <code>.angular-cli.json
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/change-history/change-history-normalize.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="HIDDEN_FIELDS"></a>
+                    <span class="name">
+                        <span ><b>HIDDEN_FIELDS</b></span>
+                        <a href="#HIDDEN_FIELDS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Set([
+  &quot;_id&quot;,
+  &quot;_rev&quot;,
+  &quot;_revisions&quot;,
+  &quot;created&quot;,
+  &quot;updated&quot;,
+])</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Doc fields that are internal/metadata and never shown as user-facing field changes.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
