@@ -2,6 +2,28 @@
   <span class="block-height">
     <mat-spinner diameter="16" class="inline-spinner"></mat-spinner>
   </span>
+} @else if (!entityId() && !entity()) {
+  <span
+    matTooltip="no record defined"
+    i18n-matTooltip="No record defined tooltip"
+    >-</span
+  >
+} @else if (notFound()) {
+  <span
+    class="block-height truncate-text inactive"
+    matTooltip="This record does not exist anymore or you do not have the required permissions to access it."
+    i18n-matTooltip="Entity not found tooltip"
+  >
+    <app-fa-dynamic-icon
+      [icon]="notFoundIcon()"
+      class="margin-right-small"
+    ></app-fa-dynamic-icon>
+
+    @if (missingEntityType()) {
+      {{ missingEntityType()?.label }}:
+    }
+    <span i18n="Entity block not found message">not available</span>
+  </span>
 } @else {
   <span
     class="block-height truncate-text"

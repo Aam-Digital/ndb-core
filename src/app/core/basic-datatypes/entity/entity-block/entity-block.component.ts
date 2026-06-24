@@ -13,10 +13,15 @@ import { TemplateTooltipDirective } from "../../../common-components/template-to
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityFieldViewComponent } from "../../../entity/entity-field-view/entity-field-view.component";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../../entity/database-entity.decorator";
 import { getEntityRuntimeRoute } from "../../../entity/entity-config.service";
 import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
 import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Display an inline block representing an entity.
@@ -33,11 +38,16 @@ import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
     DisplayImgComponent,
     EntityFieldViewComponent,
     MatProgressSpinnerModule,
+    MatTooltipModule,
   ],
 })
 export class EntityBlockComponent {
   private entityMapper = inject(EntityMapperService);
   private router = inject(Router);
+  // optional + module-singleton fallback so this widely-reused block never
+  // crashes a host/test that didn't explicitly provide EntityRegistry
+  private readonly registry =
+    inject(EntityRegistry, { optional: true }) ?? entityRegistry;
   /** The entity to display directly. Takes precedence over entityId. */
   entity = input<Entity>();
 
@@ -71,16 +81,47 @@ export class EntityBlockComponent {
     () => this.entityResource.isLoading() && !this.entityResource.value(),
   );
 
-  entityBlockConfig = computed(() => {
+  /**
+   * True when an id was given but no entity could be resolved (and loading has
+   * settled) — e.g. the referenced record was deleted.
+   */
+  notFound = computed(
+    () =>
+      !!this.entityId() &&
+      !this.entityResource.isLoading() &&
+      !this.entityResource.value(),
+  );
+
+  /** The constructor for the id's type prefix, if registered (used for the not-found display). */
+  readonly missingEntityType = computed(() => {
+    if (!this.notFound()) {
+      return undefined;
+    }
+    const type = Entity.extractTypeFromId(this.entityId());
+    return type && this.registry.has(type)
+      ? this.registry.get(type)
+      : undefined;
+  });
+
+  /**
+   * Icon for the not-found block: the referenced entity's *type* icon (e.g. the
+   * Child icon for a deleted child), since the entity itself is gone. Falls back
+   * to the generic block icon for unknown types.
+   */
+  readonly notFoundIcon = computed(
+    () => this.missingEntityType()?.icon || "diamond",
+  );
+
+  readonly entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()
       ?.toBlockDetailsAttributes;
   });
 
-  entityIcon = computed(() => {
+  readonly entityIcon = computed(() => {
     return this.entityResource.value()?.getConstructor()?.icon || "diamond";
   });
 
-  entityColor = computed(() => {
+  readonly entityColor = computed(() => {
     const entity = this.entityResource.value();
     if (!entity) return undefined;
     const colorConfig = entity.getConstructor().color;
