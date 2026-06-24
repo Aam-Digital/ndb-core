@@ -5,11 +5,25 @@
 // design-specific light info-blue to differentiate the expanded panel
 $history-open-bg: #f1f6fb;
 
+// small section labels distinguishing the "Summary" (record metadata) from the
+// "Change log" (server-recorded history) so the two aren't read as one list
+.section-title {
+  font-size: 0.8em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: colors.$muted;
+  margin: 0 0 sizes.$x-small;
+}
+
 // entity created / last-updated metadata, always shown above the audit history
 .entity-meta {
   padding-bottom: sizes.$regular;
   margin-bottom: sizes.$regular;
-  border-bottom: 1px solid colors.$grey-medium;
+  border-bottom: 1px solid colors.$border-color;
+  // wider gap between the "last updated by" and "created by" columns
+  column-gap: sizes.$large * 2;
+  row-gap: sizes.$regular;
 
   .meta-icon {
     // muted grey so the icons read as decorative, not clickable

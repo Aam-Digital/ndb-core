@@ -8,7 +8,15 @@
 <mat-dialog-content>
   <!-- The entity's own created / last-updated metadata. Pure entity state, so
        it is always shown — even when the audit history below is unavailable. -->
-  <div class="entity-meta flex-row flex-wrap gap-small">
+  <h3 class="section-title" i18n="Change history summary section title">
+    Summary
+  </h3>
+  <app-hint-box class="history-hints">
+    <p i18n="Change history summary section note">
+      When this record was created and last edited - including recent or offline changes.
+    </p>
+  </app-hint-box>
+  <div class="entity-meta flex-row flex-wrap">
     @if (updated) {
       <ng-container
         *ngTemplateOutlet="
@@ -69,6 +77,10 @@
   <ng-template #createdWhen>
     {{ created.at | customDate: "short" }}
   </ng-template>
+
+  <h3 class="section-title" i18n="Change history log section title">
+    Change log
+  </h3>
 
   <!-- feature-flag state: nothing when enabled, a disabled notice when off, a
        loading indicator while the flag is still being fetched -->
