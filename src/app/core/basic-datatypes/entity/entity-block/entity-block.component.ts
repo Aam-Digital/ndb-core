@@ -21,6 +21,7 @@ import { getEntityRuntimeRoute } from "../../../entity/entity-config.service";
 import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
 import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Display an inline block representing an entity.
@@ -37,6 +38,7 @@ import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
     DisplayImgComponent,
     EntityFieldViewComponent,
     MatProgressSpinnerModule,
+    MatTooltipModule,
   ],
 })
 export class EntityBlockComponent {
@@ -106,7 +108,9 @@ export class EntityBlockComponent {
    * Child icon for a deleted child), since the entity itself is gone. Falls back
    * to the generic block icon for unknown types.
    */
-  readonly notFoundIcon = computed(() => this.missingEntityType()?.icon || "diamond");
+  readonly notFoundIcon = computed(
+    () => this.missingEntityType()?.icon || "diamond",
+  );
 
   readonly entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()
