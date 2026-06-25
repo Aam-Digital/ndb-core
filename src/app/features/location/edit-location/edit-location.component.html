@@ -1,4 +1,8 @@
-<div class="flex-row gap-regular align-end">
+<div
+  class="flex-row gap-regular align-end"
+  [class.clickable]="enabled()"
+  (click)="onContainerClick(); $event.stopPropagation()"
+>
   <textarea
     #inputElement
     matInput
