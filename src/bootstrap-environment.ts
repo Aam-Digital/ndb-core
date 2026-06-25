@@ -64,7 +64,7 @@ async function initConfigJsonToEnvironment() {
     Logging.error(err, "failed to load config.json");
 
     alert(
-      "We couldn't load the configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.",
+      "We couldn't load the base configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.",
     );
     window.location.reload();
   }
