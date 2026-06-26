@@ -124,8 +124,10 @@ export class DownloadService {
         }
         return new Blob([result], { type: "text/csv" });
       case "xlsx":
-        if (!Array.isArray(data)) {
-          Logging.warn("XLSX export requires an array of records.");
+        if (!Array.isArray(data) && typeof data !== "string") {
+          Logging.warn(
+            "XLSX export requires an array of records or a CSV string.",
+          );
           return new Blob([""]);
         }
         return this.createXlsx(data, selectedColumns);
@@ -163,13 +165,32 @@ export class DownloadService {
   }
 
   /**
-   * Creates an XLSX Blob from the input data using the shared export data preparation.
+   * Creates an XLSX Blob from the input data.
+   *
+   * Accepts either an array of records (transformed via the shared export data
+   * preparation) or a raw, pre-formatted CSV string (e.g. a hierarchical SQL
+   * report). The raw-string path mirrors {@link getFormattedBlobData}'s CSV
+   * handling so the same data can be exported to both CSV and XLSX.
    */
   async createXlsx(
-    data: any[],
+    data: any[] | string,
     selectedColumns?: ExportColumnConfig[],
   ): Promise<Blob> {
-    const rows = await this.prepareExportData(data, selectedColumns);
+    const rows =
+      typeof data === "string"
+        ? this.parseCsvToRows(data)
+        : await this.prepareExportData(data, selectedColumns);
+    return this.buildXlsxBlob(rows);
+  }
+
+  /** Parses a raw CSV string into an array of row arrays for XLSX output. */
+  private parseCsvToRows(csv: string): any[][] {
+    const parsed = this.papa.parse(csv, { skipEmptyLines: true });
+    return (parsed?.data as any[][]) ?? [];
+  }
+
+  /** Builds a styled XLSX workbook Blob from an array of row arrays. */
+  private async buildXlsxBlob(rows: any[][]): Promise<Blob> {
     const wb = new Workbook();
     const ws = wb.addWorksheet("Export");
     for (const row of rows) {
