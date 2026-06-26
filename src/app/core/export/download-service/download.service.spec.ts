@@ -80,6 +80,7 @@ describe("DownloadService", () => {
           provide: Papa,
           useValue: {
             unparse: (...args: Parameters<typeof unparse>) => unparse(...args),
+            parse: (...args: Parameters<typeof parse>) => parse(...args),
           },
         },
       ],
@@ -553,6 +554,50 @@ describe("DownloadService", () => {
     expect(results).toEqual([
       '"address"',
       `"${locationObject.locationString}"`,
+    ]);
+  });
+
+  // Regression test for #4083: hierarchical (v2) SQL reports produce a
+  // pre-formatted raw CSV string as export data. The xlsx path used to reject
+  // any non-array input and return an empty Blob, producing a corrupt .xlsx
+  // file that Excel 365 could not open.
+  // mirrors the indented output of SqlReportService.getCsvforV2 (incl. its
+  // trailing row separator, which papa's skipEmptyLines must drop)
+  const hierarchicalReportCsv =
+    ["Name,,Value", '"Group A",,"5"', ',"Child A1","3"'].join(
+      DownloadService.SEPARATOR_ROW,
+    ) + DownloadService.SEPARATOR_ROW;
+
+  it("should build a valid xlsx workbook from a raw CSV string instead of an empty blob", async () => {
+    const blob = await service["getFormattedBlobData"](
+      hierarchicalReportCsv,
+      "xlsx",
+    );
+
+    // a real (non-empty) xlsx file, not the previous empty `Blob([""])`
+    expect(blob.size).toBeGreaterThan(0);
+    expect(blob.type).toBe(
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    // xlsx is a ZIP container and must start with the "PK\x03\x04" signature
+    const signature = new Uint8Array(await blob.arrayBuffer()).subarray(0, 4);
+    expect(Array.from(signature)).toEqual([0x50, 0x4b, 0x03, 0x04]);
+  });
+
+  it("should convert a raw CSV string into worksheet rows for xlsx export", async () => {
+    const buildXlsxSpy = vi
+      .spyOn(service as any, "buildXlsxBlob")
+      .mockResolvedValue(new Blob([""]));
+
+    await service.createXlsx(hierarchicalReportCsv);
+
+    // CSV is parsed into row arrays (incl. preserved indentation columns),
+    // and the trailing empty line is dropped
+
+    expect(buildXlsxSpy).toHaveBeenCalledWith([
+      ["Name", "", "Value"],
+      ["Group A", "", "5"],
+      ["", "Child A1", "3"],
     ]);
   });
 });
