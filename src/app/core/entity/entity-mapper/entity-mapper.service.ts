@@ -95,11 +95,13 @@ export class EntityMapperService {
     filter: DataFilter<T>,
     limit?: number,
     skip?: number,
+    sort_prop?: string,
+    sort_dir?: "asc" | "desc",
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
     const records = await this.dbResolver
       .getDatabase(ctor.DATABASE)
-      .find(ctor.ENTITY_TYPE, filter, limit, skip);
+      .find(ctor.ENTITY_TYPE, filter, limit, skip, sort_prop, sort_dir);
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 

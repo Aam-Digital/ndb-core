@@ -10,8 +10,25 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
   TableRow<T>
 > {
   private sortRef: MatSort;
+  private sortState: { prop?: string; dir?: "asc" | "desc" } = {};
   override set sort(sort: MatSort) {
     this.sortRef = sort;
+    this.updateSort(this.sortRef.active, this.sortRef.direction);
+    this.sortRef.sortChange.subscribe(({ active, direction }) => {
+      this.updateSort(active, direction);
+    });
+  }
+
+  private updateSort(active: string, direction: "asc" | "desc" | "") {
+    if (this.sortState.prop === active && this.sortState.dir === direction) {
+      return;
+    }
+    if (direction === "") {
+      this.sortState = {};
+    } else {
+      this.sortState = { prop: active, dir: direction };
+    }
+    this.loadData();
   }
 
   private _dataFilter: DataFilter<T> = {};
@@ -46,6 +63,8 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
         this._dataFilter,
         this.pageSize + 1,
         this.pageSize * this.pageIndex,
+        this.sortState.prop,
+        this.sortState.dir,
       )
       .then((res) => {
         super.data = res.map((record) => ({ record })).slice(0, this.pageSize);

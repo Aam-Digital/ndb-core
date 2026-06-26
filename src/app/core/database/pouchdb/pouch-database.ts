@@ -368,7 +368,14 @@ export class PouchDatabase extends Database {
     this.databaseInitialized = new Subject();
   }
 
-  find(prefix = "", query = {}, limit?: number, skip?: number): Promise<any> {
+  async find(
+    prefix = "",
+    query = {},
+    limit?: number,
+    skip?: number,
+    sort_prop?: string,
+    sort_dir?: "asc" | "desc",
+  ): Promise<any> {
     const findOptions: PouchDB.Find.FindRequest<any> = {
       selector: {
         _id: { $lt: `${prefix}:\ufff0`, $gte: `${prefix}:` },
@@ -381,12 +388,29 @@ export class PouchDatabase extends Database {
     if (Number.isInteger(skip)) {
       findOptions.skip = skip;
     }
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.find(findOptions))
-      .then((res) => res.docs)
-      .catch((err) => {
-        throw new DatabaseException(err);
+    const pouchDB = await this.getPouchDBOnceReady();
+    if (sort_prop && sort_dir) {
+      // TODO delete indexes at one point? e.g. when column is removed
+      const res = await pouchDB.createIndex({
+        index: {
+          name: prefix + "_" + sort_prop,
+          partial_filter_selector: {
+            _id: findOptions.selector._id,
+          },
+          fields: [sort_prop],
+        },
       });
+      // deleted because already included in partial_filter_selector
+      delete findOptions.selector._id;
+      findOptions.sort = [{ [sort_prop]: sort_dir }];
+      findOptions.use_index = res["id"];
+    }
+    try {
+      const res = await pouchDB.find(findOptions);
+      return res.docs;
+    } catch (err) {
+      throw new DatabaseException(err);
+    }
   }
 
   /**

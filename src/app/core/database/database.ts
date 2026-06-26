@@ -96,6 +96,8 @@ export abstract class Database {
     query: any,
     limit?: number,
     skip?: number,
+    sort_prop?: string,
+    sort_dir?: "asc" | "desc",
   ): Promise<any>;
 
   /**
