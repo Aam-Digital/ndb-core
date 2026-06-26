@@ -147,12 +147,29 @@ describe("EditConfigurableEnumComponent", () => {
     const res = await component.addNewOption("second");
 
     expect(confirmationSpy).toHaveBeenCalled();
-    expect(res).toEqual({ id: "SECOND", label: "second" });
+    expect(res).toEqual({ id: "second", label: "second" });
     expect(enumEntity.values).toEqual([
       { id: "1", label: "first" },
-      { id: "SECOND", label: "second" },
+      { id: "second", label: "second" },
     ]);
     expect(saveSpy).toHaveBeenCalledWith(enumEntity);
+  });
+
+  it("should warn the user and not save when the new option has no usable characters", async () => {
+    const confirmationSpy = vi.spyOn(
+      TestBed.inject<ConfirmationDialogService>(ConfirmationDialogService),
+      "getConfirmation",
+    );
+    confirmationSpy.mockResolvedValue(true);
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
+    enumEntity.values = [{ id: "1", label: "first" }];
+
+    const res = await component.addNewOption("!@#$%");
+
+    expect(res).toBeUndefined();
+    expect(confirmationSpy).toHaveBeenCalled();
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(enumEntity.values).toEqual([{ id: "1", label: "first" }]);
   });
 
   it("should open the configure enum dialog and re-initialize the available options afterwards", async () => {

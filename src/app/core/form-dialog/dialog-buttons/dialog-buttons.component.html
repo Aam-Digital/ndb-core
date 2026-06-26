@@ -35,6 +35,10 @@
   </button>
 }
 
+<!-- inline content projected immediately before the context menu (e.g. the
+     change-history button), so it sits right next to the "⋮" trigger -->
+<ng-content select="[beforeContextMenu]"></ng-content>
+
 <app-entity-actions-menu
   [entity]="entity()"
   (actionTriggered)="onAction($event)"

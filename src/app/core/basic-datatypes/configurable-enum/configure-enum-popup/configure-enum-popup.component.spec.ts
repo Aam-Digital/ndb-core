@@ -226,4 +226,30 @@ describe("ConfigureEnumPopupComponent", () => {
       expect.any(Object),
     );
   });
+
+  it("should show a confirmation dialog when entries without usable characters are skipped", async () => {
+    const confirmationSpy = vi.spyOn(
+      TestBed.inject(ConfirmationDialogService),
+      "getConfirmation",
+    );
+
+    component.newOptionInput = `
+      Valid Option
+      !@#$%
+      ?!.
+    `.trim();
+
+    await component.createNewOption();
+
+    const labels = component.localEnum.values.map((v) => v.label);
+    expect(labels).toEqual(["Valid Option"]);
+
+    expect(confirmationSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringMatching(
+        /Skipped 2 entries without usable letters or numbers for ID/,
+      ),
+      expect.any(Object),
+    );
+  });
 });

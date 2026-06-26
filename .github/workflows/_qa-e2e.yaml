@@ -25,6 +25,9 @@ jobs:
     env:
       TZ: Europe/Berlin
       FORCE_COLOR: 1
+      # Stop Playwright registering its own TS/ESM loader; we transform via tsx
+      # (playwright.config.ts). Avoids a loader clash on Playwright >= 1.61 + Node 22+.
+      PW_DISABLE_TS_ESM: 1
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
