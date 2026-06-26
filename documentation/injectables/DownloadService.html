@@ -238,8 +238,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="148"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:148</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:150</a></div>
                         </td>
                     </tr>
 
@@ -322,22 +322,26 @@ Depending on the browser and the setting this might open a popup or directly dow
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createXlsx(data: any[], selectedColumns?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
+                    <code>createXlsx(data: any[] | string, selectedColumns?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="168"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:168</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:175</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Creates an XLSX Blob from the input data using the shared export data preparation.</p>
+                        <div class="io-description"><p>Creates an XLSX Blob from the input data.</p>
+<p>Accepts either an array of records (transformed via the shared export data
+preparation) or a raw, pre-formatted CSV string (e.g. a hierarchical SQL
+report). The raw-string path mirrors <a href="getFormattedBlobData">getFormattedBlobData</a>&#39;s CSV
+handling so the same data can be exported to both CSV and XLSX.</p>
 </div>
 
                             <div class="io-description">
@@ -355,7 +359,7 @@ Depending on the browser and the setting this might open a popup or directly dow
                                         <tr>
                                                 <td>data</td>
                                             <td>
-                                                        <code>any[]</code>
+                                                        <code>any[] | string</code>
                                             </td>
 
                                             <td>
@@ -412,8 +416,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="198"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:198</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="219"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:219</a></div>
                         </td>
                     </tr>
 
@@ -815,8 +819,10 @@ export class DownloadService {
         }
         return new Blob([result], { type: &quot;text/csv&quot; });
       case &quot;xlsx&quot;:
-        if (!Array.isArray(data)) {
-          Logging.warn(&quot;XLSX export requires an array of records.&quot;);
+        if (!Array.isArray(data) &amp;&amp; typeof data !&#x3D;&#x3D; &quot;string&quot;) {
+          Logging.warn(
+            &quot;XLSX export requires an array of records or a CSV string.&quot;,
+          );
           return new Blob([&quot;&quot;]);
         }
         return this.createXlsx(data, selectedColumns);
@@ -854,13 +860,32 @@ export class DownloadService {
   }
 
   /**
-   * Creates an XLSX Blob from the input data using the shared export data preparation.
+   * Creates an XLSX Blob from the input data.
+   *
+   * Accepts either an array of records (transformed via the shared export data
+   * preparation) or a raw, pre-formatted CSV string (e.g. a hierarchical SQL
+   * report). The raw-string path mirrors {@link getFormattedBlobData}&#x27;s CSV
+   * handling so the same data can be exported to both CSV and XLSX.
    */
   async createXlsx(
-    data: any[],
+    data: any[] | string,
     selectedColumns?: ExportColumnConfig[],
   ): Promise&lt;Blob&gt; {
-    const rows &#x3D; await this.prepareExportData(data, selectedColumns);
+    const rows &#x3D;
+      typeof data &#x3D;&#x3D;&#x3D; &quot;string&quot;
+        ? this.parseCsvToRows(data)
+        : await this.prepareExportData(data, selectedColumns);
+    return this.buildXlsxBlob(rows);
+  }
+
+  /** Parses a raw CSV string into an array of row arrays for XLSX output. */
+  private parseCsvToRows(csv: string): any[][] {
+    const parsed &#x3D; this.papa.parse(csv, { skipEmptyLines: true });
+    return (parsed?.data as any[][]) ?? [];
+  }
+
+  /** Builds a styled XLSX workbook Blob from an array of row arrays. */
+  private async buildXlsxBlob(rows: any[][]): Promise&lt;Blob&gt; {
     const wb &#x3D; new Workbook();
     const ws &#x3D; wb.addWorksheet(&quot;Export&quot;);
     for (const row of rows) {

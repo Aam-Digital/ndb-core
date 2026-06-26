@@ -417,8 +417,10 @@ export class DownloadService {
         }
         return new Blob([result], { type: &quot;text/csv&quot; });
       case &quot;xlsx&quot;:
-        if (!Array.isArray(data)) {
-          Logging.warn(&quot;XLSX export requires an array of records.&quot;);
+        if (!Array.isArray(data) &amp;&amp; typeof data !&#x3D;&#x3D; &quot;string&quot;) {
+          Logging.warn(
+            &quot;XLSX export requires an array of records or a CSV string.&quot;,
+          );
           return new Blob([&quot;&quot;]);
         }
         return this.createXlsx(data, selectedColumns);
@@ -456,13 +458,32 @@ export class DownloadService {
   }
 
   /**
-   * Creates an XLSX Blob from the input data using the shared export data preparation.
+   * Creates an XLSX Blob from the input data.
+   *
+   * Accepts either an array of records (transformed via the shared export data
+   * preparation) or a raw, pre-formatted CSV string (e.g. a hierarchical SQL
+   * report). The raw-string path mirrors {@link getFormattedBlobData}&#x27;s CSV
+   * handling so the same data can be exported to both CSV and XLSX.
    */
   async createXlsx(
-    data: any[],
+    data: any[] | string,
     selectedColumns?: ExportColumnConfig[],
   ): Promise&lt;Blob&gt; {
-    const rows &#x3D; await this.prepareExportData(data, selectedColumns);
+    const rows &#x3D;
+      typeof data &#x3D;&#x3D;&#x3D; &quot;string&quot;
+        ? this.parseCsvToRows(data)
+        : await this.prepareExportData(data, selectedColumns);
+    return this.buildXlsxBlob(rows);
+  }
+
+  /** Parses a raw CSV string into an array of row arrays for XLSX output. */
+  private parseCsvToRows(csv: string): any[][] {
+    const parsed &#x3D; this.papa.parse(csv, { skipEmptyLines: true });
+    return (parsed?.data as any[][]) ?? [];
+  }
+
+  /** Builds a styled XLSX workbook Blob from an array of row arrays. */
+  private async buildXlsxBlob(rows: any[][]): Promise&lt;Blob&gt; {
     const wb &#x3D; new Workbook();
     const ws &#x3D; wb.addWorksheet(&quot;Export&quot;);
     for (const row of rows) {
