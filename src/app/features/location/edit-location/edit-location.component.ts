@@ -74,7 +74,7 @@ export class EditLocationComponent
 
     const ref = this.dialog.open(MapPopupComponent, {
       width: "90%",
-      height: "95vh",
+      height: "90vh",
       autoFocus: ".address-search-input",
       restoreFocus: false,
       data: config,
