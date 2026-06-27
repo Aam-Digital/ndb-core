@@ -42,6 +42,7 @@ import { DuplicateRecordService } from "../duplicate-records/duplicate-records.s
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
+import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
@@ -114,6 +115,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
+  private readonly exportColumnsService = inject(ExportColumnsService);
   private readonly formDialog = inject(FormDialogService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -427,11 +429,25 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   openExportDialog() {
+    const cols = this.columnsToDisplay ?? [];
+    const availableColumns = this.columns() ?? [];
+    const schema = this.entityConstructor()?.schema;
+
+    const { allAvailableColumns, preselectedExportConfig } =
+      this.exportColumnsService.buildExportColumns({
+        schema,
+        visibleColIds: cols,
+        availableColumns,
+        exportConfig: this.exportConfig(),
+      });
+
     this.dialog.open(ExportDialogComponent, {
       data: {
         allEntities: this.allEntities(),
         filteredData: this.filteredData,
-        exportConfig: this.exportConfig(),
+        exportConfig: allAvailableColumns,
+        preselectedExportConfig,
+        columnGroups: this.columnGroups(),
         filename: (this.title() ?? "").replaceAll(" ", ""),
       },
     });

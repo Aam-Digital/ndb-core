@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# Claude Code worktrees (local only, must never be committed as submodules)
+.claude/worktrees/
+
 /src/assets/config.json
 /src/assets/firebase-config.json
 /src/assets/child-photos
@@ -208,3 +211,12 @@ fabric.properties
 .firebase
 *-debug.log
 .runtimeconfig.json
+
+# CLI local config — never commit
+cli/.env
+
+# CLI credentials (operator-local only) — never commit, encrypted or not
+credentials.json
+credentials.json.age
+cli/credentials.json
+cli/credentials.json.age

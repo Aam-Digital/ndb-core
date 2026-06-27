@@ -73,13 +73,6 @@ export class ColorInputComponent
    */
   readonly colorControl = new FormControl<string>("", { nonNullable: true });
 
-  /**
-   * The external form control provided by Angular Forms (only present in EditComponent mode).
-   */
-  get formControl(): FormControl<string> {
-    return this.ngControl?.control as FormControl<string>;
-  }
-
   ngOnInit() {
     if (this.formControl) {
       this.formControl.valueChanges
@@ -94,9 +87,7 @@ export class ColorInputComponent
         .subscribe((value) => {
           if (!value || this.HEX_COLOR_PATTERN.test(value)) {
             this.colorControl.setErrors(null);
-            this._value = value;
-            this.stateChanges.next();
-            this.valueChange.emit(value);
+            super.writeValue(value, false);
           } else {
             this.colorControl.setErrors({ pattern: true });
           }
@@ -110,12 +101,7 @@ export class ColorInputComponent
         this.colorControl.setValue(value ?? "", { emitEvent: false });
       }
     }
-    if (JSON.stringify(value) === JSON.stringify(this._value)) return;
-    this._value = value;
-    if (notifyFormControl) {
-      this.onChange(value);
-    }
-    this.stateChanges.next();
+    super.writeValue(value, notifyFormControl);
   }
 
   onColorPickerChange(value: string) {

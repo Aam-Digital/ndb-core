@@ -1,3 +1,8 @@
 :host {
   pointer-events: auto;
 }
+
+.clickable,
+.clickable * {
+  cursor: pointer;
+}

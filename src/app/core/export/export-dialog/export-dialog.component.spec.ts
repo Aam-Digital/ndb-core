@@ -14,7 +14,10 @@ describe("ExportDialogComponent", () => {
   const dialogData = {
     allEntities: [{ id: 1 }, { id: 2 }],
     filteredData: [{ id: 1 }],
-    exportConfig: undefined,
+    exportConfig: [
+      { query: "name", label: "Name" },
+      { query: "age", label: "Age" },
+    ],
     filename: "TestExport",
   };
 
@@ -61,7 +64,24 @@ describe("ExportDialogComponent", () => {
       dialogData.filteredData,
       "csv",
       dialogData.filename,
-      dialogData.exportConfig,
+      [
+        { query: "name", label: "Name" },
+        { query: "age", label: "Age" },
+      ],
+    );
+  });
+
+  it("should pass selected subset of columns when modified", async () => {
+    // remove second column from selection
+    component.selectedColumnKeys.set(["name"]);
+
+    await component.download();
+
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+      dialogData.filteredData,
+      "csv",
+      dialogData.filename,
+      [{ query: "name", label: "Name" }],
     );
   });
 
@@ -75,7 +95,10 @@ describe("ExportDialogComponent", () => {
       dialogData.allEntities,
       "xlsx",
       dialogData.filename,
-      dialogData.exportConfig,
+      [
+        { query: "name", label: "Name" },
+        { query: "age", label: "Age" },
+      ],
     );
   });
 

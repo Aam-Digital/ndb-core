@@ -8,11 +8,8 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { BackgroundProcessState } from "../background-process-state.interface";
-import { Observable } from "rxjs";
-import { switchMap } from "rxjs/operators";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -20,6 +17,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDividerModule } from "@angular/material/divider";
 import { DatabaseResolverService } from "../../../database/database-resolver.service";
+import { SessionType } from "../../../session/session-type";
+import { environment } from "../../../../../environments/environment";
 
 /**
  * A dumb component handling presentation of the sync indicator icon
@@ -42,22 +41,21 @@ import { DatabaseResolverService } from "../../../database/database-resolver.ser
 })
 export class BackgroundProcessingIndicatorComponent {
   /** details on current background processes to be displayed to user */
-  backgroundProcesses = input.required<Observable<BackgroundProcessState[]>>();
+  backgroundProcesses = input.required<BackgroundProcessState[]>();
 
   /** whether processes of with the same title shall be summarized into one line */
   summarize = input(true);
   wasClosed = signal(false);
 
   private readonly dbResolver = inject(DatabaseResolverService);
-  private readonly currentProcesses = toSignal(
-    toObservable(this.backgroundProcesses).pipe(
-      switchMap((processes) => processes),
-    ),
-    { initialValue: [] as BackgroundProcessState[] },
-  );
 
   filteredProcesses = computed(() =>
-    this.summarizeProcesses(this.currentProcesses()),
+    this.summarizeProcesses(this.backgroundProcesses()),
+  );
+
+  /** whether to show the manual sync button (hide in pure online-only mode) */
+  showManualSync = computed(
+    () => environment.session_type !== SessionType.online,
   );
   taskCounter = computed(
     () => this.filteredProcesses().filter((process) => process.pending).length,

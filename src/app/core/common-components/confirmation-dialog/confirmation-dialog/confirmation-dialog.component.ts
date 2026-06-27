@@ -16,6 +16,7 @@ import { MarkdownComponent } from "ngx-markdown";
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-confirmation-dialog",
   templateUrl: "./confirmation-dialog.component.html",
+  styleUrl: "./confirmation-dialog.component.scss",
   imports: [
     DialogCloseComponent,
     MatDialogModule,

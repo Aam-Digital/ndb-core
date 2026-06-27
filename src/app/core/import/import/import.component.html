@@ -32,6 +32,11 @@
       <div class="flex-row gap-large">
         <div class="flex-grow">
           <app-import-file
+            [entityType]="importSettings().entityType"
+            [additionalSettings]="importSettings().additionalSettings"
+            (additionalSettingsChange)="
+              updateImportSettings({ additionalSettings: $event })
+            "
             (dataLoaded)="onDataLoaded($event)"
           ></app-import-file>
         </div>
@@ -79,12 +84,6 @@
         [entityType]="importSettings().entityType"
         (entityTypeChange)="onEntityTypeChange($event)"
       ></app-import-entity-type>
-
-      <app-import-additional-settings
-        [entityType]="importSettings().entityType"
-        [settings]="importSettings().additionalSettings"
-        (settingsChange)="updateImportSettings({ additionalSettings: $event })"
-      ></app-import-additional-settings>
 
       <app-import-additional-actions
         [entityType]="importSettings().entityType"

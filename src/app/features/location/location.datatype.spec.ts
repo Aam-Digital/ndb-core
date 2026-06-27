@@ -1,8 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 import { of, throwError } from "rxjs";
-import { GeoLocation } from "./geo-location";
-import { GeoResult, GeoService } from "./geo.service";
+import { GeoLocation, enrichGeoLocation } from "./geo-location";
+import { OpenStreetMapsSearchResult, GeoService } from "./geo.service";
 import { LocationDatatype } from "./location.datatype";
+import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 
 describe("Schema data type: location", () => {
   let service: LocationDatatype;
@@ -11,6 +12,9 @@ describe("Schema data type: location", () => {
   beforeEach(() => {
     mockGeoService = {
       lookup: vi.fn(),
+      enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
+        enrichGeoLocation(loc),
+      ),
     };
 
     TestBed.configureTestingModule({
@@ -30,7 +34,8 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
     };
 
     expect(service.transformToObjectFormat(location)).toEqual(location);
@@ -38,18 +43,25 @@ describe("Schema data type: location", () => {
   });
 
   it("should transform old (legacy) format to new format during loading", async () => {
-    const oldLocationFormat: GeoResult = {
+    const oldLocationFormat: OpenStreetMapsSearchResult = {
       lat: 1,
       lon: 2,
       display_name: "1, test address",
-    };
+      address: {},
+    } as OpenStreetMapsSearchResult;
     const newLocationFormat: GeoLocation = {
       locationString: "1, test address",
       geoLookup: {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
+      road: undefined,
+      house_number: undefined,
+      postcode: undefined,
+      city: undefined,
+      country: undefined,
     };
 
     expect(service.transformToObjectFormat(oldLocationFormat as any)).toEqual(
@@ -62,7 +74,7 @@ describe("Schema data type: location", () => {
 
   async function testImportMapping(
     importedValue: string,
-    mockedLookup: GeoResult[],
+    mockedLookup: OpenStreetMapsSearchResult[],
     expectedResult: GeoLocation,
   ) {
     mockGeoService.lookup.mockReturnValue(of(mockedLookup));
@@ -75,25 +87,43 @@ describe("Schema data type: location", () => {
 
   it("should import lookup location data when importing address string", async () => {
     const importedAddress = "21 MyStreet, MyCity";
-    const locationResult: GeoResult = {
+    const locationResult: OpenStreetMapsSearchResult = {
       lat: 1,
       lon: 2,
       display_name: importedAddress,
-    };
+      address: {
+        road: "MyStreet",
+        house_number: "21",
+        postcode: "12345",
+        city: "MyCity",
+        country: "Germany",
+      },
+    } as OpenStreetMapsSearchResult;
 
     await testImportMapping(importedAddress, [locationResult], {
       locationString: importedAddress,
       geoLookup: locationResult,
+      road: "MyStreet",
+      house_number: "21",
+      postcode: "12345",
+      city: "MyCity",
+      country: "Germany",
     });
   });
 
   it("should import first lookup location when importing address string resulting in multiple results", async () => {
     const importedAddress = "21 MyStreet, MyCity";
-    const locationResult: GeoResult = {
+    const locationResult: OpenStreetMapsSearchResult = {
       lat: 1,
       lon: 2,
       display_name: importedAddress,
-    };
+      address: {
+        road: "MyStreet",
+        house_number: "21",
+        postcode: "12345",
+        city: "MyCity",
+      },
+    } as OpenStreetMapsSearchResult;
 
     await testImportMapping(
       importedAddress,
@@ -101,6 +131,10 @@ describe("Schema data type: location", () => {
       {
         locationString: importedAddress,
         geoLookup: locationResult,
+        road: "MyStreet",
+        house_number: "21",
+        postcode: "12345",
+        city: "MyCity",
       },
     );
   });
@@ -162,7 +196,8 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
     };
     const expected1: GeoLocation = {
       locationString: "1, test address",
@@ -170,7 +205,13 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "1, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
+      road: undefined,
+      house_number: undefined,
+      postcode: undefined,
+      city: undefined,
+      country: undefined,
     };
     expect(service.transformToObjectFormat(location1)).toEqual(expected1);
 
@@ -180,6 +221,7 @@ describe("Schema data type: location", () => {
           lat: 1,
           lon: 2,
           display_name: "2, test address",
+          address: {},
         },
       },
     };
@@ -189,8 +231,121 @@ describe("Schema data type: location", () => {
         lat: 1,
         lon: 2,
         display_name: "2, test address",
-      },
+        address: {},
+      } as OpenStreetMapsSearchResult,
+      road: undefined,
+      house_number: undefined,
+      postcode: undefined,
+      city: undefined,
+      country: undefined,
     };
     expect(service.transformToObjectFormat(location2)).toEqual(expected2);
+  });
+
+  it("should preserve top-level address parts when loading already enriched locations", () => {
+    const location: GeoLocation = {
+      locationString: "21 MyStreet, MyCity",
+      geoLookup: {
+        lat: 1,
+        lon: 2,
+        display_name: "21 MyStreet, MyCity",
+        address: {
+          road: "MyStreet",
+          house_number: "21",
+          postcode: "12345",
+          city: "MyCity",
+          country: "Germany",
+        },
+      } as OpenStreetMapsSearchResult,
+      road: "MyStreet",
+      house_number: "21",
+      postcode: "12345",
+      city: "MyCity",
+      country: "Germany",
+    };
+
+    expect(service.transformToObjectFormat(location)).toEqual(location);
+  });
+
+  it("should not return any export columns when the field has no label", () => {
+    expect(
+      service.getExportColumns({ id: "address" } as EntitySchemaField),
+    ).toEqual([]);
+  });
+
+  it("should export the display name plus separate columns for each address part", () => {
+    const schemaField = {
+      id: "address",
+      label: "Address",
+    } as EntitySchemaField;
+    const columns = service.getExportColumns(schemaField);
+
+    expect(columns.map((c) => c.keySuffix)).toEqual([
+      "",
+      "_street",
+      "_house_number",
+      "_postcode",
+      "_city",
+    ]);
+    expect(columns[0].label).toBe("Address");
+    expect(columns.slice(1).every((c) => c.label.startsWith("Address"))).toBe(
+      true,
+    );
+
+    const value: GeoLocation = {
+      locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      road: "Rollbergstraße",
+      house_number: "28A",
+      postcode: "12053",
+      city: "Berlin",
+    };
+
+    expect(columns[0].resolveValue(value, schemaField)).toBe(value);
+    expect(columns[1].resolveValue(value, schemaField)).toBe("Rollbergstraße");
+    expect(columns[2].resolveValue(value, schemaField)).toBe("28A");
+    expect(columns[3].resolveValue(value, schemaField)).toBe("12053");
+    expect(columns[4].resolveValue(value, schemaField)).toBe("Berlin");
+  });
+
+  it("should export the address parts that transformToObjectFormat flattens from geoLookup", () => {
+    const schemaField = {
+      id: "address",
+      label: "Address",
+    } as EntitySchemaField;
+    const columns = service.getExportColumns(schemaField);
+
+    // raw value as stored before enrichment: only geoLookup.address is populated,
+    // postcode is numeric and the city is a "village"
+    const value = service.transformToObjectFormat({
+      locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      geoLookup: {
+        address: {
+          road: "Rollbergstraße",
+          house_number: "28A",
+          postcode: 12053,
+          village: "Berlin",
+        },
+      } as unknown as OpenStreetMapsSearchResult,
+    });
+
+    expect(columns[1].resolveValue(value, schemaField)).toBe("Rollbergstraße");
+    expect(columns[2].resolveValue(value, schemaField)).toBe("28A");
+    expect(columns[3].resolveValue(value, schemaField)).toBe("12053");
+    expect(columns[4].resolveValue(value, schemaField)).toBe("Berlin");
+  });
+
+  it("should resolve missing address parts to undefined", () => {
+    const schemaField = {
+      id: "address",
+      label: "Address",
+    } as EntitySchemaField;
+    const partColumns = service.getExportColumns(schemaField).slice(1);
+
+    for (const column of partColumns) {
+      expect(column.resolveValue(undefined, schemaField)).toBeUndefined();
+      expect(
+        column.resolveValue({ locationString: "x" }, schemaField),
+      ).toBeUndefined();
+    }
   });
 });

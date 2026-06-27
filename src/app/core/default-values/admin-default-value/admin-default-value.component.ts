@@ -5,8 +5,8 @@ import {
   ChangeDetectionStrategy,
   input,
   resource,
+  signal,
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { DefaultValueConfig, DefaultValueMode } from "../default-value-config";
 import {
   MatError,
@@ -103,17 +103,16 @@ export class AdminDefaultValueComponent extends CustomFormControlDirective<Defau
 
   modes = computed(() => this.modesResource.value() ?? []);
 
-  selectedMode = toSignal(this.modeControl.valueChanges, {
-    initialValue: this.modeControl.value,
-  });
+  selectedMode = signal<DefaultValueMode | null>(null);
 
   constructor() {
     super();
     this.syncFormWithValue(this.value);
 
-    this.form
-      .get("mode")
-      ?.valueChanges.subscribe(() => this.form.get("config")?.setValue(null));
+    this.form.get("mode")?.valueChanges.subscribe((mode) => {
+      this.selectedMode.set(mode);
+      this.form.get("config")?.setValue(null);
+    });
 
     this.form.get("config")?.valueChanges.subscribe((value) => {
       if (!this.form.get("mode")?.getRawValue() && !!value) {
@@ -141,6 +140,7 @@ export class AdminDefaultValueComponent extends CustomFormControlDirective<Defau
     ) {
       this.form.setValue(newFormValue, { emitEvent: false });
       this.form.updateValueAndValidity({ emitEvent: false });
+      this.selectedMode.set(newFormValue.mode);
     }
   }
 

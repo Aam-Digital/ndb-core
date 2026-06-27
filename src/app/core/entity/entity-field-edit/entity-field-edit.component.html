@@ -10,7 +10,7 @@
   >
     <div class="flex-grow">
       <mat-form-field
-        floatLabel="always"
+        [floatLabel]="hideLabel() ? 'auto' : 'always'"
         class="allow-full-width"
         id="entity-field__{{ _field().id }}"
       >

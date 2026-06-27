@@ -67,4 +67,66 @@ describe("EditPrefilledValuesComponent", () => {
 
     expect(component.prefilledValues.length).toBe(0);
   });
+
+  it("should be invalid when a newly added prefilled field has mode set but no config value", () => {
+    component.addPrefilledFields();
+    component.prefilledValues.at(0).get("field").setValue("name");
+    // defaultValue stays { mode: "static" } with no config — incomplete
+
+    expect(component.prefilledValueSettings.invalid).toBe(true);
+  });
+
+  it("should update isDisabled signal when formControl status changes, enabling OnPush CD for view-mode blocking", () => {
+    expect(component.isDisabled()).toBe(false);
+
+    component.formControl.disable();
+    expect(component.isDisabled()).toBe(true);
+    expect(component.prefilledValueSettings.disabled).toBe(true);
+
+    component.formControl.enable();
+    expect(component.isDisabled()).toBe(false);
+    expect(component.prefilledValueSettings.disabled).toBe(false);
+  });
+
+  it("should be invalid when config has null value payload (e.g. static mode with empty input)", () => {
+    component.addPrefilledFields();
+    component.prefilledValues.at(0).get("field").setValue("name");
+    component.prefilledValues
+      .at(0)
+      .get("defaultValue")
+      .setValue({ mode: "static", config: { value: null } });
+
+    expect(component.prefilledValueSettings.invalid).toBe(true);
+  });
+
+  it("should be invalid when default value is cleared (null) after being set", () => {
+    component.addPrefilledFields();
+    component.prefilledValues.at(0).get("field").setValue("name");
+    component.prefilledValues
+      .at(0)
+      .get("defaultValue")
+      .setValue({ mode: "static", config: { value: "test" } });
+    component.prefilledValues.at(0).get("defaultValue").setValue(null);
+
+    expect(component.prefilledValueSettings.invalid).toBe(true);
+    expect(component.formControl.errors).toBeTruthy();
+  });
+
+  it("should not mark formControl dirty when prefilledValueSettings emits the same effective value", () => {
+    component.addPrefilledFields();
+    component.prefilledValues.at(0).get("field").setValue("name");
+    component.prefilledValues
+      .at(0)
+      .get("defaultValue")
+      .setValue({ mode: "static", config: { value: "test" } });
+
+    component.formControl.markAsPristine();
+
+    component.prefilledValues
+      .at(0)
+      .get("defaultValue")
+      .setValue({ mode: "static", config: { value: "test" } });
+
+    expect(component.formControl.pristine).toBe(true);
+  });
 });

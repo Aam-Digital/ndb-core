@@ -1,10 +1,10 @@
 <div matAutocompleteOrigin #autocompleteOrigin="matAutocompleteOrigin">
   <!--Display-->
-  @if (display === "text" || display === "none") {
+  @if (effectiveDisplay() === "text" || effectiveDisplay() === "none") {
     <input
       [id]="id"
-      [hidden]="isInSearchMode() || display === 'none'"
-      [disabled]="_disabled"
+      [hidden]="isInSearchMode() || effectiveDisplay() === 'none'"
+      [disabled]="!enabled()"
       matInput
       style="text-overflow: ellipsis; width: calc(100% - 50px)"
       (focusin)="showAutocomplete()"
@@ -15,42 +15,59 @@
   } @else {
     <input
       [hidden]="true"
-      [disabled]="_disabled"
+      [disabled]="!enabled()"
       matInput
       (focusin)="showAutocomplete()"
       (focusout)="showAutocomplete()"
       [matChipInputFor]="chipList"
     />
-    <mat-chip-grid #chipList>
-      <ng-container>
-        @for (item of _selectedOptions(); track item.asString) {
-          <mat-chip-row
-            [editable]="!_disabled"
-            class="chip"
-            [style.background-color]="item.asValue?.['color']"
-          >
-            @if (!templateRef) {
-              {{ item.asString }}
-            } @else {
+    <mat-chip-grid
+      #chipList
+      cdkDropList
+      cdkDropListOrientation="mixed"
+      [cdkDropListDisabled]="!reorder()"
+      (cdkDropListDropped)="dropChips($event)"
+      class="chip-drop-list"
+    >
+      @for (item of _selectedOptions(); track item.asValue) {
+        <mat-chip-row
+          cdkDrag
+          [cdkDragDisabled]="!reorder()"
+          [editable]="enabled()"
+          class="chip"
+          [style.background-color]="item.asValue?.['color']"
+        >
+          <ng-template
+            [ngTemplateOutlet]="chipContent"
+            [ngTemplateOutletContext]="{ $implicit: item }"
+          ></ng-template>
+
+          @if (enabled()) {
+            <button matChipRemove (click)="unselect(item)">
+              <app-fa-dynamic-icon
+                i18n-matTooltip="
+                  tooltip for remove icon on chips of dropdown item
+                "
+                matTooltip="remove"
+                icon="xmark"
+              ></app-fa-dynamic-icon>
+            </button>
+          }
+
+          <ng-template cdkDragPreview>
+            <mat-chip-row
+              [editable]="false"
+              class="chip chip-preview"
+              [style.background-color]="item.asValue?.['color']"
+            >
               <ng-template
-                [ngTemplateOutlet]="templateRef"
-                [ngTemplateOutletContext]="{ $implicit: item.initial }"
+                [ngTemplateOutlet]="chipContent"
+                [ngTemplateOutletContext]="{ $implicit: item }"
               ></ng-template>
-            }
-            @if (!_disabled) {
-              <button matChipRemove (click)="unselect(item)">
-                <fa-icon
-                  i18n-matTooltip="
-                    tooltip for remove icon on chips of dropdown item
-                  "
-                  matTooltip="remove"
-                  icon="xmark"
-                ></fa-icon>
-              </button>
-            }
-          </mat-chip-row>
-        }
-      </ng-container>
+            </mat-chip-row>
+          </ng-template>
+        </mat-chip-row>
+      }
     </mat-chip-grid>
   }
 
@@ -83,12 +100,7 @@ Autocomplete
   <div>
     <ng-content select="[autocompleteHeader]"></ng-content>
   </div>
-  <div
-    cdkDropList
-    (cdkDropListDropped)="drop($event)"
-    cdkDropListGroup
-    [cdkDropListDisabled]="!reorder"
-  >
+  <div>
     @if (!displayFullLengthOptionLabel()) {
       <cdk-virtual-scroll-viewport
         [style.height.px]="viewportHeight()"
@@ -98,7 +110,6 @@ Autocomplete
       >
         <mat-option
           [value]="item"
-          cdkDrag
           *cdkVirtualFor="
             let item of autocompleteOptions();
             trackBy: trackByOptionValueFn
@@ -112,7 +123,7 @@ Autocomplete
       </cdk-virtual-scroll-viewport>
     } @else {
       @for (item of autocompleteOptions(); track item.asValue) {
-        <mat-option [value]="item" class="option-with-wrap" cdkDrag>
+        <mat-option [value]="item" class="option-with-wrap">
           <ng-container
             [ngTemplateOutlet]="optionContent"
             [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"
@@ -122,19 +133,31 @@ Autocomplete
     }
   </div>
 
+  <ng-template #chipContent let-item>
+    @if (reorder()) {
+      <span class="drag-handle color-accent" cdkDragHandle>
+        <app-fa-dynamic-icon icon="grip-vertical"></app-fa-dynamic-icon>
+      </span>
+    }
+
+    @if (!templateRef()) {
+      {{ item.asString }}
+    } @else {
+      <ng-template
+        [ngTemplateOutlet]="templateRef()"
+        [ngTemplateOutletContext]="{ $implicit: item.initial }"
+      ></ng-template>
+    }
+  </ng-template>
+
   <ng-template #optionContent let-item let-truncate="truncate">
     <div
       class="option-content flex-row disable-autocomplete-active-color align-center"
     >
-      @if (reorder) {
-        <div>
-          <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>
-        </div>
-      }
-      @if (multi) {
+      @if (multi()) {
         <mat-checkbox [checked]="item.selected"></mat-checkbox>
       }
-      @if (!templateRef) {
+      @if (!templateRef()) {
         <span
           class="option-label"
           [class.text-truncate]="truncate"
@@ -149,7 +172,7 @@ Autocomplete
       } @else {
         <div class="option-label item-option">
           <ng-template
-            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutlet]="templateRef()"
             [ngTemplateOutletContext]="{ $implicit: item.initial }"
           ></ng-template>
         </div>
@@ -159,7 +182,7 @@ Autocomplete
 
   <!-- Create new option -->
   @if (showAddOption() && inputElement.value) {
-    @for (option of availableCreateOptions; track $index) {
+    @for (option of availableCreateOptions(); track $index) {
       <mat-option
         [value]="toCreateOptionValue(option, inputElement.value)"
         [attr.aria-label]="createOptionAriaLabel(option, inputElement.value)"

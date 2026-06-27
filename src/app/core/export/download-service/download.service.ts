@@ -1,7 +1,9 @@
 import { Injectable, inject } from "@angular/core";
-import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
 import { Logging } from "../../logging/logging.service";
-import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
+import {
+  ExportColumnConfig,
+  normalizeQueryKey,
+} from "../data-transformation-service/export-column-config";
 import { Papa } from "ngx-papaparse";
 import { EntityConstructor } from "app/core/entity/model/entity";
 import { ExportColumnMapping } from "app/core/entity/default-datatype/default.datatype";
@@ -53,7 +55,7 @@ export function buildExportColumnResolvers(
   return resolvers;
 }
 
-export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx";
+export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx" | "zip";
 
 /**
  * This service allows to start a download process from the browser.
@@ -61,9 +63,6 @@ export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx";
  */
 @Injectable({ providedIn: "root" })
 export class DownloadService {
-  private readonly dataTransformationService = inject(
-    DataTransformationService,
-  );
   private readonly papa = inject(Papa);
   private readonly entitySchemaService = inject(EntitySchemaService);
 
@@ -77,18 +76,18 @@ export class DownloadService {
    * @param data content of the file that will be downloaded
    * @param format extension of the file that will be downloaded, support is 'csv' and 'json'
    * @param filename of the file that will be downloaded
-   * @param exportConfig special configuration that will be applied to the 'data' before triggering the download
+   * @param selectedColumns optional list of export column keys to restrict (and order) the exported columns
    */
   async triggerDownload(
     data: any,
     format: FileDownloadFormat,
     filename: string,
-    exportConfig?: ExportColumnConfig[],
+    selectedColumns?: ExportColumnConfig[],
   ) {
     const blobData = await this.getFormattedBlobData(
       data,
       format,
-      exportConfig,
+      selectedColumns,
     );
     const filenameWithExtension = filename.endsWith("." + format)
       ? filename
@@ -108,37 +107,34 @@ export class DownloadService {
   private async getFormattedBlobData(
     data: any,
     format: FileDownloadFormat,
-    exportConfig?: ExportColumnConfig[],
+    selectedColumns?: ExportColumnConfig[],
   ): Promise<Blob> {
     let result = "";
 
-    if (exportConfig) {
-      data = await this.dataTransformationService.transformData(
-        data,
-        exportConfig,
-      );
-    }
-
     switch (format.toLowerCase()) {
       case "json":
-        result = typeof data === "string" ? data : JSON.stringify(data); // TODO: support exportConfig for json format
+        result = typeof data === "string" ? data : JSON.stringify(data); // TODO: support column selection for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
         if (Array.isArray(data)) {
-          result = await this.createCsv(data);
+          result = await this.createCsv(data, selectedColumns);
         } else {
           // assume raw csv data
           result = data;
         }
         return new Blob([result], { type: "text/csv" });
       case "xlsx":
-        if (!Array.isArray(data)) {
-          Logging.warn("XLSX export requires an array of records.");
+        if (!Array.isArray(data) && typeof data !== "string") {
+          Logging.warn(
+            "XLSX export requires an array of records or a CSV string.",
+          );
           return new Blob([""]);
         }
-        return this.createXlsx(data);
+        return this.createXlsx(data, selectedColumns);
       case "pdf":
         return new Blob([data], { type: "application/pdf" });
+      case "zip":
+        return new Blob([data], { type: "application/zip" });
       default:
         Logging.warn(`Not supported format: ${format}`);
         return new Blob([""]);
@@ -151,8 +147,14 @@ export class DownloadService {
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[]): Promise<string> {
-    const [headers, ...rows] = await this.prepareExportData(data);
+  async createCsv(
+    data: any[],
+    selectedColumns?: ExportColumnConfig[],
+  ): Promise<string> {
+    const [headers, ...rows] = await this.prepareExportData(
+      data,
+      selectedColumns,
+    );
     return this.papa.unparse(
       { fields: headers, data: rows },
       {
@@ -163,10 +165,32 @@ export class DownloadService {
   }
 
   /**
-   * Creates an XLSX Blob from the input data using the shared export data preparation.
+   * Creates an XLSX Blob from the input data.
+   *
+   * Accepts either an array of records (transformed via the shared export data
+   * preparation) or a raw, pre-formatted CSV string (e.g. a hierarchical SQL
+   * report). The raw-string path mirrors {@link getFormattedBlobData}'s CSV
+   * handling so the same data can be exported to both CSV and XLSX.
    */
-  async createXlsx(data: any[]): Promise<Blob> {
-    const rows = await this.prepareExportData(data);
+  async createXlsx(
+    data: any[] | string,
+    selectedColumns?: ExportColumnConfig[],
+  ): Promise<Blob> {
+    const rows =
+      typeof data === "string"
+        ? this.parseCsvToRows(data)
+        : await this.prepareExportData(data, selectedColumns);
+    return this.buildXlsxBlob(rows);
+  }
+
+  /** Parses a raw CSV string into an array of row arrays for XLSX output. */
+  private parseCsvToRows(csv: string): any[][] {
+    const parsed = this.papa.parse(csv, { skipEmptyLines: true });
+    return (parsed?.data as any[][]) ?? [];
+  }
+
+  /** Builds a styled XLSX workbook Blob from an array of row arrays. */
+  private async buildXlsxBlob(rows: any[][]): Promise<Blob> {
     const wb = new Workbook();
     const ws = wb.addWorksheet("Export");
     for (const row of rows) {
@@ -192,7 +216,19 @@ export class DownloadService {
    * For entity data: uses schema column resolvers to produce human-readable headers and values.
    * For plain objects: the first row contains the object keys as headers.
    */
-  async prepareExportData(data: any[]): Promise<any[][]> {
+  async prepareExportData(
+    data: any[],
+    selectedColumns?: ExportColumnConfig[],
+  ): Promise<any[][]> {
+    // map of selected column key -> custom label (e.g. the list view column label)
+    const selectedKeys = selectedColumns?.map((c) =>
+      normalizeQueryKey(c.query),
+    );
+    const labelOverrides = new Map<string, string>();
+    for (const c of selectedColumns ?? []) {
+      if (c.label) labelOverrides.set(normalizeQueryKey(c.query), c.label);
+    }
+
     let entityConstructor: EntityConstructor | undefined;
     if (data.length > 0 && typeof data[0]?.getConstructor === "function") {
       entityConstructor = data[0].getConstructor();
@@ -207,11 +243,15 @@ export class DownloadService {
           ]),
         ),
       );
-      const keys =
+      const allKeys =
         mapped.length > 0
           ? Array.from(new Set(mapped.flatMap((r) => Object.keys(r))))
           : [];
-      return [keys, ...mapped.map((r) => keys.map((k) => r[k]))];
+      const keys = selectedKeys
+        ? selectedKeys.filter((k) => allKeys.includes(k))
+        : allKeys;
+      const headers = keys.map((k) => labelOverrides.get(k) ?? k);
+      return [headers, ...mapped.map((r) => keys.map((k) => r[k]))];
     }
 
     const entitySchema = entityConstructor.schema;
@@ -231,11 +271,23 @@ export class DownloadService {
       data.map((item) => this.mapEntityToExportRow(item, columnResolvers)),
     );
 
-    const columnKeys = Array.from(columnLabels.keys());
-    const headers = Array.from(columnLabels.values());
+    // Keep selected columns that have no schema resolver (e.g. runtime-attached
+    // fields like a Child's `schoolId`, or configured query-expression columns)
+    // and read their value directly from the entity, so they are not silently
+    // dropped from the export.
+    const columnKeys = selectedKeys ?? Array.from(columnLabels.keys());
+    const headers = columnKeys.map(
+      (key) => labelOverrides.get(key) ?? columnLabels.get(key) ?? key,
+    );
     return [
       headers,
-      ...exportEntities.map((item) => columnKeys.map((key) => item[key])),
+      ...data.map((item, i) =>
+        columnKeys.map((key) =>
+          columnResolvers.has(key)
+            ? exportEntities[i][key]
+            : this.ensureCsvFriendlyValue(item[key]),
+        ),
+      ),
     ];
   }
 

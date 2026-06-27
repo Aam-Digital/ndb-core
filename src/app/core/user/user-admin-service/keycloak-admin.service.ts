@@ -233,6 +233,11 @@ export class KeycloakAdminService extends UserAdminService {
 
   /**
    * Sends an email to the user with the given id, asking to perform the specified action.
+   *
+   * `client_id` is passed so that Keycloak's "Back to Application" link after completing
+   * the action returns the user to the app (via the client's configured baseUrl) instead
+   * of the Keycloak server itself. Without a client_id, Keycloak falls back to the account
+   * console on the Keycloak server.
    * @param userAccountId
    * @param action e.g. "UPDATE_PASSWORD", "VERIFY_EMAIL"
    */
@@ -243,6 +248,9 @@ export class KeycloakAdminService extends UserAdminService {
       {
         headers: {
           "Accept-Language": this.baseLocale,
+        },
+        params: {
+          client_id: environment.clientId as string,
         },
       },
     );

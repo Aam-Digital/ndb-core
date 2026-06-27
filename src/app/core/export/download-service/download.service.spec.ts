@@ -11,6 +11,9 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DateWithAgeDatatype } from "../../basic-datatypes/date-with-age/date-with-age.datatype";
+import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
+import { calculateAge } from "../../../utils/utils";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
@@ -69,9 +72,15 @@ describe("DownloadService", () => {
           multi: true,
         },
         {
+          provide: DefaultDatatype,
+          useClass: DateWithAgeDatatype,
+          multi: true,
+        },
+        {
           provide: Papa,
           useValue: {
             unparse: (...args: Parameters<typeof unparse>) => unparse(...args),
+            parse: (...args: Parameters<typeof parse>) => parse(...args),
           },
         },
       ],
@@ -430,6 +439,96 @@ describe("DownloadService", () => {
     expect(rows[1]).toContain(testSchool.toString());
   });
 
+  it("should export a non-empty age column for date-with-age fields", async () => {
+    @DatabaseEntity("AgeExportTestEntity")
+    class AgeExportTestEntity extends Entity {
+      @DatabaseField({ label: "Date of birth", dataType: "date-with-age" })
+      dateOfBirth: Date;
+    }
+
+    const entity = new AgeExportTestEntity();
+    entity.dateOfBirth = new DateWithAge(moment("2000-01-01").toDate());
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".dateOfBirth_age" }],
+    );
+
+    expect(rows[0]).toEqual(["Date of birth (age)"]);
+    expect(rows[1]).toEqual([calculateAge(entity.dateOfBirth as DateWithAge)]);
+  });
+
+  it("should use the provided column label as the export header", async () => {
+    @DatabaseEntity("LabelOverrideTestEntity")
+    class LabelOverrideTestEntity extends Entity {
+      @DatabaseField({ label: "Date of birth", dataType: "date-with-age" })
+      dateOfBirth: Date;
+    }
+
+    const entity = new LabelOverrideTestEntity();
+    entity.dateOfBirth = new DateWithAge(moment("2000-01-01").toDate());
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".dateOfBirth_age", label: "Age" }],
+    );
+
+    expect(rows[0]).toEqual(["Age"]);
+    expect(rows[1]).toEqual([calculateAge(entity.dateOfBirth as DateWithAge)]);
+  });
+
+  it("should restrict entity export to the selected columns only", async () => {
+    @DatabaseEntity("SelectedColumnsTestEntity")
+    class SelectedColumnsTestEntity extends Entity {
+      @DatabaseField({ label: "Full Name" })
+      fullName: string;
+      @DatabaseField({ label: "Score" })
+      score: number;
+    }
+
+    const entity = new SelectedColumnsTestEntity();
+    entity.fullName = "Test Person";
+    entity.score = 42;
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".fullName" }],
+    );
+
+    expect(rows[0]).toEqual(["Full Name"]);
+    expect(rows[1]).toEqual(["Test Person"]);
+  });
+
+  it("should restrict plain-object export to the selected columns only", async () => {
+    const data = [{ name: "Alice", age: 30 }];
+
+    const rows = await service.prepareExportData(data, [{ query: ".name" }]);
+
+    expect(rows[0]).toEqual(["name"]);
+    expect(rows[1]).toEqual(["Alice"]);
+  });
+
+  it("should export a selected column that is not a schema field from the raw entity value", async () => {
+    @DatabaseEntity("RuntimeFieldTestEntity")
+    class RuntimeFieldTestEntity extends Entity {
+      @DatabaseField({ label: "Name" })
+      name: string;
+    }
+
+    const entity = new RuntimeFieldTestEntity();
+    entity.name = "Test Person";
+    // runtime-attached property that is not part of the schema
+    (entity as any).schoolId = "School:1";
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".schoolId", label: "School" }],
+    );
+
+    expect(rows[0]).toEqual(["School"]);
+    expect(rows[1]).toEqual(["School:1"]);
+  });
+
   it("should return empty rows array for empty data in export", async () => {
     const rows = await service.prepareExportData([]);
 
@@ -455,6 +554,50 @@ describe("DownloadService", () => {
     expect(results).toEqual([
       '"address"',
       `"${locationObject.locationString}"`,
+    ]);
+  });
+
+  // Regression test for #4083: hierarchical (v2) SQL reports produce a
+  // pre-formatted raw CSV string as export data. The xlsx path used to reject
+  // any non-array input and return an empty Blob, producing a corrupt .xlsx
+  // file that Excel 365 could not open.
+  // mirrors the indented output of SqlReportService.getCsvforV2 (incl. its
+  // trailing row separator, which papa's skipEmptyLines must drop)
+  const hierarchicalReportCsv =
+    ["Name,,Value", '"Group A",,"5"', ',"Child A1","3"'].join(
+      DownloadService.SEPARATOR_ROW,
+    ) + DownloadService.SEPARATOR_ROW;
+
+  it("should build a valid xlsx workbook from a raw CSV string instead of an empty blob", async () => {
+    const blob = await service["getFormattedBlobData"](
+      hierarchicalReportCsv,
+      "xlsx",
+    );
+
+    // a real (non-empty) xlsx file, not the previous empty `Blob([""])`
+    expect(blob.size).toBeGreaterThan(0);
+    expect(blob.type).toBe(
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    // xlsx is a ZIP container and must start with the "PK\x03\x04" signature
+    const signature = new Uint8Array(await blob.arrayBuffer()).subarray(0, 4);
+    expect(Array.from(signature)).toEqual([0x50, 0x4b, 0x03, 0x04]);
+  });
+
+  it("should convert a raw CSV string into worksheet rows for xlsx export", async () => {
+    const buildXlsxSpy = vi
+      .spyOn(service as any, "buildXlsxBlob")
+      .mockResolvedValue(new Blob([""]));
+
+    await service.createXlsx(hierarchicalReportCsv);
+
+    // CSV is parsed into row arrays (incl. preserved indentation columns),
+    // and the trailing empty line is dropped
+
+    expect(buildXlsxSpy).toHaveBeenCalledWith([
+      ["Name", "", "Value"],
+      ["Group A", "", "5"],
+      ["", "Child A1", "3"],
     ]);
   });
 });

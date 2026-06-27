@@ -6,6 +6,10 @@ import { Router } from "@angular/router";
 import { Logging } from "../../../logging/logging.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DatabaseException } from "../../../database/pouchdb/pouch-database";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
 describe("EntityBlockComponent", () => {
   let component: EntityBlockComponent;
   let fixture: ComponentFixture<EntityBlockComponent>;
@@ -30,6 +34,7 @@ describe("EntityBlockComponent", () => {
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: Router, useValue: mockRouter },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
   });
@@ -99,6 +104,17 @@ describe("EntityBlockComponent", () => {
       expect.any(DatabaseException),
     );
     expect(component.entityResource.value()).toBeUndefined();
+  });
+
+  it("shows a '<type> not available' fallback when a referenced entity can't be loaded", async () => {
+    mockEntityMapper.load.mockRejectedValue(new Error("not found"));
+    fixture.componentRef.setInput("entityId", `${TestEntity.ENTITY_TYPE}:404`);
+    fixture.detectChanges();
+
+    await vi.waitFor(() => expect(component.notFound()).toBe(true));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain("not available");
   });
 
   it("should display configured entity color on the icon", async () => {

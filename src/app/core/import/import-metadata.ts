@@ -3,7 +3,7 @@ import { Entity } from "../entity/model/entity";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { ColumnMapping } from "./column-mapping";
 import { AdditionalImportAction } from "./additional-actions/additional-import-action";
-import { ImportAdditionalSettings } from "./import-additional-settings/import-additional-settings.component";
+import { ImportAdditionalSettings } from "./import-additional-settings";
 
 /**
  * Details of a previously executed import of data saved to the database to keep a history.

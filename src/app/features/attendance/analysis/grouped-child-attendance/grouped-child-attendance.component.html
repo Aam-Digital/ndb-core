@@ -4,7 +4,11 @@
   </div>
 }
 
-<mat-tab-group appTabStateMemo class="activity-tab-group">
+<mat-tab-group
+  appTabStateMemo
+  tabIndexKey="activityTab"
+  class="activity-tab-group"
+>
   @for (activity of activities(); track activity) {
     <mat-tab [label]="activity.toString()">
       <app-activity-attendance-section

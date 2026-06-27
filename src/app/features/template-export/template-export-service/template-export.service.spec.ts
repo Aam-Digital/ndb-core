@@ -6,6 +6,7 @@ import { TemplateExportService } from "./template-export.service";
 import { MatDialog } from "@angular/material/dialog";
 import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
 import { environment } from "#src/environments/environment";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
 
 type MatDialogMock = {
@@ -48,12 +49,23 @@ describe("TemplateExportService", () => {
   });
 
   it("should open dialog with given entity", async () => {
-    const data = {};
+    const data = new TestEntity();
     const result = await service.generateFile(data);
 
     expect(mockDialog.open).toHaveBeenCalledWith(
       TemplateExportSelectionDialogComponent,
       expect.objectContaining({ data: data }),
+    );
+    expect(result).toBe(true);
+  });
+
+  it("should open dialog with an array payload for bulk input", async () => {
+    const entities = [new TestEntity("a"), new TestEntity("b")];
+    const result = await service.generateFile(entities);
+
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      TemplateExportSelectionDialogComponent,
+      expect.objectContaining({ data: entities }),
     );
     expect(result).toBe(true);
   });

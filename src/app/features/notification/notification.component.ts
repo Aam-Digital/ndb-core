@@ -6,6 +6,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { Logging } from "app/core/logging/logging.service";
 import { Subject, Subscription } from "rxjs";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -22,10 +23,12 @@ import { closeOnlySubmenu } from "./close-only-submenu";
 import { Router, RouterLink } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
+import { Entity } from "../../core/entity/model/entity";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { NotificationConfig } from "./model/notification-config";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { getEntityRuntimeRoute } from "../../core/entity/entity-config.service";
+import { DatabaseException } from "../../core/database/pouchdb/pouch-database";
 
 /**
  * Display Notification indicator for toolbar
@@ -146,8 +149,18 @@ export class NotificationComponent implements OnInit {
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications() {
-    const notifications =
-      await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
+    let notifications: NotificationEvent[];
+    try {
+      notifications =
+        await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
+    } catch (err) {
+      if (err instanceof DatabaseException && (err as any).status === 404) {
+        // DB doesn't exist yet — it's created only once the first notification event is written
+        Logging.debug("Notifications database not yet available", err);
+        return;
+      }
+      throw err;
+    }
 
     this.notificationsSubject.next(notifications);
   }
@@ -243,6 +256,12 @@ export class NotificationComponent implements OnInit {
     return actionURL;
   }
 
+  private normalizeEntityId(entityType: string, entityId: string): string {
+    return Entity.extractEntityIdFromId(
+      Entity.createPrefixedId(entityType, entityId),
+    );
+  }
+
   private generateEntityUrl(notification: NotificationEvent): string {
     let url = "";
 
@@ -250,7 +269,10 @@ export class NotificationComponent implements OnInit {
     if (entityCtr) {
       url = getEntityRuntimeRoute(entityCtr);
       if (notification.context.entityId) {
-        url += `/${notification.context.entityId}`;
+        url += `/${this.normalizeEntityId(
+          notification.context.entityType,
+          notification.context.entityId,
+        )}`;
       }
     }
 

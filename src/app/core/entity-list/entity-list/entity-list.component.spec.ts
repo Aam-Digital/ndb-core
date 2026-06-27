@@ -5,7 +5,8 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subject } from "rxjs";
+import { Subject, of } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
@@ -275,4 +276,77 @@ describe("EntityListComponent", () => {
     }
     fixture.detectChanges();
   }
+
+  function makeMatDialogRef<T = any>(result: T | null = null) {
+    return {
+      afterClosed: () => of(result),
+    } as any;
+  }
+
+  it("should offer all schema export columns and preselect the visible ones", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Visible columns include a plain field and an entity-reference field
+      component.columnsToDisplay = ["name", "ref"];
+
+      const matDialog = TestBed.inject(MatDialog);
+      const openSpy = vi
+        .spyOn(matDialog, "open")
+        .mockImplementation(() => makeMatDialogRef());
+
+      component.openExportDialog();
+
+      expect(openSpy).toHaveBeenCalled();
+      const callArgs = openSpy.mock.calls[0][1] as any;
+      const available = callArgs.data.exportConfig as any[];
+      const preselected = callArgs.data.preselectedExportConfig as any[];
+      const queries = (cols: any[]) => cols.map((c) => c.query);
+
+      // available columns are derived from the schema, incl. the readable
+      // name column contributed by the entity-reference datatype
+      expect(queries(available)).toEqual(
+        expect.arrayContaining([".name", ".ref", ".ref_readable"]),
+      );
+      // a visible entity field preselects both its readable name and raw id
+      expect(queries(preselected)).toEqual(
+        expect.arrayContaining([".name", ".ref", ".ref_readable"]),
+      );
+      // columns of non-visible fields are not preselected
+      expect(queries(preselected)).not.toContain(".other");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should apply admin-configured export labels to matching columns", async () => {
+    vi.useFakeTimers();
+    try {
+      createComponent();
+      fixture.componentRef.setInput("exportConfig", [
+        { query: ".name", label: "Custom Name Label" },
+      ]);
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      component.columnsToDisplay = ["name"];
+
+      const matDialog = TestBed.inject(MatDialog);
+      const openSpy = vi
+        .spyOn(matDialog, "open")
+        .mockImplementation(() => makeMatDialogRef());
+
+      component.openExportDialog();
+
+      const callArgs = openSpy.mock.calls[0][1] as any;
+      const available = callArgs.data.exportConfig as any[];
+      const nameColumn = available.find((c) => c.query === ".name");
+      expect(nameColumn.label).toBe("Custom Name Label");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

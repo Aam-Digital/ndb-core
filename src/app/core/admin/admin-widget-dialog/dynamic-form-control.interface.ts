@@ -6,5 +6,5 @@ import { FormControl } from "@angular/forms";
  * and has a form control input to communicate changes.
  */
 export interface DynamicFormControlComponent<T> {
-  formControl: FormControl<T> | InputSignal<FormControl<T>>;
+  formControl: InputSignal<FormControl<T>>;
 }

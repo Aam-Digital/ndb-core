@@ -106,18 +106,13 @@ export class SelectReportComponent {
     const report = this.selectedReport();
     if (!report) return false;
     if (report.mode !== "sql") return true;
-    if (report.version == 1 || report.version == undefined) {
-      return (
-        report.neededArgs.indexOf("from") !== -1 ||
-        report.neededArgs.indexOf("to") !== -1
-      );
-    } else if (report.version == 2) {
-      return (
-        !!report.transformations["startDate"] ||
-        !!report.transformations["endDate"]
-      );
-    }
-    return false;
+    // v1 configs use neededArgs; v2/canonical use transformations
+    return (
+      !!report.neededArgs?.find((a) => a === "from" || a === "startDate") ||
+      !!report.neededArgs?.find((a) => a === "to" || a === "endDate") ||
+      !!report.transformations?.["startDate"] ||
+      !!report.transformations?.["endDate"]
+    );
   });
 
   dateRangeFilterConfig = computed<DateFilter<any> | undefined>(() => {

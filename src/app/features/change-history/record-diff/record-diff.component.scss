@@ -1,0 +1,125 @@
+@use "variables/colors";
+@use "variables/sizes";
+@use "variables/breakpoints";
+
+$diff-columns: 140px minmax(0, 1fr) 28px minmax(0, 1fr);
+
+// layout (flex/align/gap) comes from utility classes in the template
+.diff-note {
+  padding: sizes.$small;
+  margin-bottom: sizes.$regular;
+  border-radius: 6px;
+  // light info-blue (design); ndb brand palette is orange
+  background: #eef4fb;
+  color: colors.$text-secondary;
+}
+
+.structural {
+  padding: sizes.$small;
+  color: colors.$text-secondary;
+  font-style: italic;
+}
+
+.diff-head,
+.diff-row {
+  display: grid;
+  grid-template-columns: $diff-columns;
+  column-gap: sizes.$small;
+  align-items: start;
+}
+
+// allow value cells to shrink and their chips/text to wrap instead of
+// overflowing the dialog (multi-value fields render several enum bubbles)
+.field-label,
+.value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+// multi-value enum fields render a flex row of bubbles with no wrap; let them
+// wrap inside the (narrow) diff cells instead of overflowing the dialog
+.value ::ng-deep .bubble-list {
+  flex-wrap: wrap;
+}
+
+.head {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: colors.$muted;
+  padding-bottom: sizes.$x-small;
+  border-bottom: 1px solid colors.$grey-medium;
+}
+
+.head.before {
+  color: colors.$error;
+}
+
+.head.after {
+  color: colors.$success;
+}
+
+.field-label {
+  color: colors.$text-secondary;
+}
+
+// values render through their own datatype view component (enum pills, dates,
+// entity refs) — do not override their color; only style the empty placeholder
+.value .empty {
+  font-style: italic;
+  color: colors.$muted;
+}
+
+// inline Before/After captions are only needed in the stacked narrow layout
+// (the .diff-head column captions cover the wide layout); the text lives in the
+// template so it stays translatable
+.value-caption {
+  display: none;
+  font-size: 0.85em;
+}
+
+.arrow {
+  color: colors.$muted;
+  text-align: center;
+}
+
+// on narrow screens the 4-column grid does not fit; stack each field's
+// label / before / after vertically with inline Before/After captions
+@media (max-width: breakpoints.$sm) {
+  .diff-head {
+    display: none;
+  }
+
+  .diff-row {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2px;
+    padding-bottom: sizes.$small;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid colors.$grey-medium;
+    }
+  }
+
+  .field-label {
+    font-weight: 600;
+    color: colors.$text;
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  .value .value-caption {
+    display: inline;
+    margin-right: 2px;
+  }
+
+  .value.before .value-caption {
+    color: colors.$error;
+  }
+
+  .value.after .value-caption {
+    color: colors.$success;
+  }
+}

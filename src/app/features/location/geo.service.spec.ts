@@ -1,9 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 
-import { GeoResult, GeoService } from "./geo.service";
+import { OpenStreetMapsSearchResult, GeoService } from "./geo.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { ConfigService } from "../../core/config/config.service";
-import { of, Subject, throwError } from "rxjs";
+import { firstValueFrom, of, Subject, throwError } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import type { Mock } from "vitest";
@@ -21,14 +21,16 @@ type HttpClientMock = {
   get: Mock;
 };
 
-type SearchResult = GeoResult & {
+type SearchResult = OpenStreetMapsSearchResult & {
   address: {
     amenity?: string;
     office?: string;
     road?: string;
     house_number?: string;
-    postcode?: number;
+    postcode?: string;
     city?: string;
+    village?: string;
+    country?: string;
   };
 };
 
@@ -49,7 +51,7 @@ describe("GeoService", () => {
   let mockHttp: HttpClientMock;
 
   beforeEach(() => {
-    environment.email = "some@mail.com";
+    environment.webmaster_email = "some@mail.com";
     mockHttp = {
       get: vi.fn(),
     };
@@ -92,6 +94,20 @@ describe("GeoService", () => {
     });
   });
 
+  it("should omit the email param when no email is configured", () => {
+    environment.webmaster_email = undefined;
+    // defaultOptions is evaluated in the field initializer, so build a fresh
+    // instance after clearing the configured email.
+    const serviceWithoutEmail = TestBed.runInInjectionContext(
+      () => new GeoService(),
+    );
+
+    serviceWithoutEmail.lookup("someSearch").subscribe();
+
+    const sentParams = mockHttp.get.mock.calls[0][1].params;
+    expect("email" in sentParams).toBe(false);
+  });
+
   it("should track requests in analytics service", () => {
     const searchTerm = "mySearchTerm";
     service.lookup(searchTerm).subscribe();
@@ -113,11 +129,15 @@ describe("GeoService", () => {
       amenity: "Cafe",
       road: "Main St",
       house_number: "42",
-      postcode: 12345,
+      postcode: "12345",
       city: "Berlin",
     });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Cafe, Main St 42, 12345 Berlin");
+    expect(formatted.address?.road).toBe("Main St");
+    expect(formatted.address?.house_number).toBe("42");
+    expect(formatted.address?.postcode).toBe("12345");
+    expect(formatted.address?.city).toBe("Berlin");
   });
 
   it("should format with office and city only", () => {
@@ -127,6 +147,7 @@ describe("GeoService", () => {
     });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Company HQ, Munich");
+    expect(formatted.address?.city).toBe("Munich");
   });
 
   it("should handle missing address gracefully", () => {
@@ -146,6 +167,41 @@ describe("GeoService", () => {
     });
     const formatted = service.reformatDisplayName(testResult);
     expect(formatted.display_name).toBe("Library, Hamburg");
+  });
+
+  it("should use village as fallback for city when city missing", () => {
+    const testResult = createSearchResult({
+      road: "Village Road",
+      postcode: "99999",
+      village: "Smallville",
+    });
+    const formatted = service.reformatDisplayName(testResult);
+    expect(formatted.display_name).toBe("Village Road, 99999 Smallville");
+    expect(formatted.address?.city).toBe("Smallville");
+  });
+
+  it("should normalize address parts on lookup results for PDF templating", async () => {
+    const searchTerm = "Rollbergstraße Berlin";
+    const results = [
+      createSearchResult({
+        road: "Rollbergstraße",
+        house_number: "12",
+        postcode: "12053",
+        village: "Berlin",
+        country: "Germany",
+      }),
+    ];
+    mockHttp.get.mockReturnValue(of(results));
+
+    const response = await firstValueFrom(service.lookup(searchTerm));
+
+    expect(response).toHaveLength(1);
+    expect(response[0].display_name).toBe("Rollbergstraße 12, 12053 Berlin");
+    expect(response[0].address?.road).toBe("Rollbergstraße");
+    expect(response[0].address?.house_number).toBe("12");
+    expect(response[0].address?.postcode).toBe("12053");
+    expect(response[0].address?.city).toBe("Berlin");
+    expect(response[0].address?.country).toBe("Germany");
   });
 
   it("should return cached result on repeated lookup without additional HTTP request", () => {

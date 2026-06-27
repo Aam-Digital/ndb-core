@@ -21,7 +21,7 @@ import { SyncStatusComponent } from "./sync-status.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SyncState } from "../../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../../entity/database-indexing/database-indexing.service";
-import { BehaviorSubject, firstValueFrom } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
@@ -72,6 +72,14 @@ describe("SyncStatusComponent", () => {
     fixture.detectChanges();
   });
 
+  async function flushDebouncedBackgroundProcesses(
+    fixtureRef: ComponentFixture<SyncStatusComponent>,
+  ): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 1100));
+    await fixtureRef.whenStable();
+    fixtureRef.detectChanges();
+  }
+
   it("should be created", () => {
     expect(component).toBeTruthy();
   });
@@ -79,19 +87,15 @@ describe("SyncStatusComponent", () => {
   it("should update backgroundProcesses details on sync", async () => {
     syncState.next(SyncState.STARTED);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await flushDebouncedBackgroundProcesses(fixture);
 
-    await expect(
-      firstValueFrom(component.backgroundProcesses),
-    ).resolves.toEqual([DATABASE_SYNCING_STATE]);
+    expect(component.backgroundProcesses()).toEqual([DATABASE_SYNCING_STATE]);
 
     syncState.next(SyncState.COMPLETED);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await flushDebouncedBackgroundProcesses(fixture);
 
-    await expect(
-      firstValueFrom(component.backgroundProcesses),
-    ).resolves.toEqual([DATABASE_SYNCED_STATE]);
+    expect(component.backgroundProcesses()).toEqual([DATABASE_SYNCED_STATE]);
   });
 
   it("should update backgroundProcesses with indexing", async () => {
@@ -101,10 +105,11 @@ describe("SyncStatusComponent", () => {
     };
     mockIndexingService.indicesRegistered.next([testIndexState]);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await flushDebouncedBackgroundProcesses(fixture);
 
-    await expect(
-      firstValueFrom(component.backgroundProcesses),
-    ).resolves.toEqual([DATABASE_SYNCED_STATE, testIndexState]);
+    expect(component.backgroundProcesses()).toEqual([
+      DATABASE_SYNCED_STATE,
+      testIndexState,
+    ]);
   });
 });

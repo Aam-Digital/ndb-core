@@ -1,0 +1,69 @@
+@if (event().note) {
+  <div class="diff-note flex-row align-start gap-small">
+    <app-fa-dynamic-icon icon="circle-info"></app-fa-dynamic-icon>
+    <span>{{ event().note }}</span>
+  </div>
+}
+
+@if (isStructural()) {
+  <div class="structural" i18n="Change history deleted record message">
+    Record was deleted. The full record at the time of deletion is retained in
+    the audit store.
+  </div>
+} @else if (rows().length === 0) {
+  <div class="structural" i18n="Change history no field changes">
+    No field-level changes recorded for this entry.
+  </div>
+} @else {
+  <div class="diff-grid flex-column gap-small">
+    <div class="diff-head">
+      <span class="head" i18n="Change history diff column">Field</span>
+      <span class="head before" i18n="Change history diff column">Before</span>
+      <span class="head"></span>
+      <span class="head after" i18n="Change history diff column">After</span>
+    </div>
+
+    @for (row of rows(); track row.field) {
+      <div class="diff-row">
+        <div class="field-label">
+          <app-entity-field-label
+            [field]="row.field"
+            [entityType]="entityType()"
+          ></app-entity-field-label>
+        </div>
+
+        <div class="value before">
+          <span class="value-caption" i18n="Change history diff inline caption"
+            >↳ before:</span
+          >
+          @if (row.hasFrom) {
+            <app-entity-field-view
+              [entity]="row.oldEntity"
+              [field]="row.field"
+            ></app-entity-field-view>
+          } @else {
+            <span class="empty" i18n="Change history empty value">empty</span>
+          }
+        </div>
+
+        <div class="arrow">
+          <app-fa-dynamic-icon icon="arrow-right"></app-fa-dynamic-icon>
+        </div>
+
+        <div class="value after">
+          <span class="value-caption" i18n="Change history diff inline caption"
+            >↳ after:</span
+          >
+          @if (row.hasTo) {
+            <app-entity-field-view
+              [entity]="row.newEntity"
+              [field]="row.field"
+            ></app-entity-field-view>
+          } @else {
+            <span class="empty" i18n="Change history empty value">empty</span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

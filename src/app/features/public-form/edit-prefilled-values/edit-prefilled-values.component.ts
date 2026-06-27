@@ -5,12 +5,15 @@ import {
   inject,
   input,
   OnInit,
+  signal,
 } from "@angular/core";
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
-  FormControl,
   ReactiveFormsModule,
+  ValidatorFn,
+  ValidationErrors,
   Validators,
 } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -31,6 +34,27 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { AdminDefaultValueComponent } from "../../../core/default-values/admin-default-value/admin-default-value.component";
 import { DefaultValueConfig } from "../../../core/default-values/default-value-config";
+
+const defaultValueCompleteValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const val: DefaultValueConfig = control.value;
+  if (!val) {
+    return { incompleteDefaultValue: true };
+  }
+  if (val.mode && !val.config) {
+    return { incompleteDefaultValue: true };
+  }
+  if (
+    val.config &&
+    typeof val.config === "object" &&
+    "value" in val.config &&
+    (val.config as { value: unknown }).value == null
+  ) {
+    return { incompleteDefaultValue: true };
+  }
+  return null;
+};
 
 @DynamicComponent("EditPrefilledValuesComponent")
 @Component({
@@ -67,11 +91,7 @@ export class EditPrefilledValuesComponent
   private readonly entities = inject(EntityRegistry);
   private readonly fb = inject(FormBuilder);
 
-  get formControl(): FormControl<Record<string, DefaultValueConfig>> {
-    return this.ngControl.control as FormControl<
-      Record<string, DefaultValueConfig>
-    >;
-  }
+  readonly isDisabled = signal(false);
 
   prefilledValueSettings = this.fb.group({
     prefilledValue: this.fb.array([]),
@@ -87,17 +107,18 @@ export class EditPrefilledValuesComponent
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),
     );
 
-    // Sync disabled state between main form control and internal form
     this.formControl.statusChanges.subscribe(() => {
-      if (this.formControl.disabled) {
+      const disabled = this.formControl.disabled;
+      this.isDisabled.set(disabled);
+      if (disabled) {
         this.prefilledValueSettings.disable({ emitEvent: false });
       } else {
         this.prefilledValueSettings.enable({ emitEvent: false });
       }
     });
 
-    // Set initial disabled state
     if (this.formControl.disabled) {
+      this.isDisabled.set(true);
       this.prefilledValueSettings.disable({ emitEvent: false });
     }
   }
@@ -116,7 +137,7 @@ export class EditPrefilledValuesComponent
         this.prefilledValues.push(
           this.fb.group({
             field: [fieldId, Validators.required],
-            defaultValue: [defVal],
+            defaultValue: [defVal, defaultValueCompleteValidator],
           }),
         );
       }
@@ -128,7 +149,7 @@ export class EditPrefilledValuesComponent
     this.prefilledValues.push(
       this.fb.group({
         field: ["", Validators.required],
-        defaultValue: { mode: "static" },
+        defaultValue: [{ mode: "static" }, defaultValueCompleteValidator],
       }),
     );
   }
@@ -156,11 +177,16 @@ export class EditPrefilledValuesComponent
 
     const updatedFields: Record<string, DefaultValueConfig> = {};
     value.prefilledValue.forEach(({ field, defaultValue }) => {
-      if (field) updatedFields[field] = defaultValue;
+      if (field && defaultValue != null) updatedFields[field] = defaultValue;
     });
 
+    const hasChanged =
+      JSON.stringify(updatedFields) !==
+      JSON.stringify(this.formControl.value ?? {});
     this.formControl.setValue(updatedFields);
-    this.formControl.markAsDirty();
+    if (hasChanged) {
+      this.formControl.markAsDirty();
+    }
   }
 }
 

@@ -38,6 +38,60 @@
       </mat-radio-button>
     </mat-radio-group>
   }
+
+  @if (data.exportConfig) {
+    @if (columnGroups) {
+      <mat-form-field class="full-width">
+        <mat-label i18n="Export dialog presets label">Presets</mat-label>
+        <mat-select
+          [ngModel]="selectedGroupName()"
+          (ngModelChange)="
+            selectedGroupName.set($event); applyColumnGroup($event)
+          "
+        >
+          @for (g of columnGroups.groups; track g.name) {
+            <mat-option [value]="g.name">{{ g.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+    <mat-form-field floatLabel="always" class="full-width">
+      <mat-label i18n="Export dialog columns label">Columns</mat-label>
+      <app-basic-autocomplete
+        [ngModel]="selectedColumnKeys()"
+        (ngModelChange)="selectedColumnKeys.set($event)"
+        [options]="availableColumns"
+        [optionToString]="columnToString"
+        [valueMapper]="columnToValue"
+        placeholder="Type to search columns"
+        i18n-placeholder="Placeholder text for export columns search"
+        [multi]="true"
+        [reorder]="true"
+        [required]="true"
+      ></app-basic-autocomplete>
+
+      @if (selectedColumnCount() === 0) {
+        <mat-error i18n="Error shown when no export columns are selected">
+          Select at least one column to download.
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <div class="flex-row gap-small margin-top-small">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="includeAll()"
+        color="accent"
+        i18n
+      >
+        Include all columns
+      </button>
+      <button mat-stroked-button type="button" (click)="clearSelection()" i18n>
+        Clear selection
+      </button>
+    </div>
+  }
 </div>
 
 @if (downloadError()) {
@@ -48,7 +102,9 @@
   <button
     mat-raised-button
     color="accent"
-    [disabled]="isLoading()"
+    [disabled]="
+      isLoading() || (data.exportConfig && selectedColumnCount() === 0)
+    "
     (click)="download()"
     i18n="Download button"
   >
