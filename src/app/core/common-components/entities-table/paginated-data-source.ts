@@ -20,7 +20,10 @@ export class PaginatedDataSource<T extends Entity> extends MatTableDataSource<
   }
 
   private updateSort(active: string, direction: "asc" | "desc" | "") {
-    if (this.sortState.prop === active && this.sortState.dir === direction) {
+    if (
+      (direction === "" && this.sortState.dir === undefined) ||
+      (this.sortState.prop === active && this.sortState.dir === direction)
+    ) {
       return;
     }
     if (direction === "") {
