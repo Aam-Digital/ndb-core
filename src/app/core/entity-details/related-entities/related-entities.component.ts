@@ -11,7 +11,6 @@ import {
 } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
-import { Subscription } from "rxjs";
 import {
   ScreenSize,
   ScreenWidthObserver,
@@ -23,6 +22,7 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "../../common-components/entity-form/FormConfig";
+import { InMemoryDataSource } from "../../common-components/entities-table/in-memory-data-source";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -31,7 +31,6 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { applyUpdate } from "../../entity/model/entity-update";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
@@ -48,11 +47,11 @@ import { DataFilter } from "../../filter/filters/filters";
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
 export class RelatedEntitiesComponent<E extends Entity> {
-  protected entityMapper = inject(EntityMapperService);
-  private entityRegistry = inject(EntityRegistry);
-  private screenWidthObserver = inject(ScreenWidthObserver);
-  protected filterService = inject(FilterService);
-  private entitySpecialLoader = inject(EntitySpecialLoaderService, {
+  protected readonly entityMapper = inject(EntityMapperService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly screenWidthObserver = inject(ScreenWidthObserver);
+  protected readonly filterService = inject(FilterService);
+  private readonly entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
 
@@ -63,14 +62,8 @@ export class RelatedEntitiesComponent<E extends Entity> {
   entityType = input<string>();
 
   /**
-   * Property name of the related entities (type given in this.entityType) that holds the entity id
-   * to be matched with the id of the current main entity (given in this.entity).
-   * If not explicitly set, this will be inferred based on the defined relations between the entities.
-   *
-   * manually setting this is only necessary if you have multiple properties referencing the same entity type
-   * and you want to list only records related to one of them.
-   * For example: if you set `entityType = "Project"` (to display a list of projects here) and the Project entities have a properties "participants" and "supervisors" both storing references to User entities,
-   * you can set `property = "supervisors"` to only list those projects where the current User is supervisors, not participant.
+   * Property name of the related entities that holds the entity id to be matched
+   * with the id of the current main entity. If not explicitly set, inferred from schema.
    */
   property = input<string | string[]>();
 
@@ -81,7 +74,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   /**
    * Columns to be displayed in the table
-   * @param value
    */
   columns = input<ColumnConfig[]>([]);
 
@@ -124,7 +116,23 @@ export class RelatedEntitiesComponent<E extends Entity> {
   clickMode = input<"popup" | "navigate" | "popup-details">("popup");
   editable = input<boolean>(true);
 
-  readonly data = signal<E[] | undefined>(undefined);
+  /**
+   * Data source handling filtering, sorting and pagination for the entities table.
+   * Created in injection context (field initializer); allRecords and filter are
+   * updated reactively by the constructor effect.
+   */
+  readonly entityDataSource = new InMemoryDataSource<E>();
+
+  /** All loaded records before filtering (computed alias into entityDataSource). */
+  readonly data = computed<E[] | undefined>(
+    () => this.entityDataSource.allRecords(),
+  );
+
+  /** Effective filter applied to the table (computed alias into entityDataSource). */
+  readonly filterObj = computed<DataFilter<E>>(
+    () => this.entityDataSource.filter(),
+  );
+
   protected readonly entityCtr = computed<EntityConstructor<E> | undefined>(
     () => {
       const entityType = this.entityType();
@@ -134,6 +142,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
       return this.entityRegistry.get(entityType) as EntityConstructor<E>;
     },
   );
+
   protected readonly relationProperty = computed<string | string[]>(() => {
     const entity = this.entity();
     const entityCtr = this.entityCtr();
@@ -146,13 +155,16 @@ export class RelatedEntitiesComponent<E extends Entity> {
       ? this.resolvePropertyPath(resolvedProperty)
       : resolvedProperty.map((p) => this.resolvePropertyPath(p));
   });
-  readonly filterObj = signal<DataFilter<E>>({});
+
   private readonly currentScreenSize = signal(
     this.screenWidthObserver.currentScreenSize(),
   );
-  private updateListenerSub?: import("rxjs").Subscription;
 
   constructor() {
+    // Delegate real-time update subscription to the data source.
+    // This also marks allRecords = undefined (loading) when entityCtr changes.
+    this.entityDataSource.connectEntityUpdates(this.entityCtr);
+
     this.screenWidthObserver
       .shared()
       .pipe(untilDestroyed(this))
@@ -163,36 +175,25 @@ export class RelatedEntitiesComponent<E extends Entity> {
       });
 
     effect((onCleanup) => {
+      const entityCtr = this.entityCtr();
+      const entity = this.entity();
+      if (!entityCtr || !entity) return;
+
+      // Update filter so the table immediately reflects the new relationship.
+      this.entityDataSource.filter.set(this.initFilter());
+
+      // Show inactive records when visiting an archived parent entity (once).
+      if (untracked(() => this.showInactive()) === undefined) {
+        this.showInactive.set(entity.anonymized);
+      }
+
+      // Load initial data; cancel if entityCtr/entity changes before it resolves.
       let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
+      onCleanup(() => { cancelled = true; });
+      void this.getData().then((data) => {
+        if (!cancelled) this.entityDataSource.allRecords.set(data);
       });
-      void this.initData(() => cancelled);
     });
-  }
-
-  private async initData(isCancelled: () => boolean = () => false) {
-    const entity = this.entity();
-    const entityCtr = this.entityCtr();
-
-    if (!entity || !entityCtr) {
-      return;
-    }
-    if (isCancelled()) return;
-    const data = await this.getData();
-    if (isCancelled()) return;
-
-    this.data.set(data);
-    this.filterObj.set(this.initFilter());
-
-    // untracked: showInactive changes (user toggle) must not re-trigger full initData()
-    if (untracked(() => this.showInactive()) === undefined) {
-      // show all related docs when visiting an archived entity
-      this.showInactive.set(entity.anonymized);
-    }
-
-    this.updateListenerSub?.unsubscribe();
-    this.updateListenerSub = this.listenToEntityUpdates();
   }
 
   protected getData(): Promise<E[]> {
@@ -341,20 +342,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
           this.fieldReferencesType(inner, entityType),
       )
       .map(([key]) => key);
-  }
-
-  protected listenToEntityUpdates(): import("rxjs").Subscription {
-    const entityCtr = this.entityCtr();
-    if (!entityCtr) {
-      return new Subscription();
-    }
-
-    return this.entityMapper
-      .receiveUpdates(entityCtr)
-      .pipe(untilDestroyed(this))
-      .subscribe((next) => {
-        this.data.set(applyUpdate(this.data(), next));
-      });
   }
 
   createNewRecordFactory() {

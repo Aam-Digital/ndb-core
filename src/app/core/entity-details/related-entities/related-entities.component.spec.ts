@@ -102,16 +102,16 @@ describe("RelatedEntitiesComponent", () => {
   });
 
   it("should remove an entity from the table when it has been deleted", async () => {
+    const entity = new TestEntity();
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
     vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
+    vi.spyOn(entityMapper, "loadType").mockResolvedValue([entity]);
 
-    const entity = new TestEntity();
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("entityType", entity.getType());
     fixture.componentRef.setInput("property", "ref");
     await initComponent();
-    component.data.set([entity]);
 
     entityUpdates.next({ entity: entity, type: "remove" });
 

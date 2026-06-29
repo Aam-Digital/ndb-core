@@ -88,13 +88,8 @@ export class InMemoryDataSource<T extends Entity> extends EntitiesTableDataSourc
   });
 
   // --- Loading state ---
-  /** True while entities are being loaded from EntityMapper. */
-  readonly isLoading = computed<boolean>(() => {
-    // Only loading when entityType was provided and allRecords hasn't been set yet.
-    return this._autoLoading && this.allRecords() === undefined;
-  });
-
-  private _autoLoading = false;
+  /** True while no records are available yet (auto-loading or waiting for external records). */
+  readonly isLoading = computed<boolean>(() => this.allRecords() === undefined);
 
   // --- Sort state ---
   // "Aliased signal" pattern: connectColumns() stores a reference to the
@@ -167,17 +162,7 @@ export class InMemoryDataSource<T extends Entity> extends EntitiesTableDataSourc
     super();
 
     if (entityType) {
-      this._autoLoading = true;
-      this.entityMapper.loadType(entityType).then((records) => {
-        this.allRecords.set(records);
-      });
-
-      this.entityMapper
-        .receiveUpdates(entityType)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((update) => {
-          this.allRecords.set(applyUpdate(this.allRecords() ?? [], update));
-        });
+      this.connectEntityUpdates(signal(entityType), true);
     }
 
     // Sync default sort when no manual override and no URL state
@@ -211,6 +196,40 @@ export class InMemoryDataSource<T extends Entity> extends EntitiesTableDataSourc
         this._paginator.length = rows.length;
       }
       this._dataSubject.next(this._pageRows(rows));
+    });
+  }
+
+  /**
+   * Subscribe reactively to real-time entity updates for a given entity type.
+   * Call once from the host component's constructor.
+   * The subscription is replaced (and the previous one cancelled) whenever
+   * `entityTypeSig` emits a new value.  Marks allRecords = undefined (loading)
+   * each time the entity type changes.
+   *
+   * @param entityTypeSig Signal that emits the entity type to subscribe to.
+   * @param autoLoad When true, also load all records from the database on each
+   *   entity-type change (auto-loading mode). Defaults to false so that callers
+   *   can supply records themselves via allRecords.
+   */
+  connectEntityUpdates(
+    entityTypeSig: Signal<EntityConstructor<T> | undefined>,
+    autoLoad = false,
+  ): void {
+    effect((onCleanup) => {
+      const ctr = entityTypeSig();
+      if (!ctr) return;
+      this.allRecords.set(undefined);
+      if (autoLoad) {
+        this.entityMapper
+          .loadType(ctr)
+          .then((records) => this.allRecords.set(records));
+      }
+      const sub = this.entityMapper
+        .receiveUpdates(ctr)
+        .subscribe((update) => {
+          this.allRecords.set(applyUpdate(this.allRecords() ?? [], update));
+        });
+      onCleanup(() => sub.unsubscribe());
     });
   }
 

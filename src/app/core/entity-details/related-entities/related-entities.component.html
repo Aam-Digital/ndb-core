@@ -1,7 +1,6 @@
 <app-entities-table
+  [dataSource]="entityDataSource"
   [entityType]="entityCtr()!"
-  [records]="data()"
-  [filter]="filterObj()"
   [customColumns]="_columns()"
   [columnsToDisplay]="columnsToDisplay()"
   [newRecordFactory]="createNewRecordFactory()"

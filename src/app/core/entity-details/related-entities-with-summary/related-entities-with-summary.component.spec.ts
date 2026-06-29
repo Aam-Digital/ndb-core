@@ -78,7 +78,6 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   });
 
   it("produces an empty summary when there are no records", () => {
-    component.data.set([]);
     component.updateSummary([]);
     expect(getSummary().sum).toHaveLength(0);
     expect(getSummary().avg).toHaveLength(0);
@@ -88,7 +87,6 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     ...records: Partial<TestEntityWithAmount>[]
   ) {
     const data = records.map(TestEntityWithAmount.create);
-    component.data.set(data);
     component.updateSummary(data);
   }
 
@@ -110,7 +108,6 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   it("produces a singly summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
     const plainData = [{ amount: 1 }, { amount: 5 }] as any[];
-    component.data.set(plainData);
     const summaries = component.summaries();
     delete summaries.groupBy;
     summaries.countProperty = "amount";

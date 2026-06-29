@@ -80,6 +80,14 @@ describe("InMemoryDataSource", () => {
     const ds = createDataSource();
     tick();
     expect(ds.allRecords()).toBeUndefined();
+    expect(ds.isLoading()).toBe(true); // stays loading until caller sets allRecords
+  }));
+
+  it("should set isLoading=false once external records are provided", fakeAsync(() => {
+    const ds = createDataSource();
+    expect(ds.isLoading()).toBe(true);
+
+    ds.allRecords.set([]);
     expect(ds.isLoading()).toBe(false);
   }));
 

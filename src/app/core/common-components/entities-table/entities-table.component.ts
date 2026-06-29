@@ -227,12 +227,17 @@ export class EntitiesTableComponent<
       }
     });
 
-    // Keep filter/freetext/showInactive inputs in sync with the data source
+    // Keep filter/freetext inputs in sync with the INTERNAL data source only.
+    // When an external dataSource is provided, the caller owns the filter state.
     effect(() => {
-      this.activeDataSource().filter.set(this.filter());
+      if (!this.dataSource()) {
+        this._internalDataSource.filter.set(this.filter());
+      }
     });
     effect(() => {
-      this.activeDataSource().filterFreetext.set(this.filterFreetext() ?? "");
+      if (!this.dataSource()) {
+        this._internalDataSource.filterFreetext.set(this.filterFreetext() ?? "");
+      }
     });
     effect(() => {
       this.activeDataSource().showInactive.set(this.showInactive());
