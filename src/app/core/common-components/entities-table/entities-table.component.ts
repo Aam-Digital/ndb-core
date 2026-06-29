@@ -49,6 +49,8 @@ import {
   shouldSkipRowInteraction,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
+import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/paginated-data-source";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -76,6 +78,7 @@ import { EntitiesTableSortStore } from "./entities-table-sort.store";
 export class EntitiesTableComponent<
   T extends Entity,
 > implements AfterContentInit {
+  private readonly entityMapper = inject(EntityMapperService);
   private readonly formDialog = inject(FormDialogService);
   private readonly router = inject(Router);
   private readonly filterService = inject(FilterService);
@@ -168,6 +171,9 @@ export class EntitiesTableComponent<
     const predicate = this.filterService.getFilterPredicate(
       this.effectiveFilter(),
     );
+    if (this.recordsDataSource instanceof PaginatedDataSource) {
+      this.recordsDataSource.dataFiler = this.effectiveFilter();
+    }
     const domainFiltered = records.filter(predicate);
 
     const freetext = this.filterFreetext() ?? "";
@@ -187,10 +193,10 @@ export class EntitiesTableComponent<
   });
 
   // --- Loading state ---
-  readonly isLoading = signal(true);
+  readonly isLoading = signal(false);
 
   // --- Material DataSource (for paginator interop) ---
-  readonly recordsDataSource = this.createDataSource();
+  recordsDataSource: MatTableDataSource<TableRow<T>>;
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
@@ -235,7 +241,11 @@ export class EntitiesTableComponent<
 
     // Sync sorted rows to Material DataSource
     effect(() => {
-      this.recordsDataSource.data = this.sortStore.sortedRows();
+      // this.recordsDataSource.data = this.sortStore.sortedRows();
+    });
+
+    effect(() => {
+      this.recordsDataSource = this.createDataSource();
     });
 
     // Track loading state
@@ -315,7 +325,10 @@ export class EntitiesTableComponent<
   }
 
   private createDataSource() {
-    const dataSource = new MatTableDataSource<TableRow<T>>();
+    const dataSource = new PaginatedDataSource<T>(
+      this.entityType(),
+      this.entityMapper,
+    );
     dataSource.sortData = (data, sort) =>
       tableSort<T, keyof T>(data, {
         active: (sort.active as keyof T) ?? "",

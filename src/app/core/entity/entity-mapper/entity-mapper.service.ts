@@ -30,6 +30,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
 import { EntityActionPermission } from "../../permissions/permission-types";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -75,15 +76,32 @@ export class EntityMapperService {
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
    * or the registered name of that class.
+   * @param options Further options for the database query, such as pagination
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
+    options: { skip?: number; limit?: number } = {},
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
     const records = await this.dbResolver
       .getDatabase(ctor.DATABASE)
-      .getAll(ctor.ENTITY_TYPE + ":");
+      .getAll(ctor.ENTITY_TYPE + ":", options);
+    return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+  }
+
+  public async findType<T extends Entity>(
+    entityType: EntityConstructor<T> | string,
+    filter: DataFilter<T>,
+    limit?: number,
+    skip?: number,
+    sort_prop?: string,
+    sort_dir?: "asc" | "desc",
+  ): Promise<T[]> {
+    const ctor = this.resolveConstructor(entityType);
+    const records = await this.dbResolver
+      .getDatabase(ctor.DATABASE)
+      .find(ctor.ENTITY_TYPE, filter, limit, skip, sort_prop, sort_dir);
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 
