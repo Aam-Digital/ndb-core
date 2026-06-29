@@ -116,7 +116,7 @@ test("Editing a report's description via the admin view persists", async ({
   // Reach the report admin list via the Reports view context menu ("Manage Reports").
   await page.getByRole("navigation").getByText("Reports").click();
   await page
-    .locator("app-view-actions button[mat-icon-button]")
+    .locator("button[mat-icon-button][color='primary']")
     .first()
     .click();
   await page.getByRole("menuitem", { name: "Manage Reports" }).click();
@@ -135,9 +135,11 @@ test("Editing a report's description via the admin view persists", async ({
 
   await page.getByRole("button", { name: "Save", exact: true }).click();
 
-  // After saving, the details view returns to read mode showing the new text.
+  // After saving, the details view returns to read mode (disabled fields) showing the new value.
   await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
-  await expect(page.getByText(newDescription)).toBeVisible({ timeout: 10_000 });
+  await expect(
+    page.locator("#entity-field__description").getByRole("textbox"),
+  ).toHaveValue(newDescription, { timeout: 10_000 });
 });
 
 test("Report description is shown above the results on the Reports view", async ({
