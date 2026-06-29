@@ -196,8 +196,13 @@ export class PublicFormsService {
       return [];
     }
 
+    if (!this.entities.has(formConfig.entity)) {
+      Logging.warn(
+        `PublicForm config references unknown entity type "${formConfig.entity}" — skipping. Check this PublicFormConfig.`,
+      );
+      return [];
+    }
     const entityConstructor = this.entities.get(formConfig.entity);
-    if (!entityConstructor) return [];
 
     return formConfig.linkedEntities.filter((fieldId) => {
       const fieldSchema = entityConstructor.schema.get(fieldId);
@@ -215,7 +220,10 @@ export class PublicFormsService {
   async saveCustomFieldsToEntityConfig(
     publicFormConfig: PublicFormConfig,
   ): Promise<void> {
-    if (!publicFormConfig.entity) {
+    if (
+      !publicFormConfig.entity ||
+      !this.entities.has(publicFormConfig.entity)
+    ) {
       return;
     }
 
