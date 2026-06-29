@@ -194,7 +194,7 @@ test("SQL report definition is edited in a syntax-highlighting editor", async ({
   // Reach the report's admin details via the Reports view context menu.
   await page.getByRole("navigation").getByText("Reports").click();
   await page
-    .locator("app-view-actions button[mat-icon-button]")
+    .locator("button[mat-icon-button][color='primary']")
     .first()
     .click();
   await page.getByRole("menuitem", { name: "Manage Reports" }).click();
