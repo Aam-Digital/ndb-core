@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   effect,
   input,
+  output,
   signal,
 } from "@angular/core";
 import {
@@ -26,12 +27,14 @@ export class ListPaginatorComponent<E> {
 
   dataSource = input<MatTableDataSource<E>>();
   idForSavingPagination = input<string>();
+  /** Emits the MatPaginator once it is ready, so callers can pass it to a custom data source. */
+  paginatorReady = output<MatPaginator>();
 
-  private readonly paginatorReady = signal(false);
+  private readonly _paginatorReady = signal(false);
   @ViewChild(MatPaginator, { static: true })
   set paginatorRef(paginator: MatPaginator) {
     this.paginator = paginator;
-    this.paginatorReady.set(!!paginator);
+    this._paginatorReady.set(!!paginator);
   }
   paginator: MatPaginator;
 
@@ -45,8 +48,11 @@ export class ListPaginatorComponent<E> {
     });
 
     effect(() => {
-      this.paginatorReady();
+      this._paginatorReady();
       this.bindPaginator(this.dataSource());
+      if (this.paginator) {
+        this.paginatorReady.emit(this.paginator);
+      }
     });
   }
 

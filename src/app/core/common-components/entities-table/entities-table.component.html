@@ -1,16 +1,16 @@
-@if (isLoading()) {
+@if (activeDataSource().isLoading()) {
   <div class="process-spinner">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 }
 
-<div [hidden]="isLoading()" class="table-container">
+<div [hidden]="activeDataSource().isLoading()" class="table-container">
   <table
     mat-table
-    [dataSource]="recordsDataSource"
+    [dataSource]="activeDataSource()"
     matSort
-    [matSortActive]="sortStore.effectiveSort()?.active"
-    [matSortDirection]="sortStore.effectiveSort()?.direction"
+    [matSortActive]="activeDataSource().effectiveSort()?.active"
+    [matSortDirection]="activeDataSource().effectiveSort()?.direction"
     class="full-width table"
   >
     @for (col of _columns(); track col.id) {
@@ -104,8 +104,8 @@
   -->
   <app-list-paginator
     class="table-footer"
-    [dataSource]="recordsDataSource"
     [idForSavingPagination]="idForSavingPagination()"
+    (paginatorReady)="onPaginatorReady($event)"
   ></app-list-paginator>
 
   <!--

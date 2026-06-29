@@ -243,7 +243,7 @@ export function inferDefaultSort(
  * `record.dateOfBirth.age`, so datatype sorting cannot use the column value directly.
  * The legacy `age` and `age_<field>` conventions remain supported for existing configs.
  */
-function resolveAgeSourceField(column: FormFieldConfig): string | undefined {
+export function resolveAgeSourceField(column: FormFieldConfig): string | undefined {
   if (
     column.viewComponent === "DisplayAge" &&
     typeof column.additional === "string"
