@@ -127,20 +127,17 @@
 
 <ng-template #subrecord>
   <app-entities-table
+    [dataSource]="_dataSource"
     [entityType]="entityConstructor()!"
-    [records]="allEntities()"
     [customColumns]="columns()"
     [editable]="false"
     [clickMode]="clickMode()"
     (entityClick)="onRowClick($event)"
     [columnsToDisplay]="columnsToDisplay"
-    [filter]="filterObj()"
     [sortBy]="defaultSort()"
     [(selectedRecords)]="selectedRows"
     [selectable]="!!selectedRows()"
     [showInactive]="showInactive()"
-    (filteredRecordsChange)="filteredData = $event"
-    [filterFreetext]="filterFreetext"
     [showEntityColor]="showEntityColor()"
   ></app-entities-table>
 </ng-template>

@@ -1,13 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  effect,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
-  SimpleChanges,
-  inject,
-  ChangeDetectionStrategy,
   signal,
+  SimpleChanges,
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -24,6 +25,7 @@ import { ImportAdditionalSettings } from "../import-additional-settings";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "../../common-components/entities-table/in-memory-data-source";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import {
@@ -93,6 +95,13 @@ export class ImportReviewDataComponent implements OnChanges {
 
   isLoading = signal(false);
   mappedEntities = signal<Entity[]>([]);
+  readonly mappedEntitiesDataSource = new InMemoryDataSource<Entity>();
+
+  constructor() {
+    effect(() => {
+      this.mappedEntitiesDataSource.allRecords.set(this.mappedEntities());
+    });
+  }
   displayColumns = signal<string[]>([]);
   transformationErrorColumns = signal<string[]>([]);
   MULTIPLE_MATCHING_ENTITIES_KEY =

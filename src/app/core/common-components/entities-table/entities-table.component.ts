@@ -28,7 +28,6 @@ import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entit
 import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { DataFilter } from "../../filter/filters/filters";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import {
@@ -88,22 +87,13 @@ export class EntitiesTableComponent<
   ) as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
-  /** External data source (new API). When set, takes precedence over `records`. */
   dataSource = input<EntitiesTableDataSource<T>>();
-  /** Raw entity records (backward-compat API). Creates an internal InMemoryDataSource. */
-  records = input<T[]>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
   });
   columnsToDisplay = input<string[]>();
   entityType = input<EntityConstructor<T>>();
   sortBy = input<Sort>();
-  filter = input<DataFilter<T>, DataFilter<T> | undefined>(
-    {},
-    {
-      transform: (value) => value ?? {},
-    },
-  );
   filterFreetext = input<string>();
   showEntityColor = input<boolean>(false);
   getBackgroundColor = input<(rec: T) => string>();
@@ -227,17 +217,8 @@ export class EntitiesTableComponent<
       }
     });
 
-    // Keep filter/freetext inputs in sync with the INTERNAL data source only.
-    // When an external dataSource is provided, the caller owns the filter state.
     effect(() => {
-      if (!this.dataSource()) {
-        this._internalDataSource.filter.set(this.filter());
-      }
-    });
-    effect(() => {
-      if (!this.dataSource()) {
-        this._internalDataSource.filterFreetext.set(this.filterFreetext() ?? "");
-      }
+      this._internalDataSource.filterFreetext.set(this.filterFreetext() ?? "");
     });
     effect(() => {
       this.activeDataSource().showInactive.set(this.showInactive());
@@ -245,14 +226,6 @@ export class EntitiesTableComponent<
     // Write-back: keep the model in sync if the data source changes showInactive
     effect(() => {
       this.showInactive.set(this.activeDataSource().showInactive());
-    });
-
-    // When `records` input is provided, push them into the internal data source
-    effect(() => {
-      const records = this.records();
-      if (records !== undefined) {
-        this._internalDataSource.allRecords.set(records);
-      }
     });
 
     // Connect selection store

@@ -1,13 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
-  LOCALE_ID,
   linkedSignal,
+  LOCALE_ID,
   resource,
   signal,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
@@ -28,6 +29,7 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * Displays attendance analysis for a given "recurring activity"
@@ -157,10 +159,6 @@ export class ActivityAttendanceSectionComponent {
     },
   ];
 
-  constructor() {
-    this.subscribeToEventUpdates();
-  }
-
   private subscribeToEventUpdates() {
     const eventTypes = this.attendanceService.eventTypes();
     if (eventTypes.length === 0) {
@@ -185,7 +183,16 @@ export class ActivityAttendanceSectionComponent {
     });
   }
 
+  readonly attendanceDataSource = new InMemoryDataSource<ActivityAttendance>();
+
   getBackgroundColor = computed(
     () => (rec: ActivityAttendance) => rec.getColor(this.forChild()),
   );
+
+  constructor() {
+    this.subscribeToEventUpdates();
+    effect(() => {
+      this.attendanceDataSource.allRecords.set(this.records());
+    });
+  }
 }

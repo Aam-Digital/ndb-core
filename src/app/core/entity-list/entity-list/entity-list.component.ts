@@ -45,6 +45,7 @@ import { ExportColumnConfig } from "../../export/data-transformation-service/exp
 import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "../../common-components/entities-table/in-memory-data-source";
 import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
@@ -165,8 +166,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   filterObj = model<DataFilter<T>>({});
   filterString = "";
-  filteredData = [];
   filterFreetext: string;
+
+  readonly _dataSource = new InMemoryDataSource<T>();
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -193,6 +195,13 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   constructor() {
+    effect(() => {
+      this._dataSource.allRecords.set(this.allEntities());
+    });
+    effect(() => {
+      this._dataSource.filter.set(this.filterObj());
+    });
+
     effect(() => {
       this.entityType();
       this.columns();
@@ -369,8 +378,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   applyFilter(filterValue: string) {
-    // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
-    this.filterFreetext = filterValue.trim().toLowerCase();
+    const trimmed = filterValue.trim().toLowerCase();
+    this.filterFreetext = trimmed;
+    this._dataSource.filterFreetext.set(trimmed);
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -444,7 +454,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     this.dialog.open(ExportDialogComponent, {
       data: {
         allEntities: this.allEntities(),
-        filteredData: this.filteredData,
+        filteredData: this._dataSource.filteredRecords(),
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),

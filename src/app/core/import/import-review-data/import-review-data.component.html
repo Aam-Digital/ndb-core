@@ -40,9 +40,9 @@
   }
 
   <app-entities-table
+    [dataSource]="mappedEntitiesDataSource"
     [entityType]="entityConstructor"
     [columnsToDisplay]="displayColumns()"
-    [records]="mappedEntities()"
     clickMode="none"
     [editable]="false"
   >

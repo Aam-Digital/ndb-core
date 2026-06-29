@@ -1,8 +1,7 @@
 <app-entities-table
+  [dataSource]="entityDataSource"
   [entityType]="entityCtr()"
-  [records]="data()"
   [customColumns]="_columns()"
-  [filter]="filterObj()"
   [newRecordFactory]="newRecordFactory"
   clickMode="none"
   (entityClick)="showNoteDetails($event)"

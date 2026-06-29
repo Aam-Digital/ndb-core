@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
 } from "@angular/core";
@@ -18,6 +19,7 @@ import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * Displays detailed attendance data for a calculated attendance time period (`ActivityAttendance`).
@@ -56,6 +58,14 @@ export class AttendanceDetailsComponent {
   eventEntities = computed<Entity[]>(
     () => this.entity()?.events.map((e) => e.entity) ?? [],
   );
+
+  readonly eventsDataSource = new InMemoryDataSource<Entity>();
+
+  constructor() {
+    effect(() => {
+      this.eventsDataSource.allRecords.set(this.eventEntities());
+    });
+  }
 
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },

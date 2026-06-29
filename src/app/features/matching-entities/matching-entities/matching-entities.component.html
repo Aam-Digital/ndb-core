@@ -134,13 +134,12 @@
           ></app-filter>
 
           <app-entities-table
+            [dataSource]="side.dataSource"
             [entityType]="side.entityType | entityType"
-            [records]="side.availableEntities"
             [customColumns]="side.columns"
             [editable]="false"
             clickMode="none"
             (entityClick)="side.selectMatch($event)"
-            [filter]="side.filterObj()"
             [getBackgroundColor]="getEntityBackgroundColor"
           ></app-entities-table>
         </div>

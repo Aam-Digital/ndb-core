@@ -20,8 +20,8 @@
 }
 
 <app-entities-table
+  [dataSource]="attendanceDataSource"
   [entityType]="entityCtr"
-  [records]="records()"
   [customColumns]="columns"
   clickMode="none"
   (entityClick)="showDetails($event)"

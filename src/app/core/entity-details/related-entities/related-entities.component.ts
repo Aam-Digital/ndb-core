@@ -162,8 +162,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   constructor() {
     // Delegate real-time update subscription to the data source.
-    // This also marks allRecords = undefined (loading) when entityCtr changes.
-    this.entityDataSource.connectEntityUpdates(this.entityCtr);
+    // Use a getter so child class field overrides of entityCtr are picked up at
+    // effect evaluation time (not at constructor call time).
+    this.entityDataSource.connectEntityUpdates(() => this.entityCtr());
 
     this.screenWidthObserver
       .shared()

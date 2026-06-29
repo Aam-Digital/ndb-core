@@ -162,7 +162,7 @@ export class InMemoryDataSource<T extends Entity> extends EntitiesTableDataSourc
     super();
 
     if (entityType) {
-      this.connectEntityUpdates(signal(entityType), true);
+      this.connectEntityUpdates(() => entityType, true);
     }
 
     // Sync default sort when no manual override and no URL state
@@ -212,11 +212,11 @@ export class InMemoryDataSource<T extends Entity> extends EntitiesTableDataSourc
    *   can supply records themselves via allRecords.
    */
   connectEntityUpdates(
-    entityTypeSig: Signal<EntityConstructor<T> | undefined>,
+    getEntityType: () => EntityConstructor<T> | undefined,
     autoLoad = false,
   ): void {
     effect((onCleanup) => {
-      const ctr = entityTypeSig();
+      const ctr = getEntityType();
       if (!ctr) return;
       this.allRecords.set(undefined);
       if (autoLoad) {

@@ -26,6 +26,7 @@ import { GeoLocation } from "app/features/location/geo-location";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { BehaviorSubject, map } from "rxjs";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "../../../core/common-components/entities-table/in-memory-data-source";
 import {
   ColumnConfig,
   FormFieldConfig,
@@ -62,6 +63,7 @@ export interface MatchingSide extends MatchingSideConfig {
   filterObj: WritableSignal<DataFilter<Entity>>;
 
   availableEntities?: Entity[];
+  dataSource?: InMemoryDataSource<Entity>;
   selectMatch?: (e) => void;
   entityType: string;
 
@@ -145,10 +147,8 @@ export class MatchingEntitiesComponent implements OnInit {
   filteredMapEntities = computed(() => {
     const entities: Entity[] = [];
     this.sideDetails()?.forEach((side) => {
-      const filterObj = side.filterObj();
-      if (Object.keys(filterObj).length > 0) {
-        const predicate = this.filterService.getFilterPredicate(filterObj);
-        entities.push(...(side.availableEntities ?? []).filter(predicate));
+      if (side.dataSource) {
+        entities.push(...side.dataSource.filteredRecords());
       } else {
         entities.push(...(side.availableEntities ?? []));
       }
@@ -180,6 +180,9 @@ export class MatchingEntitiesComponent implements OnInit {
   });
 
   private columnsState: [ColumnConfig, ColumnConfig][] = [];
+
+  private readonly _side0DataSource = new InMemoryDataSource<Entity>();
+  private readonly _side1DataSource = new InMemoryDataSource<Entity>();
 
   // TODO: fill selection on hover already?
 
@@ -233,6 +236,8 @@ export class MatchingEntitiesComponent implements OnInit {
       newSide.selectMatch = this.getSingleSelectFunction(newSide);
     }
 
+    const ds = sideIndex === 0 ? this._side0DataSource : this._side1DataSource;
+
     if (!newSide.selected) {
       newSide.availableEntities = await this.entityMapper.loadType(
         newSide.entityType,
@@ -240,11 +245,14 @@ export class MatchingEntitiesComponent implements OnInit {
       newSide.availableFilters = newSide.availableFilters ?? [];
       newSide.selected = signal<Entity[]>([]);
       newSide.highlightedSelected = signal<Entity | null>(null);
+      newSide.dataSource = ds;
+      ds.allRecords.set(newSide.availableEntities);
     }
 
     newSide.filterObj = signal<DataFilter<Entity>>({
       ...(side.prefilter ?? {}),
     });
+    ds.filter.set({ ...(side.prefilter ?? {}) });
 
     return newSide;
   }
@@ -413,7 +421,9 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    side.filterObj.set({ ...side.prefilter, ...filter });
+    const newFilter = { ...side.prefilter, ...filter };
+    side.filterObj.set(newFilter);
+    side.dataSource?.filter.set(newFilter);
   }
 
   entityInMapClicked(entity: Entity) {
