@@ -112,31 +112,30 @@ export class KeycloakAuthService {
    * is invoked by an explicit user action and a single transient failure
    * shouldn't push the user back to the offline fallback.
    */
-  login = reuseFirstAsync(
-    async (): Promise<SessionInfo> =>
-      firstValueFrom(
-        defer(() => this.loginOnce()).pipe(
-          retry({
-            count: LOGIN_RETRY_DELAYS_MS.length,
-            delay: (err, retryCount) => {
-              const retryable =
-                isRetryableNetworkError(err) ||
-                (err instanceof RemoteLoginNotAvailableError &&
-                  isRetryableNetworkError(err.cause));
-              if (!retryable) return throwError(() => err);
-              const delayMs =
-                LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
-                LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
-              Logging.debug(
-                `Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms`,
-                err,
-              );
-              return timer(delayMs);
-            },
-            resetOnSuccess: true,
-          }),
-        ),
+  login = reuseFirstAsync(async (): Promise<SessionInfo> =>
+    firstValueFrom(
+      defer(() => this.loginOnce()).pipe(
+        retry({
+          count: LOGIN_RETRY_DELAYS_MS.length,
+          delay: (err, retryCount) => {
+            const retryable =
+              isRetryableNetworkError(err) ||
+              (err instanceof RemoteLoginNotAvailableError &&
+                isRetryableNetworkError(err.cause));
+            if (!retryable) return throwError(() => err);
+            const delayMs =
+              LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
+              LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
+            Logging.debug(
+              `Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms`,
+              err,
+            );
+            return timer(delayMs);
+          },
+          resetOnSuccess: true,
+        }),
       ),
+    ),
   );
 
   private async loginOnce(): Promise<SessionInfo> {
