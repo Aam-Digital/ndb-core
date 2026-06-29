@@ -244,8 +244,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="297"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:297</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="296"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:296</a></div>
                         </td>
                     </tr>
 
@@ -313,8 +313,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="333"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:333</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="332"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:332</a></div>
                         </td>
                     </tr>
 
@@ -355,8 +355,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="340"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:340</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="339"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:339</a></div>
                         </td>
                     </tr>
 
@@ -394,8 +394,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="323"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:323</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="322"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:322</a></div>
                         </td>
                     </tr>
 
@@ -433,8 +433,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="348"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:348</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="347"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:347</a></div>
                         </td>
                     </tr>
 
@@ -472,8 +472,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="314"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:314</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="313"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:313</a></div>
                         </td>
                     </tr>
 
@@ -642,31 +642,30 @@ user clicks &quot;Log in&quot;.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>reuseFirstAsync(
-    async (): Promise&lt;SessionInfo&gt; &#x3D;&gt;
-      firstValueFrom(
-        defer(() &#x3D;&gt; this.loginOnce()).pipe(
-          retry({
-            count: LOGIN_RETRY_DELAYS_MS.length,
-            delay: (err, retryCount) &#x3D;&gt; {
-              const retryable &#x3D;
-                isRetryableNetworkError(err) ||
-                (err instanceof RemoteLoginNotAvailableError &amp;&amp;
-                  isRetryableNetworkError(err.cause));
-              if (!retryable) return throwError(() &#x3D;&gt; err);
-              const delayMs &#x3D;
-                LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
-                LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
-              Logging.debug(
-                &#x60;Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms&#x60;,
-                err,
-              );
-              return timer(delayMs);
-            },
-            resetOnSuccess: true,
-          }),
-        ),
+                        <i>Default value : </i><code>reuseFirstAsync(async (): Promise&lt;SessionInfo&gt; &#x3D;&gt;
+    firstValueFrom(
+      defer(() &#x3D;&gt; this.loginOnce()).pipe(
+        retry({
+          count: LOGIN_RETRY_DELAYS_MS.length,
+          delay: (err, retryCount) &#x3D;&gt; {
+            const retryable &#x3D;
+              isRetryableNetworkError(err) ||
+              (err instanceof RemoteLoginNotAvailableError &amp;&amp;
+                isRetryableNetworkError(err.cause));
+            if (!retryable) return throwError(() &#x3D;&gt; err);
+            const delayMs &#x3D;
+              LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
+              LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
+            Logging.debug(
+              &#x60;Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms&#x60;,
+              err,
+            );
+            return timer(delayMs);
+          },
+          resetOnSuccess: true,
+        }),
       ),
+    ),
   )</code>
                     </td>
                 </tr>
@@ -808,31 +807,30 @@ export class KeycloakAuthService {
    * is invoked by an explicit user action and a single transient failure
    * shouldn&#x27;t push the user back to the offline fallback.
    */
-  login &#x3D; reuseFirstAsync(
-    async (): Promise&lt;SessionInfo&gt; &#x3D;&gt;
-      firstValueFrom(
-        defer(() &#x3D;&gt; this.loginOnce()).pipe(
-          retry({
-            count: LOGIN_RETRY_DELAYS_MS.length,
-            delay: (err, retryCount) &#x3D;&gt; {
-              const retryable &#x3D;
-                isRetryableNetworkError(err) ||
-                (err instanceof RemoteLoginNotAvailableError &amp;&amp;
-                  isRetryableNetworkError(err.cause));
-              if (!retryable) return throwError(() &#x3D;&gt; err);
-              const delayMs &#x3D;
-                LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
-                LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
-              Logging.debug(
-                &#x60;Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms&#x60;,
-                err,
-              );
-              return timer(delayMs);
-            },
-            resetOnSuccess: true,
-          }),
-        ),
+  login &#x3D; reuseFirstAsync(async (): Promise&lt;SessionInfo&gt; &#x3D;&gt;
+    firstValueFrom(
+      defer(() &#x3D;&gt; this.loginOnce()).pipe(
+        retry({
+          count: LOGIN_RETRY_DELAYS_MS.length,
+          delay: (err, retryCount) &#x3D;&gt; {
+            const retryable &#x3D;
+              isRetryableNetworkError(err) ||
+              (err instanceof RemoteLoginNotAvailableError &amp;&amp;
+                isRetryableNetworkError(err.cause));
+            if (!retryable) return throwError(() &#x3D;&gt; err);
+            const delayMs &#x3D;
+              LOGIN_RETRY_DELAYS_MS[retryCount - 1] ??
+              LOGIN_RETRY_DELAYS_MS[LOGIN_RETRY_DELAYS_MS.length - 1];
+            Logging.debug(
+              &#x60;Keycloak login attempt ${retryCount} failed; retrying in ${delayMs}ms&#x60;,
+              err,
+            );
+            return timer(delayMs);
+          },
+          resetOnSuccess: true,
+        }),
       ),
+    ),
   );
 
   private async loginOnce(): Promise&lt;SessionInfo&gt; {

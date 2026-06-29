@@ -436,9 +436,9 @@ export class SetupService {
   async getAvailableBaseConfig(): Promise&lt;BaseConfig[]&gt; {
     const externalSourceUrlsRaw &#x3D; await firstValueFrom(
       this.httpClient
-        .get&lt;
-          string[]
-        &gt;(this.BASE_CONFIGS_FOLDER + &quot;/external-sources.json&quot;, { responseType: &quot;json&quot; })
+        .get&lt;string[]&gt;(this.BASE_CONFIGS_FOLDER + &quot;/external-sources.json&quot;, {
+          responseType: &quot;json&quot;,
+        })
         .pipe(
           catchError(() &#x3D;&gt; {
             Logging.debug(&quot;No external-sources.json found, skipping.&quot;);

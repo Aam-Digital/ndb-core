@@ -406,9 +406,9 @@ export class SqlReportService {
 
     return firstValueFrom(
       this.http
-        .get&lt;
-          ReportCalculation[]
-        &gt;(&#x60;${SqlReportService.API_URL}/report-calculation/report/${report.getId()}&#x60;)
+        .get&lt;ReportCalculation[]&gt;(
+          &#x60;${SqlReportService.API_URL}/report-calculation/report/${report.getId()}&#x60;,
+        )
         .pipe(
           switchMap((reportDetails) &#x3D;&gt; {
             let lastReports &#x3D; this.getLastReports(reportDetails, from, to);

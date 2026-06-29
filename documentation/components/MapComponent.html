@@ -619,8 +619,8 @@ Hides address search, selected location, and save/cancel actions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="391"
-                                    class="link-to-prism">src/app/features/location/map/map.component.ts:391</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="390"
+                                    class="link-to-prism">src/app/features/location/map/map.component.ts:390</a></div>
                         </td>
                     </tr>
 
@@ -656,8 +656,8 @@ Hides address search, selected location, and save/cancel actions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="423"
-                                    class="link-to-prism">src/app/features/location/map/map.component.ts:423</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="422"
+                                    class="link-to-prism">src/app/features/location/map/map.component.ts:422</a></div>
                         </td>
                     </tr>
 
@@ -894,8 +894,7 @@ export class MapComponent implements AfterViewInit {
       const locationProperties &#x3D; this.getMapProperties(entity);
       locationProperties.forEach((prop) &#x3D;&gt; {
         const location &#x3D; (entity as any)[prop]?.geoLookup as
-          | { lat: number; lon: number }
-          | undefined;
+          { lat: number; lon: number } | undefined;
 
         const lat &#x3D; Number(location?.lat);
         const lon &#x3D; Number(location?.lon);

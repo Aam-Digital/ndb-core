@@ -463,9 +463,9 @@ export class LatestChangesService {
     releaseFilter: (releases: Changelog[]) &#x3D;&gt; Changelog[],
   ): Observable&lt;Changelog[]&gt; {
     return this.http
-      .get&lt;
-        Changelog[]
-      &gt;(&#x60;${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases&#x60;)
+      .get&lt;Changelog[]&gt;(
+        &#x60;${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases&#x60;,
+      )
       .pipe(
         map(excludePrereleases),
         map(releaseFilter),

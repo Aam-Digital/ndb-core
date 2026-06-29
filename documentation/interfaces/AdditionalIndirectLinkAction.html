@@ -459,8 +459,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export type AdditionalImportAction &#x3D;
-  | AdditonalDirectLinkAction
-  | AdditionalIndirectLinkAction;
+  AdditonalDirectLinkAction | AdditionalIndirectLinkAction;
 
 interface AdditionalImportBaseAction {
   mode: &quot;direct&quot; | &quot;indirect&quot;;
