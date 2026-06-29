@@ -122,8 +122,7 @@ export class RollCallSetupComponent {
   entityType = computed(
     () =>
       this.activeEvents()[0]?.entity.constructor as
-        | EntityConstructor
-        | undefined,
+        EntityConstructor | undefined,
   );
 
   showMore() {
