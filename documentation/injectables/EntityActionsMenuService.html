@@ -225,8 +225,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="22"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:22</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="23"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:23</a></div>
                         </td>
                     </tr>
 
@@ -294,8 +294,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="56"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:56</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:62</a></div>
                         </td>
                     </tr>
 
@@ -363,8 +363,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="64"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:64</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="70"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -434,8 +434,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="32"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:32</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -515,8 +515,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="71"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:71</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -584,8 +584,8 @@ and displayed to users in the entity details context menu.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -654,8 +654,8 @@ depending on the specific entity for which the menu is displayed (e.g. only for 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="110"
-                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:110</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="116"
+                                    class="link-to-prism">src/app/core/entity-details/entity-actions-menu/entity-actions-menu.service.ts:116</a></div>
                         </td>
                     </tr>
 
@@ -718,6 +718,7 @@ depending on the specific entity for which the menu is displayed (e.g. only for 
 import { EntityAction } from &quot;./entity-action.interface&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
  * Register and access actions that can be performed on an entity
@@ -757,10 +758,15 @@ export class EntityActionsMenuService {
     const visibleActions: EntityAction[] &#x3D; [];
     for (const action of actions) {
       let isVisible: boolean;
-      if (action.visible) {
-        isVisible &#x3D; await action.visible(entities);
-      } else {
-        isVisible &#x3D; true;
+      try {
+        isVisible &#x3D; action.visible ? await action.visible(entities) : true;
+      } catch (err) {
+        // a single misbehaving action must not break the whole context menu
+        Logging.warn(
+          &#x60;EntityActionsMenu: visibility check for action &quot;${action.action}&quot; failed; hiding it.&#x60;,
+          err,
+        );
+        isVisible &#x3D; false;
       }
       if (isVisible &amp;&amp; this.hasRequiredPermission(action, entities)) {
         visibleActions.push(action);

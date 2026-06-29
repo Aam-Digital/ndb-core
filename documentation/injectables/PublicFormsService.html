@@ -555,8 +555,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="215"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:215</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="220"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:220</a></div>
                         </td>
                     </tr>
 
@@ -815,8 +815,13 @@ export class PublicFormsService {
       return [];
     }
 
+    if (!this.entities.has(formConfig.entity)) {
+      Logging.warn(
+        &#x60;PublicForm config references unknown entity type &quot;${formConfig.entity}&quot; — skipping. Check this PublicFormConfig.&#x60;,
+      );
+      return [];
+    }
     const entityConstructor &#x3D; this.entities.get(formConfig.entity);
-    if (!entityConstructor) return [];
 
     return formConfig.linkedEntities.filter((fieldId) &#x3D;&gt; {
       const fieldSchema &#x3D; entityConstructor.schema.get(fieldId);
@@ -834,7 +839,10 @@ export class PublicFormsService {
   async saveCustomFieldsToEntityConfig(
     publicFormConfig: PublicFormConfig,
   ): Promise&lt;void&gt; {
-    if (!publicFormConfig.entity) {
+    if (
+      !publicFormConfig.entity ||
+      !this.entities.has(publicFormConfig.entity)
+    ) {
       return;
     }
 
