@@ -37,3 +37,17 @@
     color: colors.$text-secondary;
   }
 }
+
+.stale-calculation-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 10px 0;
+  color: colors.$error;
+  font-weight: 500;
+
+  .updating-hint {
+    color: colors.$text-secondary;
+    font-weight: normal;
+  }
+}
