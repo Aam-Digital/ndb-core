@@ -1,0 +1,21 @@
+// ViewEncapsulation.None: scope all rules under the host class so they don't leak.
+// CodeMirror builds its DOM (`.cm-editor`) imperatively, so it is not reachable by
+// Angular's emulated encapsulation and must be styled globally (under this class).
+.sql-code-editor {
+  .cm-editor {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    min-height: 5em;
+    font-size: 13px;
+    background: #fff;
+  }
+
+  .cm-editor.cm-focused {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.38);
+  }
+
+  .cm-scroller {
+    overflow: auto;
+  }
+}

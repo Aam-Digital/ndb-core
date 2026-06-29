@@ -22,4 +22,18 @@ export const reportingComponents: ComponentTuple[] = [
         (c) => c.EditReportPeriodToggleComponent,
       ),
   ],
+  [
+    "EditSqlQuery",
+    () =>
+      import("./edit-sql-query/sql-code-editor.component").then(
+        (c) => c.SqlCodeEditorComponent,
+      ),
+  ],
+  [
+    "EditReportDefinition",
+    () =>
+      import("./edit-report-definition/edit-report-definition.component").then(
+        (c) => c.EditReportDefinitionComponent,
+      ),
+  ],
 ];
