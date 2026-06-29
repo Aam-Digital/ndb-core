@@ -16,6 +16,20 @@
   </div>
 
   <mat-menu #contextMenu>
+    <button
+      mat-menu-item
+      [routerLink]="[reportAdminLink]"
+      angulartics2On="click"
+      angularticsCategory="Reporting"
+      angularticsAction="manageReports"
+    >
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        icon="gear"
+      ></fa-icon>
+      <span i18n>Manage Reports</span>
+    </button>
+
     @if (currentReport()) {
       <button
         mat-menu-item
@@ -77,6 +91,15 @@
   (selectedReportChange)="currentReport.set($event); onReportCriteriaChange()"
   class="view-section"
 ></app-select-report>
+
+@if (currentReport()?.description; as description) {
+  <mat-expansion-panel class="view-section">
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>About this report</mat-panel-title>
+    </mat-expansion-panel-header>
+    <p class="report-description">{{ description }}</p>
+  </mat-expansion-panel>
+}
 
 @if (reportCalculation()) {
   <div style="color: gray; padding: 10px">

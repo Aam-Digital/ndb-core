@@ -66,3 +66,113 @@ test("Generate a configured aggregation report and download CSV", async ({
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/\.csv|\.xlsx/);
 });
+
+test("Reports are manageable from Admin Overview → Templates and Forms", async ({
+  page,
+}) => {
+  const users = generateUsers();
+
+  const reportConfig = createEntityOfType("ReportConfig", "e2e-admin-report");
+  reportConfig.title = "E2E Admin Report";
+  reportConfig.mode = "sql";
+  reportConfig.reportDefinition = [{ query: "SELECT name FROM children" }];
+
+  await loadApp(page, [...users, reportConfig]);
+
+  // Navigate to Admin Overview and open the "Templates and Forms" section.
+  await page.getByRole("navigation").getByText("Admin").click();
+  await page.getByRole("navigation").getByText("Admin Overview").click();
+
+  const templatesPanel = page
+    .locator("mat-expansion-panel")
+    .filter({ hasText: "Templates and Forms" });
+  await templatesPanel
+    .getByRole("button", { name: /Templates and Forms/ })
+    .click();
+
+  // The dynamically-registered "Reports" entry opens the report admin list.
+  await templatesPanel.getByText("Reports", { exact: true }).click();
+
+  await expect(
+    page.getByRole("cell", { name: "E2E Admin Report" }),
+  ).toBeVisible({ timeout: 10_000 });
+
+  await argosScreenshot(page, "report-admin-list");
+});
+
+test("Editing a report's description via the admin view persists", async ({
+  page,
+}) => {
+  const users = generateUsers();
+
+  const reportConfig = createEntityOfType("ReportConfig", "e2e-edit-report");
+  reportConfig.title = "E2E Editable Report";
+  reportConfig.mode = "sql";
+  reportConfig.description = "Original description";
+  reportConfig.reportDefinition = [{ query: "SELECT name FROM children" }];
+
+  await loadApp(page, [...users, reportConfig]);
+
+  // Reach the report admin list via the Reports view context menu ("Manage Reports").
+  await page.getByRole("navigation").getByText("Reports").click();
+  await page
+    .locator("app-view-actions button[mat-icon-button]")
+    .first()
+    .click();
+  await page.getByRole("menuitem", { name: "Manage Reports" }).click();
+
+  // Open the report's details and edit the description.
+  await page.getByRole("cell", { name: "E2E Editable Report" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+
+  const newDescription = "Edited by e2e test";
+  const descriptionField = page
+    .locator("#entity-field__description")
+    .getByRole("textbox");
+  await descriptionField.fill(newDescription);
+
+  await argosScreenshot(page, "report-admin-details");
+
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+
+  // After saving, the details view returns to read mode showing the new text.
+  await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
+  await expect(page.getByText(newDescription)).toBeVisible({ timeout: 10_000 });
+});
+
+test("Report description is shown above the results on the Reports view", async ({
+  page,
+}) => {
+  const users = generateUsers();
+  const children = range(3).map((i) =>
+    generateChild({ name: `Reports Child ${i}` }),
+  );
+
+  const description = "This report counts all children in the system.";
+  const reportConfig = createEntityOfType(
+    "ReportConfig",
+    "e2e-described-report",
+  );
+  reportConfig.title = "E2E Described Report";
+  reportConfig.mode = "reporting";
+  reportConfig.description = description;
+  reportConfig.aggregationDefinitions = [
+    { query: "Child:toArray", label: "All children" },
+  ];
+
+  await loadApp(page, [...users, ...children, reportConfig]);
+
+  await page.getByRole("navigation").getByText("Reports").click();
+
+  await page.getByRole("combobox", { name: /Select Report/i }).click();
+  await page.getByRole("option", { name: "E2E Described Report" }).click();
+
+  // The new collapsible "About this report" panel appears above the results.
+  await expect(
+    page.getByRole("button", { name: /About this report/ }),
+  ).toBeVisible({ timeout: 10_000 });
+  await page.getByRole("button", { name: /About this report/ }).click();
+  await expect(page.getByText(description)).toBeVisible();
+
+  await argosScreenshot(page, "report-description");
+});
