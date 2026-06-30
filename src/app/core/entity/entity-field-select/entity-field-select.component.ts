@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   input,
   Input,
@@ -35,16 +34,19 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   FormFieldConfig,
   string
 > {
+  // `placeholder` is part of the `MatFormFieldControl` contract (Angular Material
+  // reads it as a plain property), so it stays a decorator `@Input()` rather than a
+  // signal input; here we only override the default value.
   @Input() override placeholder: string =
     $localize`:EntityFieldSelect placeholder:Select Record Field`;
 
-  override optionToString = (option: FormFieldConfig) => option.label;
-  override valueMapper = (option: FormFieldConfig) => option.id;
-
-  @Input() override multi?: boolean;
-
-  @Input() override hideOption: (option: FormFieldConfig) => boolean = () =>
-    false;
+  override optionToString = input<(option: FormFieldConfig) => string>(
+    // fall back to the id so the internal `_id` field (which has no label) is not blank
+    (option) => option.label ?? option.id,
+  );
+  override valueMapper = input<(option: FormFieldConfig) => string>(
+    (option) => option.id,
+  );
 
   /**
    * Whether to show the internal _id field in the dropdown.
@@ -75,17 +77,7 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
     return this.getAllFieldProps(entityType.schema);
   });
 
-  constructor() {
-    super();
-    effect(() => {
-      this.options = this.fieldOptions();
-      // Manually trigger ngOnChanges so that any already-set value is re-applied
-      // to mark the correct options as selected.
-      // (Setting `this.options` directly doesn't go through Angular's @Input binding,
-      // so ngOnChanges would not be called automatically.)
-      this.ngOnChanges({ options: true } as any);
-    });
-  }
+  protected override optionsSource = computed(() => this.fieldOptions());
 
   private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
     return [...schema.entries()]

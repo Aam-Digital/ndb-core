@@ -41,6 +41,8 @@ export const environment = {
   userAdminApi: undefined, // loaded from `assets/keycloak.json` during bootstrap
   /** Keycloak realm for user management */
   realm: undefined, // loaded from `assets/keycloak.json` during bootstrap
+  /** Keycloak client id of the app (used e.g. for the "back to application" link in action emails) */
+  clientId: undefined, // loaded from `assets/keycloak.json` during bootstrap
 
   /** Path for the reverse proxy that forwards to the database - configured in `default.conf` */
   DB_PROXY_PREFIX: "/db",

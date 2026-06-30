@@ -61,7 +61,8 @@ describe("BasicAutocompleteComponent", () => {
     const school1 = TestEntity.create({ name: "Aaa" });
     const school2 = TestEntity.create({ name: "aab" });
     const school3 = TestEntity.create({ name: "cde" });
-    component.options = [school1, school2, school3];
+    fixture.componentRef.setInput("options", [school1, school2, school3]);
+    fixture.detectChanges();
     let currentAutocompleteSuggestions: TestEntity[];
     component.autocompleteSuggestedOptions.subscribe(
       (value) => (currentAutocompleteSuggestions = value.map((o) => o.initial)),
@@ -78,11 +79,10 @@ describe("BasicAutocompleteComponent", () => {
   it("should show name of the selected entity", async () => {
     const child1 = TestEntity.create("First Child");
     const child2 = TestEntity.create("Second Child");
-    component.options = [child1, child2];
-    component.valueMapper = entityToId;
+    fixture.componentRef.setInput("options", [child1, child2]);
+    fixture.componentRef.setInput("valueMapper", entityToId);
 
     component.value = child1.getId();
-    component.ngOnChanges({ value: true, options: true, valueMapper: true });
     fixture.detectChanges();
 
     expect(component.displayText).toBe("First Child");
@@ -91,9 +91,8 @@ describe("BasicAutocompleteComponent", () => {
   it("should use _id and _label as default display/value for options", async () => {
     const option1 = { _id: "1", _label: "First" };
     const option2 = { _id: "2", _label: "Second" };
-    component.options = [option1, option2];
+    fixture.componentRef.setInput("options", [option1, option2]);
 
-    component.ngOnChanges({ options: true });
     fixture.detectChanges();
 
     // @ts-ignore
@@ -114,8 +113,9 @@ describe("BasicAutocompleteComponent", () => {
   it("should have the correct entity selected when it's name is entered", () => {
     const child1 = TestEntity.create("First Child");
     const child2 = TestEntity.create("Second Child");
-    component.options = [child1, child2];
-    component.valueMapper = entityToId;
+    fixture.componentRef.setInput("options", [child1, child2]);
+    fixture.componentRef.setInput("valueMapper", entityToId);
+    fixture.detectChanges();
 
     component.select({ asValue: child1.getId() } as any);
 
@@ -125,8 +125,9 @@ describe("BasicAutocompleteComponent", () => {
   it("should reset if leaving empty autocomplete", () => {
     const first = TestEntity.create("First");
     const second = TestEntity.create("Second");
-    component.options = [first, second];
-    component.valueMapper = entityToId;
+    fixture.componentRef.setInput("options", [first, second]);
+    fixture.componentRef.setInput("valueMapper", entityToId);
+    fixture.detectChanges();
 
     component.select({ asValue: first.getId() } as any);
     expect(component.value).toBe(first.getId());
@@ -148,13 +149,13 @@ describe("BasicAutocompleteComponent", () => {
 
   it("should initialize the options in multi select mode", async () => {
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
-    component.options = [0, 1, 2];
-    component.multi = true;
+    fixture.componentRef.setInput("options", [0, 1, 2]);
+    fixture.componentRef.setInput("multi", true);
     component.value = [0, 1];
-    component.ngOnChanges({ options: true, value: true });
+    fixture.detectChanges();
 
     component.showAutocomplete();
-    component.autocomplete.openPanel();
+    component.autocomplete()!.openPanel();
     const options = await autocomplete.getOptions();
     expect(options).toHaveLength(
       3 +
@@ -164,7 +165,7 @@ describe("BasicAutocompleteComponent", () => {
 
     await options[2].click();
     // When browser is not in foreground, this doesn't happen automatically
-    component.autocomplete.openPanel();
+    component.autocomplete()!.openPanel();
     fixture.detectChanges();
     await options[1].click();
 
@@ -174,10 +175,16 @@ describe("BasicAutocompleteComponent", () => {
   it("should switch the input when focusing in multi select mode", () => {
     vi.useFakeTimers();
     try {
-      component.multi = true;
-      component.options = ["some", "values", "and", "other", "options"];
+      fixture.componentRef.setInput("multi", true);
+      fixture.componentRef.setInput("options", [
+        "some",
+        "values",
+        "and",
+        "other",
+        "options",
+      ]);
       component.value = ["some", "values"];
-      component.ngOnChanges({ value: true, options: true });
+      fixture.detectChanges();
       expect(component.displayText).toBe("some, values");
 
       component.showAutocomplete();
@@ -210,14 +217,14 @@ describe("BasicAutocompleteComponent", () => {
   it("should create new option", async () => {
     const createOptionMock = vi.fn();
 
-    component.createOption = createOptionMock;
+    fixture.componentRef.setInput("createOption", createOptionMock);
     const newOption = "new option";
-    component.options = genders;
+    fixture.componentRef.setInput("options", genders);
     const initialValue = genders[0].id;
     component.value = initialValue;
-    component.valueMapper = (o) => o.id;
+    fixture.componentRef.setInput("valueMapper", (o) => o.id);
 
-    component.ngOnChanges({ value: true, options: true, valueMapper: true });
+    fixture.detectChanges();
 
     component.showAutocomplete();
     component.autocompleteForm.setValue(newOption);
@@ -244,16 +251,19 @@ describe("BasicAutocompleteComponent", () => {
     const createOptionMock = vi.fn();
     const newOption = "new option";
 
-    component.createOptions = [{ label: "Gender", create: createOptionMock }];
-    component.options = genders;
-    component.valueMapper = (o) => o.id;
+    fixture.componentRef.setInput("createOptions", [
+      { label: "Gender", create: createOptionMock },
+    ]);
+    fixture.componentRef.setInput("options", genders);
+    fixture.componentRef.setInput("valueMapper", (o) => o.id);
+    fixture.detectChanges();
 
     component.showAutocomplete();
     component.autocompleteForm.setValue(newOption);
 
     createOptionMock.mockResolvedValue({ id: newOption, label: newOption });
     component.select({
-      __createOptionConfig: component.createOptions[0],
+      __createOptionConfig: component.createOptions()[0],
       __input: newOption,
     } as any);
 
@@ -265,14 +275,15 @@ describe("BasicAutocompleteComponent", () => {
   it("should realign the panel on resize while open", async () => {
     vi.useFakeTimers();
     try {
-      component.options = ["one", "two"];
+      fixture.componentRef.setInput("options", ["one", "two"]);
+      fixture.detectChanges();
       component.showAutocomplete();
-      component.autocomplete.openPanel();
+      component.autocomplete()!.openPanel();
       fixture.detectChanges();
 
       const updatePanelWidthSpy = vi.spyOn(component, "updatePanelWidth");
       const updatePositionSpy = vi.spyOn(
-        component.autocomplete,
+        component.autocomplete(),
         "updatePosition",
       );
       updatePanelWidthSpy.mockClear();
@@ -282,7 +293,7 @@ describe("BasicAutocompleteComponent", () => {
       vi.advanceTimersByTime(100);
       await fixture.whenStable();
 
-      expect(component.autocomplete.panelOpen).toBe(true);
+      expect(component.autocomplete()!.panelOpen).toBe(true);
       expect(updatePanelWidthSpy).toHaveBeenCalled();
       expect(updatePositionSpy).toHaveBeenCalled();
     } finally {
