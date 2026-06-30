@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { Logging } from "../../logging/logging.service";
 
 describe("EntityActionsMenuService", () => {
   let service: EntityActionsMenuService;
@@ -82,5 +83,34 @@ describe("EntityActionsMenuService", () => {
     ]);
     expect(ability.can).toHaveBeenCalledWith("update", entityA);
     expect(ability.can).toHaveBeenCalledWith("update", entityB);
+  });
+
+  it("should not break the whole menu when one action's visible() throws (#4096)", async () => {
+    const entity = TestEntity.create("Record A");
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+
+    service.registerActions([
+      {
+        action: "throwing-action",
+        label: "Throwing",
+        icon: "bug",
+        visible: async () => {
+          throw new Error("Requested item is not registered ...");
+        },
+        execute: async () => true,
+      },
+      {
+        action: "healthy-action",
+        label: "Healthy",
+        icon: "check",
+        execute: async () => true,
+      },
+    ]);
+
+    const actions = await service.getActionsForSingle(entity);
+
+    // the throwing action is hidden, but the menu still resolves with the healthy one
+    expect(actions.map((action) => action.action)).toEqual(["healthy-action"]);
+    expect(warnSpy).toHaveBeenCalled();
   });
 });

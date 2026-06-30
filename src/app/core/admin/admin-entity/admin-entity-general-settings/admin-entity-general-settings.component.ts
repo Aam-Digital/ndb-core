@@ -44,6 +44,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 import { MatExpansionModule } from "@angular/material/expansion";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { ConditionalColorConfigComponent } from "./conditional-color-config/conditional-color-config.component";
+import { NumberDatatype } from "#src/app/core/basic-datatypes/number/number.datatype";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -114,6 +115,7 @@ export class AdminEntityGeneralSettingsComponent {
         ([, field]) =>
           [
             StringDatatype.dataType,
+            NumberDatatype.dataType,
             ConfigurableEnumDatatype.dataType,
             DateOnlyDatatype.dataType,
           ].includes(field.dataType) && field.label,

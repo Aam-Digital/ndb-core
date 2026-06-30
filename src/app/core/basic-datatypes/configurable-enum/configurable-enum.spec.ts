@@ -1,4 +1,7 @@
-import { ConfigurableEnum } from "./configurable-enum";
+import {
+  ConfigurableEnum,
+  InvalidEnumOptionException,
+} from "./configurable-enum";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
 
 describe("ConfigurableEnum", () => {
@@ -36,10 +39,24 @@ describe("ConfigurableEnum", () => {
     expect(returnedOption.label).toEqual(newOption);
     expect(testEnum.values).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "THREE", label: "three" }),
+        expect.objectContaining({ id: "three", label: "three" }),
       ]),
     );
     expect(testEnum.values.length).toBe(sampleValues.length + 1);
+  });
+
+  it("should generate a normalized id without special characters", () => {
+    const newOption: string = "Some Option (with) special! chars";
+    const returnedOption = testEnum.addOption(newOption);
+    expect(returnedOption.label).toEqual(newOption);
+    expect(returnedOption.id).toEqual("someOptionWithSpecialChars");
+  });
+
+  it("should throw for option consisting only of special characters", () => {
+    expect(() => testEnum.addOption("!@#$%")).toThrowError(
+      InvalidEnumOptionException,
+    );
+    expect(testEnum.values).toEqual(sampleValues);
   });
 
   it("should not add option for empty values", () => {
