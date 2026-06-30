@@ -435,7 +435,7 @@ describe("ReportingComponent", () => {
     report.mode = "sql";
     const staleEndDate = moment
       .utc()
-      .subtract(2, "hours")
+      .subtract(5, "minutes")
       .format("YYYY-MM-DDTHH:mm:ss.SSS");
     const freshEndDate = moment
       .utc()

@@ -49,7 +49,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { Logging } from "#src/app/core/logging/logging.service";
 
 /** A shown calculation older than this (seconds) is treated as stale/outdated. */
-const STALE_THRESHOLD_SECONDS = 60 * 60; // 1 hour
+const STALE_THRESHOLD_SECONDS = 60; // 1 minute
 
 @RouteTarget("Reporting")
 @Component({
