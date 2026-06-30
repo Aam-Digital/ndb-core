@@ -80,13 +80,15 @@
 
 @if (reportCalculation()) {
   @if (isStale()) {
-    <div class="stale-calculation-warning">
+    <div
+      class="flex-row align-center gap-small color-error padding-top-small padding-left-small"
+    >
       <fa-icon icon="triangle-exclamation"></fa-icon>
       <span i18n
         >You are seeing a previous calculation. Data may be outdated.</span
       >
       @if (isRefreshing()) {
-        <span class="updating-hint" i18n>(updating…)</span>
+        <span class="text-secondary" i18n>(updating…)</span>
       }
     </div>
   }
