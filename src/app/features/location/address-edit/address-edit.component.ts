@@ -3,7 +3,6 @@ import {
   ElementRef,
   input,
   model,
-  signal,
   viewChild,
   ChangeDetectionStrategy,
   inject,
@@ -14,6 +13,7 @@ import { GeoLocation } from "../geo-location";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
+import { MatExpansionModule } from "@angular/material/expansion";
 import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
 
 /**
@@ -29,6 +29,7 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
     MatInput,
     MatHint,
     MatTooltip,
+    MatExpansionModule,
     AddressGpsLocationComponent,
   ],
   templateUrl: "./address-edit.component.html",
@@ -48,26 +49,51 @@ export class AddressEditComponent {
    */
   disabled = input<boolean>(false);
 
-  manualAddressEnabled = signal(false);
-
   private readonly geoService = inject(GeoService);
 
-  enableManualAddressEditing() {
-    this.manualAddressEnabled.set(true);
-    // switch focus only after input has been enabled
+  focusManualAddressInput() {
+    // switch focus only after the panel's content has rendered
     setTimeout(() => this.manualAddressInput()?.nativeElement.focus(), 0);
   }
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation.set(this.geoService.enrichGeoLocation(selected));
-    this.manualAddressEnabled.set(
-      this.selectedLocation()?.geoLookup?.display_name !==
-        this.selectedLocation()?.locationString,
-    );
   }
 
   clearLocation() {
     this.updateLocation(undefined);
+  }
+
+  hasAnyPart(): boolean {
+    const l = this.selectedLocation();
+    return !!(l?.road || l?.house_number || l?.postcode || l?.city || l?.country);
+  }
+
+  partsMatchText(): boolean {
+    const location = this.selectedLocation();
+    if (!location?.locationString) {
+      return true;
+    }
+    return (
+      this.geoService.composeAddressFromParts(location).trim() ===
+      location.locationString.trim()
+    );
+  }
+
+  updateAddressPart(
+    key: "road" | "house_number" | "postcode" | "city" | "country",
+    value: string,
+  ) {
+    this.updateLocation({
+      locationString: this.selectedLocation()?.locationString,
+      geoLookup: this.selectedLocation()?.geoLookup,
+      road: this.selectedLocation()?.road,
+      house_number: this.selectedLocation()?.house_number,
+      postcode: this.selectedLocation()?.postcode,
+      city: this.selectedLocation()?.city,
+      country: this.selectedLocation()?.country,
+      [key]: value,
+    });
   }
 
   updateLocationString(value: string) {

@@ -209,6 +209,23 @@ export class GeoService {
   ): GeoLocation | undefined {
     return enrichGeoLocation(location);
   }
+
+  /**
+   * Composes a display address string from a GeoLocation's structured parts
+   * (the reverse of what {@link enrichGeoLocation} derives from a lookup).
+   */
+  composeAddressFromParts(location: GeoLocation | undefined): string {
+    if (!location) {
+      return "";
+    }
+    return [
+      this.formatStreet(location),
+      this.formatPostcodeCity(location),
+      location.country,
+    ]
+      .filter((x) => !!x)
+      .join(", ");
+  }
 }
 
 export type OpenStreetMapsSearchResult = GeoResult & {

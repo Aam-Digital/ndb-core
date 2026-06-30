@@ -39,6 +39,14 @@ describe("AddressEditComponent", () => {
       enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
         enrichGeoLocation(loc),
       ),
+      composeAddressFromParts: vi.fn((loc: GeoLocation | undefined) => {
+        if (!loc) return "";
+        const street = [loc.road, loc.house_number].filter(Boolean).join(" ");
+        const postcodeCity = [loc.postcode, loc.city].filter(Boolean).join(" ");
+        return [street, postcodeCity, loc.country]
+          .filter((x) => !!x)
+          .join(", ");
+      }),
     };
     mockGeoService.lookup.mockReturnValue(of([]));
 
@@ -233,5 +241,59 @@ describe("AddressEditComponent", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should update a single address part while preserving siblings and locationString", async () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Main St 42, 12345 Berlin, Germany",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+
+    component.updateAddressPart("city", "Tempelhof");
+
+    expect(component.selectedLocation()).toEqual({
+      locationString: "Main St 42, 12345 Berlin, Germany",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Tempelhof",
+      country: "Germany",
+    });
+  });
+
+  it("should report parts as matching when no location is selected", () => {
+    expect(component.partsMatchText()).toBe(true);
+  });
+
+  it("should report parts as matching the text when unedited", () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Main St 42, 12345 Berlin, Germany",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+
+    expect(component.partsMatchText()).toBe(true);
+  });
+
+  it("should report parts as not matching the text after editing a part", () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Main St 42, 12345 Berlin, Germany",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+
+    component.updateAddressPart("city", "Tempelhof");
+
+    expect(component.partsMatchText()).toBe(false);
   });
 });
