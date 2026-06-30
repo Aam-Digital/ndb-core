@@ -15,7 +15,7 @@ import { FilterGeneratorService } from "../filter-generator/filter-generator.ser
 import { TableStateUrlService } from "../../common-components/entities-table/table-state-url.service";
 import { NgComponentOutlet } from "@angular/common";
 import { FilterService } from "../filter.service";
-import { DataFilter, Filter } from "../filters/filters";
+import { DataFilter, Filter, SelectableFilter } from "../filters/filters";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -144,7 +144,7 @@ export class FilterComponent<T extends Entity = Entity> {
     if (this.useUrlQueryParams()) {
       this.tableStateUrl.updateFilterParam(
         filter.name,
-        selectedOptions.toString(),
+        selectedOptions.join(","),
         false,
       );
     }
@@ -186,6 +186,55 @@ export class FilterComponent<T extends Entity = Entity> {
     return [...(this.filterConfig() ?? []), ...extraConfigs];
   }
 
+  /**
+   * Parse a URL query-param string into the list of selected option values.
+   *
+   * Multiple selected values are joined by "," in the URL. Legacy option ids
+   * (e.g. configurable-enum ids created before they were normalized) may
+   * themselves contain a comma, which would otherwise be mistaken for the
+   * multi-value separator (see issue #4104). To stay backwards-compatible
+   * without changing the URL format, the raw value is resolved against the
+   * filter's known option keys instead of being split blindly.
+   */
+  private parseFilterValue(filter: Filter<T>, raw: string): string[] {
+    const validKeys =
+      filter instanceof SelectableFilter
+        ? (filter.options?.map((option) => option.key) ?? [])
+        : [];
+
+    // filters without a known set of option keys (e.g. date range filters):
+    // keep the legacy comma-split behaviour.
+    if (validKeys.length === 0) {
+      return raw.split(",").filter((value) => value !== "");
+    }
+
+    // a single option key may itself contain a comma, so a whole-string match
+    // takes precedence over splitting.
+    if (validKeys.includes(raw)) {
+      return [raw];
+    }
+
+    // greedily reconstruct values: at each position prefer the longest run of
+    // comma-separated tokens that matches a valid option key; tokens that match
+    // no key are kept as-is so stale/unknown values from old URLs are preserved.
+    const tokens = raw.split(",");
+    const values: string[] = [];
+    let i = 0;
+    while (i < tokens.length) {
+      let matchedLength = 0;
+      for (let length = tokens.length - i; length >= 1; length--) {
+        if (validKeys.includes(tokens.slice(i, i + length).join(","))) {
+          matchedLength = length;
+          break;
+        }
+      }
+      const consumed = matchedLength || 1;
+      values.push(tokens.slice(i, i + consumed).join(","));
+      i += consumed;
+    }
+    return values.filter((value) => value !== "");
+  }
+
   private loadUrlParams(filterSelections: Filter<T>[]): Filter<T>[] {
     if (!this.useUrlQueryParams()) {
       return filterSelections;
@@ -199,9 +248,7 @@ export class FilterComponent<T extends Entity = Entity> {
       let nextValues: string[] | undefined;
 
       if (Object.hasOwn(params, filter.name)) {
-        nextValues = params[filter.name]
-          .split(",")
-          .filter((value) => value !== "");
+        nextValues = this.parseFilterValue(filter, params[filter.name]);
       } else if (
         hasUrlParams &&
         (filter.selectedOptionValues?.length ?? 0) > 0

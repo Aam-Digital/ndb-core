@@ -137,6 +137,53 @@ describe("FilterComponent", () => {
     expect(component.filterSelections()[0].selectedOptionValues[1]).toBe("bar");
   });
 
+  it("should load url param with a comma inside an option key as a single value", async () => {
+    // legacy enum/string option ids can contain a comma (e.g. "option, with, comma").
+    // such an id must round-trip as ONE selected value, not be split on the comma.
+    const e1 = TestEntity.create({ other: "option, with, comma" });
+    const e2 = TestEntity.create({ other: "Delhi" });
+
+    activatedRouteMock.snapshot = {
+      queryParams: { other: "option, with, comma" },
+    };
+
+    await setComponentInputs({
+      entityType: TestEntity,
+      entities: [e1, e2],
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "other" }],
+    });
+
+    const otherFilter = component
+      .filterSelections()
+      .find((f) => f.name === "other");
+    expect(otherFilter.selectedOptionValues).toEqual(["option, with, comma"]);
+  });
+
+  it("should load multiple url param values where one option key contains a comma", async () => {
+    const e1 = TestEntity.create({ other: "option, with, comma" });
+    const e2 = TestEntity.create({ other: "Delhi" });
+
+    activatedRouteMock.snapshot = {
+      queryParams: { other: "option, with, comma,Delhi" },
+    };
+
+    await setComponentInputs({
+      entityType: TestEntity,
+      entities: [e1, e2],
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "other" }],
+    });
+
+    const otherFilter = component
+      .filterSelections()
+      .find((f) => f.name === "other");
+    expect(otherFilter.selectedOptionValues).toEqual([
+      "option, with, comma",
+      "Delhi",
+    ]);
+  });
+
   it("should load url params and set no filter value when empty", async () => {
     activatedRouteMock.snapshot = {
       queryParams: {
