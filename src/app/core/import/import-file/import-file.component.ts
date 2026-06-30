@@ -81,11 +81,11 @@ export class ImportFileComponent {
     }));
   }
 
-  get trimValues(): boolean {
-    return this.additionalSettings()?.trimValues !== false;
-  }
+  readonly trimValues = computed(
+    () => this.additionalSettings()?.trimValues !== false,
+  );
 
-  set trimValues(value: boolean) {
+  onTrimValuesChange(value: boolean) {
     this.additionalSettings.update((settings) => ({
       ...settings,
       trimValues: value,

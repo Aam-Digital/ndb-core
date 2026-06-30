@@ -48,7 +48,11 @@
       ></app-help-button>
     </div>
     <div class="settings-row flex-row align-center gap-small">
-      <mat-checkbox [(ngModel)]="trimValues" i18n>
+      <mat-checkbox
+        [ngModel]="trimValues()"
+        (ngModelChange)="onTrimValuesChange($event)"
+        i18n
+      >
         Trim leading/trailing spaces from values
       </mat-checkbox>
       <app-help-button
