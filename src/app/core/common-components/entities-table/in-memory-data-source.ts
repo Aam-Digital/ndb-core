@@ -21,6 +21,13 @@ import {
 import { Subscription } from "rxjs";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 
+export interface LoadRecordConfig<T extends Entity> {
+  entityCtr: EntityConstructor<T>;
+  forEntity?: Entity;
+  relationProperty?: keyof Entity;
+  loaderMethod?: LoaderMethod;
+}
+
 export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   TableRow<T>
 > {
@@ -36,11 +43,7 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   allRecords = signal<T[]>([]);
   filteredRecords = signal<T[]>([]);
   displayedData = signal<TableRow<T>[]>([]);
-  loadRecordConfig = signal<{
-    entityCtr: EntityConstructor<T>;
-    forEntity?: string;
-    loaderMethod?: LoaderMethod;
-  }>(undefined);
+  loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
 
   override set data(data: TableRow<T>[]) {
     // expose signal containing current data
@@ -84,7 +87,16 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   private getRecords() {
     const loaderMethod = this.loadRecordConfig().loaderMethod;
     if (loaderMethod && this.entitySpecialLoader) {
-      return this.entitySpecialLoader.loadData(loaderMethod);
+      const forEntity = this.loadRecordConfig().forEntity;
+      if (forEntity) {
+        return this.entitySpecialLoader.loadDataFor(
+          loaderMethod,
+          forEntity,
+          this.loadRecordConfig().relationProperty,
+        );
+      } else {
+        return this.entitySpecialLoader.loadData(loaderMethod);
+      }
     }
 
     const entityConstructor = this.loadRecordConfig().entityCtr;

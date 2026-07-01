@@ -7,11 +7,9 @@ import {
   input,
   model,
   signal,
-  untracked,
 } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
-import { Subscription } from "rxjs";
 import {
   ScreenSize,
   ScreenWidthObserver,
@@ -26,16 +24,15 @@ import {
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import {
-  EntitySpecialLoaderService,
-  LoaderMethod,
-} from "../../entity/entity-special-loader/entity-special-loader.service";
+import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { applyUpdate } from "../../entity/model/entity-update";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import {
+  InMemoryDataSource,
+  LoadRecordConfig,
+} from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -53,9 +50,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
   protected filterService = inject(FilterService);
-  private entitySpecialLoader = inject(EntitySpecialLoaderService, {
-    optional: true,
-  });
 
   readonly dataSource = new InMemoryDataSource<E>();
 
@@ -152,7 +146,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
   private readonly currentScreenSize = signal(
     this.screenWidthObserver.currentScreenSize(),
   );
-  private updateListenerSub?: Subscription;
 
   constructor() {
     this.screenWidthObserver
@@ -164,55 +157,26 @@ export class RelatedEntitiesComponent<E extends Entity> {
         );
       });
 
-    effect((onCleanup) => {
-      let cancelled = false;
-      onCleanup(() => {
-        cancelled = true;
-      });
-      void this.initData(() => cancelled);
+    effect(() => {
+      this.filterObj.set(this.initFilter());
     });
-  }
 
-  private async initData(isCancelled: () => boolean = () => false) {
-    const entity = this.entity();
-    const entityCtr = this.entityCtr();
+    effect(() => {
+      this.showInactive.set(this.entity().anonymized);
+    });
 
-    if (!entity || !entityCtr) {
-      return;
-    }
-    if (isCancelled()) return;
-    const data = await this.getData();
-    if (isCancelled()) return;
-
-    this.dataSource.allRecords.set(data);
-    this.filterObj.set(this.initFilter());
-
-    // untracked: showInactive changes (user toggle) must not re-trigger full initData()
-    if (untracked(() => this.showInactive()) === undefined) {
-      // show all related docs when visiting an archived entity
-      this.showInactive.set(entity.anonymized);
-    }
-
-    this.updateListenerSub?.unsubscribe();
-    this.updateListenerSub = this.listenToEntityUpdates();
-  }
-
-  protected getData(): Promise<E[]> {
-    const entity = this.entity();
-    const entityCtr = this.entityCtr();
-    if (!entity) {
-      return Promise.resolve([]);
-    }
-    const loaderMethod = this.loaderMethod();
-    if (loaderMethod && this.entitySpecialLoader) {
-      return this.entitySpecialLoader.loadDataFor(loaderMethod, entity);
-    }
-
-    if (!entityCtr) {
-      return Promise.resolve([]);
-    }
-
-    return this.entityMapper.loadType(entityCtr);
+    effect(() => {
+      const config: LoadRecordConfig<E> = {
+        entityCtr: this.entityCtr(),
+        forEntity: this.entity(),
+      };
+      if (!Array.isArray(this.relationProperty())) {
+        // Only when a single relation property is defined/exists, a loader method can be used
+        config.relationProperty = this.relationProperty() as keyof Entity;
+        config.loaderMethod = this.loaderMethod();
+      }
+      this.dataSource.loadRecordConfig.set(config);
+    });
   }
 
   /**
@@ -343,22 +307,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
           this.fieldReferencesType(inner, entityType),
       )
       .map(([key]) => key);
-  }
-
-  protected listenToEntityUpdates(): Subscription {
-    const entityCtr = this.entityCtr();
-    if (!entityCtr) {
-      return new Subscription();
-    }
-
-    return this.entityMapper
-      .receiveUpdates(entityCtr)
-      .pipe(untilDestroyed(this))
-      .subscribe((next) => {
-        this.dataSource.allRecords.set(
-          applyUpdate(this.dataSource.allRecords(), next),
-        );
-      });
   }
 
   createNewRecordFactory() {

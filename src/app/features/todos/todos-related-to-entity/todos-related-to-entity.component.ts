@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  input,
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -11,10 +12,10 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DataFilter } from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Todo } from "../model/todo";
+import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -26,9 +27,11 @@ import { Todo } from "../model/todo";
 })
 export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo> {
   private formDialog = inject(FormDialogService);
-  private dbIndexingService = inject(DatabaseIndexingService);
 
   override entityCtr = signal(Todo);
+  override loaderMethod = input<LoaderMethod>(
+    LoaderMethod.TodosRelatedToEntity,
+  );
 
   protected override getDefaultColumns(): FormFieldConfig[] {
     return RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
@@ -41,35 +44,6 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
       return r.getColor();
     }
   };
-
-  override getData() {
-    const relationProperty = this.relationProperty();
-    if (Array.isArray(relationProperty)) {
-      return super.getData();
-    }
-
-    // TODO: move this generic index creation into schema
-    const relationPropertyKey = relationProperty as keyof Todo;
-    this.dbIndexingService.generateIndexOnProperty(
-      "todo_index",
-      Todo,
-      relationPropertyKey,
-      "deadline",
-    );
-    const entityId = this.entity()?.getId();
-    if (!entityId) {
-      return Promise.resolve([]);
-    }
-    return this.dbIndexingService.queryIndexDocs(
-      Todo,
-      "todo_index/by_" + relationPropertyKey,
-      {
-        startkey: [entityId, "\uffff"],
-        endkey: [entityId],
-        descending: true,
-      },
-    );
-  }
 
   public getNewEntryFunction(): () => Todo {
     return () => {
