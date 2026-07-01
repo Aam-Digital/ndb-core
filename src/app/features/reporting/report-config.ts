@@ -97,8 +97,7 @@ class ReportConfig extends Entity {
   @DatabaseField({
     label: $localize`:ReportConfig:Report definition (SQL queries)`,
     description: $localize`:ReportConfig:The SQL queries (and optional groups) calculated for "sql" mode reports.`,
-    // Part A: edit as raw JSON; Part B replaces this with the structured "EditReportDefinition" editor.
-    editComponent: "EditJson",
+    editComponent: "EditReportDefinition",
   })
   reportDefinition: ReportDefinitionDto[];
 }

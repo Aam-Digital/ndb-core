@@ -178,3 +178,33 @@ test("Report description is shown above the results on the Reports view", async 
 
   await argosScreenshot(page, "report-description");
 });
+
+test("SQL report definition is edited in a syntax-highlighting editor", async ({
+  page,
+}) => {
+  const users = generateUsers();
+
+  const reportConfig = createEntityOfType("ReportConfig", "e2e-sql-report");
+  reportConfig.title = "E2E SQL Report";
+  reportConfig.mode = "sql";
+  reportConfig.reportDefinition = [{ query: "SELECT name FROM children" }];
+
+  await loadApp(page, [...users, reportConfig]);
+
+  // Reach the report's admin details via the Reports view context menu.
+  await page.getByRole("navigation").getByText("Reports").click();
+  await page
+    .locator("button[mat-icon-button][color='primary']")
+    .first()
+    .click();
+  await page.getByRole("menuitem", { name: "Manage Reports" }).click();
+  await page.getByRole("cell", { name: "E2E SQL Report" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+
+  // Each query renders in its own CodeMirror SQL editor showing the query text.
+  const editor = page.locator("app-edit-sql-query .cm-content").first();
+  await expect(editor).toBeVisible({ timeout: 10_000 });
+  await expect(editor).toContainText("SELECT");
+
+  await argosScreenshot(page, "report-sql-editor");
+});
