@@ -31,8 +31,6 @@
 
   .location-label {
     display: block;
-    font-size: 0.75rem;
-    color: colors.$muted;
   }
 
   .location-value {
@@ -41,11 +39,6 @@
     .placeholder {
       color: colors.$muted;
     }
-  }
-
-  .location-hint {
-    font-size: 0.75rem;
-    color: colors.$muted;
   }
 }
 

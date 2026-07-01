@@ -240,7 +240,7 @@ export class MapPopupComponent {
   ): Promise<"keep" | "update" | undefined> {
     const result = await this.confirmationDialog.getConfirmation(
       $localize`Update address text?`,
-      $localize`You changed the address details, so the address text no longer matches. Which should be saved?\n\n**Current text:**\n${currentText}\n\n**From details:**\n${partsAddress}`,
+      $localize`You changed the address details, so the address text no longer matches. Which should be saved?\n\n**Current text:**\n${currentText}\n\n**Updated text:**\n${partsAddress}`,
       [
         {
           text: $localize`Keep current text`,

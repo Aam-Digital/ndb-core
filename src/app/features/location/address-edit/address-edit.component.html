@@ -12,7 +12,7 @@
   }
 
   <div class="selected-location-display">
-    <span class="location-label" i18n>Selected Location</span>
+    <span class="location-label hint-text" i18n>Selected Location</span>
     <div class="location-value">
       @if (
         selectedLocation()?.locationString ||
@@ -31,7 +31,7 @@
       selectedLocation()?.geoLookup?.display_name !==
       selectedLocation()?.locationString
     ) {
-      <div class="location-hint">
+      <div class="location-hint hint-text">
         @if (selectedLocation()?.geoLookup) {
           <span
             matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."
@@ -99,9 +99,7 @@
             matInput
             #houseNumberInput
             [value]="selectedLocation()?.house_number ?? ''"
-            (change)="
-              updateAddressPart('house_number', houseNumberInput.value)
-            "
+            (change)="updateAddressPart('house_number', houseNumberInput.value)"
             [disabled]="disabled()"
           />
         </mat-form-field>
@@ -137,10 +135,9 @@
         </mat-form-field>
       </div>
 
-      @if (hasAnyPart() && !partsMatchText()) {
+      @if (partsEdited && !partsMatchText()) {
         <p class="parts-mismatch-hint" i18n>
-          Address text no longer matches these parts — you'll be asked on
-          save.
+          Address text no longer matches these parts — you'll be asked on save.
         </p>
       }
 

@@ -176,7 +176,8 @@ export class MapComponent implements AfterViewInit {
       const locationProperties = this.getMapProperties(entity);
       locationProperties.forEach((prop) => {
         const location = (entity as any)[prop]?.geoLookup as
-          { lat: number; lon: number } | undefined;
+          | { lat: number; lon: number }
+          | undefined;
 
         const lat = Number(location?.lat);
         const lon = Number(location?.lon);

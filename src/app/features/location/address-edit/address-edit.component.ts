@@ -10,7 +10,7 @@ import {
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { GeoLocation } from "../geo-location";
-import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -27,7 +27,6 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
     MatFormField,
     MatLabel,
     MatInput,
-    MatHint,
     MatTooltip,
     MatExpansionModule,
     AddressGpsLocationComponent,
@@ -51,6 +50,8 @@ export class AddressEditComponent {
 
   private readonly geoService = inject(GeoService);
 
+  partsEdited = false;
+
   focusManualAddressInput() {
     // switch focus only after the panel's content has rendered
     setTimeout(() => this.manualAddressInput()?.nativeElement.focus(), 0);
@@ -61,12 +62,8 @@ export class AddressEditComponent {
   }
 
   clearLocation() {
+    this.partsEdited = false;
     this.updateLocation(undefined);
-  }
-
-  hasAnyPart(): boolean {
-    const l = this.selectedLocation();
-    return !!(l?.road || l?.house_number || l?.postcode || l?.city || l?.country);
   }
 
   partsMatchText(): boolean {
@@ -84,6 +81,7 @@ export class AddressEditComponent {
     key: "road" | "house_number" | "postcode" | "city" | "country",
     value: string,
   ) {
+    this.partsEdited = true;
     this.updateLocation({
       locationString: this.selectedLocation()?.locationString,
       geoLookup: this.selectedLocation()?.geoLookup,
@@ -192,6 +190,7 @@ export class AddressEditComponent {
         value?.locationString ?? value?.geoLookup?.display_name ?? "";
     }
 
+    this.partsEdited = false;
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: value?.geoLookup,
@@ -199,6 +198,7 @@ export class AddressEditComponent {
   }
 
   onGpsLocationSelected(geoResult: GeoResult) {
+    this.partsEdited = false;
     const newLocation: GeoLocation = {
       locationString: geoResult.display_name,
       geoLookup: geoResult,

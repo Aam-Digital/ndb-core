@@ -5,7 +5,12 @@ import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 export type DashboardTheme =
-  "general" | "child" | "attendance" | "note" | "class" | "school";
+  | "general"
+  | "child"
+  | "attendance"
+  | "note"
+  | "class"
+  | "school";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

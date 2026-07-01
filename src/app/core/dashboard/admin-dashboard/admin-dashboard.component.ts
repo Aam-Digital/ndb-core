@@ -69,7 +69,8 @@ export class AdminDashboardComponent {
   private readonly dashboardViewConfig = computed(
     () =>
       this.configService.getConfig(this.dashboardViewConfigKey()) as
-        DynamicComponentConfig<DashboardConfig> | undefined,
+        | DynamicComponentConfig<DashboardConfig>
+        | undefined,
   );
 
   dashboardConfig = linkedSignal(() =>
