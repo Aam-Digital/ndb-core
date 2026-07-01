@@ -208,31 +208,48 @@ export class FilterComponent<T extends Entity = Entity> {
       return raw.split(",").filter((value) => value !== "");
     }
 
-    // a single option key may itself contain a comma, so a whole-string match
-    // takes precedence over splitting.
-    if (validKeys.includes(raw)) {
-      return [raw];
-    }
-
-    // greedily reconstruct values: at each position prefer the longest run of
-    // comma-separated tokens that matches a valid option key; tokens that match
-    // no key are kept as-is so stale/unknown values from old URLs are preserved.
+    // Resolve the comma-separated tokens into selected values. A single option
+    // key may itself contain a comma (legacy ids), so tokens are not split
+    // blindly. Find the segmentation that covers the most tokens with valid
+    // option keys (i.e. the fewest unknown fragments), preferring longer keys
+    // on ties. Tokens matching no key are kept as-is so stale/unknown values
+    // from old URLs are preserved. A greedy longest-match would mis-partition
+    // overlapping keys (e.g. keys "A" and "B,C" turning "A,B,C" into
+    // ["A,B", ...]), so this uses a small dynamic program over token positions.
     const tokens = raw.split(",");
-    const values: string[] = [];
-    let i = 0;
-    while (i < tokens.length) {
-      let matchedLength = 0;
-      for (let length = tokens.length - i; length >= 1; length--) {
-        if (validKeys.includes(tokens.slice(i, i + length).join(","))) {
-          matchedLength = length;
-          break;
+    const n = tokens.length;
+    // best[i] = optimal parse of tokens[i..n]
+    const best: { unknowns: number; values: string[] }[] = new Array(n + 1);
+    best[n] = { unknowns: 0, values: [] };
+    for (let i = n - 1; i >= 0; i--) {
+      // fallback: keep tokens[i] as a single unknown value
+      const rest = best[i + 1];
+      let candidate = {
+        unknowns: rest.unknowns + 1,
+        values: [tokens[i], ...rest.values],
+      };
+      // prefer runs (longest first) whose join is a valid option key
+      for (let length = n - i; length >= 1; length--) {
+        const key = tokens.slice(i, i + length).join(",");
+        if (!validKeys.includes(key)) {
+          continue;
+        }
+        const tail = best[i + length];
+        const option = {
+          unknowns: tail.unknowns,
+          values: [key, ...tail.values],
+        };
+        if (
+          option.unknowns < candidate.unknowns ||
+          (option.unknowns === candidate.unknowns &&
+            option.values.length < candidate.values.length)
+        ) {
+          candidate = option;
         }
       }
-      const consumed = matchedLength || 1;
-      values.push(tokens.slice(i, i + consumed).join(","));
-      i += consumed;
+      best[i] = candidate;
     }
-    return values.filter((value) => value !== "");
+    return best[0].values.filter((value) => value !== "");
   }
 
   private loadUrlParams(filterSelections: Filter<T>[]): Filter<T>[] {
