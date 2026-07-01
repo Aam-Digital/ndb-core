@@ -72,14 +72,6 @@ export class MapPopupComponent {
   private manualAddressJustEdited = false;
   private partsJustEdited = false;
 
-  private static readonly ADDRESS_PART_KEYS: (keyof GeoLocation)[] = [
-    "road",
-    "house_number",
-    "postcode",
-    "city",
-    "country",
-  ];
-
   constructor() {
     const data = this.data;
 
@@ -183,7 +175,8 @@ export class MapPopupComponent {
     return (
       manualAddress &&
       manualAddress !== lookupAddress &&
-      !this.manualAddressJustEdited
+      !this.manualAddressJustEdited &&
+      !this.partsJustEdited
     );
   }
 
@@ -192,7 +185,9 @@ export class MapPopupComponent {
     partsAddress: string,
   ): boolean {
     return (
-      this.partsJustEdited && !!partsAddress && manualAddress !== partsAddress
+      this.partsJustEdited &&
+      !!partsAddress &&
+      manualAddress.trim() !== partsAddress.trim()
     );
   }
 
@@ -284,6 +279,10 @@ export class MapPopupComponent {
     this.dialogRef.close([this.selectedLocation]);
   }
 
+  onPartEdited() {
+    this.partsJustEdited = true;
+  }
+
   updateLocation(event: GeoLocation | undefined) {
     let updatedLocation = this.geoService.enrichGeoLocation(event);
 
@@ -308,17 +307,6 @@ export class MapPopupComponent {
         updatedLocation?.geoLookup?.display_name
     ) {
       this.manualAddressJustEdited = true;
-    }
-
-    // Detect if a structured address part was just edited (locationString untouched)
-    if (
-      this.selectedLocation?.locationString ===
-        updatedLocation?.locationString &&
-      MapPopupComponent.ADDRESS_PART_KEYS.some(
-        (key) => this.selectedLocation?.[key] !== updatedLocation?.[key],
-      )
-    ) {
-      this.partsJustEdited = true;
     }
 
     this.selectedLocation = updatedLocation;

@@ -3,6 +3,7 @@ import {
   ElementRef,
   input,
   model,
+  output,
   viewChild,
   ChangeDetectionStrategy,
   inject,
@@ -43,6 +44,9 @@ export class AddressEditComponent {
    */
   selectedLocation = model<GeoLocation>();
 
+  /** Emitted when the user explicitly edits a structured address part field. */
+  readonly partEdited = output<void>();
+
   /**
    * Whether the search box is enabled and visible.
    */
@@ -82,6 +86,7 @@ export class AddressEditComponent {
     value: string,
   ) {
     this.partsEdited = true;
+    this.partEdited.emit();
     this.updateLocation({
       locationString: this.selectedLocation()?.locationString,
       geoLookup: this.selectedLocation()?.geoLookup,

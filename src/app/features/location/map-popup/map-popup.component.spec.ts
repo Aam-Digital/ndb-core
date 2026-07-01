@@ -247,7 +247,6 @@ describe("MapPopupComponent", () => {
   });
 
   it("should ask for confirmation when an edited address part no longer matches the text", async () => {
-    // route through updateLocation() so internal edit-tracking flags are set realistically
     component.updateLocation({
       locationString: "Main St 42, 12345 Berlin, Germany",
       road: "Main St",
@@ -260,6 +259,7 @@ describe("MapPopupComponent", () => {
       ...component.selectedLocation,
       city: "Tempelhof",
     });
+    component.onPartEdited();
 
     mockConfirmationDialog.getConfirmation.mockResolvedValue("update");
 
@@ -284,6 +284,7 @@ describe("MapPopupComponent", () => {
       ...component.selectedLocation,
       city: "Tempelhof",
     });
+    component.onPartEdited();
 
     mockConfirmationDialog.getConfirmation.mockResolvedValue("keep");
 
@@ -310,7 +311,7 @@ describe("MapPopupComponent", () => {
       city: "Berlin",
       country: "Germany",
     };
-    // not going through updateLocation(), so partsJustEdited stays false
+    // onPartEdited() not called, so partsJustEdited stays false
 
     await component.onSave();
 
