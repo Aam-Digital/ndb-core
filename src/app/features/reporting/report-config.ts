@@ -66,7 +66,8 @@ class ReportConfig extends Entity {
   @DatabaseField({
     label: $localize`:ReportConfig:Aggregation definitions`,
     description: $localize`:ReportConfig:Used for "reporting" and "exporting" mode reports (not SQL).`,
-    editComponent: "EditJson",
+    editComponent: "EditReportFieldByMode",
+    additional: { modes: ["reporting", "exporting"] },
   })
   aggregationDefinitions: any[];
 
@@ -102,8 +103,10 @@ class ReportConfig extends Entity {
   @DatabaseField({
     label: $localize`:ReportConfig:Report definition (SQL queries)`,
     description: $localize`:ReportConfig:The SQL queries (and optional groups) calculated for "sql" mode reports.`,
-    // Part A: edit as raw JSON; Part B replaces this with the structured "EditReportDefinition" editor.
-    editComponent: "EditJson",
+    // Part A: edit as raw JSON, shown only in "sql" mode; Part B replaces this with the
+    // structured "EditReportDefinition" editor.
+    editComponent: "EditReportFieldByMode",
+    additional: { modes: ["sql"] },
   })
   reportDefinition: ReportDefinitionDto[];
 }
