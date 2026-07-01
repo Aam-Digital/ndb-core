@@ -11,6 +11,7 @@ import type { Mock } from "vitest";
 
 type ChildrenServiceMock = {
   getChildren: Mock;
+  getNotesRelatedTo: Mock;
 };
 
 type HistoricalDataServiceMock = {
@@ -26,6 +27,7 @@ describe("EntitySpecialLoaderService", () => {
   beforeEach(() => {
     mockChildrenService = {
       getChildren: vi.fn(),
+      getNotesRelatedTo: vi.fn(),
     };
     mockHistoricalDataService = {
       getHistoricalDataFor: vi.fn(),
@@ -52,5 +54,21 @@ describe("EntitySpecialLoaderService", () => {
 
     expect(actual).toEqual(testData);
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
+  });
+
+  it("should load notes related to an entity via ChildrenService", async () => {
+    const entity = new TestEntity();
+    const notes = [{ id: "note-1" }];
+    mockChildrenService.getNotesRelatedTo.mockResolvedValue(notes);
+
+    const actual = await service.loadDataFor(
+      LoaderMethod.NotesRelatedToEntity,
+      entity,
+    );
+
+    expect(actual).toEqual(notes);
+    expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
+      entity.getId(),
+    );
   });
 });

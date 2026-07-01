@@ -150,7 +150,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
   private readonly currentScreenSize = signal(
     this.screenWidthObserver.currentScreenSize(),
   );
-  private updateListenerSub?: import("rxjs").Subscription;
+  private updateListenerSub?: Subscription;
 
   constructor() {
     this.screenWidthObserver
@@ -343,7 +343,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
       .map(([key]) => key);
   }
 
-  protected listenToEntityUpdates(): import("rxjs").Subscription {
+  protected listenToEntityUpdates(): Subscription {
     const entityCtr = this.entityCtr();
     if (!entityCtr) {
       return new Subscription();

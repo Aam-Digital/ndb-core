@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Entity } from "../model/entity";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
@@ -9,6 +9,7 @@ export enum LoaderMethod {
   ChildrenService = "ChildrenService",
   HistoricalDataService = "HistoricalDataService",
   ChildrenServiceQueryRelations = "ChildrenServiceQueryRelations",
+  NotesRelatedToEntity = "NotesRelatedToEntity",
 }
 
 /**
@@ -67,6 +68,10 @@ export class EntitySpecialLoaderService {
       case LoaderMethod.ChildrenServiceQueryRelations:
         return this.childrenService.queryRelations(
           entity.getId(false),
+        ) as unknown as Promise<E[]>;
+      case LoaderMethod.NotesRelatedToEntity:
+        return this.childrenService.getNotesRelatedTo(
+          entity.getId(),
         ) as unknown as Promise<E[]>;
     }
   }
