@@ -8,6 +8,7 @@ import {
   inject,
   input,
   model,
+  OnInit,
   output,
   QueryList,
   signal,
@@ -70,9 +71,9 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<
-  T extends Entity,
-> implements AfterContentInit {
+export class EntitiesTableComponent<T extends Entity>
+  implements AfterContentInit, OnInit
+{
   private readonly formDialog = inject(FormDialogService);
   private readonly router = inject(Router);
   private readonly entityFormService = inject(EntityFormService);
@@ -84,7 +85,7 @@ export class EntitiesTableComponent<
   ) as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
-  records = input<T[]>();
+  recordsDataSource = input<InMemoryDataSource<T>>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
   });
@@ -167,10 +168,8 @@ export class EntitiesTableComponent<
   });
 
   // --- Loading state ---
-  readonly isLoading = signal(true);
-
-  // --- Material DataSource (for paginator interop) ---
-  readonly recordsDataSource = new InMemoryDataSource<T>();
+  // TODO re-add loading state
+  readonly isLoading = signal(false);
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
@@ -178,11 +177,31 @@ export class EntitiesTableComponent<
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.sortStore.attachSort(sort);
     if (sort) {
-      this.recordsDataSource.sort = sort;
+      this.recordsDataSource().sort = sort;
     }
   }
 
   constructor() {
+    effect(() => {
+      this.filteredRecordsChange.emit(
+        this.recordsDataSource().filteredRecords(),
+      );
+    });
+
+    effect(() => {
+      this.recordsDataSource().dataFilter.set(this.effectiveFilter());
+    });
+
+    effect(() => {
+      this.recordsDataSource().filter = this.filterFreetext() ?? "";
+    });
+
+    effect(() => {
+      this.recordsDataSource().sortValueFns.set(this.sortStore.sortValueFns());
+    });
+  }
+
+  ngOnInit() {
     // Connect sort store
     this.sortStore.connect({
       columnsToDisplay: this._columnsToDisplay,
@@ -208,33 +227,8 @@ export class EntitiesTableComponent<
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      sortedRows: this.recordsDataSource.displayedData,
+      sortedRows: this.recordsDataSource().displayedData,
       getCurrentPageRows: () => this.getCurrentPageRows(),
-    });
-
-    effect(() => {
-      this.filteredRecordsChange.emit(this.recordsDataSource.filteredRecords());
-    });
-
-    // Track loading state
-    effect(() => {
-      const records = this.records();
-      if (records !== undefined && records !== null) {
-        this.isLoading.set(false);
-        this.recordsDataSource.allRecords.set(records);
-      }
-    });
-
-    effect(() => {
-      this.recordsDataSource.dataFilter.set(this.effectiveFilter());
-    });
-
-    effect(() => {
-      this.recordsDataSource.filter = this.filterFreetext() ?? "";
-    });
-
-    effect(() => {
-      this.recordsDataSource.sortValueFns.set(this.sortStore.sortValueFns());
     });
   }
 
@@ -288,8 +282,8 @@ export class EntitiesTableComponent<
   }
 
   getCurrentPageRows(): TableRow<T>[] {
-    const rows = this.recordsDataSource.data;
-    const paginator = this.recordsDataSource.paginator;
+    const rows = this.recordsDataSource().data;
+    const paginator = this.recordsDataSource().paginator;
     if (!paginator) {
       return rows;
     }

@@ -61,6 +61,7 @@ import { PublicFormConfig } from "#src/app/features/public-form/public-form-conf
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -122,8 +123,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   private readonly publicFormsService = inject(PublicFormsService);
   public publicFormConfigs: PublicFormConfig[] = [];
-
-  allEntities = model<T[] | undefined>(undefined);
+  readonly dataSource = new InMemoryDataSource<T>();
 
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
@@ -259,17 +259,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.title.set(this.entityConstructor()?.labelPlural);
     }
 
-    if (!this.allEntities()) {
-      // if no entities are passed as input, by default load all entities of the type
-      await this.loadEntities();
-    } else {
-      this.cdr.markForCheck();
-    }
-  }
-
-  protected async loadEntities() {
-    this.allEntities.set(await this.getEntities());
-    this.cdr.markForCheck();
+    this.dataSource.allRecords.set(await this.getEntities());
     this.listenToEntityUpdates();
   }
 
@@ -311,7 +301,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
             );
           if (!inProgress) {
             // reload the list once
-            this.allEntities.set(await this.getEntities());
+            this.dataSource.allRecords.set(await this.getEntities());
             this.cdr.markForCheck();
             // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
             setTimeout(() => {
@@ -331,8 +321,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
             updatedEntity,
           );
         }
-        this.allEntities.set(
-          applyUpdate(this.allEntities() ?? [], updatedEntity),
+        this.dataSource.allRecords.set(
+          applyUpdate(this.dataSource.allRecords(), updatedEntity),
         );
         this.cdr.markForCheck();
       });
@@ -393,7 +383,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       data: {
         filterConfig: this.filters(),
         entityType: this.entityConstructor(),
-        entities: this.allEntities(),
+        entities: this.dataSource.allRecords(),
         useUrlQueryParams: true,
         filterObjChange: (filter: DataFilter<T>) => this.filterObj.set(filter),
       },
@@ -443,7 +433,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.allEntities(),
+        allEntities: this.dataSource.allRecords(),
         filteredData: this.filteredData,
         exportConfig: allAvailableColumns,
         preselectedExportConfig,

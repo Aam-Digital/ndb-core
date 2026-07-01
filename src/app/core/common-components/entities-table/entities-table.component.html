@@ -7,7 +7,7 @@
 <div [hidden]="isLoading()" class="table-container">
   <table
     mat-table
-    [dataSource]="recordsDataSource"
+    [dataSource]="recordsDataSource()"
     matSort
     [matSortActive]="sortStore.effectiveSort()?.active"
     [matSortDirection]="sortStore.effectiveSort()?.direction"
@@ -104,7 +104,7 @@
   -->
   <app-list-paginator
     class="table-footer"
-    [dataSource]="recordsDataSource"
+    [dataSource]="recordsDataSource()"
     [idForSavingPagination]="idForSavingPagination()"
   ></app-list-paginator>
 

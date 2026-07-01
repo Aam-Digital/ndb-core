@@ -35,6 +35,7 @@ import { applyUpdate } from "../../entity/model/entity-update";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -55,6 +56,8 @@ export class RelatedEntitiesComponent<E extends Entity> {
   private entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
+
+  readonly dataSource = new InMemoryDataSource<E>();
 
   /** currently viewed/main entity for which related entities are displayed in this component */
   entity = input<Entity>();
@@ -124,7 +127,6 @@ export class RelatedEntitiesComponent<E extends Entity> {
   clickMode = input<"popup" | "navigate" | "popup-details">("popup");
   editable = input<boolean>(true);
 
-  readonly data = signal<E[] | undefined>(undefined);
   protected readonly entityCtr = computed<EntityConstructor<E> | undefined>(
     () => {
       const entityType = this.entityType();
@@ -182,7 +184,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
     const data = await this.getData();
     if (isCancelled()) return;
 
-    this.data.set(data);
+    this.dataSource.allRecords.set(data);
     this.filterObj.set(this.initFilter());
 
     // untracked: showInactive changes (user toggle) must not re-trigger full initData()
@@ -353,7 +355,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
       .receiveUpdates(entityCtr)
       .pipe(untilDestroyed(this))
       .subscribe((next) => {
-        this.data.set(applyUpdate(this.data(), next));
+        this.dataSource.allRecords.set(
+          applyUpdate(this.dataSource.allRecords(), next),
+        );
       });
   }
 

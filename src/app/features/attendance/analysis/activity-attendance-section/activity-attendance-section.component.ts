@@ -1,13 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
-  LOCALE_ID,
   linkedSignal,
+  LOCALE_ID,
   resource,
   signal,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
@@ -28,6 +29,7 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * Displays attendance analysis for a given "recurring activity"
@@ -83,22 +85,7 @@ export class ActivityAttendanceSectionComponent {
 
   entityCtr = ActivityAttendance;
 
-  records = computed(() => {
-    const forChild = this.forChild();
-    let records: ActivityAttendance[];
-    if (this.includeWithoutParticipation() || !forChild) {
-      records = [...this.allRecords()];
-    } else {
-      records = this.allRecords().filter(
-        (r) =>
-          r.countEventsAbsent(forChild) + r.countEventsPresent(forChild) > 0,
-      );
-    }
-    if (records?.length > 0) {
-      records.sort((a, b) => b.periodFrom.getTime() - a.periodFrom.getTime());
-    }
-    return records;
-  });
+  readonly dataSource = new InMemoryDataSource<ActivityAttendance>();
 
   combinedAttendance = computed(() => {
     const combined = new ActivityAttendance();
@@ -159,6 +146,23 @@ export class ActivityAttendanceSectionComponent {
 
   constructor() {
     this.subscribeToEventUpdates();
+
+    effect(() => {
+      const forChild = this.forChild();
+      let records: ActivityAttendance[];
+      if (this.includeWithoutParticipation() || !forChild) {
+        records = [...this.allRecords()];
+      } else {
+        records = this.allRecords().filter(
+          (r) =>
+            r.countEventsAbsent(forChild) + r.countEventsPresent(forChild) > 0,
+        );
+      }
+      if (records?.length > 0) {
+        records.sort((a, b) => b.periodFrom.getTime() - a.periodFrom.getTime());
+      }
+      this.dataSource.allRecords.set(records);
+    });
   }
 
   private subscribeToEventUpdates() {

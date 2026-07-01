@@ -21,7 +21,7 @@
 
 <app-entities-table
   [entityType]="entityCtr"
-  [records]="records()"
+  [recordsDataSource]="dataSource"
   [customColumns]="columns"
   clickMode="none"
   (entityClick)="showDetails($event)"

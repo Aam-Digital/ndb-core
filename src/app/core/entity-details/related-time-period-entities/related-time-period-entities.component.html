@@ -1,4 +1,5 @@
-@if (!hasCurrentlyActiveEntry() && data() !== undefined) {
+<!--TODO add check, whether data is still loading-->
+@if (!hasCurrentlyActiveEntry()) {
   <app-pill class="hint-badge">
     Currently there is no active entry. To add a new entry, click on the
     <fa-icon class="color-accent" aria-label="add" icon="plus-circle"></fa-icon>
@@ -8,7 +9,7 @@
 
 <app-entities-table
   [entityType]="entityCtr()!"
-  [records]="data()"
+  [recordsDataSource]="dataSource"
   [filter]="filterObj()"
   [customColumns]="_columns()"
   [newRecordFactory]="createNewRecordFactory()"
