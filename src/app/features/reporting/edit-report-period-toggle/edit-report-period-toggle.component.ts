@@ -52,9 +52,15 @@ export class EditReportPeriodToggleComponent
     return !!value && Object.keys(value).length > 0;
   });
 
-  setChecked(checked: boolean): void {
-    this.value = checked
+  setChecked(checked: boolean) {
+    const value: Transformations = checked
       ? { ...EditReportPeriodToggleComponent.REPORT_PERIOD_TRANSFORMATION }
       : {};
+
+    // Write through the bound FormControl directly: unlike editors that bind an inner
+    // `[formControl]`, this toggle has no inner control accessor, so the directive's
+    // `onChange` is never registered and `this.value = …` would not reach the form.
+    this.formControl?.setValue(value);
+    this.formControl?.markAsDirty();
   }
 }

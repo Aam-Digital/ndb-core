@@ -35,16 +35,16 @@ describe("EditReportPeriodToggleComponent", () => {
     expect(component.checked()).toBe(false);
   });
 
-  it("writes the report-period transformation when toggled on and clears it when off", () => {
+  it("writes the report-period transformation into the bound control when toggled on and clears it when off", () => {
     component.setChecked(true);
-    expect(component.value).toEqual({
+    expect(formGroup.get("transformations").value).toEqual({
       startDate: ["SQL_FROM_DATE"],
       endDate: ["SQL_TO_DATE"],
     });
     expect(component.checked()).toBe(true);
 
     component.setChecked(false);
-    expect(component.value).toEqual({});
+    expect(formGroup.get("transformations").value).toEqual({});
     expect(component.checked()).toBe(false);
   });
 
