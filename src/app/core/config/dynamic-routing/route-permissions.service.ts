@@ -20,7 +20,7 @@ export class RoutePermissionsService {
    */
   private readonly additionalGuards =
     (inject(AbstractPermissionGuard, { optional: true }) as unknown as
-      | AbstractPermissionGuard[] | null) ?? [];
+      AbstractPermissionGuard[] | null) ?? [];
 
   /**
    * Filters menu items based on the route and entity permissions on the link.
