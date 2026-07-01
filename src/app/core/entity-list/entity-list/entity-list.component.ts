@@ -18,7 +18,6 @@ import {
 } from "../EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -45,22 +44,16 @@ import { ExportColumnConfig } from "../../export/data-transformation-service/exp
 import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
-import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
-import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
-import {
-  EntitySpecialLoaderService,
-  LoaderMethod,
-} from "../../entity/entity-special-loader/entity-special-loader.service";
+import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { AblePurePipe } from "@casl/angular";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
-import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
@@ -110,15 +103,10 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private screenWidthObserver = inject(ScreenWidthObserver);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  protected entityMapperService = inject(EntityMapperService);
   private entities = inject(EntityRegistry);
   private dialog = inject(MatDialog);
-  private entitySpecialLoader = inject(EntitySpecialLoaderService, {
-    optional: true,
-  });
   private readonly exportColumnsService = inject(ExportColumnsService);
   private readonly formDialog = inject(FormDialogService);
-  private readonly bulkOperationState = inject(BulkOperationStateService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly publicFormsService = inject(PublicFormsService);
@@ -201,6 +189,12 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       // untracked: internal signals set during build (title, allEntities) must not re-trigger this effect
       void untracked(() => this.buildComponentFromConfig());
     });
+    effect(() => {
+      this.dataSource.loadRecordConfig.set({
+        entityCtr: this.entityConstructor(),
+        loaderMethod: this.loaderMethod(),
+      });
+    });
 
     this.screenWidthObserver
       .platform()
@@ -258,78 +252,10 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     if (!this.title()) {
       this.title.set(this.entityConstructor()?.labelPlural);
     }
-
-    this.dataSource.allRecords.set(await this.getEntities());
-    this.listenToEntityUpdates();
-  }
-
-  /**
-   * Template method that can be overwritten to change the loading logic.
-   * @protected
-   */
-  protected getEntities(): Promise<T[]> {
-    const loaderMethod = this.loaderMethod();
-    if (loaderMethod && this.entitySpecialLoader) {
-      return this.entitySpecialLoader.loadData(loaderMethod);
-    }
-
-    const entityConstructor = this.entityConstructor();
-    if (!entityConstructor) {
-      return Promise.resolve([]);
-    }
-    return this.entityMapperService.loadType(entityConstructor);
-  }
-
-  private updateSubscription: Subscription;
-
-  private listenToEntityUpdates() {
-    const entityConstructor = this.entityConstructor();
-    if (this.updateSubscription || !entityConstructor) {
-      return;
-    }
-
-    this.updateSubscription = this.entityMapperService
-      .receiveUpdates(entityConstructor)
-      .pipe(untilDestroyed(this))
-      .subscribe(async (updatedEntity: UpdatedEntity<T>) => {
-        if (this.bulkOperationState.isBulkOperationInProgress()) {
-          //buffer updates during bulk operations to avoid UI performance issues
-          const inProgress =
-            this.bulkOperationState.updateBulkOperationProgress(
-              updatedEntity,
-              false,
-            );
-          if (!inProgress) {
-            // reload the list once
-            this.dataSource.allRecords.set(await this.getEntities());
-            this.cdr.markForCheck();
-            // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
-            setTimeout(() => {
-              requestAnimationFrame(() => {
-                this.bulkOperationState.completeBulkOperation();
-              });
-            });
-          }
-          return;
-        }
-
-        //get specially enhanced entity if necessary
-        const loaderMethod = this.loaderMethod();
-        if (loaderMethod && this.entitySpecialLoader) {
-          updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
-            loaderMethod,
-            updatedEntity,
-          );
-        }
-        this.dataSource.allRecords.set(
-          applyUpdate(this.dataSource.allRecords(), updatedEntity),
-        );
-        this.cdr.markForCheck();
-      });
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
-    if (columnGroup && columnGroup.groups.length > 0) {
+    if (columnGroup && columnGroup.groups?.length > 0) {
       this.groups = columnGroup.groups;
       this.defaultColumnGroup =
         columnGroup.default && this.configuredTabExists(columnGroup.default)

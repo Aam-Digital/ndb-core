@@ -193,6 +193,7 @@ export class EntitiesTableComponent<T extends Entity>
     });
 
     effect(() => {
+      // TODO somehow on resizing the screen this throws an error (cannot read length of undefined)
       this.recordsDataSource().filter = this.filterFreetext() ?? "";
     });
 
