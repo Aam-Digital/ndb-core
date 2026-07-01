@@ -23,7 +23,11 @@ class ReportConfig extends Entity {
   static override icon: IconName = "chart-line";
 
   /** human-readable title of the report */
-  @DatabaseField({ label: $localize`:ReportConfig:Title` }) title: string;
+  @DatabaseField({
+    label: $localize`:ReportConfig:Title`,
+    validators: { required: true },
+  })
+  title: string;
 
   /** longer description documenting the purpose and usage of this report */
   @DatabaseField({
@@ -42,6 +46,7 @@ class ReportConfig extends Entity {
     label: $localize`:ReportConfig:Mode`,
     description: $localize`:ReportConfig:How the report is calculated: "reporting" (in-browser aggregations), "exporting" (data export) or "sql" (server-side SQL queries). Defaults to "reporting".`,
     editComponent: "EditReportMode",
+    validators: { required: true },
   })
   mode?: string;
 
