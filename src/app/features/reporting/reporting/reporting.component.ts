@@ -84,6 +84,8 @@ export class ReportingComponent {
 
   /** runtime route to the report admin list (Admin Overview → Templates and Forms) */
   protected readonly reportAdminLink = getEntityRuntimeRoute(ReportEntity);
+  /** entity type used to permission-gate the "Manage Reports" admin link */
+  protected readonly reportEntity = ReportEntity;
 
   private reportsResource = resource({
     loader: () =>

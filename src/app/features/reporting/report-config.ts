@@ -16,11 +16,11 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 @DatabaseEntity("ReportConfig")
 class ReportConfig extends Entity {
   static override isInternalEntity = true;
-  static override label = $localize`:ReportConfig:Report`;
-  static override labelPlural = $localize`:ReportConfig:Reports`;
-  static override toStringAttributes = ["title"];
-  static override route = "admin/report-config";
-  static override icon: IconName = "chart-line";
+  static override readonly label = $localize`:ReportConfig:Report`;
+  static override readonly labelPlural = $localize`:ReportConfig:Reports`;
+  static override readonly toStringAttributes = ["title"];
+  static override readonly route = "admin/report-config";
+  static override readonly icon: IconName = "chart-line";
 
   /** human-readable title of the report */
   @DatabaseField({

@@ -53,4 +53,34 @@ describe("EditReportPeriodToggleComponent", () => {
     fixture.detectChanges();
     expect(component.checked()).toBe(true);
   });
+
+  it("is unchecked for a report that only has non-period transformations", () => {
+    formGroup.get("transformations").setValue({ custom: ["X"] });
+    fixture.detectChanges();
+    expect(component.checked()).toBe(false);
+  });
+
+  it("adds the report period without dropping other transformation keys", () => {
+    formGroup.get("transformations").setValue({ custom: ["X"] });
+    fixture.detectChanges();
+
+    component.setChecked(true);
+    expect(formGroup.get("transformations").value).toEqual({
+      custom: ["X"],
+      startDate: ["SQL_FROM_DATE"],
+      endDate: ["SQL_TO_DATE"],
+    });
+  });
+
+  it("removes only the period keys and preserves others when toggled off", () => {
+    formGroup.get("transformations").setValue({
+      custom: ["X"],
+      startDate: ["SQL_FROM_DATE"],
+      endDate: ["SQL_TO_DATE"],
+    });
+    fixture.detectChanges();
+
+    component.setChecked(false);
+    expect(formGroup.get("transformations").value).toEqual({ custom: ["X"] });
+  });
 });

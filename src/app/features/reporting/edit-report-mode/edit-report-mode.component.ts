@@ -28,5 +28,11 @@ export class EditReportModeComponent
   formFieldConfig = input<FormFieldConfig>();
 
   readonly modeOptions: string[] = ["reporting", "exporting", "sql"];
-  readonly modeToString = (mode: string): string => mode;
+  private readonly modeLabels: Record<string, string> = {
+    reporting: $localize`:ReportConfig mode option:Reporting`,
+    exporting: $localize`:ReportConfig mode option:Exporting`,
+    sql: $localize`:ReportConfig mode option:SQL`,
+  };
+  readonly modeToString = (mode: string): string =>
+    this.modeLabels[mode] ?? mode;
 }
