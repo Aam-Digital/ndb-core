@@ -20,7 +20,6 @@ import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
 import {
   MatColumnDef,
   MatTable,
-  MatTableDataSource,
   MatTableModule,
 } from "@angular/material/table";
 import { Router } from "@angular/router";
@@ -29,8 +28,6 @@ import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entit
 import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
-import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
@@ -43,12 +40,12 @@ import { EntityFormService } from "../entity-form/entity-form.service";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
-import { tableSort } from "./table-sort/table-sort";
 import {
   EntitiesTableSelectionStore,
   shouldSkipRowInteraction,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -78,7 +75,6 @@ export class EntitiesTableComponent<
 > implements AfterContentInit {
   private readonly formDialog = inject(FormDialogService);
   private readonly router = inject(Router);
-  private readonly filterService = inject(FilterService);
   private readonly entityFormService = inject(EntityFormService);
   protected readonly sortStore = inject(
     EntitiesTableSortStore,
@@ -163,22 +159,6 @@ export class EntitiesTableComponent<
     return nextFilter;
   });
 
-  readonly filteredRecords = computed<T[]>(() => {
-    const records = this.records() ?? [];
-    const predicate = this.filterService.getFilterPredicate(
-      this.effectiveFilter(),
-    );
-    const domainFiltered = records.filter(predicate);
-
-    const freetext = this.filterFreetext() ?? "";
-    if (!freetext) {
-      return domainFiltered;
-    }
-    return domainFiltered.filter((record) =>
-      entityFilterPredicate(record, freetext),
-    );
-  });
-
   // --- Background color ---
   readonly effectiveBackgroundColor = computed<(rec: T) => string>(() => {
     const custom = this.getBackgroundColor();
@@ -190,7 +170,7 @@ export class EntitiesTableComponent<
   readonly isLoading = signal(true);
 
   // --- Material DataSource (for paginator interop) ---
-  readonly recordsDataSource = this.createDataSource();
+  readonly recordsDataSource = new InMemoryDataSource<T>();
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
@@ -223,7 +203,7 @@ export class EntitiesTableComponent<
         ];
       }),
       externalSort: this.sortBy,
-      filteredRecords: this.filteredRecords,
+      filteredRecords: this.recordsDataSource.filteredRecords,
     });
 
     // Connect selection store
@@ -233,24 +213,25 @@ export class EntitiesTableComponent<
       getCurrentPageRows: () => this.getCurrentPageRows(),
     });
 
-    // Sync sorted rows to Material DataSource
-    effect(() => {
-      this.recordsDataSource.data = this.sortStore.sortedRows();
-    });
-
     // Track loading state
     effect(() => {
       const records = this.records();
       if (records !== undefined && records !== null) {
         this.isLoading.set(false);
+        this.recordsDataSource.allRecords.set(records);
       }
     });
 
-    // Emit filtered records changes
     effect(() => {
-      this.filteredRecordsChange.emit(
-        this.sortStore.sortedRows().map((row) => row.record),
-      );
+      this.recordsDataSource?.dataFilter.set(this.effectiveFilter());
+    });
+
+    effect(() => {
+      this.recordsDataSource.filter = this.filterFreetext() ?? "";
+    });
+
+    effect(() => {
+      this.recordsDataSource.sortValueFns.set(this.sortStore.sortValueFns());
     });
   }
 
@@ -312,18 +293,5 @@ export class EntitiesTableComponent<
 
     const startIndex = paginator.pageIndex * paginator.pageSize;
     return rows.slice(startIndex, startIndex + paginator.pageSize);
-  }
-
-  private createDataSource() {
-    const dataSource = new MatTableDataSource<TableRow<T>>();
-    dataSource.sortData = (data, sort) =>
-      tableSort<T, keyof T>(data, {
-        active: (sort.active as keyof T) ?? "",
-        direction: sort.direction,
-        sortValueFns: this.sortStore.sortValueFns(),
-      });
-    dataSource.filterPredicate = (data, filter) =>
-      entityFilterPredicate(data.record, filter);
-    return dataSource;
   }
 }
