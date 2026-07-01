@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -61,6 +62,7 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
   private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   override readonly entityConstructor = computed<EntityConstructor>(() => Note);
 
@@ -136,6 +138,7 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
     const newForm = await this.entityFormService.createEntityForm(
       this.middleForm().concat(this.topForm(), this.bottomForm()),
       entity,
+      this.destroyRef,
     );
 
     if (isCancelled()) return;

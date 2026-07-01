@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   inject,
   OnInit,
 } from "@angular/core";
@@ -59,6 +60,7 @@ export class RowDetailsComponent implements OnInit {
   data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
   private formService = inject(EntityFormService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
@@ -76,6 +78,7 @@ export class RowDetailsComponent implements OnInit {
     this.form = await this.formService.createEntityForm(
       data.columns,
       data.entity,
+      this.destroyRef,
     );
     this.enableSaveWithoutChangesIfNew(data.entity);
 
