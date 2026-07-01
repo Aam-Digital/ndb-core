@@ -5,7 +5,10 @@ import { MatTableDataSource } from "@angular/material/table";
 import { effect, inject, signal } from "@angular/core";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
-import { SortValueFns, tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
+import {
+  SortValueFns,
+  tableSort,
+} from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 
 export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   TableRow<T>
@@ -27,12 +30,10 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
       super.data = this.filteredRecords().map((record) => ({ record }));
     });
     effect(() => {
-      const records = this.allRecords();
       const predicate = this.filterService.getFilterPredicate(
         this.dataFilter(),
       );
-      const domainFiltered = records.filter(predicate);
-      this.filteredRecords.set(domainFiltered);
+      this.filteredRecords.set(this.allRecords().filter(predicate));
     });
   }
 

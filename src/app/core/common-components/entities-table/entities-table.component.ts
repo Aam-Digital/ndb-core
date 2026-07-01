@@ -212,6 +212,10 @@ export class EntitiesTableComponent<
       getCurrentPageRows: () => this.getCurrentPageRows(),
     });
 
+    effect(() => {
+      this.filteredRecordsChange.emit(this.recordsDataSource.filteredRecords());
+    });
+
     // Track loading state
     effect(() => {
       const records = this.records();
@@ -222,7 +226,7 @@ export class EntitiesTableComponent<
     });
 
     effect(() => {
-      this.recordsDataSource?.dataFilter.set(this.effectiveFilter());
+      this.recordsDataSource.dataFilter.set(this.effectiveFilter());
     });
 
     effect(() => {
