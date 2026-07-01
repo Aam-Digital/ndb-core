@@ -7,10 +7,12 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { Logging } from "#src/app/core/logging/logging.service";
 import type { Mock } from "vitest";
 
 type EntityRegistryMock = {
   get: Mock;
+  has: Mock;
 };
 
 type EntityConfigServiceMock = {
@@ -43,6 +45,7 @@ describe("PublicFormsService", () => {
   beforeEach(() => {
     mockEntityRegistry = {
       get: vi.fn().mockName("EntityRegistry.get"),
+      has: vi.fn().mockName("EntityRegistry.has").mockReturnValue(true),
     };
     mockEntityConfigService = {
       getEntityConfig: vi.fn().mockName("EntityConfigService.getEntityConfig"),
@@ -236,7 +239,8 @@ describe("PublicFormsService", () => {
     config.linkedEntities = ["children"];
 
     const entity = new Entity();
-    // Entity without getConstructor method
+    // entity whose constructor / entity type cannot be resolved
+    entity.getConstructor = vi.fn().mockReturnValue(undefined);
 
     const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(false);
@@ -315,6 +319,32 @@ describe("PublicFormsService", () => {
 
     const result = await service.isEntityTypeLinkedToConfig(config, entity);
     expect(result).toBe(true);
+  });
+
+  it("should not throw but return false when config references an unregistered entity type (#4096)", async () => {
+    const config = new PublicFormConfig();
+    config.entity = "ParticipantSurvey"; // entity type does not exist in the registry
+    config.linkedEntities = ["someField"];
+
+    // Replicate the real EntityRegistry behaviour for an unknown key:
+    // has() is false and get() throws (the latter is what broke the context menu).
+    mockEntityRegistry.has.mockReturnValue(false);
+    mockEntityRegistry.get.mockImplementation(() => {
+      throw new Error(
+        "Requested item is not registered in EntityRegistry. Key: ParticipantSurvey",
+      );
+    });
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+
+    const entity = new Entity();
+    entity.getConstructor = vi.fn().mockReturnValue({
+      ENTITY_TYPE: "Child",
+    });
+
+    await expect(
+      service.isEntityTypeLinkedToConfig(config, entity),
+    ).resolves.toBe(false);
+    expect(warnSpy).toHaveBeenCalled();
   });
 
   it("should add new field to global schema when field is not in base schema", async () => {
