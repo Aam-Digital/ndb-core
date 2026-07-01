@@ -5,19 +5,21 @@ import { MatTableDataSource } from "@angular/material/table";
 import { effect, inject, signal } from "@angular/core";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
-import {
-  SortValueFns,
-  tableSort,
-} from "#src/app/core/common-components/entities-table/table-sort/table-sort";
+import { SortValueFns, tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 
 export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   TableRow<T>
 > {
+  override set data(data: TableRow<T>[]) {
+    this.displayedData.set(data);
+    super.data = data;
+  }
   private filterService = inject(FilterService);
   dataFilter = signal<DataFilter<T>>({});
   sortValueFns = signal<SortValueFns<T>>({});
   allRecords = signal<T[]>([]);
   filteredRecords = signal<T[]>([]);
+  displayedData = signal<TableRow<T>[]>([]);
 
   constructor() {
     super();

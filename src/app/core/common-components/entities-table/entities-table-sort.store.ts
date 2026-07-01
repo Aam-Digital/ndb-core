@@ -14,8 +14,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../entity-form/FormConfig";
-import { TableRow } from "./table-row";
-import { SortValueFns, tableSort } from "./table-sort/table-sort";
+import { SortValueFns } from "./table-sort/table-sort";
 import { TableStateUrlService } from "./table-state-url.service";
 
 type ReadSignal<T> = () => T;
@@ -23,15 +22,13 @@ type ReadSignal<T> = () => T;
 /**
  * Input signals consumed by `EntitiesTableSortStore`.
  */
-export interface EntitiesTableSortContext<T extends Entity = Entity> {
+export interface EntitiesTableSortContext {
   /** Visible column IDs (updated reactively). */
   columnsToDisplay: ReadSignal<string[]>;
   /** Full column definitions (updated reactively). */
   columns: ReadSignal<FormFieldConfig[]>;
   /** External sort override from a component input binding. */
   externalSort: ReadSignal<Sort | undefined>;
-  /** Filtered records to be sorted. */
-  filteredRecords: ReadSignal<T[]>;
 }
 
 /**
@@ -44,7 +41,7 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
   private readonly schemaService = inject(EntitySchemaService);
   private readonly destroyRef = inject(DestroyRef);
 
-  private context: EntitiesTableSortContext<T> | null = null;
+  private context: EntitiesTableSortContext | null = null;
   private readonly sortManuallySet = signal(false);
   private attachedSort?: MatSort;
 
@@ -108,23 +105,6 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
     return fns;
   });
 
-  /** Sorted rows derived from filtered records and effective sort. */
-  readonly sortedRows = computed<TableRow<T>[]>(() => {
-    if (!this.context) return [];
-    const rows = this.context.filteredRecords().map((record) => ({ record }));
-    const sort = this.effectiveSort();
-
-    if (!sort?.active || !sort.direction) {
-      return rows;
-    }
-
-    return tableSort<T, keyof T>(rows, {
-      active: sort.active as keyof T,
-      direction: sort.direction,
-      sortValueFns: this.sortValueFns(),
-    });
-  });
-
   constructor() {
     // Sync default sort when no manual override and no URL state
     effect(() => {
@@ -154,7 +134,7 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
   }
 
   /** Connects component signals to this store. Must be called once from component constructor. */
-  connect(context: EntitiesTableSortContext<T>) {
+  connect(context: EntitiesTableSortContext) {
     this.context = context;
   }
 

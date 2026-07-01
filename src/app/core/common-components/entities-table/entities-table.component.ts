@@ -203,13 +203,12 @@ export class EntitiesTableComponent<
         ];
       }),
       externalSort: this.sortBy,
-      filteredRecords: this.recordsDataSource.filteredRecords,
     });
 
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      sortedRows: this.sortStore.sortedRows,
+      sortedRows: this.recordsDataSource.displayedData,
       getCurrentPageRows: () => this.getCurrentPageRows(),
     });
 
@@ -285,7 +284,7 @@ export class EntitiesTableComponent<
   }
 
   getCurrentPageRows(): TableRow<T>[] {
-    const rows = this.sortStore.sortedRows();
+    const rows = this.recordsDataSource.data;
     const paginator = this.recordsDataSource.paginator;
     if (!paginator) {
       return rows;
