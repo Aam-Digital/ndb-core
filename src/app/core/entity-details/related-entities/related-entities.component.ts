@@ -23,7 +23,6 @@ import {
 } from "../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -46,7 +45,6 @@ import {
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
 export class RelatedEntitiesComponent<E extends Entity> {
-  protected entityMapper = inject(EntityMapperService);
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
   protected filterService = inject(FilterService);
@@ -162,7 +160,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
     });
 
     effect(() => {
-      this.showInactive.set(this.entity().anonymized);
+      if (this.showInactive() === undefined) {
+        this.showInactive.set(this.entity().anonymized);
+      }
     });
 
     effect(() => {
