@@ -54,19 +54,6 @@ export class OrgRunner {
     return results;
   }
 
-  async runForEach<T>(
-    orgs: SystemCredentials[],
-    callback: (couchdb: Couchdb, org: SystemCredentials) => Promise<T>,
-  ): Promise<OrgOutcome<T>[]> {
-    const outcomes: OrgOutcome<T>[] = [];
-    for (const org of orgs) {
-      const couchdb = new Couchdb(org.url, org.password, org.username);
-      const result = await callback(couchdb, org);
-      outcomes.push({ org, result });
-    }
-    return outcomes;
-  }
-
   static filterOrgs(
     orgs: SystemCredentials[],
     options: { org?: string; category?: string },
