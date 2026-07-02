@@ -22,6 +22,14 @@ import { PREFIX_VIEW_CONFIG } from "./dynamic-routing/view-config.interface";
 @Injectable({ providedIn: "root" })
 export class ConfigService extends LatestEntityLoader<Config> {
   /**
+   * sessionStorage key tracking how many times we've auto-reloaded due to a
+   * config load failure, so a persistent failure (e.g. offline, backend down)
+   * doesn't reload-loop and flood error monitoring - see abortWithError().
+   */
+  private static readonly RELOAD_ATTEMPTS_KEY = "config_load_reload_attempts";
+  private static readonly MAX_RELOAD_ATTEMPTS = 1;
+
+  /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
   private currentConfig: Config;
@@ -43,6 +51,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
         );
         return;
       }
+      sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
       this.currentConfig = this.applyMigrations(config);
       this.logConfigRev();
     });
@@ -71,10 +80,36 @@ export class ConfigService extends LatestEntityLoader<Config> {
     const error = new Error(message, { cause });
     error.name = "ConfigLoadError";
     Logging.error(error);
-    alert(
-      $localize`We couldn't load the configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.`,
+
+    if (this.registerReloadAttempt()) {
+      alert(
+        $localize`We couldn't load the configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.`,
+      );
+      window.location.reload();
+    } else {
+      alert(
+        $localize`We couldn't load the configuration for your system, even after retrying. Please contact your tech support.`,
+      );
+    }
+  }
+
+  /**
+   * Track auto-reload attempts for the current session and return whether
+   * another reload is still allowed, to avoid an infinite reload loop
+   * (e.g. while offline or during a backend outage) flooding error monitoring.
+   */
+  private registerReloadAttempt(): boolean {
+    const attempts = Number(
+      sessionStorage.getItem(ConfigService.RELOAD_ATTEMPTS_KEY) ?? "0",
     );
-    window.location.reload();
+    if (attempts >= ConfigService.MAX_RELOAD_ATTEMPTS) {
+      return false;
+    }
+    sessionStorage.setItem(
+      ConfigService.RELOAD_ATTEMPTS_KEY,
+      String(attempts + 1),
+    );
+    return true;
   }
 
   private logConfigRev() {
