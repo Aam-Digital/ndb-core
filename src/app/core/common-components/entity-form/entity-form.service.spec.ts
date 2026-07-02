@@ -455,6 +455,21 @@ describe("EntityFormService", () => {
     TestEntity.schema.delete("test");
   });
 
+  it("should trim leading/trailing whitespace from string fields on save", async () => {
+    TestEntity.schema.set("name", { dataType: "string" });
+    TestBed.inject(EntityAbility).update([
+      { action: "manage", subject: "all" },
+    ]);
+
+    const entity = new TestEntity();
+    const form = await service.createEntityForm([{ id: "name" }], entity);
+    form.formGroup.get("name").setValue("  John  ");
+
+    await service.saveChanges(form, entity);
+
+    expect(entity["name"]).toBe("John");
+  });
+
   it("should add column definitions from property schema", () => {
     class Test extends Entity {
       @DatabaseField({

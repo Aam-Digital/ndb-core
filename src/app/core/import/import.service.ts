@@ -209,6 +209,15 @@ export class ImportService {
       return undefined;
     }
 
+    const shouldTrim =
+      typeof val === "string" &&
+      schema.trim !== false &&
+      importProcessingContext.importSettings.additionalSettings?.trimValues !==
+        false;
+    if (shouldTrim) {
+      val = val.trim();
+    }
+
     const datatype = this.schemaService.getDatatypeOrDefault(schema.dataType);
     let value;
 
