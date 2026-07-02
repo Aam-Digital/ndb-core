@@ -8,7 +8,6 @@ import {
   AutomatedFieldUpdateComponent,
 } from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
-import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
@@ -31,7 +30,6 @@ export class AutomatedFieldUpdateConfigService {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
-  private readonly unsavedChangesService = inject(UnsavedChangesService);
   private readonly entitySchemaService = inject(EntitySchemaService);
 
   /**
@@ -416,7 +414,6 @@ export class AutomatedFieldUpdateConfigService {
     });
 
     await Promise.all(savePromises);
-    this.unsavedChangesService.pending.set(false);
   }
 
   /**

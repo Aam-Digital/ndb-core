@@ -87,6 +87,16 @@ export class OrgRunner {
   static orgLabel(org: SystemCredentials): string {
     return org.name ? `${org.name} (${org.url})` : org.url;
   }
+
+  /** Sort orgs by `category`, then `url`, so reports group same-category orgs together. */
+  static sortByCategory(orgs: SystemCredentials[]): SystemCredentials[] {
+    return [...orgs].sort((a, b) => {
+      if (a.category !== b.category) {
+        return a.category.localeCompare(b.category);
+      }
+      return a.url.localeCompare(b.url);
+    });
+  }
 }
 
 /**

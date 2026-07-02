@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -24,6 +25,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
+import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
@@ -60,7 +62,9 @@ import { Note } from "../model/note";
 export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
   private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
+  private unsavedChangesService = inject(UnsavedChangesService);
   private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   override readonly entityConstructor = computed<EntityConstructor>(() => Note);
 
@@ -136,9 +140,16 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
     const newForm = await this.entityFormService.createEntityForm(
       this.middleForm().concat(this.topForm(), this.bottomForm()),
       entity,
+      this.destroyRef,
     );
 
     if (isCancelled()) return;
+    // Clear the previous form's unsaved-changes registration before replacing it,
+    // to prevent stale dirty state from accumulating when the form is recreated.
+    const previousForm = this.form();
+    if (previousForm) {
+      this.unsavedChangesService.setUnsavedChanges(previousForm, false);
+    }
     this.tmpEntity.set(entity.copy());
     this.form.set(newForm); // triggers the valueChanges effect
   }

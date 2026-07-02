@@ -208,7 +208,7 @@ describe("NotificationSettingComponent", () => {
     component.addNewNotificationRule();
     vi.spyOn(entityMapper, "save").mockReturnValue(Promise.resolve());
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
-    unsavedChanges.pending.set(true);
+    expect(unsavedChanges.pending()).toBe(true);
 
     await component.saveSettings();
 

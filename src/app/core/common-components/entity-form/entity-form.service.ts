@@ -1,4 +1,5 @@
-import { EventEmitter, inject, Injectable } from "@angular/core";
+import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -8,8 +9,6 @@ import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-vali
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
-import { ActivationStart, Router } from "@angular/router";
-import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
@@ -33,21 +32,6 @@ export class EntityFormService {
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
-
-  private subscriptions: Subscription[] = [];
-
-  constructor() {
-    const router = inject(Router);
-
-    router.events
-      .pipe(filter((e) => e instanceof ActivationStart))
-      .subscribe(() => {
-        // Clean up everything once navigation happens
-        this.subscriptions.forEach((sub) => sub.unsubscribe());
-        this.subscriptions = [];
-        this.unsavedChanges.pending.set(false);
-      });
-  }
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
@@ -113,6 +97,8 @@ export class EntityFormService {
    * Missing fields in the formFields are filled with schema information.
    * @param formFields
    * @param entity
+   * @param destroyRef the caller's DestroyRef, used to scope the form's change tracking to the
+   *   caller's lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)
    * @param forTable
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    * @param withDefaultValues if true, default value strategies are initialized and applied
@@ -120,6 +106,7 @@ export class EntityFormService {
   public async createEntityForm<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
+    destroyRef: DestroyRef,
     forTable = false,
     withPermissionCheck = true,
     withDefaultValues = true,
@@ -131,6 +118,7 @@ export class EntityFormService {
     const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
       fields,
       entity,
+      destroyRef,
       withPermissionCheck,
     );
 
@@ -142,6 +130,21 @@ export class EntityFormService {
       inheritedParentValues: new Map(),
       watcher: new Map(),
     };
+
+    // Track unsaved changes for this form, keyed by the EntityForm itself.
+    // Both the subscription and the final cleanup are tied to the caller's lifecycle.
+    // Note: if a caller creates several forms over its lifetime (e.g. reloading a
+    // resource), it should explicitly clear the old form's state via
+    // `setUnsavedChanges(oldForm, false)` before replacing it, to prevent stale
+    // dirty state from accumulating in UnsavedChangesService.sources.
+    typedFormGroup.valueChanges
+      .pipe(takeUntilDestroyed(destroyRef))
+      .subscribe(() =>
+        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
+      );
+    destroyRef.onDestroy(() =>
+      this.unsavedChanges.setUnsavedChanges(entityForm, false),
+    );
 
     if (withDefaultValues) {
       await this.defaultValueService.handleEntityForm(entityForm, entity);
@@ -160,6 +163,7 @@ export class EntityFormService {
   private createFormGroup<T extends Entity>(
     formFields: FormFieldConfig[],
     entity: T,
+    destroyRef: DestroyRef,
     withPermissionCheck = true,
   ): EntityFormGroup<T> {
     const formConfig = {};
@@ -174,18 +178,14 @@ export class EntityFormService {
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
-    const valueChangesSubscription = group.valueChanges.subscribe(() =>
-      this.unsavedChanges.pending.set(group.dirty),
-    );
-
-    this.subscriptions.push(valueChangesSubscription);
-
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
-      const statusChangesSubscription = group.statusChanges
-        .pipe(filter((status) => status !== "DISABLED"))
+      group.statusChanges
+        .pipe(
+          filter((status) => status !== "DISABLED"),
+          takeUntilDestroyed(destroyRef),
+        )
         .subscribe(() => this.disableReadOnlyFormControls(group, entity));
-      this.subscriptions.push(statusChangesSubscription);
     }
 
     return group;
@@ -259,7 +259,7 @@ export class EntityFormService {
       );
     }
 
-    this.unsavedChanges.pending.set(false);
+    this.unsavedChanges.setUnsavedChanges(entityForm, false);
     form.markAsPristine();
     form.disable();
     Object.assign(entity, updatedEntity);
@@ -324,7 +324,7 @@ export class EntityFormService {
     }
 
     form.markAsPristine();
-    this.unsavedChanges.pending.set(false);
+    this.unsavedChanges.setUnsavedChanges(entityForm, false);
     entityForm.onFormStateChange.emit("cancelled");
   }
 }
