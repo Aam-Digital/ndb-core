@@ -533,7 +533,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="332" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:332</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="335" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:335</a></div>
                         </td>
                     </tr>
 
@@ -894,8 +894,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="313"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:313</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="316"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:316</a></div>
                         </td>
                     </tr>
 
@@ -1073,8 +1073,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="334"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:334</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="337"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:337</a></div>
                         </td>
                     </tr>
 
@@ -1119,7 +1119,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:235</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:238</a></code>
 </div>
                         </td>
                     </tr>
@@ -1212,7 +1212,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:247</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:250</a></code>
 </div>
                         </td>
                     </tr>
@@ -1293,8 +1293,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="303"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:303</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="306"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:306</a></div>
                         </td>
                     </tr>
 
@@ -2833,6 +2833,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
           );
         } else if (this.isSyncConnectivityError(err)) {
           Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
+        } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
+          // expired session; the fetch layer already triggers re-login
+          Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
         } else {
           Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
         }

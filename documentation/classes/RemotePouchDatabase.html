@@ -313,7 +313,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:46</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:57</a></div>
                             </td>
                         </tr>
 
@@ -424,7 +424,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:29</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:40</a></div>
                         </td>
                     </tr>
 
@@ -722,8 +722,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="281"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:281</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="296"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:296</a></div>
                         </td>
                     </tr>
 
@@ -771,7 +771,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:64</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:75</a></code>
 </div>
                         </td>
                     </tr>
@@ -871,7 +871,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:287</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:302</a></code>
 </div>
                         </td>
                     </tr>
@@ -948,7 +948,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:310</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:325</a></code>
 </div>
                         </td>
                     </tr>
@@ -2231,6 +2231,17 @@ import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { isVersionNewer } from &quot;./version-comparison.utils&quot;;
 
 /**
+ * 4XX statuses that occur during normal operation
+ * (and are handled by callers or the auth layer),
+ * so they are not reported to remote logging.
+ */
+const EXPECTED_4XX_STATUSES: number[] &#x3D; [
+  HttpStatusCode.Unauthorized,
+  HttpStatusCode.Forbidden,
+  HttpStatusCode.NotFound,
+];
+
+/**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
 export class RemotePouchDatabase extends PouchDatabase {
@@ -2386,6 +2397,10 @@ export class RemotePouchDatabase extends PouchDatabase {
         Logging.debug(
           &quot;Notifications database not found (404) - may be expected&quot;,
         );
+      } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
+        // expired session (401), permission-filtered doc (403) and missing doc (404)
+        // are part of normal operation and handled by callers
+        Logging.debug(&quot;Failed to fetch from DB with 40X error&quot;, result);
       } else {
         Logging.warn(&quot;Failed to fetch from DB with 40X error&quot;, result);
       }

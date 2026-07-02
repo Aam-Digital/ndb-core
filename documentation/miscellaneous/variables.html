@@ -316,6 +316,9 @@
                             <a href="#environment" title="src/environments/environment.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.ts)</a>
                         </li>
                         <li>
+                            <a href="#EXPECTED_4XX_STATUSES" title="src/app/core/database/pouchdb/remote-pouch-database.ts" ><b>EXPECTED_4XX_STATUSES</b>&nbsp;&nbsp;&nbsp;(src/.../remote-pouch-database.ts)</a>
+                        </li>
+                        <li>
                             <a href="#faker" title="src/app/core/demo-data/faker.ts" ><b>faker</b>&nbsp;&nbsp;&nbsp;(src/.../faker.ts)</a>
                         </li>
                         <li>
@@ -5150,6 +5153,47 @@ For deployments, the <code>assets/config.json</code> can be used to override the
 The build system defaults to the dev environment which uses <code>environment.ts</code>, but if you do
 <code>ng build --env=prod</code> then <code>environment.prod.ts</code> will be used instead.
 The list of which env maps to which file can be found in <code>.angular-cli.json</code>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/remote-pouch-database.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EXPECTED_4XX_STATUSES"></a>
+                    <span class="name">
+                        <span ><b>EXPECTED_4XX_STATUSES</b></span>
+                        <a href="#EXPECTED_4XX_STATUSES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  HttpStatusCode.Unauthorized,
+  HttpStatusCode.Forbidden,
+  HttpStatusCode.NotFound,
+]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>4XX statuses that occur during normal operation
+(and are handled by callers or the auth layer),
+so they are not reported to remote logging.</p>
 </div>
                 </td>
             </tr>
