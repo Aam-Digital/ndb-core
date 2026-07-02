@@ -72,7 +72,7 @@ export class EntitiesTableSortStore<T extends Entity = Entity> {
     return inferDefaultSort(
       this.context.columnsToDisplay(),
       this.columns(),
-      (dataType) => this.schemaService.getDatatypeOrDefault(dataType, true),
+      (dataType) => this.schemaService.getDatatypeOrDefault(dataType),
     );
   });
 
