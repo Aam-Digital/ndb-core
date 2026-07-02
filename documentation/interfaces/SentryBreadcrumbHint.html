@@ -500,7 +500,7 @@ export class LoggingService {
       release: &quot;ndb-core@&quot; + environment.appVersion,
       transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
-      beforeSend: enrichSentryEvent,
+      beforeSend: processSentryEvent,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -745,7 +745,65 @@ interface SentryBreadcrumbHint {
 export const Logging &#x3D; new LoggingService();
 
 /**
- * Sentry &#x60;beforeSend&#x60; hook that enriches events with structured extra data
+ * Maximum number of times an identical event is sent to remote logging
+ * within one app session (page load).
+ * Guards against error loops (e.g. an error thrown on every change detection
+ * cycle) flooding remote monitoring with thousands of duplicate events.
+ */
+export const MAX_REPEATED_SENTRY_EVENTS &#x3D; 5;
+
+const sentryEventCounts &#x3D; new Map&lt;string, number&gt;();
+
+/**
+ * Sentry &#x60;beforeSend&#x60; hook: drops excessive repeats of an identical event
+ * and enriches the remaining events with structured extra data.
+ */
+export function processSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent | null {
+  if (isExcessiveRepeat(event)) {
+    return null;
+  }
+  return enrichSentryEvent(event, hint);
+}
+
+/**
+ * Count occurrences of an event and check whether it exceeded the session cap.
+ *
+ * The key is deliberately coarse: error class + message of the root cause
+ * (&#x60;values[0]&#x60; is the deepest &#x60;cause&#x60; in the chain; the originally thrown,
+ * outermost error is last), without any stack information.
+ * Consequences:
+ * - Same-message errors from different code paths share one budget,
+ *   and all wrappers of a cascading failure are capped via their common
+ *   root cause. This is a flood guard, not a grouping mechanism -
+ *   Sentry&#x27;s server-side, stack-based grouping remains authoritative
+ *   for separating issues, and the first occurrences always get through.
+ * - Errors that interpolate data (e.g. entity IDs) into their message
+ *   get a separate budget per variant, so the cap is weaker for those.
+ */
+function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
+  const exception &#x3D; event.exception?.values?.[0];
+  const key &#x3D; exception
+    ? &#x60;${exception.type}: ${exception.value}&#x60;
+    : String(event.message ?? &quot;unknown&quot;);
+
+  const count &#x3D; (sentryEventCounts.get(key) ?? 0) + 1;
+  sentryEventCounts.set(key, count);
+
+  if (count &gt; MAX_REPEATED_SENTRY_EVENTS) {
+    Logging.debug(&quot;Skipping repeated event for remote logging&quot;, {
+      event: key,
+      occurrence: count,
+    });
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException&#x27;s entityId, status, reason).
  */
 function enrichSentryEvent(

@@ -481,6 +481,9 @@
                             <a href="#isEntityViewConfig" title="src/app/core/config/dynamic-routing/route-paths.ts" ><b>isEntityViewConfig</b>&nbsp;&nbsp;&nbsp;(src/.../route-paths.ts)</a>
                         </li>
                         <li>
+                            <a href="#isExcessiveRepeat" title="src/app/core/logging/logging.service.ts" ><b>isExcessiveRepeat</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#isFunction" title="src/app/utils/test-utils/vitest-proxy-zone-compat.ts" ><b>isFunction</b>&nbsp;&nbsp;&nbsp;(src/.../vitest-proxy-zone-compat.ts)</a>
                         </li>
                         <li>
@@ -590,6 +593,9 @@
                         </li>
                         <li>
                             <a href="#preloadDynamicComponents" title="src/app/core/config/config.app-initializer.ts" ><b>preloadDynamicComponents</b>&nbsp;&nbsp;&nbsp;(src/.../config.app-initializer.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#processSentryEvent" title="src/app/core/logging/logging.service.ts" ><b>processSentryEvent</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
                         </li>
                         <li>
                             <a href="#provideTestingConfigService" title="src/app/core/config/testing-config-service.ts" ><b>provideTestingConfigService</b>&nbsp;&nbsp;&nbsp;(src/.../testing-config-service.ts)</a>
@@ -7380,8 +7386,149 @@ The entity should also be added to the <a href="databaseEntities">databaseEntiti
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Sentry <code>beforeSend</code> hook that enriches events with structured extra data
+                        <div class="io-description"><p>Enrich events with structured extra data
 from custom Error properties (e.g. DatabaseException&#39;s entityId, status, reason).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>hint</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Sentry.ErrorEvent | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isExcessiveRepeat"></a>
+                    <span class="name">
+                        <span ><b>isExcessiveRepeat</b></span>
+                        <a href="#isExcessiveRepeat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isExcessiveRepeat(event)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Count occurrences of an event and check whether it exceeded the session cap.</p>
+<p>The key is deliberately coarse: error class + message of the root cause
+(<code>values[0]</code> is the deepest <code>cause</code> in the chain; the originally thrown,
+outermost error is last), without any stack information.
+Consequences:</p>
+<ul>
+<li>Same-message errors from different code paths share one budget,
+and all wrappers of a cascading failure are capped via their common
+root cause. This is a flood guard, not a grouping mechanism -
+Sentry&#39;s server-side, stack-based grouping remains authoritative
+for separating issues, and the first occurrences always get through.</li>
+<li>Errors that interpolate data (e.g. entity IDs) into their message
+get a separate budget per variant, so the cap is weaker for those.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="processSentryEvent"></a>
+                    <span class="name">
+                        <span ><b>processSentryEvent</b></span>
+                        <a href="#processSentryEvent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>processSentryEvent(event, hint)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sentry <code>beforeSend</code> hook: drops excessive repeats of an identical event
+and enriches the remaining events with structured extra data.</p>
 </div>
 
                             <div class="io-description">
