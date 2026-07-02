@@ -76,9 +76,9 @@ export class EntityConfigService {
   setupEntitiesFromConfig() {
     this.setupEntities(
       this.configService
-        .getAllConfigs<EntityConfig & { _id: string }>(
-          EntityConfigService.PREFIX_ENTITY_CONFIG,
-        )
+        .getAllConfigs<
+          EntityConfig & { _id: string }
+        >(EntityConfigService.PREFIX_ENTITY_CONFIG)
         .map((config) => [
           config._id.substring(EntityConfigService.PREFIX_ENTITY_CONFIG.length),
           config,

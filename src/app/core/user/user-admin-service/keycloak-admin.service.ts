@@ -313,9 +313,9 @@ export class KeycloakAdminService extends UserAdminService {
 
   getRolesOfUser(userAccountId: string) {
     return this.http
-      .get<Role[]>(
-        `${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm`,
-      )
+      .get<
+        Role[]
+      >(`${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm`)
       .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));
   }
 

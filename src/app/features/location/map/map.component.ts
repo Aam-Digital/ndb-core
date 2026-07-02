@@ -79,6 +79,9 @@ export class MapComponent implements AfterViewInit {
   private displayedPropertiesState: LocationProperties = {};
   private previousEntitiesReference: Entity[] | undefined;
 
+  private openPopupEntities$?: BehaviorSubject<Entity[]>;
+  private openPopupHighlightedEntities$?: BehaviorSubject<Entity[]>;
+
   constructor() {
     const config = this.configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
     if (config?.start) {
@@ -103,6 +106,9 @@ export class MapComponent implements AfterViewInit {
       this.showPropertySelection.set(
         Object.keys(this.displayedPropertiesState).length > 0,
       );
+
+      this.openPopupEntities$?.next(this.entitiesState);
+      this.openPopupHighlightedEntities$?.next(this.highlightedEntitiesState);
 
       this.updateMarkers();
     });
@@ -176,7 +182,8 @@ export class MapComponent implements AfterViewInit {
       const locationProperties = this.getMapProperties(entity);
       locationProperties.forEach((prop) => {
         const location = (entity as any)[prop]?.geoLookup as
-          { lat: number; lon: number } | undefined;
+          | { lat: number; lon: number }
+          | undefined;
 
         const lat = Number(location?.lat);
         const lon = Number(location?.lon);
@@ -389,10 +396,18 @@ export class MapComponent implements AfterViewInit {
 
   async openMapInPopup() {
     const mapComponent = await import("../map-popup/map-popup.component");
+
+    const entities$ = new BehaviorSubject(this.entitiesState);
+    const highlightedEntities$ = new BehaviorSubject(
+      this.highlightedEntitiesState,
+    );
+    this.openPopupEntities$ = entities$;
+    this.openPopupHighlightedEntities$ = highlightedEntities$;
+
     const data: MapPopupConfig = {
       marked: this.markedState,
-      entities: new BehaviorSubject(this.entitiesState),
-      highlightedEntities: new BehaviorSubject(this.highlightedEntitiesState),
+      entities: entities$,
+      highlightedEntities: highlightedEntities$,
       entityClick: {
         next: (entity: Entity) => this.entityClick.emit(entity),
       } as Subject<Entity>,
@@ -405,9 +420,11 @@ export class MapComponent implements AfterViewInit {
     this.dialog
       .open(mapComponent.MapPopupComponent, { width: "90%", data })
       .afterClosed()
-      .subscribe(() =>
-        this.updatedDisplayedProperties(data.displayedProperties),
-      );
+      .subscribe(() => {
+        this.openPopupEntities$ = undefined;
+        this.openPopupHighlightedEntities$ = undefined;
+        this.updatedDisplayedProperties(data.displayedProperties);
+      });
   }
 
   private updatedDisplayedProperties(

@@ -2,7 +2,8 @@
  * Definition of an additional generic import action, e.g. linking imported records to an existing group entity.
  */
 export type AdditionalImportAction =
-  AdditonalDirectLinkAction | AdditionalIndirectLinkAction;
+  | AdditonalDirectLinkAction
+  | AdditionalIndirectLinkAction;
 
 interface AdditionalImportBaseAction {
   mode: "direct" | "indirect";
