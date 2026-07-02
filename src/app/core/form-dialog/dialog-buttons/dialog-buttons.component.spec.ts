@@ -153,26 +153,25 @@ describe("DialogButtonsComponent", () => {
     }
   });
 
-  it("should reset pending changes when dialog is closed", () => {
+  it("should discard this form's unsaved changes on cancel", () => {
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
-    unsavedChanges.pending.set(true);
+    unsavedChanges.setUnsavedChanges(component.form(), true);
+    expect(unsavedChanges.pending()).toBe(true);
 
-    closed.next();
+    component.cancel();
 
     expect(unsavedChanges.pending()).toBe(false);
+    expect(dialogRef.close).toHaveBeenCalled();
   });
 
-  it("should restore previous pending state when dialog is closed", () => {
-    fixture.destroy();
-    closed = new Subject<void>();
-    dialogRef.afterClosed.mockReturnValue(closed);
-
+  it("should not discard unsaved changes of other layers on cancel", () => {
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
-    unsavedChanges.pending.set(true);
-    createComponent();
+    const outerViewChanges = {};
+    unsavedChanges.setUnsavedChanges(outerViewChanges, true);
 
-    closed.next();
+    component.cancel();
 
+    // changes of the view underneath this dialog remain untouched
     expect(unsavedChanges.pending()).toBe(true);
   });
 });
