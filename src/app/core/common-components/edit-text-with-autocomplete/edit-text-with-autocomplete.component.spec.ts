@@ -8,6 +8,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
+import { MockDestroyRef } from "../../../utils/mock-destroy-ref";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -40,6 +41,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     const entityForm = await entityFormService.createEntityForm(
       [{ id: "name" }, { id: "other" }, { id: "ref" }, { id: "refMixed" }],
       new TestEntity(),
+      new MockDestroyRef(),
     );
 
     const nameControl = entityForm.formGroup.get("name") as FormControl<string>;
