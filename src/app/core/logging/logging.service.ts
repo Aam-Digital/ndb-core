@@ -308,6 +308,21 @@ export function processSentryEvent(
   return enrichSentryEvent(event, hint);
 }
 
+/**
+ * Count occurrences of an event and check whether it exceeded the session cap.
+ *
+ * The key is deliberately coarse: error class + message of the root cause
+ * (`values[0]` is the deepest `cause` in the chain; the originally thrown,
+ * outermost error is last), without any stack information.
+ * Consequences:
+ * - Same-message errors from different code paths share one budget,
+ *   and all wrappers of a cascading failure are capped via their common
+ *   root cause. This is a flood guard, not a grouping mechanism -
+ *   Sentry's server-side, stack-based grouping remains authoritative
+ *   for separating issues, and the first occurrences always get through.
+ * - Errors that interpolate data (e.g. entity IDs) into their message
+ *   get a separate budget per variant, so the cap is weaker for those.
+ */
 function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
   const exception = event.exception?.values?.[0];
   const key = exception
