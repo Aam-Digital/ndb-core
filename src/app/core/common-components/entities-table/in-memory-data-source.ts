@@ -3,24 +3,19 @@ import { TableRow } from "#src/app/core/common-components/entities-table/table-r
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatTableDataSource } from "@angular/material/table";
 import { DestroyRef, effect, inject, signal } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
-import {
-  SortValueFns,
-  tableSort,
-} from "#src/app/core/common-components/entities-table/table-sort/table-sort";
+import { SortValueFns, tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import {
   EntitySpecialLoaderService,
-  LoaderMethod,
+  LoaderMethod
 } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import {
-  applyUpdate,
-  UpdatedEntity,
-} from "#src/app/core/entity/model/entity-update";
-import { Subscription } from "rxjs";
+import { applyUpdate, UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { skip, Subscription } from "rxjs";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
+import { take } from "rxjs/operators";
 
 export interface LoadRecordConfig<T extends Entity> {
   entityCtr: EntityConstructor<T>;
@@ -46,6 +41,7 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   filteredRecords = signal<T[]>([]);
   displayedData = signal<TableRow<T>[]>([]);
   loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
+  isLoading = signal(true);
 
   // NOTE: overriding only the setter would hide the inherited `get data`,
   // so `dataSource.data` would return `undefined`. Provide both accessors.
@@ -74,6 +70,11 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
 
   constructor() {
     super();
+    // Wait for first change of `allRecords` to show that loading is done
+    toObservable(this.allRecords)
+      .pipe(skip(1), take(1))
+      .subscribe(() => this.isLoading.set(false));
+
     effect(() => {
       this.data = this.filteredRecords().map((record) => ({ record }));
     });

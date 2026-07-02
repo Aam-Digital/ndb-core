@@ -1,10 +1,10 @@
-@if (isLoading()) {
+@if (recordsDataSource().isLoading()) {
   <div class="process-spinner">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 }
 
-<div [hidden]="isLoading()" class="table-container">
+<div [hidden]="recordsDataSource().isLoading()" class="table-container">
   <table
     mat-table
     [dataSource]="recordsDataSource()"

@@ -1,5 +1,4 @@
-<!--TODO add check, whether data is still loading-->
-@if (!hasCurrentlyActiveEntry()) {
+@if (!hasCurrentlyActiveEntry() && !dataSource.isLoading()) {
   <app-pill class="hint-badge">
     Currently there is no active entry. To add a new entry, click on the
     <fa-icon class="color-accent" aria-label="add" icon="plus-circle"></fa-icon>

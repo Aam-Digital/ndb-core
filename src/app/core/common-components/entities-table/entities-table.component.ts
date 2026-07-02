@@ -11,7 +11,6 @@ import {
   OnInit,
   output,
   QueryList,
-  signal,
   ViewChild,
 } from "@angular/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -166,10 +165,6 @@ export class EntitiesTableComponent<T extends Entity>
     const useEntityColor = this.showEntityColor();
     return custom ?? ((rec: T) => (useEntityColor ? rec.getColor() : ""));
   });
-
-  // --- Loading state ---
-  // TODO re-add loading state
-  readonly isLoading = signal(false);
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
