@@ -617,8 +617,8 @@ default <code>false</code>.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="240"
-                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:240</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="304"
+                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:304</a></div>
                         </td>
                     </tr>
 
@@ -842,7 +842,7 @@ import { FilterGeneratorService } from &quot;../filter-generator/filter-generato
 import { TableStateUrlService } from &quot;../../common-components/entities-table/table-state-url.service&quot;;
 import { NgComponentOutlet } from &quot;@angular/common&quot;;
 import { FilterService } from &quot;../filter.service&quot;;
-import { DataFilter, Filter } from &quot;../filters/filters&quot;;
+import { DataFilter, Filter, SelectableFilter } from &quot;../filters/filters&quot;;
 import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
@@ -971,7 +971,7 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; {
     if (this.useUrlQueryParams()) {
       this.tableStateUrl.updateFilterParam(
         filter.name,
-        selectedOptions.toString(),
+        selectedOptions.join(&quot;,&quot;),
         false,
       );
     }
@@ -1013,6 +1013,72 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; {
     return [...(this.filterConfig() ?? []), ...extraConfigs];
   }
 
+  /**
+   * Parse a URL query-param string into the list of selected option values.
+   *
+   * Multiple selected values are joined by &quot;,&quot; in the URL. Legacy option ids
+   * (e.g. configurable-enum ids created before they were normalized) may
+   * themselves contain a comma, which would otherwise be mistaken for the
+   * multi-value separator (see issue #4104). To stay backwards-compatible
+   * without changing the URL format, the raw value is resolved against the
+   * filter&#x27;s known option keys instead of being split blindly.
+   */
+  private parseFilterValue(filter: Filter&lt;T&gt;, raw: string): string[] {
+    const validKeys &#x3D;
+      filter instanceof SelectableFilter
+        ? (filter.options?.map((option) &#x3D;&gt; option.key) ?? [])
+        : [];
+
+    // filters without a known set of option keys (e.g. date range filters):
+    // keep the legacy comma-split behaviour.
+    if (validKeys.length &#x3D;&#x3D;&#x3D; 0) {
+      return raw.split(&quot;,&quot;).filter((value) &#x3D;&gt; value !&#x3D;&#x3D; &quot;&quot;);
+    }
+
+    // Resolve the comma-separated tokens into selected values. A single option
+    // key may itself contain a comma (legacy ids), so tokens are not split
+    // blindly. Find the segmentation that covers the most tokens with valid
+    // option keys (i.e. the fewest unknown fragments), preferring longer keys
+    // on ties. Tokens matching no key are kept as-is so stale/unknown values
+    // from old URLs are preserved. A greedy longest-match would mis-partition
+    // overlapping keys (e.g. keys &quot;A&quot; and &quot;B,C&quot; turning &quot;A,B,C&quot; into
+    // [&quot;A,B&quot;, ...]), so this uses a small dynamic program over token positions.
+    const tokens &#x3D; raw.split(&quot;,&quot;);
+    const n &#x3D; tokens.length;
+    // best[i] &#x3D; optimal parse of tokens[i..n]
+    const best: { unknowns: number; values: string[] }[] &#x3D; new Array(n + 1);
+    best[n] &#x3D; { unknowns: 0, values: [] };
+    for (let i &#x3D; n - 1; i &gt;&#x3D; 0; i--) {
+      // fallback: keep tokens[i] as a single unknown value
+      const rest &#x3D; best[i + 1];
+      let candidate &#x3D; {
+        unknowns: rest.unknowns + 1,
+        values: [tokens[i], ...rest.values],
+      };
+      // prefer runs (longest first) whose join is a valid option key
+      for (let length &#x3D; n - i; length &gt;&#x3D; 1; length--) {
+        const key &#x3D; tokens.slice(i, i + length).join(&quot;,&quot;);
+        if (!validKeys.includes(key)) {
+          continue;
+        }
+        const tail &#x3D; best[i + length];
+        const option &#x3D; {
+          unknowns: tail.unknowns,
+          values: [key, ...tail.values],
+        };
+        if (
+          option.unknowns &lt; candidate.unknowns ||
+          (option.unknowns &#x3D;&#x3D;&#x3D; candidate.unknowns &amp;&amp;
+            option.values.length &lt; candidate.values.length)
+        ) {
+          candidate &#x3D; option;
+        }
+      }
+      best[i] &#x3D; candidate;
+    }
+    return best[0].values.filter((value) &#x3D;&gt; value !&#x3D;&#x3D; &quot;&quot;);
+  }
+
   private loadUrlParams(filterSelections: Filter&lt;T&gt;[]): Filter&lt;T&gt;[] {
     if (!this.useUrlQueryParams()) {
       return filterSelections;
@@ -1026,9 +1092,7 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; {
       let nextValues: string[] | undefined;
 
       if (Object.hasOwn(params, filter.name)) {
-        nextValues &#x3D; params[filter.name]
-          .split(&quot;,&quot;)
-          .filter((value) &#x3D;&gt; value !&#x3D;&#x3D; &quot;&quot;);
+        nextValues &#x3D; this.parseFilterValue(filter, params[filter.name]);
       } else if (
         hasUrlParams &amp;&amp;
         (filter.selectedOptionValues?.length ?? 0) &gt; 0
