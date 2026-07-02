@@ -59,3 +59,34 @@ describe("OrgRunner.checkConnectivity", () => {
     expect(result.failureReason).toBe("network");
   });
 });
+
+describe("OrgRunner.sortByCategory", () => {
+  it("groups orgs by category, sorted alphabetically", () => {
+    const orgs = [
+      { url: "z.example.com", password: "pw", category: "staging" },
+      { url: "a.example.com", password: "pw", category: "prod" },
+      { url: "b.example.com", password: "pw", category: "prod" },
+      { url: "c.example.com", password: "pw", category: "" },
+    ];
+
+    const sorted = OrgRunner.sortByCategory(orgs);
+
+    expect(sorted.map((o) => o.url)).toEqual([
+      "c.example.com",
+      "a.example.com",
+      "b.example.com",
+      "z.example.com",
+    ]);
+  });
+
+  it("does not mutate the input array", () => {
+    const orgs = [
+      { url: "b.example.com", password: "pw", category: "" },
+      { url: "a.example.com", password: "pw", category: "" },
+    ];
+
+    OrgRunner.sortByCategory(orgs);
+
+    expect(orgs.map((o) => o.url)).toEqual(["b.example.com", "a.example.com"]);
+  });
+});

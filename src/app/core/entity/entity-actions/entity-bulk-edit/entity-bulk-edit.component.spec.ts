@@ -114,11 +114,7 @@ describe("EntityBulkEditComponent", () => {
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
-  it("should reset unsaved changes to previous state when dialog closes without save", () => {
-    mockUnsavedChanges.pending.set(true);
-
-    beforeClosed$.next(undefined);
-
-    expect(mockUnsavedChanges.pending()).toBe(false);
-  });
+  // The bulk-edit form's unsaved-changes state is now tracked per-form and cleared
+  // automatically when the dialog's DestroyRef is destroyed (see EntityFormService),
+  // so the component no longer restores a previous global pending state on close.
 });

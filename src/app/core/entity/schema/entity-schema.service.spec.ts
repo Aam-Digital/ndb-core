@@ -30,6 +30,7 @@ import { entityRegistry, EntityRegistry } from "../database-entity.decorator";
 import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
 import { FileService } from "app/features/file/file.service";
 import { of } from "rxjs";
+import { Logging } from "../../logging/logging.service";
 
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;
@@ -124,9 +125,45 @@ describe("EntitySchemaService", () => {
     expect(dataType).toBeInstanceOf(DefaultDatatype);
   });
 
-  it("should throw an error if data type does not exist", () => {
+  it("should fall back to the default datatype/component (not throw) for an unresolvable dataType, warning only once across all call sites", () => {
+    vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    try {
+      class TestEntity extends Entity {
+        @DatabaseField({ dataType: "invalidDataType" })
+        aField: any;
+      }
+
+      expect(service.getDatatypeOrDefault("invalidDataType")).toBeInstanceOf(
+        DefaultDatatype,
+      );
+
+      const schemaField: EntitySchemaField = {
+        id: "aField",
+        dataType: "invalidDataType",
+      };
+      let editComponent: string;
+      expect(
+        () => (editComponent = service.getComponent(schemaField, "edit")),
+      ).not.toThrow();
+      expect(editComponent).toEqual(new DefaultDatatype().editComponent);
+
+      for (let i = 0; i < 3; i++) {
+        const entity = new TestEntity();
+        const data = { _id: entity.getId(), aField: "value" + i };
+        expect(() => service.loadDataIntoEntity(entity, data)).not.toThrow();
+        expect(entity.aField).toEqual("value" + i);
+      }
+
+      // repeated occurrences of the same unresolvable dataType are deduped to a single warning
+      expect(Logging.warn).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
+  it("should throw an error if data type does not exist and failSilently is explicitly false", () => {
     expect(() =>
-      service.getDatatypeOrDefault("invalidDataType"),
+      service.getDatatypeOrDefault("invalidDataType", false),
     ).toThrowError();
   });
 });
