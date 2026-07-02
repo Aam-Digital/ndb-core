@@ -80,7 +80,6 @@ export class RowDetailsComponent implements OnInit {
       data.entity,
       this.destroyRef,
     );
-    this.enableSaveWithoutChangesIfNew(data.entity);
 
     this.fieldGroups = data.columns.map((col) => ({ fields: [col] }));
     this.tempEntity = this.data.entity;
@@ -93,12 +92,5 @@ export class RowDetailsComponent implements OnInit {
       });
     this.viewOnlyColumns = data.viewOnlyColumns;
     this.cdr.markForCheck();
-  }
-
-  private enableSaveWithoutChangesIfNew(entity: Entity) {
-    if (entity.isNew) {
-      // could check here that at least some fields hold a value but the naive heuristic to allow save of all new seems ok
-      this.form.formGroup.markAsDirty();
-    }
   }
 }
