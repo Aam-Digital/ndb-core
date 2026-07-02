@@ -116,7 +116,7 @@
   <li class="breadcrumb-item">Interfaces</li>
   <li class="breadcrumb-item"
   >
-  ExportingReport</li>
+  MigratableReportConfig</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -140,7 +140,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/features/reporting/report-config.ts</code>
+            <code>src/app/features/reporting/report-config-migration.ts</code>
         </p>
 
 
@@ -148,16 +148,11 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Reports handles by the {@class DataTransformationService}</p>
+                <p>A minimal shape of a ReportConfig doc/entity relevant to the definition migration.
+Kept structural (no @angular imports) so this file can be reused by the migration CLI.</p>
 
             </p>
 
-            <p class="comment">
-                <h3>Extends</h3>
-            </p>
-            <p class="comment">
-                            <code><a href="../classes/ReportConfig.html" target="_self" >ReportConfig</a></code>
-            </p>
 
         <section data-compodoc="block-index">
             <h3 id="index">Index</h3>
@@ -173,12 +168,29 @@
                             <ul class="index-list">
                                 <li>
                                             <span class="modifier">Optional</span>
+                                        <a href="#aggregationDefinition" 
+                                                class="deprecated-name"
+                                            >
+                                            aggregationDefinition
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#aggregationDefinitions" 
+                                                class="deprecated-name"
+                                            >
+                                            aggregationDefinitions
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
                                         <a href="#mode" 
 >
                                             mode
                                         </a>
                                 </li>
                                 <li>
+                                            <span class="modifier">Optional</span>
                                         <a href="#reportDefinition" 
 >
                                             reportDefinition
@@ -199,17 +211,22 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="mode"></a>
-                                        <span class="name "><b>mode</b>
-                                            <a href="#mode">
+                                        <a name="aggregationDefinition"></a>
+                                        <span class="name deprecated-name"><b>aggregationDefinition</b>
+                                            <a href="#aggregationDefinition">
                                                 <span class="icon ion-ios-link"></span>
                                             </a>
                                         </span>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td class="col-md-4 deprecated">
+                                        (sql v1) a single SQL query string — consolidated into reportDefinition
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td class="col-md-4">
-                                        <code>mode:     <code>unknown</code>
+                                        <code>aggregationDefinition:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 </code>
                                     </td>
                                 </tr>
@@ -217,7 +234,7 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>    <code>unknown</code>
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                                         </td>
                                     </tr>
@@ -231,12 +248,87 @@
 
 
 
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-description"><p>If no mode is set, it will default to &#39;exporting&#39;</p>
-</div>
-                                </td>
-                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="aggregationDefinitions"></a>
+                                        <span class="name deprecated-name"><b>aggregationDefinitions</b>
+                                            <a href="#aggregationDefinitions">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4 deprecated">
+                                        reporting/exporting definition — consolidated into reportDefinition
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>aggregationDefinitions:     <code>any[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>any[]</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="mode"></a>
+                                        <span class="name "><b>mode</b>
+                                            <a href="#mode">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>mode:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -253,7 +345,7 @@
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>reportDefinition:         <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+                                        <code>reportDefinition:     <code>any[]</code>
 </code>
                                     </td>
                                 </tr>
@@ -261,11 +353,16 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+                                            <i>Type : </i>    <code>any[]</code>
 
                                         </td>
                                     </tr>
 
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
 
 
 
@@ -277,178 +374,59 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity, EntityConstructor } from &quot;../../core/entity/model/entity&quot;;
-import { DatabaseEntity } from &quot;../../core/entity/database-entity.decorator&quot;;
-import { Aggregation } from &quot;./data-aggregation.service&quot;;
-import { ExportColumnConfig } from &quot;../../core/export/data-transformation-service/export-column-config&quot;;
-import { DatabaseField } from &quot;../../core/entity/database-field.decorator&quot;;
-
-/**
- * A report can be accessed by users to generate aggregated statistics or customized exports calculated from available data.
- * &quot;read&quot; permission for a ReportConfig entity is also used to control which users can generate the report&#x27;s results.
- *
- * This is the class which is saved to the database.
- * However, when using this in code, use the {@link ReportEntity} instead which provides better type safety.
- */
-@DatabaseEntity(&quot;ReportConfig&quot;)
-class ReportConfig extends Entity {
-  static override isInternalEntity &#x3D; true;
-
-  /** human-readable title of the report */
-  @DatabaseField() title: string;
-
-  /**
-   * (optional) mode of export.
-   * The {@link ReportEntity} holds the restriction on valid report modes.
-   * Default is &quot;reporting&quot;
-   */
-  @DatabaseField() mode?: string;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Omitted for canonical configs (backend normalizes legacy v1 docs on read).
-   */
-  @DatabaseField() version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) list of arguments needed for the sql query. Placeholder &quot;?&quot; will be replaced.
-   */
-  @DatabaseField() neededArgs?: string[] &#x3D; [];
-
-  /**
-   * @deprecated Consolidated into {@link reportDefinition} by the one-time CLI migration
-   * (consolidate-report-definition), which copies this into &#x60;reportDefinition&#x60; without deleting
-   * it. Kept during the coexistence period so legacy docs still load and old code keeps working;
-   * a follow-up migration removes it once every environment runs the new code.
-   */
-  @DatabaseField() aggregationDefinitions?: any[];
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) the definition to calculate the report
-   */
-  @DatabaseField() aggregationDefinition?: string;
-
-  /**
-   *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
-   *  example: {startDate: [&quot;SQL_FROM_DATE&quot;], endDate: [&quot;SQL_TO_DATE&quot;]}
-   */
-  @DatabaseField() transformations: {
-    [key: string]: string[];
-  };
-
-  /**
-   * The single definition of what the report calculates. Its shape depends on {@link mode}:
-   * - &quot;sql&quot;:       {@link ReportDefinitionDto}[] — SQL queries and optional groups.
-   * - &quot;reporting&quot;: {@link Aggregation}[] — in-browser aggregation definitions.
-   * - &quot;exporting&quot;: {@link ExportColumnConfig}[] — export column definitions.
-   *
-   * Consolidated from the former &#x60;aggregationDefinitions&#x60; so all report modes share one field.
-   */
-  @DatabaseField()
-  reportDefinition:
-    ReportDefinitionDto[] | Aggregation[] | ExportColumnConfig[];
-}
-
-export interface ReportDefinitionDto {
-  /** an SQL query */
-  query?: string;
-
-  /** title (human-readable) for a set of hierarchically grouped sub-items */
-  groupTitle?: String;
-
-  /** hierarchical child items, building a recursive set of report groups display in an indented way */
-  items?: ReportDefinitionDto[];
-}
-
-/**
- * Union type to enable type safety for report configs.
- * Use this instead of the {@class ReportConfig}
- */
-export type ReportEntity &#x3D; AggregationReport | ExportingReport | SqlReport;
-/**
- * This allows the &#x60;ReportEntity&#x60; to also be used as a constructor or in the &#x60;EntityMapper&#x60;
- */
-export const ReportEntity &#x3D; ReportConfig as EntityConstructor&lt;ReportEntity&gt;;
-
-/**
- * Reports handles by the {@class DataAggregationService}
- */
-export interface AggregationReport extends ReportConfig {
-  mode: &quot;reporting&quot;;
-  reportDefinition: Aggregation[];
-}
-
-/**
- * Reports handles by the {@class DataTransformationService}
- */
-export interface ExportingReport extends ReportConfig {
-  /**
-   * If no mode is set, it will default to &#x27;exporting&#x27;
-   */
-  mode?: &quot;exporting&quot;;
-  reportDefinition: ExportColumnConfig[];
-}
-
-/**
- * Reports handles by the {@class SqlReportService}
- */
-export interface SqlReport extends ReportConfig {
-  mode: &quot;sql&quot;;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Legacy version field. Omitted in canonical configs; backend normalizes on read.
-   */
-  version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) a valid SQL SELECT statement, can contain &quot;?&quot; or &quot;$name&quot; placeholders
-   */
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface MigratableReportConfig {
+  mode?: string;
+  /** @deprecated reporting/exporting definition — consolidated into reportDefinition */
+  aggregationDefinitions?: any[];
+  /** @deprecated (sql v1) a single SQL query string — consolidated into reportDefinition */
   aggregationDefinition?: string;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) list of argument names passed into the sql statement
-   */
-  neededArgs?: string[];
-
-  /**
-   * see ReportConfig docs
-   */
-  transformations: {
-    [key: string]: string[];
-  };
-
-  /**
-   *  see ReportConfig docs
-   */
-  reportDefinition: ReportDefinitionDto[];
+  reportDefinition?: any[];
 }
 
 /**
- * Whether a report&#x27;s results should be rendered as a hierarchical group/count
- * table (&#x60;sql-v2-table&#x60;) rather than a flat tabular table (&#x60;object-table&#x60;).
+ * Consolidate a ReportConfig&#x27;s legacy definition fields into the unified &#x60;reportDefinition&#x60;,
+ * so all report modes share a single definition property.
  *
- * Derived purely from the canonical config structure (no version flag):
- * a report is hierarchical when its &#x60;reportDefinition&#x60; contains a group
- * (&#x60;groupTitle&#x60;) or more than one top-level item; otherwise it is tabular.
- * Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.
+ * Mode-aware, because the canonical definition differs per mode:
+ * - &quot;reporting&quot;/&quot;exporting&quot; (and unset, which defaults to reporting): the definition lives in
+ *   &#x60;aggregationDefinitions&#x60;; any &#x60;reportDefinition&#x60; present is stale (e.g. left over from a mode
+ *   switch in the old two-field form) → overwrite it with &#x60;aggregationDefinitions&#x60;.
+ * - &quot;sql&quot;: &#x60;reportDefinition&#x60; (v2) is canonical when present; a legacy v1 &#x60;aggregationDefinition&#x60;
+ *   (a single SQL query string) is folded into &#x60;reportDefinition&#x60; as &#x60;[{ query }]&#x60;.
+ *
+ * **Non-destructive:** the legacy fields are intentionally kept, so this migration is safe to run
+ * before the code that reads &#x60;reportDefinition&#x60; is deployed (both coexist; old code keeps reading
+ * the old fields). A follow-up migration removes the legacy fields once every environment runs the
+ * new code. Idempotent and safe to re-run.
  */
-export function isHierarchicalReport(
-  report: ReportEntity | undefined,
-): boolean {
-  const reportDefinition &#x3D; report?.reportDefinition as
-    ReportDefinitionDto[] | undefined;
-  if (!reportDefinition?.length) {
-    return false;
+export function migrateReportConfig&lt;T extends MigratableReportConfig&gt;(
+  report: T,
+): T {
+  if (!report || typeof report !&#x3D;&#x3D; &quot;object&quot;) {
+    return report;
   }
-  return (
-    reportDefinition.length &gt; 1 ||
-    reportDefinition.some((item) &#x3D;&gt; !!item.groupTitle)
-  );
+
+  const hasReportDefinition &#x3D;
+    Array.isArray(report.reportDefinition) &amp;&amp;
+    report.reportDefinition.length &gt; 0;
+
+  if (report.mode &#x3D;&#x3D;&#x3D; &quot;sql&quot;) {
+    // v1 sql: a single query string → a one-item reportDefinition
+    if (
+      !hasReportDefinition &amp;&amp;
+      typeof report.aggregationDefinition &#x3D;&#x3D;&#x3D; &quot;string&quot;
+    ) {
+      report.reportDefinition &#x3D; [{ query: report.aggregationDefinition }];
+    }
+  } else {
+    // reporting/exporting/unset: aggregationDefinitions is the real definition
+    const legacy &#x3D; report.aggregationDefinitions;
+    if (Array.isArray(legacy) &amp;&amp; legacy.length &gt; 0) {
+      report.reportDefinition &#x3D; legacy;
+    }
+  }
+
+  return report;
 }
 </code></pre>
     </div>
@@ -487,7 +465,7 @@ export function isHierarchicalReport(
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'ExportingReport.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'MigratableReportConfig.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

@@ -538,6 +538,9 @@
                             <a href="#migratePublicFormConfig" title="src/app/features/public-form/public-form.component.ts" ><b>migratePublicFormConfig</b>&nbsp;&nbsp;&nbsp;(src/.../public-form.component.ts)</a>
                         </li>
                         <li>
+                            <a href="#migrateReportConfig" title="src/app/features/reporting/report-config-migration.ts" ><b>migrateReportConfig</b>&nbsp;&nbsp;&nbsp;(src/.../report-config-migration.ts)</a>
+                        </li>
+                        <li>
                             <a href="#migrateShortcutItem" title="src/app/core/config/config.service.ts" ><b>migrateShortcutItem</b>&nbsp;&nbsp;&nbsp;(src/.../config.service.ts)</a>
                         </li>
                         <li>
@@ -11638,6 +11641,84 @@ including keycloak-specific transient failures.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../classes/PublicFormConfig.html" target="_self" >PublicFormConfig</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/reporting/report-config-migration.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="migrateReportConfig"></a>
+                    <span class="name">
+                        <span ><b>migrateReportConfig</b></span>
+                        <a href="#migrateReportConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>migrateReportConfig(report: T)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Consolidate a ReportConfig&#39;s legacy definition fields into the unified <code>reportDefinition</code>,
+so all report modes share a single definition property.</p>
+<p>Mode-aware, because the canonical definition differs per mode:</p>
+<ul>
+<li>&quot;reporting&quot;/&quot;exporting&quot; (and unset, which defaults to reporting): the definition lives in
+<code>aggregationDefinitions</code>; any <code>reportDefinition</code> present is stale (e.g. left over from a mode
+switch in the old two-field form) → overwrite it with <code>aggregationDefinitions</code>.</li>
+<li>&quot;sql&quot;: <code>reportDefinition</code> (v2) is canonical when present; a legacy v1 <code>aggregationDefinition</code>
+(a single SQL query string) is folded into <code>reportDefinition</code> as <code>[{ query }]</code>.</li>
+</ul>
+<p><strong>Non-destructive:</strong> the legacy fields are intentionally kept, so this migration is safe to run
+before the code that reads <code>reportDefinition</code> is deployed (both coexist; old code keeps reading
+the old fields). A follow-up migration removes the legacy fields once every environment runs the
+new code. Idempotent and safe to re-run.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>report</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>T</code>
 
                         </div>
                             <div class="io-description">
