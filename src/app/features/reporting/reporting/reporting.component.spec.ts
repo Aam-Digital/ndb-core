@@ -28,6 +28,7 @@ import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.s
 import { Angulartics2Module } from "angulartics2";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import type { Mock } from "vitest";
+import moment from "moment";
 
 type ReportingServiceMock = {
   calculateReport: Mock;
@@ -323,6 +324,7 @@ describe("ReportingComponent", () => {
       new Date("2023-01-01"),
       new Date("2023-01-01"),
     );
+    await component["refreshTask"];
 
     // Then
     expect(mockSqlReportService.query).toHaveBeenCalledWith(
@@ -354,6 +356,7 @@ describe("ReportingComponent", () => {
       new Date("2023-01-01"),
       new Date("2023-01-01"),
     );
+    await component["refreshTask"];
 
     // Then
     expect(mockSqlReportService.query).toHaveBeenCalledWith(
@@ -425,5 +428,53 @@ describe("ReportingComponent", () => {
     expect(mockSqlReportService.flattenData).toHaveBeenCalledWith(mockData);
     expect(mockSqlReportService.getCsvforV2).toHaveBeenCalledWith(flattened);
     expect(result).toBe("csv-output");
+  });
+
+  it("auto-refreshes in the background when the shown SQL calculation is stale", async () => {
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
+    const staleEndDate = moment
+      .utc()
+      .subtract(5, "minutes")
+      .format("YYYY-MM-DDTHH:mm:ss.SSS");
+    const freshEndDate = moment
+      .utc()
+      .subtract(2, "seconds")
+      .format("YYYY-MM-DDTHH:mm:ss.SSS");
+
+    mockSqlReportService.query.mockResolvedValue(validReportDataResponse);
+    mockSqlReportService.fetchReportCalculation
+      .mockReturnValueOnce(
+        of({ ...validReportCalculation, endDate: staleEndDate }),
+      )
+      .mockReturnValueOnce(
+        of({ ...validReportCalculation, id: "fresh", endDate: freshEndDate }),
+      );
+
+    await component.calculateResults(
+      report,
+      new Date("2023-01-01"),
+      new Date("2023-01-01"),
+    );
+    await component["refreshTask"];
+
+    expect(mockSqlReportService.query).toHaveBeenCalledTimes(2);
+    expect(mockSqlReportService.query).toHaveBeenNthCalledWith(
+      1,
+      report,
+      expect.any(Date),
+      expect.any(Date),
+      false,
+    );
+    expect(mockSqlReportService.query).toHaveBeenNthCalledWith(
+      2,
+      report,
+      expect.any(Date),
+      expect.any(Date),
+      true,
+    );
+    expect(component.reportCalculation()?.id).toBe("fresh");
+    expect(component.isStale()).toBe(false);
+    expect(component.isRefreshing()).toBe(false);
   });
 });
