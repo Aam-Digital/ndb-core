@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   inject,
   OnInit,
   ChangeDetectionStrategy,
@@ -63,6 +64,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   private ability = inject(EntityAbility);
   private router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   formConfig = signal<PublicFormConfig | undefined>(undefined);
   entityFormEntries = signal<
@@ -283,6 +285,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       entry.form = await this.entityFormService.createEntityForm(
         [].concat(...entry.fieldGroups.map((group) => group.fields)),
         entry.entity,
+        this.destroyRef,
       );
 
       entry.form.formGroup.valueChanges

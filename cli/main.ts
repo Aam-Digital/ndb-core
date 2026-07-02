@@ -238,7 +238,8 @@ program
     const opts = { ...program.opts(), ...cmdOpts };
     const credentials = loadCredentials(opts);
     if (!credentials) return process.exit(2);
-    const { orgs, keycloak } = credentials;
+    const orgs = OrgRunner.sortByCategory(credentials.orgs);
+    const { keycloak } = credentials;
 
     let token: string;
     try {
@@ -261,11 +262,7 @@ program
           org.url.includes("://") ? org.url : `https://${org.url}`,
         );
         const realm = parsedUrl.hostname.split(".")[0];
-        users = await getUsersFromKeycloak(
-          realm,
-          token,
-          keycloak,
-        );
+        users = await getUsersFromKeycloak(realm, token, keycloak);
       } catch {
         console.warn("Couldn't get users from Keycloak for", org.url);
         usersError = true;

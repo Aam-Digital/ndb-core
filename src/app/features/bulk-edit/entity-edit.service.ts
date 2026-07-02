@@ -1,7 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { CascadingEntityAction } from "#src/app/core/entity/entity-actions/cascading-entity-action";
-import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 import { lastValueFrom } from "rxjs";
 import {
   BulkEditAction,
@@ -21,7 +20,6 @@ import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/b
 export class EntityEditService extends CascadingEntityAction {
   private readonly matDialog = inject(MatDialog);
   private readonly entityActionsService = inject(EntityActionsService);
-  private readonly unsavedChanges = inject(UnsavedChangesService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
 
   /**
@@ -84,7 +82,6 @@ export class EntityEditService extends CascadingEntityAction {
       // Use bulk save for performance - progress tracking happens in bulk-operation-state service
       await this.entityMapper.saveAll(newEntities);
 
-      this.unsavedChanges.pending.set(false);
       return {
         success: true,
         originalEntities,
