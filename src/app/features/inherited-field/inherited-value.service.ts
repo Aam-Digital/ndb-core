@@ -346,11 +346,21 @@ export class InheritedValueService extends DefaultValueStrategy {
         entityId,
       );
     } catch (error) {
-      Logging.warn(
-        "InheritedValueService could not load source entity for inherited field",
-        { entityId },
-        error,
-      );
+      const status = error?.["status"] ?? error?.["statusCode"];
+      if (status === 401 || status === 403) {
+        // the user simply has no read access to the linked entity - expected for some roles
+        Logging.debug(
+          "InheritedValueService could not load source entity for inherited field (no permission)",
+          { entityId },
+          error,
+        );
+      } else {
+        Logging.warn(
+          "InheritedValueService could not load source entity for inherited field",
+          { entityId },
+          error,
+        );
+      }
       return undefined;
     }
   }

@@ -247,7 +247,8 @@ export class EntityMapperService {
       return;
     }
     if (!this.ability.initialized) {
-      Logging.warn(
+      // known race during app startup; the server still enforces permissions
+      Logging.debug(
         "Permission check skipped: ability not yet initialized",
         entity.getId(),
       );
