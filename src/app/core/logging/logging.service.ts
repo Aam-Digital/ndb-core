@@ -295,17 +295,47 @@ export const MAX_REPEATED_SENTRY_EVENTS = 5;
 const sentryEventCounts = new Map<string, number>();
 
 /**
- * Sentry `beforeSend` hook: drops excessive repeats of an identical event
+ * Error message fragments produced by browsers (and our fetch wrapper)
+ * when a request fails at the network layer.
+ */
+const NETWORK_ERROR_PATTERNS = [
+  "Failed to fetch", // Chrome (also matches DatabaseException "Failed to fetch from DB")
+  "NetworkError when attempting to fetch resource", // Firefox
+  "Load failed", // Safari
+];
+
+/**
+ * Sentry `beforeSend` hook: drops network failures of offline devices
+ * and excessive repeats of an identical event,
  * and enriches the remaining events with structured extra data.
  */
 export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isExcessiveRepeat(event)) {
+  if (isOfflineNetworkError(event) || isExcessiveRepeat(event)) {
     return null;
   }
   return enrichSentryEvent(event, hint);
+}
+
+/**
+ * Whether the event is a network-layer fetch failure that occurred while the
+ * device was offline. In an offline-first app this is a normal state without
+ * diagnostic value (server outages still surface through online users).
+ */
+function isOfflineNetworkError(event: Sentry.ErrorEvent): boolean {
+  if (navigator.onLine) {
+    return false;
+  }
+
+  const messages = [
+    event.message,
+    ...(event.exception?.values?.map((v) => v.value) ?? []),
+  ];
+  return messages.some(
+    (msg) => msg && NETWORK_ERROR_PATTERNS.some((p) => msg.includes(p)),
+  );
 }
 
 function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
