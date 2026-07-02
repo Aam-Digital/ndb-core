@@ -40,7 +40,7 @@ export class LoggingService {
       release: "ndb-core@" + environment.appVersion,
       transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
-      beforeSend: enrichSentryEvent,
+      beforeSend: processSentryEvent,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -285,7 +285,42 @@ interface SentryBreadcrumbHint {
 export const Logging = new LoggingService();
 
 /**
- * Sentry `beforeSend` hook that enriches events with structured extra data
+ * Maximum number of times an identical event is sent to remote logging
+ * within one app session (page load).
+ * Guards against error loops (e.g. an error thrown on every change detection
+ * cycle) flooding remote monitoring with thousands of duplicate events.
+ */
+export const MAX_REPEATED_SENTRY_EVENTS = 5;
+
+const sentryEventCounts = new Map<string, number>();
+
+/**
+ * Sentry `beforeSend` hook: drops excessive repeats of an identical event
+ * and enriches the remaining events with structured extra data.
+ */
+export function processSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent | null {
+  if (isExcessiveRepeat(event)) {
+    return null;
+  }
+  return enrichSentryEvent(event, hint);
+}
+
+function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
+  const exception = event.exception?.values?.[0];
+  const key = exception
+    ? `${exception.type}: ${exception.value}`
+    : String(event.message ?? "unknown");
+
+  const count = (sentryEventCounts.get(key) ?? 0) + 1;
+  sentryEventCounts.set(key, count);
+  return count > MAX_REPEATED_SENTRY_EVENTS;
+}
+
+/**
+ * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
  */
 function enrichSentryEvent(
