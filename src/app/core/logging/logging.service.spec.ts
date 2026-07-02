@@ -120,5 +120,41 @@ describe("LoggingService", () => {
       }
       expect(processSentryEvent(messageEvent(), {})).toBeNull();
     });
+
+    describe("offline network errors", () => {
+      afterEach(() => vi.unstubAllGlobals());
+
+      const networkErrorEvent = () =>
+        ({
+          exception: {
+            values: [
+              { type: "DatabaseException", value: "Failed to fetch from DB" },
+            ],
+          },
+        }) as any;
+
+      it("should drop network fetch failures while offline", () => {
+        vi.stubGlobal("navigator", { onLine: false });
+
+        expect(processSentryEvent(networkErrorEvent(), {})).toBeNull();
+      });
+
+      it("should keep network fetch failures while online", () => {
+        vi.stubGlobal("navigator", { onLine: true });
+
+        expect(processSentryEvent(networkErrorEvent(), {})).not.toBeNull();
+      });
+
+      it("should keep non-network errors while offline", () => {
+        vi.stubGlobal("navigator", { onLine: false });
+
+        const otherEvent = {
+          exception: {
+            values: [{ type: "Error", value: "some application bug" }],
+          },
+        } as any;
+        expect(processSentryEvent(otherEvent, {})).not.toBeNull();
+      });
+    });
   });
 });
