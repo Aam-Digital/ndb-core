@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
@@ -35,7 +34,7 @@ describe("TodosRelatedToEntityComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load data from index when having a single relation", waitForAsync(async () => {
+  it("should load data from index when having a single relation", async () => {
     const child = createEntityOfType("Child");
     const relatedTodo = new Todo();
     relatedTodo.relatedEntities = [child.getId(), new TestEntity().getId()];
@@ -53,15 +52,15 @@ describe("TodosRelatedToEntityComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.componentRef.setInput("filter", undefined);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve));
 
     expect(indexSpy).toHaveBeenCalled();
     expect(component.filterObj()).toEqual({
       relatedEntities: { $elemMatch: { $eq: child.getId() } },
       isActive: true,
     });
-    expect(component.data()).toEqual([relatedTodo]);
-  }));
+    expect(component.dataSource.allRecords()).toEqual([relatedTodo]);
+  });
 
   it("should load data with entity mapper when having multiple relations", waitForAsync(async () => {
     const relatedEntitiesSchema = Todo.schema.get("relatedEntities");
@@ -89,11 +88,10 @@ describe("TodosRelatedToEntityComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.componentRef.setInput("filter", undefined);
     fixture.detectChanges();
-    TestBed.flushEffects();
-    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve));
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expectArrayWithExactContents(component.data(), [
+    expectArrayWithExactContents(component.dataSource.allRecords(), [
       relatedTodo,
       relatedTodo2,
       unrelatedTodo,

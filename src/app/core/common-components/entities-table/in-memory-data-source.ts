@@ -45,6 +45,12 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   displayedData = signal<TableRow<T>[]>([]);
   loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
 
+  // NOTE: overriding only the setter would hide the inherited `get data`,
+  // so `dataSource.data` would return `undefined`. Provide both accessors.
+  override get data(): TableRow<T>[] {
+    return super.data;
+  }
+
   override set data(data: TableRow<T>[]) {
     // expose signal containing current data
     this.displayedData.set(data);
@@ -67,13 +73,13 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   constructor() {
     super();
     effect(() => {
-      super.data = this.filteredRecords().map((record) => ({ record }));
+      this.data = this.filteredRecords().map((record) => ({ record }));
     });
     effect(() => {
-      const predicate = this.filterService.getFilterPredicate(
-        this.dataFilter(),
-      );
-      this.filteredRecords.set(this.allRecords().filter(predicate));
+      const records = this.allRecords();
+      const filter = this.dataFilter();
+      const predicate = this.filterService.getFilterPredicate(filter);
+      this.filteredRecords.set(records.filter(predicate));
     });
     effect(() => {
       if (this.loadRecordConfig()) {

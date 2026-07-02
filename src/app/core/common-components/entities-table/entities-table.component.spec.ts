@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { EntitiesTableComponent } from "./entities-table.component";
 import { Entity } from "../../entity/model/entity";
-
 import { Note } from "../../../child-dev-project/notes/model/note";
 import moment from "moment/moment";
 import { genders } from "../../../child-dev-project/children/model/genders";
@@ -16,8 +14,10 @@ import { of } from "rxjs";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
-import { Router, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -40,6 +40,8 @@ describe("EntitiesTableComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
+        { provide: EntitySpecialLoaderService, useValue: undefined },
+        InMemoryDataSource,
         { provide: EntityFormService, useValue: mockFormService },
         FilterService,
         {
@@ -75,6 +77,10 @@ describe("EntitiesTableComponent", () => {
     fixture = TestBed.createComponent(EntitiesTableComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput("editable", false);
+    fixture.componentRef.setInput(
+      "recordsDataSource",
+      TestBed.inject(InMemoryDataSource),
+    );
     fixture.detectChanges();
   });
 
@@ -92,11 +98,11 @@ describe("EntitiesTableComponent", () => {
 
     const oldNote = Note.create(moment().subtract(1, "day").toDate());
     const newNote = Note.create(new Date());
-    fixture.componentRef.setInput("records", [oldNote, newNote]);
+    component.recordsDataSource().allRecords.set([oldNote, newNote]);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.sort.direction).toBe("desc");
-    expect(component.recordsDataSource.sort.active).toBe("date");
+    expect(component.recordsDataSource().sort.direction).toBe("desc");
+    expect(component.recordsDataSource().sort.active).toBe("date");
   });
 
   it("should use input defaultSort if defined", () => {
@@ -106,15 +112,15 @@ describe("EntitiesTableComponent", () => {
     const n2 = Note.create(new Date(), "2");
     const n3 = Note.create(new Date(), "3");
 
-    fixture.componentRef.setInput("records", [n3, n1, n2]);
+    component.recordsDataSource().allRecords.set([n3, n1, n2]);
     fixture.componentRef.setInput("sortBy", {
       active: "subject",
       direction: "asc",
     });
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.sort.direction).toBe("asc");
-    expect(component.recordsDataSource.sort.active).toBe("subject");
+    expect(component.recordsDataSource().sort.direction).toBe("asc");
+    expect(component.recordsDataSource().sort.active).toBe("subject");
   });
 
   it("should skip non-sortable columns when inferring default sort", () => {
@@ -123,11 +129,11 @@ describe("EntitiesTableComponent", () => {
 
     const n1 = Note.create(new Date(), "B");
     const n2 = Note.create(new Date(), "A");
-    fixture.componentRef.setInput("records", [n1, n2]);
+    component.recordsDataSource().allRecords.set([n1, n2]);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.sort.active).toBe("subject");
-    expect(component.recordsDataSource.sort.direction).toBe("asc");
+    expect(component.recordsDataSource().sort.active).toBe("subject");
+    expect(component.recordsDataSource().sort.direction).toBe("asc");
   });
 
   it("should sort non-standard objects", () => {
@@ -142,15 +148,16 @@ describe("EntitiesTableComponent", () => {
     notes[2].category = { id: "2", label: "Z", _ordinal: 0 };
     notes[3].category = { id: "1", label: "AB", _ordinal: 2 };
     fixture.componentRef.setInput("entityType", Note);
-    fixture.componentRef.setInput("records", notes);
+    component.recordsDataSource().allRecords.set(notes);
     fixture.componentRef.setInput("sortBy", {
       active: "category",
       direction: "asc",
     });
     fixture.detectChanges();
 
-    const sortedIds = component.recordsDataSource
-      ._orderData(component.recordsDataSource.data)
+    const sortedIds = component
+      .recordsDataSource()
+      ._orderData(component.recordsDataSource().data)
       .map((note) => note.record.getId(true));
     expect(sortedIds).toEqual(["note-2", "note-1", "note-3", "note-0"]);
   });
@@ -173,15 +180,16 @@ describe("EntitiesTableComponent", () => {
       },
     ]);
     fixture.componentRef.setInput("columnsToDisplay", ["years"]);
-    fixture.componentRef.setInput("records", [oldest, youngest]);
+    component.recordsDataSource().allRecords.set([oldest, youngest]);
     fixture.componentRef.setInput("sortBy", {
       active: "years",
       direction: "asc",
     });
     fixture.detectChanges();
 
-    const sortedNames = component.recordsDataSource
-      ._orderData(component.recordsDataSource.data)
+    const sortedNames = component
+      .recordsDataSource()
+      ._orderData(component.recordsDataSource().data)
       .map((row) => row.record["name"]);
     expect(sortedNames).toEqual(["youngest", "oldest"]);
   });
@@ -204,11 +212,11 @@ describe("EntitiesTableComponent", () => {
     const c3 = TestEntity.create("Matching");
     c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
 
-    fixture.componentRef.setInput("records", [c1, c2, c3]);
+    component.recordsDataSource().allRecords.set([c1, c2, c3]);
     fixture.componentRef.setInput("filter", { name: "Matching" });
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.data).toEqual([
+    expect(component.recordsDataSource().data).toEqual([
       { record: c1 },
       { record: c3 },
     ]);
@@ -219,16 +227,16 @@ describe("EntitiesTableComponent", () => {
     });
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.data).toEqual([{ record: c3 }]);
+    expect(component.recordsDataSource().data).toEqual([{ record: c3 }]);
 
     const c4 = TestEntity.create("Matching");
     c4.dateOfBirth = new DateWithAge(moment().subtract(4, "years").toDate());
     const c5 = TestEntity.create("Not Matching");
 
-    fixture.componentRef.setInput("records", [c1, c2, c3, c4, c5]);
+    component.recordsDataSource().allRecords.set([c1, c2, c3, c4, c5]);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.data).toEqual([
+    expect(component.recordsDataSource().data).toEqual([
       { record: c3 },
       { record: c4 },
     ]);
@@ -237,19 +245,19 @@ describe("EntitiesTableComponent", () => {
   it("should remove an entity if it does not pass the filter anymore", async () => {
     const child = new TestEntity();
     child.category = genders[1];
-    fixture.componentRef.setInput("records", [child]);
+    component.recordsDataSource().allRecords.set([child]);
     fixture.componentRef.setInput("filter", {
       "category.id": genders[1].id,
     } as any);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.data).toEqual([{ record: child }]);
+    expect(component.recordsDataSource().data).toEqual([{ record: child }]);
 
     child.category = genders[2];
-    fixture.componentRef.setInput("records", [child]); // parent component has to update the records Input array
+    component.recordsDataSource().allRecords.set([child]); // parent component has to update the records Input array
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.data).toEqual([]);
+    expect(component.recordsDataSource().data).toEqual([]);
   });
 
   it("should only show active relations by default", async () => {
@@ -258,10 +266,10 @@ describe("EntitiesTableComponent", () => {
     const inactive = new Entity();
     inactive.inactive = true;
 
-    fixture.componentRef.setInput("records", [active1, inactive]);
+    component.recordsDataSource().allRecords.set([active1, inactive]);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource.data).toEqual([{ record: active1 }]);
+    expect(component.recordsDataSource().data).toEqual([{ record: active1 }]);
   });
 
   it("should overwrite entity schema fields with customColumn config", async () => {
