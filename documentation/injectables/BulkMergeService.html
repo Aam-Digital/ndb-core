@@ -205,8 +205,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -277,8 +277,8 @@ Returns true if merge was executed, false otherwise.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="105"
-                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:105</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -440,8 +440,8 @@ If false, the account remains and may become orphaned.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="56"
-                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:56</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/app/features/de-duplication/bulk-merge-service.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -531,7 +531,6 @@ import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import { catchError, lastValueFrom, of } from &quot;rxjs&quot;;
 import { BulkMergeRecordsComponent } from &quot;app/features/de-duplication/bulk-merge-records/bulk-merge-records.component&quot;;
 import { AlertService } from &quot;app/core/alerts/alert.service&quot;;
-import { UnsavedChangesService } from &quot;app/core/entity-details/form/unsaved-changes.service&quot;;
 import { ConfirmationDialogService } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { OkButton } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
 import { AttendanceItem } from &quot;../attendance/model/attendance-item&quot;;
@@ -550,7 +549,6 @@ export class BulkMergeService {
   private readonly entityRelationshipService &#x3D; inject(EntityRelationsService);
   private readonly matDialog &#x3D; inject(MatDialog);
   private readonly alert &#x3D; inject(AlertService);
-  private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
   private readonly userAdminService &#x3D; inject(UserAdminService);
 
@@ -611,7 +609,8 @@ export class BulkMergeService {
       dialogResult.deleteSecondaryAccount,
       dialogResult.accountUpdate,
     );
-    this.unsavedChangesService.pending.set(false);
+    // the merge dialog&#x27;s form is already destroyed (and thus its unsaved-changes state cleared)
+    // by the time we reach here, since we awaited its &#x60;afterClosed()&#x60; above.
     this.alert.addInfo($localize&#x60;Records merged successfully.&#x60;);
     return true;
   }

@@ -215,8 +215,8 @@ It finds dependent entities and updates their fields based on changes in the sou
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -310,8 +310,8 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="279"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:279</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="277"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:277</a></div>
                         </td>
                     </tr>
 
@@ -403,8 +403,8 @@ Transforms to database format for consistent handling of all datatypes.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="314"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:314</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="312"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:312</a></div>
                         </td>
                     </tr>
 
@@ -522,7 +522,6 @@ import {
   AutomatedFieldUpdateComponent,
 } from &quot;./automated-field-update.component&quot;;
 import { lastValueFrom } from &quot;rxjs&quot;;
-import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
 import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
@@ -545,7 +544,6 @@ export class AutomatedFieldUpdateConfigService {
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly dialog &#x3D; inject(MatDialog);
-  private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
 
   /**
@@ -930,7 +928,6 @@ export class AutomatedFieldUpdateConfigService {
     });
 
     await Promise.all(savePromises);
-    this.unsavedChangesService.pending.set(false);
   }
 
   /**

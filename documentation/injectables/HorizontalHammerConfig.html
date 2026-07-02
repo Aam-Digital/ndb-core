@@ -211,7 +211,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -228,6 +228,7 @@
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   Injectable,
@@ -411,6 +412,11 @@ export class RollCallComponent {
   );
 
   constructor() {
+    // clear this component&#x27;s unsaved-changes state when it is destroyed
+    inject(DestroyRef).onDestroy(() &#x3D;&gt;
+      this.unsavedChanges.setUnsavedChanges(this, false),
+    );
+
     // Initialize participants when event is loaded/resolved
     effect(() &#x3D;&gt; {
       const event &#x3D; this.event();
@@ -589,7 +595,7 @@ export class RollCallComponent {
       attendance.status &#x3D; status;
     }
     this.isDirty.set(true);
-    this.unsavedChanges.pending.set(true);
+    this.unsavedChanges.setUnsavedChanges(this, true);
 
     this.goToParticipantWithIndex(this.currentIndex() + 1);
   }
@@ -628,7 +634,7 @@ export class RollCallComponent {
             text: $localize&#x60;:Discard changes made to a form:Discard&#x60;,
             click: (): boolean &#x3D;&gt; {
               this.isDirty.set(false);
-              this.unsavedChanges.pending.set(false);
+              this.unsavedChanges.setUnsavedChanges(this, false);
               this.location.back();
               return false;
             },
@@ -647,7 +653,7 @@ export class RollCallComponent {
       try {
         await this.entityMapper.save(entity);
         this.isDirty.set(false);
-        this.unsavedChanges.pending.set(false);
+        this.unsavedChanges.setUnsavedChanges(this, false);
       } catch (e) {
         Logging.warn(&quot;Could not save attendance event&quot;, e);
         this.confirmationDialog.getConfirmation(

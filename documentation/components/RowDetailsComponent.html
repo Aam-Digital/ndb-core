@@ -297,7 +297,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:59</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -323,7 +323,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:64</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -349,7 +349,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:63</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -375,7 +375,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -401,7 +401,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:66</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/form-dialog/row-details/row-details.component.ts:68</a></div>
                         </td>
                     </tr>
 
@@ -419,6 +419,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   inject,
   OnInit,
 } from &quot;@angular/core&quot;;
@@ -475,6 +476,7 @@ export class RowDetailsComponent implements OnInit {
   data &#x3D; inject&lt;DetailsComponentData&gt;(MAT_DIALOG_DATA);
   private formService &#x3D; inject(EntityFormService);
   private readonly cdr &#x3D; inject(ChangeDetectorRef);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
 
   form: EntityForm&lt;Entity&gt;;
   fieldGroups: FieldGroup[];
@@ -492,8 +494,8 @@ export class RowDetailsComponent implements OnInit {
     this.form &#x3D; await this.formService.createEntityForm(
       data.columns,
       data.entity,
+      this.destroyRef,
     );
-    this.enableSaveWithoutChangesIfNew(data.entity);
 
     this.fieldGroups &#x3D; data.columns.map((col) &#x3D;&gt; ({ fields: [col] }));
     this.tempEntity &#x3D; this.data.entity;
@@ -506,13 +508,6 @@ export class RowDetailsComponent implements OnInit {
       });
     this.viewOnlyColumns &#x3D; data.viewOnlyColumns;
     this.cdr.markForCheck();
-  }
-
-  private enableSaveWithoutChangesIfNew(entity: Entity) {
-    if (entity.isNew) {
-      // could check here that at least some fields hold a value but the naive heuristic to allow save of all new seems ok
-      this.form.formGroup.markAsDirty();
-    }
   }
 }
 </code></pre>

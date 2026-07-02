@@ -306,7 +306,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:74</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:67</a></div>
                             </td>
                         </tr>
 
@@ -337,7 +337,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:59</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:52</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -363,7 +363,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:60</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:53</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -387,7 +387,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:61</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:54</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -420,8 +420,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="122"
-                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:122</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -457,8 +457,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -524,8 +524,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="137"
-                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:137</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="126"
+                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:126</a></div>
                         </td>
                     </tr>
 
@@ -593,8 +593,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -651,7 +651,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:63</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -683,7 +683,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:57</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -704,7 +704,6 @@
   output,
   computed,
   effect,
-  signal,
 } from &quot;@angular/core&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { Angulartics2Module } from &quot;angulartics2&quot;;
@@ -745,12 +744,6 @@ export class DialogButtonsComponent&lt;E extends Entity&gt; {
   private router &#x3D; inject(Router);
   private ability &#x3D; inject(EntityAbility);
   private unsavedChanges &#x3D; inject(UnsavedChangesService);
-  private readonly pendingStateBeforeDialogOpen &#x3D; signal(
-    this.dialog ? this.unsavedChanges.pending() : false,
-  );
-  private readonly pendingStateAfterClose &#x3D; computed(() &#x3D;&gt;
-    this.dialog ? this.pendingStateBeforeDialogOpen() : false,
-  );
 
   protected viewContext &#x3D; inject(ViewComponentContext, { optional: true });
 
@@ -791,14 +784,14 @@ export class DialogButtonsComponent&lt;E extends Entity&gt; {
   private initDialogSettings() {
     this.dialog.disableClose &#x3D; true;
     this.dialog.backdropClick().subscribe(() &#x3D;&gt;
-      this.unsavedChanges.checkUnsavedChanges().then((confirmed) &#x3D;&gt; {
+      // only consider this dialog&#x27;s own form, so a dirty view underneath the dialog
+      // does not trigger a discard prompt for changes unrelated to this dialog
+      this.unsavedChanges.checkUnsavedChanges(this.form()).then((confirmed) &#x3D;&gt; {
         if (confirmed) {
           this.dialog.close();
         }
       }),
     );
-    // Dialog closing happens before the &#x60;canDeactivate&#x60; check, so restore the state synchronously.
-    this.dialog.afterClosed().subscribe(() &#x3D;&gt; this.restorePendingChanges());
   }
 
   async save() {
@@ -818,18 +811,14 @@ export class DialogButtonsComponent&lt;E extends Entity&gt; {
   }
 
   cancel() {
+    // discard this form&#x27;s unsaved changes
+    this.unsavedChanges.setUnsavedChanges(this.form(), false);
     this.close();
   }
 
   close(result?: any) {
     this.dialog?.close(result);
     this.closeView.emit(result);
-
-    this.restorePendingChanges();
-  }
-
-  private restorePendingChanges() {
-    this.unsavedChanges.pending.set(this.pendingStateAfterClose());
   }
 
   onAction(action: string) {

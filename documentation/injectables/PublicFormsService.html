@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="74"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:74</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -312,8 +312,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="137"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:137</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="135"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -353,8 +353,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="151"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:151</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="149"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:149</a></div>
                         </td>
                     </tr>
 
@@ -425,8 +425,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="37"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:37</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -474,8 +474,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="141"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:141</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:139</a></div>
                         </td>
                     </tr>
 
@@ -555,8 +555,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="220"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:220</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:218</a></div>
                         </td>
                     </tr>
 
@@ -631,7 +631,6 @@ import { asArray } from &quot;#src/app/utils/asArray&quot;;
 import { AdminEntityService } from &quot;app/core/admin/admin-entity.service&quot;;
 import { EntityRegistry } from &quot;app/core/entity/database-entity.decorator&quot;;
 import { EntityConfigService } from &quot;app/core/entity/entity-config.service&quot;;
-import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
 
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -643,7 +642,6 @@ export class PublicFormsService {
   private readonly adminEntityService &#x3D; inject(AdminEntityService);
   private readonly entities &#x3D; inject(EntityRegistry);
   private readonly entityConfigService &#x3D; inject(EntityConfigService);
-  private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
 
   /**
    * Initializes and registers custom form actions for entities.
@@ -862,7 +860,6 @@ export class PublicFormsService {
 
     if (hasNewFields) {
       await this.adminEntityService.setAndSaveEntityConfig(entityConstructor);
-      this.unsavedChangesService.pending.set(false);
     }
   }
 }

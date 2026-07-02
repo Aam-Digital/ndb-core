@@ -190,24 +190,6 @@ new changes correctly to the entity.</p>
     </table>
 </section>
 
-            <section data-compodoc="block-constructor">
-    <h3 id="constructor">Constructor</h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-<code>constructor()</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:37</a></div>
-                            </td>
-                        </tr>
-
-            </tbody>
-        </table>
-</section>
 
             <section data-compodoc="block-methods">
     
@@ -230,15 +212,15 @@ new changes correctly to the entity.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createEntityForm(formFields: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>, entity: T, forTable: unknown, withPermissionCheck: unknown, withDefaultValues: unknown)</code>
+                    <code>createEntityForm(formFields: <a href="../classes/Config.html" target="_self">ColumnConfig[]</a>, entity: T, destroyRef: DestroyRef, forTable: unknown, withPermissionCheck: unknown, withDefaultValues: unknown)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="120"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:120</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -254,7 +236,8 @@ new changes correctly to the entity.</p>
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Creates a form with the formFields and the existing values from the entity.
-Missing fields in the formFields are filled with schema information.</p>
+Missing fields in the formFields are filled with schema information.
+  caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)</p>
 </div>
 
                             <div class="io-description">
@@ -301,6 +284,25 @@ Missing fields in the formFields are filled with schema information.</p>
                                             </td>
 
                                             <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>destroyRef</td>
+                                            <td>
+                                                        <code>DestroyRef</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>the caller&#39;s DestroyRef, used to scope the form&#39;s change tracking to the
+caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)</p>
+
                                             </td>
                                         </tr>
                                         <tr>
@@ -394,8 +396,8 @@ Missing fields in the formFields are filled with schema information.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -672,7 +674,8 @@ The input entity will not be modified but a copy of it will be returned in case 
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EventEmitter, inject, Injectable } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DestroyRef, EventEmitter, inject, Injectable } from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 import { FormBuilder, FormControl, FormControlOptions } from &quot;@angular/forms&quot;;
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from &quot;./FormConfig&quot;;
 import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
@@ -682,8 +685,6 @@ import { DynamicValidatorsService } from &quot;./dynamic-form-validators/dynamic
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { InvalidFormFieldError } from &quot;./invalid-form-field.error&quot;;
 import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-changes.service&quot;;
-import { ActivationStart, Router } from &quot;@angular/router&quot;;
-import { Subscription } from &quot;rxjs&quot;;
 import { filter } from &quot;rxjs/operators&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { DefaultValueService } from &quot;../../default-values/default-value-service/default-value.service&quot;;
@@ -707,21 +708,6 @@ export class EntityFormService {
   private ability &#x3D; inject(EntityAbility);
   private unsavedChanges &#x3D; inject(UnsavedChangesService);
   private defaultValueService &#x3D; inject(DefaultValueService);
-
-  private subscriptions: Subscription[] &#x3D; [];
-
-  constructor() {
-    const router &#x3D; inject(Router);
-
-    router.events
-      .pipe(filter((e) &#x3D;&gt; e instanceof ActivationStart))
-      .subscribe(() &#x3D;&gt; {
-        // Clean up everything once navigation happens
-        this.subscriptions.forEach((sub) &#x3D;&gt; sub.unsubscribe());
-        this.subscriptions &#x3D; [];
-        this.unsavedChanges.pending.set(false);
-      });
-  }
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
@@ -787,6 +773,8 @@ export class EntityFormService {
    * Missing fields in the formFields are filled with schema information.
    * @param formFields
    * @param entity
+   * @param destroyRef the caller&#x27;s DestroyRef, used to scope the form&#x27;s change tracking to the
+   *   caller&#x27;s lifecycle (so its unsaved-changes state is cleared when the caller is destroyed)
    * @param forTable
    * @param withPermissionCheck if true, fields without &#x27;update&#x27; permissions will stay disabled when enabling form
    * @param withDefaultValues if true, default value strategies are initialized and applied
@@ -794,6 +782,7 @@ export class EntityFormService {
   public async createEntityForm&lt;T extends Entity&gt;(
     formFields: ColumnConfig[],
     entity: T,
+    destroyRef: DestroyRef,
     forTable &#x3D; false,
     withPermissionCheck &#x3D; true,
     withDefaultValues &#x3D; true,
@@ -805,6 +794,7 @@ export class EntityFormService {
     const typedFormGroup: TypedFormGroup&lt;Partial&lt;T&gt;&gt; &#x3D; this.createFormGroup(
       fields,
       entity,
+      destroyRef,
       withPermissionCheck,
     );
 
@@ -816,6 +806,21 @@ export class EntityFormService {
       inheritedParentValues: new Map(),
       watcher: new Map(),
     };
+
+    // Track unsaved changes for this form, keyed by the EntityForm itself.
+    // Both the subscription and the final cleanup are tied to the caller&#x27;s lifecycle.
+    // Note: if a caller creates several forms over its lifetime (e.g. reloading a
+    // resource), it should explicitly clear the old form&#x27;s state via
+    // &#x60;setUnsavedChanges(oldForm, false)&#x60; before replacing it, to prevent stale
+    // dirty state from accumulating in UnsavedChangesService.sources.
+    typedFormGroup.valueChanges
+      .pipe(takeUntilDestroyed(destroyRef))
+      .subscribe(() &#x3D;&gt;
+        this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
+      );
+    destroyRef.onDestroy(() &#x3D;&gt;
+      this.unsavedChanges.setUnsavedChanges(entityForm, false),
+    );
 
     if (withDefaultValues) {
       await this.defaultValueService.handleEntityForm(entityForm, entity);
@@ -834,6 +839,7 @@ export class EntityFormService {
   private createFormGroup&lt;T extends Entity&gt;(
     formFields: FormFieldConfig[],
     entity: T,
+    destroyRef: DestroyRef,
     withPermissionCheck &#x3D; true,
   ): EntityFormGroup&lt;T&gt; {
     const formConfig &#x3D; {};
@@ -848,18 +854,14 @@ export class EntityFormService {
     }
     const group &#x3D; this.fb.group&lt;Partial&lt;T&gt;&gt;(formConfig);
 
-    const valueChangesSubscription &#x3D; group.valueChanges.subscribe(() &#x3D;&gt;
-      this.unsavedChanges.pending.set(group.dirty),
-    );
-
-    this.subscriptions.push(valueChangesSubscription);
-
     if (withPermissionCheck) {
       this.disableReadOnlyFormControls(group, entity);
-      const statusChangesSubscription &#x3D; group.statusChanges
-        .pipe(filter((status) &#x3D;&gt; status !&#x3D;&#x3D; &quot;DISABLED&quot;))
+      group.statusChanges
+        .pipe(
+          filter((status) &#x3D;&gt; status !&#x3D;&#x3D; &quot;DISABLED&quot;),
+          takeUntilDestroyed(destroyRef),
+        )
         .subscribe(() &#x3D;&gt; this.disableReadOnlyFormControls(group, entity));
-      this.subscriptions.push(statusChangesSubscription);
     }
 
     return group;
@@ -933,7 +935,7 @@ export class EntityFormService {
       );
     }
 
-    this.unsavedChanges.pending.set(false);
+    this.unsavedChanges.setUnsavedChanges(entityForm, false);
     form.markAsPristine();
     form.disable();
     Object.assign(entity, updatedEntity);
@@ -998,7 +1000,7 @@ export class EntityFormService {
     }
 
     form.markAsPristine();
-    this.unsavedChanges.pending.set(false);
+    this.unsavedChanges.setUnsavedChanges(entityForm, false);
     entityForm.onFormStateChange.emit(&quot;cancelled&quot;);
   }
 }

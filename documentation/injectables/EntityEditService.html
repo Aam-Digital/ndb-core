@@ -242,8 +242,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="34"
+                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:34</a></div>
                         </td>
                     </tr>
 
@@ -342,8 +342,8 @@ and edit the entity if the user confirms.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/features/bulk-edit/entity-edit.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -656,7 +656,6 @@ to support an undo action.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
 import { CascadingEntityAction } from &quot;#src/app/core/entity/entity-actions/cascading-entity-action&quot;;
-import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
 import { lastValueFrom } from &quot;rxjs&quot;;
 import {
   BulkEditAction,
@@ -676,7 +675,6 @@ import { BulkOperationStateService } from &quot;#src/app/core/entity/entity-acti
 export class EntityEditService extends CascadingEntityAction {
   private readonly matDialog &#x3D; inject(MatDialog);
   private readonly entityActionsService &#x3D; inject(EntityActionsService);
-  private readonly unsavedChanges &#x3D; inject(UnsavedChangesService);
   private readonly bulkOperationState &#x3D; inject(BulkOperationStateService);
 
   /**
@@ -739,7 +737,6 @@ export class EntityEditService extends CascadingEntityAction {
       // Use bulk save for performance - progress tracking happens in bulk-operation-state service
       await this.entityMapper.saveAll(newEntities);
 
-      this.unsavedChanges.pending.set(false);
       return {
         success: true,
         originalEntities,

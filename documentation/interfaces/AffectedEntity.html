@@ -606,6 +606,7 @@ import { EntityFieldEditComponent } from &quot;#src/app/core/entity/entity-field
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
 import {
   Component,
+  DestroyRef,
   inject,
   OnInit,
   ChangeDetectionStrategy,
@@ -686,6 +687,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   private readonly entityFormService &#x3D; inject(EntityFormService);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
   private readonly cdr &#x3D; inject(ChangeDetectorRef);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
 
   entityConstructor: EntityConstructor;
 
@@ -702,6 +704,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       const entityForm &#x3D; await this.entityFormService.createEntityForm(
         [fieldId],
         entity.affectedEntity,
+        this.destroyRef,
       );
 
       entity.form &#x3D; entityForm;

@@ -290,7 +290,7 @@ e.g. as a panel for the EntityDetailsComponent.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:63</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:66</a></div>
                             </td>
                         </tr>
 
@@ -321,7 +321,7 @@ e.g. as a panel for the EntityDetailsComponent.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:50</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:52</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -342,7 +342,7 @@ e.g. as a panel for the EntityDetailsComponent.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:49</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:51</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -363,7 +363,7 @@ e.g. as a panel for the EntityDetailsComponent.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:51</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:53</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -397,8 +397,8 @@ e.g. as a panel for the EntityDetailsComponent.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="102"
-                                    class="link-to-prism">src/app/core/entity-details/form/form.component.ts:102</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/core/entity-details/form/form.component.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -436,8 +436,8 @@ e.g. as a panel for the EntityDetailsComponent.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="74"
-                                    class="link-to-prism">src/app/core/entity-details/form/form.component.ts:74</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/entity-details/form/form.component.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -484,7 +484,7 @@ e.g. as a panel for the EntityDetailsComponent.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:63</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/entity-details/form/form.component.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -500,6 +500,7 @@ e.g. as a panel for the EntityDetailsComponent.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -545,6 +546,7 @@ export class FormComponent&lt;E extends Entity&gt; {
   private alertService &#x3D; inject(AlertService);
   private viewContext &#x3D; inject(ViewComponentContext, { optional: true });
   private readonly permissionService &#x3D; inject(PublicFormPermissionService);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
   entity &#x3D; input&lt;E&gt;();
   creatingNew &#x3D; input&lt;boolean&gt;(false);
   fieldGroups &#x3D; input&lt;FieldGroup[]&gt;();
@@ -556,6 +558,7 @@ export class FormComponent&lt;E extends Entity&gt; {
       return this.entityFormService.createEntityForm(
         [].concat(...fieldGroups.map((group) &#x3D;&gt; group.fields)),
         entity,
+        this.destroyRef,
       );
     },
   });

@@ -304,8 +304,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="133"
-                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:133</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="135"
+                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -343,8 +343,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/features/public-form/public-form.component.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -398,7 +398,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/public-form/public-form.component.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/public-form/public-form.component.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -429,7 +429,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/features/public-form/public-form.component.ts:77</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/public-form/public-form.component.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -460,7 +460,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/public-form/public-form.component.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/public-form/public-form.component.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -491,7 +491,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/public-form/public-form.component.ts:79</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/public-form/public-form.component.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -522,7 +522,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/features/public-form/public-form.component.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/features/public-form/public-form.component.ts:80</a></div>
                         </td>
                     </tr>
 
@@ -537,6 +537,7 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
+  DestroyRef,
   inject,
   OnInit,
   ChangeDetectionStrategy,
@@ -600,6 +601,7 @@ export class PublicFormComponent&lt;E extends Entity&gt; implements OnInit {
 
   private ability &#x3D; inject(EntityAbility);
   private router &#x3D; inject(Router);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
 
   formConfig &#x3D; signal&lt;PublicFormConfig | undefined&gt;(undefined);
   entityFormEntries &#x3D; signal&lt;
@@ -820,6 +822,7 @@ export class PublicFormComponent&lt;E extends Entity&gt; implements OnInit {
       entry.form &#x3D; await this.entityFormService.createEntityForm(
         [].concat(...entry.fieldGroups.map((group) &#x3D;&gt; group.fields)),
         entry.entity,
+        this.destroyRef,
       );
 
       entry.form.formGroup.valueChanges

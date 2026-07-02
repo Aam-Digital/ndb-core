@@ -144,6 +144,10 @@
                 <p>This service handles the state whether there are currently some unsaved changes in the app.
 These pending changes might come from a form component or popup.
 If there are pending changes, certain actions in the app should trigger a user confirmation if the changes should be discarded.</p>
+<p>Changes are tracked per &quot;source&quot; (e.g. an individual form or component) so that multiple layers
+of unsaved changes can coexist (e.g. a dirty main view with a dirty dialog form opened on top of it).
+Each source is responsible for registering and clearing its own state
+(usually tied to its lifecycle via <code>DestroyRef</code>).</p>
 
             </p>
 
@@ -162,6 +166,7 @@ If there are pending changes, certain actions in the app should trigger a user c
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Readonly</span>
                                 <a href="#pending" >pending</a>
                             </li>
                         </ul>
@@ -179,6 +184,9 @@ If there are pending changes, certain actions in the app should trigger a user c
                             <li>
                                     <span class="modifier">Async</span>
                                 <a href="#checkUnsavedChanges" >checkUnsavedChanges</a>
+                            </li>
+                            <li>
+                                <a href="#setUnsavedChanges" >setUnsavedChanges</a>
                             </li>
                         </ul>
                     </td>
@@ -203,7 +211,7 @@ If there are pending changes, certain actions in the app should trigger a user c
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/entity-details/form/unsaved-changes.service.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/entity-details/form/unsaved-changes.service.ts:26</a></div>
                             </td>
                         </tr>
 
@@ -231,15 +239,15 @@ If there are pending changes, certain actions in the app should trigger a user c
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>checkUnsavedChanges()</code>
+                    <code>checkUnsavedChanges(source?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/core/entity-details/form/unsaved-changes.service.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="70"
+                                    class="link-to-prism">src/app/core/entity-details/form/unsaved-changes.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -247,12 +255,144 @@ If there are pending changes, certain actions in the app should trigger a user c
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Shows a user confirmation popup if there are unsaved changes which will be discarded.</p>
+<p>  e.g. when closing a single dialog. If omitted, all sources are considered (and discarded on
+  confirm), e.g. when navigating away from the whole view.</p>
 </div>
 
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>source</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>if given, only this source&#39;s changes are considered (and discarded on confirm),
+e.g. when closing a single dialog. If omitted, all sources are considered (and discarded on
+confirm), e.g. when navigating away from the whole view.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>unknown</code>
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
 
                         </div>
+                            <div class="io-description">
+                                <p>whether it is safe to proceed (no changes, or the user confirmed discarding them)</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setUnsavedChanges"></a>
+                    <span class="name">
+                        <span ><b>setUnsavedChanges</b></span>
+                        <a href="#setUnsavedChanges"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setUnsavedChanges(source: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>, hasChanges: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">src/app/core/entity-details/form/unsaved-changes.service.ts:47</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Register or clear the unsaved-changes state for a specific source.</p>
+<p>A source can be any stable object identity (e.g. an <code>EntityForm</code> or a component instance).
+Sources should clear their state when destroyed (e.g. via <code>DestroyRef.onDestroy</code>).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>source</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the object identifying the origin of the changes</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>hasChanges</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>whether this source currently has unsaved changes</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -269,6 +409,7 @@ If there are pending changes, certain actions in the app should trigger a user c
                 <td class="col-md-4">
                     <a name="pending"></a>
                     <span class="name">
+                            <span class="modifier">Readonly</span>
                         <span ><b>pending</b></span>
                         <a href="#pending"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -276,25 +417,24 @@ If there are pending changes, certain actions in the app should trigger a user c
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal(false)</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; this.sources().size &gt; 0)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/entity-details/form/unsaved-changes.service.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/entity-details/form/unsaved-changes.service.ts:26</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Set to true if the user has pending changes that are not yet saved.
-Set to false once the changes have been saved or discarded.</p>
+                    <div class="io-description"><p>Whether the user has any pending changes that are not yet saved.</p>
 </div>
                 </td>
             </tr>
@@ -307,13 +447,18 @@ Set to false once the changes have been saved or discarded.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject, signal } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Signal, computed, inject, signal } from &quot;@angular/core&quot;;
 import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 
 /**
  * This service handles the state whether there are currently some unsaved changes in the app.
  * These pending changes might come from a form component or popup.
  * If there are pending changes, certain actions in the app should trigger a user confirmation if the changes should be discarded.
+ *
+ * Changes are tracked per &quot;source&quot; (e.g. an individual form or component) so that multiple layers
+ * of unsaved changes can coexist (e.g. a dirty main view with a dirty dialog form opened on top of it).
+ * Each source is responsible for registering and clearing its own state
+ * (usually tied to its lifecycle via &#x60;DestroyRef&#x60;).
  */
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -321,11 +466,13 @@ import { ConfirmationDialogService } from &quot;../../common-components/confirma
 export class UnsavedChangesService {
   private confirmation &#x3D; inject(ConfirmationDialogService);
 
+  /** the set of sources (forms, components, ...) that currently have unsaved changes */
+  private readonly sources &#x3D; signal(new Set&lt;object&gt;());
+
   /**
-   * Set to true if the user has pending changes that are not yet saved.
-   * Set to false once the changes have been saved or discarded.
+   * Whether the user has any pending changes that are not yet saved.
    */
-  pending &#x3D; signal(false);
+  readonly pending: Signal&lt;boolean&gt; &#x3D; computed(() &#x3D;&gt; this.sources().size &gt; 0);
 
   constructor() {
     // prevent browser navigation if changes are pending
@@ -338,19 +485,52 @@ export class UnsavedChangesService {
   }
 
   /**
-   * Shows a user confirmation popup if there are unsaved changes which will be discarded.
+   * Register or clear the unsaved-changes state for a specific source.
+   *
+   * A source can be any stable object identity (e.g. an &#x60;EntityForm&#x60; or a component instance).
+   * Sources should clear their state when destroyed (e.g. via &#x60;DestroyRef.onDestroy&#x60;).
+   *
+   * @param source the object identifying the origin of the changes
+   * @param hasChanges whether this source currently has unsaved changes
    */
-  async checkUnsavedChanges() {
-    if (this.pending()) {
-      const confirmed &#x3D; await this.confirmation.getDiscardConfirmation();
-      if (confirmed) {
-        this.pending.set(false);
-        return true;
+  setUnsavedChanges(source: object, hasChanges: boolean) {
+    const current &#x3D; this.sources();
+    if (hasChanges &#x3D;&#x3D;&#x3D; current.has(source)) {
+      // no change - avoid needless signal updates
+      return;
+    }
+    const next &#x3D; new Set(current);
+    if (hasChanges) {
+      next.add(source);
+    } else {
+      next.delete(source);
+    }
+    this.sources.set(next);
+  }
+
+  /**
+   * Shows a user confirmation popup if there are unsaved changes which will be discarded.
+   *
+   * @param source if given, only this source&#x27;s changes are considered (and discarded on confirm),
+   *   e.g. when closing a single dialog. If omitted, all sources are considered (and discarded on
+   *   confirm), e.g. when navigating away from the whole view.
+   * @returns whether it is safe to proceed (no changes, or the user confirmed discarding them)
+   */
+  async checkUnsavedChanges(source?: object): Promise&lt;boolean&gt; {
+    const hasChanges &#x3D; source ? this.sources().has(source) : this.pending();
+    if (!hasChanges) {
+      return true;
+    }
+
+    const confirmed &#x3D; !!(await this.confirmation.getDiscardConfirmation());
+    if (confirmed) {
+      if (source) {
+        this.setUnsavedChanges(source, false);
       } else {
-        return false;
+        this.sources.set(new Set());
       }
     }
-    return true;
+    return confirmed;
   }
 }
 </code></pre>

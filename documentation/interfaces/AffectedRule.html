@@ -308,7 +308,6 @@ import {
   AutomatedFieldUpdateComponent,
 } from &quot;./automated-field-update.component&quot;;
 import { lastValueFrom } from &quot;rxjs&quot;;
-import { UnsavedChangesService } from &quot;#src/app/core/entity-details/form/unsaved-changes.service&quot;;
 import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
@@ -331,7 +330,6 @@ export class AutomatedFieldUpdateConfigService {
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly dialog &#x3D; inject(MatDialog);
-  private readonly unsavedChangesService &#x3D; inject(UnsavedChangesService);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
 
   /**
@@ -716,7 +714,6 @@ export class AutomatedFieldUpdateConfigService {
     });
 
     await Promise.all(savePromises);
-    this.unsavedChangesService.pending.set(false);
   }
 
   /**

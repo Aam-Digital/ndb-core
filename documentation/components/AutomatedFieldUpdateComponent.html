@@ -294,8 +294,8 @@ after a triggering entity has been updated.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="115"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:115</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="118"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -343,7 +343,7 @@ after a triggering entity has been updated.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -369,7 +369,7 @@ after a triggering entity has been updated.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:87</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:89</a></div>
                         </td>
                     </tr>
 
@@ -387,6 +387,7 @@ import { EntityFieldEditComponent } from &quot;#src/app/core/entity/entity-field
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
 import {
   Component,
+  DestroyRef,
   inject,
   OnInit,
   ChangeDetectionStrategy,
@@ -467,6 +468,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   private readonly entityFormService &#x3D; inject(EntityFormService);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
   private readonly cdr &#x3D; inject(ChangeDetectorRef);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
 
   entityConstructor: EntityConstructor;
 
@@ -483,6 +485,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       const entityForm &#x3D; await this.entityFormService.createEntityForm(
         [fieldId],
         entity.affectedEntity,
+        this.destroyRef,
       );
 
       entity.form &#x3D; entityForm;

@@ -1745,6 +1745,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/MenuItemForAdminUiNew.html" data-type="entity-link" >MenuItemForAdminUiNew</a>
                             </li>
                             <li class="link">
+                                <a href="classes/MockDestroyRef.html" data-type="entity-link" >MockDestroyRef</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/MockEntityMapperService.html" data-type="entity-link" >MockEntityMapperService</a>
                             </li>
                             <li class="link">
