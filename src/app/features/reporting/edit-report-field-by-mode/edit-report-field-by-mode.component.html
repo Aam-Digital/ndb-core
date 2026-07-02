@@ -1,0 +1,7 @@
+@if (applies()) {
+  <app-json-editor [formControl]="formControl"></app-json-editor>
+} @else {
+  <p class="text-secondary" i18n>
+    Not applicable for the currently selected report mode.
+  </p>
+}

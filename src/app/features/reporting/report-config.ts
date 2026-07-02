@@ -3,6 +3,8 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { Aggregation } from "./data-aggregation.service";
 import { ExportColumnConfig } from "../../core/export/data-transformation-service/export-column-config";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
+import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * A report can be accessed by users to generate aggregated statistics or customized exports calculated from available data.
@@ -14,16 +16,39 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
 @DatabaseEntity("ReportConfig")
 class ReportConfig extends Entity {
   static override isInternalEntity = true;
+  static override readonly label = $localize`:ReportConfig:Report`;
+  static override readonly labelPlural = $localize`:ReportConfig:Reports`;
+  static override readonly toStringAttributes = ["title"];
+  static override readonly route = "admin/report-config";
+  static override readonly icon: IconName = "chart-line";
 
   /** human-readable title of the report */
-  @DatabaseField() title: string;
+  @DatabaseField({
+    label: $localize`:ReportConfig:Title`,
+    validators: { required: true },
+  })
+  title: string;
+
+  /** longer description documenting the purpose and usage of this report */
+  @DatabaseField({
+    label: $localize`:ReportConfig:Description`,
+    description: $localize`:ReportConfig:Document the purpose and usage of this report. This is also shown to users above the results when the report is run.`,
+    dataType: LongTextDatatype.dataType,
+  })
+  description?: string;
 
   /**
    * (optional) mode of export.
    * The {@link ReportEntity} holds the restriction on valid report modes.
    * Default is "reporting"
    */
-  @DatabaseField() mode?: string;
+  @DatabaseField({
+    label: $localize`:ReportConfig:Mode`,
+    description: $localize`:ReportConfig:How the report is calculated: "reporting" (in-browser aggregations), "exporting" (data export) or "sql" (server-side SQL queries). Defaults to "reporting".`,
+    editComponent: "EditReportMode",
+    validators: { required: true },
+  })
+  mode?: string;
 
   /**
    * @deprecated (will be removed completely after server-side migration)
@@ -38,7 +63,13 @@ class ReportConfig extends Entity {
   @DatabaseField() neededArgs?: string[] = [];
 
   /** (reporting/exporting only, in browser reports) the definitions to calculate the report's aggregations */
-  @DatabaseField() aggregationDefinitions: any[];
+  @DatabaseField({
+    label: $localize`:ReportConfig:Aggregation definitions`,
+    description: $localize`:ReportConfig:Used for "reporting" and "exporting" mode reports (not SQL).`,
+    editComponent: "EditReportFieldByMode",
+    additional: { modes: ["reporting", "exporting"] },
+  })
+  aggregationDefinitions: any[];
 
   /**
    * @deprecated (will be removed completely after server-side migration)
@@ -50,7 +81,12 @@ class ReportConfig extends Entity {
    *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
    *  example: {startDate: ["SQL_FROM_DATE"], endDate: ["SQL_TO_DATE"]}
    */
-  @DatabaseField() transformations: {
+  @DatabaseField({
+    label: $localize`:ReportConfig:Use report period (start & end date)`,
+    description: $localize`:ReportConfig:When enabled, the report uses the selected start and end date of the report period as parameters (SQL mode).`,
+    editComponent: "EditReportPeriodToggle",
+  })
+  transformations: {
     [key: string]: string[];
   };
 
@@ -64,7 +100,15 @@ class ReportConfig extends Entity {
    *  {groupTitle: "This is a group", items: [...]}
    *
    */
-  @DatabaseField() reportDefinition: ReportDefinitionDto[];
+  @DatabaseField({
+    label: $localize`:ReportConfig:Report definition (SQL queries)`,
+    description: $localize`:ReportConfig:The SQL queries (and optional groups) calculated for "sql" mode reports.`,
+    // Part A: edit as raw JSON, shown only in "sql" mode; Part B replaces this with the
+    // structured "EditReportDefinition" editor.
+    editComponent: "EditReportFieldByMode",
+    additional: { modes: ["sql"] },
+  })
+  reportDefinition: ReportDefinitionDto[];
 }
 
 export interface ReportDefinitionDto {

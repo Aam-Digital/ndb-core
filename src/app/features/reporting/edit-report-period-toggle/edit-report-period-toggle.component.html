@@ -1,0 +1,7 @@
+<mat-slide-toggle
+  [checked]="checked()"
+  [disabled]="!enabled()"
+  (change)="setChecked($event.checked)"
+>
+  {{ placeholder }}
+</mat-slide-toggle>

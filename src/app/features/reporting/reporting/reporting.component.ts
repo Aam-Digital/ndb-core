@@ -43,6 +43,9 @@ import { DisableEntityOperationDirective } from "#src/app/core/permissions/permi
 import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
 import { MatTooltip } from "@angular/material/tooltip";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { RouterLink } from "@angular/router";
+import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
 
 @RouteTarget("Reporting")
 @Component({
@@ -67,6 +70,8 @@ import { Logging } from "#src/app/core/logging/logging.service";
     MatMenu,
     MatMenuItem,
     MatTooltip,
+    MatExpansionModule,
+    RouterLink,
   ],
 })
 export class ReportingComponent {
@@ -76,6 +81,11 @@ export class ReportingComponent {
   private entityMapper = inject(EntityMapperService);
   private readonly jsonEditorService = inject(JsonEditorService);
   private configService = inject(ConfigService);
+
+  /** runtime route to the report admin list (Admin Overview → Templates and Forms) */
+  protected readonly reportAdminLink = getEntityRuntimeRoute(ReportEntity);
+  /** entity type used to permission-gate the "Manage Reports" admin link */
+  protected readonly reportEntity = ReportEntity;
 
   private reportsResource = resource({
     loader: () =>
