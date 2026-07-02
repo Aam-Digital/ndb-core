@@ -10,17 +10,21 @@ import {
   getUsersFromKeycloak,
 } from "./lib/keycloak-client.js";
 import { ConsoleLogger } from "./migration/console-logger.js";
-import { failedMigrationResult } from "./migration/migration-definition.js";
+import {
+  failedMigrationResult,
+  type MigrationOutcome,
+} from "./migration/migration-definition.js";
 import {
   computeExitCode,
   printBanner,
-  printOutcomes,
+  printOutcome,
   printSummary,
 } from "./migration/migration-output.js";
 import { migrations } from "./migration/migrations.js";
 import { TrackedMigrationContext } from "./migration/tracked-migration-context.js";
-import { OrgRunner, runForAllOrgs } from "./lib/org-runner.js";
+import { OrgRunner, runForAllOrgs, type OrgOutcome } from "./lib/org-runner.js";
 import { printConnectivity } from "./lib/org-output.js";
+import { withTimeout } from "./lib/timeout.js";
 import type { SystemCredentials } from "./lib/credentials.js";
 
 const program = new Command();
@@ -74,12 +78,18 @@ migrateCmd
   .description("Run a migration (preview first, then confirm)")
   .option("--dry-run", "Preview changes and exit without writing")
   .option("--yes", "Skip confirmation prompt")
+  .option("--timeout <seconds>", "Per-org timeout in seconds", "30")
   .action(async (id: string, cmdOpts) => {
     const opts = { ...program.opts(), ...cmdOpts };
     const migration = migrations.find((m) => m.id === id);
     if (!migration) {
       console.error(`\nUnknown migration id: "${id}"`);
       console.error(`Run "migrate list" to see available migrations.\n`);
+      return process.exit(2);
+    }
+    const timeoutSeconds = Number(cmdOpts.timeout);
+    if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) {
+      console.error(`\nInvalid --timeout: "${cmdOpts.timeout}"\n`);
       return process.exit(2);
     }
 
@@ -99,52 +109,73 @@ migrateCmd
       return process.exit(1);
     }
 
-    const runMigration = (dryRun: boolean) =>
-      runner.runForEach(reachable, async (couchdb, org) => {
-        console.log(`\n  ${OrgRunner.orgLabel(org)}`);
-        const ctx = new TrackedMigrationContext(couchdb, org, dryRun, logger);
-        try {
-          const result = await migration.run(ctx);
-          return { result, writeStats: ctx.getWriteStats() };
-        } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : String(e);
-          const result = failedMigrationResult(msg);
-          result.details = e instanceof Error ? e.stack : undefined;
-          return { result, writeStats: ctx.getWriteStats() };
-        }
-      });
+    const runOnOrg = async (
+      couchdb: Couchdb,
+      org: SystemCredentials,
+      dryRun: boolean,
+    ): Promise<MigrationOutcome> => {
+      const ctx = new TrackedMigrationContext(couchdb, org, dryRun, logger);
+      try {
+        const result = await withTimeout(
+          migration.run(ctx),
+          timeoutSeconds * 1000,
+          `Migration timed out after ${timeoutSeconds}s`,
+        );
+        return { result, writeStats: ctx.getWriteStats() };
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        const result = failedMigrationResult(msg);
+        result.details = e instanceof Error ? e.stack : undefined;
+        return { result, writeStats: ctx.getWriteStats() };
+      }
+    };
 
-    printBanner("PREVIEW", migration);
-    const preview = await runMigration(true);
-    printOutcomes(preview, false, !!opts.verbose);
-    printSummary(preview, unreachableCount);
+    // Each org is previewed, confirmed, and (if approved) applied before moving
+    // on to the next — so a rejected or problematic org never blocks review of
+    // the rest, and an early "no" can't be mistaken for a blanket abort.
+    printBanner("MIGRATE", migration);
+    const outcomes: OrgOutcome<MigrationOutcome>[] = [];
+    let skippedCount = 0;
+    for (const org of reachable) {
+      const couchdb = new Couchdb(org.url, org.password, org.username);
+      console.log();
+
+      const preview = await runOnOrg(couchdb, org, true);
+      printOutcome({ org, result: preview }, false, !!opts.verbose);
+
+      if (opts.dryRun || !preview.result.changed) {
+        outcomes.push({ org, result: preview });
+        continue;
+      }
+
+      if (!opts.yes) {
+        const confirmed = await askConfirmation(
+          `Apply ${preview.writeStats.intended} change(s) to ${OrgRunner.orgLabel(org)}? [y/N]`,
+        );
+        if (!confirmed) {
+          console.log("Skipped.");
+          // Excluded from `outcomes` on purpose: it was never applied, so
+          // counting it as "changed" (its dry-run status) would misreport
+          // what actually happened to this org.
+          skippedCount++;
+          continue;
+        }
+      }
+
+      const applied = await runOnOrg(couchdb, org, false);
+      printOutcome({ org, result: applied }, true, !!opts.verbose);
+      outcomes.push({ org, result: applied });
+    }
 
     if (opts.dryRun) {
       console.log("\n(--dry-run) No writes performed.\n");
-      return process.exit(computeExitCode(preview, unreachableCount));
+    }
+    if (skippedCount > 0) {
+      console.log(`${skippedCount} org(s) skipped (declined) — not applied.`);
     }
 
-    const wouldChange = preview.filter((o) => o.result.result.changed).length;
-    if (wouldChange === 0) {
-      console.log("\nNo changes needed — nothing to write.\n");
-      return process.exit(0);
-    }
-
-    if (!opts.yes) {
-      const confirmed = await askConfirmation(
-        `\nApply ${wouldChange} change(s) to ${reachable.length} org(s)? [y/N]`,
-      );
-      if (!confirmed) {
-        console.log("\nAborted.\n");
-        return process.exit(2);
-      }
-    }
-
-    printBanner("RUNNING", migration);
-    const real = await runMigration(false);
-    printOutcomes(real, true, !!opts.verbose);
-    printSummary(real, unreachableCount);
-    process.exit(computeExitCode(real, unreachableCount));
+    printSummary(outcomes, unreachableCount);
+    process.exit(computeExitCode(outcomes, unreachableCount));
   });
 
 // ─── couchdb ─────────────────────────────────────────────────────────────────

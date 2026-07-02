@@ -1,5 +1,6 @@
 import { codoAddEventType } from "./codo-add-event-type.migration.js";
 import { latestConfigFormats } from "./latest-config-formats.migration.js";
+import { consolidateReportDefinition } from "./consolidate-report-definition.migration.js";
 import type { MigrationDefinition } from "./migration-definition.js";
 
 export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
@@ -11,4 +12,5 @@ export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
 export const migrations: MigrationDefinition[] = [
   latestConfigFormats,
   codoAddEventType,
+  consolidateReportDefinition,
 ];
