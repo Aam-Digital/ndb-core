@@ -2,7 +2,8 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatTableDataSource } from "@angular/material/table";
-import { effect, inject, signal } from "@angular/core";
+import { DestroyRef, effect, inject, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
 import {
@@ -37,6 +38,7 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   });
   private readonly entityMapper = inject(EntityMapperService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   dataFilter = signal<DataFilter<T>>({});
   sortValueFns = signal<SortValueFns<T>>({});
@@ -67,7 +69,7 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
       sortValueFns: this.sortValueFns(),
     });
 
-  // TODO does this subscription need to be cleared up?
+  // Make sure only one update subscription is active
   private updateSubscription: Subscription;
 
   constructor() {
@@ -114,12 +116,14 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
 
   private listenToEntityUpdates() {
     const entityConstructor = this.loadRecordConfig().entityCtr;
-    if (this.updateSubscription || !entityConstructor) {
+    if (!entityConstructor) {
       return;
     }
 
+    this.updateSubscription?.unsubscribe();
     this.updateSubscription = this.entityMapper
       .receiveUpdates(entityConstructor)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(async (updatedEntity: UpdatedEntity<T>) => {
         if (this.bulkOperationState.isBulkOperationInProgress()) {
           await this.handleUpdateDuringBulkOperation(updatedEntity);

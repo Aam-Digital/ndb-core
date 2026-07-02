@@ -21,7 +21,6 @@ export class TodoService {
    * the given relation property (ordered by deadline).
    */
   async getTodosFor(entity: Entity, relationProperty: string): Promise<Todo[]> {
-    console.log("loader method called", relationProperty);
     // TODO: move this generic index creation into schema
     this.dbIndexing.generateIndexOnProperty(
       "todo_index",
