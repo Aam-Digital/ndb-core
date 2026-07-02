@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   inject,
   OnInit,
 } from "@angular/core";
@@ -59,6 +60,7 @@ export class RowDetailsComponent implements OnInit {
   data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
   private formService = inject(EntityFormService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
@@ -76,8 +78,8 @@ export class RowDetailsComponent implements OnInit {
     this.form = await this.formService.createEntityForm(
       data.columns,
       data.entity,
+      this.destroyRef,
     );
-    this.enableSaveWithoutChangesIfNew(data.entity);
 
     this.fieldGroups = data.columns.map((col) => ({ fields: [col] }));
     this.tempEntity = this.data.entity;
@@ -90,12 +92,5 @@ export class RowDetailsComponent implements OnInit {
       });
     this.viewOnlyColumns = data.viewOnlyColumns;
     this.cdr.markForCheck();
-  }
-
-  private enableSaveWithoutChangesIfNew(entity: Entity) {
-    if (entity.isNew) {
-      // could check here that at least some fields hold a value but the naive heuristic to allow save of all new seems ok
-      this.form.formGroup.markAsDirty();
-    }
   }
 }

@@ -6,6 +6,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { EntityFormService } from "../../entity-form/entity-form.service";
+import { MockDestroyRef } from "../../../../utils/mock-destroy-ref";
 import { AlertService } from "../../../alerts/alert.service";
 import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { CurrentUserSubject } from "../../../session/current-user-subject";
@@ -80,7 +81,7 @@ describe("EntityInlineEditActionsComponent", () => {
       const entityFormService = TestBed.inject(EntityFormService);
       let entityForm: any;
       entityFormService
-        .createEntityForm(["name", "gender"], child)
+        .createEntityForm(["name", "gender"], child, new MockDestroyRef())
         .then((form) => (entityForm = form));
       await vi.advanceTimersByTimeAsync(0);
 

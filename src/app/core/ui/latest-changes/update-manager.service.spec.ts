@@ -1,5 +1,5 @@
 import { UpdateManagerService } from "./update-manager.service";
-import { ApplicationRef, signal } from "@angular/core";
+import { ApplicationRef, signal, WritableSignal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import {
   SwUpdate,
@@ -133,7 +133,7 @@ describe("UpdateManagerService", () => {
 
   it("should reload app if no unsaved changes are detected", () => {
     service.listenToAppUpdates();
-    unsavedChanges.pending.set(true);
+    (unsavedChanges.pending as WritableSignal<boolean>).set(true);
 
     updateSubject.next(createVersionReadyEvent());
 
@@ -141,7 +141,7 @@ describe("UpdateManagerService", () => {
     expect(snackBar.open).toHaveBeenCalled();
 
     createService();
-    unsavedChanges.pending.set(false);
+    (unsavedChanges.pending as WritableSignal<boolean>).set(false);
 
     updateSubject.next(createVersionReadyEvent());
 
