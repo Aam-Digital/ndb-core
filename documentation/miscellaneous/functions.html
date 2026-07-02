@@ -505,6 +505,9 @@
                             <a href="#isManualItemWithoutLink" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" ><b>isManualItemWithoutLink</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</a>
                         </li>
                         <li>
+                            <a href="#isOfflineNetworkError" title="src/app/core/logging/logging.service.ts" ><b>isOfflineNetworkError</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#isPublicFormRoute" title="src/bootstrap-environment.ts" ><b>isPublicFormRoute</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</a>
                         </li>
                         <li>
@@ -7509,6 +7512,67 @@ get a separate budget per variant, so the cap is weaker for those.</li>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="isOfflineNetworkError"></a>
+                    <span class="name">
+                        <span ><b>isOfflineNetworkError</b></span>
+                        <a href="#isOfflineNetworkError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isOfflineNetworkError(event)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the event is a network-layer fetch failure that occurred while the
+device was offline. In an offline-first app this is a normal state without
+diagnostic value (server outages still surface through online users).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="processSentryEvent"></a>
                     <span class="name">
                         <span ><b>processSentryEvent</b></span>
@@ -7527,7 +7591,8 @@ get a separate budget per variant, so the cap is weaker for those.</li>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Sentry <code>beforeSend</code> hook: drops excessive repeats of an identical event
+                        <div class="io-description"><p>Sentry <code>beforeSend</code> hook: drops network failures of offline devices
+and excessive repeats of an identical event,
 and enriches the remaining events with structured extra data.</p>
 </div>
 
