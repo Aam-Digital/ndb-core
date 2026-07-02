@@ -1497,7 +1497,7 @@
   "273835844989646128": "leer",
   "1612182551928261057": "↳ nachher:",
   "8981309282078866700": "{$PH}min",
-  "1377069367734081212": "You are seeing a previous calculation. Data may be outdated.",
-  "7073964892928100929": "(updating…)",
-  "1430875785987675497": "We couldn't load the configuration for your system, even after retrying. Please contact your tech support."
+  "1377069367734081212": "Sie sehen eine frühere Berechnung. Die Daten sind eventuell veraltet.",
+  "7073964892928100929": "(wird aktualisiert ...)",
+  "1430875785987675497": "Wir konnten die Konfiguration Ihres Systems auch nach wiederholtem Versuch nicht laden. Bitte kontaktieren Sie Ihren technischen Support."
 }
