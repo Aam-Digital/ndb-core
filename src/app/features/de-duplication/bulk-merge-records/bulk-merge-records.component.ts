@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   OnInit,
   signal,
@@ -55,6 +56,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly entityFormService = inject(EntityFormService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly accountSection = viewChild(MergeAccountSectionComponent);
 
@@ -98,6 +100,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeForm = await this.entityFormService.createEntityForm(
       this.fieldsToMerge(),
       this.mergedEntity,
+      this.destroyRef,
       false,
       true,
       false,

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -46,6 +47,7 @@ export class FormComponent<E extends Entity> {
   private alertService = inject(AlertService);
   private viewContext = inject(ViewComponentContext, { optional: true });
   private readonly permissionService = inject(PublicFormPermissionService);
+  private readonly destroyRef = inject(DestroyRef);
   entity = input<E>();
   creatingNew = input<boolean>(false);
   fieldGroups = input<FieldGroup[]>();
@@ -57,6 +59,7 @@ export class FormComponent<E extends Entity> {
       return this.entityFormService.createEntityForm(
         [].concat(...fieldGroups.map((group) => group.fields)),
         entity,
+        this.destroyRef,
       );
     },
   });

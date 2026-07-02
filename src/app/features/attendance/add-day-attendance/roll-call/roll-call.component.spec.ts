@@ -115,7 +115,7 @@ describe("RollCallComponent", () => {
         },
         {
           provide: UnsavedChangesService,
-          useValue: { pending: signal(false) },
+          useValue: { pending: signal(false), setUnsavedChanges: () => {} },
         },
         {
           provide: AttendanceService,

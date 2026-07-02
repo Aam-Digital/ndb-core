@@ -2,6 +2,7 @@ import { EntityForm } from "#src/app/core/common-components/entity-form/entity-f
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
 import {
   Component,
+  DestroyRef,
   inject,
   OnInit,
   ChangeDetectionStrategy,
@@ -27,7 +28,6 @@ import { EntityFormService } from "app/core/common-components/entity-form/entity
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "../../model/entity";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
-import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,8 +51,7 @@ import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved
 export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
-  private readonly unsavedChanges = inject(UnsavedChangesService);
-  private readonly pendingStateBeforeDialogOpen = this.unsavedChanges.pending();
+  private readonly destroyRef = inject(DestroyRef);
 
   entityConstructor: EntityConstructor;
   entitiesToEdit: E[];
@@ -77,12 +76,8 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-
-    this.dialogRef.beforeClosed().subscribe((result) => {
-      if (!result) {
-        this.unsavedChanges.pending.set(this.pendingStateBeforeDialogOpen);
-      }
-    });
+    // The bulk-edit form's unsaved-changes state is tracked per-form and cleared
+    // automatically when this dialog (and thus its DestroyRef) is destroyed.
   }
 
   private initForm() {
@@ -104,6 +99,7 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
     this.fieldValueForm = await this.entityFormService.createEntityForm(
       fieldKeys,
       this.entityData,
+      this.destroyRef,
     );
 
     const selectedField = this.selectedFieldFormControl.value;

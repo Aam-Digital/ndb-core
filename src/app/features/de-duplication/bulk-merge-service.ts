@@ -5,7 +5,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { catchError, lastValueFrom, of } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
-import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceItem } from "../attendance/model/attendance-item";
@@ -24,7 +23,6 @@ export class BulkMergeService {
   private readonly entityRelationshipService = inject(EntityRelationsService);
   private readonly matDialog = inject(MatDialog);
   private readonly alert = inject(AlertService);
-  private readonly unsavedChangesService = inject(UnsavedChangesService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly userAdminService = inject(UserAdminService);
 
@@ -85,7 +83,8 @@ export class BulkMergeService {
       dialogResult.deleteSecondaryAccount,
       dialogResult.accountUpdate,
     );
-    this.unsavedChangesService.pending.set(false);
+    // the merge dialog's form is already destroyed (and thus its unsaved-changes state cleared)
+    // by the time we reach here, since we awaited its `afterClosed()` above.
     this.alert.addInfo($localize`Records merged successfully.`);
     return true;
   }

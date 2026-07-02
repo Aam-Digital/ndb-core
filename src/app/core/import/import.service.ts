@@ -209,7 +209,6 @@ export class ImportService {
       return undefined;
     }
 
-    const datatype = this.schemaService.getDatatypeOrDefault(schema.dataType);
     let value;
 
     // Determine if we should split array values based on enableSplitting flag
@@ -217,6 +216,13 @@ export class ImportService {
       schema.isArray && (mapping.additional?.enableSplitting ?? true);
 
     try {
+      // failSilently: false - a broken dataType should surface as a clear per-cell
+      // import error (caught below) rather than silently importing the raw,
+      // untransformed value into a field of an unknown type.
+      const datatype = this.schemaService.getDatatypeOrDefault(
+        schema.dataType,
+        false,
+      );
       if (!shouldSplit) {
         // Handle as single value (either non-array field or array field with splitting disabled)
         value = await datatype.importMapFunction(

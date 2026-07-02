@@ -13,6 +13,17 @@ import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
 
 /**
+ * 4XX statuses that occur during normal operation
+ * (and are handled by callers or the auth layer),
+ * so they are not reported to remote logging.
+ */
+const EXPECTED_4XX_STATUSES: number[] = [
+  HttpStatusCode.Unauthorized,
+  HttpStatusCode.Forbidden,
+  HttpStatusCode.NotFound,
+];
+
+/**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
 export class RemotePouchDatabase extends PouchDatabase {
@@ -168,6 +179,10 @@ export class RemotePouchDatabase extends PouchDatabase {
         Logging.debug(
           "Notifications database not found (404) - may be expected",
         );
+      } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
+        // expired session (401), permission-filtered doc (403) and missing doc (404)
+        // are part of normal operation and handled by callers
+        Logging.debug("Failed to fetch from DB with 40X error", result);
       } else {
         Logging.warn("Failed to fetch from DB with 40X error", result);
       }

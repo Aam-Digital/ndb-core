@@ -35,6 +35,14 @@ export async function initEnvironmentConfig() {
 }
 
 /**
+ * sessionStorage key tracking how many times we've auto-reloaded due to a
+ * failure loading config.json, so a persistent failure (e.g. offline) doesn't
+ * reload-loop and flood error monitoring.
+ */
+const CONFIG_JSON_RELOAD_ATTEMPTS_KEY = "config_json_reload_attempts";
+const CONFIG_JSON_MAX_RELOAD_ATTEMPTS = 1;
+
+/**
  * Load basic config values from assets/keycloak.json into environment
  */
 async function initConfigJsonToEnvironment() {
@@ -47,6 +55,7 @@ async function initConfigJsonToEnvironment() {
     if (typeof config !== "object") {
       throw new Error("config.json must be an object");
     }
+    sessionStorage.removeItem(CONFIG_JSON_RELOAD_ATTEMPTS_KEY);
   } catch (err) {
     if (
       !environment.production ||
@@ -63,10 +72,23 @@ async function initConfigJsonToEnvironment() {
 
     Logging.error(err, "failed to load config.json");
 
-    alert(
-      "We couldn't load the base configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.",
+    const attempts = Number(
+      sessionStorage.getItem(CONFIG_JSON_RELOAD_ATTEMPTS_KEY) ?? "0",
     );
-    window.location.reload();
+    if (attempts < CONFIG_JSON_MAX_RELOAD_ATTEMPTS) {
+      sessionStorage.setItem(
+        CONFIG_JSON_RELOAD_ATTEMPTS_KEY,
+        String(attempts + 1),
+      );
+      alert(
+        "We couldn't load the base configuration for your system. Trying to reload the app for you. If this problem persists, please contact your tech support.",
+      );
+      window.location.reload();
+    } else {
+      alert(
+        "We couldn't load the base configuration for your system, even after retrying. Please contact your tech support.",
+      );
+    }
   }
 
   Object.assign(environment, config);

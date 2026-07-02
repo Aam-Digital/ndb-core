@@ -8,6 +8,7 @@ import { EntityFormService } from "../entity-form.service";
 import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { MockDestroyRef } from "../../../../utils/mock-destroy-ref";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent<TestEntity>;
@@ -41,6 +42,7 @@ describe("EntityFormComponent", () => {
     const form = await TestBed.inject(EntityFormService).createEntityForm(
       columns[0],
       entity,
+      new MockDestroyRef(),
     );
     fixture.componentRef.setInput("entity", entity);
     fixture.componentRef.setInput(
