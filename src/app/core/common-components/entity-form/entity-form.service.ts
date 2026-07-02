@@ -132,12 +132,11 @@ export class EntityFormService {
     };
 
     // Track unsaved changes for this form, keyed by the EntityForm itself.
-    // Both the subscription and the final cleanup are tied to the caller's lifecycle,
-    // so a closed/destroyed form never leaves stale "pending changes" behind.
+    // Both the subscription and the final cleanup are tied to the caller's lifecycle.
     // Note: if a caller creates several forms over its lifetime (e.g. reloading a
-    // resource), each form's state is only cleared when the shared DestroyRef is
-    // destroyed, not when a form is replaced - acceptable, as routed views guard
-    // navigation via canDeactivate and dialogs are destroyed on close.
+    // resource), it should explicitly clear the old form's state via
+    // `setUnsavedChanges(oldForm, false)` before replacing it, to prevent stale
+    // dirty state from accumulating in UnsavedChangesService.sources.
     typedFormGroup.valueChanges
       .pipe(takeUntilDestroyed(destroyRef))
       .subscribe(() =>
