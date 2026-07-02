@@ -255,7 +255,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
-    if (columnGroup && columnGroup.groups?.length > 0) {
+    if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
       this.defaultColumnGroup =
         columnGroup.default && this.configuredTabExists(columnGroup.default)

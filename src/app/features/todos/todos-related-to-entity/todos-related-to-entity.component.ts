@@ -29,9 +29,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   private formDialog = inject(FormDialogService);
 
   override entityCtr = signal(Todo);
-  override loaderMethod = input<LoaderMethod>(
-    LoaderMethod.TodosRelatedToEntity,
-  );
+  override loaderMethod = input(LoaderMethod.TodosRelatedToEntity);
 
   protected override getDefaultColumns(): FormFieldConfig[] {
     return RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;

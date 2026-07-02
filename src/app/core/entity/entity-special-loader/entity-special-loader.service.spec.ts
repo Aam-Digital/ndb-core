@@ -24,7 +24,7 @@ describe("EntitySpecialLoaderService", () => {
 
   let mockChildrenService: ChildrenServiceMock;
   let mockHistoricalDataService: HistoricalDataServiceMock;
-  let mockTodoService: TodoService;
+  let mockTodoService: Partial<TodoService>;
 
   beforeEach(() => {
     mockChildrenService = {
@@ -36,7 +36,7 @@ describe("EntitySpecialLoaderService", () => {
     };
     mockTodoService = {
       getTodosFor: vi.fn(),
-    } as any;
+    };
 
     TestBed.configureTestingModule({
       providers: [
