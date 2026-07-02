@@ -280,7 +280,7 @@ export class ReportingComponent {
         const dayAfterToDate = moment(to).add(1, "day").toDate();
         return {
           data: await this.dataTransformationService.queryAndTransformData(
-            report.aggregationDefinitions,
+            report.reportDefinition,
             from,
             dayAfterToDate,
           ),
@@ -301,7 +301,7 @@ export class ReportingComponent {
       default:
         return {
           data: await this.dataAggregationService.calculateReport(
-            report.aggregationDefinitions,
+            report.reportDefinition,
             from,
             to,
           ),
@@ -343,13 +343,10 @@ export class ReportingComponent {
       title: report.title,
       mode: report.mode,
     };
-    // explicitly map the relevant properties (canonical only; version is deprecated)
+    // explicitly map the relevant properties (canonical reportDefinition only;
+    // legacy aggregationDefinition(s) are consolidated into reportDefinition by migration)
     if (report.reportDefinition)
       reportDetails.reportDefinition = report.reportDefinition;
-    if (report.aggregationDefinition)
-      reportDetails.aggregationDefinition = report.aggregationDefinition;
-    if (report.aggregationDefinitions)
-      reportDetails.aggregationDefinitions = report.aggregationDefinitions;
 
     this.jsonEditorService
       .openJsonEditorDialog(reportDetails)

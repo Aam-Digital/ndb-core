@@ -163,7 +163,7 @@ describe("ReportingComponent", () => {
       expect(component.isLoading()).toBe(false);
 
       expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
-        testReport.aggregationDefinitions as Aggregation[],
+        testReport.reportDefinition as Aggregation[],
         expect.any(Date),
         expect.any(Date),
       );
@@ -294,7 +294,7 @@ describe("ReportingComponent", () => {
     mockDataTransformationService.queryAndTransformData.mockResolvedValue(data);
     const report = new ReportEntity();
     report.mode = "exporting";
-    report.aggregationDefinitions = [];
+    report.reportDefinition = [];
 
     await component.calculateResults(report, new Date(), new Date());
 
