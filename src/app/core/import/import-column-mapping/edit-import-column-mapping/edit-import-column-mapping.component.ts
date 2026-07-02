@@ -95,7 +95,7 @@ export class EditImportColumnMappingComponent {
   hideOption = (option: FormFieldConfig) =>
     this.otherColumnMappings().some((c) => c.propertyName === option.id) &&
     !this.schemaService.getDatatypeOrDefault(option.dataType)
-      .importAllowsMultiMapping &&
+      ?.importAllowsMultiMapping &&
     option.id !== this.columnMapping()?.propertyName;
 
   onFieldSelected(propertyName: string) {
