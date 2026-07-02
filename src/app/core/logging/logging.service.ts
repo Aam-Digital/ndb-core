@@ -316,7 +316,15 @@ function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
 
   const count = (sentryEventCounts.get(key) ?? 0) + 1;
   sentryEventCounts.set(key, count);
-  return count > MAX_REPEATED_SENTRY_EVENTS;
+
+  if (count > MAX_REPEATED_SENTRY_EVENTS) {
+    Logging.debug("Skipping repeated event for remote logging", {
+      event: key,
+      occurrence: count,
+    });
+    return true;
+  }
+  return false;
 }
 
 /**
