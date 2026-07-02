@@ -21,7 +21,7 @@ test("Generate a configured aggregation report and download CSV", async ({
   const reportConfig = createEntityOfType("ReportConfig", "e2e-basic-report");
   reportConfig.title = "E2E Basic Report";
   reportConfig.mode = "reporting";
-  reportConfig.aggregationDefinitions = [
+  reportConfig.reportDefinition = [
     {
       query: "Child:toArray",
       label: "All children",

@@ -59,7 +59,7 @@ export class TrackedMigrationContext implements MigrationContext {
     await this.logDiff(path, data, db);
 
     if (this.dryRun) {
-      this.log.verbose(`[PREVIEW] Would PUT ${path}`);
+      this.log.info(`[PREVIEW] Would PUT ${path}`);
       return;
     }
     try {
@@ -81,7 +81,7 @@ export class TrackedMigrationContext implements MigrationContext {
       oldData = await this.couchdb.get(path, db);
     } catch (error: unknown) {
       if (!is404Error(error)) throw error;
-      this.log.verbose(`+ ${path} (new document)`);
+      this.logChange(`+ ${path} (new document)`);
       return;
     }
 
@@ -105,22 +105,28 @@ export class TrackedMigrationContext implements MigrationContext {
       const pathStr = change.path.join(".");
       switch (change.type) {
         case "CREATE":
-          this.log.verbose(
+          this.logChange(
             `  + ${pathStr}: ${truncate(JSON.stringify(change.value))}`,
           );
           break;
         case "REMOVE":
-          this.log.verbose(
+          this.logChange(
             `  - ${pathStr}: ${truncate(JSON.stringify(change.oldValue))}`,
           );
           break;
         case "CHANGE":
-          this.log.verbose(
+          this.logChange(
             `  ~ ${pathStr}: ${truncate(JSON.stringify(change.oldValue))} → ${truncate(JSON.stringify(change.value))}`,
           );
           break;
       }
     }
+  }
+
+  /** Diff lines: always shown during preview (that's the point of a preview), only with --verbose during a real apply so multi-org runs stay quiet. */
+  private logChange(msg: string): void {
+    if (this.dryRun) this.log.info(msg);
+    else this.log.verbose(msg);
   }
 }
 

@@ -15,7 +15,7 @@ import { FilterGeneratorService } from "../filter-generator/filter-generator.ser
 import { TableStateUrlService } from "../../common-components/entities-table/table-state-url.service";
 import { NgComponentOutlet } from "@angular/common";
 import { FilterService } from "../filter.service";
-import { DataFilter, Filter } from "../filters/filters";
+import { DataFilter, Filter, SelectableFilter } from "../filters/filters";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -144,7 +144,7 @@ export class FilterComponent<T extends Entity = Entity> {
     if (this.useUrlQueryParams()) {
       this.tableStateUrl.updateFilterParam(
         filter.name,
-        selectedOptions.toString(),
+        selectedOptions.join(","),
         false,
       );
     }
@@ -186,6 +186,72 @@ export class FilterComponent<T extends Entity = Entity> {
     return [...(this.filterConfig() ?? []), ...extraConfigs];
   }
 
+  /**
+   * Parse a URL query-param string into the list of selected option values.
+   *
+   * Multiple selected values are joined by "," in the URL. Legacy option ids
+   * (e.g. configurable-enum ids created before they were normalized) may
+   * themselves contain a comma, which would otherwise be mistaken for the
+   * multi-value separator (see issue #4104). To stay backwards-compatible
+   * without changing the URL format, the raw value is resolved against the
+   * filter's known option keys instead of being split blindly.
+   */
+  private parseFilterValue(filter: Filter<T>, raw: string): string[] {
+    const validKeys =
+      filter instanceof SelectableFilter
+        ? (filter.options?.map((option) => option.key) ?? [])
+        : [];
+
+    // filters without a known set of option keys (e.g. date range filters):
+    // keep the legacy comma-split behaviour.
+    if (validKeys.length === 0) {
+      return raw.split(",").filter((value) => value !== "");
+    }
+
+    // Resolve the comma-separated tokens into selected values. A single option
+    // key may itself contain a comma (legacy ids), so tokens are not split
+    // blindly. Find the segmentation that covers the most tokens with valid
+    // option keys (i.e. the fewest unknown fragments), preferring longer keys
+    // on ties. Tokens matching no key are kept as-is so stale/unknown values
+    // from old URLs are preserved. A greedy longest-match would mis-partition
+    // overlapping keys (e.g. keys "A" and "B,C" turning "A,B,C" into
+    // ["A,B", ...]), so this uses a small dynamic program over token positions.
+    const tokens = raw.split(",");
+    const n = tokens.length;
+    // best[i] = optimal parse of tokens[i..n]
+    const best: { unknowns: number; values: string[] }[] = new Array(n + 1);
+    best[n] = { unknowns: 0, values: [] };
+    for (let i = n - 1; i >= 0; i--) {
+      // fallback: keep tokens[i] as a single unknown value
+      const rest = best[i + 1];
+      let candidate = {
+        unknowns: rest.unknowns + 1,
+        values: [tokens[i], ...rest.values],
+      };
+      // prefer runs (longest first) whose join is a valid option key
+      for (let length = n - i; length >= 1; length--) {
+        const key = tokens.slice(i, i + length).join(",");
+        if (!validKeys.includes(key)) {
+          continue;
+        }
+        const tail = best[i + length];
+        const option = {
+          unknowns: tail.unknowns,
+          values: [key, ...tail.values],
+        };
+        if (
+          option.unknowns < candidate.unknowns ||
+          (option.unknowns === candidate.unknowns &&
+            option.values.length < candidate.values.length)
+        ) {
+          candidate = option;
+        }
+      }
+      best[i] = candidate;
+    }
+    return best[0].values.filter((value) => value !== "");
+  }
+
   private loadUrlParams(filterSelections: Filter<T>[]): Filter<T>[] {
     if (!this.useUrlQueryParams()) {
       return filterSelections;
@@ -199,9 +265,7 @@ export class FilterComponent<T extends Entity = Entity> {
       let nextValues: string[] | undefined;
 
       if (Object.hasOwn(params, filter.name)) {
-        nextValues = params[filter.name]
-          .split(",")
-          .filter((value) => value !== "");
+        nextValues = this.parseFilterValue(filter, params[filter.name]);
       } else if (
         hasUrlParams &&
         (filter.selectedOptionValues?.length ?? 0) > 0

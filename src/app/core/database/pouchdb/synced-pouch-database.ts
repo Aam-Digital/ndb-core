@@ -219,6 +219,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
           );
         } else if (this.isSyncConnectivityError(err)) {
           Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
+        } else if (err?.status === 401 || err?.statusCode === 401) {
+          // expired session; the fetch layer already triggers re-login
+          Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
         } else {
           Logging.warn(`sync failed`, { db: this.dbName }, err);
         }

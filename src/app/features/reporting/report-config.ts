@@ -37,8 +37,13 @@ class ReportConfig extends Entity {
    */
   @DatabaseField() neededArgs?: string[] = [];
 
-  /** (reporting/exporting only, in browser reports) the definitions to calculate the report's aggregations */
-  @DatabaseField() aggregationDefinitions: any[];
+  /**
+   * @deprecated Consolidated into {@link reportDefinition} by the one-time CLI migration
+   * (consolidate-report-definition), which copies this into `reportDefinition` without deleting
+   * it. Kept during the coexistence period so legacy docs still load and old code keeps working;
+   * a follow-up migration removes it once every environment runs the new code.
+   */
+  @DatabaseField() aggregationDefinitions?: any[];
 
   /**
    * @deprecated (will be removed completely after server-side migration)
@@ -55,16 +60,16 @@ class ReportConfig extends Entity {
   };
 
   /**
-   *  (sql v2 only) ReportDefinitionItem, ether ReportQuery or ReportGroup
+   * The single definition of what the report calculates. Its shape depends on {@link mode}:
+   * - "sql":       {@link ReportDefinitionDto}[] — SQL queries and optional groups.
+   * - "reporting": {@link Aggregation}[] — in-browser aggregation definitions.
+   * - "exporting": {@link ExportColumnConfig}[] — export column definitions.
    *
-   *  Can be ReportQuery:
-   *  {query: "SELECT * FROM foo"}
-   *
-   *  Can be ReportGroup:
-   *  {groupTitle: "This is a group", items: [...]}
-   *
+   * Consolidated from the former `aggregationDefinitions` so all report modes share one field.
    */
-  @DatabaseField() reportDefinition: ReportDefinitionDto[];
+  @DatabaseField()
+  reportDefinition:
+    ReportDefinitionDto[] | Aggregation[] | ExportColumnConfig[];
 }
 
 export interface ReportDefinitionDto {
@@ -93,7 +98,7 @@ export const ReportEntity = ReportConfig as EntityConstructor<ReportEntity>;
  */
 export interface AggregationReport extends ReportConfig {
   mode: "reporting";
-  aggregationDefinitions: Aggregation[];
+  reportDefinition: Aggregation[];
 }
 
 /**
@@ -104,7 +109,7 @@ export interface ExportingReport extends ReportConfig {
    * If no mode is set, it will default to 'exporting'
    */
   mode?: "exporting";
-  aggregationDefinitions: ExportColumnConfig[];
+  reportDefinition: ExportColumnConfig[];
 }
 
 /**
@@ -156,7 +161,8 @@ export interface SqlReport extends ReportConfig {
 export function isHierarchicalReport(
   report: ReportEntity | undefined,
 ): boolean {
-  const reportDefinition = report?.reportDefinition;
+  const reportDefinition = report?.reportDefinition as
+    ReportDefinitionDto[] | undefined;
   if (!reportDefinition?.length) {
     return false;
   }
