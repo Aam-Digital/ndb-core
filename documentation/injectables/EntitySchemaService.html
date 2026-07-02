@@ -231,8 +231,8 @@ You should normally use the EntityMapperService instead of transforming objects 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="165"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:165</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="189"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:189</a></div>
                         </td>
                     </tr>
 
@@ -332,15 +332,22 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:53</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="70"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:70</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Get the datatype for the giving name (or the default datatype if no other registered type fits)</p>
+                        <div class="io-description"><p>Get the datatype for the given name, always returning a usable <code>DefaultDatatype</code>.</p>
+<p>If <code>datatypeName</code> is empty, or set but doesn&#39;t match any registered datatype, this returns
+the default (no-op passthrough) datatype instead of <code>undefined</code> - so callers never need a
+null-guard for the common case. An unresolvable (non-empty) name logs a warning (deduped per
+name per session, see warnedUnresolvedDataTypes) so the underlying config/build problem is
+still visible without flooding the console/monitoring for every field/record it affects.</p>
+<p>  when <code>datatypeName</code> is set but unresolvable - only for callers with a specific reason to
+  fail hard (e.g. dedicated schema/config validation, or surfacing a per-item error).</p>
 </div>
 
                             <div class="io-description">
@@ -386,11 +393,13 @@ decorator</p>
                                             </td>
 
                                             <td>
-                                                    <code>false</code>
+                                                    <code>true</code>
                                             </td>
 
                                             <td>
-                                                    <p>If set to &#39;true&#39; no error is thrown if datatype does not exist</p>
+                                                    <p>If set to <code>false</code>, throws instead of falling back to the default datatype
+when <code>datatypeName</code> is set but unresolvable - only for callers with a specific reason to
+fail hard (e.g. dedicated schema/config validation, or surfacing a per-item error).</p>
 
                                             </td>
                                         </tr>
@@ -398,7 +407,7 @@ decorator</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                            <b>Returns : </b>        <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
 
                         </div>
                             <div class="io-description">
@@ -430,8 +439,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="110"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:110</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="134"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:134</a></div>
                         </td>
                     </tr>
 
@@ -530,8 +539,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="80"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:80</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -630,8 +639,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="123"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:123</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="147"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:147</a></div>
                         </td>
                     </tr>
 
@@ -720,8 +729,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="190"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:190</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="214"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:214</a></div>
                         </td>
                     </tr>
 
@@ -813,8 +822,8 @@ decorator</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="216"
-                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:216</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="240"
+                                    class="link-to-prism">src/app/core/entity/schema/entity-schema.service.ts:240</a></div>
                         </td>
                     </tr>
 
@@ -898,6 +907,7 @@ import { EntitySchema } from &quot;./entity-schema&quot;;
 import { EntitySchemaField } from &quot;./entity-schema-field&quot;;
 import { DefaultDatatype } from &quot;../default-datatype/default.datatype&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
  * Transform between entity instances and database objects
@@ -923,11 +933,30 @@ export class EntitySchemaService {
   private injector &#x3D; inject(Injector);
 
   /**
-   * Get the datatype for the giving name (or the default datatype if no other registered type fits)
-   * @param datatypeName The key/name of the datatype
-   * @param failSilently If set to &#x27;true&#x27; no error is thrown if datatype does not exist
+   * dataType names we&#x27;ve already logged a &quot;could not resolve&quot; warning for,
+   * so a broken/stale dataType affecting many fields or records only ever
+   * warns once per session instead of flooding the console/monitoring.
    */
-  public getDatatypeOrDefault(datatypeName: string, failSilently &#x3D; false) {
+  private warnedUnresolvedDataTypes &#x3D; new Set&lt;string&gt;();
+
+  /**
+   * Get the datatype for the given name, always returning a usable &#x60;DefaultDatatype&#x60;.
+   *
+   * If &#x60;datatypeName&#x60; is empty, or set but doesn&#x27;t match any registered datatype, this returns
+   * the default (no-op passthrough) datatype instead of &#x60;undefined&#x60; - so callers never need a
+   * null-guard for the common case. An unresolvable (non-empty) name logs a warning (deduped per
+   * name per session, see warnedUnresolvedDataTypes) so the underlying config/build problem is
+   * still visible without flooding the console/monitoring for every field/record it affects.
+   *
+   * @param datatypeName The key/name of the datatype
+   * @param failSilently If set to &#x60;false&#x60;, throws instead of falling back to the default datatype
+   *   when &#x60;datatypeName&#x60; is set but unresolvable - only for callers with a specific reason to
+   *   fail hard (e.g. dedicated schema/config validation, or surfacing a per-item error).
+   */
+  public getDatatypeOrDefault(
+    datatypeName: string,
+    failSilently &#x3D; true,
+  ): DefaultDatatype {
     if (!datatypeName) {
       return this.defaultDatatype;
     }
@@ -940,13 +969,17 @@ export class EntitySchemaService {
       DefaultDatatype,
     ) as unknown as DefaultDatatype[];
 
-    let dataType &#x3D; dataTypes.find((d) &#x3D;&gt; d.dataType &#x3D;&#x3D;&#x3D; datatypeName);
+    const dataType &#x3D; dataTypes.find((d) &#x3D;&gt; d.dataType &#x3D;&#x3D;&#x3D; datatypeName);
     if (dataType) {
       this.schemaTypes.set(datatypeName, dataType);
       return dataType;
-    } else if (!failSilently) {
+    }
+
+    if (!failSilently) {
       throw new Error(&#x60;Data type does not exist: ${datatypeName}&#x60;);
     }
+    this.warnUnresolvedDatatype(datatypeName);
+    return this.defaultDatatype;
   }
 
   /**
@@ -1053,7 +1086,7 @@ export class EntitySchemaService {
     }
 
     const dataType &#x3D; this.getDatatypeOrDefault(propertySchema.dataType);
-    if (dataType?.[componentAttribute]) {
+    if (dataType[componentAttribute]) {
       return dataType[componentAttribute];
     }
   }
@@ -1108,6 +1141,26 @@ export class EntitySchemaService {
     } else {
       return dataType.transformToObjectFormat(value, schemaField, dataObject);
     }
+  }
+
+  /**
+   * Log a warning when a field&#x27;s configured dataType cannot be resolved to a registered
+   * implementation, instead of throwing and aborting the whole entity load/render/save.
+   *
+   * Only warns once per dataType name per session (see warnedUnresolvedDataTypes) so a broken
+   * dataType affecting many fields/records doesn&#x27;t flood the console and remote monitoring with
+   * a near-duplicate warning for every occurrence.
+   */
+  private warnUnresolvedDatatype(datatypeName: string): void {
+    if (this.warnedUnresolvedDataTypes.has(datatypeName)) {
+      return;
+    }
+    this.warnedUnresolvedDataTypes.add(datatypeName);
+    Logging.warn(
+      &quot;Unknown dataType for a field - falling back to default (no-op) transformation.&quot; +
+        &quot; Further occurrences of the same dataType will not be logged again this session.&quot;,
+      { dataType: datatypeName },
+    );
   }
 }
 </code></pre>
