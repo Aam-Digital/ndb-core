@@ -6,13 +6,19 @@ import { DestroyRef, effect, inject, signal } from "@angular/core";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
-import { SortValueFns, tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
+import {
+  SortValueFns,
+  tableSort,
+} from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import {
   EntitySpecialLoaderService,
-  LoaderMethod
+  LoaderMethod,
 } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { applyUpdate, UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import {
+  applyUpdate,
+  UpdatedEntity,
+} from "#src/app/core/entity/model/entity-update";
 import { skip, Subscription } from "rxjs";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { take } from "rxjs/operators";
