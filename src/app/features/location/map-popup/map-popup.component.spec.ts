@@ -9,6 +9,7 @@ import { OpenStreetMapsSearchResult, GeoService } from "../geo.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { GeoLocation, enrichGeoLocation } from "../geo-location";
+import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("MapPopupComponent", () => {
   let component: MapPopupComponent;
@@ -16,6 +17,7 @@ describe("MapPopupComponent", () => {
 
   let mapClick: Subject<Coordinates>;
   let mockGeoService: any;
+  let mockConfirmationDialog: { getConfirmation: any };
 
   beforeEach(async () => {
     mapClick = new Subject<Coordinates>();
@@ -25,12 +27,23 @@ describe("MapPopupComponent", () => {
       enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
         enrichGeoLocation(loc),
       ),
+      composeAddressFromParts: vi.fn((loc: GeoLocation | undefined) => {
+        if (!loc) return "";
+        const street = [loc.road, loc.house_number].filter(Boolean).join(" ");
+        const postcodeCity = [loc.postcode, loc.city].filter(Boolean).join(" ");
+        return [street, postcodeCity, loc.country]
+          .filter((x) => !!x)
+          .join(", ");
+      }),
     };
     mockGeoService.reverseLookup.mockReturnValue(
       of({
         error: "Unable to geocode",
       } as any),
     );
+    mockConfirmationDialog = {
+      getConfirmation: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -43,9 +56,13 @@ describe("MapPopupComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: { mapClick, displayedProperties: {} },
         },
-        { provide: MatDialogRef, useValue: {} },
+        { provide: MatDialogRef, useValue: { close: vi.fn() } },
         { provide: ConfigService, useValue: { getConfig: () => undefined } },
         { provide: GeoService, useValue: mockGeoService },
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationDialog,
+        },
       ],
     }).compileComponents();
 
@@ -227,5 +244,77 @@ describe("MapPopupComponent", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should ask for confirmation when an edited address part no longer matches the text", async () => {
+    component.updateLocation({
+      locationString: "Main St 42, 12345 Berlin, Germany",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+    component.updateLocation({
+      ...component.selectedLocation,
+      city: "Tempelhof",
+    });
+    component.onPartEdited();
+
+    mockConfirmationDialog.getConfirmation.mockResolvedValue("update");
+
+    await component.onSave();
+
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(component.selectedLocation.locationString).toBe(
+      "Main St 42, 12345 Tempelhof, Germany",
+    );
+  });
+
+  it("should keep the current text when the user chooses to keep it on parts mismatch", async () => {
+    component.updateLocation({
+      locationString: "Main St 42, 12345 Berlin, Germany",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+    component.updateLocation({
+      ...component.selectedLocation,
+      city: "Tempelhof",
+    });
+    component.onPartEdited();
+
+    mockConfirmationDialog.getConfirmation.mockResolvedValue("keep");
+
+    await component.onSave();
+
+    expect(component.selectedLocation.locationString).toBe(
+      "Main St 42, 12345 Berlin, Germany",
+    );
+    expect(component.selectedLocation.city).toBe("Tempelhof");
+  });
+
+  it("should not ask for confirmation when parts were not just edited", async () => {
+    // geoLookup matches locationString so the existing mismatch-check is also a no-op
+    component.selectedLocation = {
+      locationString: "stale text that does not match parts",
+      geoLookup: {
+        lat: 1,
+        lon: 1,
+        display_name: "stale text that does not match parts",
+      } as OpenStreetMapsSearchResult,
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    };
+    // onPartEdited() not called, so partsJustEdited stays false
+
+    await component.onSave();
+
+    expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
   });
 });

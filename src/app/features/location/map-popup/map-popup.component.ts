@@ -70,6 +70,7 @@ export class MapPopupComponent {
   selectedLocation: GeoLocation;
   private lastSavedLocation: GeoLocation | undefined;
   private manualAddressJustEdited = false;
+  private partsJustEdited = false;
 
   constructor() {
     const data = this.data;
@@ -138,10 +139,22 @@ export class MapPopupComponent {
 
     const manualAddress = this.selectedLocation?.locationString ?? "";
     const lookupAddress = this.selectedLocation?.geoLookup?.display_name ?? "";
+    const partsAddress = this.geoService.composeAddressFromParts(
+      this.selectedLocation,
+    );
 
     if (this.shouldShowConfirmation(manualAddress, lookupAddress)) {
       const result = await this.showAddressMismatchDialog();
       await this.handleConfirmationResult(result, lookupAddress);
+      return;
+    }
+
+    if (this.shouldShowPartsConfirmation(manualAddress, partsAddress)) {
+      const result = await this.showPartsMismatchDialog(
+        manualAddress,
+        partsAddress,
+      );
+      await this.handlePartsConfirmationResult(result, partsAddress);
       return;
     }
 
@@ -162,7 +175,19 @@ export class MapPopupComponent {
     return (
       manualAddress &&
       manualAddress !== lookupAddress &&
-      !this.manualAddressJustEdited
+      !this.manualAddressJustEdited &&
+      !this.partsJustEdited
+    );
+  }
+
+  private shouldShowPartsConfirmation(
+    manualAddress: string,
+    partsAddress: string,
+  ): boolean {
+    return (
+      this.partsJustEdited &&
+      !!partsAddress &&
+      manualAddress.trim() !== partsAddress.trim()
     );
   }
 
@@ -204,14 +229,58 @@ export class MapPopupComponent {
     // If dialog closed without a result, do nothing (let user edit)
   }
 
+  private async showPartsMismatchDialog(
+    currentText: string,
+    partsAddress: string,
+  ): Promise<"keep" | "update" | undefined> {
+    const result = await this.confirmationDialog.getConfirmation(
+      $localize`Update address text?`,
+      $localize`You changed the address details, so the address text no longer matches. Which should be saved?\n\n**Current text:**\n${currentText}\n\n**Updated text:**\n${partsAddress}`,
+      [
+        {
+          text: $localize`Keep current text`,
+          dialogResult: "keep",
+          click: () => {},
+        },
+        {
+          text: $localize`Update to match details`,
+          dialogResult: "update",
+          click: () => {},
+        },
+      ],
+    );
+    return result as "keep" | "update" | undefined;
+  }
+
+  private async handlePartsConfirmationResult(
+    result: string | boolean | undefined,
+    partsAddress: string,
+  ) {
+    if (result === "keep") {
+      this.saveAndClose();
+    } else if (result === "update") {
+      this.selectedLocation = {
+        ...this.selectedLocation,
+        locationString: partsAddress,
+      };
+      this.saveAndClose();
+    }
+    // If dialog closed without a result, do nothing (let user edit)
+  }
+
   private saveAndClose() {
     this.lastSavedLocation = { ...this.selectedLocation };
     this.manualAddressJustEdited = false;
+    this.partsJustEdited = false;
     this.closeDialog();
   }
 
   private closeDialog() {
     this.dialogRef.close([this.selectedLocation]);
+  }
+
+  onPartEdited() {
+    this.partsJustEdited = true;
   }
 
   updateLocation(event: GeoLocation | undefined) {
