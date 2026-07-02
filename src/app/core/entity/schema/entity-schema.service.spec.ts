@@ -125,12 +125,37 @@ describe("EntitySchemaService", () => {
     expect(dataType).toBeInstanceOf(DefaultDatatype);
   });
 
-  it("should return the default datatype (not throw) by default if data type does not exist", () => {
+  it("should fall back to the default datatype/component (not throw) for an unresolvable dataType, warning only once across all call sites", () => {
     vi.spyOn(Logging, "warn").mockImplementation(() => {});
     try {
-      expect(service.getDatatypeOrDefault("invalidDataTypeX")).toBeInstanceOf(
+      class TestEntity extends Entity {
+        @DatabaseField({ dataType: "invalidDataType" })
+        aField: any;
+      }
+
+      expect(service.getDatatypeOrDefault("invalidDataType")).toBeInstanceOf(
         DefaultDatatype,
       );
+
+      const schemaField: EntitySchemaField = {
+        id: "aField",
+        dataType: "invalidDataType",
+      };
+      let editComponent: string;
+      expect(
+        () => (editComponent = service.getComponent(schemaField, "edit")),
+      ).not.toThrow();
+      expect(editComponent).toEqual(new DefaultDatatype().editComponent);
+
+      for (let i = 0; i < 3; i++) {
+        const entity = new TestEntity();
+        const data = { _id: entity.getId(), aField: "value" + i };
+        expect(() => service.loadDataIntoEntity(entity, data)).not.toThrow();
+        expect(entity.aField).toEqual("value" + i);
+      }
+
+      // repeated occurrences of the same unresolvable dataType are deduped to a single warning
+      expect(Logging.warn).toHaveBeenCalledTimes(1);
     } finally {
       vi.restoreAllMocks();
     }
@@ -140,66 +165,6 @@ describe("EntitySchemaService", () => {
     expect(() =>
       service.getDatatypeOrDefault("invalidDataType", false),
     ).toThrowError();
-  });
-
-  it("should fall back to default datatype and warn (not throw) when loading a field with an unresolvable dataType", () => {
-    vi.spyOn(Logging, "warn").mockImplementation(() => {});
-    try {
-      class TestEntity extends Entity {
-        @DatabaseField({ dataType: "invalidDataType" })
-        aField: any;
-      }
-
-      const entity = new TestEntity();
-      const data = { _id: entity.getId(), aField: "some value" };
-
-      expect(() => service.loadDataIntoEntity(entity, data)).not.toThrow();
-      expect(entity.aField).toEqual("some value");
-      expect(Logging.warn).toHaveBeenCalled();
-    } finally {
-      vi.restoreAllMocks();
-    }
-  });
-
-  it("should only warn once per dataType, even across many records/fields", () => {
-    vi.spyOn(Logging, "warn").mockImplementation(() => {});
-    try {
-      class TestEntity extends Entity {
-        @DatabaseField({ dataType: "invalidDataType2" })
-        aField: any;
-      }
-
-      for (let i = 0; i < 5; i++) {
-        const entity = new TestEntity();
-        service.loadDataIntoEntity(entity, {
-          _id: entity.getId(),
-          aField: "value" + i,
-        });
-      }
-
-      expect(Logging.warn).toHaveBeenCalledTimes(1);
-    } finally {
-      vi.restoreAllMocks();
-    }
-  });
-
-  it("should return the default (no-op) component and warn (not throw) when getComponent is given an unresolvable dataType", () => {
-    vi.spyOn(Logging, "warn").mockImplementation(() => {});
-    try {
-      const schemaField: EntitySchemaField = {
-        id: "aField",
-        dataType: "invalidDataType3",
-      };
-
-      let editComponent: string;
-      expect(
-        () => (editComponent = service.getComponent(schemaField, "edit")),
-      ).not.toThrow();
-      expect(editComponent).toEqual(new DefaultDatatype().editComponent);
-      expect(Logging.warn).toHaveBeenCalled();
-    } finally {
-      vi.restoreAllMocks();
-    }
   });
 });
 
