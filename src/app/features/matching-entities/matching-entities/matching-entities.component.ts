@@ -59,12 +59,13 @@ import {
   NewMatchAction,
 } from "./matching-entities-config";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { LoggingService } from "#src/app/core/logging/logging.service";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
   filterObj: WritableSignal<DataFilter<Entity>>;
 
-  dataSource: InMemoryDataSource<Entity>;
+  dataSource?: InMemoryDataSource<Entity>;
   selectMatch?: (e) => void;
   entityType: string;
 
@@ -116,6 +117,7 @@ export class MatchingEntitiesComponent implements OnInit {
   private entityRegistry = inject(EntityRegistry);
   private filterService = inject(FilterService);
   private injector = inject(Injector);
+  private logger = inject(LoggingService);
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
   entity = input<Entity>();
@@ -244,7 +246,14 @@ export class MatchingEntitiesComponent implements OnInit {
         this.injector,
         () => (newSide.dataSource = new InMemoryDataSource()),
       );
-      const records = await this.entityMapper.loadType(newSide.entityType);
+      const records = await this.entityMapper
+        .loadType(newSide.entityType)
+        .catch((err) => {
+          this.logger.error(
+            `Failed to initialize entities (${newSide.entityType}) for matching side ${sideIndex}. Reasons: ${err}`,
+          );
+          return [];
+        });
       newSide.dataSource.allRecords.set(records);
       newSide.availableFilters = newSide.availableFilters ?? [];
       newSide.selected = signal<Entity[]>([]);

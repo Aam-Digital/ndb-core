@@ -84,7 +84,7 @@ export class EntitiesTableComponent<T extends Entity>
   ) as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
-  recordsDataSource = input<InMemoryDataSource<T>>();
+  recordsDataSource = input.required<InMemoryDataSource<T>>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
   });
