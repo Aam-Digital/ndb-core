@@ -21,6 +21,7 @@ import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { asArray } from "app/utils/asArray";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Transform between entity instances and database objects
@@ -46,11 +47,30 @@ export class EntitySchemaService {
   private injector = inject(Injector);
 
   /**
-   * Get the datatype for the giving name (or the default datatype if no other registered type fits)
-   * @param datatypeName The key/name of the datatype
-   * @param failSilently If set to 'true' no error is thrown if datatype does not exist
+   * dataType names we've already logged a "could not resolve" warning for,
+   * so a broken/stale dataType affecting many fields or records only ever
+   * warns once per session instead of flooding the console/monitoring.
    */
-  public getDatatypeOrDefault(datatypeName: string, failSilently = false) {
+  private warnedUnresolvedDataTypes = new Set<string>();
+
+  /**
+   * Get the datatype for the given name, always returning a usable `DefaultDatatype`.
+   *
+   * If `datatypeName` is empty, or set but doesn't match any registered datatype, this returns
+   * the default (no-op passthrough) datatype instead of `undefined` - so callers never need a
+   * null-guard for the common case. An unresolvable (non-empty) name logs a warning (deduped per
+   * name per session, see warnedUnresolvedDataTypes) so the underlying config/build problem is
+   * still visible without flooding the console/monitoring for every field/record it affects.
+   *
+   * @param datatypeName The key/name of the datatype
+   * @param failSilently If set to `false`, throws instead of falling back to the default datatype
+   *   when `datatypeName` is set but unresolvable - only for callers with a specific reason to
+   *   fail hard (e.g. dedicated schema/config validation, or surfacing a per-item error).
+   */
+  public getDatatypeOrDefault(
+    datatypeName: string,
+    failSilently = true,
+  ): DefaultDatatype {
     if (!datatypeName) {
       return this.defaultDatatype;
     }
@@ -63,13 +83,17 @@ export class EntitySchemaService {
       DefaultDatatype,
     ) as unknown as DefaultDatatype[];
 
-    let dataType = dataTypes.find((d) => d.dataType === datatypeName);
+    const dataType = dataTypes.find((d) => d.dataType === datatypeName);
     if (dataType) {
       this.schemaTypes.set(datatypeName, dataType);
       return dataType;
-    } else if (!failSilently) {
+    }
+
+    if (!failSilently) {
       throw new Error(`Data type does not exist: ${datatypeName}`);
     }
+    this.warnUnresolvedDatatype(datatypeName);
+    return this.defaultDatatype;
   }
 
   /**
@@ -176,7 +200,7 @@ export class EntitySchemaService {
     }
 
     const dataType = this.getDatatypeOrDefault(propertySchema.dataType);
-    if (dataType?.[componentAttribute]) {
+    if (dataType[componentAttribute]) {
       return dataType[componentAttribute];
     }
   }
@@ -231,5 +255,25 @@ export class EntitySchemaService {
     } else {
       return dataType.transformToObjectFormat(value, schemaField, dataObject);
     }
+  }
+
+  /**
+   * Log a warning when a field's configured dataType cannot be resolved to a registered
+   * implementation, instead of throwing and aborting the whole entity load/render/save.
+   *
+   * Only warns once per dataType name per session (see warnedUnresolvedDataTypes) so a broken
+   * dataType affecting many fields/records doesn't flood the console and remote monitoring with
+   * a near-duplicate warning for every occurrence.
+   */
+  private warnUnresolvedDatatype(datatypeName: string): void {
+    if (this.warnedUnresolvedDataTypes.has(datatypeName)) {
+      return;
+    }
+    this.warnedUnresolvedDataTypes.add(datatypeName);
+    Logging.warn(
+      "Unknown dataType for a field - falling back to default (no-op) transformation." +
+        " Further occurrences of the same dataType will not be logged again this session.",
+      { dataType: datatypeName },
+    );
   }
 }
