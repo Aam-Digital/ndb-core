@@ -462,7 +462,7 @@ describe("EntityFormService", () => {
     ]);
 
     const entity = new TestEntity();
-    const form = await service.createEntityForm([{ id: "name" }], entity);
+    const form = await createForm([{ id: "name" }], entity);
     form.formGroup.get("name").setValue("  John  ");
 
     await service.saveChanges(form, entity);
