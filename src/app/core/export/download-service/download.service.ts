@@ -43,9 +43,9 @@ export function buildExportColumnResolvers(
       label: field.label || (useFieldIdAsFallbackLabel ? fieldId : undefined),
     };
 
-    const datatype =
-      entitySchemaService.getDatatypeOrDefault(schemaField.dataType, true) ??
-      entitySchemaService.getDatatypeOrDefault(undefined);
+    const datatype = entitySchemaService.getDatatypeOrDefault(
+      schemaField.dataType,
+    );
 
     for (const column of datatype.getExportColumns(schemaField)) {
       resolvers.push({ sourceFieldId: fieldId, schemaField, column });

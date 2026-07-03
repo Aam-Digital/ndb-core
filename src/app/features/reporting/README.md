@@ -117,7 +117,7 @@ In the UI, grouped SQL reports are rendered as a hierarchical report view, while
 
 #### Aggregation structure
 
-Inside the `aggregationDefinitions` an array of aggregations can be added.
+Inside the `reportDefinition` an array of aggregations can be added.
 The following example shows the structure of an aggregation.
 
 ```json

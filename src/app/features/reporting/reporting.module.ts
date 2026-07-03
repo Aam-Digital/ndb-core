@@ -57,9 +57,20 @@ const reportAdminViewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["title", "mode", "description", "transformations"],
+                    fields: [
+                      {
+                        id: "report_explanation",
+                        viewComponent: "DisplayDescriptionOnly",
+                        label: $localize`:ReportConfig:Configure a report that users can run to generate aggregated statistics or data exports.
+See [Analyzing data through advanced reports](https://chatwoot.help/hc/aam-digital/articles/1782889956-analyzing-data-through-advanced-reports) for how to set up and use reports.`,
+                      },
+                      "title",
+                      "mode",
+                      "description",
+                      "transformations",
+                    ],
                   },
-                  { fields: ["reportDefinition", "aggregationDefinitions"] },
+                  { fields: ["reportDefinition"] },
                 ],
               },
             },

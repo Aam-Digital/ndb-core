@@ -62,14 +62,13 @@ class ReportConfig extends Entity {
    */
   @DatabaseField() neededArgs?: string[] = [];
 
-  /** (reporting/exporting only, in browser reports) the definitions to calculate the report's aggregations */
-  @DatabaseField({
-    label: $localize`:ReportConfig:Aggregation definitions`,
-    description: $localize`:ReportConfig:Used for "reporting" and "exporting" mode reports (not SQL).`,
-    editComponent: "EditReportFieldByMode",
-    additional: { modes: ["reporting", "exporting"] },
-  })
-  aggregationDefinitions: any[];
+  /**
+   * @deprecated Consolidated into {@link reportDefinition} by the one-time CLI migration
+   * (consolidate-report-definition), which copies this into `reportDefinition` without deleting
+   * it. Kept during the coexistence period so legacy docs still load and old code keeps working;
+   * a follow-up migration removes it once every environment runs the new code.
+   */
+  @DatabaseField() aggregationDefinitions?: any[];
 
   /**
    * @deprecated (will be removed completely after server-side migration)
@@ -91,24 +90,21 @@ class ReportConfig extends Entity {
   };
 
   /**
-   *  (sql v2 only) ReportDefinitionItem, ether ReportQuery or ReportGroup
+   * The single definition of what the report calculates. Its shape depends on {@link mode}:
+   * - "sql":       {@link ReportDefinitionDto}[] — SQL queries and optional groups.
+   * - "reporting": {@link Aggregation}[] — in-browser aggregation definitions.
+   * - "exporting": {@link ExportColumnConfig}[] — export column definitions.
    *
-   *  Can be ReportQuery:
-   *  {query: "SELECT * FROM foo"}
-   *
-   *  Can be ReportGroup:
-   *  {groupTitle: "This is a group", items: [...]}
-   *
+   * Consolidated from the former `aggregationDefinitions` so all report modes share one field.
    */
   @DatabaseField({
-    label: $localize`:ReportConfig:Report definition (SQL queries)`,
-    description: $localize`:ReportConfig:The SQL queries (and optional groups) calculated for "sql" mode reports.`,
-    // Part A: edit as raw JSON, shown only in "sql" mode; Part B replaces this with the
-    // structured "EditReportDefinition" editor.
-    editComponent: "EditReportFieldByMode",
-    additional: { modes: ["sql"] },
+    label: $localize`:ReportConfig:Report definition`,
+    description: $localize`:ReportConfig:The definition of what the report calculates: SQL queries for "sql" mode, or aggregation/export definitions for "reporting"/"exporting" mode.`,
+    // Part B replaces this with the structured "EditReportDefinition" editor (sql mode).
+    editComponent: "EditJson",
   })
-  reportDefinition: ReportDefinitionDto[];
+  reportDefinition:
+    ReportDefinitionDto[] | Aggregation[] | ExportColumnConfig[];
 }
 
 export interface ReportDefinitionDto {
@@ -137,7 +133,7 @@ export const ReportEntity = ReportConfig as EntityConstructor<ReportEntity>;
  */
 export interface AggregationReport extends ReportConfig {
   mode: "reporting";
-  aggregationDefinitions: Aggregation[];
+  reportDefinition: Aggregation[];
 }
 
 /**
@@ -148,7 +144,7 @@ export interface ExportingReport extends ReportConfig {
    * If no mode is set, it will default to 'exporting'
    */
   mode?: "exporting";
-  aggregationDefinitions: ExportColumnConfig[];
+  reportDefinition: ExportColumnConfig[];
 }
 
 /**
@@ -200,7 +196,8 @@ export interface SqlReport extends ReportConfig {
 export function isHierarchicalReport(
   report: ReportEntity | undefined,
 ): boolean {
-  const reportDefinition = report?.reportDefinition;
+  const reportDefinition = report?.reportDefinition as
+    ReportDefinitionDto[] | undefined;
   if (!reportDefinition?.length) {
     return false;
   }

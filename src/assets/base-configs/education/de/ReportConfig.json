@@ -2,7 +2,7 @@
   {
     "_id": "ReportConfig:basic-report",
     "title": "Basis-Bericht",
-    "aggregationDefinitions": [
+    "reportDefinition": [
       {
         "query": "Child:toArray[*isActive=true]",
         "label": "Alle Kinder",
@@ -47,7 +47,7 @@
   {
     "_id": "ReportConfig:event-report",
     "title": "Veranstaltungsbericht",
-    "aggregationDefinitions": [
+    "reportDefinition": [
       {
         "query": "Event:toArray[* date >= ? & date <= ?]",
         "groupBy": [
@@ -70,7 +70,7 @@
     "_id": "ReportConfig:attendance-report",
     "title": "Anwesenheitsbericht",
     "mode": "exporting",
-    "aggregationDefinitions": [
+    "reportDefinition": [
       {
         "query": "Event:toArray[* date >= ? & date <= ?]",
         "groupBy": {
@@ -124,7 +124,7 @@
     "_id": "ReportConfig:materials-distributed",
     "title": "Ausgegebene Materialien",
     "mode": "exporting",
-    "aggregationDefinitions": [
+    "reportDefinition": [
       {
         "query": "EducationalMaterial:toArray[*date >= ? & date <= ?]",
         "groupBy": {

@@ -22,11 +22,4 @@ export const reportingComponents: ComponentTuple[] = [
         (c) => c.EditReportPeriodToggleComponent,
       ),
   ],
-  [
-    "EditReportFieldByMode",
-    () =>
-      import("./edit-report-field-by-mode/edit-report-field-by-mode.component").then(
-        (c) => c.EditReportFieldByModeComponent,
-      ),
-  ],
 ];
