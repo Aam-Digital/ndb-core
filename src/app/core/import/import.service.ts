@@ -218,7 +218,6 @@ export class ImportService {
       val = val.trim();
     }
 
-    const datatype = this.schemaService.getDatatypeOrDefault(schema.dataType);
     let value;
 
     // Determine if we should split array values based on enableSplitting flag
