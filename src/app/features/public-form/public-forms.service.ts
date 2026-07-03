@@ -12,7 +12,6 @@ import { asArray } from "#src/app/utils/asArray";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
-import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 
 @Injectable({
   providedIn: "root",
@@ -24,7 +23,6 @@ export class PublicFormsService {
   private readonly adminEntityService = inject(AdminEntityService);
   private readonly entities = inject(EntityRegistry);
   private readonly entityConfigService = inject(EntityConfigService);
-  private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   /**
    * Initializes and registers custom form actions for entities.
@@ -196,8 +194,13 @@ export class PublicFormsService {
       return [];
     }
 
+    if (!this.entities.has(formConfig.entity)) {
+      Logging.warn(
+        `PublicForm config references unknown entity type "${formConfig.entity}" — skipping. Check this PublicFormConfig.`,
+      );
+      return [];
+    }
     const entityConstructor = this.entities.get(formConfig.entity);
-    if (!entityConstructor) return [];
 
     return formConfig.linkedEntities.filter((fieldId) => {
       const fieldSchema = entityConstructor.schema.get(fieldId);
@@ -215,7 +218,10 @@ export class PublicFormsService {
   async saveCustomFieldsToEntityConfig(
     publicFormConfig: PublicFormConfig,
   ): Promise<void> {
-    if (!publicFormConfig.entity) {
+    if (
+      !publicFormConfig.entity ||
+      !this.entities.has(publicFormConfig.entity)
+    ) {
       return;
     }
 
@@ -235,7 +241,6 @@ export class PublicFormsService {
 
     if (hasNewFields) {
       await this.adminEntityService.setAndSaveEntityConfig(entityConstructor);
-      this.unsavedChangesService.pending.set(false);
     }
   }
 }

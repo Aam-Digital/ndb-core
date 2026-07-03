@@ -46,15 +46,26 @@ export class EditReportPeriodToggleComponent
     endDate: ["SQL_TO_DATE"],
   };
 
-  /** the toggle is "on" whenever any transformation is configured */
+  /** the toggle is "on" when the report-period (start & end date) transformation is present */
   readonly checked = computed<boolean>(() => {
     const value = this.valueSignal();
-    return !!value && Object.keys(value).length > 0;
+    return !!value?.["startDate"] || !!value?.["endDate"];
   });
 
-  setChecked(checked: boolean): void {
-    this.value = checked
-      ? { ...EditReportPeriodToggleComponent.REPORT_PERIOD_TRANSFORMATION }
-      : {};
+  setChecked(checked: boolean) {
+    // Preserve any other (non-period) transformation keys; only add/remove startDate & endDate.
+    const { startDate, endDate, ...rest } = this.valueSignal() ?? {};
+    const value: Transformations = checked
+      ? {
+          ...rest,
+          ...EditReportPeriodToggleComponent.REPORT_PERIOD_TRANSFORMATION,
+        }
+      : rest;
+
+    // Write through the bound FormControl directly: unlike editors that bind an inner
+    // `[formControl]`, this toggle has no inner control accessor, so the directive's
+    // `onChange` is never registered and `this.value = …` would not reach the form.
+    this.formControl?.setValue(value);
+    this.formControl?.markAsDirty();
   }
 }

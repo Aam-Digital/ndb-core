@@ -20,7 +20,11 @@ import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { isHierarchicalReport, ReportEntity } from "../report-config";
+import {
+  isHierarchicalReport,
+  ReportEntity,
+  SqlReport,
+} from "../report-config";
 import {
   ReportCalculation,
   ReportCalculationError,
@@ -46,6 +50,9 @@ import { Logging } from "#src/app/core/logging/logging.service";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { RouterLink } from "@angular/router";
 import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
+
+/** A shown calculation older than this (seconds) is treated as stale/outdated. */
+const STALE_THRESHOLD_SECONDS = 60; // 1 minute
 
 @RouteTarget("Reporting")
 @Component({
@@ -84,6 +91,8 @@ export class ReportingComponent {
 
   /** runtime route to the report admin list (Admin Overview → Templates and Forms) */
   protected readonly reportAdminLink = getEntityRuntimeRoute(ReportEntity);
+  /** entity type used to permission-gate the "Manage Reports" admin link */
+  protected readonly reportEntity = ReportEntity;
 
   private reportsResource = resource({
     loader: () =>
@@ -106,12 +115,30 @@ export class ReportingComponent {
   isError = signal(false);
   errorDetails = signal<string | null>(null);
 
+  /** Whether a background refresh of a stale calculation is currently running. */
+  isRefreshing = signal(false);
+  /** Incremented on every new calculation / criteria change to invalidate in-flight refreshes. */
+  private refreshToken = 0;
+  /** The in-flight background refresh, if any. */
+  private refreshTask?: Promise<void>;
+
   reportCalculation = signal<ReportCalculation | null>(null);
   localTime = computed<Date | undefined>(() => {
     const endDate = this.reportCalculation()?.endDate;
     if (!endDate) return undefined;
     // Convert the UTC to local timezone (as the date string doesn't include timezone information (e.g. ending with "Z") we have to handle this explicitly
     return moment.utc(endDate).local().toDate();
+  });
+
+  /** Whether the currently shown calculation is older than the staleness threshold. */
+  isStale = computed<boolean>(() => {
+    const endDate = this.reportCalculation()?.endDate;
+    if (!endDate) return false;
+    // endDate has no timezone suffix; treat it as UTC like localTime() does.
+    return (
+      moment.utc().diff(moment.utc(endDate), "seconds") >
+      STALE_THRESHOLD_SECONDS
+    );
   });
 
   data = signal<any[]>([]);
@@ -169,6 +196,7 @@ export class ReportingComponent {
     fromDate: Date,
     toDate: Date,
   ): Promise<void> {
+    const token = ++this.refreshToken;
     this.isError.set(false);
     this.errorDetails.set(null);
     this.isLoading.set(true);
@@ -194,6 +222,50 @@ export class ReportingComponent {
     this.data.set(result.data);
     this.reportCalculation.set(result.calculation ?? null);
     this.isLoading.set(false);
+
+    // isStale() is only true for SQL reports (only they set reportCalculation).
+    if (this.isStale()) {
+      this.refreshTask = this.backgroundRefresh(
+        selectedReport as SqlReport,
+        fromDate,
+        toDate,
+        token,
+      );
+    }
+  }
+
+  /**
+   * Re-run the SQL report with forceCalculation to replace a stale cached result.
+   * Runs in the background: keeps the stale data + warning visible until the fresh
+   * result arrives. A token guards against a slow result overwriting a report the
+   * user has since changed.
+   */
+  private async backgroundRefresh(
+    report: SqlReport,
+    from: Date,
+    to: Date,
+    token: number,
+  ) {
+    this.isRefreshing.set(true);
+    try {
+      const reportData = await this.sqlReportService.query(
+        report,
+        from,
+        to,
+        true,
+      );
+      const calculation = await firstValueFrom(
+        this.sqlReportService.fetchReportCalculation(reportData.calculation.id),
+      );
+      if (token !== this.refreshToken) return; // superseded; discard
+      this.data.set(reportData.data);
+      this.reportCalculation.set(calculation);
+    } catch (reason) {
+      Logging.warn("Background report refresh failed", reason);
+      // keep showing the stale data + warning
+    } finally {
+      if (token === this.refreshToken) this.isRefreshing.set(false);
+    }
   }
 
   private getSqlExportableData(
@@ -218,7 +290,7 @@ export class ReportingComponent {
         const dayAfterToDate = moment(to).add(1, "day").toDate();
         return {
           data: await this.dataTransformationService.queryAndTransformData(
-            report.aggregationDefinitions,
+            report.reportDefinition,
             from,
             dayAfterToDate,
           ),
@@ -239,7 +311,7 @@ export class ReportingComponent {
       default:
         return {
           data: await this.dataAggregationService.calculateReport(
-            report.aggregationDefinitions,
+            report.reportDefinition,
             from,
             to,
           ),
@@ -270,6 +342,8 @@ export class ReportingComponent {
   }
 
   onReportCriteriaChange() {
+    this.refreshToken++;
+    this.isRefreshing.set(false);
     this.reportCalculation.set(null);
     this.data.set([]);
   }
@@ -279,13 +353,10 @@ export class ReportingComponent {
       title: report.title,
       mode: report.mode,
     };
-    // explicitly map the relevant properties (canonical only; version is deprecated)
+    // explicitly map the relevant properties (canonical reportDefinition only;
+    // legacy aggregationDefinition(s) are consolidated into reportDefinition by migration)
     if (report.reportDefinition)
       reportDetails.reportDefinition = report.reportDefinition;
-    if (report.aggregationDefinition)
-      reportDetails.aggregationDefinition = report.aggregationDefinition;
-    if (report.aggregationDefinitions)
-      reportDetails.aggregationDefinitions = report.aggregationDefinitions;
 
     this.jsonEditorService
       .openJsonEditorDialog(reportDetails)

@@ -132,9 +132,7 @@ describe("EntityConfigService", () => {
     mockConfigService.getAllConfigs.mockReturnValue([
       {
         _id: "entity:" + TestEntity.ENTITY_TYPE,
-        attributes: {
-          /* undo custom label */
-        },
+        attributes: {/* undo custom label */},
       },
     ]);
     service.setupEntitiesFromConfig();

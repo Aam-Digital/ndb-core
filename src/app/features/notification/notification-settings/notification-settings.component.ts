@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   linkedSignal,
   resource,
@@ -66,6 +67,13 @@ export class NotificationSettingsComponent {
   protected readonly notificationService = inject(NotificationService);
   private readonly alertService = inject(AlertService);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
+
+  constructor() {
+    // clear this component's unsaved-changes state when it is destroyed
+    inject(DestroyRef).onDestroy(() =>
+      this.unsavedChanges.setUnsavedChanges(this, false),
+    );
+  }
 
   readonly accountEmail = toSignal(this.sessionInfo.pipe(map((s) => s?.email)));
 
@@ -163,7 +171,7 @@ export class NotificationSettingsComponent {
       clone.channels = { ...config.channels, email: event.checked };
       return clone;
     });
-    this.unsavedChanges.pending.set(true);
+    this.unsavedChanges.setUnsavedChanges(this, true);
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
@@ -207,7 +215,7 @@ export class NotificationSettingsComponent {
       clone.notificationRules = [...(config.notificationRules ?? []), newRule];
       return clone;
     });
-    this.unsavedChanges.pending.set(true);
+    this.unsavedChanges.setUnsavedChanges(this, true);
   }
 
   updateNotificationRule(
@@ -224,13 +232,13 @@ export class NotificationSettingsComponent {
       );
       return clone;
     });
-    this.unsavedChanges.pending.set(true);
+    this.unsavedChanges.setUnsavedChanges(this, true);
   }
 
   async saveSettings() {
     const saved = await this.saveNotificationConfig(this.notificationConfig());
     if (!saved) return;
-    this.unsavedChanges.pending.set(false);
+    this.unsavedChanges.setUnsavedChanges(this, false);
     this.alertService.addInfo($localize`Notification settings saved.`);
   }
 
@@ -254,7 +262,7 @@ export class NotificationSettingsComponent {
         this.notificationConfig(),
       );
       if (!saved) return false;
-      this.unsavedChanges.pending.set(false);
+      this.unsavedChanges.setUnsavedChanges(this, false);
       return true;
     }
     return false;

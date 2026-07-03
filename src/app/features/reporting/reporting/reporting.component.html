@@ -19,6 +19,10 @@
     <button
       mat-menu-item
       [routerLink]="[reportAdminLink]"
+      *appDisabledEntityOperation="{
+        entity: reportEntity,
+        operation: 'create',
+      }"
       angulartics2On="click"
       angularticsCategory="Reporting"
       angularticsAction="manageReports"
@@ -102,6 +106,19 @@
 }
 
 @if (reportCalculation()) {
+  @if (isStale()) {
+    <div
+      class="flex-row align-center gap-small color-error padding-top-small padding-left-small"
+    >
+      <fa-icon icon="triangle-exclamation"></fa-icon>
+      <span i18n
+        >You are seeing a previous calculation. Data may be outdated.</span
+      >
+      @if (isRefreshing()) {
+        <span class="text-secondary" i18n>(updating…)</span>
+      }
+    </div>
+  }
   <div style="color: gray; padding: 10px">
     <span i18n>This report was calculated at:</span>
     {{ localTime() | customDate: "short" }} <br />

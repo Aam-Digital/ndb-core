@@ -16,14 +16,18 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 @DatabaseEntity("ReportConfig")
 class ReportConfig extends Entity {
   static override isInternalEntity = true;
-  static override label = $localize`:ReportConfig:Report`;
-  static override labelPlural = $localize`:ReportConfig:Reports`;
-  static override toStringAttributes = ["title"];
-  static override route = "admin/report-config";
-  static override icon: IconName = "chart-line";
+  static override readonly label = $localize`:ReportConfig:Report`;
+  static override readonly labelPlural = $localize`:ReportConfig:Reports`;
+  static override readonly toStringAttributes = ["title"];
+  static override readonly route = "admin/report-config";
+  static override readonly icon: IconName = "chart-line";
 
   /** human-readable title of the report */
-  @DatabaseField({ label: $localize`:ReportConfig:Title` }) title: string;
+  @DatabaseField({
+    label: $localize`:ReportConfig:Title`,
+    validators: { required: true },
+  })
+  title: string;
 
   /** longer description documenting the purpose and usage of this report */
   @DatabaseField({
@@ -42,6 +46,7 @@ class ReportConfig extends Entity {
     label: $localize`:ReportConfig:Mode`,
     description: $localize`:ReportConfig:How the report is calculated: "reporting" (in-browser aggregations), "exporting" (data export) or "sql" (server-side SQL queries). Defaults to "reporting".`,
     editComponent: "EditReportMode",
+    validators: { required: true },
   })
   mode?: string;
 
@@ -57,13 +62,13 @@ class ReportConfig extends Entity {
    */
   @DatabaseField() neededArgs?: string[] = [];
 
-  /** (reporting/exporting only, in browser reports) the definitions to calculate the report's aggregations */
-  @DatabaseField({
-    label: $localize`:ReportConfig:Aggregation definitions`,
-    description: $localize`:ReportConfig:Used for "reporting" and "exporting" mode reports (not SQL).`,
-    editComponent: "EditJson",
-  })
-  aggregationDefinitions: any[];
+  /**
+   * @deprecated Consolidated into {@link reportDefinition} by the one-time CLI migration
+   * (consolidate-report-definition), which copies this into `reportDefinition` without deleting
+   * it. Kept during the coexistence period so legacy docs still load and old code keeps working;
+   * a follow-up migration removes it once every environment runs the new code.
+   */
+  @DatabaseField() aggregationDefinitions?: any[];
 
   /**
    * @deprecated (will be removed completely after server-side migration)
@@ -85,21 +90,21 @@ class ReportConfig extends Entity {
   };
 
   /**
-   *  (sql v2 only) ReportDefinitionItem, ether ReportQuery or ReportGroup
+   * The single definition of what the report calculates. Its shape depends on {@link mode}:
+   * - "sql":       {@link ReportDefinitionDto}[] — SQL queries and optional groups.
+   * - "reporting": {@link Aggregation}[] — in-browser aggregation definitions.
+   * - "exporting": {@link ExportColumnConfig}[] — export column definitions.
    *
-   *  Can be ReportQuery:
-   *  {query: "SELECT * FROM foo"}
-   *
-   *  Can be ReportGroup:
-   *  {groupTitle: "This is a group", items: [...]}
-   *
+   * Consolidated from the former `aggregationDefinitions` so all report modes share one field.
    */
   @DatabaseField({
-    label: $localize`:ReportConfig:Report definition (SQL queries)`,
-    description: $localize`:ReportConfig:The SQL queries (and optional groups) calculated for "sql" mode reports.`,
+    label: $localize`:ReportConfig:Report definition`,
+    description: $localize`:ReportConfig:The definition of what the report calculates: SQL queries for "sql" mode, or aggregation/export definitions for "reporting"/"exporting" mode.`,
+    // Mode-aware: structured SQL editor for "sql" mode, raw JSON editor otherwise.
     editComponent: "EditReportDefinition",
   })
-  reportDefinition: ReportDefinitionDto[];
+  reportDefinition:
+    ReportDefinitionDto[] | Aggregation[] | ExportColumnConfig[];
 }
 
 export interface ReportDefinitionDto {
@@ -128,7 +133,7 @@ export const ReportEntity = ReportConfig as EntityConstructor<ReportEntity>;
  */
 export interface AggregationReport extends ReportConfig {
   mode: "reporting";
-  aggregationDefinitions: Aggregation[];
+  reportDefinition: Aggregation[];
 }
 
 /**
@@ -139,7 +144,7 @@ export interface ExportingReport extends ReportConfig {
    * If no mode is set, it will default to 'exporting'
    */
   mode?: "exporting";
-  aggregationDefinitions: ExportColumnConfig[];
+  reportDefinition: ExportColumnConfig[];
 }
 
 /**
@@ -191,7 +196,8 @@ export interface SqlReport extends ReportConfig {
 export function isHierarchicalReport(
   report: ReportEntity | undefined,
 ): boolean {
-  const reportDefinition = report?.reportDefinition;
+  const reportDefinition = report?.reportDefinition as
+    ReportDefinitionDto[] | undefined;
   if (!reportDefinition?.length) {
     return false;
   }

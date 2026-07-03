@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { EntityAction } from "./entity-action.interface";
 import { Entity } from "../../entity/model/entity";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Register and access actions that can be performed on an entity
@@ -41,10 +42,15 @@ export class EntityActionsMenuService {
     const visibleActions: EntityAction[] = [];
     for (const action of actions) {
       let isVisible: boolean;
-      if (action.visible) {
-        isVisible = await action.visible(entities);
-      } else {
-        isVisible = true;
+      try {
+        isVisible = action.visible ? await action.visible(entities) : true;
+      } catch (err) {
+        // a single misbehaving action must not break the whole context menu
+        Logging.warn(
+          `EntityActionsMenu: visibility check for action "${action.action}" failed; hiding it.`,
+          err,
+        );
+        isVisible = false;
       }
       if (isVisible && this.hasRequiredPermission(action, entities)) {
         visibleActions.push(action);
