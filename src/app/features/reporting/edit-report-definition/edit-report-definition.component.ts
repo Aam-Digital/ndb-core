@@ -2,10 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
+  inject,
   input,
+  OnInit,
   signal,
 } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -16,6 +21,7 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { ReportDefinitionDto } from "../report-config";
 import { SqlCodeEditorComponent } from "../edit-sql-query/sql-code-editor.component";
+import { JsonEditorComponent } from "#src/app/core/admin/json-editor/json-editor.component";
 
 /** a flattened view of one node in the {@link ReportDefinitionDto} tree, for rendering */
 interface FlatEntry {
@@ -46,6 +52,8 @@ interface FlatEntry {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     SqlCodeEditorComponent,
+    JsonEditorComponent,
+    ReactiveFormsModule,
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
@@ -59,9 +67,15 @@ interface FlatEntry {
 })
 export class EditReportDefinitionComponent
   extends CustomFormControlDirective<ReportDefinitionDto[]>
-  implements EditComponent
+  implements EditComponent, OnInit
 {
+  private readonly destroyRef = inject(DestroyRef);
+
   formFieldConfig = input<FormFieldConfig>();
+
+  /** the report's mode; the structured SQL editor is only used for "sql" reports */
+  private readonly mode = signal<string | undefined>(undefined);
+  readonly isSql = computed<boolean>(() => this.mode() === "sql");
 
   /** working copy of the definition tree */
   private readonly tree = signal<ReportDefinitionDto[]>([]);
@@ -85,6 +99,18 @@ export class EditReportDefinitionComponent
         this.tree.set(arr);
       }
     });
+  }
+
+  ngOnInit() {
+    // Track the report's mode (from the sibling form control) so the structured SQL editor
+    // is only shown for "sql" reports; reporting/exporting definitions use the JSON editor.
+    const modeControl = this.formControl?.parent?.get("mode");
+    if (modeControl) {
+      this.mode.set(modeControl.value);
+      modeControl.valueChanges
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((value) => this.mode.set(value));
+    }
   }
 
   // -- mutations -----------------------------------------------------------
@@ -122,7 +148,11 @@ export class EditReportDefinitionComponent
   private commit(next: ReportDefinitionDto[]): void {
     this.lastSync = JSON.stringify(next);
     this.tree.set(next);
-    this.value = next;
+    // Write through the bound FormControl directly: as a dynamically-created edit component
+    // its `onChange` is never registered, so `this.value = …` would not reach the form and
+    // the edit would be lost on save.
+    this.formControl?.setValue(next);
+    this.formControl?.markAsDirty();
   }
 
   private flatten(
