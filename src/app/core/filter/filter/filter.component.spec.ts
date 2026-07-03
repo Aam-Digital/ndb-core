@@ -143,25 +143,29 @@ describe("FilterComponent", () => {
     // for the multi-value separator. Here keys "A" and "B,C" are both valid;
     // a naive greedy longest-match would parse "A,B,C" as ["A,B","C"] and drop
     // the valid "B,C" - the values must instead resolve to ["A", "B,C"].
-    const e1 = TestEntity.create({ other: "A" });
-    const e2 = TestEntity.create({ other: "A,B" });
-    const e3 = TestEntity.create({ other: "B,C" });
+    // (using a non-schema property so a SelectableFilter with options is generated)
+    const e1 = new TestEntity();
+    e1["customStatus"] = "A";
+    const e2 = new TestEntity();
+    e2["customStatus"] = "A,B";
+    const e3 = new TestEntity();
+    e3["customStatus"] = "B,C";
 
     activatedRouteMock.snapshot = {
-      queryParams: { other: "A,B,C" },
+      queryParams: { customStatus: "A,B,C" },
     };
 
     await setComponentInputs({
       entityType: TestEntity,
       entities: [e1, e2, e3],
       useUrlQueryParams: true,
-      filterConfig: [{ id: "other" }],
+      filterConfig: [{ id: "customStatus" }],
     });
 
-    const otherFilter = component
+    const customStatusFilter = component
       .filterSelections()
-      .find((f) => f.name === "other");
-    expect(otherFilter.selectedOptionValues).toEqual(["A", "B,C"]);
+      .find((f) => f.name === "customStatus");
+    expect(customStatusFilter.selectedOptionValues).toEqual(["A", "B,C"]);
   });
 
   it("should load url params and set no filter value when empty", async () => {
@@ -204,8 +208,9 @@ describe("FilterComponent", () => {
       filterObj: {},
     });
 
+    // "other" is a string field, so a StringFilter with a $regex query is applied
     expect(emittedFilterObj).toEqual({
-      $and: [{ $or: [{ other: "Alipore" }] }],
+      $and: [{ other: { $regex: "Alipore", $options: "i" } }],
     } as any);
   });
 
