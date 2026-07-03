@@ -70,6 +70,7 @@ describe("AttendanceService", () => {
     createIndex: Mock;
     queryIndexDocsRange: Mock;
     queryIndexDocs: Mock;
+    queryIndexRaw: Mock;
   };
   let currentUserSubject: BehaviorSubject<Entity | undefined>;
   let mockEntityRegistry: { has: Mock; get: Mock };
@@ -115,10 +116,12 @@ describe("AttendanceService", () => {
       queryIndexDocs: vi
         .fn()
         .mockName("DatabaseIndexingService.queryIndexDocs"),
+      queryIndexRaw: vi.fn().mockName("DatabaseIndexingService.queryIndexRaw"),
     };
     mockDbIndexing.createIndex.mockResolvedValue(undefined);
     mockDbIndexing.queryIndexDocsRange.mockResolvedValue([]);
     mockDbIndexing.queryIndexDocs.mockResolvedValue([]);
+    mockDbIndexing.queryIndexRaw.mockResolvedValue({ rows: [] });
 
     currentUserSubject = new BehaviorSubject<Entity | undefined>(undefined);
 
@@ -235,6 +238,28 @@ describe("AttendanceService", () => {
     ).toBe(true);
     expect(actualAttendances[1].events.map((e) => e.entity)).toEqual([e1_3]);
     expect(actualAttendances[1].activity).toEqual(activity1);
+  });
+
+  it("getLatestEventDate returns date of most recent event (or undefined without events)", async () => {
+    mockDbIndexing.queryIndexRaw.mockResolvedValue({
+      rows: [{ key: activity1.getId() + "_2020-03-02", id: "x", value: null }],
+    });
+
+    const result = await service.getLatestEventDate(activity1);
+
+    expect(result).toEqual(moment("2020-03-02").toDate());
+    expect(mockDbIndexing.queryIndexRaw).toHaveBeenCalledWith(
+      "events_index/by_activity",
+      {
+        startkey: activity1.getId() + "_￰",
+        endkey: activity1.getId() + "_",
+        descending: true,
+        limit: 1,
+      },
+    );
+
+    mockDbIndexing.queryIndexRaw.mockResolvedValue({ rows: [] });
+    expect(await service.getLatestEventDate(activity1)).toBeUndefined();
   });
 
   it("getActivitiesForParticipant gets all existing RecurringActivities where it is a participant", async () => {

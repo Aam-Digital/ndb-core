@@ -68,17 +68,51 @@ export class ActivityAttendanceSectionComponent {
   attendanceData = resource({
     params: () => ({ entity: this.entity(), loadAll: this.loadAll() }),
     loader: async ({ params: { entity, loadAll } }) => {
-      if (!entity) return [];
-      return loadAll
-        ? await this.attendanceService.getActivityAttendances(entity)
-        : await this.attendanceService.getActivityAttendances(
-            entity,
-            moment().startOf("month").subtract(6, "months").toDate(),
-          );
+      if (!entity) {
+        return { records: [] as ActivityAttendance[], fallbackToOlder: false };
+      }
+      if (loadAll) {
+        return {
+          records: await this.attendanceService.getActivityAttendances(entity),
+          fallbackToOlder: false,
+        };
+      }
+
+      const records = await this.attendanceService.getActivityAttendances(
+        entity,
+        moment().startOf("month").subtract(6, "months").toDate(),
+      );
+      if (records.length > 0) {
+        return { records, fallbackToOlder: false };
+      }
+      return this.loadMostRecentRecords(entity);
     },
   });
+
+  /**
+   * Load records of the most recent month with data (if any),
+   * used as fallback when the default time range has no records at all.
+   */
+  private async loadMostRecentRecords(entity: Entity) {
+    const latestEventDate =
+      await this.attendanceService.getLatestEventDate(entity);
+    if (!latestEventDate) {
+      return { records: [] as ActivityAttendance[], fallbackToOlder: false };
+    }
+    const records = await this.attendanceService.getActivityAttendances(
+      entity,
+      moment(latestEventDate).startOf("month").toDate(),
+    );
+    return { records, fallbackToOlder: records.length > 0 };
+  }
+
   private readonly allRecords = computed(
-    () => this.attendanceData.value() ?? [],
+    () => this.attendanceData.value()?.records ?? [],
+  );
+
+  /** Whether older records are displayed because the default time range had none. */
+  fallbackToOlder = computed(
+    () => this.attendanceData.value()?.fallbackToOlder ?? false,
   );
 
   entityCtr = ActivityAttendance;

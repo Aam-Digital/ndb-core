@@ -32,9 +32,13 @@ describe("ActivityAttendanceSectionComponent", () => {
       wrapEventEntity: vi
         .fn()
         .mockName("mockAttendanceService.wrapEventEntity"),
+      getLatestEventDate: vi
+        .fn()
+        .mockName("mockAttendanceService.getLatestEventDate"),
       eventTypes: vi.fn().mockReturnValue([]),
     };
     mockAttendanceService.getActivityAttendances.mockResolvedValue(testRecords);
+    mockAttendanceService.getLatestEventDate.mockResolvedValue(undefined);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,
@@ -80,6 +84,43 @@ describe("ActivityAttendanceSectionComponent", () => {
       testActivity,
     );
     expect(component.records()).toEqual(testRecords);
+  });
+
+  it("should fall back to loading the most recent month if no records in default range", async () => {
+    const latestEventDate = moment()
+      .subtract(2, "years")
+      .startOf("month")
+      .add(10, "days")
+      .toDate();
+    const oldRecords = [ActivityAttendance.create(latestEventDate, [])];
+    mockAttendanceService.getActivityAttendances.mockImplementation(
+      async (_entity, from?: Date) =>
+        from && moment(from).isAfter(latestEventDate) ? [] : oldRecords,
+    );
+    mockAttendanceService.getLatestEventDate.mockResolvedValue(latestEventDate);
+
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.records()).toEqual(oldRecords);
+    expect(component.fallbackToOlder()).toBe(true);
+    expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
+      testActivity,
+      moment(latestEventDate).startOf("month").toDate(),
+    );
+  });
+
+  it("should not fall back if activity has no events at all", async () => {
+    mockAttendanceService.getActivityAttendances.mockResolvedValue([]);
+    mockAttendanceService.getLatestEventDate.mockResolvedValue(undefined);
+
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.records()).toEqual([]);
+    expect(component.fallbackToOlder()).toBe(false);
   });
 
   it("should also display records without participation if toggled", async () => {
