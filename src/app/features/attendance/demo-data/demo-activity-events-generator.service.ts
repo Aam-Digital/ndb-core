@@ -3,7 +3,10 @@ import { Injectable, inject } from "@angular/core";
 import { faker } from "#src/app/core/demo-data/faker";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
-import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
+import {
+  DEMO_OLD_ACTIVITY_TITLE,
+  DemoActivityGeneratorService,
+} from "./demo-activity-generator.service";
 import moment from "moment";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "../model/attendance-item";
@@ -56,8 +59,13 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
         continue;
       }
 
+      // For the special demo activity, only generate events older than 6 months
+      // (230 days > 6-month window even when it snaps to start of month).
+      const firstDayOffset =
+        activity["title"] === DEMO_OLD_ACTIVITY_TITLE ? 230 : 1;
+
       for (
-        let dayOffset = 1;
+        let dayOffset = firstDayOffset;
         dayOffset < this.config.forNLastYears * 365;
         dayOffset++
       ) {
