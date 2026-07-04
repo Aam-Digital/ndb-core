@@ -44,7 +44,6 @@ export abstract class EntitiesTableDataSource<
     effect(() => {
       if (this.loadRecordConfig()) {
         // If config is provided, this class loads the data and listens to updates
-        console.log("effect triggered");
         this.setRecords();
         this.listenToEntityUpdates();
       }
@@ -52,7 +51,6 @@ export abstract class EntitiesTableDataSource<
   }
 
   setRecords() {
-    console.log("setting records");
     this.getRecords().then((records) => this.allRecords.set(records));
   }
 

@@ -388,15 +388,6 @@ export class PouchDatabase extends Database {
     }
     const pouchDB = await this.getPouchDBOnceReady();
     if (sort?.prop) {
-      console.log("index", {
-        index: {
-          name: prefix + "_" + sort.prop,
-          partial_filter_selector: {
-            _id: findOptions.selector._id,
-          },
-          fields: [sort.prop],
-        },
-      });
       // TODO delete indexes at one point? e.g. when column is removed
       const indexRes = await pouchDB.createIndex({
         index: {
@@ -413,7 +404,6 @@ export class PouchDatabase extends Database {
       findOptions.use_index = indexRes["id"];
     }
     try {
-      console.log("requesting", findOptions);
       const res = await pouchDB.find(findOptions);
       return res.docs;
     } catch (err) {

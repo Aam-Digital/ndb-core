@@ -94,7 +94,6 @@ export class EntityMapperService {
     page?: { limit: number; skip: number },
     sort?: { prop?: string; dir?: "asc" | "desc" },
   ): Promise<T[]> {
-    console.log("using filter", filter);
     const ctor = this.resolveConstructor(entityType);
     const records = await this.dbResolver
       .getDatabase(ctor.DATABASE)
