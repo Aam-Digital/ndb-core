@@ -28,6 +28,7 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**
  * Displays attendance analysis for a given "recurring activity"
@@ -46,6 +47,7 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
     MatButtonModule,
     AttendanceCalendarComponent,
     AttendanceSummaryComponent,
+    FaIconComponent,
   ],
 })
 @UntilDestroy()

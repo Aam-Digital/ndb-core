@@ -5,14 +5,17 @@
 } @else {
   @if (fallbackToOlder()) {
     <div
-      class="hint-text margin-bottom-regular"
-      i18n="
-        attendance fallback hint|explains that older records are shown because
-        there are no records within the default recent time range
-      "
+      class="flex-row align-center gap-small color-error margin-bottom-regular"
     >
-      No records within the last 6 months. Showing the most recent records
-      instead.
+      <fa-icon icon="triangle-exclamation"></fa-icon>
+      <span
+        i18n="
+          attendance fallback hint|explains that older records are shown because
+          there are no records within the default recent time range
+        "
+        >No records within the last 6 months. Showing the most recent records
+        instead.</span
+      >
     </div>
   }
   <div class="flex-row flex-wrap gap-large">
