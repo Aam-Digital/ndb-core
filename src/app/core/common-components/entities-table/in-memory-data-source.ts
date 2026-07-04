@@ -1,19 +1,11 @@
-import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { Entity } from "../../entity/model/entity";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
-import { DataFilter } from "#src/app/core/filter/filters/filters";
-import { MatTableDataSource } from "@angular/material/table";
-import { DestroyRef, effect, inject, signal } from "@angular/core";
+import { DestroyRef, effect, inject } from "@angular/core";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
-import {
-  SortValueFns,
-  tableSort,
-} from "#src/app/core/common-components/entities-table/table-sort/table-sort";
-import {
-  EntitySpecialLoaderService,
-  LoaderMethod,
-} from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
+import { tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
+import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import {
   applyUpdate,
@@ -22,17 +14,11 @@ import {
 import { skip, Subscription } from "rxjs";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { take } from "rxjs/operators";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 
-export interface LoadRecordConfig<T extends Entity> {
-  entityCtr: EntityConstructor<T>;
-  forEntity?: Entity;
-  relationProperty?: keyof Entity;
-  loaderMethod?: LoaderMethod;
-}
-
-export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
-  TableRow<T>
-> {
+export class InMemoryDataSource<
+  T extends Entity,
+> extends EntitiesTableDataSource<T> {
   private readonly filterService = inject(FilterService);
   private readonly entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
@@ -40,26 +26,6 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   private readonly entityMapper = inject(EntityMapperService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
   private readonly destroyRef = inject(DestroyRef);
-
-  dataFilter = signal<DataFilter<T>>({});
-  sortValueFns = signal<SortValueFns<T>>({});
-  allRecords = signal<T[]>([]);
-  filteredRecords = signal<T[]>([]);
-  displayedData = signal<TableRow<T>[]>([]);
-  loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
-  isLoading = signal(true);
-
-  // NOTE: overriding only the setter would hide the inherited `get data`,
-  // so `dataSource.data` would return `undefined`. Provide both accessors.
-  override get data(): TableRow<T>[] {
-    return super.data;
-  }
-
-  override set data(data: TableRow<T>[]) {
-    // expose signal containing current data
-    this.displayedData.set(data);
-    super.data = data;
-  }
 
   override filterPredicate = (data: TableRow<T>, filter: string) =>
     entityFilterPredicate(data.record, filter);
@@ -82,24 +48,14 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
       .subscribe(() => this.isLoading.set(false));
 
     effect(() => {
-      this.data = this.filteredRecords().map((record) => ({ record }));
-    });
-    effect(() => {
       const records = this.allRecords();
       const filter = this.dataFilter();
       const predicate = this.filterService.getFilterPredicate(filter);
       this.filteredRecords.set(records.filter(predicate));
     });
-    effect(() => {
-      if (this.loadRecordConfig()) {
-        // If config is provided, this class loads the data and listens to updates
-        this.getRecords().then((records) => this.allRecords.set(records));
-        this.listenToEntityUpdates();
-      }
-    });
   }
 
-  private getRecords() {
+  protected getRecords() {
     const loaderMethod = this.loadRecordConfig().loaderMethod;
     if (loaderMethod && this.entitySpecialLoader) {
       const forEntity = this.loadRecordConfig().forEntity;
@@ -121,7 +77,7 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
     return this.entityMapper.loadType(entityConstructor);
   }
 
-  private listenToEntityUpdates() {
+  protected override listenToEntityUpdates() {
     const entityConstructor = this.loadRecordConfig().entityCtr;
     if (!entityConstructor) {
       return;

@@ -28,10 +28,8 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
-import {
-  InMemoryDataSource,
-  LoadRecordConfig,
-} from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
