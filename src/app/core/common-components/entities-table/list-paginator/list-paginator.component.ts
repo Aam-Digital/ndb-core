@@ -1,10 +1,11 @@
 import {
-  Component,
-  ViewChild,
   ChangeDetectionStrategy,
+  Component,
+  computed,
   effect,
   input,
   signal,
+  ViewChild,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -12,6 +13,7 @@ import {
   PageEvent,
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
+import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +28,9 @@ export class ListPaginatorComponent<E> {
 
   dataSource = input<MatTableDataSource<E>>();
   idForSavingPagination = input<string>();
+  showFirstLast = computed(
+    () => !(this.dataSource() instanceof PaginatedDataSource),
+  );
 
   private readonly paginatorReady = signal(false);
   @ViewChild(MatPaginator, { static: true })
