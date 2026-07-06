@@ -41,7 +41,7 @@ export class EntityFormService {
   private entityMapper = inject(EntityMapperService);
   private entitySchemaService = inject(EntitySchemaService);
   private dynamicValidator = inject(DynamicValidatorsService);
-  private enumService = inject(ConfigurableEnumService);
+  private readonly enumService = inject(ConfigurableEnumService);
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
