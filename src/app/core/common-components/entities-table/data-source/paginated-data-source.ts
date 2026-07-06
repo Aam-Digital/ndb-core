@@ -6,6 +6,7 @@ import { effect } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 
 export class PaginatedDataSource<
   T extends Entity,
@@ -57,6 +58,11 @@ export class PaginatedDataSource<
     return this.paginatorRef;
   }
 
+  /**
+   * Total number of records reported to the paginator
+   * (loaded pages plus at least one more record, if it exists).
+   */
+  private totalCount = 0;
   private effectiveFilter: DataFilter<T> = {};
 
   constructor() {
@@ -77,9 +83,27 @@ export class PaginatedDataSource<
       this.sortState,
     );
     // TODO get total amount of elements
-    this.paginatorRef.length = this.page.size * this.page.index + res.length;
+    this.totalCount = this.page.size * this.page.index + res.length;
     // `this.allRecords` stays empty
     this.filteredRecords.set(res.slice(0, this.page.size));
+  }
+
+  /**
+   * Records are already paginated by the database query,
+   * so the MatTableDataSource base class must not slice them again by page index.
+   */
+  override _pageData(data: TableRow<T>[]): TableRow<T>[] {
+    return data;
+  }
+
+  /**
+   * The MatTableDataSource base class updates the paginator with the length of the
+   * loaded data (deferred, after every data change) - which here is only a single page.
+   * Report the overall total from the database query instead,
+   * otherwise the base class would overwrite paginator.length right after setRecords().
+   */
+  override _updatePaginator(_filteredDataLength: number): void {
+    super._updatePaginator(this.totalCount);
   }
 
   protected override async processEntityUpdate({
