@@ -1,16 +1,27 @@
 import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormControlOptions,
+  ValidatorFn,
+} from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
+import {
+  buildPermissionConditionValidator,
+  describeConditionFragment,
+} from "./dynamic-form-validators/permission-condition-validators";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import {
   EntityForm,
@@ -18,6 +29,7 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
+import { asArray } from "app/utils/asArray";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -29,6 +41,7 @@ export class EntityFormService {
   private entityMapper = inject(EntityMapperService);
   private entitySchemaService = inject(EntitySchemaService);
   private dynamicValidator = inject(DynamicValidatorsService);
+  private enumService = inject(ConfigurableEnumService);
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
@@ -174,7 +187,7 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy);
+      this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
@@ -202,6 +215,7 @@ export class EntityFormService {
     formConfig: { [key: string]: FormControl },
     field: FormFieldConfig,
     entity: Entity,
+    withPermissionCheck: boolean,
   ) {
     let value = entity[field.id];
 
@@ -215,7 +229,63 @@ export class EntityFormService {
       Object.assign(controlOptions, validators);
     }
 
+    if (withPermissionCheck) {
+      const conditionValidator = this.getPermissionConditionValidator(
+        entity,
+        field.id,
+      );
+      if (conditionValidator) {
+        controlOptions.validators = [
+          ...asArray(controlOptions.validators ?? []),
+          conditionValidator,
+        ];
+      }
+    }
+
     formConfig[field.id] = new FormControl(value, controlOptions);
+  }
+
+  /**
+   * Validator reflecting the current user's permission rule conditions for the
+   * given field, so unmet conditions show as normal field errors instead of
+   * only failing the save.
+   */
+  private getPermissionConditionValidator(
+    entity: Entity,
+    fieldId: string,
+  ): ValidatorFn | null {
+    const action = entity.isNew ? "create" : "update";
+    const rules = this.ability.rulesFor(action, entity.getType());
+    const schemaField = entity.getSchema().get(fieldId);
+
+    // rule conditions are evaluated against entities in database format
+    return buildPermissionConditionValidator(
+      rules,
+      fieldId,
+      (value) =>
+        this.entitySchemaService.valueToDatabaseFormat(
+          value,
+          schemaField,
+          entity,
+        ),
+      this.getConditionValueFormatter(schemaField),
+    );
+  }
+
+  /**
+   * Human-readable display of a single (database-format) condition value,
+   * resolving configurable-enum ids to their labels.
+   */
+  private getConditionValueFormatter(
+    schemaField: EntitySchemaField | undefined,
+  ): ((value: any) => string) | undefined {
+    if (schemaField?.dataType !== ConfigurableEnumDatatype.dataType) {
+      return undefined;
+    }
+    return (value) =>
+      this.enumService
+        .getEnumValues(schemaField.additional)
+        .find((option) => option.id === value)?.label ?? String(value);
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
@@ -305,14 +375,27 @@ export class EntityFormService {
     }
 
     if (!this.ability.can(action, entity, undefined, true)) {
-      const conditions = this.ability
+      const requiredValues = this.ability
         .rulesFor(action, entity.getType())
-        .map((r) => r.conditions);
+        .filter((r) => !r.inverted && r.conditions)
+        .map((r) =>
+          Object.entries(r.conditions)
+            .map(([field, fragment]) => {
+              const schemaField = entity.getSchema().get(field);
+              const description = describeConditionFragment(
+                fragment,
+                this.getConditionValueFormatter(schemaField),
+              );
+              return `${schemaField?.label ?? field}: ${description}`;
+            })
+            .join(", "),
+        )
+        .join($localize`:joining alternative permission conditions: or `);
 
       throw new Error(
-        $localize`Current user is not permitted to save these changes: ${JSON.stringify(
-          conditions,
-        )}`,
+        requiredValues
+          ? $localize`Current user is not permitted to save these changes. Values required by your permissions - ${requiredValues}`
+          : $localize`Current user is not permitted to save these changes.`,
       );
     }
   }

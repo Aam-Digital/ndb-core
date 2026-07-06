@@ -162,6 +162,35 @@ describe("EntityFormService", () => {
     TestEntity.schema.delete("result");
   });
 
+  it("should add validators for fields restricted by permission conditions", async () => {
+    TestBed.inject(EntityAbility).update([
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "manage",
+        conditions: { name: "permitted name" },
+      },
+    ]);
+
+    const form = await createForm(
+      [{ id: "name" }, { id: "other" }],
+      new TestEntity(),
+    );
+    const nameControl = form.formGroup.get("name");
+
+    nameControl.setValue("some other name");
+    expect(nameControl.errors["permissionCondition"].errorMessage).toContain(
+      "permitted name",
+    );
+
+    nameControl.setValue("permitted name");
+    expect(nameControl.valid).toBe(true);
+
+    // field not part of the rule conditions stays unrestricted
+    const otherControl = form.formGroup.get("other");
+    otherControl.setValue("anything");
+    expect(otherControl.valid).toBe(true);
+  });
+
   it("should use create permissions to disable fields when creating a new entity", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
