@@ -62,8 +62,14 @@ export class PaginatedDataSource<
 
   constructor() {
     effect(() => {
-      this.effectiveFilter = this.dataFilter();
-      delete this.effectiveFilter["isActive"];
+      const filter = this.dataFilter();
+      // prepare filter for database query
+      // isActive is not available in the database
+      delete filter["isActive"];
+      const filterString = JSON.stringify(filter);
+      // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
+      const updatedString = filterString.replace(/("\w+)\.id(?="\:)/g, "$1");
+      this.effectiveFilter = JSON.parse(updatedString);
       // this.setRecords();
     });
     super();
