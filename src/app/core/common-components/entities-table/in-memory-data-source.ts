@@ -1,18 +1,16 @@
 import { Entity } from "../../entity/model/entity";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
-import { DestroyRef, effect, inject } from "@angular/core";
-import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
+import { effect, inject } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
 import { tableSort } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import {
   applyUpdate,
   UpdatedEntity,
 } from "#src/app/core/entity/model/entity-update";
-import { skip, Subscription } from "rxjs";
-import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
+import { skip } from "rxjs";
 import { take } from "rxjs/operators";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 
@@ -23,9 +21,6 @@ export class InMemoryDataSource<
   private readonly entitySpecialLoader = inject(EntitySpecialLoaderService, {
     optional: true,
   });
-  private readonly entityMapper = inject(EntityMapperService);
-  private readonly bulkOperationState = inject(BulkOperationStateService);
-  private readonly destroyRef = inject(DestroyRef);
 
   override filterPredicate = (data: TableRow<T>, filter: string) =>
     entityFilterPredicate(data.record, filter);
@@ -36,9 +31,6 @@ export class InMemoryDataSource<
       direction: sort.direction,
       sortValueFns: this.sortValueFns(),
     });
-
-  // Make sure only one update subscription is active
-  private updateSubscription: Subscription;
 
   constructor() {
     super();
@@ -55,8 +47,8 @@ export class InMemoryDataSource<
     });
   }
 
-  protected override setRecords() {
-    this.getRecords().then((records) => this.allRecords.set(records));
+  protected override setRecords(): Promise<any> {
+    return this.getRecords().then((records) => this.allRecords.set(records));
   }
 
   private getRecords() {
@@ -81,51 +73,17 @@ export class InMemoryDataSource<
     return this.entityMapper.loadType(entityConstructor);
   }
 
-  protected override listenToEntityUpdates() {
-    const entityConstructor = this.loadRecordConfig().entityCtr;
-    if (!entityConstructor) {
-      return;
-    }
-
-    this.updateSubscription?.unsubscribe();
-    this.updateSubscription = this.entityMapper
-      .receiveUpdates(entityConstructor)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(async (updatedEntity: UpdatedEntity<T>) => {
-        if (this.bulkOperationState.isBulkOperationInProgress()) {
-          await this.handleUpdateDuringBulkOperation(updatedEntity);
-          return;
-        }
-
-        //get specially enhanced entity if necessary
-        const loaderMethod = this.loadRecordConfig().loaderMethod;
-        if (loaderMethod && this.entitySpecialLoader) {
-          updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
-            loaderMethod,
-            updatedEntity,
-          );
-        }
-        this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
-      });
-  }
-
-  private async handleUpdateDuringBulkOperation(
+  protected override async processEntityUpdate(
     updatedEntity: UpdatedEntity<T>,
   ) {
-    //buffer updates during bulk operations to avoid UI performance issues
-    const inProgress = this.bulkOperationState.updateBulkOperationProgress(
-      updatedEntity,
-      false,
-    );
-    if (!inProgress) {
-      // reload the list once
-      this.allRecords.set(await this.getRecords());
-      // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          this.bulkOperationState.completeBulkOperation();
-        });
-      });
+    //get specially enhanced entity if necessary
+    const loaderMethod = this.loadRecordConfig().loaderMethod;
+    if (loaderMethod && this.entitySpecialLoader) {
+      updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
+        loaderMethod,
+        updatedEntity,
+      );
     }
+    this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
   }
 }

@@ -1,10 +1,15 @@
 import { MatTableDataSource } from "@angular/material/table";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
-import { effect, signal } from "@angular/core";
+import { DestroyRef, effect, inject, signal } from "@angular/core";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { SortValueFns } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
+import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Subscription } from "rxjs";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 
 export interface LoadRecordConfig<T extends Entity> {
   entityCtr: EntityConstructor<T>;
@@ -16,6 +21,10 @@ export interface LoadRecordConfig<T extends Entity> {
 export abstract class EntitiesTableDataSource<
   T extends Entity,
 > extends MatTableDataSource<TableRow<T>> {
+  private readonly destroyRef = inject(DestroyRef);
+  protected readonly entityMapper = inject(EntityMapperService);
+  private readonly bulkOperationState = inject(BulkOperationStateService);
+
   dataFilter = signal<DataFilter<T>>({});
   sortValueFns = signal<SortValueFns<T>>({});
   allRecords = signal<T[]>([]);
@@ -36,6 +45,9 @@ export abstract class EntitiesTableDataSource<
     super.data = data;
   }
 
+  // Make sure only one update subscription is active
+  private updateSubscription: Subscription;
+
   protected constructor() {
     super();
     effect(() => {
@@ -50,6 +62,50 @@ export abstract class EntitiesTableDataSource<
     });
   }
 
-  protected abstract setRecords();
-  protected abstract listenToEntityUpdates(): void;
+  protected abstract setRecords(): Promise<any>;
+
+  protected listenToEntityUpdates() {
+    const entityConstructor = this.loadRecordConfig().entityCtr;
+    if (!entityConstructor) {
+      return;
+    }
+
+    this.updateSubscription?.unsubscribe();
+    this.updateSubscription = this.entityMapper
+      .receiveUpdates(entityConstructor)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((update) => this.handleUpdate(update));
+  }
+
+  private handleUpdate(updatedEntity: UpdatedEntity<T>) {
+    if (this.bulkOperationState.isBulkOperationInProgress()) {
+      return this.handleUpdateDuringBulkOperation(updatedEntity);
+    }
+
+    return this.processEntityUpdate(updatedEntity);
+  }
+
+  protected abstract processEntityUpdate(
+    updatedEntity: UpdatedEntity<T>,
+  ): Promise<any>;
+
+  private async handleUpdateDuringBulkOperation(
+    updatedEntity: UpdatedEntity<T>,
+  ) {
+    //buffer updates during bulk operations to avoid UI performance issues
+    const inProgress = this.bulkOperationState.updateBulkOperationProgress(
+      updatedEntity,
+      false,
+    );
+    if (!inProgress) {
+      // reload the list once
+      await this.setRecords();
+      // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          this.bulkOperationState.completeBulkOperation();
+        });
+      });
+    }
+  }
 }

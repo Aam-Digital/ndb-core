@@ -2,16 +2,14 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { MatSort } from "@angular/material/sort";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatPaginator } from "@angular/material/paginator";
-import { effect, inject } from "@angular/core";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { effect } from "@angular/core";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
+import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 
 export class PaginatedDataSource<
   T extends Entity,
 > extends EntitiesTableDataSource<T> {
-  private readonly entityMapper = inject(EntityMapperService);
-
   private sortRef: MatSort;
   private sortState: { prop?: string; dir?: "asc" | "desc" } = {};
   override set sort(sort: MatSort) {
@@ -84,8 +82,27 @@ export class PaginatedDataSource<
     this.filteredRecords.set(res.slice(0, this.page.size));
   }
 
-  override listenToEntityUpdates() {
-    // throw new Error("Method not implemented.");
+  protected override async processEntityUpdate({
+    type,
+    entity,
+  }: UpdatedEntity<T>) {
+    if (type === "update") {
+      let updated = false;
+      const updatedEntities = this.filteredRecords().map((e) => {
+        if (e.getId() === entity.getId()) {
+          updated = true;
+          return entity;
+        } else {
+          return e;
+        }
+      });
+      if (updated) {
+        this.filteredRecords.set(updatedEntities);
+      }
+    } else {
+      // We don't really know how it might affect the pages -> full reload
+      await this.setRecords();
+    }
   }
 
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
