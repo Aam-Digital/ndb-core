@@ -36,7 +36,7 @@ export abstract class EntitiesTableDataSource<
     super.data = data;
   }
 
-  constructor() {
+  protected constructor() {
     super();
     effect(() => {
       this.data = this.filteredRecords().map((record) => ({ record }));
@@ -50,10 +50,6 @@ export abstract class EntitiesTableDataSource<
     });
   }
 
-  setRecords() {
-    this.getRecords().then((records) => this.allRecords.set(records));
-  }
-
-  protected abstract getRecords(): Promise<T[]>;
+  protected abstract setRecords();
   protected abstract listenToEntityUpdates(): void;
 }

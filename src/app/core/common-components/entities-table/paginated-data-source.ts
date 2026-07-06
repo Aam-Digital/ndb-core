@@ -5,6 +5,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { effect, inject } from "@angular/core";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 
 export class PaginatedDataSource<
   T extends Entity,
@@ -61,24 +62,14 @@ export class PaginatedDataSource<
   private effectiveFilter: DataFilter<T> = {};
 
   constructor() {
-    effect(() => {
-      const filter = this.dataFilter();
-      // prepare filter for database query
-      // isActive is not available in the database
-      delete filter["isActive"];
-      const filterString = JSON.stringify(filter);
-      // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
-      const updatedString = filterString.replace(/("\w+)\.id(?="\:)/g, "$1");
-      this.effectiveFilter = JSON.parse(updatedString);
-      // this.setRecords();
-    });
     super();
     effect(() => {
-      this.filteredRecords.set(this.allRecords());
+      this.effectiveFilter = this.processFilterForDB(this.dataFilter());
+      this.setRecords();
     });
   }
 
-  protected override async getRecords(): Promise<T[]> {
+  override async setRecords() {
     if (!this.loadRecordConfig()) return [];
 
     const res = await this.entityMapper.findType(
@@ -89,9 +80,20 @@ export class PaginatedDataSource<
     );
     // TODO get total amount of elements
     this.paginatorRef.length = this.page.size * this.page.index + res.length;
-    return res.slice(0, this.page.size);
+    // `this.allRecords` stays empty
+    this.filteredRecords.set(res.slice(0, this.page.size));
   }
+
   override listenToEntityUpdates() {
     // throw new Error("Method not implemented.");
+  }
+
+  private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
+    // isActive is not available in the database
+    delete filter["isActive"];
+    const filterString = JSON.stringify(filter);
+    // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
+    const updatedString = filterString.replace(/("\w+)\.id(?="\:)/g, "$1");
+    return JSON.parse(updatedString);
   }
 }

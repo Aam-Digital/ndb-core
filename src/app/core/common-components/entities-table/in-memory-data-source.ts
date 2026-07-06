@@ -55,7 +55,11 @@ export class InMemoryDataSource<
     });
   }
 
-  protected getRecords() {
+  protected override setRecords() {
+    this.getRecords().then((records) => this.allRecords.set(records));
+  }
+
+  private getRecords() {
     const loaderMethod = this.loadRecordConfig().loaderMethod;
     if (loaderMethod && this.entitySpecialLoader) {
       const forEntity = this.loadRecordConfig().forEntity;
