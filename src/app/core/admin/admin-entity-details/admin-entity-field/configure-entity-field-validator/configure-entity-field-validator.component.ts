@@ -9,10 +9,12 @@ import {
 } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
 } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -53,6 +55,8 @@ export class ConfigureEntityFieldValidatorComponent {
 
   validatorForm = computed(() => {
     const v = this.entitySchemaField()?.validators;
+    const pattern =
+      typeof v?.pattern === "object" ? v.pattern.pattern : v?.pattern;
     return this.fb.group({
       required: [v?.required ?? false],
       min: [v?.min ?? null],
@@ -61,7 +65,7 @@ export class ConfigureEntityFieldValidatorComponent {
       maxAge: [v?.maxAge ?? null],
       minDate: [v?.minDate ?? null],
       maxDate: [v?.maxDate ?? null],
-      regex: [v?.pattern ?? ""],
+      pattern: [pattern ?? "", validRegexValidator],
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
     });
@@ -76,6 +80,7 @@ export class ConfigureEntityFieldValidatorComponent {
 
       const sub = form.valueChanges.subscribe(() => {
         const rawValues = form.getRawValue();
+        this.transformPatternValue(rawValues);
         const cleanedValues =
           this.removeDefaultValuesFromValidatorConfig(rawValues);
         this.entityValidatorChanges.emit(cleanedValues);
@@ -89,6 +94,28 @@ export class ConfigureEntityFieldValidatorComponent {
       this.entitySchemaField()?.dataType,
     );
   });
+
+  isStringType = computed(() => {
+    return ["string", "long-text"].includes(this.entitySchemaField()?.dataType);
+  });
+
+  /**
+   * Replaces the raw pattern input with a config value for the "pattern" validator:
+   * drops it if empty or not a compilable regex,
+   * otherwise keeps a custom error message from the previously existing config.
+   */
+  private transformPatternValue(values: FormValidatorConfig) {
+    const newPattern = values.pattern;
+    if (!newPattern || !isValidRegex(newPattern)) {
+      delete values.pattern;
+      return;
+    }
+
+    const existing = this.entitySchemaField()?.validators?.pattern;
+    if (typeof existing === "object" && existing.message) {
+      values.pattern = { ...existing, pattern: newPattern };
+    }
+  }
 
   isDateWithAgeType = computed(() => {
     return this.entitySchemaField()?.dataType === "date-with-age";
@@ -128,4 +155,25 @@ export class ConfigureEntityFieldValidatorComponent {
 
     return validators;
   }
+}
+
+function isValidRegex(pattern: string): boolean {
+  try {
+    new RegExp(pattern);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Marks the control as invalid if its value cannot be compiled as a regular expression.
+ */
+function validRegexValidator(
+  control: AbstractControl,
+): ValidationErrors | null {
+  if (!control.value || isValidRegex(control.value)) {
+    return null;
+  }
+  return { invalidPattern: true };
 }

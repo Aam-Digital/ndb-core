@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   signal,
+  viewChild,
   WritableSignal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -120,6 +121,10 @@ export class AdminEntityFieldComponent implements OnInit {
   private dialog = inject(MatDialog);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly validatorConfig = viewChild(
+    ConfigureEntityFieldValidatorComponent,
+  );
 
   fieldId: string;
   entityType: EntityConstructor;
@@ -499,7 +504,12 @@ export class AdminEntityFieldComponent implements OnInit {
     this.form.markAllAsTouched();
     // Recalculates the value and validation status of the control, also updates the value and validity of its ancestors.
     this.schemaFieldsForm.updateValueAndValidity();
-    if (this.form.invalid) return;
+
+    // the validator settings sub-form is not part of `form`, so its validity is checked separately
+    const validatorForm = this.validatorConfig()?.validatorForm();
+    validatorForm?.markAllAsTouched();
+
+    if (this.form.invalid || validatorForm?.invalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
     this.dialogRef.close(this.data.entitySchemaField);
   }

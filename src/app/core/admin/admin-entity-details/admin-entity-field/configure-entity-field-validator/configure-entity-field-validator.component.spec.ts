@@ -1,5 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -53,7 +58,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       maxAge: 12,
       minDate: null,
       maxDate: new Date(2010, 0, 1),
-      regex: "abc",
+      pattern: "abc",
       uniqueId: "",
     };
 
@@ -67,8 +72,51 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       max: 100,
       maxAge: 12,
       maxDate: new Date(2010, 0, 1),
-      regex: "abc",
+      pattern: "abc",
     };
     expect(actualResult).toEqual(expectedResult);
+  });
+
+  it("should load existing pattern config and emit edited pattern under the 'pattern' key, keeping a custom message", () => {
+    fixture.componentRef.setInput("entitySchemaField", {
+      dataType: "string",
+      validators: { pattern: { pattern: "[0-9]{10}", message: "custom msg" } },
+    });
+    fixture.detectChanges();
+
+    const patternControl = component
+      .validatorForm()
+      .get("pattern") as AbstractControl;
+    expect(patternControl?.value).toBe("[0-9]{10}");
+
+    let emitted;
+    component.entityValidatorChanges.subscribe((v) => (emitted = v));
+
+    patternControl.setValue("[a-z]+");
+    expect(emitted).toEqual({
+      pattern: { pattern: "[a-z]+", message: "custom msg" },
+    });
+
+    patternControl.setValue("");
+    expect(emitted).toEqual({});
+  });
+
+  it("should flag invalid regex input as control error and not emit it", () => {
+    fixture.componentRef.setInput("entitySchemaField", {
+      dataType: "string",
+      validators: {},
+    });
+    fixture.detectChanges();
+
+    let emitted;
+    component.entityValidatorChanges.subscribe((v) => (emitted = v));
+
+    const patternControl = component
+      .validatorForm()
+      .get("pattern") as AbstractControl;
+    patternControl.setValue("[a-z");
+
+    expect(patternControl.hasError("invalidPattern")).toBe(true);
+    expect(emitted).toEqual({});
   });
 });

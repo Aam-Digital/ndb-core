@@ -56,17 +56,28 @@
     }
   }
 
-  <!-- TODO: requires transformation of value to { pattern: string, message: string } before saving
-  <mat-form-field *ngIf="entitySchemaField.dataType === 'string'">
-    <mat-label i18n>Pattern (Regex)</mat-label>
-    <input formControlName="regex" matInput />
-    <app-help-button
-      matSuffix
-      text="Define a format (-> regular expression) that text values have to match to be valid."
-      i18n-text
-    ></app-help-button>
-  </mat-form-field>
-  -->
+  @if (isStringType()) {
+    <mat-form-field floatLabel="always">
+      <mat-label i18n>Pattern (Regex)</mat-label>
+      <input formControlName="pattern" matInput />
+      <app-help-button
+        matSuffix
+        text="Define a format (-> regular expression) that text values have to match to be valid."
+        i18n-text
+      ></app-help-button>
+      <mat-error i18n>Not a valid regular expression</mat-error>
+      <mat-hint align="start" i18n>
+        Learn about regular expressions at
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
+          target="_blank"
+          rel="noopener"
+        >
+          developer.mozilla.org
+        </a>
+      </mat-hint>
+    </mat-form-field>
+  }
 
   <div>
     <mat-checkbox i18n formControlName="required">
