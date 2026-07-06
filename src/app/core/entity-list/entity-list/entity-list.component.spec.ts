@@ -206,7 +206,7 @@ describe("EntityListComponent", () => {
       entityUpdates.next({ entity: entity, type: "new" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.dataSource.allRecords()).toEqual([entity]);
+      expect(component.recordsDataSource().allRecords()).toEqual([entity]);
     } finally {
       vi.useRealTimers();
     }
@@ -223,11 +223,11 @@ describe("EntityListComponent", () => {
       initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.dataSource.allRecords.set([entity]);
+      component.recordsDataSource().allRecords.set([entity]);
       entityUpdates.next({ entity: entity, type: "remove" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.dataSource.allRecords()).toEqual([]);
+      expect(component.recordsDataSource().allRecords()).toEqual([]);
     } finally {
       vi.useRealTimers();
     }

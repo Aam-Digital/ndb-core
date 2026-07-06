@@ -4,9 +4,12 @@ import {
   computed,
   effect,
   inject,
+  Injector,
   input,
   model,
+  runInInjectionContext,
   signal,
+  untracked,
 } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
@@ -28,8 +31,16 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
-import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+
+import {
+  availableDataSources,
+  DataSourceType,
+} from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
+import {
+  EntitiesTableDataSource,
+  LoadRecordConfig,
+} from "#src/app/core/common-components/entities-table/entities-table-data-source";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -46,8 +57,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
   private entityRegistry = inject(EntityRegistry);
   private screenWidthObserver = inject(ScreenWidthObserver);
   protected filterService = inject(FilterService);
-
-  readonly dataSource = new InMemoryDataSource<E>();
+  private readonly injector = inject(Injector);
 
   /** currently viewed/main entity for which related entities are displayed in this component */
   entity = input<Entity>();
@@ -77,6 +87,16 @@ export class RelatedEntitiesComponent<E extends Entity> {
    * @param value
    */
   columns = input<ColumnConfig[]>([]);
+
+  dataSource = input<DataSourceType>();
+  recordsDataSource = computed<EntitiesTableDataSource<E>>(() => {
+    const currentSource = this.dataSource();
+    const DataSourceClass =
+      availableDataSources[currentSource] ?? InMemoryDataSource;
+    return runInInjectionContext(this.injector, () =>
+      untracked(() => new DataSourceClass<E>()),
+    );
+  });
 
   readonly _columns = computed(() => {
     const entity = this.entity();
@@ -173,7 +193,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
         config.relationProperty = this.relationProperty() as keyof Entity;
         config.loaderMethod = this.loaderMethod();
       }
-      this.dataSource.loadRecordConfig.set(config);
+      this.recordsDataSource().loadRecordConfig.set(config);
     });
   }
 

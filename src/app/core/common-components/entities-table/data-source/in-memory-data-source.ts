@@ -1,4 +1,3 @@
-import { Entity } from "../../entity/model/entity";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 import { effect, inject } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
@@ -12,6 +11,7 @@ import {
 } from "#src/app/core/entity/model/entity-update";
 import { skip } from "rxjs";
 import { take } from "rxjs/operators";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 
 export class InMemoryDataSource<

@@ -2,12 +2,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   effect,
   inject,
+  Injector,
   input,
   model,
   OnInit,
   output,
+  runInInjectionContext,
   untracked,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
@@ -54,7 +57,11 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import {
+  availableDataSources,
+  DataSourceType,
+} from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -108,15 +115,24 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly exportColumnsService = inject(ExportColumnsService);
   private readonly formDialog = inject(FormDialogService);
   private readonly cdr = inject(ChangeDetectorRef);
-
   private readonly publicFormsService = inject(PublicFormsService);
+  private readonly injector = inject(Injector);
+
   public publicFormConfigs: PublicFormConfig[] = [];
-  readonly dataSource = new InMemoryDataSource<T>();
 
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
   defaultSort = input<Sort>();
   exportConfig = input<ExportColumnConfig[]>();
+  dataSource = input<DataSourceType>();
+  recordsDataSource = computed(() => {
+    const currentSource = this.dataSource();
+    const DataSourceClass =
+      availableDataSources[currentSource] ?? InMemoryDataSource;
+    return runInInjectionContext(this.injector, () =>
+      untracked(() => new DataSourceClass<T>()),
+    );
+  });
 
   /**
    * The special service or method to load data via an index or other special method.
@@ -190,7 +206,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       void untracked(() => this.buildComponentFromConfig());
     });
     effect(() => {
-      this.dataSource.loadRecordConfig.set({
+      this.recordsDataSource().loadRecordConfig.set({
         entityCtr: this.entityConstructor(),
         loaderMethod: this.loaderMethod(),
       });
@@ -309,7 +325,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       data: {
         filterConfig: this.filters(),
         entityType: this.entityConstructor(),
-        entities: this.dataSource.allRecords(),
+        entities: this.recordsDataSource().allRecords(),
         useUrlQueryParams: true,
         filterObjChange: (filter: DataFilter<T>) => this.filterObj.set(filter),
       },
@@ -359,7 +375,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.dataSource.allRecords(),
+        allEntities: this.recordsDataSource().allRecords(),
         filteredData: this.filteredData,
         exportConfig: allAvailableColumns,
         preselectedExportConfig,

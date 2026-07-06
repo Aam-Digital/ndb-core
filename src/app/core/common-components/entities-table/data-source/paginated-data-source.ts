@@ -3,9 +3,9 @@ import { MatSort } from "@angular/material/sort";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatPaginator } from "@angular/material/paginator";
 import { effect } from "@angular/core";
-import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 
 export class PaginatedDataSource<
   T extends Entity,
