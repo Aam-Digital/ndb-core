@@ -43,7 +43,10 @@ export interface EntityListConfig {
   defaultSort?: Sort;
 
   /**
-   * Optional config defining what fields are included in exports.
+   * Export column definitions consumed by the entity-details export path
+   * (e.g. the note details export dialog), which supports advanced features
+   * such as subQueries. The entity list view no longer uses this — its export
+   * columns are derived from the visible columns and entity schema.
    */
   exportConfig?: ExportColumnConfig[];
 }
