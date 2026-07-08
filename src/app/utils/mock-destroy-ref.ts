@@ -17,6 +17,10 @@ export class MockDestroyRef extends DestroyRef {
   }
 
   onDestroy(callback: () => void): () => void {
+    if (this._destroyed) {
+      // mirrors Angular's NG0911 "View has already been destroyed" behavior
+      throw new Error("NG0911: View has already been destroyed.");
+    }
     this.callbacks.add(callback);
     return () => this.callbacks.delete(callback);
   }

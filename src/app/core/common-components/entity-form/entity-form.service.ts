@@ -142,9 +142,17 @@ export class EntityFormService {
       .subscribe(() =>
         this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
       );
-    destroyRef.onDestroy(() =>
-      this.unsavedChanges.setUnsavedChanges(entityForm, false),
-    );
+    // The caller's view may already be destroyed by the time this async form
+    // finishes being created (e.g. navigated away while the form was still loading).
+    // `onDestroy` throws NG0911 in that case, so check `destroyed` first, the same
+    // way `takeUntilDestroyed` (used above) guards against it internally.
+    if (destroyRef.destroyed) {
+      this.unsavedChanges.setUnsavedChanges(entityForm, false);
+    } else {
+      destroyRef.onDestroy(() =>
+        this.unsavedChanges.setUnsavedChanges(entityForm, false),
+      );
+    }
 
     if (withDefaultValues) {
       await this.defaultValueService.handleEntityForm(entityForm, entity);

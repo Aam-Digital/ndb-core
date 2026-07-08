@@ -319,6 +319,16 @@ describe("EntityFormService", () => {
     expect(unsavedChanged.pending()).toBe(false);
   });
 
+  it("should not throw (NG0911) and should clear unsaved-changes state if the DestroyRef is already destroyed when the form finishes creating (async race, e.g. navigated away while the form was still loading)", async () => {
+    const unsavedChanged = TestBed.inject(UnsavedChangesService);
+    const formFields = [{ id: "inactive" }];
+
+    destroyRef.destroy();
+
+    await expect(createForm(formFields, new Entity())).resolves.toBeDefined();
+    expect(unsavedChanged.pending()).toBe(false);
+  });
+
   it("should assign default values", async () => {
     const schema: EntitySchemaField = {
       defaultValue: {
