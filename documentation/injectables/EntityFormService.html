@@ -497,8 +497,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="320"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:320</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="328"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:328</a></div>
                         </td>
                     </tr>
 
@@ -587,8 +587,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="241"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:241</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="249"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:249</a></div>
                         </td>
                     </tr>
 
@@ -818,9 +818,17 @@ export class EntityFormService {
       .subscribe(() &#x3D;&gt;
         this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
       );
-    destroyRef.onDestroy(() &#x3D;&gt;
-      this.unsavedChanges.setUnsavedChanges(entityForm, false),
-    );
+    // The caller&#x27;s view may already be destroyed by the time this async form
+    // finishes being created (e.g. navigated away while the form was still loading).
+    // &#x60;onDestroy&#x60; throws NG0911 in that case, so check &#x60;destroyed&#x60; first, the same
+    // way &#x60;takeUntilDestroyed&#x60; (used above) guards against it internally.
+    if (destroyRef.destroyed) {
+      this.unsavedChanges.setUnsavedChanges(entityForm, false);
+    } else {
+      destroyRef.onDestroy(() &#x3D;&gt;
+        this.unsavedChanges.setUnsavedChanges(entityForm, false),
+      );
+    }
 
     if (withDefaultValues) {
       await this.defaultValueService.handleEntityForm(entityForm, entity);

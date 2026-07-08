@@ -234,8 +234,8 @@ deterministically without a real component lifecycle.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="25"
-                                    class="link-to-prism">src/app/utils/mock-destroy-ref.ts:25</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="29"
+                                    class="link-to-prism">src/app/utils/mock-destroy-ref.ts:29</a></div>
                         </td>
                     </tr>
 
@@ -376,6 +376,10 @@ export class MockDestroyRef extends DestroyRef {
   }
 
   onDestroy(callback: () &#x3D;&gt; void): () &#x3D;&gt; void {
+    if (this._destroyed) {
+      // mirrors Angular&#x27;s NG0911 &quot;View has already been destroyed&quot; behavior
+      throw new Error(&quot;NG0911: View has already been destroyed.&quot;);
+    }
     this.callbacks.add(callback);
     return () &#x3D;&gt; this.callbacks.delete(callback);
   }
