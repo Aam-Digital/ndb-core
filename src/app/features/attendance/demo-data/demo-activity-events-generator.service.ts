@@ -56,11 +56,6 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
         continue;
       }
 
-      // For the special demo activity, only generate events older than 6 months
-      // (230 days > 6-month window even when it snaps to start of month).
-      const firstDayOffset =
-        activity["title"] === DEMO_OLD_ACTIVITY_TITLE ? 230 : 1;
-
       for (
         let dayOffset = 1;
         dayOffset < this.config.forNLastYears * 365;
