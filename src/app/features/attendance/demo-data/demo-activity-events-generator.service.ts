@@ -3,10 +3,7 @@ import { Injectable, inject } from "@angular/core";
 import { faker } from "#src/app/core/demo-data/faker";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
-import {
-  DEMO_OLD_ACTIVITY_TITLE,
-  DemoActivityGeneratorService,
-} from "./demo-activity-generator.service";
+import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import moment from "moment";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceItem } from "../model/attendance-item";
