@@ -118,9 +118,6 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
   }
 }
 
-/** Title marking the demo activity that only has events older than 6 months. */
-export const DEMO_OLD_ACTIVITY_TITLE = "Old Activity (no recent events)";
-
 export const ACTIVITY_TYPES = [
   defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
   defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
