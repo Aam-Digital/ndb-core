@@ -65,7 +65,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<Entity
         activity["title"] === DEMO_OLD_ACTIVITY_TITLE ? 230 : 1;
 
       for (
-        let dayOffset = firstDayOffset;
+        let dayOffset = 1;
         dayOffset < this.config.forNLastYears * 365;
         dayOffset++
       ) {
