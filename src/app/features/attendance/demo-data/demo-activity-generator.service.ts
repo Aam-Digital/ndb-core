@@ -58,19 +58,6 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<Entity> {
       }
     }
 
-    // Extra activity whose events are all older than 6 months (see events generator).
-    const oldActivitySettings = this.attendanceService.eventTypeSettings.find(
-      (s) => s.activityType !== undefined,
-    );
-    if (oldActivitySettings && children.length > 0) {
-      const oldActivity = this.generateActivityOfType(
-        oldActivitySettings,
-        children.slice(0, 5),
-      );
-      oldActivity["title"] = DEMO_OLD_ACTIVITY_TITLE;
-      data.push(oldActivity);
-    }
-
     return data;
   }
 
