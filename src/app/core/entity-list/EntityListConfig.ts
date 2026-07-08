@@ -1,6 +1,5 @@
 import { FilterSelectionOption } from "../filter/filters/filters";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
-import { ExportColumnConfig } from "../export/data-transformation-service/export-column-config";
 import { Sort } from "@angular/material/sort";
 import { unitOfTime } from "moment";
 
@@ -41,14 +40,6 @@ export interface EntityListConfig {
    * Default is to sort by the first column.
    */
   defaultSort?: Sort;
-
-  /**
-   * Export column definitions consumed by the entity-details export path
-   * (e.g. the note details export dialog), which supports advanced features
-   * such as subQueries. The entity list view no longer uses this — its export
-   * columns are derived from the visible columns and entity schema.
-   */
-  exportConfig?: ExportColumnConfig[];
 }
 
 export interface ColumnGroupsConfig {
