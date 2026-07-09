@@ -355,6 +355,45 @@ describe("ImportService", () => {
     expect(parsedEntities[1].items).toEqual(["x", "y"]);
   });
 
+  it("should trim leading/trailing whitespace from string values during import by default", async () => {
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockReturnValue(
+      ImportTestTarget,
+    );
+
+    const rawData: any[] = [{ rawName: "  John  ", rawText: "  hello  " }];
+    const columnMapping: ColumnMapping[] = [
+      { column: "rawName", propertyName: "name" },
+      { column: "rawText", propertyName: "text" },
+    ];
+
+    const { entities } = await service.transformRawDataToEntities(rawData, {
+      entityType: "ImportTestTarget",
+      columnMapping,
+    });
+
+    expect((entities[0] as ImportTestTarget).name).toBe("John");
+    expect((entities[0] as ImportTestTarget).text).toBe("hello");
+  });
+
+  it("should not trim string values when trimValues is false", async () => {
+    vi.spyOn(TestBed.inject(EntityRegistry), "get").mockReturnValue(
+      ImportTestTarget,
+    );
+
+    const rawData: any[] = [{ rawName: "  John  " }];
+    const columnMapping: ColumnMapping[] = [
+      { column: "rawName", propertyName: "name" },
+    ];
+
+    const { entities } = await service.transformRawDataToEntities(rawData, {
+      entityType: "ImportTestTarget",
+      columnMapping,
+      additionalSettings: { trimValues: false },
+    });
+
+    expect((entities[0] as ImportTestTarget).name).toBe("  John  ");
+  });
+
   it("should gracefully skip cell when importMapFunction throws an error", async () => {
     vi.spyOn(TestBed.inject(EntityRegistry), "get").mockReturnValue(
       ImportTestTarget,
