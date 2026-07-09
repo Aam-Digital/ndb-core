@@ -15,6 +15,7 @@ describe("ConfigService", () => {
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
+    sessionStorage.clear();
     entityMapper = {
       load: vi.fn(),
       save: vi.fn(),
@@ -868,6 +869,32 @@ describe("ConfigService", () => {
   });
 
   describe("undefined config handling", () => {
+    /**
+     * Sets up window.location/alert/Logging.error mocks for testing
+     * ConfigService's abortWithError/reload behavior, then flushes and resets
+     * the incidental background load that TestBed.inject(ConfigService)
+     * always triggers in beforeEach (using the outer beforeEach's default
+     * rejected mock) - otherwise it silently consumes the reload-attempt
+     * budget meant for the test's own explicit scenario below.
+     */
+    async function setupReloadTest() {
+      const reloadMock = vi.fn();
+      Object.defineProperty(window, "location", {
+        value: { reload: reloadMock },
+        writable: true,
+      });
+      vi.spyOn(window, "alert").mockImplementation(() => {});
+      vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+      await vi.advanceTimersByTimeAsync(0);
+      sessionStorage.clear();
+      reloadMock.mockClear();
+      vi.mocked(window.alert).mockClear();
+      vi.mocked(Logging.error).mockClear();
+
+      return { reloadMock };
+    }
+
     it("should return empty array from getAllConfigs when config is not loaded", () => {
       expect(service.getAllConfigs("view:")).toEqual([]);
     });
@@ -914,13 +941,7 @@ describe("ConfigService", () => {
     it("should abort app on non-404 config load error", async () => {
       vi.useFakeTimers();
       try {
-        const reloadMock = vi.fn();
-        Object.defineProperty(window, "location", {
-          value: { reload: reloadMock },
-          writable: true,
-        });
-        vi.spyOn(window, "alert").mockImplementation(() => {});
-        vi.spyOn(Logging, "error").mockImplementation(() => {});
+        const { reloadMock } = await setupReloadTest();
 
         const dbError = { status: 500, message: "Internal Server Error" };
         entityMapper.load.mockRejectedValue(dbError);
@@ -940,13 +961,7 @@ describe("ConfigService", () => {
     it("should abort app when config loads with undefined data", async () => {
       vi.useFakeTimers();
       try {
-        const reloadMock = vi.fn();
-        Object.defineProperty(window, "location", {
-          value: { reload: reloadMock },
-          writable: true,
-        });
-        vi.spyOn(window, "alert").mockImplementation(() => {});
-        vi.spyOn(Logging, "error").mockImplementation(() => {});
+        const { reloadMock } = await setupReloadTest();
 
         const config = new Config();
         config.data = undefined;
@@ -958,6 +973,30 @@ describe("ConfigService", () => {
         expect(Logging.error).toHaveBeenCalled();
         expect(window.alert).toHaveBeenCalled();
         expect(reloadMock).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+      }
+    });
+
+    it("should stop auto-reloading after the retry budget is exhausted to avoid a reload loop", async () => {
+      vi.useFakeTimers();
+      try {
+        const { reloadMock } = await setupReloadTest();
+
+        const dbError = { status: 500, message: "Internal Server Error" };
+        entityMapper.load.mockRejectedValue(dbError);
+
+        // first failure is still within the retry budget -> reloads once
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(reloadMock).toHaveBeenCalledTimes(1);
+
+        // simulates the reloaded page failing again -> retry budget exhausted, no more reload
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(reloadMock).toHaveBeenCalledTimes(1);
+        expect(window.alert).toHaveBeenCalledTimes(2);
       } finally {
         vi.useRealTimers();
         vi.restoreAllMocks();

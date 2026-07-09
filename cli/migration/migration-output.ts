@@ -14,37 +14,33 @@ export function printBanner(
   );
 }
 
-export function printOutcomes(
-  outcomes: OrgOutcome<MigrationOutcome>[],
+const STATUS_TAGS: Record<MigrationResult["status"], string> = {
+  ok: "OK       ",
+  "no-change": "NO-CHANGE",
+  "dry-run": "PREVIEW  ",
+  partial: "PARTIAL  ",
+  failed: "FAILED   ",
+};
+
+/** Prints a single org's outcome line (plus warnings/details), as each org is processed. */
+export function printOutcome(
+  { org, result: { result, writeStats } }: OrgOutcome<MigrationOutcome>,
   showWriteStats: boolean,
   verbose = false,
 ): void {
-  console.log("\n── Summary: Status per org ──");
-  for (const {
-    org,
-    result: { result, writeStats },
-  } of outcomes) {
-    process.stdout.write(`  ${OrgRunner.orgLabel(org).padEnd(50)}`);
-    const suffix =
-      showWriteStats && writeStats.intended > 0
-        ? `  (${writeStats.succeeded}/${writeStats.intended} written)`
-        : "";
-    const STATUS_TAGS: Record<MigrationResult["status"], string> = {
-      ok: "OK       ",
-      "no-change": "NO-CHANGE",
-      "dry-run": "PREVIEW  ",
-      partial: "PARTIAL  ",
-      failed: "FAILED   ",
-    };
-    console.log((STATUS_TAGS[result.status] ?? result.status) + suffix);
-    if (result.warnings?.length) {
-      result.warnings.forEach((w) => console.log(`    ! ${w}`));
-    }
-    if (verbose && result.details) {
-      String(result.details)
-        .split("\n")
-        .forEach((line) => console.log(`    ${line}`));
-    }
+  process.stdout.write(`  ${OrgRunner.orgLabel(org).padEnd(50)}`);
+  const suffix =
+    showWriteStats && writeStats.intended > 0
+      ? `  (${writeStats.succeeded}/${writeStats.intended} written)`
+      : "";
+  console.log((STATUS_TAGS[result.status] ?? result.status) + suffix);
+  if (result.warnings?.length) {
+    result.warnings.forEach((w) => console.log(`    ! ${w}`));
+  }
+  if (verbose && result.details) {
+    String(result.details)
+      .split("\n")
+      .forEach((line) => console.log(`    ${line}`));
   }
 }
 

@@ -6,7 +6,6 @@ import {
   output,
   computed,
   effect,
-  signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -47,12 +46,6 @@ export class DialogButtonsComponent<E extends Entity> {
   private router = inject(Router);
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
-  private readonly pendingStateBeforeDialogOpen = signal(
-    this.dialog ? this.unsavedChanges.pending() : false,
-  );
-  private readonly pendingStateAfterClose = computed(() =>
-    this.dialog ? this.pendingStateBeforeDialogOpen() : false,
-  );
 
   protected viewContext = inject(ViewComponentContext, { optional: true });
 
@@ -93,14 +86,14 @@ export class DialogButtonsComponent<E extends Entity> {
   private initDialogSettings() {
     this.dialog.disableClose = true;
     this.dialog.backdropClick().subscribe(() =>
-      this.unsavedChanges.checkUnsavedChanges().then((confirmed) => {
+      // only consider this dialog's own form, so a dirty view underneath the dialog
+      // does not trigger a discard prompt for changes unrelated to this dialog
+      this.unsavedChanges.checkUnsavedChanges(this.form()).then((confirmed) => {
         if (confirmed) {
           this.dialog.close();
         }
       }),
     );
-    // Dialog closing happens before the `canDeactivate` check, so restore the state synchronously.
-    this.dialog.afterClosed().subscribe(() => this.restorePendingChanges());
   }
 
   async save() {
@@ -120,18 +113,14 @@ export class DialogButtonsComponent<E extends Entity> {
   }
 
   cancel() {
+    // discard this form's unsaved changes
+    this.unsavedChanges.setUnsavedChanges(this.form(), false);
     this.close();
   }
 
   close(result?: any) {
     this.dialog?.close(result);
     this.closeView.emit(result);
-
-    this.restorePendingChanges();
-  }
-
-  private restorePendingChanges() {
-    this.unsavedChanges.pending.set(this.pendingStateAfterClose());
   }
 
   onAction(action: string) {

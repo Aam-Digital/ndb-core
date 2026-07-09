@@ -9,6 +9,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -76,6 +77,7 @@ export class AdminEntityFormComponent {
   private entityFormService = inject(EntityFormService);
   private matDialog = inject(MatDialog);
   private adminEntityService = inject(AdminEntityService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // migrate inputs to Angular `input()` signals
   readonly entityType = input<EntityConstructor>();
@@ -174,6 +176,7 @@ export class AdminEntityFormComponent {
     this.dummyForm = await this.entityFormService.createEntityForm(
       [...this.getUsedFields(this.fieldGroups()), ...this.availableFields()],
       this.dummyEntity,
+      this.destroyRef,
     );
     this.dummyForm.formGroup.disable();
   }

@@ -137,6 +137,33 @@ describe("FilterComponent", () => {
     expect(component.filterSelections()[0].selectedOptionValues[1]).toBe("bar");
   });
 
+  it("should parse url params for option keys that contain commas (#4104)", async () => {
+    // Legacy enum/string option ids can contain a comma. Selected ids are
+    // joined by "," in the url, so a comma inside an id must not be mistaken
+    // for the multi-value separator. Here keys "A" and "B,C" are both valid;
+    // a naive greedy longest-match would parse "A,B,C" as ["A,B","C"] and drop
+    // the valid "B,C" - the values must instead resolve to ["A", "B,C"].
+    const e1 = TestEntity.create({ other: "A" });
+    const e2 = TestEntity.create({ other: "A,B" });
+    const e3 = TestEntity.create({ other: "B,C" });
+
+    activatedRouteMock.snapshot = {
+      queryParams: { other: "A,B,C" },
+    };
+
+    await setComponentInputs({
+      entityType: TestEntity,
+      entities: [e1, e2, e3],
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "other" }],
+    });
+
+    const otherFilter = component
+      .filterSelections()
+      .find((f) => f.name === "other");
+    expect(otherFilter.selectedOptionValues).toEqual(["A", "B,C"]);
+  });
+
   it("should load url params and set no filter value when empty", async () => {
     activatedRouteMock.snapshot = {
       queryParams: {

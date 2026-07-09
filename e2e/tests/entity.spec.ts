@@ -336,3 +336,66 @@ test("Dialog Cancel discards edits; Dialog Save persists changes", async ({
     page.getByRole("cell", { name: DIALOG_INITIAL_SUBJECT }),
   ).not.toBeVisible();
 });
+
+const NO_CHANGES_CHILD_NAME = "<NO CHANGES CHILD>";
+
+test("Closing an untouched new-entity dialog does not prompt discard-changes, but an edited one does", async ({
+  page,
+}) => {
+  const users = generateUsers();
+  const child = generateChild({ name: NO_CHANGES_CHILD_NAME });
+
+  await loadApp(page, [...users, child]);
+
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.getByRole("cell", { name: NO_CHANGES_CHILD_NAME }).click();
+  await page.getByRole("tab", { name: "Education", exact: true }).click();
+
+  const schoolHistoryHeaderRow = page
+    .getByRole("row")
+    .filter({ hasText: "School Class" });
+  const openNewSchoolEnrollmentDialog = () =>
+    schoolHistoryHeaderRow
+      .getByRole("button", { name: /add element/i })
+      .click();
+
+  const discardDialogContainer = page
+    .getByRole("dialog")
+    .filter({ hasText: "Discard Changes?" });
+  const discardDialog = discardDialogContainer.getByRole("heading", {
+    name: "Discard Changes?",
+  });
+
+  // Case 1: open the dialog, touch no fields, and close it via the backdrop
+  // (equivalent to clicking anything behind the dialog, e.g. the page's back
+  // arrow). No discard-changes prompt should appear.
+  await openNewSchoolEnrollmentDialog();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  await page
+    .locator(".cdk-overlay-backdrop")
+    .click({ position: { x: 5, y: 5 } });
+
+  await expect(discardDialog).not.toBeVisible({ timeout: 3000 });
+  await expect(dialog).not.toBeVisible();
+
+  // Case 2: open the dialog again and actually edit a field — closing it now
+  // must still trigger the discard-changes prompt.
+  await openNewSchoolEnrollmentDialog();
+  await expect(dialog).toBeVisible();
+
+  await dialog
+    .locator("#entity-field__start")
+    .getByRole("textbox")
+    .fill("01.09.2024");
+
+  await page
+    .locator(".cdk-overlay-backdrop")
+    .click({ position: { x: 5, y: 5 } });
+
+  await expect(discardDialog).toBeVisible();
+  await discardDialogContainer.getByRole("button", { name: "No" }).click();
+  await expect(discardDialog).not.toBeVisible();
+  await expect(dialog).toBeVisible();
+});

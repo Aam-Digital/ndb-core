@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   inject,
   input,
   ChangeDetectionStrategy,
@@ -37,6 +38,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   private alertService = inject(AlertService);
   private entityRemoveService = inject(EntityActionsService);
   private unsavedChanges = inject(UnsavedChangesService);
+  private readonly destroyRef = inject(DestroyRef);
 
   row = input.required<TableRow<T>>();
 
@@ -46,6 +48,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
     this.form = await this.entityFormService.createEntityForm(
       Array.from(this.row().record.getSchema().keys()),
       this.row().record,
+      this.destroyRef,
       true,
     );
 
@@ -80,6 +83,8 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
    */
   resetChanges() {
     delete this.row().formGroup;
-    this.unsavedChanges.pending.set(false);
+    if (this.form) {
+      this.unsavedChanges.setUnsavedChanges(this.form, false);
+    }
   }
 }
