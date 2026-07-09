@@ -396,7 +396,10 @@ export class EntityFormService {
     if (!this.ability.can(action, entity, undefined, true)) {
       const requiredValues = this.ability
         .rulesFor(action, entity.getType())
-        .filter((r) => !r.inverted && r.conditions)
+        .filter(
+          (r) =>
+            !r.inverted && r.conditions && Object.keys(r.conditions).length > 0,
+        )
         .map((r) =>
           Object.entries(r.conditions)
             .map(([field, fragment]) => {
