@@ -635,6 +635,10 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm.get(&quot;validators&quot;).setValue(validatorData);
   }
 
+  onEntitySchemaFieldChanges(changes: Partial&lt;EntitySchemaField&gt;) {
+    Object.assign(this.data.entitySchemaField, changes);
+  }
+
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
     const label &#x3D;

@@ -637,6 +637,15 @@ export class ImportService {
       return undefined;
     }
 
+    const shouldTrim &#x3D;
+      typeof val &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
+      schema.trim !&#x3D;&#x3D; false &amp;&amp;
+      importProcessingContext.importSettings.additionalSettings?.trimValues !&#x3D;&#x3D;
+        false;
+    if (shouldTrim) {
+      val &#x3D; val.trim();
+    }
+
     let value;
 
     // Determine if we should split array values based on enableSplitting flag

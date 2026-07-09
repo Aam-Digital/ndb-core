@@ -288,6 +288,13 @@
                                 </li>
                                 <li>
                                             <span class="modifier">Optional</span>
+                                        <a href="#trim" 
+>
+                                            trim
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
                                         <a href="#validators" 
 >
                                             validators
@@ -1081,6 +1088,51 @@ If nothing is specified, the long name will be used.</p>
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
+                                        <a name="trim"></a>
+                                        <span class="name "><b>trim</b>
+                                            <a href="#trim">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>trim:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>If set to false, leading/trailing whitespace will NOT be automatically trimmed when saving this field.
+Defaults to true (trimming enabled) for string fields.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
                                         <a name="validators"></a>
                                         <span class="name "><b>validators</b>
                                             <a href="#validators">
@@ -1284,6 +1336,12 @@ export interface EntitySchemaField {
   description?: string;
 
   validators?: FormValidatorConfig;
+
+  /**
+   * If set to false, leading/trailing whitespace will NOT be automatically trimmed when saving this field.
+   * Defaults to true (trimming enabled) for string fields.
+   */
+  trim?: boolean;
 
   /** whether to show this field in the default details view */
   showInDetailsView?: boolean;

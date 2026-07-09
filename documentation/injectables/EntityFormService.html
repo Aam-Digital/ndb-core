@@ -497,8 +497,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="328"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:328</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="339"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:339</a></div>
                         </td>
                     </tr>
 
@@ -969,7 +969,18 @@ export class EntityFormService {
     const updatedEntity &#x3D; entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !&#x3D;&#x3D; null) {
-        updatedEntity[key] &#x3D; value;
+        const schema &#x3D; entity.getSchema().get(key);
+        const trimmedValue &#x3D;
+          typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; schema?.trim !&#x3D;&#x3D; false
+            ? value.trim()
+            : value;
+        updatedEntity[key] &#x3D; trimmedValue;
+        if (trimmedValue !&#x3D;&#x3D; value) {
+          // keep the form control in sync with the persisted (trimmed) value,
+          // otherwise the entity&#x27;s own save echo looks like an external
+          // conflicting change and triggers a spurious &quot;Load changes?&quot; prompt
+          form.get(key)?.setValue(trimmedValue, { emitEvent: false });
+        }
       } else {
         // formControls&#x27; value is null if it is empty (untouched or cleared by user) but we don&#x27;t want entity docs to be full of null properties
         delete updatedEntity[key];
