@@ -87,4 +87,16 @@
       i18n-text
     ></app-help-button>
   </div>
+
+  @if (entitySchemaField().dataType === "string") {
+    <div>
+      <mat-checkbox i18n [formControl]="trimControl()">
+        Trim leading/trailing spaces automatically
+      </mat-checkbox>
+      <app-help-button
+        text="When enabled, leading and trailing spaces are automatically removed when saving this field."
+        i18n-text
+      ></app-help-button>
+    </div>
+  }
 </form>
