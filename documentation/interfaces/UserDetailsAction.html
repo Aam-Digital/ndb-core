@@ -428,6 +428,18 @@ export class UserDetailsComponent {
     return !this.userAccount()?.id &amp;&amp; !this.isProfileMode();
   });
 
+  /**
+   * Whether the account was created but the user has not yet completed
+   * the invitation email (verified email + set initial password).
+   */
+  invitationPending &#x3D; computed(() &#x3D;&gt; {
+    return (
+      !this.isProfileMode() &amp;&amp;
+      !this.creatingNewAccount() &amp;&amp;
+      this.userAccount()?.emailVerified &#x3D;&#x3D;&#x3D; false
+    );
+  });
+
   availableRoles &#x3D; resource&lt;Role[], unknown&gt;({
     loader: async () &#x3D;&gt; {
       if (this.isProfileMode()) {
@@ -721,6 +733,37 @@ export class UserDetailsComponent {
       : $localize&#x60;:Snackbar message:Account has been disabled, user will not be able to login anymore.&#x60;;
 
     await this.updateUserAccount({ enabled }, message);
+  }
+
+  /**
+   * Whether a resend invitation request is currently in progress
+   * (disables the button to prevent duplicate emails).
+   */
+  resendingInvitation &#x3D; signal(false);
+
+  async resendInvitation() {
+    const currentUser &#x3D; this.userAccount();
+    if (!currentUser?.id || this.resendingInvitation()) {
+      return;
+    }
+
+    this.resendingInvitation.set(true);
+    try {
+      await firstValueFrom(
+        this.userAdminService.resendInvitation(currentUser.id),
+      );
+      this.alertService.addInfo(
+        $localize&#x60;:Snackbar message:Invitation email has been sent to ${currentUser.email}&#x60;,
+      );
+    } catch (err) {
+      this.alertService.addDanger(
+        err?.[&quot;error&quot;]?.message ||
+          err?.[&quot;message&quot;] ||
+          $localize&#x60;:Error message:Failed to send invitation email&#x60;,
+      );
+    } finally {
+      this.resendingInvitation.set(false);
+    }
   }
 
   editMode() {

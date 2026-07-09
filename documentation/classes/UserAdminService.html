@@ -203,6 +203,10 @@
                             </li>
                             <li>
                                     <span class="modifier">Abstract</span>
+                                <a href="#resendInvitation" >resendInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Abstract</span>
                                 <a href="#updateUser" >updateUser</a>
                             </li>
                         </ul>
@@ -472,8 +476,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="56"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:56</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:62</a></div>
                         </td>
                     </tr>
 
@@ -513,8 +517,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="62"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:62</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="68"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:68</a></div>
                         </td>
                     </tr>
 
@@ -608,6 +612,82 @@
                             <div class="io-description">
                                 <p>The user account details or <code>null</code> of no user is found</p>
 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resendInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Abstract</span>
+                        <span ><b>resendInvitation</b></span>
+                        <a href="#resendInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resendInvitation(userAccountId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="57"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:57</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Re-send the account invitation email (e.g. if the original link expired)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userAccountId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The user account id of the authentication server (not the profile entity id)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>
@@ -766,6 +846,12 @@ export abstract class UserAdminService {
   abstract deleteUser(
     userEntityId: string,
   ): Observable&lt;{ userDeleted: boolean }&gt;;
+
+  /**
+   * Re-send the account invitation email (e.g. if the original link expired)
+   * @param userAccountId The user account id of the authentication server (not the profile entity id)
+   */
+  abstract resendInvitation(userAccountId: string): Observable&lt;void&gt;;
 
   /**
    * Get all available roles of the server

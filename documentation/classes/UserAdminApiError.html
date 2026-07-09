@@ -190,7 +190,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:78</a></div>
                             </td>
                         </tr>
 
@@ -264,7 +264,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -345,6 +345,12 @@ export abstract class UserAdminService {
   abstract deleteUser(
     userEntityId: string,
   ): Observable&lt;{ userDeleted: boolean }&gt;;
+
+  /**
+   * Re-send the account invitation email (e.g. if the original link expired)
+   * @param userAccountId The user account id of the authentication server (not the profile entity id)
+   */
+  abstract resendInvitation(userAccountId: string): Observable&lt;void&gt;;
 
   /**
    * Get all available roles of the server
