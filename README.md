@@ -59,6 +59,15 @@ please refer to the instructions at [Aam-Digital/aam-services/docs/developer](ht
 Our detailed [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 provides tutorials, guides, concepts and an API reference.
 
+### Module-level documentation
+
+Core modules have technical READMEs in their directories for developers and agents to avoid expensive code exploration.
+These provide architecture overviews, file organization, key concepts, and patterns specific to that module.
+
+For example:
+
+- [Permissions module](src/app/core/permissions/README.md)
+
 ## Translations (internationalization; i18n)
 
 Aam Digital is available in multiple languages.

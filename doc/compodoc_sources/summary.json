@@ -61,7 +61,7 @@
       },
       {
         "title": "User Roles and Permissions",
-        "file": "concepts/permissions.md"
+        "file": "../../src/app/core/permissions/README.md"
       },
       {
         "title": "Security",
