@@ -468,12 +468,19 @@ export class UserDetailsComponent {
     await this.updateUserAccount({ enabled }, message);
   }
 
+  /**
+   * Whether a resend invitation request is currently in progress
+   * (disables the button to prevent duplicate emails).
+   */
+  resendingInvitation = signal(false);
+
   async resendInvitation() {
     const currentUser = this.userAccount();
-    if (!currentUser?.id) {
+    if (!currentUser?.id || this.resendingInvitation()) {
       return;
     }
 
+    this.resendingInvitation.set(true);
     try {
       await firstValueFrom(
         this.userAdminService.resendInvitation(currentUser.id),
@@ -487,6 +494,8 @@ export class UserDetailsComponent {
           err?.["message"] ||
           $localize`:Error message:Failed to send invitation email`,
       );
+    } finally {
+      this.resendingInvitation.set(false);
     }
   }
 

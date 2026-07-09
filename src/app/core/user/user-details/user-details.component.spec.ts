@@ -11,7 +11,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { BehaviorSubject, of, throwError } from "rxjs";
+import { BehaviorSubject, of, Subject, throwError } from "rxjs";
 import { CoreTestingModule } from "#src/app/utils/core-testing.module";
 import { Angulartics2Module } from "angulartics2";
 import type { SessionInfo } from "../../session/auth/session-info";
@@ -400,6 +400,29 @@ describe("UserDetailsComponent", () => {
     await component.resendInvitation();
 
     expect(mockAlertService.addDanger).toHaveBeenCalled();
+  });
+
+  it("should ignore further resend clicks while a resend request is pending", async () => {
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      emailVerified: false,
+    });
+    fixture.detectChanges();
+
+    const pendingRequest = new Subject<void>();
+    mockUserAdminService.resendInvitation.mockReturnValue(pendingRequest);
+
+    const firstClick = component.resendInvitation();
+    expect(component.resendingInvitation()).toBe(true);
+
+    component.resendInvitation();
+    expect(mockUserAdminService.resendInvitation).toHaveBeenCalledTimes(1);
+
+    pendingRequest.next();
+    pendingRequest.complete();
+    await firstClick;
+
+    expect(component.resendingInvitation()).toBe(false);
   });
 
   it("should not trigger sync reset when only email is updated", () => {

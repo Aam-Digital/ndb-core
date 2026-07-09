@@ -51,6 +51,7 @@
               mat-stroked-button
               class="action-button"
               (click)="resendInvitation()"
+              [disabled]="resendingInvitation()"
               i18n="button to resend the account invitation email"
             >
               Resend invitation
