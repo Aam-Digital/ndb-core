@@ -293,7 +293,18 @@ export class EntityFormService {
     const updatedEntity = entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !== null) {
-        updatedEntity[key] = value;
+        const schema = entity.getSchema().get(key);
+        const trimmedValue =
+          typeof value === "string" && schema?.trim !== false
+            ? value.trim()
+            : value;
+        updatedEntity[key] = trimmedValue;
+        if (trimmedValue !== value) {
+          // keep the form control in sync with the persisted (trimmed) value,
+          // otherwise the entity's own save echo looks like an external
+          // conflicting change and triggers a spurious "Load changes?" prompt
+          form.get(key)?.setValue(trimmedValue, { emitEvent: false });
+        }
       } else {
         // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
         delete updatedEntity[key];
