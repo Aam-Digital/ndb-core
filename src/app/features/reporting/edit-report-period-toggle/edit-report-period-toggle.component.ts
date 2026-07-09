@@ -2,9 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  effect,
+  inject,
   input,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
@@ -20,6 +26,8 @@ type Transformations = { [key: string]: string[] };
  *
  * For now this only exposes the common date-range transformation; advanced/custom
  * transformations are not editable here.
+ *
+ * The report period is a SQL-only concept, so the whole field is hidden for other modes.
  */
 @DynamicComponent("EditReportPeriodToggle")
 @Component({
@@ -36,15 +44,51 @@ type Transformations = { [key: string]: string[] };
 })
 export class EditReportPeriodToggleComponent
   extends CustomFormControlDirective<Transformations>
-  implements EditComponent
+  implements EditComponent, OnInit
 {
+  private readonly destroyRef = inject(DestroyRef);
+
   formFieldConfig = input<FormFieldConfig>();
+
+  /** the report's mode; the report period only applies to "sql" reports */
+  private readonly mode = signal<string | undefined>(undefined);
+  readonly isSql = computed<boolean>(() => this.mode() === "sql");
+
+  /** the wrapping form-field row, hidden entirely for non-SQL modes */
+  private readonly fieldRow = signal<HTMLElement | null>(null);
 
   /** the canonical transformation object enabling the report period (start & end date) */
   static readonly REPORT_PERIOD_TRANSFORMATION: Transformations = {
     startDate: ["SQL_FROM_DATE"],
     endDate: ["SQL_TO_DATE"],
   };
+
+  constructor() {
+    super();
+
+    // Hide the whole field row (label + toggle + help) for non-SQL modes. Interim workaround
+    // until generic conditional (mode-dependent) form fields exist; `.hidden` belongs to the
+    // entity-field-edit wrapper's own stylesheet, so toggling it on that ancestor applies its
+    // `display: none`.
+    effect(() => {
+      this.fieldRow()?.classList.toggle("hidden", !this.isSql());
+    });
+  }
+
+  ngOnInit() {
+    this.fieldRow.set(
+      this.elementRef.nativeElement.closest(".flex-row") ?? null,
+    );
+
+    // Track the report's mode from the sibling form control.
+    const modeControl = this.formControl?.parent?.get("mode");
+    if (modeControl) {
+      this.mode.set(modeControl.value);
+      modeControl.valueChanges
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((value) => this.mode.set(value));
+    }
+  }
 
   /** the toggle is "on" when the report-period (start & end date) transformation is present */
   readonly checked = computed<boolean>(() => {

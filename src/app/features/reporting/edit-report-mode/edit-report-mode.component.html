@@ -3,3 +3,12 @@
   [options]="modeOptions"
   [optionToString]="modeToString"
 ></app-basic-autocomplete>
+
+@if (valueSignal() === "sql") {
+  <app-feature-disabled-info
+    featureName="SQL reports"
+    i18n-featureName="ReportConfig SQL feature name"
+    [featureEnabled]="reportingBackendEnabled.value()"
+    [compactView]="true"
+  ></app-feature-disabled-info>
+}
