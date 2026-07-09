@@ -231,6 +231,17 @@ For CI-style runs with coverage, results are written to `coverage/` (lcov format
 
 ---
 
+## Public GitHub Content (PRs, Issues, Comments, Commit Messages)
+
+This repository is public. Never include customer/project-identifying information or other
+production-system-specific data in anything posted to GitHub — no deployment/instance names,
+server hostnames, external partner URLs, user identifiers, or real record data. Share only
+generalized insights instead (e.g. "a large production instance", "an external webhook
+consumer"). Scrub quoted log or monitoring output before posting. Links to access-restricted
+internal tools (e.g. Sentry issues) are acceptable.
+
+---
+
 ## Agent Workflows
 
 Custom agents are defined in `.claude/agents/`. They support these key workflows (in logical order):
