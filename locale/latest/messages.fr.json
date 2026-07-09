@@ -1499,5 +1499,9 @@
   "8981309282078866700": "{$PH}min",
   "1377069367734081212": "You are seeing a previous calculation. Data may be outdated.",
   "7073964892928100929": "(updating…)",
-  "1430875785987675497": "We couldn't load the configuration for your system, even after retrying. Please contact your tech support."
+  "1430875785987675497": "We couldn't load the configuration for your system, even after retrying. Please contact your tech support.",
+  "6278712032504662681": " Trim leading/trailing spaces automatically ",
+  "1115588532150064880": "When enabled, leading and trailing spaces are automatically removed when saving this field.",
+  "8933293634033658217": " Trim leading/trailing spaces from values ",
+  "1373034020305825622": "Automatically remove leading and trailing spaces from all text values during import."
 }
