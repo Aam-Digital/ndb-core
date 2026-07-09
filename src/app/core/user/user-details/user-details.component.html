@@ -46,6 +46,17 @@
           >
             Edit
           </button>
+          @if (invitationPending()) {
+            <button
+              mat-stroked-button
+              class="action-button"
+              (click)="resendInvitation()"
+              [disabled]="resendingInvitation()"
+              i18n="button to resend the account invitation email"
+            >
+              Resend invitation
+            </button>
+          }
         } @else {
           @if (userAccount()?.enabled) {
             <button
@@ -111,9 +122,21 @@
   }
 
   @if (userAccount() && !userAccount()?.enabled) {
-    <p i18n="Hint in user account page" class="field-hint field-warning">
-      User is currently disabled and will not be able to login to the app
-    </p>
+    <div class="flex-row align-center gap-small margin-bottom-regular">
+      <fa-icon class="color-error" icon="triangle-exclamation"></fa-icon>
+      <span i18n="Hint in user account page" class="color-error">
+        User is currently disabled and will not be able to login to the app
+      </span>
+    </div>
+  }
+
+  @if (invitationPending()) {
+    <div class="flex-row align-center gap-small margin-bottom-regular">
+      <fa-icon class="color-error" icon="triangle-exclamation"></fa-icon>
+      <span i18n="Hint in user account page" class="color-error">
+        User has not yet accepted the invitation email and cannot log in yet.
+      </span>
+    </div>
   }
 
   <div class="user-details-form">
