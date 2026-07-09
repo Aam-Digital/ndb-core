@@ -43,7 +43,7 @@ export type DynamicValidator =
  * {
  *   pattern: { pattern: "[0-9]{10}", message: "Enter a 10-digit phone number" },
  * }
-* </pre>
+ * </pre>
  * Non-compliant examples:
  * <pre>
  * {
