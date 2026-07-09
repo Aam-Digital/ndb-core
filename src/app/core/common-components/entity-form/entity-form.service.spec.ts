@@ -478,6 +478,9 @@ describe("EntityFormService", () => {
     await service.saveChanges(form, entity);
 
     expect(entity["name"]).toBe("John");
+    // form control is kept in sync with the trimmed persisted value, so the
+    // entity's own save echo is not mistaken for an external conflicting change
+    expect(form.formGroup.get("name").value).toBe("John");
   });
 
   it("should add column definitions from property schema", () => {
