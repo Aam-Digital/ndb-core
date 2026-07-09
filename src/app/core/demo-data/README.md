@@ -1,6 +1,6 @@
 # How to generate demo data
 
-If the app is run in the "useTemporaryDatabase" mode, realistic demo data is generated on each startup.
+If the app is run in demo mode (config `demo_mode: true`), realistic demo data is generated on each startup.
 
 This Guide walks you through the steps to add data to this demo mode for your own Entity type.
 
@@ -89,3 +89,11 @@ DemoDataModule.forRoot([
 Note that the spread operator (the `...` in front of the call to `.provider()`) is required.
 As the `provider()` method returns an array of providers, the `...` "flattens" that array
 and simply makes all providers directly items of the primary array that is passed into `DemoDataModule.forRoot()`.
+
+## Key files
+
+- `demo-data-generator.ts` — the abstract `DemoDataGenerator` base class you extend
+- `demo-data.module.ts` — `DemoDataModule.forRoot([...])` registers your generators
+- `demo-data.service.ts` — `DemoDataService`, orchestrates running all registered generators
+- `demo-data-initializer.service.ts` — `DemoDataInitializerService`, triggers generation on startup in demo mode
+- `faker.ts` — the customized `faker` instance for realistic random values

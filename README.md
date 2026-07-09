@@ -61,12 +61,15 @@ provides tutorials, guides, concepts and an API reference.
 
 ### Module-level documentation
 
-Core modules have technical READMEs in their directories for developers and agents to avoid expensive code exploration.
+Core modules have technical `README.md` files in their directories
+for developers and agents to avoid expensive code exploration.
 These provide architecture overviews, file organization, key concepts, and patterns specific to that module.
 
 For example:
 
-- [Permissions module](src/app/core/permissions/README.md)
+- [Entity system](src/app/core/entity/README.md) — entity base class, schema, load/save, lifecycle actions
+- [Configuration system](src/app/core/config/README.md) — how the JSON config drives views, menus and entities
+- [Permissions module](src/app/core/permissions/README.md) — CASL-based role/permission enforcement
 
 ## Translations (internationalization; i18n)
 
