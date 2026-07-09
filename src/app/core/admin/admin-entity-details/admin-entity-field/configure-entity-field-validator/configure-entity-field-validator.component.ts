@@ -10,6 +10,7 @@ import {
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -51,6 +52,15 @@ export class ConfigureEntityFieldValidatorComponent {
    */
   entityValidatorChanges = output<FormValidatorConfig>();
 
+  /**
+   * Emit changes to EntitySchemaField properties (e.g. trim) that are not validators.
+   */
+  entitySchemaFieldChanges = output<Partial<EntitySchemaField>>();
+
+  trimControl = computed(
+    () => new FormControl(this.entitySchemaField()?.trim !== false),
+  );
+
   validatorForm = computed(() => {
     const v = this.entitySchemaField()?.validators;
     return this.fb.group({
@@ -79,6 +89,14 @@ export class ConfigureEntityFieldValidatorComponent {
         const cleanedValues =
           this.removeDefaultValuesFromValidatorConfig(rawValues);
         this.entityValidatorChanges.emit(cleanedValues);
+      });
+      onCleanup(() => sub.unsubscribe());
+    });
+
+    effect((onCleanup) => {
+      const ctrl = this.trimControl();
+      const sub = ctrl.valueChanges.subscribe((value: boolean) => {
+        this.entitySchemaFieldChanges.emit({ trim: value });
       });
       onCleanup(() => sub.unsubscribe());
     });

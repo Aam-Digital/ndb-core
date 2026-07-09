@@ -51,6 +51,12 @@ export abstract class UserAdminService {
   ): Observable<{ userDeleted: boolean }>;
 
   /**
+   * Re-send the account invitation email (e.g. if the original link expired)
+   * @param userAccountId The user account id of the authentication server (not the profile entity id)
+   */
+  abstract resendInvitation(userAccountId: string): Observable<void>;
+
+  /**
    * Get all available roles of the server
    */
   abstract getAllRoles(): Observable<Role[]>;
