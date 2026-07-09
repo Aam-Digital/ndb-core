@@ -77,6 +77,19 @@
         </a>
       </mat-hint>
     </mat-form-field>
+
+    <mat-form-field floatLabel="always">
+      <mat-label i18n>Validation Error Text for Pattern</mat-label>
+      <input formControlName="patternMessage" matInput />
+      <app-help-button
+        matSuffix
+        text="Optional custom message shown to users when their input does not match the pattern. If empty, a generic error message is displayed."
+        i18n-text
+      ></app-help-button>
+      <mat-hint align="start" i18n>
+        Shown when the entered value does not match the pattern above
+      </mat-hint>
+    </mat-form-field>
   }
 
   <div>

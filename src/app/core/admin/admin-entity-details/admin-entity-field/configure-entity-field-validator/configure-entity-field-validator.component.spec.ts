@@ -77,7 +77,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     expect(actualResult).toEqual(expectedResult);
   });
 
-  it("should load existing pattern config and emit edited pattern under the 'pattern' key, keeping a custom message", () => {
+  it("should load existing pattern config and emit edited pattern and custom message under the 'pattern' key", () => {
     fixture.componentRef.setInput("entitySchemaField", {
       dataType: "string",
       validators: { pattern: { pattern: "[0-9]{10}", message: "custom msg" } },
@@ -87,7 +87,11 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     const patternControl = component
       .validatorForm()
       .get("pattern") as AbstractControl;
+    const messageControl = component
+      .validatorForm()
+      .get("patternMessage") as AbstractControl;
     expect(patternControl?.value).toBe("[0-9]{10}");
+    expect(messageControl?.value).toBe("custom msg");
 
     let emitted;
     component.entityValidatorChanges.subscribe((v) => (emitted = v));
@@ -97,8 +101,17 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       pattern: { pattern: "[a-z]+", message: "custom msg" },
     });
 
+    messageControl.setValue("");
+    expect(emitted).toEqual({ pattern: "[a-z]+" });
+
+    messageControl.setValue("only lowercase letters");
+    expect(emitted).toEqual({
+      pattern: { pattern: "[a-z]+", message: "only lowercase letters" },
+    });
+
     patternControl.setValue("");
     expect(emitted).toEqual({});
+    expect(messageControl.disabled).toBe(true); // message only editable while a pattern is set
   });
 
   it("should flag invalid regex input as control error and not emit it", () => {
@@ -114,9 +127,15 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     const patternControl = component
       .validatorForm()
       .get("pattern") as AbstractControl;
+    const messageControl = component
+      .validatorForm()
+      .get("patternMessage") as AbstractControl;
+    expect(messageControl.disabled).toBe(true); // disabled while no pattern is set
+
     patternControl.setValue("[a-z");
 
     expect(patternControl.hasError("invalidPattern")).toBe(true);
     expect(emitted).toEqual({});
+    expect(messageControl.enabled).toBe(true); // editable as soon as user types a pattern
   });
 });

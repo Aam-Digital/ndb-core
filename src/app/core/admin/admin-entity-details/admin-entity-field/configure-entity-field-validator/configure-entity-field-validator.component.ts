@@ -55,8 +55,7 @@ export class ConfigureEntityFieldValidatorComponent {
 
   validatorForm = computed(() => {
     const v = this.entitySchemaField()?.validators;
-    const pattern =
-      typeof v?.pattern === "object" ? v.pattern.pattern : v?.pattern;
+    const isObjectForm = typeof v?.pattern === "object";
     return this.fb.group({
       required: [v?.required ?? false],
       min: [v?.min ?? null],
@@ -65,7 +64,11 @@ export class ConfigureEntityFieldValidatorComponent {
       maxAge: [v?.maxAge ?? null],
       minDate: [v?.minDate ?? null],
       maxDate: [v?.maxDate ?? null],
-      pattern: [pattern ?? "", validRegexValidator],
+      pattern: [
+        (isObjectForm ? v.pattern.pattern : v?.pattern) ?? "",
+        validRegexValidator,
+      ],
+      patternMessage: [(isObjectForm ? v.pattern.message : "") ?? ""],
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
     });
@@ -77,7 +80,13 @@ export class ConfigureEntityFieldValidatorComponent {
 
       this.normalizeDateControl(form, "minDate");
       this.normalizeDateControl(form, "maxDate");
+      this.syncPatternMessageAvailability(form);
 
+      const patternSub = form
+        .get("pattern")
+        .valueChanges.subscribe(() =>
+          this.syncPatternMessageAvailability(form),
+        );
       const sub = form.valueChanges.subscribe(() => {
         const rawValues = form.getRawValue();
         this.transformPatternValue(rawValues);
@@ -85,8 +94,24 @@ export class ConfigureEntityFieldValidatorComponent {
           this.removeDefaultValuesFromValidatorConfig(rawValues);
         this.entityValidatorChanges.emit(cleanedValues);
       });
-      onCleanup(() => sub.unsubscribe());
+      onCleanup(() => {
+        patternSub.unsubscribe();
+        sub.unsubscribe();
+      });
     });
+  }
+
+  /**
+   * The custom validation error text is only meaningful together with a pattern,
+   * so the input is disabled while no pattern is entered.
+   */
+  private syncPatternMessageAvailability(form: FormGroup) {
+    const messageControl = form.get("patternMessage");
+    if (form.get("pattern").value) {
+      messageControl.enable({ emitEvent: false });
+    } else {
+      messageControl.disable({ emitEvent: false });
+    }
   }
 
   isDateLikeValidatorType = computed(() => {
@@ -100,20 +125,24 @@ export class ConfigureEntityFieldValidatorComponent {
   });
 
   /**
-   * Replaces the raw pattern input with a config value for the "pattern" validator:
-   * drops it if empty or not a compilable regex,
-   * otherwise keeps a custom error message from the previously existing config.
+   * Replaces the raw pattern and patternMessage inputs with a config value for the "pattern" validator:
+   * drops it if the pattern is empty or not a compilable regex,
+   * uses the object form { pattern, message } if a custom error message is entered.
    */
-  private transformPatternValue(values: FormValidatorConfig) {
+  private transformPatternValue(
+    values: FormValidatorConfig & { patternMessage?: string },
+  ) {
     const newPattern = values.pattern;
+    const message = values.patternMessage;
+    delete values.patternMessage;
+
     if (!newPattern || !isValidRegex(newPattern)) {
       delete values.pattern;
       return;
     }
 
-    const existing = this.entitySchemaField()?.validators?.pattern;
-    if (typeof existing === "object" && existing.message) {
-      values.pattern = { ...existing, pattern: newPattern };
+    if (message) {
+      values.pattern = { pattern: newPattern, message };
     }
   }
 
