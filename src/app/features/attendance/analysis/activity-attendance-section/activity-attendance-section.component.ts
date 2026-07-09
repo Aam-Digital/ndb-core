@@ -70,42 +70,57 @@ export class ActivityAttendanceSectionComponent {
   attendanceData = resource({
     params: () => ({ entity: this.entity(), loadAll: this.loadAll() }),
     loader: async ({ params: { entity, loadAll } }) => {
+      const emptyResult = {
+        records: [] as ActivityAttendance[],
+        isFallbackToOlder: false,
+        hasMoreRecords: false,
+      };
       if (!entity) {
-        return { records: [] as ActivityAttendance[], fallbackToOlder: false };
+        return emptyResult;
       }
       if (loadAll) {
         return {
+          ...emptyResult,
           records: await this.attendanceService.getActivityAttendances(entity),
-          fallbackToOlder: false,
         };
       }
 
-      const records = await this.attendanceService.getActivityAttendances(
+      let from = moment().startOf("month").subtract(6, "months").toDate();
+      let records = await this.attendanceService.getActivityAttendances(
         entity,
-        moment().startOf("month").subtract(6, "months").toDate(),
+        from,
       );
-      if (records.length > 0) {
-        return { records, fallbackToOlder: false };
+      let isFallbackToOlder = false;
+
+      if (records.length === 0) {
+        // fall back to the most recent month with data (if any)
+        const latestEventDate =
+          await this.attendanceService.getLatestEventDate(entity);
+        if (latestEventDate) {
+          from = moment(latestEventDate).startOf("month").toDate();
+          records = await this.attendanceService.getActivityAttendances(
+            entity,
+            from,
+          );
+          isFallbackToOlder = records.length > 0;
+        }
       }
-      return this.loadMostRecentRecords(entity);
+
+      return {
+        records,
+        isFallbackToOlder,
+        hasMoreRecords: await this.hasRecordsBefore(entity, from),
+      };
     },
   });
 
-  /**
-   * Load records of the most recent month with data (if any),
-   * used as fallback when the default time range has no records at all.
-   */
-  private async loadMostRecentRecords(entity: Entity) {
-    const latestEventDate =
-      await this.attendanceService.getLatestEventDate(entity);
-    if (!latestEventDate) {
-      return { records: [] as ActivityAttendance[], fallbackToOlder: false };
-    }
-    const records = await this.attendanceService.getActivityAttendances(
-      entity,
-      moment(latestEventDate).startOf("month").toDate(),
+  /** Whether any events exist before the given date (i.e. more records can be loaded). */
+  private async hasRecordsBefore(entity: Entity, date: Date) {
+    const earliestEventDate =
+      await this.attendanceService.getEarliestEventDate(entity);
+    return (
+      !!earliestEventDate && moment(earliestEventDate).isBefore(date, "day")
     );
-    return { records, fallbackToOlder: records.length > 0 };
   }
 
   private readonly allRecords = computed(
@@ -113,8 +128,13 @@ export class ActivityAttendanceSectionComponent {
   );
 
   /** Whether older records are displayed because the default time range had none. */
-  fallbackToOlder = computed(
-    () => this.attendanceData.value()?.fallbackToOlder ?? false,
+  isFallbackToOlder = computed(
+    () => this.attendanceData.value()?.isFallbackToOlder ?? false,
+  );
+
+  /** Whether events older than the currently displayed records exist and can be loaded. */
+  hasMoreRecords = computed(
+    () => this.attendanceData.value()?.hasMoreRecords ?? false,
   );
 
   entityCtr = ActivityAttendance;

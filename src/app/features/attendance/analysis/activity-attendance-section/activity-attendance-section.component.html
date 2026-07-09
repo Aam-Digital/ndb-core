@@ -3,7 +3,7 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 } @else {
-  @if (fallbackToOlder()) {
+  @if (isFallbackToOlder()) {
     <div
       class="flex-row flex-wrap align-center gap-small margin-bottom-regular margin-top-regular"
     >
@@ -17,17 +17,19 @@
         >No records within the last 6 months. Showing the most recent records
         instead.</span
       >
-      <button
-        i18n="
-          load-all button|load all records, not only the ones from the last 6
-          months
-        "
-        mat-flat-button
-        color="accent"
-        (click)="loadAll.set(true)"
-      >
-        Load all records
-      </button>
+      @if (hasMoreRecords()) {
+        <button
+          i18n="
+            load-all button|load all records, not only the ones from the last 6
+            months
+          "
+          mat-flat-button
+          color="accent"
+          (click)="loadAll.set(true)"
+        >
+          Load all records
+        </button>
+      }
     </div>
   }
   <div class="flex-row flex-wrap gap-large">
@@ -73,7 +75,7 @@
     Also show unrelated
   </mat-slide-toggle>
   &nbsp;
-  @if (!fallbackToOlder()) {
+  @if (!isFallbackToOlder() && hasMoreRecords()) {
     <button
       i18n="
         load-all button|load all records, not only the ones from the last 6

@@ -35,10 +35,14 @@ describe("ActivityAttendanceSectionComponent", () => {
       getLatestEventDate: vi
         .fn()
         .mockName("mockAttendanceService.getLatestEventDate"),
+      getEarliestEventDate: vi
+        .fn()
+        .mockName("mockAttendanceService.getEarliestEventDate"),
       eventTypes: vi.fn().mockReturnValue([]),
     };
     mockAttendanceService.getActivityAttendances.mockResolvedValue(testRecords);
     mockAttendanceService.getLatestEventDate.mockResolvedValue(undefined);
+    mockAttendanceService.getEarliestEventDate.mockResolvedValue(undefined);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,
@@ -104,7 +108,7 @@ describe("ActivityAttendanceSectionComponent", () => {
     await fixture.whenStable();
 
     expect(component.records()).toEqual(oldRecords);
-    expect(component.fallbackToOlder()).toBe(true);
+    expect(component.isFallbackToOlder()).toBe(true);
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
       moment(latestEventDate).startOf("month").toDate(),
@@ -120,7 +124,30 @@ describe("ActivityAttendanceSectionComponent", () => {
     await fixture.whenStable();
 
     expect(component.records()).toEqual([]);
-    expect(component.fallbackToOlder()).toBe(false);
+    expect(component.isFallbackToOlder()).toBe(false);
+  });
+
+  it("should only offer to load more records if older events exist", async () => {
+    mockAttendanceService.getEarliestEventDate.mockResolvedValue(
+      moment().subtract(3, "years").toDate(),
+    );
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.hasMoreRecords()).toBe(true);
+
+    mockAttendanceService.getEarliestEventDate.mockResolvedValue(
+      moment().subtract(1, "month").toDate(),
+    );
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.hasMoreRecords()).toBe(false);
+
+    component.loadAll.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.hasMoreRecords()).toBe(false);
   });
 
   it("should also display records without participation if toggled", async () => {

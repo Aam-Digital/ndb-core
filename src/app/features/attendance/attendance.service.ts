@@ -321,12 +321,31 @@ ${byParticipantChecks}
    * @param activity The activity whose events are considered.
    */
   async getLatestEventDate(activity: Entity): Promise<Date | undefined> {
+    return this.getEdgeEventDate(activity, true);
+  }
+
+  /**
+   * Get the date of the oldest event of the given activity, if any exists.
+   *
+   * Uses a limit-1 index query, so this is fast even for activities with many events.
+   * @param activity The activity whose events are considered.
+   */
+  async getEarliestEventDate(activity: Entity): Promise<Date | undefined> {
+    return this.getEdgeEventDate(activity, false);
+  }
+
+  private async getEdgeEventDate(
+    activity: Entity,
+    latest: boolean,
+  ): Promise<Date | undefined> {
+    const lowerKey = activity.getId() + "_";
+    const upperKey = activity.getId() + "_￰";
     const result = await this.dbIndexing.queryIndexRaw(
       "events_index/by_activity",
       {
-        startkey: activity.getId() + "_￰",
-        endkey: activity.getId() + "_",
-        descending: true,
+        startkey: latest ? upperKey : lowerKey,
+        endkey: latest ? lowerKey : upperKey,
+        descending: latest,
         limit: 1,
       },
     );

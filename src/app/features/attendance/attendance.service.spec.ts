@@ -262,6 +262,28 @@ describe("AttendanceService", () => {
     expect(await service.getLatestEventDate(activity1)).toBeUndefined();
   });
 
+  it("getEarliestEventDate returns date of oldest event (or undefined without events)", async () => {
+    mockDbIndexing.queryIndexRaw.mockResolvedValue({
+      rows: [{ key: activity1.getId() + "_2019-11-20", id: "x", value: null }],
+    });
+
+    const result = await service.getEarliestEventDate(activity1);
+
+    expect(result).toEqual(moment("2019-11-20").toDate());
+    expect(mockDbIndexing.queryIndexRaw).toHaveBeenCalledWith(
+      "events_index/by_activity",
+      {
+        startkey: activity1.getId() + "_",
+        endkey: activity1.getId() + "_￰",
+        descending: false,
+        limit: 1,
+      },
+    );
+
+    mockDbIndexing.queryIndexRaw.mockResolvedValue({ rows: [] });
+    expect(await service.getEarliestEventDate(activity1)).toBeUndefined();
+  });
+
   it("getActivitiesForParticipant gets all existing RecurringActivities where it is a participant", async () => {
     const testChildId = "c1";
     const testActivity1 = MockRecurringActivity.create("a1");
