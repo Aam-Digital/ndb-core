@@ -1,5 +1,5 @@
 import type { Mock } from "vitest";
-import { PouchDatabase } from "./pouch-database";
+import { DatabaseException, PouchDatabase } from "./pouch-database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
 import { RemotePouchDatabase } from "./remote-pouch-database";
@@ -77,142 +77,139 @@ describe("RemotePouchDatabase tests", () => {
     expect(headers.get("ngsw-bypass")).toBe("true");
   });
 
-  it("should retry on transient network errors", async () => {
-    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
-    (database as any).FETCH_TIMEOUT_MS = 60000;
+  const READ_URL = `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`;
 
-    let callCount = 0;
-    (PouchDB.fetch as Mock).mockImplementation(async () => {
-      callCount++;
-      if (callCount < 3) {
-        throw new TypeError("Failed to fetch");
-      }
-      return new Response("{}", { status: HttpStatusCode.Ok });
+  describe("withReadRetry (operation-level retry for idempotent reads)", () => {
+    it("should retry a transient (connectivity) failure then resolve", async () => {
+      (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+
+      let calls = 0;
+      const operation = vi.fn(async () => {
+        calls++;
+        if (calls < 3) {
+          throw new TypeError("Failed to fetch");
+        }
+        return "ok";
+      });
+
+      const result = await (database as any).withReadRetry(operation);
+
+      // 1 initial + 2 retries
+      expect(calls).toBe(3);
+      expect(result).toBe("ok");
     });
 
-    const result = await (database as any).fetchWithTransientRetry(
-      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-      { headers: new Headers() },
-    );
+    it("should throw after exhausting retries on a persistent transient error", async () => {
+      (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
 
-    expect(callCount).toBe(3);
-    expect(result.status).toBe(HttpStatusCode.Ok);
+      let calls = 0;
+      const operation = vi.fn(async () => {
+        calls++;
+        throw new DOMException("The operation was aborted.", "AbortError");
+      });
+
+      await expect((database as any).withReadRetry(operation)).rejects.toThrow(
+        "operation was aborted",
+      );
+      // 1 initial + 2 retries = 3 total
+      expect(calls).toBe(3);
+    });
+
+    it("should not retry non-connectivity errors (e.g. a code bug or 404)", async () => {
+      let calls = 0;
+      const operation = vi.fn(async () => {
+        calls++;
+        throw new Error("x is not a function");
+      });
+
+      await expect((database as any).withReadRetry(operation)).rejects.toThrow(
+        "x is not a function",
+      );
+      expect(calls).toBe(1);
+    });
   });
 
-  it("should throw after exhausting transient retries", async () => {
+  it("should retry a transient read at the operation level via get() and recover", async () => {
+    // Reproduces AAM-DIGITAL-73M: an abort surfacing during the read (e.g.
+    // response-body streaming on a stale connection) is retried transparently.
     (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
-    (database as any).FETCH_TIMEOUT_MS = 60000;
+    database.init("");
+    const pouchDB = (database as any).pouchDB;
 
-    let callCount = 0;
-    (PouchDB.fetch as Mock).mockImplementation(async () => {
-      callCount++;
+    let calls = 0;
+    vi.spyOn(pouchDB, "get").mockImplementation(async () => {
+      calls++;
+      if (calls < 2) {
+        throw new DOMException("The operation was aborted.", "AbortError");
+      }
+      return { _id: "Entity:ABC" };
+    });
+
+    const result = await database.get("Entity:ABC");
+
+    expect(calls).toBe(2);
+    expect(result._id).toBe("Entity:ABC");
+  });
+
+  it("should surface a persistent transient read failure as a DatabaseException after exhausting retries", async () => {
+    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+    database.init("");
+    const pouchDB = (database as any).pouchDB;
+
+    let calls = 0;
+    vi.spyOn(pouchDB, "get").mockImplementation(async () => {
+      calls++;
+      throw new DOMException("The operation was aborted.", "AbortError");
+    });
+
+    await expect(database.get("Entity:ABC")).rejects.toThrow(DatabaseException);
+    // 1 initial + 2 retries = 3 total
+    expect(calls).toBe(3);
+  });
+
+  it("fetchWithTimeout attaches an abort signal to reads but no longer retries them", async () => {
+    // retry now lives at the operation level (withReadRetry), not the fetch layer
+    let calls = 0;
+    let capturedOpts: any;
+    (PouchDB.fetch as Mock).mockImplementation(async (_url, opts) => {
+      calls++;
+      capturedOpts = opts;
       throw new TypeError("Failed to fetch");
     });
 
     await expect(
-      (database as any).fetchWithTransientRetry(
-        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-        { headers: new Headers() },
-      ),
+      (database as any).fetchWithTimeout(READ_URL, {
+        method: "GET",
+        headers: new Headers(),
+      }),
     ).rejects.toThrow(TypeError);
 
-    // 1 initial + 2 retries = 3 total
-    expect(callCount).toBe(3);
+    // read gets the abort timeout signal, but only a single attempt
+    expect(capturedOpts?.signal).toBeInstanceOf(AbortSignal);
+    expect(calls).toBe(1);
   });
 
-  it("should not retry on non-TypeError errors", async () => {
-    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
-    (database as any).FETCH_TIMEOUT_MS = 60000;
-
-    let callCount = 0;
-    (PouchDB.fetch as Mock).mockImplementation(async () => {
-      callCount++;
-      throw new Error("Some other error");
-    });
-
-    await expect(
-      (database as any).fetchWithTransientRetry(
-        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-        { headers: new Headers() },
-      ),
-    ).rejects.toThrow(Error);
-
-    // no retries for non-TypeError
-    expect(callCount).toBe(1);
-  });
-
-  it("should retry AbortError for GET requests", async () => {
-    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
-    (database as any).FETCH_TIMEOUT_MS = 60000;
-
-    const abortError = new DOMException("Fetch is aborted", "AbortError");
-
-    let callCount = 0;
-    (PouchDB.fetch as Mock).mockImplementation(async () => {
-      callCount++;
-      if (callCount < 2) {
-        throw abortError;
-      }
-      return new Response("{}", { status: HttpStatusCode.Ok });
-    });
-
-    const result = await (database as any).fetchWithTransientRetry(
-      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-      { method: "GET", headers: new Headers() },
-    );
-
-    expect(callCount).toBe(2);
-    expect(result.status).toBe(HttpStatusCode.Ok);
-  });
-
-  it("should not retry write operations on any transient error (avoids create-then-unauthorized-update)", async () => {
-    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
-    (database as any).FETCH_TIMEOUT_MS = 60000;
-
-    const transientErrors = [
-      new DOMException("Fetch is aborted", "AbortError"),
-      new TypeError("Failed to fetch"), // e.g. ERR_NETWORK_CHANGED
-    ];
-
-    for (const method of ["PUT", "POST", "DELETE"]) {
-      for (const err of transientErrors) {
-        let callCount = 0;
-        (PouchDB.fetch as Mock).mockImplementation(async () => {
-          callCount++;
-          throw err;
-        });
-
-        await expect(
-          (database as any).fetchWithTransientRetry(
-            `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-            { method, headers: new Headers() },
-          ),
-        ).rejects.toBe(err);
-
-        // writes are never auto-retried — the server may have already committed
-        expect(callCount).toBe(1);
-      }
-    }
-  });
-
-  it("should not impose the abort timeout on write operations", async () => {
+  it("should run writes exactly once with no abort timeout signal", async () => {
     // a tiny timeout would abort almost immediately if it were applied to writes
     (database as any).FETCH_TIMEOUT_MS = 0;
 
+    let calls = 0;
     let capturedOpts: any;
     (PouchDB.fetch as Mock).mockImplementation(async (_url, opts) => {
+      calls++;
       capturedOpts = opts;
       return new Response("{}", { status: HttpStatusCode.Ok });
     });
 
-    const result = await (database as any).fetchWithTransientRetry(
-      `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-      { method: "PUT", headers: new Headers() },
-    );
+    const result = await (database as any).fetchWithTimeout(READ_URL, {
+      method: "PUT",
+      headers: new Headers(),
+    });
 
     expect(result.status).toBe(HttpStatusCode.Ok);
     // no AbortController signal is attached to writes, so a slow write is not aborted
     expect(capturedOpts?.signal).toBeUndefined();
+    expect(calls).toBe(1);
   });
 
   it("should use periodic polling for changes feed instead of live long-polling", async () => {
@@ -276,10 +273,9 @@ describe("RemotePouchDatabase tests", () => {
     }
   });
 
-  it("should show alert when fetch fails after retries", async () => {
+  it("should show alert when a fetch fails", async () => {
     const mockAlertService = { addWarning: vi.fn() };
     (database as any).alertService = mockAlertService;
-    (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
     (database as any).FETCH_TIMEOUT_MS = 60000;
 
     (PouchDB.fetch as Mock).mockImplementation(async () => {
