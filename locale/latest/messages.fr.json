@@ -1503,5 +1503,9 @@
   "6278712032504662681": " Trim leading/trailing spaces automatically ",
   "1115588532150064880": "When enabled, leading and trailing spaces are automatically removed when saving this field.",
   "8933293634033658217": " Trim leading/trailing spaces from values ",
-  "1373034020305825622": "Automatically remove leading and trailing spaces from all text values during import."
+  "1373034020305825622": "Automatically remove leading and trailing spaces from all text values during import.",
+  "2353245940497073752": " Resend invitation ",
+  "5872519387087503048": " User has not yet accepted the invitation email and cannot log in yet. ",
+  "2513513412314834937": "Invitation email has been sent to {$PH}",
+  "1987785992860223333": "Failed to send invitation email"
 }
