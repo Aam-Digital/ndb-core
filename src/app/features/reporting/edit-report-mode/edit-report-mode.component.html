@@ -1,8 +1,14 @@
-<app-basic-autocomplete
-  [formControl]="formControl"
-  [options]="modeOptions"
-  [optionToString]="modeToString"
-></app-basic-autocomplete>
+<mat-select [formControl]="formControl">
+  @for (mode of modeOptions; track mode) {
+    <mat-option
+      [value]="mode"
+      [matTooltip]="modeDescriptions[mode]"
+      matTooltipPosition="right"
+    >
+      {{ modeToString(mode) }}
+    </mat-option>
+  }
+</mat-select>
 
 @if (valueSignal() === "sql") {
   <app-feature-disabled-info

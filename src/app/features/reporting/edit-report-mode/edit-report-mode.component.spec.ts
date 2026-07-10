@@ -44,6 +44,12 @@ describe("EditReportModeComponent", () => {
     expect(component.modeOptions).toEqual(["reporting", "exporting", "sql"]);
   });
 
+  it("provides a non-empty description tooltip for every mode", () => {
+    for (const mode of component.modeOptions) {
+      expect(component.modeDescriptions[mode]).toBeTruthy();
+    }
+  });
+
   it("shows the SQL feature warning only when SQL mode is selected", () => {
     const warning = () =>
       fixture.nativeElement.querySelector("app-feature-disabled-info");
