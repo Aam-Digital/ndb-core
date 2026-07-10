@@ -72,7 +72,9 @@ markup.
 ## Visual regression screenshots
 
 Screenshots are captured only when either the CI or SCREENSHOT environment
-variables are set.
+variables are set. They are uploaded to Argos for comparison only when an
+`ARGOS_TOKEN` is available, which on CI happens only in the "Final Review"
+label flow. Regular PR pushes run the e2e tests without uploading screenshots.
 
 Take screenshots after completing actions and verifying expectations:
 
