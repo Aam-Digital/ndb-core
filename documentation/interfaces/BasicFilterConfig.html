@@ -395,7 +395,6 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { FilterSelectionOption } from &quot;../filter/filters/filters&quot;;
 import { FormFieldConfig } from &quot;../common-components/entity-form/FormConfig&quot;;
-import { ExportColumnConfig } from &quot;../export/data-transformation-service/export-column-config&quot;;
 import { Sort } from &quot;@angular/material/sort&quot;;
 import { unitOfTime } from &quot;moment&quot;;
 
@@ -436,11 +435,6 @@ export interface EntityListConfig {
    * Default is to sort by the first column.
    */
   defaultSort?: Sort;
-
-  /**
-   * Optional config defining what fields are included in exports.
-   */
-  exportConfig?: ExportColumnConfig[];
 }
 
 export interface ColumnGroupsConfig {

@@ -265,7 +265,6 @@ export interface BuildExportColumnsOptions {
   schema: Map&lt;string, any&gt; | undefined;
   visibleColIds: string[];
   availableColumns: Array&lt;string | ExportColumnConfig | FormFieldConfig&gt;;
-  exportConfig?: ExportColumnConfig[];
 }
 
 export interface BuildExportColumnsResult {
@@ -283,7 +282,7 @@ export class ExportColumnsService {
   buildExportColumns(
     opts: BuildExportColumnsOptions,
   ): BuildExportColumnsResult {
-    const { schema, visibleColIds, availableColumns, exportConfig } &#x3D; opts;
+    const { schema, visibleColIds, availableColumns } &#x3D; opts;
 
     const allAvailableColumns: ExportColumnConfig[] &#x3D; [];
     // export column config objects keyed by their column id (for label overrides)
@@ -380,17 +379,6 @@ export class ExportColumnsService {
       );
       const col &#x3D; primary &amp;&amp; columnById.get(primary.columnId);
       if (visibleLabel &amp;&amp; col) col.label &#x3D; visibleLabel;
-    }
-
-    // Admin-configured custom labels take precedence over the list view labels
-    // (see EntityListConfig.exportConfig).
-    for (const configured of exportConfig ?? []) {
-      if (!configured.label) continue;
-      const key &#x3D; normalizeQueryKey(configured.query);
-      const match &#x3D; allAvailableColumns.find(
-        (c) &#x3D;&gt; normalizeQueryKey(c.query) &#x3D;&#x3D;&#x3D; key,
-      );
-      if (match) match.label &#x3D; configured.label;
     }
 
     const preselectedExportConfig &#x3D; allAvailableColumns.filter((c) &#x3D;&gt;
