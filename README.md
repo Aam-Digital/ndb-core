@@ -95,11 +95,11 @@ To learn more about the build process, see [/build](./build/README.md).
 
 This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.
 
-| Tool                         | Usage                                                                                                                                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                                                                    |
-| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                                                               |
-| **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled).                                            |
+| Tool                         | Usage                                                                                                                                               |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                           |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                      |
+| **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled). |
 
 ## Agents
 
