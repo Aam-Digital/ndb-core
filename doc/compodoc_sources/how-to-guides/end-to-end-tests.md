@@ -40,7 +40,7 @@ markup.
   import { expect, test } from "#e2e/fixtures.ts";
   ```
 
-  This prepare the application properly and loads it in the browser.
+  This prepares the application properly and loads it in the browser.
 
 - Prefer actions over expectations. Instead of the following
 
@@ -56,7 +56,7 @@ markup.
   await page.getByLabel("...").click();
   ```
 
-- Use accesibility-based locator, in descending preference
+- Use accessibility-based locators, in descending preference
   - [`getByLabel()`](https://playwright.dev/docs/locators#locate-by-label)
   - [`getByTitle()`](https://playwright.dev/docs/locators#locate-by-title)
   - [`getByPlaceholder()`](https://playwright.dev/docs/locators#locate-by-placeholder)
@@ -67,7 +67,7 @@ markup.
   HTML templates so that the desired elements can be located.
 
 - Avoid navigation with `page.goto()`. Instead, click on the links that lead you
-  to the desired page. This avoid reloading the app which is slow.
+  to the desired page. This avoids reloading the app which is slow.
 
 ## Visual regression screenshots
 
