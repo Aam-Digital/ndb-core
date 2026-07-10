@@ -318,7 +318,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/features/location/map/map.component.ts:80</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/features/location/map/map.component.ts:83</a></div>
                             </td>
                         </tr>
 
@@ -619,8 +619,8 @@ Hides address search, selected location, and save/cancel actions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="390"
-                                    class="link-to-prism">src/app/features/location/map/map.component.ts:390</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="396"
+                                    class="link-to-prism">src/app/features/location/map/map.component.ts:396</a></div>
                         </td>
                     </tr>
 
@@ -656,8 +656,8 @@ Hides address search, selected location, and save/cancel actions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="422"
-                                    class="link-to-prism">src/app/features/location/map/map.component.ts:422</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="438"
+                                    class="link-to-prism">src/app/features/location/map/map.component.ts:438</a></div>
                         </td>
                     </tr>
 
@@ -797,6 +797,9 @@ export class MapComponent implements AfterViewInit {
   private displayedPropertiesState: LocationProperties &#x3D; {};
   private previousEntitiesReference: Entity[] | undefined;
 
+  private openPopupEntities$?: BehaviorSubject&lt;Entity[]&gt;;
+  private openPopupHighlightedEntities$?: BehaviorSubject&lt;Entity[]&gt;;
+
   constructor() {
     const config &#x3D; this.configService.getConfig&lt;MapConfig&gt;(MAP_CONFIG_KEY);
     if (config?.start) {
@@ -821,6 +824,9 @@ export class MapComponent implements AfterViewInit {
       this.showPropertySelection.set(
         Object.keys(this.displayedPropertiesState).length &gt; 0,
       );
+
+      this.openPopupEntities$?.next(this.entitiesState);
+      this.openPopupHighlightedEntities$?.next(this.highlightedEntitiesState);
 
       this.updateMarkers();
     });
@@ -1107,10 +1113,18 @@ export class MapComponent implements AfterViewInit {
 
   async openMapInPopup() {
     const mapComponent &#x3D; await import(&quot;../map-popup/map-popup.component&quot;);
+
+    const entities$ &#x3D; new BehaviorSubject(this.entitiesState);
+    const highlightedEntities$ &#x3D; new BehaviorSubject(
+      this.highlightedEntitiesState,
+    );
+    this.openPopupEntities$ &#x3D; entities$;
+    this.openPopupHighlightedEntities$ &#x3D; highlightedEntities$;
+
     const data: MapPopupConfig &#x3D; {
       marked: this.markedState,
-      entities: new BehaviorSubject(this.entitiesState),
-      highlightedEntities: new BehaviorSubject(this.highlightedEntitiesState),
+      entities: entities$,
+      highlightedEntities: highlightedEntities$,
       entityClick: {
         next: (entity: Entity) &#x3D;&gt; this.entityClick.emit(entity),
       } as Subject&lt;Entity&gt;,
@@ -1123,9 +1137,11 @@ export class MapComponent implements AfterViewInit {
     this.dialog
       .open(mapComponent.MapPopupComponent, { width: &quot;90%&quot;, data })
       .afterClosed()
-      .subscribe(() &#x3D;&gt;
-        this.updatedDisplayedProperties(data.displayedProperties),
-      );
+      .subscribe(() &#x3D;&gt; {
+        this.openPopupEntities$ &#x3D; undefined;
+        this.openPopupHighlightedEntities$ &#x3D; undefined;
+        this.updatedDisplayedProperties(data.displayedProperties);
+      });
   }
 
   private updatedDisplayedProperties(
