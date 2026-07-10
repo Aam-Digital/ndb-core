@@ -142,14 +142,14 @@ markup.</p>
 Playwright documentation.</p>
 </li>
 <li><p>Import <code>test</code> and <code>expect</code>, <code>#e2e/fixtures.ts</code> instead of <code>@playwright/test</code>:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { expect, test } from &quot;#e2e/fixtures.ts&quot;;</code></pre></div><p>This prepare the application properly and loads it in the browser.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { expect, test } from &quot;#e2e/fixtures.ts&quot;;</code></pre></div><p>This prepares the application properly and loads it in the browser.</p>
 </li>
 <li><p>Prefer actions over expectations. Instead of the following</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">const someButton = page.getByLabel(&quot;...&quot;)
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">const someButton = page.getByLabel(&quot;...&quot;);
 await expect(someButton).toBeVisible();
 await someButton.click();</code></pre></div><p>write</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await page.getByLabel(&quot;...&quot;).click();</code></pre></div></li>
-<li><p>Use accesibility-based locator, in descending preference</p>
+<li><p>Use accessibility-based locators, in descending preference</p>
 <ul>
 <li><a href="https://playwright.dev/docs/locators#locate-by-label"><code>getByLabel()</code></a></li>
 <li><a href="https://playwright.dev/docs/locators#locate-by-title"><code>getByTitle()</code></a></li>
@@ -161,16 +161,18 @@ await someButton.click();</code></pre></div><p>write</p>
 HTML templates so that the desired elements can be located.</p>
 </li>
 <li><p>Avoid navigation with <code>page.goto()</code>. Instead, click on the links that lead you
-to the desired page. This avoid reloading the app which is slow.</p>
+to the desired page. This avoids reloading the app which is slow.</p>
 </li>
 </ul>
 <h2>Visual regression screenshots</h2>
 <p>Screenshots are captured only when either the CI or SCREENSHOT environment
-variables are set.</p>
+variables are set. They are uploaded to Argos for comparison only when an
+<code>ARGOS_TOKEN</code> is available, which on CI happens only in the &quot;Final Review&quot;
+label flow. Regular PR pushes run the e2e tests without uploading screenshots.</p>
 <p>Take screenshots after completing actions and verifying expectations:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await someButton.click()
-await expect(page.getByText(&quot;Content created&quot;)).toBeVisible()
-await argosScreenshot(page, &quot;content-created&quot;)</code></pre></div><p>This approach captures the app in a stable state rather than during transitions.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await someButton.click();
+await expect(page.getByText(&quot;Content created&quot;)).toBeVisible();
+await argosScreenshot(page, &quot;content-created&quot;);</code></pre></div><p>This approach captures the app in a stable state rather than during transitions.</p>
 <p>The <code>argosScreenshot()</code> function waits for page stabilization before capturing.
 Use <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy"><code>aria-busy=true</code></a> on loading elements to help ensure screenshots
 are taken only when the UI is ready.</p>
