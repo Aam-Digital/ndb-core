@@ -1,10 +1,6 @@
 import { enableVitestProxyZoneCompat } from "./app/utils/test-utils/vitest-proxy-zone-compat";
 import { environment } from "./environments/environment";
 import { SessionType } from "./app/core/session/session-type";
-import {
-  PRISTINE_TEST_ENTITY_SCHEMA,
-  TestEntity,
-} from "./app/utils/test-utils/TestEntity";
 
 enableVitestProxyZoneCompat();
 
@@ -18,15 +14,6 @@ beforeEach(() => {
 afterEach(() => {
   // Defensive: also reset after each test.
   environment.session_type = SessionType.mock;
-
-  // Restore the shared static TestEntity.schema so a spec that adds, replaces or
-  // removes fields without cleaning up (or that throws before its inline cleanup
-  // runs) cannot leak into later-running specs. The Angular unit-test builder
-  // runs non-isolated, so this static state is shared across spec files.
-  TestEntity.schema.clear();
-  for (const [key, value] of PRISTINE_TEST_ENTITY_SCHEMA) {
-    TestEntity.schema.set(key, value);
-  }
 });
 
 if (!window.matchMedia) {

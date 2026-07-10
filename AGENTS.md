@@ -138,7 +138,7 @@ export class ExampleComponent {
 - Implement proper permissions checking via CASL integration.
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
 - Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
-- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests
+- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. ``@DatabaseEntity("MyTest") class MyTest extends Entity {}`` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. The unit-test runner is non-isolated, so mutating a shared entity's schema without restoring it leaks into other specs and causes order-dependent flaky failures
 - See `doc/compodoc_sources/how-to-guides/` for detailed guides on entities, datatypes, and more
 
 ### Configuration System

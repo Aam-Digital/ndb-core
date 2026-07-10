@@ -17,16 +17,14 @@ import {
   SelectableFilter,
 } from "../filters/filters";
 import { Entity } from "../../entity/model/entity";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import {
-  EntitySchemaField,
-  PLACEHOLDERS,
-} from "../../entity/schema/entity-schema-field";
+import { PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
@@ -42,37 +40,30 @@ describe("FilterGeneratorService", () => {
     filterService = TestBed.inject(FilterService);
   }));
 
-  afterEach(() => {
-    // remove fields individual tests add to the shared static schemas so they
-    // don't leak into later-running specs (runs even if a test throws first)
-    TestEntity.schema.delete("test");
-    TestEntity.schema.delete("enumField");
-    TestEntity.schema.delete("tags");
-    Note.schema.delete("otherEnum");
-  });
-
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
   it("should create a boolean filter", async () => {
+    @DatabaseEntity("BooleanFilterTestEntity")
+    class BooleanFilterTestEntity extends Entity {}
+    BooleanFilterTestEntity.schema.set("test", {
+      dataType: "boolean",
+      label: "test Property",
+    });
+
     const filterConfig: BooleanFilterConfig = {
       id: "test",
       true: "On",
       false: "Off",
       type: "boolean",
     };
-    const fieldSchema: EntitySchemaField = {
-      dataType: "boolean",
-      label: "test Property",
-    };
-    TestEntity.schema.set("test", fieldSchema);
 
     const filter = (
-      await service.generate([filterConfig], TestEntity, [])
-    )[0] as BooleanFilter<TestEntity>;
+      await service.generate([filterConfig], BooleanFilterTestEntity, [])
+    )[0] as BooleanFilter<Entity>;
 
-    expect(filter.label).toEqual(fieldSchema.label);
+    expect(filter.label).toEqual("test Property");
     expect(filter.name).toEqual("test");
     expect(
       filter.options.map((option) => {
@@ -281,13 +272,13 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should filter entities with empty values using configurable enum filter", async () => {
-    const schema = {
-      id: "enumField",
+    @DatabaseEntity("EnumFilterTestEntity")
+    class EnumFilterTestEntity extends Entity {}
+    EnumFilterTestEntity.schema.set("enumField", {
       dataType: "configurable-enum",
       additional: "TestEnum",
       label: "Enum Field",
-    };
-    TestEntity.schema.set("enumField", schema);
+    });
 
     vi.spyOn(
       TestBed.inject(FilterGeneratorService)["enumService"],
@@ -298,25 +289,25 @@ describe("FilterGeneratorService", () => {
     ]);
 
     // Create entities with various "empty" values
-    const e1 = new TestEntity(); // undefined
-    const e2 = new TestEntity();
+    const e1 = new EnumFilterTestEntity(); // undefined
+    const e2 = new EnumFilterTestEntity();
     e2["enumField"] = null;
-    const e3 = new TestEntity();
+    const e3 = new EnumFilterTestEntity();
     e3["enumField"] = "";
-    const e4 = new TestEntity();
+    const e4 = new EnumFilterTestEntity();
     e4["enumField"] = { id: undefined };
-    const e5 = new TestEntity();
+    const e5 = new EnumFilterTestEntity();
     e5["enumField"] = { id: null };
-    const e6 = new TestEntity();
+    const e6 = new EnumFilterTestEntity();
     e6["enumField"] = { id: "" };
-    const e7 = new TestEntity();
+    const e7 = new EnumFilterTestEntity();
     e7["enumField"] = { id: "A" }; // valid
 
     const data = [e1, e2, e3, e4, e5, e6, e7];
 
     const filter = (
-      await service.generate([{ id: "enumField" }], TestEntity, data)
-    )[0] as ConfigurableEnumFilter<TestEntity>;
+      await service.generate([{ id: "enumField" }], EnumFilterTestEntity, data)
+    )[0] as ConfigurableEnumFilter<Entity>;
 
     const emptyOption = filter.options.find(
       (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
@@ -394,14 +385,14 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should handle array values (multi-select fields) and show invalid options correctly", async () => {
-    const schema = {
-      id: "tags",
+    @DatabaseEntity("TagsFilterTestEntity")
+    class TagsFilterTestEntity extends Entity {}
+    TagsFilterTestEntity.schema.set("tags", {
       dataType: "configurable-enum",
       additional: "TestEnum",
       label: "Tags",
       isArray: true,
-    };
-    TestEntity.schema.set("tags", schema);
+    });
 
     vi.spyOn(
       TestBed.inject(FilterGeneratorService)["enumService"],
@@ -412,21 +403,21 @@ describe("FilterGeneratorService", () => {
     ]);
 
     // Create entities with array values containing invalid enum IDs
-    const e1 = new TestEntity();
+    const e1 = new TagsFilterTestEntity();
     e1["tags"] = [
       { id: "VALID_A", label: "Valid A" },
       { id: "INVALID_X", label: "Invalid X" },
     ];
-    const e2 = new TestEntity();
+    const e2 = new TagsFilterTestEntity();
     e2["tags"] = [{ id: "INVALID_Y", label: "Invalid Y" }];
-    const e3 = new TestEntity();
+    const e3 = new TagsFilterTestEntity();
     e3["tags"] = [];
 
     const data = [e1, e2, e3];
 
     const filter = (
-      await service.generate([{ id: "tags" }], TestEntity, data)
-    )[0] as ConfigurableEnumFilter<TestEntity>;
+      await service.generate([{ id: "tags" }], TagsFilterTestEntity, data)
+    )[0] as ConfigurableEnumFilter<Entity>;
 
     // Main assertion: invalid options should show the actual ID, not [object Object]
     const invalidOptionX = filter.options.find(
