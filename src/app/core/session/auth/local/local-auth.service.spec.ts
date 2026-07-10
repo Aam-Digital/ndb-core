@@ -8,17 +8,20 @@ describe("LocalAuthService", () => {
   let service: LocalAuthService;
   let testUser: SessionInfo;
   let mockDatabases: ReturnType<typeof vi.fn>;
+  const originalSessionType = environment.session_type;
 
   beforeEach(() => {
     service = new LocalAuthService();
     localStorage.clear();
     mockDatabases = vi.fn().mockResolvedValue([]);
     vi.stubGlobal("indexedDB", { databases: mockDatabases });
+    environment.session_type = SessionType.local;
   });
 
   afterEach(() => {
     localStorage.clear();
     vi.unstubAllGlobals();
+    environment.session_type = originalSessionType;
   });
 
   it("should be created", () => {
