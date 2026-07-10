@@ -184,137 +184,120 @@ describe("MapPopupComponent", () => {
     }
   });
 
-  it("should replace stale top-level fields when selecting a different map location", async () => {
-    vi.useFakeTimers();
-    try {
-      let updatedMarkedLocations: OpenStreetMapsSearchResult[];
-      component.markedLocations.subscribe(
-        (res) => (updatedMarkedLocations = res),
-      );
+  it("should adopt the new location (text + parts) on map click when the user confirms the update", async () => {
+    let updatedMarkedLocations: OpenStreetMapsSearchResult[];
+    component.markedLocations.subscribe(
+      (res) => (updatedMarkedLocations = res),
+    );
 
-      // Pre-populate selectedLocation with a previous geoLookup and top-level fields
-      component.selectedLocation = {
-        geoLookup: {
-          lat: 52,
-          lon: 13,
-          display_name: "Old Place",
-          address: {
-            road: "Old Road",
-            postcode: "10001",
-            city: "OldCity",
-            country: "OldCountry",
-          },
-        } as OpenStreetMapsSearchResult,
-        locationString: "Old Place",
-        // top-level fields that should be replaced when a new geoLookup is selected
-        road: "Old Road",
-        postcode: "10001",
-        city: "OldCity",
-        country: "OldCountry",
-      } as any;
-
-      const mockedClick: Coordinates = { lat: 1, lon: 2 };
-      const newGeo: OpenStreetMapsSearchResult = {
-        lat: mockedClick.lat,
-        lon: mockedClick.lon,
-        display_name: "New Place",
+    component.selectedLocation = {
+      geoLookup: {
+        lat: 52,
+        lon: 13,
+        display_name: "Old Place",
         address: {
-          road: "New Road",
-          postcode: "99999",
-          city: "NewCity",
-          country: "NewCountry",
+          road: "Old Road",
+          postcode: "10001",
+          city: "OldCity",
+          country: "OldCountry",
         },
-      } as OpenStreetMapsSearchResult;
+      } as OpenStreetMapsSearchResult,
+      locationString: "Old Place",
+      road: "Old Road",
+      postcode: "10001",
+      city: "OldCity",
+      country: "OldCountry",
+    };
 
-      mockGeoService.reverseLookup.mockReturnValue(of(newGeo));
+    const newGeo: OpenStreetMapsSearchResult = {
+      lat: 1,
+      lon: 2,
+      display_name: "New Place",
+      address: {
+        road: "New Road",
+        postcode: "99999",
+        city: "NewCity",
+        country: "NewCountry",
+      },
+    } as OpenStreetMapsSearchResult;
 
-      await component.mapClicked(mockedClick);
-      await vi.advanceTimersByTimeAsync(0);
-
-      // marked locations should reflect the new lookup
-      expect(updatedMarkedLocations).toEqual([newGeo]);
-
-      // selectedLocation should have top-level fields populated from the new geoLookup,
-      // not retain the old ones
-      expect(component.selectedLocation?.road).toBe("New Road");
-      expect(component.selectedLocation?.postcode).toBe("99999");
-      expect(component.selectedLocation?.city).toBe("NewCity");
-      expect(component.selectedLocation?.country).toBe("NewCountry");
-      expect(component.selectedLocation?.geoLookup).toEqual(newGeo);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should ask for confirmation when an edited address part no longer matches the text", async () => {
-    component.updateLocation({
-      locationString: "Main St 42, 12345 Berlin, Germany",
-      road: "Main St",
-      house_number: "42",
-      postcode: "12345",
-      city: "Berlin",
-      country: "Germany",
-    });
-    component.updateLocation({
-      ...component.selectedLocation,
-      city: "Tempelhof",
-    });
-    component.onPartEdited();
-
+    mockGeoService.reverseLookup.mockReturnValue(of(newGeo));
     mockConfirmationDialog.getConfirmation.mockResolvedValue("update");
 
-    await component.onSave();
+    await component.mapClicked({ lat: 1, lon: 2 });
 
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-    expect(component.selectedLocation.locationString).toBe(
-      "Main St 42, 12345 Tempelhof, Germany",
-    );
+    expect(updatedMarkedLocations).toEqual([newGeo]);
+    expect(component.selectedLocation?.geoLookup).toEqual(newGeo);
+    expect(component.selectedLocation?.locationString).toBe("New Place");
+    expect(component.selectedLocation?.road).toBe("New Road");
+    expect(component.selectedLocation?.postcode).toBe("99999");
+    expect(component.selectedLocation?.city).toBe("NewCity");
+    expect(component.selectedLocation?.country).toBe("NewCountry");
   });
 
-  it("should keep the current text when the user chooses to keep it on parts mismatch", async () => {
-    component.updateLocation({
-      locationString: "Main St 42, 12345 Berlin, Germany",
-      road: "Main St",
-      house_number: "42",
-      postcode: "12345",
-      city: "Berlin",
-      country: "Germany",
-    });
-    component.updateLocation({
-      ...component.selectedLocation,
-      city: "Tempelhof",
-    });
-    component.onPartEdited();
+  it("should move only the pin on map click when the user keeps the current address", async () => {
+    let updatedMarkedLocations: OpenStreetMapsSearchResult[];
+    component.markedLocations.subscribe(
+      (res) => (updatedMarkedLocations = res),
+    );
 
+    component.selectedLocation = {
+      geoLookup: {
+        lat: 52,
+        lon: 13,
+        display_name: "Old Place",
+      } as OpenStreetMapsSearchResult,
+      locationString: "My custom text",
+      road: "Old Road",
+      house_number: "1",
+      postcode: "10001",
+      city: "OldCity",
+      country: "OldCountry",
+    };
+
+    const newGeo: OpenStreetMapsSearchResult = {
+      lat: 1,
+      lon: 2,
+      display_name: "New Place",
+      address: {
+        road: "New Road",
+        postcode: "99999",
+        city: "NewCity",
+        country: "NewCountry",
+      },
+    } as OpenStreetMapsSearchResult;
+
+    mockGeoService.reverseLookup.mockReturnValue(of(newGeo));
     mockConfirmationDialog.getConfirmation.mockResolvedValue("keep");
 
-    await component.onSave();
+    await component.mapClicked({ lat: 1, lon: 2 });
 
-    expect(component.selectedLocation.locationString).toBe(
-      "Main St 42, 12345 Berlin, Germany",
-    );
-    expect(component.selectedLocation.city).toBe("Tempelhof");
+    // pin moved to the new lookup...
+    expect(component.selectedLocation?.geoLookup).toEqual(newGeo);
+    expect(updatedMarkedLocations).toEqual([newGeo]);
+    // ...but text and structured parts are preserved exactly
+    expect(component.selectedLocation?.locationString).toBe("My custom text");
+    expect(component.selectedLocation?.road).toBe("Old Road");
+    expect(component.selectedLocation?.house_number).toBe("1");
+    expect(component.selectedLocation?.postcode).toBe("10001");
+    expect(component.selectedLocation?.city).toBe("OldCity");
+    expect(component.selectedLocation?.country).toBe("OldCountry");
   });
 
-  it("should not ask for confirmation when parts were not just edited", async () => {
-    // geoLookup matches locationString so the existing mismatch-check is also a no-op
-    component.selectedLocation = {
-      locationString: "stale text that does not match parts",
-      geoLookup: {
-        lat: 1,
-        lon: 1,
-        display_name: "stale text that does not match parts",
-      } as OpenStreetMapsSearchResult,
-      road: "Main St",
-      house_number: "42",
-      postcode: "12345",
-      city: "Berlin",
-      country: "Germany",
-    };
-    // onPartEdited() not called, so partsJustEdited stays false
+  it("should adopt the new location without asking when there is no existing address", async () => {
+    component.selectedLocation = undefined as unknown as GeoLocation;
+    const newGeo: OpenStreetMapsSearchResult = {
+      lat: 1,
+      lon: 2,
+      display_name: "Fresh Place",
+    } as OpenStreetMapsSearchResult;
+    mockGeoService.reverseLookup.mockReturnValue(of(newGeo));
 
-    await component.onSave();
+    await component.mapClicked({ lat: 1, lon: 2 });
 
     expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    expect(component.selectedLocation?.geoLookup).toEqual(newGeo);
+    expect(component.selectedLocation?.locationString).toBe("Fresh Place");
   });
 });

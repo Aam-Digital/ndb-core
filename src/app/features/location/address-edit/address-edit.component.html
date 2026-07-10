@@ -135,9 +135,10 @@
         </mat-form-field>
       </div>
 
-      @if (partsEdited && !partsMatchText()) {
+      @if (hasDivergingText()) {
         <p class="parts-mismatch-hint" i18n>
-          Address text no longer matches these parts — you'll be asked on save.
+          The address text has been customized and differs from the structured
+          details below.
         </p>
       }
 
