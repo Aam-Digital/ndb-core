@@ -247,8 +247,8 @@ Users without a local IndexedDB are filtered out (e.g. stale entries from online
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="71"
-                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:71</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -328,6 +328,12 @@ export class LocalAuthService {
 
     if (users.length &#x3D;&#x3D;&#x3D; 0) {
       return [];
+    }
+
+    // Mock (demo) mode uses the in-memory PouchDB adapter, so no IndexedDB
+    // database exists to check against. Return all stored users directly.
+    if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.mock) {
+      return users;
     }
 
     const existingDbNames &#x3D; await this.listIndexedDbNames();
