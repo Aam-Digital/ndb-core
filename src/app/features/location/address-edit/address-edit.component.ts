@@ -71,7 +71,9 @@ export class AddressEditComponent {
    * location. Inferred (no flag needed): a meaningful manual edit always makes
    * the text diverge from both derivations, so this is self-detecting.
    */
-  private isTextManuallyOverwritten(location: GeoLocation | undefined): boolean {
+  private isTextManuallyOverwritten(
+    location: GeoLocation | undefined,
+  ): boolean {
     const text = location?.locationString?.trim();
     if (!text) {
       return false;
