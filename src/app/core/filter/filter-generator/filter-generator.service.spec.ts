@@ -42,6 +42,15 @@ describe("FilterGeneratorService", () => {
     filterService = TestBed.inject(FilterService);
   }));
 
+  afterEach(() => {
+    // remove fields individual tests add to the shared static schemas so they
+    // don't leak into later-running specs (runs even if a test throws first)
+    TestEntity.schema.delete("test");
+    TestEntity.schema.delete("enumField");
+    TestEntity.schema.delete("tags");
+    Note.schema.delete("otherEnum");
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });

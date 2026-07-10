@@ -71,3 +71,13 @@ export class TestEntity extends Entity {
     return Object.assign(new TestEntity(), data);
   }
 }
+
+/**
+ * Pristine snapshot of TestEntity's schema, captured once at module load right
+ * after the decorators populate it (before any spec can mutate the shared static
+ * schema). test-setup restores from this after every test so a spec that adds,
+ * replaces or removes fields without cleaning up (or that throws before its
+ * inline cleanup runs) cannot leak into later specs and cause order-dependent
+ * flakiness.
+ */
+export const PRISTINE_TEST_ENTITY_SCHEMA = new Map(TestEntity.schema);
