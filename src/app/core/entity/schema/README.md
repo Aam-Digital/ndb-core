@@ -7,7 +7,7 @@ See the _Create a New Entity Type_ how-to guide for background and practical con
 An example of a schema definition:
 
 ```ts
-@DatabaseEntity("Child") // configures the database prefix to be used by the Schema system
+@DatabaseEntity("Note") // configures the database prefix to be used by the Schema system
 class Note extends Entity {
   @DatabaseField() children: Child[];
   @DatabaseField() text: string = "default text";
@@ -16,18 +16,15 @@ class Note extends Entity {
 }
 ```
 
-The logical flow looks something like this:
+When entities are [loaded or saved](../README.md#loading-saving-and-deleting-data), the schema drives how their data is transformed:
 
-1. Entities are requested through the `EntityMapperService` (`entityMapper.load(...)`)
-2. The `EntitySchemaService` functions as a helper to the `EntityMapperService`
-   and takes care of data transformations based on the schema of that entity type.
-3. Data from the database is "loaded" into an entity instance to combine the raw data
-   with its entity class by the `EntityMapperService` together with the `EntitySchemaService`.
-4. The entity classes themselves only define the schema through the `@DatabaseEntity` and `@DatabaseField` decorators
+1. The `EntitySchemaService` takes care of data transformations based on the schema of that entity type.
+2. Data from the database is "loaded" into an entity instance, combining the raw data
+   with its entity class (via the `EntityMapperService` together with the `EntitySchemaService`).
+3. The entity classes themselves only define the schema through the `@DatabaseEntity` and `@DatabaseField` decorators
    and are otherwise simple TypeScript objects.
 
-The process of saving an entity to the database works similarly with `EntitySchemaService`
-supporting the `EntityMapperService` and transforming the entity object into the desired format to be persisted into the database.
+Saving works the same way in reverse: the `EntitySchemaService` transforms the entity object into the format to be persisted into the database.
 
 `EntitySchemaService` manages a registry of "data types",
 i.e. transformation functions that will be called for a specific schema field's dataType.
@@ -37,7 +34,7 @@ You can register your own types by implementing services extending `DefaultDatat
 providing these through Angular dependency injection using `multi: true`.
 Also see [Create a New Datatype](../../basic-datatypes/README.md).
 
-### Schema options
+## Schema options
 
 The schema definitions contain information regarding the schema transformation as well as how a property can be displayed.
 The `EntitySchemaField` interface (`entity-schema-field.ts`) shows all configuration options.

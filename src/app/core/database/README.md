@@ -16,7 +16,7 @@ As queries and database indexing is closely related to the underlying database t
 directly refers to the underlying PouchDB feature.
 
 Please read through the PouchDB documentation referring to map/reduce queries:
-https://pouchdb.com/guides/queries.html
+<https://pouchdb.com/guides/queries.html>
 
 ## Creating a persistent query / database index
 

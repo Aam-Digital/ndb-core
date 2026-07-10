@@ -134,7 +134,7 @@ Permissions use JSON format with a role → rules mapping:
 - **`subject`**: The entity type(s) — e.g., `Child`, `School`, `Note`, or `all` for any type
 - **`action`**: What users can do — `read`, `create`, `update`, `delete`, or `manage` (all operations)
 - **`default`**: Rules applied to all authenticated users (regardless of role)
-- **Combining roles**: If a user has multiple roles, their rules combine. The most permissive wins.
+- **Combining roles**: If a user has multiple roles, their rules are appended in order (the `default` rules first, then each role's rules). CASL evaluates them so that the **last matching rule wins** — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later `"inverted": true` rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.
 
 ### Restricting access (inverted rules)
 

@@ -11,7 +11,7 @@ Instead, to log information for analysis and debugging (without explicit notific
 use the `Logging` object.
 This way, all logging is done in a consistent manner and can be transferred to the remote monitoring or saved in some other way:
 
-```
+```ts
 someFun() {
   Logging.error('some error information');
 }

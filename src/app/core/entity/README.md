@@ -53,7 +53,7 @@ so that the `EntityMapperService` can use it to properly cast the record to the 
 
 ```ts
 let user: User;
-const userId = '1';
+const userId = "1";
 user = await this.entityMapper.load<User>(User, userId);
 ```
 
@@ -73,9 +73,9 @@ allUsers = await this.entityMapper.loadType<User>(User);
 Similar to the loading of data you can use the `EntityMapperService` to save a new or updated entity:
 
 ```ts
-const userId = '2';
+const userId = "2";
 const newUser = new User(userId);
-newUser.name = 'Max';
+newUser.name = "Max";
 await this.entityMapper.save<User>(newUser);
 ```
 
@@ -86,8 +86,8 @@ but if there already is another `User` entity with this ID in the database `save
 To update an existing entity you can simply change the object and `save` it again:
 
 ```ts
-const user = await this.entityMapper.load<User>(User, '1');
-user.name = 'Max';
+const user = await this.entityMapper.load<User>(User, "1");
+user.name = "Max";
 await this.entityMapper.save<User>(user);
 ```
 
@@ -108,7 +108,7 @@ Deleting an entity is similar to saving
 (and the same rules about conflicts apply, so you should delete only entity instances that you actually loaded previously):
 
 ```ts
-const user = await this.entityMapper.load<User>(User, '1');
+const user = await this.entityMapper.load<User>(User, "1");
 await this.entityMapper.remove<User>(user);
 ```
 
