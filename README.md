@@ -107,11 +107,11 @@ To learn more about the build process, see [/build](./build/README.md).
 
 This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.
 
-| Tool                         | Usage                                                                                                                                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                                                                    |
-| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                                                               |
-| **CodeRabbit** (GitHub)      | Automated PR reviews — configured via `.coderabbit.yaml`. Add the label **"Ready for Review"** to trigger a review (works in draft mode too; removing the label stops further auto-reviews). |
+| Tool                         | Usage                                                                                                                                               |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                           |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                      |
+| **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled). |
 
 ## Agents
 
@@ -123,7 +123,7 @@ Custom agents are defined in `.claude/agents/` and can be invoked from Copilot c
 | `troubleshooter`          | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
 | `implementation-planner`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
 | `implementation-executor` | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
-| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (automatic) + manual prompt |
+| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (on-demand) + manual prompt |
 | `e2e-test-writer`         | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
 
 ## MCP Servers
