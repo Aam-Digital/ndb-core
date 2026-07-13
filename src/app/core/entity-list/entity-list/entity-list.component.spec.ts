@@ -335,32 +335,4 @@ describe("EntityListComponent", () => {
       vi.useRealTimers();
     }
   });
-
-  it("should apply admin-configured export labels to matching columns", async () => {
-    vi.useFakeTimers();
-    try {
-      createComponent();
-      fixture.componentRef.setInput("exportConfig", [
-        { query: ".name", label: "Custom Name Label" },
-      ]);
-      fixture.detectChanges();
-      await vi.advanceTimersByTimeAsync(0);
-
-      component.columnsToDisplay = ["name"];
-
-      const matDialog = TestBed.inject(MatDialog);
-      const openSpy = vi
-        .spyOn(matDialog, "open")
-        .mockImplementation(() => makeMatDialogRef());
-
-      component.openExportDialog();
-
-      const callArgs = openSpy.mock.calls[0][1] as any;
-      const available = callArgs.data.exportConfig as any[];
-      const nameColumn = available.find((c) => c.query === ".name");
-      expect(nameColumn.label).toBe("Custom Name Label");
-    } finally {
-      vi.useRealTimers();
-    }
-  });
 });

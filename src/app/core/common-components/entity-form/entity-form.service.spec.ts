@@ -319,6 +319,16 @@ describe("EntityFormService", () => {
     expect(unsavedChanged.pending()).toBe(false);
   });
 
+  it("should not throw (NG0911) and should clear unsaved-changes state if the DestroyRef is already destroyed when the form finishes creating (async race, e.g. navigated away while the form was still loading)", async () => {
+    const unsavedChanged = TestBed.inject(UnsavedChangesService);
+    const formFields = [{ id: "inactive" }];
+
+    destroyRef.destroy();
+
+    await expect(createForm(formFields, new Entity())).resolves.toBeDefined();
+    expect(unsavedChanged.pending()).toBe(false);
+  });
+
   it("should assign default values", async () => {
     const schema: EntitySchemaField = {
       defaultValue: {
@@ -453,6 +463,23 @@ describe("EntityFormService", () => {
     expect(actualSaved["test"]).not.toEqual(null);
 
     TestEntity.schema.delete("test");
+  });
+
+  it("should trim leading/trailing whitespace from string fields on save", async () => {
+    TestBed.inject(EntityAbility).update([
+      { action: "manage", subject: "all" },
+    ]);
+
+    const entity = new TestEntity();
+    const form = await createForm([{ id: "name" }], entity);
+    form.formGroup.get("name").setValue("  John  ");
+
+    await service.saveChanges(form, entity);
+
+    expect(entity["name"]).toBe("John");
+    // form control is kept in sync with the trimmed persisted value, so the
+    // entity's own save echo is not mistaken for an external conflicting change
+    expect(form.formGroup.get("name").value).toBe("John");
   });
 
   it("should add column definitions from property schema", () => {
