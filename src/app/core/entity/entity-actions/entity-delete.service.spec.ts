@@ -100,6 +100,12 @@ describe("EntityDeleteService", () => {
     ) as MockEntityMapperService;
   });
 
+  afterEach(() => {
+    // remove the field a test adds to the shared static Note schema so it does
+    // not leak into later-running specs (runs even if a test throws first)
+    Note.schema.delete("testAttendance");
+  });
+
   function removeReference(
     entity: EntityWithAnonRelations,
     property: "refAggregate" | "refComposite",
@@ -468,8 +474,5 @@ describe("EntityDeleteService", () => {
       primary,
       originalNote,
     ]);
-
-    // restore original schema
-    Note.schema.delete("testAttendance");
   });
 });
