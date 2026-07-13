@@ -151,11 +151,6 @@ export class BasicAutocompleteComponent<O, V = O>
   createOption = input<(input: string) => Promise<O>>();
   createOptions = input<CreateOptionConfig<O>[]>([]);
   hideOption = input<(option: O) => boolean>(() => false);
-
-  /**
-   * Predicate to disable (but still show) individual options,
-   * e.g. to indicate an option the user is not allowed to select.
-   */
   disableOption = input<(option: O) => boolean>(() => false);
 
   /**

@@ -42,11 +42,9 @@ export class ImportEntityTypeComponent {
    */
   expertMode = signal(false);
 
-  /** Disable types the user is not allowed to create, so they cannot start an import that would fail. */
   disableTypeOption = (type: EntityConstructor) =>
     this.ability.initialized && this.ability.cannot("create", type);
 
-  /** Append a hint to the label of types the user cannot create. */
   typeOptionToString = (type: EntityConstructor) => {
     const label = type.label ?? type.ENTITY_TYPE;
     return this.disableTypeOption(type)
