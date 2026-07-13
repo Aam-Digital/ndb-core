@@ -72,7 +72,7 @@
         </button>
         <button
           mat-raised-button
-          [disabled]="!step2.completed"
+          [disabled]="!step2.completed || cannotCreateSelectedType()"
           i18n="import next step button"
           matStepperNext
         >

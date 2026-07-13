@@ -28,6 +28,7 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { RouteTarget } from "../../../route-target";
 import { ImportMatchExistingComponent } from "../update-existing/import-match-existing/import-match-existing.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -61,10 +62,25 @@ export class ImportComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private location = inject<Location>(LOCATION_TOKEN);
+  private readonly ability = inject(EntityAbility);
 
   rawData: any[];
 
   importSettings = signal<Partial<ImportSettings>>({});
+
+  /**
+   * Whether the current user lacks permission to create records of the selected type.
+   * Checked already on the type-selection step so the user is not sent through
+   * column mapping and review only to fail at the end.
+   */
+  cannotCreateSelectedType = computed(() => {
+    const entityType = this.importSettings().entityType;
+    return (
+      !!entityType &&
+      this.ability.initialized &&
+      this.ability.cannot("create", entityType)
+    );
+  });
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;

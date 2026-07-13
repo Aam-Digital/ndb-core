@@ -42,6 +42,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,6 +70,21 @@ export class ImportReviewDataComponent implements OnChanges {
   private matDialog = inject(MatDialog);
   private entityRegistry = inject(EntityRegistry);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly ability = inject(EntityAbility);
+
+  /**
+   * Whether the current user lacks permission to create ImportMetadata records.
+   * The import always writes an ImportMetadata history entry at the end, so without
+   * this permission an import would only half-complete (data saved, history write fails).
+   * We block it up front to avoid partial imports.
+   */
+  cannotCreateImportMetadata = signal(false);
+
+  constructor() {
+    this.cannotCreateImportMetadata.set(
+      this.ability.initialized && this.ability.cannot("create", ImportMetadata),
+    );
+  }
 
   readonly IMPORT_STATUS_COLUMN = "_importStatus";
 

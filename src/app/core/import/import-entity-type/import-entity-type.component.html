@@ -8,6 +8,8 @@
       (ngModelChange)="onSelectedTypeChange($event)"
       [multi]="false"
       [showInternalTypes]="expertMode()"
+      [disableOption]="disableTypeOption"
+      [optionToString]="typeOptionToString"
     ></app-entity-type-select>
   </mat-form-field>
 

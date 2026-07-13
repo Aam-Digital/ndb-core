@@ -110,6 +110,7 @@ Autocomplete
       >
         <mat-option
           [value]="item"
+          [disabled]="disableOption()(item.initial)"
           *cdkVirtualFor="
             let item of autocompleteOptions();
             trackBy: trackByOptionValueFn
@@ -123,7 +124,11 @@ Autocomplete
       </cdk-virtual-scroll-viewport>
     } @else {
       @for (item of autocompleteOptions(); track item.asValue) {
-        <mat-option [value]="item" class="option-with-wrap">
+        <mat-option
+          [value]="item"
+          [disabled]="disableOption()(item.initial)"
+          class="option-with-wrap"
+        >
           <ng-container
             [ngTemplateOutlet]="optionContent"
             [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"

@@ -6,6 +6,8 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { entityAbilityFactory } from "../../permissions/ability/testing-entity-ability-factory";
 
 describe("ImportSelectTypeComponent", () => {
   let component: ImportEntityTypeComponent;
@@ -35,7 +37,10 @@ describe("ImportSelectTypeComponent", () => {
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
-      providers: [{ provide: EntityRegistry, useValue: mockRegistry }],
+      providers: [
+        { provide: EntityRegistry, useValue: mockRegistry },
+        { provide: EntityAbility, useFactory: entityAbilityFactory },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImportEntityTypeComponent);
@@ -45,5 +50,24 @@ describe("ImportSelectTypeComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should disable and annotate types the user cannot create", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: TestEntity.ENTITY_TYPE, action: "create", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    expect(component.disableTypeOption(TestEntity)).toBe(true);
+    expect(component.typeOptionToString(TestEntity)).toBe(
+      "some-label (no permission)",
+    );
+
+    expect(component.disableTypeOption(ConfigurableEnum)).toBe(false);
+    expect(component.typeOptionToString(ConfigurableEnum)).toBe(
+      ConfigurableEnum.label ?? ConfigurableEnum.ENTITY_TYPE,
+    );
   });
 });

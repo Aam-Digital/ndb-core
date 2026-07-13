@@ -153,6 +153,12 @@ export class BasicAutocompleteComponent<O, V = O>
   hideOption = input<(option: O) => boolean>(() => false);
 
   /**
+   * Predicate to disable (but still show) individual options,
+   * e.g. to indicate an option the user is not allowed to select.
+   */
+  disableOption = input<(option: O) => boolean>(() => false);
+
+  /**
    * Used in template to display the "Add new" option label.
    * Delegates to optionToString so callers with a custom optionToString (e.g. showing
    * an example date) get a preview in the "Add new" option too.
