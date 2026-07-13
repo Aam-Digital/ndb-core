@@ -121,46 +121,50 @@
 
 
 <h1>Entity Schema</h1>
-<hr>
 <p>The Entity Schema defines details of the properties of an entity type.
 We define an entity type and its schema in code through a plain TypeScript class and some custom annotations.
-Read more on the background and practical considerations in <a href="../how-to-guides/create-a-new-entity-type.html">How to create a new Entity Type</a>.</p>
+See the <em>Create a New Entity Type</em> how-to guide for background and practical considerations.</p>
 <p>An example of a schema definition:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-none">&#64;DatabaseEntity(&#39;Child&#39;) // configures the database prefix to be used by the Schema system
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">&#64;DatabaseEntity(&quot;Note&quot;) // configures the database prefix to be used by the Schema system
 class Note extends Entity {
   &#64;DatabaseField() children: Child[];
-  &#64;DatabaseField() text: string = &#39;default text&#39;;
-  &#64;DatabaseField() date: Date; // dataType is inferred from the Typescript type
-  &#64;DatabaseField({dataType: &#39;month&#39;}) reportingMonth: Date; // sets a specific dataType how this value will be written to the database
-}</code></pre></div><hr>
-<p>The logical flow looks something like this:</p>
+  &#64;DatabaseField() text: string = &quot;default text&quot;;
+  &#64;DatabaseField() date: Date; // dataType is inferred from the TypeScript type
+  &#64;DatabaseField({ dataType: &quot;month&quot; }) reportingMonth: Date; // sets a specific dataType how this value will be written to the database
+}</code></pre></div><p>When entities are <a href="../README.md#loading-saving-and-deleting-data">loaded or saved</a>, the schema drives how their data is transformed:</p>
 <ol>
-<li>Entities are requested through the <code>EntityMapperService</code> (<code>entityMapper.load(...)</code>)</li>
-<li>The <code>EntitySchemaService</code> functions as a helper to the <code>EntityMapperService</code>
-and takes care of data transformations based on the schema of that entity type.</li>
-<li>Data from the database is &quot;loaded&quot; into an entity instance to combine the raw data
-with its entity class by the <code>EntityMapperService</code> together with the <code>EntitySchemaService</code>.</li>
+<li>The <code>EntitySchemaService</code> takes care of data transformations based on the schema of that entity type.</li>
+<li>Data from the database is &quot;loaded&quot; into an entity instance, combining the raw data
+with its entity class (via the <code>EntityMapperService</code> together with the <code>EntitySchemaService</code>).</li>
 <li>The entity classes themselves only define the schema through the <code>@DatabaseEntity</code> and <code>@DatabaseField</code> decorators
-and are otherwise simple Typescript objects.</li>
+and are otherwise simple TypeScript objects.</li>
 </ol>
-<p>The process of saving an entity to the database works similarly with <code>EntitySchemaService</code>
-supporting the <code>EntityMapperService</code> and transforming the entity object into the desired format to be persisted into the database.</p>
-<hr>
+<p>Saving works the same way in reverse: the <code>EntitySchemaService</code> transforms the entity object into the format to be persisted into the database.</p>
 <p><code>EntitySchemaService</code> manages a registry of &quot;data types&quot;,
 i.e. transformation functions that will be called for a specific schema field&#39;s dataType.</p>
 <p>Basic data transformations for <code>string</code>, <code>number</code>, <code>date</code> and <code>month</code> are supported by default.
 You can register your own types by implementing services extending <code>DefaultDatatype</code> and
-providing these through Angular dependency injection using <code>multi: true</code>.</p>
-<p>Also see: <a href="../how-to-guides/create-a-new-datatype.html">How to create a new Datatype</a>.</p>
-<h3>Schema options</h3>
-<p>The schema definitions contains information regarding the schema transformation as well as how a property can be displayed.
-The <a href="../../interfaces/EntitySchemaField.html">EntitySchemaField</a> interface shows all configuration options.
+providing these through Angular dependency injection using <code>multi: true</code>.
+Also see <a href="../../basic-datatypes/README.md">Create a New Datatype</a>.</p>
+<h2>Schema options</h2>
+<p>The schema definitions contain information regarding the schema transformation as well as how a property can be displayed.
+The <code>EntitySchemaField</code> interface (<code>entity-schema-field.ts</code>) shows all configuration options.
 If the <code>editComponent</code> and the <code>viewComponent</code> are not set, the default components of this property&#39;s datatype will be used.
 The <code>description</code> field allows adding further explanation which will be displayed as a tooltip.</p>
 <h2>Generic Entity functionalities</h2>
 <h3>Metadata (created, updated)</h3>
-<p>Each record automatically holds basic data of timestamp and user who created and last updated the record.
-(see <code>Entity</code> class)</p>
+<p>Each record automatically holds basic data of timestamp and user who created and last updated the record
+(see the <code>Entity</code> base class in <code>../model/entity.ts</code>).</p>
+<h2>Key files</h2>
+<ul>
+<li><code>entity-schema.service.ts</code> — <code>EntitySchemaService</code>, runs dataType transformations when loading/saving entities</li>
+<li><code>entity-schema-field.ts</code> — <code>EntitySchemaField</code> interface, all per-field schema options (<code>dataType</code>, <code>label</code>, <code>editComponent</code>, <code>anonymize</code>, …)</li>
+<li><code>entity-schema.ts</code> — <code>EntitySchema</code>, the map of field id → field config for an entity type</li>
+<li><code>../database-field.decorator.ts</code> — <code>@DatabaseField()</code> registers a property in the schema</li>
+<li><code>../database-entity.decorator.ts</code> — <code>@DatabaseEntity()</code> registers the entity type and its DB prefix</li>
+<li><code>../default-datatype/default.datatype.ts</code> — <code>DefaultDatatype</code>, base class for dataType transformations</li>
+<li><code>../entity-mapper/entity-mapper.service.ts</code> — <code>EntityMapperService</code>, public API to load/save entities</li>
+</ul>
 
                    </div><div class="search-results">
     <div class="has-results">

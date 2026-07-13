@@ -125,7 +125,7 @@
 Clicking this button will create a downloadable <code>.csv</code> file.
 The format of this file can be adjusted through the configuration for the list view.</p>
 <h2>Config Format</h2>
-<p>The configuration of the export format is part of the configuration of the <a href="../../interfaces/EntityListConfig.html">EntityListComponent</a>.</p>
+<p>The configuration of the export format is part of the list view configuration (<code>EntityListConfig</code>).</p>
 <p>E.g.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">  &quot;view:child&quot;: {
     &quot;component&quot;: &quot;ChildrenList&quot;,
@@ -148,12 +148,12 @@ The format of this file can be adjusted through the configuration for the list v
       &quot;filters&quot;: [...]
     }
   },</code></pre></div><h2>Configuring a Export</h2>
-<p>The structure of the exports is according to the <a href="../../interfaces/ExportColumnConfig.html">ExportColumnConfig</a>.</p>
+<p>The structure of the exports is according to the <code>ExportColumnConfig</code>.</p>
 <p>The <code>label</code> property is optional and provides a title for this column.
 If nothing is provided the query (without dots) is used (e.g. for <code>&quot;query&quot;: &quot;.name&quot;</code> the label will be <code>name</code>).</p>
 <p>The <code>query</code> has to be a valid <a href="https://github.com/auditassistant/json-query#queries">JSON-Query</a>.
 The query will be run on each entity of the list page that is visited (e.g. on each child).
-For further information about the query-syntax read the <a href="reports.md">Reports Guide</a> which uses the same query language.</p>
+For further information about the query-syntax read the <a href="../../features/reporting/README.md">Reports guide</a> which uses the same query language.</p>
 <p>The <code>subQueries</code> is optional and expects an array of <code>ExportColumnConfigs</code>.
 The queries of the <code>subQueries</code> will be run for each result of the parent query.
 In the example above, this would mean that for each <code>ChildSchoolRelation</code> the name of the school, the from- and the to-date will be exported.
@@ -224,6 +224,13 @@ const school = {
 </tr>
 </tbody>
 </table>
+<h2>Key files</h2>
+<ul>
+<li><code>data-transformation-service/export-column-config.ts</code> — <code>ExportColumnConfig</code> interface (<code>label</code>, <code>query</code>, <code>subQueries</code>)</li>
+<li><code>data-transformation-service/data-transformation.service.ts</code> — <code>DataTransformationService</code>, runs the JSON-queries and flattens results into rows</li>
+<li><code>export-columns.service.ts</code> — <code>ExportColumnsService</code>, resolves the export columns for a list view</li>
+<li><code>download-service/download.service.ts</code> — <code>DownloadService</code>, turns the transformed data into a downloadable <code>.csv</code> file</li>
+</ul>
 
                    </div><div class="search-results">
     <div class="has-results">

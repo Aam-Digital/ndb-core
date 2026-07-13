@@ -123,7 +123,7 @@
 <h1>Configuration System</h1>
 <p>The config is a json object containing information about how the user interface for a specific project is displayed.
 The config is stored in the database and can be updated for a user without changing the code base.
-The default config is part of the repository in the <a href="https://github.com/Aam-Digital/ndb-core/tree/master/src/app/core/config/config-fix.json">config-fix.json file</a>.</p>
+The default configs are part of the repository under <a href="../../../assets/base-configs/"><code>src/assets/base-configs/</code></a> (e.g. <code>all-features/Config_CONFIG_ENTITY.json</code>).</p>
 <p>Config data is loaded by the <code>ConfigService</code> and then distributed to the relevant modules.
 This document aims to explain how cofiguration defines the rest of the application and all options that can be changed through the config.</p>
 <hr>
@@ -145,17 +145,17 @@ This document aims to explain how cofiguration defines the rest of the applicati
 </ul>
 <h2><!-- /TOC --></h2>
 <h2>Config Service</h2>
-<p><img src="../../images/config-system.drawio.png" alt="" class="img-responsive"></p>
-<p>The <a href="../../injectables/ConfigService.html">ConfigService</a> is an Angular service that you can inject anywhere in the code if you need to access configuration values.
+<p><img src="https://raw.githubusercontent.com/Aam-Digital/ndb-core/master/doc/images/config-system.drawio.png" alt="Configuration system overview" class="img-responsive"></p>
+<p>The <code>ConfigService</code> (<code>config.service.ts</code>) is an Angular service that you can inject anywhere in the code if you need to access configuration values.
 It loads the configuration from the database (or the default file if no entry is available) first thing when starting the application.</p>
-<p>Some core services use the ConfigService to dynamically set up parts of the application on startup.
-For example the <a href="../../injectables/NavigationItemsService.html">NavigationItemsService</a> creates the menu items as configured
-and the <a href="../../injectables/RouterService.html">RouterService</a> sets up Angular routing defining what components users see.
+<p>Some core services use the <code>ConfigService</code> to dynamically set up parts of the application on startup.
+For example the <code>MenuService</code> (<code>../ui/navigation/menu.service.ts</code>) creates the menu items as configured
+and the <code>RouterService</code> (<code>dynamic-routing/router.service.ts</code>) sets up Angular routing defining what components users see.
 The config service provides a behavior subject which will notify all subscribers when a new configuration was uploaded.
 This can be used for core tasks like setting up the routes or creating the navigation bar.</p>
 <p>Top-level &quot;view&quot; components (i.e. components that are used to define a whole page, not just some building block for a part or section)
 receive their config data automatically assigned as <code>@Input()</code> properties mapped from config object property name to an identical component class property.
-This is handled by the <code>RoutedViewComponent</code> internally.
+This is handled by the <code>RoutedViewComponent</code> (<code>../ui/routed-view/routed-view.component.ts</code>) internally.
 (If needed for special cases, you can also access it through the standard Angular router and can access it by injecting <code>ActivatedRoute</code>.)</p>
 <h3>Storing config in DB</h3>
 <p>Config is currently stored in the normal app database with the fixed _id <code>&quot;_id&quot;: &quot;Config:CONFIG_ENTITY&quot;</code>.
@@ -180,9 +180,9 @@ On the top level of the config file, there are four different kinds of entries:<
 <li>The main navigation menu (<code>navigationMenu</code>)</li>
 <li>Views defining the UI of each page (<code>view:&lt;path&gt;</code>)</li>
 <li>Lists of select options for dropdown fields (<code>enum:&lt;category-id&gt;</code>, including available Note categories, etc.)</li>
-<li>Entity configuration to define [schemas](./entity-schema.html (<code>entity:&lt;entity-id&gt;</code>)</li>
+<li>Entity configuration to define <a href="../entity/schema/README.md">schemas</a> (<code>entity:&lt;entity-id&gt;</code>)</li>
 </ol>
-<p><em>also see <a href="user-roles-and-permissions.html">User Roles &amp; Permissions</a></em></p>
+<p><em>also see <a href="../permissions/README.md">User Roles &amp; Permissions</a></em></p>
 <h3>Navigation Menu</h3>
 <p>The top level entry <code>navigationMenu</code> builds the visible and clickable items for the navigation menu on the left hand side of the app. Right now, the <code>navigationMenu</code> has the only subentry <code>items</code>. <code>items</code> contains an array of objects, each object representing one item within the navigation menu. The order of the entries reflects how the navigation menu items are shown in the app.</p>
 <p>Each navigation menu item object has to have the three properties <code>name</code>, <code>icon</code> and <code>link</code>. <code>name</code> hold the inscription of the item in the navigation menu in the app, <code>icon</code> indicates the little icon picture that is shown before the textual inscription of the item in the navigation menu and <code>link</code> contains the URL or view that the user is directed to when clicking on the navigation menu item. For every link given, there necessarily has to be a corresponding view-entry on the top level of the config file.</p>
@@ -220,7 +220,7 @@ be used for the view have the <code>@DynamicComponent</code> decorator present</
 If one or more roles are specified, only users with these roles are able to see this menu item and visit this page in the app.</p>
 <p>What comes within the <code>&quot;config&quot;:</code> object depends on the component being used.
 The Dashboard-Component for example takes as <code>&quot;widgets:&quot;</code> an array of subcomponents, where every entry has to have a <code>&quot;component:&quot;</code> and may have an own <code>&quot;config:&quot;</code> object.
-(This &quot;config&quot; is passed to the component, which receives and handles it by implementing the <a href="../../interfaces/OnInitDynamicComponent.html">OnInitDynamicComponent</a> interface)</p>
+(This &quot;config&quot; is passed to the component, which receives and handles it by implementing the <code>OnInitDynamicComponent</code> interface)</p>
 <p>Example:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;view:&quot;: {
 &quot;component&quot;: &quot;Dashboard&quot;,
@@ -241,10 +241,10 @@ The Dashboard-Component for example takes as <code>&quot;widgets:&quot;</code> a
 },
 ...</code></pre></div><h4>List components</h4>
 <p>List components showing data in a table (such as ChildrenList oder SchoolsList) usually have the four config objects <code>&quot;title&quot;</code>, <code>&quot;columns&quot;</code>, <code>&quot;columnGroup&quot;</code> (optional) and <code>&quot;filters&quot;</code> (optional).
-(These are implemented by the <a href="../../components/EntityListComponent.html">EntityListComponent</a>.)</p>
+(These are implemented by the <code>EntityListComponent</code>.)</p>
 <p>The <code>&quot;title&quot;</code> is the text shown in the heading of the component.</p>
 <p><code>&quot;columns&quot;</code> contains an array of the columns to be displayed.
-The configuration for the columns happens with the <a href="../../interfaces/FormFieldConfig.html">FormFieldConfiguration</a> interface.
+The configuration for the columns happens with the <code>FormFieldConfig</code> interface.
 If all the information is available on the schema or through the datatype of a property, it is sufficient to put a string with the name of the property into the columns array.</p>
 <p>Example:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;view:child&quot;: {
@@ -311,8 +311,8 @@ This option requires the fields <code>&quot;type&quot;</code> and <code>&quot;id
 },
 ]</code></pre></div><h4>Detail components</h4>
 <p>Detail components can show data of a single entity presented in multiple sections and forms.
-(These are implemented by the <a href="../../modules/EntityDetailsModule.html">EntityDetailsModule</a>, in particular the <a href="../../components/EntityDetailsComponent.html">EntityDetailsComponent</a>.)</p>
-<p>You can find details on the config format and its sub-sections from API reference section: <a href="../../classes/EntityDetailsConfig.html">EntityDetailsConfig</a></p>
+(These are implemented by the <code>EntityDetailsComponent</code> in <code>../entity-details/</code>.)</p>
+<p>You can find all config options in the <code>EntityDetailsConfig</code> interface (<code>../entity-details/EntityDetailsConfig.ts</code>).</p>
 <p>The detail component requires three attributes: <code>&quot;icon&quot;</code>, <code>&quot;entity&quot;</code> and <code>&quot;panels&quot;</code>.
 <code>&quot;icon&quot;</code> indicates a little icon that will be rendered on the top of the page.
 <code>&quot;entity&quot;</code> expects the name of an entity for which the details page should be created.
@@ -320,7 +320,7 @@ This has to match exactly the name of the entity defined by the <code>@DatabaseE
 The entity will then be loaded using the entity name and the id which is read from the URL.
 The <code>&quot;panels&quot;</code> field expects an array of panel definitions.
 Each panel has a <code>&quot;title&quot;</code> and an array of <code>&quot;components&quot;</code>.
-The component configuration requires another <code>&quot;title&quot;</code>, the <code>&quot;component&quot;</code> that should be rendered (the component has to be defined here <a href="../../interfaces/OnInitDynamicComponent.html">OnInitDynamicComponent</a>) and a configuration (<code>&quot;config&quot;</code>) which is passed to this component.</p>
+The component configuration requires another <code>&quot;title&quot;</code>, the <code>&quot;component&quot;</code> that should be rendered (the component has to be defined here <code>OnInitDynamicComponent</code>) and a configuration (<code>&quot;config&quot;</code>) which is passed to this component.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">    &quot;config&quot;: {
 &quot;icon&quot;: &quot;child&quot;,
 &quot;entity&quot;: &quot;Child&quot;,
@@ -359,7 +359,7 @@ The configuration for this component expects a single field, the <code>&quot;fie
 <p>The fieldGroups should be an array of logically related fields and optionally a header displayed above the group of fields.
 Each field group is rendered next to each other (as columns).
 You can also define only a single field in each fieldGroups entry, to display them next to each other instead of one field taking up full width.
-The definitions for the fields is defined by the <a href="../../interfaces/FormFieldConfig.html">FormFieldConfiguration</a>
+The definitions for the fields is defined by the <code>FormFieldConfig</code> interface
 However, the schema definitions of the entity should be sufficient so that only the names of the properties which should be editable in the form have to be provided.
 This means instead of placing an object in the <code>fields</code> array, simple strings do the same job.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">  &quot;config&quot;: {
@@ -378,7 +378,7 @@ Possible configurations are <code>single</code> and <code>columns</code> which a
 <code>single</code> is a boolean and if is set to <code>true</code> the component will show which (if any) school the child is currently attending.
 This should only be set to <code>true</code>, when the use-case only allows one active school per child.
 <code>columns</code> is an object and determines which columns of the <code>ChildSchoolRelation</code> are shown.
-The configuration is according to the <a href="../how-to-guides/entity-subrecord-component.md">EntitySubrecordComponent</a>;</p>
+The configuration follows the related-entities table (see the <em>Display Related Entities</em> how-to guide);</p>
 <p>Example:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">  &quot;config&quot;: {
 &quot;single&quot;: true,
@@ -394,7 +394,7 @@ The configuration is according to the <a href="../how-to-guides/entity-subrecord
 The name of the entity to which this config refers comes after the colon in this case <code>&quot;child&quot;</code>.</p>
 <h4>Attributes</h4>
 <p>The attribute field allows to add attributes to an entity:
-Configure this as a key-value object with the property name as key and the schema as value, which refers to the entity <a href="entity-schema-system.md">schemas</a>.</p>
+Configure this as a key-value object with the property name as key and the schema as value, which refers to the entity <a href="../entity/schema/README.md">schemas</a>.</p>
 <p>Example:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;entity:Child&quot;: {
 &quot;attributes&quot;: {
@@ -553,7 +553,19 @@ These are configured as the <code>enum:attendance-type</code>.</p>
       &quot;label&quot;: &quot;Excused&quot;,
       &quot;style&quot;: &quot;attendance-E&quot;,
       &quot;countAs&quot;: &quot;IGNORE&quot;
-    }</code></pre></div>
+    }</code></pre></div><h2>Key files</h2>
+<ul>
+<li><code>config.service.ts</code> — <code>ConfigService</code>, loads the <code>Config:CONFIG_ENTITY</code> document and notifies subscribers when it changes</li>
+<li><code>config.ts</code> — <code>Config</code> entity wrapper holding the config <code>data</code> (<code>CONFIG_KEY = &quot;CONFIG_ENTITY&quot;</code>)</li>
+<li><code>config-migrations.ts</code> — migrations applied to older stored configs when they are loaded</li>
+<li><code>dynamic-routing/router.service.ts</code> — <code>RouterService</code>, builds Angular routes from the <code>view:*</code> config entries</li>
+<li><code>dynamic-components/</code> — registry + directive that render components referenced by their string id in the config</li>
+<li><code>registry/dynamic-registry.ts</code> — the generic <code>Registry</code> base class used to look up dynamically registered types by id</li>
+<li><code>../ui/navigation/menu.service.ts</code> — <code>MenuService</code>, builds the navigation menu from the <code>navigationMenu</code> config</li>
+<li><code>../ui/routed-view/routed-view.component.ts</code> — <code>RoutedViewComponent</code>, maps a view config&#39;s properties onto a component&#39;s <code>@Input()</code>s</li>
+<li><code>../../../assets/base-configs/</code> — the default/base configs shipped with the app (e.g. <code>all-features/Config_CONFIG_ENTITY.json</code>)</li>
+</ul>
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>

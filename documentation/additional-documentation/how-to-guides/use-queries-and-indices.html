@@ -121,8 +121,8 @@
 
 
 <h1>How to use queries and indices to get data</h1>
-<p>The <a href="../../injectables/EntityMapperService.html">EntityMapperService</a> gives you an easy way to access
-all entities of an Entity type or an individual entity by its ID (see <a href="load-and-save-data.html">Load and Save Data</a> for these basics).
+<p>The <code>EntityMapperService</code> gives you an easy way to access
+all entities of an Entity type or an individual entity by its ID (see <a href="../entity/README.md#loading-saving-and-deleting-data">Loading, saving and deleting data</a> for these basics).
 However, for more advance features this will not be enough and you may need more powerful ways to load certain data.
 This is where (persistent) queries come into play.</p>
 <blockquote>
@@ -139,7 +139,7 @@ directly refers to the underlying PouchDB feature.</p>
 <h2>Creating a persistent query / database index</h2>
 <p>Before you can use <code>query</code> to load specific data you have to create the related &quot;design document&quot; for it in the PouchDB.</p>
 <p>To do this, create a design document object according to the PouchDB documentation
-and then use <code>saveDatabaseIndex</code> on the <a href="../../classes/Database.html">Database</a> service:</p>
+and then use <code>saveDatabaseIndex</code> on the <code>Database</code> service:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-none">constructor(private db: Database) {}
 
 private createQueryIndex() {
@@ -169,7 +169,14 @@ resultEntities = result.rows.map(loadedRow =&gt; {
     const entity = new Note(&#39;&#39;);
     this.entitySchemaService.loadDataIntoEntity(entity, loadedRow.doc);
     return entity;
-});</code></pre></div>
+});</code></pre></div><h2>Key files</h2>
+<ul>
+<li><code>database.ts</code> — the abstract <code>Database</code> service, including <code>query()</code> and <code>saveDatabaseIndex()</code></li>
+<li><code>pouchdb/pouch-database.ts</code> — <code>PouchDatabase</code>, the PouchDB-backed implementation</li>
+<li><code>query-data-source.ts</code> — data source that runs a query and exposes its results</li>
+<li><code>../entity/schema/entity-schema.service.ts</code> — <code>loadDataIntoEntity()</code> used to turn raw query rows into entity instances</li>
+</ul>
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>

@@ -122,21 +122,26 @@
 
 <h1>How to log errors</h1>
 <p>This Guide considers logging of errors and information that is necessary for developers in debugging and monitoring.
-Refer to the <a href="display-dialogs-and-notifications.html">Display Dialogs or Notifications</a> Guide
+Refer to the <em>Display Dialogs and Notifications</em> guide
 regarding ways to inform the user about errors or other events.</p>
 <h2>Logging things</h2>
 <p>Production code (whatever is merged into the <code>master</code> branch) should not contain any calls to <code>console.log()</code>.
-If you need to output information for possible debugging that is not handled otherwise, use the <code>AlertService</code> from our <code>AlertsModule</code>.
-This way, all logging is done in a consistent manner and can possibly be transferred to the development team or saved in some other way.</p>
-<p>To log information for analysis and debugging (without explicit notification to the user)
-use the <a href="../../injectables/LoggingService.html">Logging</a> object:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-none">someFun() {
+Instead, to log information for analysis and debugging (without explicit notification to the user)
+use the <code>Logging</code> object.
+This way, all logging is done in a consistent manner and can be transferred to the remote monitoring or saved in some other way:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">someFun() {
   Logging.error(&#39;some error information&#39;);
-}</code></pre></div><p>Similar to the AlertService the LoggingService has multiple log levels
+}</code></pre></div><p>The <code>LoggingService</code> has multiple log levels (<code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code>)
 that control whether log messages are sent to the remote monitoring and how they are treated there.</p>
 <h2>Remote Logging</h2>
-<p>The service side logging is performed via the <a href="https://sentry.io/ewb/aam-digital/">sentry.io</a> logging service.
-The credentials for the EWB-Account can be found in the <code>podio</code> workspace.</p>
+<p>Higher log levels (<code>warn</code> and <code>error</code>) are forwarded to our remote monitoring service, <a href="https://sentry.io/">Sentry</a>.
+How messages are grouped there depends on the (static) message text, so keep <code>Logging.warn()</code> / <code>Logging.error()</code>
+message strings constant and pass variable data as additional context arguments.</p>
+<h2>Key files</h2>
+<ul>
+<li><code>logging.service.ts</code> — <code>LoggingService</code> and the <code>Logging</code> singleton (<code>export const Logging = new LoggingService()</code>); implements the log levels and Sentry forwarding</li>
+<li><code>log-level.ts</code> — the <code>LogLevel</code> definitions</li>
+</ul>
 
                    </div><div class="search-results">
     <div class="has-results">

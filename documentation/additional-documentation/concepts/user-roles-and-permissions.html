@@ -120,38 +120,89 @@
 
 
 
-<h1>User Roles and Permissions</h1>
-<p>User roles and permission rules restrict what components a user can see and what data a user can access and edit.
-These are stored in the backend and are available in the frontend after a successful login.</p>
+<h1>Permissions System</h1>
+<p>This module implements CASL-based role-based access control (RBAC) for Aam Digital.</p>
+<h2>Quick Reference</h2>
 <ul>
-<li>Permissions are enforced during database sync by a special backend service, our <a href="https://github.com/Aam-Digital/replication-backend">replication-backend</a>.</li>
-<li>Permissions (and roles) can also be evaluated in the frontend to disable or hide certain UI elements</li>
+<li><strong>Where it lives</strong>: <code>Config:Permissions</code> CouchDB document (JSON rules)</li>
+<li><strong>Frontend enforcement</strong>: <code>EntityAbility</code> blocks writes client-side before network</li>
+<li><strong>Backend enforcement</strong>: <a href="https://github.com/Aam-Digital/replication-backend">replication-backend</a> filters reads and validates writes</li>
+<li><strong>Configuration</strong>: Admins edit via Admin UI or directly in the database</li>
+<li><strong>Rule format</strong>: <a href="https://casl.js.org/v6/en/guide/define-rules">CASL JSON syntax</a></li>
 </ul>
-<h2>User Roles</h2>
-<p>One or more roles can be assigned to a user account.
-A role is linked to specific permission rules that define access for individual entities (i.e. database documents).</p>
-<h3>Roles are assigned in Keycloak</h3>
-<p>When using Keycloak as an authenticator, the roles are assigned through so called Role-Mappings.
-To assign a new role to a user, this role first has to be created in the realm.
-To do this go to the Keycloak admin console, select the realm for which you want to create a role and go to the <em>Realm
-roles</em> menu item.
-Here a new role can be created and also a description can be provided for it.
-This description should explain non-technical users, what this role is there for.
-Default roles that are always available are <code>user_app</code>, <code>admin_app</code> and <code>account_manager</code>.
-After a role has been created, the role can be assigned to a user.
-This can either be done in the frontend using the <code>UserSecurityComponent</code> or via the Keycloak admin console under _
-Users_
--&gt; <em>&lt;select user&gt;</em> -&gt; <em>Role mapping</em> -&gt; <em>Assign role</em>.</p>
-<h2>Permissions</h2>
-<p>Aam Digital allows to specify permissions to restrict access of certain user roles to the various entity types.
-Permissions are defined using the <a href="https://casl.js.org/v5/en/guide/define-rules#the-shape-of-raw-rule">CASL JSON syntax</a>.
-The permissions are stored in a <a href="../../classes/Config.html">config entity</a> <code>Config:Permissions</code> which is persisted together with other
-entities in the database.</p>
+<h2>Architecture: How permissions work end-to-end</h2>
+<h3>System design (high-level)</h3>
+<ol>
+<li><strong>Admin configures permissions</strong>: An org&#39;s admin edits <code>Config:Permissions</code> in the database, defining which roles can do what on which entity types.</li>
+<li><strong>Backend enforces on read</strong>: <code>replication-backend</code> uses CASL rules to filter what documents each user can sync (via <code>_changes</code> feed and bulk-document endpoints).</li>
+<li><strong>Frontend enforces on write</strong>: <code>ndb-core</code> uses CASL rules to block write operations client-side (before hitting the network) via <code>EntityAbility.can()</code> checks.</li>
+<li><strong>Backend enforces on write</strong>: <code>replication-backend</code> also checks permissions on write operations as defense-in-depth.</li>
+</ol>
+<h3>Frontend (<code>ndb-core</code>) architecture</h3>
+<p><em>Key files:</em></p>
+<ul>
+<li><code>permission-types.ts</code> — type definitions (<code>EntityActionPermission</code>, <code>DatabaseRule</code>, <code>DatabaseRules</code>)</li>
+<li><code>ability/entity-ability.ts</code> — extends CASL <code>Ability</code>, converts <code>Entity</code> instances to CASL subjects</li>
+<li><code>ability/ability.service.ts</code> — loads <code>Config:Permissions</code> and builds the <code>EntityAbility</code></li>
+<li><code>../entity/entity-mapper/entity-mapper.service.ts</code> — calls <code>assertPermission()</code> before <code>save()</code> / <code>remove()</code> (write enforcement)</li>
+</ul>
+<p><em>Flow:</em></p>
+<ol>
+<li>On login, <code>AbilityService.initializeRules()</code> loads the <code>Config:Permissions</code> entity.</li>
+<li><code>getRulesForUser()</code> merges rules: <code>[...admin-default-rules, ...role-rules]</code>.</li>
+<li>Rules are interpolated (<code>${user.entityId}</code>, <code>${user.projects}</code>) and fed to <code>EntityAbility.update(rules)</code>.</li>
+<li>When saving an entity, <code>EntityAbility.assertPermission(action, entity)</code> throws if <code>ability.cannot()</code> — this blocks the write before network.</li>
+<li>Reads are not gated client-side; PouchDB sync and the backend&#39;s replication filter determine what gets downloaded.</li>
+</ol>
+<p><em>Rule evaluation order:</em> Last matching rule wins (CASL default).</p>
+<h3>Backend (<code>replication-backend</code>) architecture</h3>
+<p><em>Key files:</em></p>
+<ul>
+<li><code>src/permissions/rules/permission.ts</code> — defines <code>Permission</code> entity (doc ID <code>Config:Permissions</code>)</li>
+<li><code>src/permissions/rules/rules.service.ts</code> — loads and hot-reloads <code>Config:Permissions</code>, implements <code>getRulesForUser()</code></li>
+<li><code>src/permissions/permission/permission.service.ts</code> — builds <code>Ability</code> from rules, exports <code>getAbilityFor()</code> and <code>isAllowedTo()</code></li>
+<li><code>src/restricted-endpoints/replication/changes/changes.controller.ts</code> — filters <code>_changes</code> feed via <code>ability.can(&#39;read&#39;, doc)</code></li>
+<li><code>src/restricted-endpoints/replication/bulk-document/bulk-document.service.ts</code> — filters bulk-pull, bulk-push via <code>ability.can()</code></li>
+<li><code>src/restricted-endpoints/document/document-write.service.ts</code> — checks write permissions via <code>isAllowedTo()</code></li>
+</ul>
+<p><em>Flow:</em></p>
+<ol>
+<li>On startup, <code>RulesService.onModuleInit()</code> loads <code>Config:Permissions</code> and subscribes to live changes to hot-reload.</li>
+<li>If the doc is missing (404), it falls back to bootstrap mode: only <code>admin_app</code> users get full access.</li>
+<li><code>getRulesForUser(user)</code> merges rules: for authenticated users, <code>[...admin-default, ...role-rules]</code> (rule order same as frontend).</li>
+<li>Rules are interpolated and passed to <code>PermissionService.getAbilityFor(user)</code>.</li>
+<li>Every access point (changes feed, bulk-doc, REST write, design-doc) calls <code>.can()</code> on this ability or goes through <code>isAllowedTo()</code>.</li>
+<li>CASL&#39;s deny-by-default means unauthenticated (anonymous) users only get access via <code>permission.public</code> rules.</li>
+</ol>
+<p><em>Choke points:</em></p>
+<ul>
+<li><code>changes.controller.ts</code> is the replication-feed authorization boundary — the vast majority of read traffic is filtered there.</li>
+</ul>
+<h2>CASL library details</h2>
+<p>Both repos use CASL v6.8.1. Key facts:</p>
+<ul>
+<li><strong>Deny-by-default</strong>: If no rule matches a subject/action pair, access is denied.</li>
+<li><strong>No specificity</strong>: CASL does not rank rules by how specific they are. Instead, it uses <strong>last matching rule wins</strong> — the last rule in the array that matches the subject/action/conditions determines the result, regardless of whether earlier rules are more specific.</li>
+<li><strong>Inverted rules</strong>: A rule with <code>inverted: true</code> works as a deny, not a grant. This can be confusing with multiple roles; use with care.</li>
+<li><strong>Conditions</strong>: Rules can specify MongoDB-style conditions to restrict access to specific documents or fields. Conditions are only evaluated if the document is passed to <code>ability.can(subject, doc)</code> — not just the subject type string.</li>
+<li><strong><code>cannot()</code></strong>: Calling <code>ability.cannot(action, subject)</code> is literally <code>!ability.can(action, subject)</code>.</li>
+</ul>
+<h2>Configuring Permissions (Admin Guide)</h2>
+<p>All permission rules are defined in a single document: <code>Config:Permissions</code> in the database.
+Admins edit this document to control what each role can do.</p>
+<h3>How to edit permissions</h3>
+<p><strong>In the Aam Digital app:</strong></p>
+<ul>
+<li>Go to Admin &gt; Application Configuration &gt; Edit permissions config</li>
+<li>This opens the <code>Config:Permissions</code> document in the app&#39;s JSON editor</li>
+</ul>
+<p><strong>Directly in the database:</strong></p>
+<ul>
+<li>Use CouchDB Fauxton GUI or another database tool to edit the document directly</li>
+</ul>
 <h3>Permission structure</h3>
-<p>In the following example, we define roles <code>user_app</code> and <code>admin_app</code>.
-There are also some permissions for the general <code>default</code> role that is automatically applied to all authenticated users.</p>
-<p>A user can have multiple roles and the permissions are then combined.</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-JSON">{
+<p>Permissions use JSON format with a role → rules mapping:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
   &quot;_id&quot;: &quot;Config:Permissions&quot;,
   &quot;data&quot;: {
     &quot;default&quot;: [
@@ -160,18 +211,10 @@ There are also some permissions for the general <code>default</code> role that i
         &quot;action&quot;: &quot;read&quot;
       }
     ],
-    &quot;user_app&quot;: [
+    &quot;field_officer&quot;: [
       {
         &quot;subject&quot;: [&quot;Child&quot;, &quot;School&quot;],
         &quot;action&quot;: &quot;manage&quot;
-      },
-      {
-        &quot;subject&quot;: &quot;RecurringActivity&quot;,
-        &quot;action&quot;: &quot;manage&quot;,
-        &quot;action&quot;: [
-          &quot;create&quot;,
-          &quot;delete&quot;
-        ]
       },
       {
         &quot;subject&quot;: &quot;Note&quot;,
@@ -179,143 +222,108 @@ There are also some permissions for the general <code>default</code> role that i
         &quot;conditions&quot;: {
           &quot;authors&quot;: {
             &quot;$elemMatch&quot;: {
-              &quot;$eq&quot;: &quot;${user.name}&quot;
+              &quot;$eq&quot;: &quot;${user.entityId}&quot;
             }
           }
         }
       }
     ],
-    &quot;admin_app&quot;: [
+    &quot;supervisor&quot;: [
       {
         &quot;subject&quot;: &quot;all&quot;,
         &quot;action&quot;: &quot;manage&quot;
       }
     ]
   }
-}</code></pre></div><ul>
-<li>The <code>_id</code> property of the doc (&quot;Config:Permissions&quot;) needs to be exactly as displayed here, as there is only one permission object allowed in a single database.</li>
-<li>In <code>data</code>, the permissions for each of the user role are defined.</li>
-<li>The permissions for a given role consist of an array of rules.</li>
-<li><code>subject</code> refers to the type of entity.<ul>
-<li><code>all</code> is a wildcard for the subject that matches any entity.</li>
+}</code></pre></div><p><strong>Key concepts:</strong></p>
+<ul>
+<li><strong><code>subject</code></strong>: The entity type(s) — e.g., <code>Child</code>, <code>School</code>, <code>Note</code>, or <code>all</code> for any type</li>
+<li><strong><code>action</code></strong>: What users can do — <code>read</code>, <code>create</code>, <code>update</code>, <code>delete</code>, or <code>manage</code> (all operations)</li>
+<li><strong><code>default</code></strong>: Rules applied to all authenticated users (regardless of role)</li>
+<li><strong>Combining roles</strong>: If a user has multiple roles, their rules are appended in order (the <code>default</code> rules first, then each role&#39;s rules). CASL evaluates them so that the <strong>last matching rule wins</strong> — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later <code>&quot;inverted&quot;: true</code> rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.</li>
 </ul>
-</li>
-<li><code>action</code> refers to the operation that is allowed or permitted on the given subject.<ul>
-<li>available actions from the CASL library are <code>create</code>, <code>read</code>, <code>update</code>, <code>delete</code></li>
-<li><code>manage</code> is also a wildcard for the action which means <em>any operation is allowed</em>.</li>
-</ul>
-</li>
-</ul>
-<p>To learn more about how to define rules, have a look at
-the <a href="https://casl.js.org/v5/en/guide/define-rules#rules">CASL documentation</a>.</p>
-<h3>&quot;Inverted&quot; permission rules (disallowing actions)</h3>
-<p>It is possible to restrict / remove permissions, instead of adding permissions, through the <code>&quot;inverted&quot;: true</code> keyword.
-when <code>&quot;inverted&quot;: true</code> is specified, this rule defines what the role is <strong>not allowed</strong> to do.</p>
-<p>Use this with care: When users have multiple roles that overlap, it may not be intuitively clear which permissions apply.</p>
-<h3>Conditions in permission rules</h3>
-<p>Instead of giving permission for all records of a given subject (i.e. entity type)
-you can also apply conditions to narrow this down:</p>
+<h3>Restricting access (inverted rules)</h3>
+<p>Use <code>&quot;inverted&quot;: true</code> to deny access instead of grant it:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;subject&quot;: &quot;SensitiveReport&quot;,
+  &quot;action&quot;: &quot;delete&quot;,
+  &quot;inverted&quot;: true
+}</code></pre></div><p>This says: the role cannot delete <code>SensitiveReport</code> documents.</p>
+<blockquote>
+<p><strong>⚠️ Warning:</strong> When a user has multiple roles with overlapping inverted rules, it can be unclear which permissions actually apply. Use inverted rules sparingly and document them well.</p>
+</blockquote>
+<h3>Conditional access (restrict by user or entity field)</h3>
+<p>Instead of allowing all access to an entity type, you can restrict to specific documents:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
   &quot;subject&quot;: &quot;Note&quot;,
   &quot;action&quot;: &quot;manage&quot;,
   &quot;conditions&quot;: {
-    &quot;$or&quot;: [
-      &quot;authors&quot;: {
-        &quot;$elemMatch&quot;: {
-          &quot;$eq&quot;: &quot;${user.entityId}&quot;
-        }
-      },
-      &quot;assignedProjects&quot;: {
-        &quot;$elemMatch&quot;: {
-          &quot;$in&quot;: &quot;${user.projects}&quot;
-        }
-      },
-      &quot;category&quot;: {
-        &quot;$eq&quot;: &quot;DISCUSSION&quot;
+    &quot;authors&quot;: {
+      &quot;$elemMatch&quot;: {
+        &quot;$eq&quot;: &quot;${user.entityId}&quot;
       }
-    ]
-  }
-}</code></pre></div><p>Conditions follow MongoDB syntax. Refer to <a href="https://casl.js.org/v6/en/guide/conditions-in-depth">CASL documentation</a> for details.</p>
-<p>Aam Digital allows you to use certain details of the user entity for such conditions:</p>
-<ul>
-<li><code>${user.entityId}</code> is the entity ID (including prefix) linked to the currently logged in user<ul>
-<li>this allows to grant access to entities that have explicitly been assigned to a certain user</li>
-</ul>
-</li>
-<li><code>${user.projects}</code> is the (array) field with ID <code>projects</code> on the entity linked to current user.
-You can configure this by editing the data structure of the relevant entity type(s).<ul>
-<li>usually this field is configured as a multi-select entity reference field to allow linking certain &quot;groups&quot; to an individual user.
-For example: Select schools the user is responsible for and allow the user to see all Note entities that are linked to one of their assigned schools.</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h2>Implementing components with permissions</h2>
-<p>This section is about code using permissions to read and edit <strong>entities</strong>.
-If you want to change the menu items which are shown in the navigation bar have a look at the <em>views</em> section in
-the <a href="./configuration.html">Configuration Guide</a>.</p>
-<p>The permission object is automatically fetched whenever a user logs in.
-The permissions disable certain buttons based on the users overall permissions.
-This is done in the app through
-the <a href="../../directives/DisableEntityOperationDirective.html">DisableEntityOperationDirective</a>, which connects certain
-buttons with their operation.</p>
-<p>As an example lets say we have a class variable called <code>note</code> which holds an object of the <code>Note</code> entity.
-We want to create a button which allows to <em>edit</em> this note.
-In the HTML template we could write the following in order to automatically connect it to the permission system:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-HTML">
-&lt;button
-  *appDisabledEntityOperation=&quot;{
-        entity: note,
-        operation: &#39;update&#39;
-    }&quot;
-&gt;
-  Edit Note
-&lt;/button&gt;</code></pre></div><p>This will automatically disable the button if the user is not allowed to <em>update</em> this specific note.</p>
-<p>To check permissions inside a <code>*.ts</code> file, you can inject the <code>EntityAbility</code>:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { Note } from &quot;./note&quot;;
-import { Injectable } from &quot;&#64;angular/core&quot;;
-import { EntityAbility } from &quot;./permission-types&quot;;
-
-&#64;Injectable()
-export class SomeService {
-  constructor(private ability: EntityAbility) {
-    if (this.ability.can(&quot;create&quot;, Note)) {
-      // I have permissions to create notes
-      const note = new Note();
-    } else {
-      // I don&#39;t have permissions to create notes
-      throw Error(&quot;Missing permissions&quot;);
     }
   }
-}</code></pre></div><p>In this example the <code>EntityAbility</code> service is used to check whether the currently logged in user is allowed to <em>create</em>
-new objects of the <code>Note</code> entity.
-In this case a constructor is provided to check for the permissions,
-in other cases it might make more sense to use an instance of an object like <code>this.ability.can(&#39;read&#39;, new Note())</code>.</p>
-<blockquote>
-<p>WARNING: If you have conditions in your rules, make sure you pass the fully loaded entity and not only the string entity type.
-Otherwise, conditions for specific properties are ignored.</p>
-</blockquote>
-<h3>Permissions in production</h3>
-<p>Permissions for roles are defined in the CouchDB database in a document <code>Config:Permissions</code>.
-Each role must be created in the Keycloak realm also and assigning roles to accounts is managed via Keycloak
-(or in app, which makes API calls to Keycloak for you then).</p>
+}</code></pre></div><p>This allows users to manage only Notes they authored.</p>
+<p><strong>Available user variables:</strong></p>
+<ul>
+<li><code>${user.entityId}</code> — the entity ID of the currently logged-in user (e.g., <code>User:john_doe</code>)</li>
+<li><code>${user.projects}</code> — array of projects linked to the user (if configured in the user entity)</li>
+</ul>
+<p><strong>Example:</strong> Restrict by linked projects:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;subject&quot;: &quot;Report&quot;,
+  &quot;action&quot;: &quot;read&quot;,
+  &quot;conditions&quot;: {
+    &quot;project&quot;: {
+      &quot;$in&quot;: &quot;${user.projects}&quot;
+    }
+  }
+}</code></pre></div><p>Users can only read Reports linked to one of their assigned projects.</p>
+<h3>When permissions change</h3>
+<p>If you change <code>Config:Permissions</code>:</p>
 <ol>
-<li>use CouchDB Fauxton GUI to edit database documents directly or open the JSON in the app: &quot;Admin &gt; Application Configuration: Edit permissions config&quot;</li>
-<li>In case some users might have <strong>gained</strong> access to documents to which they did not have access before,
-the app will automatically make an API call to the replication-backend (<code>POST /admin/clear_local/{db}</code>)
-to ensure that each client re-checks whether new objects are available for synchronization.
-This should also be used in case an existing user has gotten a new, more powerful role.
-In case a user lost permissions for objects that were already synced, this user&#39;s local DB will automatically be
-destroyed and the user has to synchronize all data again.</li>
+<li><strong>Users gain new permissions</strong> — The app automatically re-syncs available data. No action needed.</li>
+<li><strong>Users lose permissions</strong> — Their local database is cleared on next login, and they re-sync only what they&#39;re allowed to access.</li>
 </ol>
-<h3>Permissions in development</h3>
-<p>When trying to test out things with the permissions,
-the <a href="../../Injectable/DemoPermissionGeneratorService.html">DemoPermissionGeneratorService</a> can be modified to change the
-permission object which is created in the demo data.
-These changes should not be committed however, as this demo data is also used in the publicly available demo.</p>
-<p>The demo data comes with two user: <code>demo</code> and <code>demo-admin</code>.
-The <code>demo</code> user has the role <code>user_app</code>, the <code>demo-admin</code> has the roles <code>user_app</code> and <code>admin_app</code>.
-The permissions of the latter overwrite the permissions of the former.</p>
+<h2>Common Tasks</h2>
+<h3>Check permissions in code (TypeScript)</h3>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { EntityAbility } from &quot;&#64;app/core/permissions/ability/entity-ability&quot;;
+
+export class MyService {
+  constructor(private ability: EntityAbility) {
+    if (this.ability.can(&quot;read&quot;, new SomeEntity())) {
+      // Permission granted
+    } else {
+      // Permission denied
+    }
+  }
+}</code></pre></div><h3>Check permissions in templates (HTML)</h3>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">&lt;button
+  *appDisabledEntityOperation=&quot;{
+    entity: myEntity,
+    operation: &#39;update&#39;
+  }&quot;
+&gt;
+  Edit
+&lt;/button&gt;</code></pre></div><p>The <code>DisableEntityOperationDirective</code> automatically disables buttons based on the user&#39;s permissions.
+Pass the entity and the operation (<code>create</code>, <code>read</code>, <code>update</code>, <code>delete</code>, <code>manage</code>).</p>
+<h2>Testing</h2>
+<ul>
+<li>Frontend: <code>src/app/core/permissions/ability/ability.service.spec.ts</code>, <code>entity-ability.spec.ts</code></li>
+<li>Backend: <code>src/permissions/rules/rules.service.spec.ts</code>, <code>src/permissions/permission/permission.service.spec.ts</code></li>
+</ul>
+<p>When testing permissions:</p>
+<ul>
+<li>Always pass the fully-loaded entity (not just the type string) if testing rules with conditions.</li>
+<li>Use <code>testing-entity-ability-factory.ts</code> (frontend) or test fixtures in <code>test/utils/test-app.ts</code> (backend) to seed test rules.</li>
+<li>Test both the allow and deny cases, especially for inverted rules.</li>
+</ul>
+<h2>Links</h2>
+<ul>
+<li><a href="https://casl.js.org/v6/en/guide/intro">CASL Documentation</a> — rule format, conditions, API reference</li>
+<li><a href="https://github.com/Aam-Digital/replication-backend">Backend (<code>replication-backend</code>)</a> — authoritative enforcement, replication filtering</li>
+</ul>
 
                    </div><div class="search-results">
     <div class="has-results">

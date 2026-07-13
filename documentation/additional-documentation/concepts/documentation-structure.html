@@ -122,7 +122,7 @@
 
 <h1>Documentation Structure</h1>
 <p>Our documentation is structured into four different approaches,
-following the concept laid out at <strong><a href="http://www.divio.com/blog/documentation">www.divio.com/blog/documentation</a></strong>:</p>
+following the concept laid out at <strong>&lt;<a href="http://www.divio.com/blog/documentation%3E">www.divio.com/blog/documentation&gt;</a></strong>:</p>
 <ol>
 <li>TUTORIALS<ul>
 <li>learning-oriented</li>
@@ -155,6 +155,28 @@ following the concept laid out at <strong><a href="http://www.divio.com/blog/doc
 </ol>
 <p>A good reference and repository of documentation templates also is
 <a href="https://thegooddocsproject.dev/">The Good Docs Project</a>.</p>
+<h2>How the documentation is generated</h2>
+<p>The <em>Developer Documentation</em> (which you are reading here) is generated using
+<a href="https://github.com/compodoc/compodoc/">compodoc</a>:</p>
+<ul>
+<li><strong>Tutorials, How-To Guides and Concepts</strong> are written explicitly as Markdown files.
+They live either under <code>doc/compodoc_sources</code> or as <code>README.md</code> files next to the code
+they describe, and are registered in <code>doc/compodoc_sources/summary.json</code>.</li>
+<li><strong>The API Reference</strong> (the <em>Modules</em>, <em>Classes</em>, etc. sections) is generated automatically
+from JSDoc code comments.</li>
+</ul>
+<p>The documentation is regenerated and published from <code>master</code> automatically via CI.</p>
+<h2>How to contribute documentation</h2>
+<ul>
+<li><strong>Document your code with JSDoc.</strong> New code should be documented as soon as you write or
+edit it, and your Pull Request should include that documentation. For the correct comment
+format see the <a href="https://compodoc.app/guides/comments.html">compodoc comment guide</a>.</li>
+<li><strong>To add or edit an article</strong> (like this page), edit the relevant Markdown file under
+<code>doc/compodoc_sources</code> or the <code>README.md</code> next to the code. When you add a new Markdown file,
+also register it in <code>doc/compodoc_sources/summary.json</code>.</li>
+<li><strong>To preview locally</strong>, run <code>npm run compodoc</code> (see <code>package.json</code>). The online documentation
+is usually the more convenient reference, though.</li>
+</ul>
 
                    </div><div class="search-results">
     <div class="has-results">

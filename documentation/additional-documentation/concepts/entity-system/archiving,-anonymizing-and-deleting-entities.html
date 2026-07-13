@@ -120,14 +120,13 @@
 
 
 
-<h1>Archive / Anonymize Entities</h1>
-<hr>
+<h1>Archive / Anonymize / Delete Entities</h1>
 <p>Any entity can be archived (i.e. marked as inactive and hidden from UI by default) or anonymized (i.e. discarding most data and keeping a few selected properties for statistical reports).
 This is often preferable to deleting a record completely. Deleting data also affects statistical reports, even for previous time periods.
 By anonymizing records, all personal identifiable data can be removed and the remaining stub record can be stored indefinitely, as it is not subject to data protection regulations like GDPR anymore.</p>
 <p>Anonymization is configured as part of the entity schema.
 Data of fields that are not explicitly marked to be retained during anonymization is always deleted (anonymization by default).</p>
-<p>To keep some data even after the user &quot;anonymized&quot; a record, configure the <code>anonymize</code> property of the <code>@DatabaseField</code> decorator:</p>
+<p>To keep some data even after the user &quot;anonymized&quot; a record, configure the <code>anonymize</code> property of the <code>@DatabaseField</code> decorator (see <code>EntitySchemaField</code> in <code>../schema/entity-schema-field.ts</code>):</p>
 <ul>
 <li><code>anonymize: &quot;retain&quot;</code> will keep this field unchanged and prevent it from being deleted</li>
 <li><code>anonymize: &quot;retain-anonymized&quot;</code> will trigger a special &quot;partial&quot; deletion that depends on the dataType (e.g. date types will be changed to 1st July of the given year, thereby largely removing details but keeping data to calculate a rough age)</li>
@@ -137,7 +136,7 @@ Data of fields that are not explicitly marked to be retained during anonymizatio
 Any related entities that reference the anonymized/deleted entity are checked
 and - depending on their configured role - may be updated or anonymized as well.</p>
 <p>The logic follows the scenarios shown below:
-<img src="../../images/cascading-delete.png" alt="" class="img-responsive"></p>
+<img src="https://raw.githubusercontent.com/Aam-Digital/ndb-core/master/doc/images/cascading-delete.png" alt="Cascading delete/anonymize scenarios" class="img-responsive"></p>
 <h2>Data Protection &amp; GDPR regarding anonymization / pseudonomyzation</h2>
 <p>The &quot;anonymize&quot; function is implemented specifically for data protection rules requiring to delete personal data.
 According to the EU&#39;s &quot;General Data Protection Regulation&quot; (GDPR) &quot;anonymous&quot; data does not fall under its regulations:</p>
@@ -157,6 +156,14 @@ According to the EU&#39;s &quot;General Data Protection Regulation&quot; (GDPR) 
 <li>by default only a few, explicitly selected properties in anonymized records are retained (data minimization by default). As such, both re-identification likelihood and the impact in case of re-identification are reduced as far as possible.</li>
 </ul>
 <p>--&gt; If our anonymization process is configured thoughfully on a case by case basis to only retain a few data fields that are not easy indirect identifiers, it seems reasonably unlikely that the person can be identified after the anonymization process. Therefore, GDPR should not apply to these records and it is legitimate to retain these for statistical reporting.</p>
+<h2>Key files</h2>
+<ul>
+<li><code>entity-actions.service.ts</code> — <code>EntityActionsService</code>, entry point that UI actions call to archive/anonymize/delete</li>
+<li><code>entity-anonymize.service.ts</code> — implements the anonymization logic driven by each field&#39;s <code>anonymize</code> schema option</li>
+<li><code>entity-delete.service.ts</code> — implements deletion</li>
+<li><code>cascading-entity-action.ts</code> — shared base handling the cascade to related entities</li>
+<li><code>../schema/entity-schema-field.ts</code> — <code>anonymize</code> field option (<code>&quot;retain&quot;</code> / <code>&quot;retain-anonymized&quot;</code>)</li>
+</ul>
 
                    </div><div class="search-results">
     <div class="has-results">

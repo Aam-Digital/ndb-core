@@ -150,8 +150,7 @@ You can use Angular&#39;s dependency injection to access any other services, if 
 </ul>
 </li>
 <li>Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)</li>
-<li><strong>Register the datatype</strong> using Angular DI system as a &quot;multi&quot; provider in your feature module to make it available to the system overall:
-<code>{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true }</code></li>
+<li><strong>Register the datatype</strong> as a &quot;multi&quot; provider so the platform picks it up (see <a href="#registering-the-new-datatype">Registering the new Datatype</a> below).</li>
 </ol>
 <p>This could result in a Datatype class like this:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-none">&#64;Injectable()
@@ -203,13 +202,8 @@ is automatically applied wherever the type is used in a sortable list.</p>
 <p>The EntitySchemaService, that handles all data transformations, and other platform modules automatically pick up your datatype
 and use it for any entity properties that use the <code>dataType</code> identifier of your implementation.</p>
 <h2>Implementing a custom EditComponent</h2>
-<p>To provide a custom UI, you can implement an Angular component that extends the <code>CustomFormControlDirective</code> and implements <code>EditComponent</code> interface.
-Then configure this to be used for the datatype as shown above.</p>
-<p>Such a component is a standard Angular component.
-It has to extend the <code>CustomFormControlDirective</code> base class however
-to function as an Angular FormControl within mat-form-field.
-You can then design a custom UX and logic for the value
-while parent components use this like a simple <code>matInput</code> field.</p>
+<p>To provide a custom UI, implement an Angular component that extends <code>CustomFormControlDirective</code> and implements the <code>EditComponent</code> interface, then configure it for the datatype as shown above.</p>
+<p>See <a href="../entity-details/form/README.md#creating-a-custom-form-control">Entity Form components</a> for the <code>CustomFormControlDirective</code> base class and its reactive API — it handles the <code>MatFormFieldControl</code> plumbing so parent components can use your component like a simple <code>matInput</code> field.</p>
 <p>Your custom EditComponent should <em>not</em> include a form field label.
 This and other mat-form-field details are automatically added by the parent component.</p>
 <p>The <code>EditComponent</code> interface shows the properties you can access from the current context

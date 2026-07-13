@@ -120,22 +120,19 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="additional-documentation/concepts/configuration.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Configuration</a>
                                             </li>
                                             <li class="link for-chapter2">
-                                                <a href="additional-documentation/concepts/session-and-authentication-system.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Session and Authentication System</a>
-                                            </li>
-                                            <li class="link for-chapter2">
                                                 <a href="additional-documentation/concepts/user-roles-and-permissions.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">User Roles and Permissions</a>
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/concepts/security.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Security</a>
                                             </li>
                                             <li class="link for-chapter2">
+                                                <a href="additional-documentation/concepts/internationalization-(i18n).html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Internationalization (i18n)</a>
+                                            </li>
+                                            <li class="link for-chapter2">
                                                 <a href="additional-documentation/concepts/ux-guidelines.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">UX Guidelines</a>
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/concepts/documentation-structure.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Documentation Structure</a>
-                                            </li>
-                                            <li class="link for-chapter2">
-                                                <a href="additional-documentation/concepts/infrastructure.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Infrastructure</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -155,16 +152,7 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="additional-documentation/how-to-guides/development-processes/write-automated-unit-tests.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Write Automated Unit Tests</a>
                                             </li>
                                             <li class="link for-chapter3">
-                                                <a href="additional-documentation/how-to-guides/development-processes/document-code.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Document Code</a>
-                                            </li>
-                                            <li class="link for-chapter3">
                                                 <a href="additional-documentation/how-to-guides/development-processes/review-a-pull-request.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Review a Pull Request</a>
-                                            </li>
-                                            <li class="link for-chapter2">
-                                                <a href="additional-documentation/how-to-guides/configure-and-customize-a-system.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Configure and Customize a System</a>
-                                            </li>
-                                            <li class="link for-chapter2">
-                                                <a href="additional-documentation/how-to-guides/navigate-the-code-structure.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Navigate the Code Structure</a>
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/create-a-new-entity-type.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Create a New Entity Type</a>
@@ -180,9 +168,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/create-a-report.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Create a Report</a>
-                                            </li>
-                                            <li class="link for-chapter2">
-                                                <a href="additional-documentation/how-to-guides/load-and-save-data.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Load and Save Data</a>
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/end-to-end-tests.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">End-to-end tests</a>
@@ -204,15 +189,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/format-data-export.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Format Data Export</a>
-                                            </li>
-                                            <li class="link for-chapter2">
-                                                <a href="additional-documentation/how-to-guides/build-localizable-(translatable)-ui.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Build localizable (translatable) UI</a>
-                                            </li>
-                                            <li class="link for-chapter3">
-                                                <a href="additional-documentation/how-to-guides/build-localizable-(translatable)-ui/work-with-xlf.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Work with XLF</a>
-                                            </li>
-                                            <li class="link for-chapter3">
-                                                <a href="additional-documentation/how-to-guides/build-localizable-(translatable)-ui/add-another-language.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Add Another Language</a>
                                             </li>
                                         </ul>
                                     </li>
