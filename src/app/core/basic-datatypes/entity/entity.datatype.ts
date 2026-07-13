@@ -108,9 +108,20 @@ export class EntityDatatype extends StringDatatype {
       importProcessingContext,
     );
 
+    // Filter fresh from the full candidate list on every call so each value
+    // of a multi-value cell is matched independently (import.service splits
+    // the cell and calls this function once per value).
+    let candidates = context.entities ?? [];
+
     for (const mapping of columnMappings) {
       const mappingConfig = normalizeEntityAdditional(mapping.additional);
-      const rawValue = importProcessingContext.row[mapping.column];
+      // Use the passed value for the column currently being mapped; other
+      // columns targeting this field contribute extra match criteria read
+      // from the row.
+      const isCurrentColumn = mappingConfig?.refField === fieldConfig.refField;
+      const rawValue = isCurrentColumn
+        ? val
+        : importProcessingContext.row[mapping.column];
 
       const expectedValue = await this.resolveColumnValue(
         rawValue,
@@ -120,13 +131,13 @@ export class EntityDatatype extends StringDatatype {
         importProcessingContext,
       );
 
-      context.filteredEntities = context.filteredEntities.filter(
+      candidates = candidates.filter(
         (entity) =>
           normalizeValue(entity[mappingConfig?.refField]) === expectedValue,
       );
     }
 
-    return this.pickSingleMatch(context.filteredEntities);
+    return this.pickSingleMatch(candidates);
   }
 
   /**
@@ -309,18 +320,10 @@ function normalizeValue(val: any): string {
  * Manage cache access to the current import processing context.
  */
 class EntityFieldImportContext {
-  private contextKey: string;
-
   constructor(
     private globalContext: ImportProcessingContext,
     private schemaField: EntitySchemaField,
-  ) {
-    this.contextKey = `${schemaField.id}_${globalContext.rowIndex}`;
-
-    if (!globalContext[this.contextKey]) {
-      globalContext[this.contextKey] = {};
-    }
-  }
+  ) {}
 
   /**
    * Entities (in database format for easier comparison!)
@@ -342,21 +345,5 @@ class EntityFieldImportContext {
 
   set refEntityCtor(value: EntityConstructor) {
     this.globalContext[`ctor_${this.schemaField.additional}`] = value;
-  }
-
-  /**
-   * Entities already filter by any other column conditions
-   * (in database format for easier comparison!)
-   */
-  get filteredEntities(): any[] {
-    return (
-      this.globalContext[this.contextKey].filteredEntities ??
-      this.entities ??
-      []
-    );
-  }
-
-  set filteredEntities(value: any[]) {
-    this.globalContext[this.contextKey].filteredEntities = value;
   }
 }

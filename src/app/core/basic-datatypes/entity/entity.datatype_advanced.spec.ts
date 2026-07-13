@@ -139,6 +139,31 @@ describe("Schema data type: entity (advanced functionality)", () => {
     expect(result).toBe(undefined);
   });
 
+  it("should importMap each split value of a multi-value cell", async () => {
+    const joe = new TestEntity();
+    joe.name = "Joe";
+    const max = new TestEntity();
+    max.name = "Max";
+    await entityMapper.saveAll([joe, max]);
+
+    // single column mapping into an array field: the cell holds comma-separated
+    // names, so import.service splits it and calls importMapFunction per value
+    const importContext = new ImportProcessingContext({
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [
+        { column: "iRef", propertyName: schema.id, additional: "name" },
+      ],
+    });
+    importContext.row = { iRef: "Joe, Max" };
+
+    await expect(
+      dataType.importMapFunction("Joe", schema, "name", importContext),
+    ).resolves.toEqual(joe.getId());
+    await expect(
+      dataType.importMapFunction("Max", schema, "name", importContext),
+    ).resolves.toEqual(max.getId());
+  });
+
   it("should anonymize entity recursively", async () => {
     const referencedEntity = new TestEntity("ref-1");
     referencedEntity.name = "test";
