@@ -466,7 +466,6 @@ describe("EntityFormService", () => {
   });
 
   it("should trim leading/trailing whitespace from string fields on save", async () => {
-    TestEntity.schema.set("name", { dataType: "string" });
     TestBed.inject(EntityAbility).update([
       { action: "manage", subject: "all" },
     ]);
