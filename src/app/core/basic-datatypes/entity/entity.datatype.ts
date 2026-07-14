@@ -74,9 +74,28 @@ export class EntityDatatype extends StringDatatype {
   /**
    * Maps a value from an import to an actual entity in the database.
    *
-   * Finds all column mappings targeting this field, resolves each column's comparison value
-   * (applying any configured value mapping), and progressively filters candidate entities
-   * until a unique match is found.
+   * This gets called once for each (multi-value) value in a column mapped to the entity field,
+   * for each column (if multiple columns are mapped to the same field to filter it further).
+   *
+   * Case target field isArray===false:
+   * simple:
+   *  IMPORT: { x: "x1", y: "y1" }
+   *  --> matches { x: "x1", y: "y1" } (if there is a single unique match)
+   *
+   * complex, multi-value import:
+   *  IMPORT: { x: "x1,x2", y: "y1,y2" }
+   *  --> matches { x1, y1 } OR { x2, y2 } OR { x1, y2 } OR { x2, y1 } (if there is a single combination that matches)
+   *
+   *
+   * Case target field isArray===true:
+   * simple:
+   *  IMPORT: { x: "x1", y: "y1" }
+   *  --> matches { x: "x1", y: "y1", z: "z1" }, { x: "x1", y: "y1", z: "z2" } (if there are multiple matches)
+   *
+   * complex, multi-value import:
+   *  IMPORT: { x: "x1,x2", y: "y1,y2" }
+   *  --> matches { x: "x1", y: "y1" }, { x: "x2", y: "y2" }, { x: "x1", y: "y2" }, { x: "x2", y: "y1" } (any combinations that match)
+   *
    *
    * @param val The value from an import that should be mapped to an entity reference.
    * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
@@ -320,6 +339,29 @@ function normalizeValue(val: any): string {
  * Manage cache access to the current import processing context.
  */
 class EntityFieldImportContext {
+  // SUGGESTED IMPLEMENTATION:
+  // keep a very clear class instance holding all details of the import for the current row for this field
+  // (also keep a (static?) cache of the full entity list to be reused across rows?)
+  // goal --> make this class very intuitive to understand (and hold all details for matching, without needing to read other methods outside)
+
+  /**
+   * The schema field of the entity, into which the value(s) will be imported.
+   */
+  targetField: EntitySchemaField;
+
+  /**
+   * Column(s) of the imported file that are mapped to the target field
+   * and used to filter the candidate entities for matching.
+   *
+   * This is populated gradually with every call to importMapFunction for each column mapped to the same field.
+   */
+  sourceColumns: any[]; // TODO: type? more than just the column ID maybe, if we have details?
+
+  // TODO: cache of full entity list to be searched
+  // TODO: cache of currently filtered down entity list? (if that's possible to cache for the various combinations)
+
+  // TODO: function to return entity object(s) currently matching the mapping
+
   constructor(
     private globalContext: ImportProcessingContext,
     private schemaField: EntitySchemaField,
