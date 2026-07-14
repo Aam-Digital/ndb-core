@@ -315,6 +315,54 @@ ${byParticipantChecks}
   }
 
   /**
+   * Get the date of the most recent event of the given activity, if any exists.
+   *
+   * Uses a limit-1 index query, so this is fast even for activities with many events.
+   * @param activity The activity whose events are considered.
+   */
+  async getLatestEventDate(activity: Entity): Promise<Date | undefined> {
+    return this.getEdgeEventDate(activity, true);
+  }
+
+  /**
+   * Get the date of the oldest event of the given activity, if any exists.
+   *
+   * Uses a limit-1 index query, so this is fast even for activities with many events.
+   * @param activity The activity whose events are considered.
+   */
+  async getEarliestEventDate(activity: Entity): Promise<Date | undefined> {
+    return this.getEdgeEventDate(activity, false);
+  }
+
+  private async getEdgeEventDate(
+    activity: Entity,
+    latest: boolean,
+  ): Promise<Date | undefined> {
+    const lowerKey = activity.getId() + "_";
+    const upperKey = activity.getId() + "_￰";
+    const result = await this.dbIndexing.queryIndexRaw(
+      "events_index/by_activity",
+      {
+        startkey: latest ? upperKey : lowerKey,
+        endkey: latest ? lowerKey : upperKey,
+        descending: latest,
+        limit: 1,
+      },
+    );
+
+    const key: string | undefined = result.rows?.[0]?.key;
+    if (!key) {
+      return undefined;
+    }
+    const date = moment(
+      key.substring(activity.getId().length + 1),
+      "YYYY-MM-DD",
+      true,
+    );
+    return date.isValid() ? date.toDate() : undefined;
+  }
+
+  /**
    * Load all activities that list the given participant ID in their `participants` field.
    * Queries all configured recurring activity types (see {@link AttendanceFeatureConfig.recurringActivityTypes}).
    *
