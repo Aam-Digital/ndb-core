@@ -202,7 +202,15 @@
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
+                                <a href="#getEarliestEventDate" >getEarliestEventDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#getEventsOnDate" >getEventsOnDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getLatestEventDate" >getLatestEventDate</a>
                             </li>
                             <li>
                                 <a href="#wrapEventEntity" >wrapEventEntity</a>
@@ -265,8 +273,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="496"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:496</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="544"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:544</a></div>
                         </td>
                     </tr>
 
@@ -346,8 +354,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="326"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:326</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="374"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:374</a></div>
                         </td>
                     </tr>
 
@@ -517,8 +525,8 @@ also includes activities linked via school group membership (legacy).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="364"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:364</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="412"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:412</a></div>
                         </td>
                     </tr>
 
@@ -565,6 +573,83 @@ merging existing events with new (unsaved) events generated from recurring activ
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEarliestEventDate"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getEarliestEventDate</b></span>
+                        <a href="#getEarliestEventDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getEarliestEventDate(activity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="333"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:333</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get the date of the oldest event of the given activity, if any exists.</p>
+<p>Uses a limit-1 index query, so this is fast even for activities with many events.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The activity whose events are considered.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Date | undefined&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -676,6 +761,83 @@ merging existing events with new (unsaved) events generated from recurring activ
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getLatestEventDate"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getLatestEventDate</b></span>
+                        <a href="#getLatestEventDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getLatestEventDate(activity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="323"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:323</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get the date of the most recent event of the given activity, if any exists.</p>
+<p>Uses a limit-1 index query, so this is fast even for activities with many events.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The activity whose events are considered.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Date | undefined&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="wrapEventEntity"></a>
                     <span class="name">
                         <span ><b>wrapEventEntity</b></span>
@@ -692,8 +854,8 @@ merging existing events with new (unsaved) events generated from recurring activ
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="408"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:408</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="456"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:456</a></div>
                         </td>
                     </tr>
 
@@ -1252,6 +1414,54 @@ ${byParticipantChecks}
     return Array.from(periods.values()).sort(
       (a, b) &#x3D;&gt; a.periodFrom.getTime() - b.periodFrom.getTime(),
     );
+  }
+
+  /**
+   * Get the date of the most recent event of the given activity, if any exists.
+   *
+   * Uses a limit-1 index query, so this is fast even for activities with many events.
+   * @param activity The activity whose events are considered.
+   */
+  async getLatestEventDate(activity: Entity): Promise&lt;Date | undefined&gt; {
+    return this.getEdgeEventDate(activity, true);
+  }
+
+  /**
+   * Get the date of the oldest event of the given activity, if any exists.
+   *
+   * Uses a limit-1 index query, so this is fast even for activities with many events.
+   * @param activity The activity whose events are considered.
+   */
+  async getEarliestEventDate(activity: Entity): Promise&lt;Date | undefined&gt; {
+    return this.getEdgeEventDate(activity, false);
+  }
+
+  private async getEdgeEventDate(
+    activity: Entity,
+    latest: boolean,
+  ): Promise&lt;Date | undefined&gt; {
+    const lowerKey &#x3D; activity.getId() + &quot;_&quot;;
+    const upperKey &#x3D; activity.getId() + &quot;_￰&quot;;
+    const result &#x3D; await this.dbIndexing.queryIndexRaw(
+      &quot;events_index/by_activity&quot;,
+      {
+        startkey: latest ? upperKey : lowerKey,
+        endkey: latest ? lowerKey : upperKey,
+        descending: latest,
+        limit: 1,
+      },
+    );
+
+    const key: string | undefined &#x3D; result.rows?.[0]?.key;
+    if (!key) {
+      return undefined;
+    }
+    const date &#x3D; moment(
+      key.substring(activity.getId().length + 1),
+      &quot;YYYY-MM-DD&quot;,
+      true,
+    );
+    return date.isValid() ? date.toDate() : undefined;
   }
 
   /**
