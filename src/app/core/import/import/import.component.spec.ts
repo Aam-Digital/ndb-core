@@ -66,19 +66,19 @@ describe("ImportComponent", () => {
     expect(navigateSpy).toHaveBeenCalledWith(["/import"], expect.anything());
   });
 
-  it("should flag missing create permission for the selected import type", () => {
+  it("should block the whole import when user cannot create ImportMetadata", () => {
     const ability = TestBed.inject(EntityAbility);
     ability.update([
       { subject: "all", action: "manage" },
-      { subject: "Child", action: "create", inverted: true },
+      { subject: "ImportMetadata", action: "create", inverted: true },
     ]);
     ability.initialized = true;
 
-    component.importSettings.set({ entityType: "Child" });
-    expect(component.cannotCreateSelectedType()).toBe(true);
-
-    component.importSettings.set({ entityType: "School" });
-    expect(component.cannotCreateSelectedType()).toBe(false);
+    // cannotImport is evaluated on construction, so create a fresh instance
+    const blockedComponent =
+      TestBed.createComponent(ImportComponent).componentInstance;
+    expect(blockedComponent.cannotImport).toBe(true);
+    expect(component.cannotImport).toBe(false);
   });
 
   it("should update an empty column mapping upon loading rawData", async () => {

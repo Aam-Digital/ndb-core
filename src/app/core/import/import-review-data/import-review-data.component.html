@@ -4,22 +4,10 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 } @else {
-  @if (cannotCreateImportMetadata()) {
-    <app-hint-box type="warning" i18n>
-      You don't have the required permissions to import.
-    </app-hint-box>
-  }
-
   <div class="flex-row gap-regular align-center">
     <span class="flex-grow" i18n>Review your mapped data to be imported:</span>
 
-    <button
-      (click)="startImport()"
-      mat-raised-button
-      color="accent"
-      [disabled]="cannotCreateImportMetadata()"
-      i18n
-    >
+    <button (click)="startImport()" mat-raised-button color="accent" i18n>
       Start Import
     </button>
 

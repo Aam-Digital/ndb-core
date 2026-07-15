@@ -8,7 +8,6 @@ import { ImportService } from "../import.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
@@ -83,26 +82,6 @@ describe("ImportReviewDataComponent", () => {
     } finally {
       vi.useRealTimers();
     }
-  });
-
-  it("should block import when user cannot create ImportMetadata", () => {
-    const ability = TestBed.inject(EntityAbility);
-    ability.update([
-      { subject: "all", action: "manage" },
-      { subject: "ImportMetadata", action: "create", inverted: true },
-    ]);
-    ability.initialized = true;
-
-    const blockedFixture = TestBed.createComponent(ImportReviewDataComponent);
-    blockedFixture.componentInstance.entityType = TestEntity.ENTITY_TYPE;
-    blockedFixture.detectChanges();
-
-    expect(blockedFixture.componentInstance.cannotCreateImportMetadata()).toBe(
-      true,
-    );
-    const startButton: HTMLButtonElement =
-      blockedFixture.nativeElement.querySelector("button[color='accent']");
-    expect(startButton.disabled).toBe(true);
   });
 
   it("should open Summary Confirmation when clicking to start import", async () => {

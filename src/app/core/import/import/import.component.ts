@@ -69,18 +69,13 @@ export class ImportComponent {
   importSettings = signal<Partial<ImportSettings>>({});
 
   /**
-   * Whether the current user lacks permission to create records of the selected type.
-   * Checked already on the type-selection step so the user is not sent through
-   * column mapping and review only to fail at the end.
+   * Whether the current user lacks permission to create ImportMetadata records.
+   * Every import writes an ImportMetadata history entry at the end, so without this
+   * permission no import can succeed - block the whole flow up front rather than
+   * letting the user prepare an import that would fail.
    */
-  cannotCreateSelectedType = computed(() => {
-    const entityType = this.importSettings().entityType;
-    return (
-      !!entityType &&
-      this.ability.initialized &&
-      this.ability.cannot("create", entityType)
-    );
-  });
+  cannotImport =
+    this.ability.initialized && this.ability.cannot("create", ImportMetadata);
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
