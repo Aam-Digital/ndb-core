@@ -117,6 +117,14 @@ export class ConfigureEntityFieldValidatorComponent {
       });
       onCleanup(() => sub.unsubscribe());
     });
+
+    effect((onCleanup) => {
+      const ctrl = this.trimControl();
+      const sub = ctrl.valueChanges.subscribe((value: boolean) => {
+        this.entitySchemaFieldChanges.emit({ trim: value });
+      });
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   /**
