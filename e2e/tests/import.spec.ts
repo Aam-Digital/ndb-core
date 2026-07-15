@@ -190,10 +190,11 @@ test("Import a multi-value entity reference from a single comma-separated column
   await page.getByRole("navigation").getByText("Import").click();
   await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
 
-  // a single "Groups" cell holds several comma-separated school names
+  // "Groups" holds comma-separated school names; "GroupIds" a second condition
+  // mapped to the same field (multi-column matching) holding the internal ids
   const csvContent = [
-    "Subject,Groups",
-    'Joint school meeting,"Springfield Elementary, Shelbyville Academy"',
+    "Subject,Groups,GroupIds",
+    'Joint school meeting,"Springfield Elementary, Shelbyville Academy","School:school-1, School:school-2"',
   ].join("\n");
 
   const fileInput = page.locator('input[type="file"]');
@@ -212,20 +213,33 @@ test("Import a multi-value entity reference from a single comma-separated column
   await page.getByRole("option", { name: "Note", exact: true }).click();
   await page.getByRole("button", { name: "Continue" }).click();
 
-  // Step 3: "Subject" and "Groups" auto-map by label; match the groups by school name
+  // Step 3: "Subject" and "Groups" auto-map by label; match the groups by school
+  // name, and map a second "GroupIds" column onto the same field matched by id
+  // (multi-column matching)
   await expect(
     page.getByText("Define which columns / fields will be imported"),
   ).toBeVisible();
 
   const groupsRow = page
     .locator("app-edit-import-column-mapping")
-    .filter({ hasText: "Groups" });
+    .filter({ hasText: /^Groups/ });
   await groupsRow.locator("mat-select").click();
   await page.getByRole("option", { name: "Name", exact: true }).click();
 
+  const groupIdsRow = page
+    .locator("app-edit-import-column-mapping")
+    .filter({ hasText: "GroupIds" });
+  await groupIdsRow.getByRole("textbox", { name: "GroupIds" }).fill("Groups");
+  await page.getByRole("option", { name: "Groups", exact: true }).click();
+  await groupIdsRow.locator("mat-select").click();
+  await page.getByRole("option", { name: /internal unique/i }).click();
+
+  // multi-column matching indicator is shown on the mapping step
+  await argosScreenshot(page, "import-multi-column-matching-mapping");
+
   await page.getByRole("button", { name: "Continue" }).click();
 
-  // Step 4: both comma-separated names resolve to their records (the bug: was empty)
+  // Step 4: both comma-separated names resolve to their records
   await expect(
     page.getByText("Review your mapped data to be imported"),
   ).toBeVisible();
