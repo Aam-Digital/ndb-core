@@ -60,6 +60,7 @@ import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 
@@ -138,7 +139,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     return (
       !!entityConstructor &&
       this.ability.can("create", entityConstructor) &&
-      this.ability.can("create", "ImportMetadata")
+      this.ability.can("create", ImportMetadata)
     );
   });
 

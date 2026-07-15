@@ -1,7 +1,9 @@
 <app-warning-not-optimized-for-small-screen />
 
 @if (cannotImport) {
-  <div class="flex-column place-center permission-message">
+  <div
+    class="flex-column place-center gap-regular text-secondary permission-message"
+  >
     <fa-icon icon="triangle-exclamation" size="4x"></fa-icon>
     <h2 i18n>You don't have permission to import</h2>
     <p i18n>
