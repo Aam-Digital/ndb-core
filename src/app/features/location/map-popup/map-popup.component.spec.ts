@@ -31,9 +31,7 @@ describe("MapPopupComponent", () => {
         if (!loc) return "";
         const street = [loc.road, loc.house_number].filter(Boolean).join(" ");
         const postcodeCity = [loc.postcode, loc.city].filter(Boolean).join(" ");
-        return [street, postcodeCity, loc.country]
-          .filter((x) => !!x)
-          .join(", ");
+        return [street, postcodeCity].filter((x) => !!x).join(", ");
       }),
     };
     mockGeoService.reverseLookup.mockReturnValue(

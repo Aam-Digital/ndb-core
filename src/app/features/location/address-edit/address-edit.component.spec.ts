@@ -43,9 +43,7 @@ describe("AddressEditComponent", () => {
         if (!loc) return "";
         const street = [loc.road, loc.house_number].filter(Boolean).join(" ");
         const postcodeCity = [loc.postcode, loc.city].filter(Boolean).join(" ");
-        return [street, postcodeCity, loc.country]
-          .filter((x) => !!x)
-          .join(", ");
+        return [street, postcodeCity].filter((x) => !!x).join(", ");
       }),
     };
     mockGeoService.lookup.mockReturnValue(of([]));
@@ -245,7 +243,7 @@ describe("AddressEditComponent", () => {
 
   it("should update a single part and preserve siblings", async () => {
     fixture.componentRef.setInput("selectedLocation", {
-      locationString: "Main St 42, 12345 Berlin, Germany",
+      locationString: "Main St 42, 12345 Berlin",
       road: "Main St",
       house_number: "42",
       postcode: "12345",
@@ -266,7 +264,7 @@ describe("AddressEditComponent", () => {
 
   it("should auto-update the text (no prompt) when editing a part and the text was not manually overwritten", async () => {
     fixture.componentRef.setInput("selectedLocation", {
-      locationString: "Main St 42, 12345 Berlin, Germany",
+      locationString: "Main St 42, 12345 Berlin",
       road: "Main St",
       house_number: "42",
       postcode: "12345",
@@ -278,7 +276,7 @@ describe("AddressEditComponent", () => {
 
     expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
     expect(component.selectedLocation()?.locationString).toBe(
-      "Main St 42, 12345 Tempelhof, Germany",
+      "Main St 42, 12345 Tempelhof",
     );
   });
 
@@ -319,7 +317,7 @@ describe("AddressEditComponent", () => {
 
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
     expect(component.selectedLocation()?.locationString).toBe(
-      "Main St 42, 12345 Tempelhof, Germany",
+      "Main St 42, 12345 Tempelhof",
     );
     expect(component.selectedLocation()?.city).toBe("Tempelhof");
   });

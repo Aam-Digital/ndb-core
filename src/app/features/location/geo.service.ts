@@ -213,16 +213,17 @@ export class GeoService {
   /**
    * Composes a display address string from a GeoLocation's structured parts
    * (the reverse of what {@link enrichGeoLocation} derives from a lookup).
+   *
+   * Deliberately mirrors the format of {@link reformatDisplayName} (street,
+   * then postcode + city) and omits `country`: callers compare the composed
+   * string against a lookup's `display_name` to tell whether the address text
+   * was customized, so the two must be able to match.
    */
   composeAddressFromParts(location: GeoLocation | undefined): string {
     if (!location) {
       return "";
     }
-    return [
-      this.formatStreet(location),
-      this.formatPostcodeCity(location),
-      location.country,
-    ]
+    return [this.formatStreet(location), this.formatPostcodeCity(location)]
       .filter((x) => !!x)
       .join(", ");
   }
