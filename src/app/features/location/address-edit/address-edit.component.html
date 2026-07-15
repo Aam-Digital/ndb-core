@@ -82,6 +82,13 @@
         ></textarea>
       </mat-form-field>
 
+      @if (hasDivergingText()) {
+        <p class="parts-mismatch-hint" i18n>
+          This address text has been customized — it no longer matches the
+          address details below or the mapped location.
+        </p>
+      }
+
       <div class="address-parts-grid">
         <mat-form-field class="road-field">
           <mat-label i18n>Road</mat-label>
@@ -134,13 +141,6 @@
           />
         </mat-form-field>
       </div>
-
-      @if (hasDivergingText()) {
-        <p class="parts-mismatch-hint" i18n>
-          The address text has been customized and differs from the structured
-          details below.
-        </p>
-      }
 
       @if (!disabled()) {
         <div class="panel-footer">
