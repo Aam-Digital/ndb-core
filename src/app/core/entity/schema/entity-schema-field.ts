@@ -133,6 +133,12 @@ export interface EntitySchemaField {
 
   validators?: FormValidatorConfig;
 
+  /**
+   * If set to false, leading/trailing whitespace will NOT be automatically trimmed when saving this field.
+   * Defaults to true (trimming enabled) for string fields.
+   */
+  trim?: boolean;
+
   /** whether to show this field in the default details view */
   showInDetailsView?: boolean;
 

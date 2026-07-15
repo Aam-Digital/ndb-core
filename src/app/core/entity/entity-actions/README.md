@@ -1,6 +1,4 @@
-# Archive / Anonymize Entities
-
----
+# Archive / Anonymize / Delete Entities
 
 Any entity can be archived (i.e. marked as inactive and hidden from UI by default) or anonymized (i.e. discarding most data and keeping a few selected properties for statistical reports).
 This is often preferable to deleting a record completely. Deleting data also affects statistical reports, even for previous time periods.
@@ -9,7 +7,7 @@ By anonymizing records, all personal identifiable data can be removed and the re
 Anonymization is configured as part of the entity schema.
 Data of fields that are not explicitly marked to be retained during anonymization is always deleted (anonymization by default).
 
-To keep some data even after the user "anonymized" a record, configure the `anonymize` property of the `@DatabaseField` decorator:
+To keep some data even after the user "anonymized" a record, configure the `anonymize` property of the `@DatabaseField` decorator (see `EntitySchemaField` in `../schema/entity-schema-field.ts`):
 
 - `anonymize: "retain"` will keep this field unchanged and prevent it from being deleted
 - `anonymize: "retain-anonymized"` will trigger a special "partial" deletion that depends on the dataType (e.g. date types will be changed to 1st July of the given year, thereby largely removing details but keeping data to calculate a rough age)
@@ -21,7 +19,7 @@ Any related entities that reference the anonymized/deleted entity are checked
 and - depending on their configured role - may be updated or anonymized as well.
 
 The logic follows the scenarios shown below:
-![](../../images/cascading-delete.png)
+![Cascading delete/anonymize scenarios](https://raw.githubusercontent.com/Aam-Digital/ndb-core/master/doc/images/cascading-delete.png)
 
 ## Data Protection & GDPR regarding anonymization / pseudonomyzation
 
@@ -41,3 +39,11 @@ In the case of records being retained "anonymized" in Aam Digital, we provide a 
 - by default only a few, explicitly selected properties in anonymized records are retained (data minimization by default). As such, both re-identification likelihood and the impact in case of re-identification are reduced as far as possible.
 
 --> If our anonymization process is configured thoughfully on a case by case basis to only retain a few data fields that are not easy indirect identifiers, it seems reasonably unlikely that the person can be identified after the anonymization process. Therefore, GDPR should not apply to these records and it is legitimate to retain these for statistical reporting.
+
+## Key files
+
+- `entity-actions.service.ts` — `EntityActionsService`, entry point that UI actions call to archive/anonymize/delete
+- `entity-anonymize.service.ts` — implements the anonymization logic driven by each field's `anonymize` schema option
+- `entity-delete.service.ts` — implements deletion
+- `cascading-entity-action.ts` — shared base handling the cascade to related entities
+- `../schema/entity-schema-field.ts` — `anonymize` field option (`"retain"` / `"retain-anonymized"`)

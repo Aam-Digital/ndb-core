@@ -40,7 +40,6 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
-import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -116,7 +115,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
   defaultSort = input<Sort>();
-  exportConfig = input<ExportColumnConfig[]>();
 
   /**
    * The special service or method to load data via an index or other special method.
@@ -354,7 +352,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         schema,
         visibleColIds: cols,
         availableColumns,
-        exportConfig: this.exportConfig(),
       });
 
     this.dialog.open(ExportDialogComponent, {

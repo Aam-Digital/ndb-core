@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
   loginState = inject(LoginStateSubject);
   siteSettingsService = inject(SiteSettingsService);
 
-  offlineUsers: SessionInfo[] = [];
+  offlineUsers = signal<SessionInfo[]>([]);
   /**
    * Whether offline-login buttons are clickable.
    * Becomes true once the remote login has failed or after a hard timeout,
@@ -167,7 +167,7 @@ export class LoginComponent implements OnInit {
     });
 
     this.sessionManager.getOfflineUsers().then((users) => {
-      this.offlineUsers = users;
+      this.offlineUsers.set(users);
     });
   }
 

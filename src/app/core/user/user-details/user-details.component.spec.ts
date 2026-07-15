@@ -11,8 +11,9 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { BehaviorSubject, of } from "rxjs";
+import { BehaviorSubject, of, Subject, throwError } from "rxjs";
 import { CoreTestingModule } from "#src/app/utils/core-testing.module";
+import { Angulartics2Module } from "angulartics2";
 import type { SessionInfo } from "../../session/auth/session-info";
 import type { Mock } from "vitest";
 
@@ -21,6 +22,7 @@ type UserAdminServiceMock = {
   createUser: Mock;
   updateUser: Mock;
   deleteUser: Mock;
+  resendInvitation: Mock;
 };
 
 type AlertServiceMock = {
@@ -77,6 +79,10 @@ describe("UserDetailsComponent", () => {
       createUser: vi.fn().mockName("UserAdminService.createUser"),
       updateUser: vi.fn().mockName("UserAdminService.updateUser"),
       deleteUser: vi.fn().mockReturnValue(of({ userDeleted: true })),
+      resendInvitation: vi
+        .fn()
+        .mockName("UserAdminService.resendInvitation")
+        .mockReturnValue(of(undefined)),
     };
     mockUserAdminService.getAllRoles.mockReturnValue(of([mockRole]));
     mockUserAdminService.updateUser.mockReturnValue(of({ userUpdated: true }));
@@ -112,7 +118,11 @@ describe("UserDetailsComponent", () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [UserDetailsComponent, CoreTestingModule],
+      imports: [
+        UserDetailsComponent,
+        CoreTestingModule,
+        Angulartics2Module.forRoot(),
+      ],
       providers: [
         { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: AlertService, useValue: mockAlertService },
@@ -339,6 +349,80 @@ describe("UserDetailsComponent", () => {
     await component.enableAccount(false);
 
     expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
+  });
+
+  it("should offer resend invitation only for existing accounts with unverified email", () => {
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      emailVerified: false,
+    });
+    fixture.detectChanges();
+    expect(component.invitationPending()).toBe(true);
+
+    // email verified -> invitation completed
+    fixture.componentRef.setInput("userAccount", mockUserAccount);
+    fixture.detectChanges();
+    expect(component.invitationPending()).toBe(false);
+
+    // own profile mode -> admin actions hidden
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      emailVerified: false,
+    });
+    fixture.componentRef.setInput("isProfileMode", true);
+    fixture.detectChanges();
+    expect(component.invitationPending()).toBe(false);
+
+    // creating a new account -> nothing to resend yet
+    fixture.componentRef.setInput("isProfileMode", false);
+    fixture.componentRef.setInput("userAccount", null);
+    fixture.detectChanges();
+    expect(component.invitationPending()).toBe(false);
+  });
+
+  it("should resend invitation via service and alert about success or failure", async () => {
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      emailVerified: false,
+    });
+    fixture.detectChanges();
+
+    await component.resendInvitation();
+
+    expect(mockUserAdminService.resendInvitation).toHaveBeenCalledWith(
+      mockUserAccount.id,
+    );
+    expect(mockAlertService.addInfo).toHaveBeenCalled();
+
+    mockUserAdminService.resendInvitation.mockReturnValue(
+      throwError(() => new Error("sending failed")),
+    );
+    await component.resendInvitation();
+
+    expect(mockAlertService.addDanger).toHaveBeenCalled();
+  });
+
+  it("should ignore further resend clicks while a resend request is pending", async () => {
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      emailVerified: false,
+    });
+    fixture.detectChanges();
+
+    const pendingRequest = new Subject<void>();
+    mockUserAdminService.resendInvitation.mockReturnValue(pendingRequest);
+
+    const firstClick = component.resendInvitation();
+    expect(component.resendingInvitation()).toBe(true);
+
+    component.resendInvitation();
+    expect(mockUserAdminService.resendInvitation).toHaveBeenCalledTimes(1);
+
+    pendingRequest.next();
+    pendingRequest.complete();
+    await firstClick;
+
+    expect(component.resendingInvitation()).toBe(false);
   });
 
   it("should not trigger sync reset when only email is updated", () => {

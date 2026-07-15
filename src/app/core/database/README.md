@@ -1,7 +1,7 @@
 # How to use queries and indices to get data
 
-The [EntityMapperService](../../injectables/EntityMapperService.html) gives you an easy way to access
-all entities of an Entity type or an individual entity by its ID (see [Load and Save Data](load-and-save-data.html) for these basics).
+The `EntityMapperService` gives you an easy way to access
+all entities of an Entity type or an individual entity by its ID (see [Loading, saving and deleting data](../entity/README.md#loading-saving-and-deleting-data) for these basics).
 However, for more advance features this will not be enough and you may need more powerful ways to load certain data.
 This is where (persistent) queries come into play.
 
@@ -16,14 +16,14 @@ As queries and database indexing is closely related to the underlying database t
 directly refers to the underlying PouchDB feature.
 
 Please read through the PouchDB documentation referring to map/reduce queries:
-https://pouchdb.com/guides/queries.html
+<https://pouchdb.com/guides/queries.html>
 
 ## Creating a persistent query / database index
 
 Before you can use `query` to load specific data you have to create the related "design document" for it in the PouchDB.
 
 To do this, create a design document object according to the PouchDB documentation
-and then use `saveDatabaseIndex` on the [Database](../../classes/Database.html) service:
+and then use `saveDatabaseIndex` on the `Database` service:
 
 ```
 constructor(private db: Database) {}
@@ -72,3 +72,10 @@ resultEntities = result.rows.map(loadedRow => {
     return entity;
 });
 ```
+
+## Key files
+
+- `database.ts` — the abstract `Database` service, including `query()` and `saveDatabaseIndex()`
+- `pouchdb/pouch-database.ts` — `PouchDatabase`, the PouchDB-backed implementation
+- `query-data-source.ts` — data source that runs a query and exposes its results
+- `../entity/schema/entity-schema.service.ts` — `loadDataIntoEntity()` used to turn raw query rows into entity instances

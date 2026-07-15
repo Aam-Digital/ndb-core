@@ -209,6 +209,15 @@ export class ImportService {
       return undefined;
     }
 
+    const shouldTrim =
+      typeof val === "string" &&
+      schema.trim !== false &&
+      importProcessingContext.importSettings.additionalSettings?.trimValues !==
+        false;
+    if (shouldTrim) {
+      val = val.trim();
+    }
+
     let value;
 
     // Determine if we should split array values based on enableSplitting flag

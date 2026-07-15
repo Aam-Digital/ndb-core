@@ -1,9 +1,8 @@
 reviews:
+  # CodeRabbit runs on-demand only. Trigger a review by commenting
+  # "@coderabbitai review" on a pull request.
   auto_review:
-    enabled: true
-    drafts: true
-    labels:
-      - Final Review
+    enabled: false
   path_instructions:
     - path: "src/app/core/entity/**"
       instructions: "Core entity system — extra scrutiny for schema changes, backward compatibility"

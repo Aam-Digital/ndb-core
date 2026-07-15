@@ -10,26 +10,18 @@ import {
   signal,
   ViewEncapsulation,
 } from "@angular/core";
-import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressBar } from "@angular/material/progress-bar";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { Angulartics2Module } from "angulartics2";
 import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
-import { ConfigService } from "../../../core/config/config.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
-import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EntityConstructor } from "../../../core/entity/model/entity";
-import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
-import { ExportDialogComponent } from "../../../core/export/export-dialog/export-dialog.component";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { getDefaultNoteDetailsConfig } from "../add-default-note-views";
 import { Note } from "../model/note";
@@ -45,13 +37,9 @@ import { Note } from "../model/note";
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
   imports: [
-    MatDialogModule,
     CustomDatePipe,
-    FontAwesomeModule,
-    Angulartics2Module,
     EntityFormComponent,
     DialogButtonsComponent,
-    MatMenuModule,
     EntityArchivedInfoComponent,
     ViewTitleComponent,
     MatProgressBar,
@@ -60,20 +48,11 @@ import { Note } from "../model/note";
   encapsulation: ViewEncapsulation.None,
 })
 export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
-  private configService = inject(ConfigService);
   private entityFormService = inject(EntityFormService);
   private unsavedChangesService = inject(UnsavedChangesService);
-  private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
   override readonly entityConstructor = computed<EntityConstructor>(() => Note);
-
-  /** export format for notes to be used for downloading the individual details */
-  readonly exportConfig = computed<ExportColumnConfig[]>(
-    () =>
-      this.configService.getConfig<{ config: EntityListConfig }>("view:note")
-        ?.config.exportConfig,
-  );
 
   private readonly defaultFormConfig = getDefaultNoteDetailsConfig();
   topForm = input(this.defaultFormConfig.topForm);
@@ -115,19 +94,6 @@ export class NoteDetailsComponent extends AbstractEntityDetailsComponent {
           this.tmpEntity.set(Object.assign(entity.copy(), value));
         });
       onCleanup(() => sub.unsubscribe());
-    });
-  }
-
-  openExportDialog() {
-    const entity = this.entity() as Note;
-    const dateStr = entity?.date ? entity.date.toISOString().split("T")[0] : "";
-    const filename = `event_${entity?.toString()?.replaceAll(" ", "-")}_${dateStr}`;
-    this.dialog.open(ExportDialogComponent, {
-      data: {
-        allEntities: entity ? [entity] : [],
-        exportConfig: this.exportConfig(),
-        filename,
-      },
     });
   }
 
