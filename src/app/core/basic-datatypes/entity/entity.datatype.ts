@@ -22,7 +22,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Logging } from "app/core/logging/logging.service";
 import { ImportProcessingContext } from "../../import/import-processing-context";
-import { splitArrayValue } from "../../import/import.service";
+import { splitArrayValue } from "../../import/split-array-value";
 import { ColumnMapping } from "../../import/column-mapping";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";

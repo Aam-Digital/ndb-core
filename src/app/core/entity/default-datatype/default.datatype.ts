@@ -19,6 +19,7 @@ import { $localize } from "@angular/localize/init"; // import needed to make thi
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity, EntityConstructor } from "../model/entity";
 import { asArray } from "../../../utils/asArray";
+import { splitArrayValue } from "../../import/split-array-value";
 
 /**
  * Definition of an export column contributed by a datatype.
@@ -194,28 +195,74 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
-   * Optional per-field import matching.
+   * Map all columns mapped to one target field to the value(s) stored there.
    *
-   * When implemented, ImportService calls this once per target field per row,
-   * passing all columns mapped to that field together, and lets the datatype
-   * own value splitting and cross-column combination. This is required for
-   * matches that depend on several columns at once, which the per-value
-   * importMapFunction cannot express.
-   *
-   * Datatypes that leave this undefined keep the default per-column /
-   * per-value importMapFunction path (ImportService handles array splitting).
+   * ImportService calls this once per target field per row with every column
+   * mapped to that field. The default handles trimming and array splitting and
+   * delegates each individual value to {@link importMapFunction}. Datatypes that
+   * need to consider several columns together (e.g. matching an entity by more
+   * than one property) override this.
    *
    * @param schemaField the target property the value(s) are imported into
    * @param columns every column mapped to this field, with its raw cell value
    * @param importProcessingContext shared context across columns and rows
-   * @returns a single value (isArray=false) or array of values (isArray=true),
-   *   or undefined if nothing matched
+   * @returns the value to store: a single value (isArray=false) or array
+   *   (isArray=true), or undefined if nothing was mapped
    */
-  importMatchField?(
+  async importMatchField(
     schemaField: EntitySchemaField,
     columns: { mapping: any; rawCell: any }[],
     importProcessingContext?: any,
-  ): Promise<any>;
+  ): Promise<any> {
+    const additionalSettings =
+      importProcessingContext?.importSettings?.additionalSettings;
+    const separator = additionalSettings?.multiValueSeparator ?? ",";
+
+    let value;
+    // if several columns map to the same field, the last one with a value wins
+    for (const { mapping, rawCell } of columns) {
+      if (rawCell === undefined || rawCell === null) {
+        continue;
+      }
+
+      let val = rawCell;
+      const shouldTrim =
+        typeof val === "string" &&
+        schemaField.trim !== false &&
+        additionalSettings?.trimValues !== false;
+      if (shouldTrim) {
+        val = val.trim();
+      }
+
+      const shouldSplit =
+        schemaField.isArray && (mapping.additional?.enableSplitting ?? true);
+
+      if (!shouldSplit) {
+        value = await this.importMapFunction(
+          val,
+          schemaField,
+          mapping.additional,
+          importProcessingContext,
+        );
+      } else {
+        // split the cell and map each item individually
+        const mapped = [];
+        for (const rawValue of splitArrayValue(val, separator)) {
+          const item = await this.importMapFunction(
+            rawValue,
+            { ...schemaField, isArray: false },
+            mapping.additional,
+            importProcessingContext,
+          );
+          if (item !== undefined && item !== null && item !== "") {
+            mapped.push(item);
+          }
+        }
+        value = [...new Set(mapped)];
+      }
+    }
+    return value;
+  }
 
   /**
    * A component to be rendered inline to configure the import transformation

@@ -179,51 +179,42 @@ export class ImportService {
 
     for (const [propertyName, mappings] of mappingsByProperty) {
       const schema = entity.getSchema().get(propertyName);
-      const datatype = schema
-        ? this.schemaService.getDatatypeOrDefault(schema.dataType)
-        : undefined;
-
-      let value;
-      if (schema && datatype?.importMatchField) {
-        // per-field matching: the datatype owns splitting and cross-column combination
-        try {
-          value = await datatype.importMatchField(
-            schema,
-            mappings.map((mapping) => ({
-              mapping,
-              rawCell: row[mapping.column],
-            })),
-            importProcessingContext,
-          );
-        } catch (e) {
-          errors.push({
-            column: mappings[0].column,
-            propertyName,
-            rowIndex: importProcessingContext.rowIndex,
-            error: e,
-          });
-          continue;
-        }
-      } else {
-        // default per-column path (last mapped column present in the row wins)
-        for (const mapping of mappings) {
-          if (!(mapping.column in row)) {
-            continue;
-          }
-          const parsed = await this.parseCell(
-            row[mapping.column],
-            mapping,
-            entity,
-            importProcessingContext,
-            errors,
-          );
-          if (parsed !== undefined) {
-            value = parsed;
-          }
-        }
+      if (!schema) {
+        continue;
       }
 
-      if (value === undefined || (Array.isArray(value) && value.length === 0)) {
+      let value;
+      try {
+        // failSilently: false - a broken/unknown dataType should surface as a
+        // clear import error (caught below) rather than silently importing the
+        // raw, untransformed value into a field of an unknown type.
+        const datatype = this.schemaService.getDatatypeOrDefault(
+          schema.dataType,
+          false,
+        );
+        value = await datatype.importMatchField(
+          schema,
+          mappings.map((mapping) => ({
+            mapping,
+            rawCell: row[mapping.column],
+          })),
+          importProcessingContext,
+        );
+      } catch (e) {
+        errors.push({
+          column: mappings[0].column,
+          propertyName,
+          rowIndex: importProcessingContext.rowIndex,
+          error: e,
+        });
+        continue;
+      }
+
+      // ignore empty or invalid values for import (falsy except 0 / false, or empty array)
+      if (
+        (!value && value !== 0 && value !== false) ||
+        (Array.isArray(value) && value.length === 0)
+      ) {
         continue;
       }
       entity[propertyName] = value;
@@ -235,137 +226,4 @@ export class ImportService {
       return entity;
     }
   }
-
-  private async parseCell(
-    val: any,
-    mapping: ColumnMapping,
-    entity: Entity,
-    importProcessingContext: ImportProcessingContext,
-    errors: ImportCellError[],
-  ) {
-    if (val === undefined || val === null) {
-      return undefined;
-    }
-
-    const schema = entity.getSchema().get(mapping.propertyName);
-    if (!schema) {
-      return undefined;
-    }
-
-    const shouldTrim =
-      typeof val === "string" &&
-      schema.trim !== false &&
-      importProcessingContext.importSettings.additionalSettings?.trimValues !==
-        false;
-    if (shouldTrim) {
-      val = val.trim();
-    }
-
-    let value;
-
-    // Determine if we should split array values based on enableSplitting flag
-    const shouldSplit =
-      schema.isArray && (mapping.additional?.enableSplitting ?? true);
-
-    try {
-      // failSilently: false - a broken dataType should surface as a clear per-cell
-      // import error (caught below) rather than silently importing the raw,
-      // untransformed value into a field of an unknown type.
-      const datatype = this.schemaService.getDatatypeOrDefault(
-        schema.dataType,
-        false,
-      );
-      if (!shouldSplit) {
-        // Handle as single value (either non-array field or array field with splitting disabled)
-        value = await datatype.importMapFunction(
-          val,
-          schema,
-          mapping.additional,
-          importProcessingContext,
-        );
-      } else {
-        // For array fields with splitting enabled, split the value and map each item individually
-        const separator =
-          importProcessingContext.importSettings.additionalSettings
-            ?.multiValueSeparator ?? ",";
-        const rawValues = splitArrayValue(val, separator);
-        value = [];
-        for (const rawValue of rawValues) {
-          const mapped = await datatype.importMapFunction(
-            rawValue,
-            {
-              ...schema,
-              isArray: false, // transform here only for single values, array mapping is handled here separately
-            },
-            mapping.additional,
-            importProcessingContext,
-          );
-          if (mapped !== undefined && mapped !== null && mapped !== "") {
-            value.push(mapped);
-          }
-        }
-        // Filter duplicate values
-        value = [...new Set(value)];
-      }
-    } catch (e) {
-      errors.push({
-        column: mapping.column,
-        propertyName: mapping.propertyName,
-        rowIndex: importProcessingContext.rowIndex,
-        error: e,
-      });
-      return undefined;
-    }
-
-    // ignore empty or invalid values for import
-    if (
-      (!value && value !== 0 && value !== false) ||
-      (Array.isArray(value) && value.length === 0)
-    ) {
-      // falsy values except 0 (=> null, undefined, empty string, NaN, ...)
-      return undefined;
-    }
-
-    return value;
-  }
-}
-
-/**
- * Split a raw value into an array of individual values.
- * Supports JSON arrays and separator-delimited strings.
- * @param val The raw value to split
- * @param separator The separator character to use for splitting (default: ",")
- * @returns Array of individual string values
- */
-export function splitArrayValue(val: any, separator: string = ","): string[] {
-  if (val === null || val === undefined) {
-    return [];
-  }
-
-  if (Array.isArray(val)) {
-    return val;
-  }
-
-  if (typeof val !== "string") {
-    return [String(val)];
-  }
-
-  val = val.trim();
-  // Try parsing as JSON array first
-  if (val.startsWith("[")) {
-    try {
-      const parsed = JSON.parse(val);
-      if (Array.isArray(parsed)) {
-        return parsed;
-      }
-    } catch {
-      // Invalid JSON, fall through to separator-based parsing
-    }
-  }
-
-  // Split by separator and trim whitespace
-  return val
-    .split(separator)
-    .map((e) => e.trim())
-    .filter((e) => e?.length > 0);
 }
