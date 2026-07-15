@@ -1507,5 +1507,12 @@
   "5872519387087503048": " User has not yet accepted the invitation email and cannot log in yet. ",
   "2513513412314834937": "Invitation email has been sent to {$PH}",
   "1987785992860223333": "Failed to send invitation email",
-  "7024976195900190702": "No records within the last 6 months. Showing the most recent records instead."
+  "7024976195900190702": "No records within the last 6 months. Showing the most recent records instead.",
+  "5653232299852128088": "Pattern (Regex)",
+  "2375020006246084373": "Define a format (-> regular expression) that text values have to match to be valid.",
+  "367387288971460528": "Not a valid regular expression",
+  "6932938032497130936": " Learn about regular expressions at {$START_LINK} developer.mozilla.org {$CLOSE_LINK}",
+  "7938911496689430902": "Validation Error Text for Pattern",
+  "3741445540696371596": "Optional custom message shown to users when their input does not match the pattern. If empty, a generic error message is displayed.",
+  "2785348116466137296": " Shown when the entered value does not match the pattern above "
 }
