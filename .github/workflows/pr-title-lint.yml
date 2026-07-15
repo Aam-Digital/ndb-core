@@ -1,0 +1,21 @@
+name: PR Title Lint
+# We squash-merge exclusively, with squash_merge_commit_title=PR_TITLE, so the
+# PR title becomes the commit subject on master that @semantic-release/commit-analyzer
+# reads to determine the next release version. Enforce Conventional Commits here
+# so an invalid/mistyped type doesn't silently produce a missing release.
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  validate:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
