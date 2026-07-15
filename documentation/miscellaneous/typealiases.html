@@ -739,6 +739,13 @@ Compliant examples:</p>
   pattern: "[a-z]*",
 }
 </pre>
+<p>The <code>pattern</code> validator alternatively supports an object form
+to display a custom error message when validation fails:</p>
+<pre>
+{
+  pattern: { pattern: "[0-9]{10}", message: "Enter a 10-digit phone number" },
+}
+</pre>
 <p>Non-compliant examples:</p>
 <pre>
 {
