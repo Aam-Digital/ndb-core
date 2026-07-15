@@ -8,9 +8,11 @@
       (ngModelChange)="onSelectedTypeChange($event)"
       [multi]="false"
       [showInternalTypes]="expertMode()"
-      [disableOption]="disableTypeOption"
-      [optionToString]="typeOptionToString"
+      [hideOption]="hideTypeOption"
     ></app-entity-type-select>
+    <mat-hint i18n>
+      Only record types you have permission to create are available.
+    </mat-hint>
   </mat-form-field>
 
   <app-help-button

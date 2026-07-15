@@ -42,15 +42,8 @@ export class ImportEntityTypeComponent {
    */
   expertMode = signal(false);
 
-  disableTypeOption = (type: EntityConstructor) =>
+  hideTypeOption = (type: EntityConstructor) =>
     this.ability.initialized && this.ability.cannot("create", type);
-
-  typeOptionToString = (type: EntityConstructor) => {
-    const label = type.label ?? type.ENTITY_TYPE;
-    return this.disableTypeOption(type)
-      ? $localize`${label} (no permission)`
-      : label;
-  };
 
   onSelectedTypeChange(newType) {
     this.entityType.set(newType);

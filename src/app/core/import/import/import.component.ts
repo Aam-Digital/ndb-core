@@ -77,6 +77,19 @@ export class ImportComponent {
   cannotImport =
     this.ability.initialized && this.ability.cannot("create", ImportMetadata);
 
+  /**
+   * Whether the user may update existing records of the selected type.
+   * The "check/update existing" option modifies existing records, so it requires
+   * update (not just create) permission on the target type.
+   */
+  canUpdateSelectedType = computed(() => {
+    const entityType = this.importSettings().entityType;
+    return (
+      !!entityType &&
+      (!this.ability.initialized || this.ability.can("update", entityType))
+    );
+  });
+
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
 

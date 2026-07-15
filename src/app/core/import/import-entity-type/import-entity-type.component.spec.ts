@@ -52,7 +52,7 @@ describe("ImportSelectTypeComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should disable and annotate types the user cannot create", () => {
+  it("should hide types the user cannot create", () => {
     const ability = TestBed.inject(EntityAbility);
     ability.update([
       { subject: "all", action: "manage" },
@@ -60,14 +60,7 @@ describe("ImportSelectTypeComponent", () => {
     ]);
     ability.initialized = true;
 
-    expect(component.disableTypeOption(TestEntity)).toBe(true);
-    expect(component.typeOptionToString(TestEntity)).toBe(
-      "some-label (no permission)",
-    );
-
-    expect(component.disableTypeOption(ConfigurableEnum)).toBe(false);
-    expect(component.typeOptionToString(ConfigurableEnum)).toBe(
-      ConfigurableEnum.label ?? ConfigurableEnum.ENTITY_TYPE,
-    );
+    expect(component.hideTypeOption(TestEntity)).toBe(true);
+    expect(component.hideTypeOption(ConfigurableEnum)).toBe(false);
   });
 });

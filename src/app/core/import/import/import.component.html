@@ -109,11 +109,13 @@
           "
         ></app-import-additional-actions>
 
-        <app-import-match-existing
-          [entityType]="importSettings().entityType"
-          [settings]="importSettings().importExisting"
-          (settingsChange)="updateImportSettings({ importExisting: $event })"
-        ></app-import-match-existing>
+        @if (canUpdateSelectedType()) {
+          <app-import-match-existing
+            [entityType]="importSettings().entityType"
+            [settings]="importSettings().importExisting"
+            (settingsChange)="updateImportSettings({ importExisting: $event })"
+          ></app-import-match-existing>
+        }
       </ng-template>
     </mat-step>
 

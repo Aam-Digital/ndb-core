@@ -151,7 +151,6 @@ export class BasicAutocompleteComponent<O, V = O>
   createOption = input<(input: string) => Promise<O>>();
   createOptions = input<CreateOptionConfig<O>[]>([]);
   hideOption = input<(option: O) => boolean>(() => false);
-  disableOption = input<(option: O) => boolean>(() => false);
 
   /**
    * Used in template to display the "Add new" option label.

@@ -81,6 +81,21 @@ describe("ImportComponent", () => {
     expect(component.cannotImport).toBe(false);
   });
 
+  it("should not allow updating existing records without update permission", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: "Child", action: "update", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    component.importSettings.set({ entityType: "Child" });
+    expect(component.canUpdateSelectedType()).toBe(false);
+
+    component.importSettings.set({ entityType: "School" });
+    expect(component.canUpdateSelectedType()).toBe(true);
+  });
+
   it("should update an empty column mapping upon loading rawData", async () => {
     component.onDataLoaded(testDataRaw);
 
