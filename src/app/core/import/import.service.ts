@@ -163,27 +163,70 @@ export class ImportService {
     let entity = new entityConstructor();
     let hasMappedProperty = false; // to avoid empty records being created
 
-    for (const col in row) {
-      const mapping: ColumnMapping = importSettings.columnMapping.find(
-        (c) => c.column === col,
-      );
-      if (!mapping) {
+    // group mappings by target property so datatypes that match across multiple
+    // columns (see importMatchField) see all their columns at once. All mapped
+    // columns are kept (even ones missing from this row) so a missing identifier
+    // can still block a match.
+    const mappingsByProperty = new Map<string, ColumnMapping[]>();
+    for (const mapping of importSettings.columnMapping) {
+      if (!mapping?.propertyName) {
         continue;
       }
+      const group = mappingsByProperty.get(mapping.propertyName) ?? [];
+      group.push(mapping);
+      mappingsByProperty.set(mapping.propertyName, group);
+    }
 
-      const parsed = await this.parseCell(
-        row[col],
-        mapping,
-        entity,
-        importProcessingContext,
-        errors,
-      );
+    for (const [propertyName, mappings] of mappingsByProperty) {
+      const schema = entity.getSchema().get(propertyName);
+      const datatype = schema
+        ? this.schemaService.getDatatypeOrDefault(schema.dataType)
+        : undefined;
 
-      if (parsed === undefined) {
-        continue;
+      let value;
+      if (schema && datatype?.importMatchField) {
+        // per-field matching: the datatype owns splitting and cross-column combination
+        try {
+          value = await datatype.importMatchField(
+            schema,
+            mappings.map((mapping) => ({
+              mapping,
+              rawCell: row[mapping.column],
+            })),
+            importProcessingContext,
+          );
+        } catch (e) {
+          errors.push({
+            column: mappings[0].column,
+            propertyName,
+            rowIndex: importProcessingContext.rowIndex,
+            error: e,
+          });
+          continue;
+        }
+      } else {
+        // default per-column path (last mapped column present in the row wins)
+        for (const mapping of mappings) {
+          if (!(mapping.column in row)) {
+            continue;
+          }
+          const parsed = await this.parseCell(
+            row[mapping.column],
+            mapping,
+            entity,
+            importProcessingContext,
+            errors,
+          );
+          if (parsed !== undefined) {
+            value = parsed;
+          }
+        }
       }
 
-      entity[mapping.propertyName] = parsed;
+      if (value === undefined || (Array.isArray(value) && value.length === 0)) {
+        continue;
+      }
+      entity[propertyName] = value;
       hasMappedProperty = true;
     }
 

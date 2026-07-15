@@ -194,6 +194,30 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
+   * Optional per-field import matching.
+   *
+   * When implemented, ImportService calls this once per target field per row,
+   * passing all columns mapped to that field together, and lets the datatype
+   * own value splitting and cross-column combination. This is required for
+   * matches that depend on several columns at once, which the per-value
+   * importMapFunction cannot express.
+   *
+   * Datatypes that leave this undefined keep the default per-column /
+   * per-value importMapFunction path (ImportService handles array splitting).
+   *
+   * @param schemaField the target property the value(s) are imported into
+   * @param columns every column mapped to this field, with its raw cell value
+   * @param importProcessingContext shared context across columns and rows
+   * @returns a single value (isArray=false) or array of values (isArray=true),
+   *   or undefined if nothing matched
+   */
+  importMatchField?(
+    schemaField: EntitySchemaField,
+    columns: { mapping: any; rawCell: any }[],
+    importProcessingContext?: any,
+  ): Promise<any>;
+
+  /**
    * A component to be rendered inline to configure the import transformation
    * (e.g. defining a format or value mapping).
    *
