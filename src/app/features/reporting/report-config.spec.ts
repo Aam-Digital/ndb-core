@@ -93,23 +93,17 @@ describe("reportUsesDateRange", () => {
     ).toBe(true);
   });
 
-  it("detects the ? placeholder in non-sql queries, incl. nested aggregations", () => {
+  it("always offers a date range for non-sql (in-browser) reports", () => {
     expect(
       reportUsesDateRange({
         mode: "reporting",
         reportDefinition: [{ query: "Child:toArray[*isActive=true]" }],
       }),
-    ).toBe(false);
-
+    ).toBe(true);
     expect(
       reportUsesDateRange({
         mode: "exporting",
-        reportDefinition: [
-          {
-            query: "EventNote:toArray",
-            subQueries: [{ query: ".[* date >= ? & date <= ?]" }],
-          },
-        ],
+        reportDefinition: [{ query: "EventNote:toArray" }],
       }),
     ).toBe(true);
   });

@@ -47,7 +47,7 @@ describe("EditReportPeriodToggleComponent", () => {
     expect(create("sql", []).component).toBeTruthy();
   });
 
-  it("derives usesDateRange from date placeholders in the query", () => {
+  it("derives usesDateRange from $startDate/$endDate for sql, and is always on for non-sql", () => {
     expect(
       create("sql", [{ query: "SELECT * FROM c" }]).component.usesDateRange(),
     ).toBe(false);
@@ -56,10 +56,9 @@ describe("EditReportPeriodToggleComponent", () => {
         { query: "SELECT * FROM c WHERE d BETWEEN $startDate AND $endDate" },
       ]).component.usesDateRange(),
     ).toBe(true);
+    // non-sql (in-browser) reports always run over the report period
     expect(
-      create("reporting", [
-        { query: "X:toArray[* date >= ? & date <= ?]" },
-      ]).component.usesDateRange(),
+      create("reporting", [{ query: "X:toArray" }]).component.usesDateRange(),
     ).toBe(true);
   });
 

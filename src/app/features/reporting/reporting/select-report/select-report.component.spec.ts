@@ -43,12 +43,10 @@ describe("SelectReportComponent", () => {
     expect(component.selectedReport()).toBe(report);
   });
 
-  it("should display date range filter when a non-sql query uses date placeholders", () => {
+  it("should display date range filter for a non-sql report", () => {
     const report = new ReportEntity();
     report.mode = "reporting";
-    report.reportDefinition = [
-      { query: "EventNote:toArray[* date >= ? & date <= ?]" },
-    ];
+    report.reportDefinition = [{ query: "Child:toArray[*isActive=true]" }];
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
@@ -56,14 +54,26 @@ describe("SelectReportComponent", () => {
     expect(component.isDateRangeReport()).toBe(true);
   });
 
-  it("should hide date range filter when a non-sql query has no date placeholders", () => {
+  it("should hide date range filter for a sql report without date placeholders", () => {
     const report = new ReportEntity();
-    report.mode = "reporting";
-    report.reportDefinition = [{ query: "Child:toArray[*isActive=true]" }];
+    report.mode = "sql";
+    report.reportDefinition = [{ query: "SELECT name FROM Child" }];
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
     expect(component.isDateRangeReport()).toBe(false);
+  });
+
+  it("should display date range filter when a sql query uses $startDate/$endDate", () => {
+    const report = new ReportEntity();
+    report.mode = "sql";
+    report.reportDefinition = [
+      { query: "SELECT * FROM Child WHERE d BETWEEN $startDate AND $endDate" },
+    ];
+    fixture.componentRef.setInput("reports", [report]);
+    fixture.detectChanges();
+
+    expect(component.isDateRangeReport()).toBe(true);
   });
 
   it("should display date range filter when sql report supports it", () => {
