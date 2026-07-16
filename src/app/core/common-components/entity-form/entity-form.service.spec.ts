@@ -191,6 +191,33 @@ describe("EntityFormService", () => {
     expect(otherControl.valid).toBe(true);
   });
 
+  it("should add validators for fields denied by inverted permission rules", async () => {
+    TestBed.inject(EntityAbility).update([
+      { subject: TestEntity.ENTITY_TYPE, action: "manage" },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "manage",
+        inverted: true,
+        conditions: { name: "forbidden name" },
+      },
+    ]);
+
+    // an existing entity, as for "create" the field is disabled through the
+    // condition-less permission check on the empty new entity instead
+    const entity = new TestEntity();
+    entity.name = "original name";
+    entity._rev = "1";
+
+    const form = await createForm([{ id: "name" }], entity);
+    const nameControl = form.formGroup.get("name");
+
+    nameControl.setValue("forbidden name");
+    expect(nameControl.errors["permissionCondition"]).toBeTruthy();
+
+    nameControl.setValue("any other name");
+    expect(nameControl.valid).toBe(true);
+  });
+
   it("should use create permissions to disable fields when creating a new entity", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([

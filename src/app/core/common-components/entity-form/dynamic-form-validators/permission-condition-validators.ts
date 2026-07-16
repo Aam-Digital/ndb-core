@@ -100,14 +100,29 @@ export class PermissionConditionValidatorsService {
 }
 
 /**
+ * A single per-field decision derived from one permission rule: if its
+ * condition fragment matches the field's value, the rule decides the outcome
+ * (deny for inverted rules, grant otherwise).
+ */
+interface FieldDecision {
+  fragment: any;
+  inverted: boolean;
+  matcher: Ability;
+}
+
+/**
  * Create a form validator that checks a single field's value against the
  * permission rule `conditions` restricting it, so that users see a normal
  * field error instead of only a technical rejection when saving.
  *
- * Returns `null` if the field's value cannot be the reason for a denied save,
- * i.e. if any granting rule does not restrict this field. Inverted ("cannot")
- * rules and conditions on properties without a form control (e.g. "created.by")
- * are not covered here and remain handled by the save-time permission check.
+ * The rules are evaluated in the given priority order (as returned by
+ * `ability.rulesFor`): the first rule whose condition matches the value
+ * decides, mirroring CASL's own precedence.
+ *
+ * Returns `null` if the field's value cannot be the reason for a denied save.
+ * Inverted ("cannot") rules with conditions on several fields and conditions
+ * on properties without a form control (e.g. "created.by") are not covered
+ * here and remain handled by the save-time permission check.
  *
  * @param rules The relevant CASL rules for the action and entity type (`ability.rulesFor(...)`)
  * @param fieldId The form field / entity property to validate
@@ -122,25 +137,66 @@ export function buildPermissionConditionValidator(
   toDbFormat: (value: any) => any = (value) => value,
   formatValue?: (value: any) => string,
 ): ValidatorFn | null {
-  const grantingRules = rules.filter((r) => !r.inverted);
-  const fieldRestrictedByAllRules =
-    grantingRules.length > 0 &&
-    grantingRules.every((r) => r.conditions && fieldId in r.conditions);
-  if (!fieldRestrictedByAllRules) {
+  if (!rules.some((r) => !r.inverted)) {
+    // without any granting rule the action is denied as a whole,
+    // which is handled by disabling the form, not per-field errors
     return null;
   }
 
-  const fragments = grantingRules.map((r) => r.conditions[fieldId]);
-  const matcher = new Ability(
-    fragments.map((fragment) => ({
-      action: MATCH_ACTION,
-      subject: MATCH_SUBJECT,
-      conditions: { [fieldId]: fragment },
-    })),
-  );
-  const allowedValues = fragments
+  const decisions: FieldDecision[] = [];
+  let unconditionalGrant = false;
+  for (const rule of rules) {
+    if (!rule.inverted) {
+      if (rule.conditions && fieldId in rule.conditions) {
+        decisions.push(createFieldDecision(rule, fieldId));
+      } else {
+        // grants regardless of this field's value; lower-priority rules
+        // can no longer change the outcome for this field
+        unconditionalGrant = true;
+        break;
+      }
+    } else if (
+      rule.conditions &&
+      fieldId in rule.conditions &&
+      Object.keys(rule.conditions).length === 1
+    ) {
+      decisions.push(createFieldDecision(rule, fieldId));
+    }
+    // inverted rules conditioned on other or several fields cannot be decided
+    // by this field's value alone and are left to the save-time check
+  }
+
+  const disallowedFragments = decisions
+    .filter((d) => d.inverted)
+    .map((d) => d.fragment);
+  if (disallowedFragments.length === 0 && unconditionalGrant) {
+    // no rule can reject based on this field's value
+    return null;
+  }
+
+  const allowedValues = unconditionalGrant
+    ? undefined
+    : decisions
+        .filter((d) => !d.inverted)
+        .map((d) => describeConditionFragment(d.fragment, formatValue))
+        .join(" / ");
+  const disallowedValues = disallowedFragments
     .map((fragment) => describeConditionFragment(fragment, formatValue))
     .join(" / ");
+
+  const errorMessage = [
+    allowedValues
+      ? $localize`:form field error for value outside the user's permissions:Your permissions only allow the following value(s) here\: ${allowedValues}`
+      : undefined,
+    disallowedValues
+      ? $localize`:form field error for a value denied by the user's permissions:Your permissions do not allow the following value(s) here\: ${disallowedValues}`
+      : undefined,
+  ]
+    .filter((part) => !!part)
+    .join(" ");
+  const error = {
+    permissionCondition: { allowedValues, disallowedValues, errorMessage },
+  };
 
   return (control) => {
     let value = control.value;
@@ -154,17 +210,34 @@ export function buildPermissionConditionValidator(
       }
     }
 
-    const checkedObject = value === undefined ? {} : { [fieldId]: value };
-    if (matcher.can(MATCH_ACTION, subject(MATCH_SUBJECT, checkedObject))) {
-      return null;
+    const checkedObject = subject(
+      MATCH_SUBJECT,
+      value === undefined ? {} : { [fieldId]: value },
+    );
+    for (const decision of decisions) {
+      if (decision.matcher.can(MATCH_ACTION, checkedObject)) {
+        return decision.inverted ? error : null;
+      }
     }
+    return unconditionalGrant ? null : error;
+  };
+}
 
-    return {
-      permissionCondition: {
-        allowedValues,
-        errorMessage: $localize`:form field error for value outside the user's permissions:Your permissions only allow the following value(s) here\: ${allowedValues}`,
+function createFieldDecision(
+  rule: RuleWithConditions,
+  fieldId: string,
+): FieldDecision {
+  const fragment = rule.conditions[fieldId];
+  return {
+    fragment,
+    inverted: !!rule.inverted,
+    matcher: new Ability([
+      {
+        action: MATCH_ACTION,
+        subject: MATCH_SUBJECT,
+        conditions: { [fieldId]: fragment },
       },
-    };
+    ]),
   };
 }
 

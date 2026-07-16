@@ -80,12 +80,70 @@ describe("buildPermissionConditionValidator", () => {
       ),
     ).toBeNull();
 
-    // inverted (cannot) rules are not translated into field validators
+    // a lone inverted rule without any granting rule: the action is denied
+    // as a whole (form is disabled elsewhere), no field validator needed
     expect(
       buildPermissionConditionValidator(
         [{ inverted: true, conditions: { language: "Bengali" } }],
         "language",
       ),
     ).toBeNull();
+
+    // inverted rules with multi-field conditions cannot be decided by a
+    // single field's value and are left to the save-time permission check
+    expect(
+      buildPermissionConditionValidator(
+        [
+          { inverted: true, conditions: { language: "Bengali", name: "x" } },
+          {},
+        ],
+        "language",
+      ),
+    ).toBeNull();
+  });
+
+  it("should flag values denied by a single-field inverted (cannot) rule", () => {
+    // priority order as returned by `ability.rulesFor`: first matching rule wins
+    const validator = buildPermissionConditionValidator(
+      [{ inverted: true, conditions: { center: "BERLIN" } }, {}],
+      "center",
+    );
+
+    const denied = validator(new FormControl("BERLIN"));
+    expect(denied.permissionCondition.errorMessage).toContain("BERLIN");
+
+    expect(validator(new FormControl("OTHER"))).toBeNull();
+    // an empty value is not denied by a "cannot ... BERLIN" rule
+    expect(validator(new FormControl(undefined))).toBeNull();
+  });
+
+  it("should respect rule priority when granting and inverted rules overlap", () => {
+    // a higher-priority granting rule wins over a later inverted rule
+    const validator = buildPermissionConditionValidator(
+      [
+        { conditions: { center: "BERLIN" } },
+        { inverted: true, conditions: { center: "BERLIN" } },
+      ],
+      "center",
+    );
+    expect(validator(new FormControl("BERLIN"))).toBeNull();
+
+    // combined with restricted granting rules, both limits apply
+    const combined = buildPermissionConditionValidator(
+      [
+        { inverted: true, conditions: { language: "Hindi" } },
+        { conditions: { language: { $in: ["Bengali", "Hindi"] } } },
+      ],
+      "language",
+    );
+    expect(combined(new FormControl("Bengali"))).toBeNull();
+    const deniedByInverted = combined(new FormControl("Hindi"));
+    expect(deniedByInverted.permissionCondition.errorMessage).toContain(
+      "Hindi",
+    );
+    const outsideAllowed = combined(new FormControl("English"));
+    expect(outsideAllowed.permissionCondition.errorMessage).toContain(
+      "Bengali",
+    );
   });
 });
