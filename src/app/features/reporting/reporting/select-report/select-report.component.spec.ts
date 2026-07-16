@@ -43,14 +43,27 @@ describe("SelectReportComponent", () => {
     expect(component.selectedReport()).toBe(report);
   });
 
-  it("should display date range filter when report mode is reporting", () => {
+  it("should display date range filter when a non-sql query uses date placeholders", () => {
     const report = new ReportEntity();
     report.mode = "reporting";
+    report.reportDefinition = [
+      { query: "EventNote:toArray[* date >= ? & date <= ?]" },
+    ];
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
     expect(component.selectedReport()).toBe(report);
     expect(component.isDateRangeReport()).toBe(true);
+  });
+
+  it("should hide date range filter when a non-sql query has no date placeholders", () => {
+    const report = new ReportEntity();
+    report.mode = "reporting";
+    report.reportDefinition = [{ query: "Child:toArray[*isActive=true]" }];
+    fixture.componentRef.setInput("reports", [report]);
+    fixture.detectChanges();
+
+    expect(component.isDateRangeReport()).toBe(false);
   });
 
   it("should display date range filter when sql report supports it", () => {

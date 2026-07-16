@@ -206,3 +206,41 @@ export function isHierarchicalReport(
     reportDefinition.some((item) => !!item.groupTitle)
   );
 }
+
+/**
+ * Whether running this report requires a date-range (start & end date) input,
+ * derived purely from the placeholders used in its queries:
+ * - "sql": the query uses the `$startDate` / `$endDate` placeholders.
+ * - "reporting"/"exporting": the query uses positional `?` placeholders (date args).
+ *
+ * This lets the UI decide automatically whether to offer a date range, instead of
+ * relying on a separately configured flag that can get out of sync with the query.
+ */
+export function reportUsesDateRange(
+  report: { mode?: string; reportDefinition?: unknown } | undefined,
+): boolean {
+  const queries = collectQueryStrings(report?.reportDefinition);
+  if (report?.mode === "sql") {
+    return queries.some((query) => /\$startDate|\$endDate/.test(query));
+  }
+  return queries.some((query) => query.includes("?"));
+}
+
+/** Recursively collect every `query` string value from a report definition tree. */
+function collectQueryStrings(node: unknown): string[] {
+  if (Array.isArray(node)) {
+    return node.flatMap(collectQueryStrings);
+  }
+  if (node && typeof node === "object") {
+    const out: string[] = [];
+    for (const [key, value] of Object.entries(node)) {
+      if (key === "query" && typeof value === "string") {
+        out.push(value);
+      } else {
+        out.push(...collectQueryStrings(value));
+      }
+    }
+    return out;
+  }
+  return [];
+}
