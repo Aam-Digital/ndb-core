@@ -25,6 +25,12 @@ export class LocalAuthService {
       return [];
     }
 
+    // Mock (demo) mode uses the in-memory PouchDB adapter, so no IndexedDB
+    // database exists to check against. Return all stored users directly.
+    if (environment.session_type === SessionType.mock) {
+      return users;
+    }
+
     const existingDbNames = await this.listIndexedDbNames();
     return users.filter((user) => this.hasLocalDatabase(user, existingDbNames));
   }

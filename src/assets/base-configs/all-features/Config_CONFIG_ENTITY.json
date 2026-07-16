@@ -778,28 +778,6 @@
             "label": "School"
           }
         ],
-        "exportConfig": [
-          {
-            "label": "Name",
-            "query": "name"
-          },
-          {
-            "label": "Gender",
-            "query": "gender"
-          },
-          {
-            "label": "Date of Birth",
-            "query": "dateOfBirth"
-          },
-          {
-            "label": "School",
-            "query": ".schoolId:toEntities(School).name"
-          },
-          {
-            "label": "more fields can be configured - or all data exported",
-            "query": "projectNumber"
-          }
-        ],
         "loaderMethod": "ChildrenService"
       },
       "_id": "view:child"
@@ -1223,20 +1201,6 @@
           "type",
           "status",
           "assignedTo"
-        ],
-        "exportConfig": [
-          {
-            "label": "Title",
-            "query": "title"
-          },
-          {
-            "label": "Type",
-            "query": "type"
-          },
-          {
-            "label": "Assigned users",
-            "query": "assignedTo"
-          }
         ]
       },
       "_id": "view:attendance/recurring-activity"

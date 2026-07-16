@@ -37,6 +37,13 @@ export type DynamicValidator =
  *   pattern: "[a-z]*",
  * }
  * </pre>
+ * The `pattern` validator alternatively supports an object form
+ * to display a custom error message when validation fails:
+ * <pre>
+ * {
+ *   pattern: { pattern: "[0-9]{10}", message: "Enter a 10-digit phone number" },
+ * }
+ * </pre>
  * Non-compliant examples:
  * <pre>
  * {
