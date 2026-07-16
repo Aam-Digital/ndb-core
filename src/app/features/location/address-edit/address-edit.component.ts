@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   ElementRef,
   input,
   model,
@@ -86,9 +87,9 @@ export class AddressEditComponent {
   }
 
   /** Drives the in-panel hint that text and structured details are diverging. */
-  hasDivergingText(): boolean {
-    return this.isTextManuallyOverwritten(this.selectedLocation());
-  }
+  readonly hasDivergingText = computed(() =>
+    this.isTextManuallyOverwritten(this.selectedLocation()),
+  );
 
   async updateAddressPart(
     key: "road" | "house_number" | "postcode" | "city" | "country",
@@ -100,16 +101,7 @@ export class AddressEditComponent {
     // falsely ask on every edit.
     const textOverwritten = this.isTextManuallyOverwritten(current);
 
-    const updated: GeoLocation = {
-      locationString: current?.locationString,
-      geoLookup: current?.geoLookup,
-      road: current?.road,
-      house_number: current?.house_number,
-      postcode: current?.postcode,
-      city: current?.city,
-      country: current?.country,
-      [key]: value,
-    };
+    const updated: GeoLocation = { ...current, [key]: value };
     const updatedText = this.geoService.composeAddressFromParts(updated);
 
     if (!textOverwritten) {
@@ -153,13 +145,8 @@ export class AddressEditComponent {
     }
 
     this.updateLocation({
+      ...this.selectedLocation(),
       locationString: manualAddress,
-      geoLookup: this.selectedLocation()?.geoLookup,
-      road: this.selectedLocation()?.road,
-      house_number: this.selectedLocation()?.house_number,
-      postcode: this.selectedLocation()?.postcode,
-      city: this.selectedLocation()?.city,
-      country: this.selectedLocation()?.country,
     });
   }
 
