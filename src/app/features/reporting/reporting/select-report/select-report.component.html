@@ -27,7 +27,9 @@
             </mat-option>
           }
         </mat-select>
+        <mat-hint>{{ selectedReport()?.description }}</mat-hint>
       </mat-form-field>
+
       @if (isDateRangeReport()) {
         <app-date-range-filter
           [filterConfig]="dateRangeFilterConfig()"

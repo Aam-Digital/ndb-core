@@ -82,7 +82,7 @@ class ReportConfig extends Entity {
    */
   @DatabaseField({
     label: $localize`:ReportConfig:Use report period (start & end date)`,
-    description: $localize`:ReportConfig:When enabled, the report uses the selected start and end date of the report period as parameters (SQL mode).`,
+    description: $localize`:ReportConfig:When you use time filters in your report, users see a date range selector to choose the start and end date for the report when calculating results.`,
     editComponent: "EditReportPeriodToggle",
   })
   transformations: {

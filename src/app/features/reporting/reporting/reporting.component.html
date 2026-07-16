@@ -96,15 +96,6 @@
   class="view-section"
 ></app-select-report>
 
-@if (currentReport()?.description; as description) {
-  <mat-expansion-panel class="view-section">
-    <mat-expansion-panel-header>
-      <mat-panel-title i18n>About this report</mat-panel-title>
-    </mat-expansion-panel-header>
-    <p class="report-description">{{ description }}</p>
-  </mat-expansion-panel>
-}
-
 @if (reportCalculation()) {
   @if (isStale()) {
     <div
