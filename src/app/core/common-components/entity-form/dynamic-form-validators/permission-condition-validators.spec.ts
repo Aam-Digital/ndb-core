@@ -4,6 +4,12 @@ import {
   describeConditionFragment,
 } from "./permission-condition-validators";
 
+/*
+ * The rules passed in are the pre-filtered result of `ability.rulesFor(action, entityType)`,
+ * i.e. all rules here apply to the tested entity type and action anyway.
+ * Only the `conditions` (and `inverted` flag) of a rule are relevant for the validator,
+ * so the fixtures omit the `subject` / `action` properties of real rules.
+ */
 describe("buildPermissionConditionValidator", () => {
   it("should flag values (incl. empty) not matching an equality condition and pass matching ones", () => {
     const validator = buildPermissionConditionValidator(
@@ -54,7 +60,8 @@ describe("buildPermissionConditionValidator", () => {
     // no rules at all
     expect(buildPermissionConditionValidator([], "language")).toBeNull();
 
-    // an unconditional rule grants access regardless of the field value
+    // {} = rule without any "conditions" (e.g. a plain "can manage School" rule),
+    // which grants access regardless of the field value
     expect(
       buildPermissionConditionValidator(
         [{ conditions: { language: "Bengali" } }, {}],

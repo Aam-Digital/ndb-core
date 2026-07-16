@@ -1,5 +1,12 @@
+import { inject, Injectable } from "@angular/core";
 import { ValidatorFn } from "@angular/forms";
 import { Ability, subject } from "@casl/ability";
+import { Entity } from "../../../entity/model/entity";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 /**
  * Minimal structural type of the CASL rules (see `Ability.rulesFor`)
@@ -12,6 +19,85 @@ interface RuleWithConditions {
 
 const MATCH_ACTION = "match";
 const MATCH_SUBJECT = "PermissionConditionCheck";
+
+/**
+ * Derives form validators and human-readable messages from the `conditions`
+ * of the current user's permission rules, so unmet conditions surface as
+ * normal field errors instead of only a technical rejection when saving.
+ */
+@Injectable({ providedIn: "root" })
+export class PermissionConditionValidatorsService {
+  private readonly ability = inject(EntityAbility);
+  private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly enumService = inject(ConfigurableEnumService);
+
+  /**
+   * Validator reflecting the current user's permission rule conditions for the
+   * given field, or `null` if the field's value cannot be the reason for a
+   * denied save.
+   */
+  forField(entity: Entity, fieldId: string): ValidatorFn | null {
+    const action = entity.isNew ? "create" : "update";
+    const rules = this.ability.rulesFor(action, entity.getType());
+    const schemaField = entity.getSchema().get(fieldId);
+
+    // rule conditions are evaluated against entities in database format
+    return buildPermissionConditionValidator(
+      rules,
+      fieldId,
+      (value) =>
+        this.entitySchemaService.valueToDatabaseFormat(
+          value,
+          schemaField,
+          entity,
+        ),
+      this.getConditionValueFormatter(schemaField),
+    );
+  }
+
+  /**
+   * Human-readable summary of the values the current user's permission rule
+   * conditions require on the entity (empty string if no rule has conditions),
+   * e.g. to explain a denied save.
+   */
+  describeRequiredValues(action: "create" | "update", entity: Entity): string {
+    return this.ability
+      .rulesFor(action, entity.getType())
+      .filter(
+        (r) =>
+          !r.inverted && r.conditions && Object.keys(r.conditions).length > 0,
+      )
+      .map((r) =>
+        Object.entries(r.conditions)
+          .map(([field, fragment]) => {
+            const schemaField = entity.getSchema().get(field);
+            const description = describeConditionFragment(
+              fragment,
+              this.getConditionValueFormatter(schemaField),
+            );
+            return `${schemaField?.label ?? field}: ${description}`;
+          })
+          .join(", "),
+      )
+      .join($localize`:joining alternative permission conditions: or `);
+  }
+
+  /**
+   * Human-readable display of a single (database-format) condition value,
+   * resolving configurable-enum ids to their labels.
+   */
+  private getConditionValueFormatter(
+    schemaField: EntitySchemaField | undefined,
+  ): ((value: any) => string) | undefined {
+    if (schemaField?.dataType !== ConfigurableEnumDatatype.dataType) {
+      return undefined;
+    }
+    return (value) =>
+      this.enumService
+        .getEnumValues(schemaField.additional)
+        .find((option) => option.id === value)?.label ?? String(value);
+  }
+}
 
 /**
  * Create a form validator that checks a single field's value against the

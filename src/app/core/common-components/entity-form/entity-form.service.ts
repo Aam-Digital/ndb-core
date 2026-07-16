@@ -1,27 +1,17 @@
 import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-  FormBuilder,
-  FormControl,
-  FormControlOptions,
-  ValidatorFn,
-} from "@angular/forms";
+import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
-import {
-  buildPermissionConditionValidator,
-  describeConditionFragment,
-} from "./dynamic-form-validators/permission-condition-validators";
+import { PermissionConditionValidatorsService } from "./dynamic-form-validators/permission-condition-validators";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import {
   EntityForm,
@@ -41,7 +31,9 @@ export class EntityFormService {
   private entityMapper = inject(EntityMapperService);
   private entitySchemaService = inject(EntitySchemaService);
   private dynamicValidator = inject(DynamicValidatorsService);
-  private readonly enumService = inject(ConfigurableEnumService);
+  private readonly permissionConditionValidators = inject(
+    PermissionConditionValidatorsService,
+  );
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
@@ -238,7 +230,7 @@ export class EntityFormService {
     }
 
     if (withPermissionCheck) {
-      const conditionValidator = this.getPermissionConditionValidator(
+      const conditionValidator = this.permissionConditionValidators.forField(
         entity,
         field.id,
       );
@@ -251,49 +243,6 @@ export class EntityFormService {
     }
 
     formConfig[field.id] = new FormControl(value, controlOptions);
-  }
-
-  /**
-   * Validator reflecting the current user's permission rule conditions for the
-   * given field, so unmet conditions show as normal field errors instead of
-   * only failing the save.
-   */
-  private getPermissionConditionValidator(
-    entity: Entity,
-    fieldId: string,
-  ): ValidatorFn | null {
-    const action = entity.isNew ? "create" : "update";
-    const rules = this.ability.rulesFor(action, entity.getType());
-    const schemaField = entity.getSchema().get(fieldId);
-
-    // rule conditions are evaluated against entities in database format
-    return buildPermissionConditionValidator(
-      rules,
-      fieldId,
-      (value) =>
-        this.entitySchemaService.valueToDatabaseFormat(
-          value,
-          schemaField,
-          entity,
-        ),
-      this.getConditionValueFormatter(schemaField),
-    );
-  }
-
-  /**
-   * Human-readable display of a single (database-format) condition value,
-   * resolving configurable-enum ids to their labels.
-   */
-  private getConditionValueFormatter(
-    schemaField: EntitySchemaField | undefined,
-  ): ((value: any) => string) | undefined {
-    if (schemaField?.dataType !== ConfigurableEnumDatatype.dataType) {
-      return undefined;
-    }
-    return (value) =>
-      this.enumService
-        .getEnumValues(schemaField.additional)
-        .find((option) => option.id === value)?.label ?? String(value);
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
@@ -394,25 +343,11 @@ export class EntityFormService {
     }
 
     if (!this.ability.can(action, entity, undefined, true)) {
-      const requiredValues = this.ability
-        .rulesFor(action, entity.getType())
-        .filter(
-          (r) =>
-            !r.inverted && r.conditions && Object.keys(r.conditions).length > 0,
-        )
-        .map((r) =>
-          Object.entries(r.conditions)
-            .map(([field, fragment]) => {
-              const schemaField = entity.getSchema().get(field);
-              const description = describeConditionFragment(
-                fragment,
-                this.getConditionValueFormatter(schemaField),
-              );
-              return `${schemaField?.label ?? field}: ${description}`;
-            })
-            .join(", "),
-        )
-        .join($localize`:joining alternative permission conditions: or `);
+      const requiredValues =
+        this.permissionConditionValidators.describeRequiredValues(
+          action,
+          entity,
+        );
 
       throw new Error(
         requiredValues
