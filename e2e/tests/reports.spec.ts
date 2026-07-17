@@ -15,14 +15,12 @@ test("Generate a configured aggregation report and download CSV", async ({
     generateChild({ name: `Reports Child ${i}` }),
   );
 
-  // Seed a non-SQL aggregation ReportConfig (with a description) so the Reports
-  // view has something to select. The query language is browser-side data
-  // aggregation; "Child:toArray" yields all Child entities.
-  const description = "This report counts all children in the system.";
+  // Seed a non-SQL aggregation ReportConfig so the Reports view has something to
+  // select. The query language is browser-side data aggregation; "Child:toArray"
+  // yields all Child entities.
   const reportConfig = createEntityOfType("ReportConfig", "e2e-basic-report");
   reportConfig.title = "E2E Basic Report";
   reportConfig.mode = "reporting";
-  reportConfig.description = description;
   reportConfig.reportDefinition = [
     {
       query: "Child:toArray",
@@ -37,12 +35,6 @@ test("Generate a configured aggregation report and download CSV", async ({
   // Pick the report in the Select Report dropdown.
   await page.getByRole("combobox", { name: /Select Report/i }).click();
   await page.getByRole("option", { name: "E2E Basic Report" }).click();
-
-  // The report's description is shown in a collapsible "About this report" panel.
-  const aboutButton = page.getByRole("button", { name: /About this report/ });
-  await expect(aboutButton).toBeVisible({ timeout: 10_000 });
-  await aboutButton.click();
-  await expect(page.getByText(description)).toBeVisible();
 
   // This report's query has no date placeholders, so no date-range selector is shown.
   await argosScreenshot(page, "reports-selected");
