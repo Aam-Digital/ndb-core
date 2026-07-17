@@ -257,8 +257,16 @@ test("Import a multi-value entity reference from a single comma-separated column
     .getByRole("button", { name: "Confirm & Run Import" })
     .click();
 
-  // import runs to completion (the note is created with both linked schools)
+  // import runs to completion
   await expect(page.getByText("Import completed")).toBeVisible({
     timeout: 15_000,
   });
+
+  // open the created note and confirm both schools are linked on the saved record
+  await page.getByRole("navigation").getByText("Notes").click();
+  await page.getByText("Joint school meeting").click();
+  const noteDetails = page.getByRole("dialog");
+  await expect(noteDetails).toBeVisible();
+  await expect(noteDetails.getByText("Springfield Elementary")).toBeVisible();
+  await expect(noteDetails.getByText("Shelbyville Academy")).toBeVisible();
 });

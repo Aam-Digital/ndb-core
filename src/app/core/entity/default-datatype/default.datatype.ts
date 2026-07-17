@@ -20,6 +20,17 @@ import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity, EntityConstructor } from "../model/entity";
 import { asArray } from "../../../utils/asArray";
 import { splitArrayValue } from "../../import/split-array-value";
+import type { ColumnMapping } from "../../import/column-mapping";
+import type { ImportProcessingContext } from "../../import/import-processing-context";
+
+/**
+ * A single column mapped to a target field during import, with the raw cell
+ * value from the current row.
+ */
+export interface ColumnImportInput {
+  mapping: ColumnMapping;
+  rawCell: unknown;
+}
 
 /**
  * Definition of an export column contributed by a datatype.
@@ -211,57 +222,74 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    */
   async importMatchField(
     schemaField: EntitySchemaField,
-    columns: { mapping: any; rawCell: any }[],
-    importProcessingContext?: any,
-  ): Promise<any> {
-    const additionalSettings =
-      importProcessingContext?.importSettings?.additionalSettings;
-    const separator = additionalSettings?.multiValueSeparator ?? ",";
-
-    let value;
+    columns: ColumnImportInput[],
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise<unknown> {
+    let value: unknown;
     // if several columns map to the same field, the last one with a value wins
-    for (const { mapping, rawCell } of columns) {
-      if (rawCell === undefined || rawCell === null) {
-        continue;
-      }
-
-      let val = rawCell;
-      const shouldTrim =
-        typeof val === "string" &&
-        schemaField.trim !== false &&
-        additionalSettings?.trimValues !== false;
-      if (shouldTrim) {
-        val = val.trim();
-      }
-
-      const shouldSplit =
-        schemaField.isArray && (mapping.additional?.enableSplitting ?? true);
-
-      if (!shouldSplit) {
-        value = await this.importMapFunction(
-          val,
-          schemaField,
-          mapping.additional,
-          importProcessingContext,
-        );
-      } else {
-        // split the cell and map each item individually
-        const mapped = [];
-        for (const rawValue of splitArrayValue(val, separator)) {
-          const item = await this.importMapFunction(
-            rawValue,
-            { ...schemaField, isArray: false },
-            mapping.additional,
-            importProcessingContext,
-          );
-          if (item !== undefined && item !== null && item !== "") {
-            mapped.push(item);
-          }
-        }
-        value = [...new Set(mapped)];
+    for (const column of columns) {
+      const mapped = await this.mapColumnValue(
+        schemaField,
+        column,
+        importProcessingContext,
+      );
+      if (mapped !== undefined) {
+        value = mapped;
       }
     }
     return value;
+  }
+
+  /**
+   * Map a single column's raw cell to this field's value: trim and (for array
+   * fields) split the cell, then delegate each value to {@link importMapFunction}.
+   */
+  private async mapColumnValue(
+    schemaField: EntitySchemaField,
+    { mapping, rawCell }: ColumnImportInput,
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise<unknown> {
+    if (rawCell === undefined || rawCell === null) {
+      return undefined;
+    }
+    const additionalSettings =
+      importProcessingContext?.importSettings?.additionalSettings;
+
+    let val: unknown = rawCell;
+    const shouldTrim =
+      typeof val === "string" &&
+      schemaField.trim !== false &&
+      additionalSettings?.trimValues !== false;
+    if (shouldTrim) {
+      val = (val as string).trim();
+    }
+
+    const shouldSplit =
+      schemaField.isArray && (mapping.additional?.enableSplitting ?? true);
+    if (!shouldSplit) {
+      return this.importMapFunction(
+        val,
+        schemaField,
+        mapping.additional,
+        importProcessingContext,
+      );
+    }
+
+    // split the cell and map each item individually
+    const separator = additionalSettings?.multiValueSeparator ?? ",";
+    const mapped: unknown[] = [];
+    for (const rawValue of splitArrayValue(val, separator)) {
+      const item = await this.importMapFunction(
+        rawValue,
+        { ...schemaField, isArray: false },
+        mapping.additional,
+        importProcessingContext,
+      );
+      if (item !== undefined && item !== null && item !== "") {
+        mapped.push(item);
+      }
+    }
+    return [...new Set(mapped)];
   }
 
   /**

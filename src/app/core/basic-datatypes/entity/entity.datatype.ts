@@ -26,7 +26,10 @@ import { splitArrayValue } from "../../import/split-array-value";
 import { ColumnMapping } from "../../import/column-mapping";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { ExportColumnMapping } from "../../entity/default-datatype/default.datatype";
+import {
+  ColumnImportInput,
+  ExportColumnMapping,
+} from "../../entity/default-datatype/default.datatype";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
@@ -105,7 +108,7 @@ export class EntityDatatype extends StringDatatype {
    */
   override async importMatchField(
     schemaField: EntitySchemaField,
-    columns: { mapping: ColumnMapping; rawCell: any }[],
+    columns: ColumnImportInput[],
     importProcessingContext: ImportProcessingContext,
   ): Promise<string | string[] | undefined> {
     const context = new EntityFieldImportContext(
@@ -115,12 +118,57 @@ export class EntityDatatype extends StringDatatype {
     await this.loadImportMapEntities(schemaField.additional, context);
     const candidates = context.entities ?? [];
 
+    const criteria = await this.buildMatchCriteria(
+      columns,
+      context,
+      importProcessingContext,
+    );
+    if (criteria.length === 0) {
+      return schemaField.isArray ? [] : undefined;
+    }
+
+    // A candidate matches when, for every mapped column, its referenced field
+    // value is one of that column's (possibly multiple) values. A mapped column
+    // with no value yields an empty list that matches nothing, so an incomplete
+    // row cannot match.
+    const matchedIds = candidates
+      .filter((entity) =>
+        criteria.every((criterion) =>
+          criterion.values.includes(normalizeValue(entity[criterion.refField])),
+        ),
+      )
+      .map((entity) => entity._id);
+    const uniqueIds = [...new Set(matchedIds)];
+
+    if (schemaField.isArray) {
+      return uniqueIds;
+    }
+    if (uniqueIds.length === 1) {
+      return uniqueIds[0];
+    }
+    if (uniqueIds.length > 1) {
+      Logging.debug(
+        "No unique match found in EntityDatatype importMatchField",
+        uniqueIds.length,
+      );
+    }
+    return undefined;
+  }
+
+  /**
+   * Build one match criterion per mapped column: the referenced field to
+   * compare and the acceptable (normalized) values parsed from the column cell.
+   */
+  private async buildMatchCriteria(
+    columns: ColumnImportInput[],
+    context: EntityFieldImportContext,
+    importProcessingContext: ImportProcessingContext,
+  ): Promise<EntityMatchCriterion[]> {
     const separator =
       importProcessingContext.importSettings.additionalSettings
         ?.multiValueSeparator ?? ",";
 
-    // one list of comparison values per mapped column
-    const columnValueLists: { refField: string; values: string[] }[] = [];
+    const criteria: EntityMatchCriterion[] = [];
     for (const { mapping, rawCell } of columns) {
       const config = normalizeEntityAdditional(mapping.additional);
       if (!config?.refField) {
@@ -128,16 +176,12 @@ export class EntityDatatype extends StringDatatype {
         continue;
       }
 
-      const enableSplitting = mapping.additional?.enableSplitting ?? true;
-      const rawValues =
-        rawCell == null
-          ? []
-          : enableSplitting
-            ? splitArrayValue(rawCell, separator)
-            : [rawCell];
-
       const values: string[] = [];
-      for (const rawValue of rawValues) {
+      for (const rawValue of this.splitCellValues(
+        rawCell,
+        mapping,
+        separator,
+      )) {
         values.push(
           await this.resolveColumnValue(
             rawValue,
@@ -148,64 +192,25 @@ export class EntityDatatype extends StringDatatype {
           ),
         );
       }
-      // a mapped identifier column with no value can never match, so keep it as
-      // an (empty) criterion rather than dropping it (blocks incomplete rows)
-      columnValueLists.push({
-        refField: config.refField,
-        values: values.length ? values : [""],
-      });
+      criteria.push({ refField: config.refField, values });
     }
-
-    if (columnValueLists.length === 0) {
-      return schemaField.isArray ? [] : undefined;
-    }
-
-    const matches = this.findMatchingEntities(candidates, columnValueLists);
-
-    if (schemaField.isArray) {
-      return matches.map((entity) => entity._id);
-    }
-    if (matches.length === 1) {
-      return matches[0]._id;
-    }
-    if (matches.length > 1) {
-      Logging.debug(
-        "No unique match found in EntityDatatype importMatchField",
-        matches.length,
-      );
-    }
-    return undefined;
+    return criteria;
   }
 
   /**
-   * Returns the distinct entities matched by any combination of one comparison
-   * value per column (cartesian product of the columns' value lists).
+   * Split a raw cell into the individual values to match, honoring the column's
+   * enableSplitting flag.
    */
-  private findMatchingEntities(
-    candidates: any[],
-    columnValueLists: { refField: string; values: string[] }[],
-  ): any[] {
-    let combinations: Record<string, string>[] = [{}];
-    for (const { refField, values } of columnValueLists) {
-      combinations = combinations.flatMap((combination) =>
-        values.map((value) => ({ ...combination, [refField]: value })),
-      );
+  private splitCellValues(
+    rawCell: unknown,
+    mapping: ColumnMapping,
+    separator: string,
+  ): unknown[] {
+    if (rawCell === undefined || rawCell === null) {
+      return [];
     }
-
-    const matched: any[] = [];
-    const seen = new Set<string>();
-    for (const combination of combinations) {
-      for (const entity of candidates) {
-        const isMatch = Object.entries(combination).every(
-          ([refField, value]) => normalizeValue(entity[refField]) === value,
-        );
-        if (isMatch && !seen.has(entity._id)) {
-          seen.add(entity._id);
-          matched.push(entity);
-        }
-      }
-    }
-    return matched;
+    const enableSplitting = mapping.additional?.enableSplitting ?? true;
+    return enableSplitting ? splitArrayValue(rawCell, separator) : [rawCell];
   }
 
   /**
@@ -313,6 +318,15 @@ export class EntityDatatype extends StringDatatype {
 
     return relatedEntitiesToStrings;
   }
+}
+
+/**
+ * One matching condition derived from a mapped import column: candidates must
+ * have `refField` equal to one of the (normalized) `values`.
+ */
+interface EntityMatchCriterion {
+  refField: string;
+  values: string[];
 }
 
 /**
