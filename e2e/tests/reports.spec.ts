@@ -39,7 +39,9 @@ test("Generate a configured aggregation report and download CSV", async ({
   await page.getByRole("option", { name: "E2E Basic Report" }).click();
 
   // The report's description is shown in a collapsible "About this report" panel.
-  await page.getByRole("button", { name: /About this report/ }).click();
+  const aboutButton = page.getByRole("button", { name: /About this report/ });
+  await expect(aboutButton).toBeVisible({ timeout: 10_000 });
+  await aboutButton.click();
   await expect(page.getByText(description)).toBeVisible();
 
   // This report's query has no date placeholders, so no date-range selector is shown.
