@@ -270,6 +270,8 @@ import { DatabaseEntity } from &quot;../../core/entity/database-entity.decorator
 import { Aggregation } from &quot;./data-aggregation.service&quot;;
 import { ExportColumnConfig } from &quot;../../core/export/data-transformation-service/export-column-config&quot;;
 import { DatabaseField } from &quot;../../core/entity/database-field.decorator&quot;;
+import { LongTextDatatype } from &quot;../../core/basic-datatypes/string/long-text.datatype&quot;;
+import { IconName } from &quot;@fortawesome/fontawesome-svg-core&quot;;
 
 /**
  * A report can be accessed by users to generate aggregated statistics or customized exports calculated from available data.
@@ -281,16 +283,39 @@ import { DatabaseField } from &quot;../../core/entity/database-field.decorator&q
 @DatabaseEntity(&quot;ReportConfig&quot;)
 class ReportConfig extends Entity {
   static override isInternalEntity &#x3D; true;
+  static override readonly label &#x3D; $localize&#x60;:ReportConfig:Report&#x60;;
+  static override readonly labelPlural &#x3D; $localize&#x60;:ReportConfig:Reports&#x60;;
+  static override readonly toStringAttributes &#x3D; [&quot;title&quot;];
+  static override readonly route &#x3D; &quot;admin/report-config&quot;;
+  static override readonly icon: IconName &#x3D; &quot;chart-line&quot;;
 
   /** human-readable title of the report */
-  @DatabaseField() title: string;
+  @DatabaseField({
+    label: $localize&#x60;:ReportConfig:Title&#x60;,
+    validators: { required: true },
+  })
+  title: string;
+
+  /** longer description documenting the purpose and usage of this report */
+  @DatabaseField({
+    label: $localize&#x60;:ReportConfig:Description&#x60;,
+    description: $localize&#x60;:ReportConfig:Document the purpose and usage of this report. This is also shown to users above the results when the report is run.&#x60;,
+    dataType: LongTextDatatype.dataType,
+  })
+  description?: string;
 
   /**
    * (optional) mode of export.
    * The {@link ReportEntity} holds the restriction on valid report modes.
    * Default is &quot;reporting&quot;
    */
-  @DatabaseField() mode?: string;
+  @DatabaseField({
+    label: $localize&#x60;:ReportConfig:Mode&#x60;,
+    description: $localize&#x60;:ReportConfig:How the report is calculated: &quot;reporting&quot; (in-browser aggregations), &quot;exporting&quot; (data export) or &quot;sql&quot; (server-side SQL queries). Defaults to &quot;reporting&quot;.&#x60;,
+    editComponent: &quot;EditReportMode&quot;,
+    validators: { required: true },
+  })
+  mode?: string;
 
   /**
    * @deprecated (will be removed completely after server-side migration)
@@ -322,7 +347,12 @@ class ReportConfig extends Entity {
    *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
    *  example: {startDate: [&quot;SQL_FROM_DATE&quot;], endDate: [&quot;SQL_TO_DATE&quot;]}
    */
-  @DatabaseField() transformations: {
+  @DatabaseField({
+    label: $localize&#x60;:ReportConfig:Use report period (start &amp; end date)&#x60;,
+    description: $localize&#x60;:ReportConfig:When you use time filters in your report, users see a date range selector to choose the start and end date for the report when calculating results.&#x60;,
+    editComponent: &quot;EditReportPeriodToggle&quot;,
+  })
+  transformations: {
     [key: string]: string[];
   };
 
@@ -334,7 +364,12 @@ class ReportConfig extends Entity {
    *
    * Consolidated from the former &#x60;aggregationDefinitions&#x60; so all report modes share one field.
    */
-  @DatabaseField()
+  @DatabaseField({
+    label: $localize&#x60;:ReportConfig:Report definition&#x60;,
+    description: $localize&#x60;:ReportConfig:The definition of what the report calculates: SQL queries for &quot;sql&quot; mode, or aggregation/export definitions for &quot;reporting&quot;/&quot;exporting&quot; mode.&#x60;,
+    // Part B replaces this with the structured &quot;EditReportDefinition&quot; editor (sql mode).
+    editComponent: &quot;EditJson&quot;,
+  })
   reportDefinition:
     ReportDefinitionDto[] | Aggregation[] | ExportColumnConfig[];
 }
@@ -437,6 +472,44 @@ export function isHierarchicalReport(
     reportDefinition.length &gt; 1 ||
     reportDefinition.some((item) &#x3D;&gt; !!item.groupTitle)
   );
+}
+
+/**
+ * Whether running this report offers a date-range (start &amp; end date) input, derived from the
+ * date placeholders used in its queries so it stays in sync with the actual report definition:
+ * - &quot;sql&quot;: the query uses the &#x60;$startDate&#x60; / &#x60;$endDate&#x60; placeholders.
+ * - &quot;reporting&quot;/&quot;exporting&quot;: the in-browser query uses positional &#x60;?&#x60; placeholders (date args).
+ */
+export function reportUsesDateRange(
+  report: { mode?: string; reportDefinition?: unknown } | undefined,
+): boolean {
+  if (!report) {
+    return false;
+  }
+  const queries &#x3D; collectQueryStrings(report.reportDefinition);
+  if (report.mode &#x3D;&#x3D;&#x3D; &quot;sql&quot;) {
+    return queries.some((query) &#x3D;&gt; /\$startDate|\$endDate/.test(query));
+  }
+  return queries.some((query) &#x3D;&gt; query.includes(&quot;?&quot;));
+}
+
+/** Recursively collect every &#x60;query&#x60; string value from a report definition tree. */
+function collectQueryStrings(node: unknown): string[] {
+  if (Array.isArray(node)) {
+    return node.flatMap(collectQueryStrings);
+  }
+  if (node &amp;&amp; typeof node &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    const out: string[] &#x3D; [];
+    for (const [key, value] of Object.entries(node)) {
+      if (key &#x3D;&#x3D;&#x3D; &quot;query&quot; &amp;&amp; typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+        out.push(value);
+      } else {
+        out.push(...collectQueryStrings(value));
+      }
+    }
+    return out;
+  }
+  return [];
 }
 </code></pre>
     </div>

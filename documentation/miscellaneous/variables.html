@@ -562,6 +562,9 @@
                             <a href="#removeOutdatedTodoViews" title="src/app/core/config/config-migrations.ts" ><b>removeOutdatedTodoViews</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</a>
                         </li>
                         <li>
+                            <a href="#reportAdminViewConfigs" title="src/app/features/reporting/reporting.module.ts" ><b>reportAdminViewConfigs</b>&nbsp;&nbsp;&nbsp;(src/.../reporting.module.ts)</a>
+                        </li>
+                        <li>
                             <a href="#ReportEntity" title="src/app/features/reporting/report-config.ts" ><b>ReportEntity</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</a>
                         </li>
                         <li>
@@ -3835,6 +3838,13 @@ application-level errors.</p>
     () &#x3D;&gt;
       import(&quot;./common-components/color-input/color-input.component&quot;).then(
         (c) &#x3D;&gt; c.ColorInputComponent,
+      ),
+  ],
+  [
+    &quot;EditJson&quot;,
+    () &#x3D;&gt;
+      import(&quot;./admin/json-editor/edit-json/edit-json.component&quot;).then(
+        (c) &#x3D;&gt; c.EditJsonComponent,
       ),
   ],
 ]</code>
@@ -7906,6 +7916,88 @@ to use the runtime <code>/c/</code> prefix.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/features/reporting/reporting.module.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="reportAdminViewConfigs"></a>
+                    <span class="name">
+                        <span ><b>reportAdminViewConfigs</b></span>
+                        <a href="#reportAdminViewConfigs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ViewConfig.html" target="_self" >ViewConfig[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  {
+    _id: &quot;view:&quot; + ReportEntity.route,
+    component: &quot;EntityList&quot;,
+    config: {
+      entityType: ReportEntity.ENTITY_TYPE,
+      columns: [&quot;title&quot;, &quot;mode&quot;, &quot;description&quot;],
+    } as EntityListConfig,
+  },
+
+  // Details / edit view
+  {
+    _id: &quot;view:&quot; + ReportEntity.route + &quot;/:id&quot;,
+    component: &quot;EntityDetails&quot;,
+    config: {
+      entityType: ReportEntity.ENTITY_TYPE,
+      panels: [
+        {
+          components: [
+            {
+              component: &quot;Form&quot;,
+              config: {
+                fieldGroups: [
+                  {
+                    fields: [
+                      {
+                        id: &quot;report_explanation&quot;,
+                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
+                        label: $localize&#x60;:ReportConfig:Configure a report that users can run to generate aggregated statistics or data exports.
+See [Analyzing data through advanced reports](https://chatwoot.help/hc/aam-digital/articles/1782889956-analyzing-data-through-advanced-reports) for how to set up and use reports.&#x60;,
+                      },
+                      &quot;title&quot;,
+                      &quot;mode&quot;,
+                      &quot;description&quot;,
+                      &quot;transformations&quot;,
+                    ],
+                  },
+                  { fields: [&quot;reportDefinition&quot;] },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    } as EntityDetailsConfig,
+  },
+]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Admin list + details views to manage <a href="../miscellaneous/typealiases.html#ReportEntity">ReportEntity</a> configs,
+registered the same way as other &quot;Templates and Forms&quot; entities (e.g. EmailTemplate).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/features/reporting/report-config.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -7968,6 +8060,20 @@ to use the runtime <code>/c/</code> prefix.</p>
     () &#x3D;&gt;
       import(&quot;./reporting/reporting.component&quot;).then(
         (c) &#x3D;&gt; c.ReportingComponent,
+      ),
+  ],
+  [
+    &quot;EditReportMode&quot;,
+    () &#x3D;&gt;
+      import(&quot;./edit-report-mode/edit-report-mode.component&quot;).then(
+        (c) &#x3D;&gt; c.EditReportModeComponent,
+      ),
+  ],
+  [
+    &quot;EditReportPeriodToggle&quot;,
+    () &#x3D;&gt;
+      import(&quot;./edit-report-period-toggle/edit-report-period-toggle.component&quot;).then(
+        (c) &#x3D;&gt; c.EditReportPeriodToggleComponent,
       ),
   ],
 ]</code>

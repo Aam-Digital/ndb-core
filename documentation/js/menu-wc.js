@@ -1071,6 +1071,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/EditImportColumnMappingComponent.html" data-type="entity-link" >EditImportColumnMappingComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/EditJsonComponent.html" data-type="entity-link" >EditJsonComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/EditLegacyAttendanceComponent.html" data-type="entity-link" class="deprecated-name">EditLegacyAttendanceComponent</a>
                             </li>
                             <li class="link">
@@ -1111,6 +1114,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/EditRecurringIntervalComponent.html" data-type="entity-link" >EditRecurringIntervalComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/EditReportModeComponent.html" data-type="entity-link" >EditReportModeComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/EditReportPeriodToggleComponent.html" data-type="entity-link" >EditReportPeriodToggleComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/EditTemplateExportFileComponent.html" data-type="entity-link" >EditTemplateExportFileComponent</a>

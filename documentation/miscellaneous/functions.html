@@ -211,6 +211,9 @@
                             <a href="#closeOnlySubmenu" title="src/app/features/notification/close-only-submenu.ts" ><b>closeOnlySubmenu</b>&nbsp;&nbsp;&nbsp;(src/.../close-only-submenu.ts)</a>
                         </li>
                         <li>
+                            <a href="#collectQueryStrings" title="src/app/features/reporting/report-config.ts" ><b>collectQueryStrings</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</a>
+                        </li>
+                        <li>
                             <a href="#compareDates" title="src/app/utils/filter-compare-utils.ts" ><b>compareDates</b>&nbsp;&nbsp;&nbsp;(src/.../filter-compare-utils.ts)</a>
                         </li>
                         <li>
@@ -617,6 +620,9 @@
                         </li>
                         <li>
                             <a href="#removeFollowUpMarkerForOldNotes" title="src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts" ><b>removeFollowUpMarkerForOldNotes</b>&nbsp;&nbsp;&nbsp;(src/.../demo-note-generator.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#reportUsesDateRange" title="src/app/features/reporting/report-config.ts" ><b>reportUsesDateRange</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</a>
                         </li>
                         <li>
                             <a href="#resizeImage" title="src/app/features/file/file-utils.ts" ><b>resizeImage</b>&nbsp;&nbsp;&nbsp;(src/.../file-utils.ts)</a>
@@ -4986,6 +4992,195 @@ and stop propagation of the event to avoid closing parent menus as well.</p>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/reporting/report-config.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="collectQueryStrings"></a>
+                    <span class="name">
+                        <span ><b>collectQueryStrings</b></span>
+                        <a href="#collectQueryStrings"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>collectQueryStrings(node)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Recursively collect every <code>query</code> string value from a report definition tree.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>node</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isHierarchicalReport"></a>
+                    <span class="name">
+                        <span ><b>isHierarchicalReport</b></span>
+                        <a href="#isHierarchicalReport"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isHierarchicalReport(report)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether a report&#39;s results should be rendered as a hierarchical group/count
+table (<code>sql-v2-table</code>) rather than a flat tabular table (<code>object-table</code>).</p>
+<p>Derived purely from the canonical config structure (no version flag):
+a report is hierarchical when its <code>reportDefinition</code> contains a group
+(<code>groupTitle</code>) or more than one top-level item; otherwise it is tabular.
+Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>report</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="reportUsesDateRange"></a>
+                    <span class="name">
+                        <span ><b>reportUsesDateRange</b></span>
+                        <a href="#reportUsesDateRange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>reportUsesDateRange(report)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether running this report offers a date-range (start &amp; end date) input, derived from the
+date placeholders used in its queries so it stays in sync with the actual report definition:</p>
+<ul>
+<li>&quot;sql&quot;: the query uses the <code>$startDate</code> / <code>$endDate</code> placeholders.</li>
+<li>&quot;reporting&quot;/&quot;exporting&quot;: the in-browser query uses positional <code>?</code> placeholders (date args).</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>report</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>
@@ -11605,72 +11800,6 @@ Can be configured to validate different properties (id, label, etc.) with option
                             <div class="io-description">
                                 <p>An async validator function</p>
 
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>    <h3>src/app/features/reporting/report-config.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="isHierarchicalReport"></a>
-                    <span class="name">
-                        <span ><b>isHierarchicalReport</b></span>
-                        <a href="#isHierarchicalReport"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>isHierarchicalReport(report)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Whether a report&#39;s results should be rendered as a hierarchical group/count
-table (<code>sql-v2-table</code>) rather than a flat tabular table (<code>object-table</code>).</p>
-<p>Derived purely from the canonical config structure (no version flag):
-a report is hierarchical when its <code>reportDefinition</code> contains a group
-(<code>groupTitle</code>) or more than one top-level item; otherwise it is tabular.
-Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>report</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
                             </div>
                 </td>
             </tr>

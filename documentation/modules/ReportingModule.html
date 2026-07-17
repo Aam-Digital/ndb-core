@@ -151,6 +151,12 @@
 import { ComponentRegistry } from &quot;../../dynamic-components&quot;;
 import { reportingComponents } from &quot;./reporting-components&quot;;
 import { ReportEntity } from &quot;./report-config&quot;;
+import { RouterService } from &quot;#src/app/core/config/dynamic-routing/router.service&quot;;
+import { AdminOverviewService } from &quot;#src/app/core/admin/admin-overview/admin-overview.service&quot;;
+import { getEntityRuntimeRoute } from &quot;#src/app/core/entity/entity-config.service&quot;;
+import { ViewConfig } from &quot;#src/app/core/config/dynamic-routing/view-config.interface&quot;;
+import { EntityListConfig } from &quot;#src/app/core/entity-list/EntityListConfig&quot;;
+import { EntityDetailsConfig } from &quot;#src/app/core/entity-details/EntityDetailsConfig&quot;;
 
 @NgModule({})
 export class ReportingModule {
@@ -158,10 +164,71 @@ export class ReportingModule {
 
   constructor() {
     const components &#x3D; inject(ComponentRegistry);
+    const routerService &#x3D; inject(RouterService);
+    const adminOverviewService &#x3D; inject(AdminOverviewService);
 
     components.addAll(reportingComponents);
+    routerService.addRoutes(reportAdminViewConfigs);
+
+    adminOverviewService.addTemplateItems({
+      label: $localize&#x60;:admin menu item:Reports&#x60;,
+      link: getEntityRuntimeRoute(ReportEntity),
+      subtitle: $localize&#x60;:admin menu item subtitle:Create and edit report configurations for aggregations, exports and SQL reports.&#x60;,
+    });
   }
 }
+
+/**
+ * Admin list + details views to manage {@link ReportEntity} configs,
+ * registered the same way as other &quot;Templates and Forms&quot; entities (e.g. EmailTemplate).
+ */
+const reportAdminViewConfigs: ViewConfig[] &#x3D; [
+  {
+    _id: &quot;view:&quot; + ReportEntity.route,
+    component: &quot;EntityList&quot;,
+    config: {
+      entityType: ReportEntity.ENTITY_TYPE,
+      columns: [&quot;title&quot;, &quot;mode&quot;, &quot;description&quot;],
+    } as EntityListConfig,
+  },
+
+  // Details / edit view
+  {
+    _id: &quot;view:&quot; + ReportEntity.route + &quot;/:id&quot;,
+    component: &quot;EntityDetails&quot;,
+    config: {
+      entityType: ReportEntity.ENTITY_TYPE,
+      panels: [
+        {
+          components: [
+            {
+              component: &quot;Form&quot;,
+              config: {
+                fieldGroups: [
+                  {
+                    fields: [
+                      {
+                        id: &quot;report_explanation&quot;,
+                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
+                        label: $localize&#x60;:ReportConfig:Configure a report that users can run to generate aggregated statistics or data exports.
+See [Analyzing data through advanced reports](https://chatwoot.help/hc/aam-digital/articles/1782889956-analyzing-data-through-advanced-reports) for how to set up and use reports.&#x60;,
+                      },
+                      &quot;title&quot;,
+                      &quot;mode&quot;,
+                      &quot;description&quot;,
+                      &quot;transformations&quot;,
+                    ],
+                  },
+                  { fields: [&quot;reportDefinition&quot;] },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    } as EntityDetailsConfig,
+  },
+];
 </code></pre>
     </div>
 </div>

@@ -186,6 +186,9 @@
                                 <a href="#getCsvforV2" >getCsvforV2</a>
                             </li>
                             <li>
+                                <a href="#isReportingBackendEnabled" >isReportingBackendEnabled</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Async</span>
                                 <a href="#query" >query</a>
                             </li>
@@ -227,8 +230,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="260"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:260</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:285</a></div>
                         </td>
                     </tr>
 
@@ -294,8 +297,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="141"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:141</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:166</a></div>
                         </td>
                     </tr>
 
@@ -424,8 +427,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="325"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:325</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="350"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:350</a></div>
                         </td>
                     </tr>
 
@@ -475,6 +478,47 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="isReportingBackendEnabled"></a>
+                    <span class="name">
+                        <span ><b>isReportingBackendEnabled</b></span>
+                        <a href="#isReportingBackendEnabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isReportingBackendEnabled()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:64</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the server-side reporting backend (SQS) required for &quot;sql&quot; reports is available,
+as reported by the <code>/actuator/features</code> endpoint (<code>reporting</code> feature flag).
+&quot;reporting&quot; and &quot;exporting&quot; reports are calculated in-browser and do not need this.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="query"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -493,8 +537,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="88"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -631,7 +675,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -648,9 +692,10 @@
 import { SqlReport } from &quot;../report-config&quot;;
 import { HttpClient } from &quot;@angular/common/http&quot;;
 import moment from &quot;moment&quot;;
-import { map, switchMap, takeWhile } from &quot;rxjs/operators&quot;;
-import { firstValueFrom, interval, lastValueFrom, Observable } from &quot;rxjs&quot;;
+import { catchError, map, switchMap, takeWhile } from &quot;rxjs/operators&quot;;
+import { firstValueFrom, interval, lastValueFrom, Observable, of } from &quot;rxjs&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
+import { Logging } from &quot;../../../core/logging/logging.service&quot;;
 
 /**
  * represents a TableRow of a SqlReportDataEntry
@@ -698,6 +743,30 @@ export class SqlReportService {
   private http &#x3D; inject(HttpClient);
 
   static readonly API_URL &#x3D; environment.API_PROXY_PREFIX + &quot;/v1/reporting&quot;;
+
+  private _isReportingBackendEnabledPromise: Promise&lt;boolean&gt; | undefined;
+
+  /**
+   * Whether the server-side reporting backend (SQS) required for &quot;sql&quot; reports is available,
+   * as reported by the &#x60;/actuator/features&#x60; endpoint (&#x60;reporting&#x60; feature flag).
+   * &quot;reporting&quot; and &quot;exporting&quot; reports are calculated in-browser and do not need this.
+   */
+  isReportingBackendEnabled(): Promise&lt;boolean&gt; {
+    if (this._isReportingBackendEnabledPromise &#x3D;&#x3D;&#x3D; undefined) {
+      this._isReportingBackendEnabledPromise &#x3D; firstValueFrom(
+        this.http.get(environment.API_PROXY_PREFIX + &quot;/actuator/features&quot;).pipe(
+          map((res) &#x3D;&gt; res?.[&quot;reporting&quot;]?.enabled ?? false),
+          catchError((err) &#x3D;&gt; {
+            // if aam-services backend is not running --&gt; 502
+            // if aam-services reporting module disabled --&gt; 404
+            Logging.debug(&quot;Reporting API not available&quot;, err);
+            return of(false);
+          }),
+        ),
+      );
+    }
+    return this._isReportingBackendEnabledPromise;
+  }
 
   /**
    * Get the combines results of the SQL statements in the report

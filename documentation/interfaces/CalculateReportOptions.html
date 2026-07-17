@@ -312,7 +312,7 @@ import { ExportDialogComponent } from &quot;../../../../core/export/export-dialo
 import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
-import { ReportEntity } from &quot;../../report-config&quot;;
+import { ReportEntity, reportUsesDateRange } from &quot;../../report-config&quot;;
 import { DateFilter } from &quot;app/core/filter/filters/dateFilter&quot;;
 import { DateRangeFilterComponent } from &quot;app/core/basic-datatypes/date/date-range-filter/date-range-filter.component&quot;;
 import { DateRangeFilterConfigOption } from &quot;app/core/entity-list/EntityListConfig&quot;;
@@ -398,8 +398,10 @@ export class SelectReportComponent {
   isDateRangeReport &#x3D; computed&lt;boolean&gt;(() &#x3D;&gt; {
     const report &#x3D; this.selectedReport();
     if (!report) return false;
-    if (report.mode !&#x3D;&#x3D; &quot;sql&quot;) return true;
-    // v1 configs use neededArgs; v2/canonical use transformations
+    // Primary signal: whether the report&#x27;s queries actually use date placeholders.
+    if (reportUsesDateRange(report)) return true;
+    // Fallback for legacy configs that declared the date args explicitly:
+    // v1 configs use neededArgs; v2/canonical use transformations.
     return (
       !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;from&quot; || a &#x3D;&#x3D;&#x3D; &quot;startDate&quot;) ||
       !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;to&quot; || a &#x3D;&#x3D;&#x3D; &quot;endDate&quot;) ||

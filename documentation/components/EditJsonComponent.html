@@ -107,7 +107,7 @@
   <li class="breadcrumb-item">Components</li>
   <li class="breadcrumb-item"
   >
-  TodosRelatedToEntityComponent</li>
+  EditJsonComponent</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -124,10 +124,6 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
-            <a href="#styleData" class="nav-link"
-                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
-        </li>
-        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
@@ -138,18 +134,32 @@
     <h3>File</h3>
 </p>
 <p class="comment">
-    <code>src/app/features/todos/todos-related-to-entity/todos-related-to-entity.component.ts</code>
+    <code>src/app/core/admin/json-editor/edit-json/edit-json.component.ts</code>
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Edit a field&#39;s value as raw JSON, using the shared <a href="../components/JsonEditorComponent.html">JsonEditorComponent</a>
+as a form-field edit component.</p>
+
+    </p>
 
     <p class="comment">
         <h3>Extends</h3>
     </p>
     <p class="comment">
-                    <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                    <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
     </p>
 
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="../interfaces/EditComponent.html" target="_self" >EditComponent</a></code>
+    </p>
 
 
 <section data-compodoc="block-metadata">
@@ -170,33 +180,34 @@
 
 
 
+            <tr>
+                <td class="col-md-3">providers</td>
+                <td class="col-md-9">
+                                <code><a href="../components/EditJsonComponent.html" target="_self" >EditJsonComponent</a></code>
+                </td>
+            </tr>
 
 
             <tr>
                 <td class="col-md-3">selector</td>
-                <td class="col-md-9"><code>app-todos-related-to-entity</code></td>
+                <td class="col-md-9"><code>app-edit-json</code></td>
             </tr>
 
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                                <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
-                            <code>MatSlideToggleModule</code>
-                                <code><a href="https://angular.io/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+                                <code><a href="https://angular.io/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+                                <code><a href="../components/JsonEditorComponent.html" target="_self" >JsonEditorComponent</a></code>
                 </td>
             </tr>
 
-            <tr>
-                <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./todos-related-to-entity.component.scss</code></td>
-            </tr>
 
 
 
             <tr>
                 <td class="col-md-3">templateUrl</td>
-                <td class="col-md-9"><code>./todos-related-to-entity.component.html</code></td>
+                <td class="col-md-9"><code>./edit-json.component.html</code></td>
             </tr>
 
 
@@ -223,40 +234,43 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#backgroundColorFn" >backgroundColorFn</a>
+                                <a href="#controlType" >controlType</a>
                             </li>
                             <li>
-                                    <span class="modifier"></span>
-                                <a href="#entityCtr" >entityCtr</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Readonly</span>
-                                <a href="#_columns" >_columns</a>
+                                <a href="#elementRef" >elementRef</a>
                             </li>
                             <li>
                                     <span class="modifier">Readonly</span>
-                                <a href="#columnsToDisplay" >columnsToDisplay</a>
+                                <a href="#enabled" >enabled</a>
+                            </li>
+                            <li>
+                                <a href="#errorStateMatcher" >errorStateMatcher</a>
+                            </li>
+                            <li>
+                                <a href="#id" >id</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#nextId" >nextId</a>
+                            </li>
+                            <li>
+                                <a href="#onChange" >onChange</a>
+                            </li>
+                            <li>
+                                <a href="#onTouched" >onTouched</a>
+                            </li>
+                            <li>
+                                <a href="#parentForm" >parentForm</a>
+                            </li>
+                            <li>
+                                <a href="#parentFormGroup" >parentFormGroup</a>
+                            </li>
+                            <li>
+                                <a href="#stateChanges" >stateChanges</a>
                             </li>
                             <li>
                                     <span class="modifier">Readonly</span>
-                                <a href="#data" >data</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Protected</span>
-                                <a href="#entityMapper" >entityMapper</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Readonly</span>
-                                <a href="#filterObj" >filterObj</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Protected</span>
-                                <a href="#filterService" >filterService</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Protected</span>
-                                    <span class="modifier">Readonly</span>
-                                <a href="#relationProperty" >relationProperty</a>
+                                <a href="#valueSignal" >valueSignal</a>
                             </li>
                         </ul>
                     </td>
@@ -271,40 +285,28 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                    <span class="modifier"></span>
-                                <a href="#getData" >getData</a>
+                                <a href="#blur" >blur</a>
                             </li>
                             <li>
-                                    <span class="modifier">Protected</span>
-                                    <span class="modifier"></span>
-                                <a href="#getDefaultColumns" >getDefaultColumns</a>
+                                <a href="#focus" >focus</a>
                             </li>
                             <li>
-                                    <span class="modifier">Public</span>
-                                <a href="#getNewEntryFunction" >getNewEntryFunction</a>
+                                <a href="#onContainerClick" >onContainerClick</a>
                             </li>
                             <li>
-                                    <span class="modifier">Protected</span>
-                                    <span class="modifier"></span>
-                                <a href="#initFilter" >initFilter</a>
+                                <a href="#registerOnChange" >registerOnChange</a>
                             </li>
                             <li>
-                                <a href="#showDetails" >showDetails</a>
+                                <a href="#registerOnTouched" >registerOnTouched</a>
                             </li>
                             <li>
-                                <a href="#createNewRecordFactory" >createNewRecordFactory</a>
+                                <a href="#setDescribedByIds" >setDescribedByIds</a>
                             </li>
                             <li>
-                                    <span class="modifier">Protected</span>
-                                <a href="#getColumns" >getColumns</a>
+                                <a href="#setDisabledState" >setDisabledState</a>
                             </li>
                             <li>
-                                    <span class="modifier">Protected</span>
-                                <a href="#getProperty" >getProperty</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Protected</span>
-                                <a href="#listenToEntityUpdates" >listenToEntityUpdates</a>
+                                <a href="#writeValue" >writeValue</a>
                             </li>
                         </ul>
                     </td>
@@ -319,31 +321,25 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#clickMode" >clickMode</a>
+                                <a href="#formFieldConfig" >formFieldConfig</a>
                             </li>
                             <li>
-                                <a href="#columns" >columns</a>
+                                <a href="#aria-describedby" >aria-describedby</a>
                             </li>
                             <li>
-                                <a href="#editable" >editable</a>
+                                <a href="#disabled" >disabled</a>
                             </li>
                             <li>
-                                <a href="#entity" >entity</a>
+                                <a href="#ngControl" >ngControl</a>
                             </li>
                             <li>
-                                <a href="#entityType" >entityType</a>
+                                <a href="#placeholder" >placeholder</a>
                             </li>
                             <li>
-                                <a href="#filter" >filter</a>
+                                <a href="#required" >required</a>
                             </li>
                             <li>
-                                <a href="#loaderMethod" >loaderMethod</a>
-                            </li>
-                            <li>
-                                <a href="#property" >property</a>
-                            </li>
-                            <li>
-                                <a href="#showInactive" >showInactive</a>
+                                <a href="#value" >value</a>
                             </li>
                         </ul>
                     </td>
@@ -358,7 +354,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#showInactive" >showInactive</a>
+                                <a href="#valueChange" >valueChange</a>
                             </li>
                         </ul>
                     </td>
@@ -377,31 +373,19 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="clickMode"></a>
-                        <b>clickMode</b>
+                        <a name="formFieldConfig"></a>
+                        <b>formFieldConfig</b>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>&quot;popup&quot; | &quot;navigate&quot; | &quot;popup-details&quot;</code>
+                        <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig</a></code>
 
                     </td>
                 </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&quot;popup&quot;</code>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                                </td>
-                            </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:124</a></code>
-</div>
+                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/admin/json-editor/edit-json/edit-json.component.ts:26</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -410,114 +394,8 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="columns"></a>
-                        <b>columns</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../classes/Config.html" target="_self" >ColumnConfig[]</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                                </td>
-                            </tr>
-                        <tr>
-                            <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:86</a></code>
-</div>
-                            </td>
-                        </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>Columns to be displayed in the table</p>
-</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="editable"></a>
-                        <b>editable</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>true</code>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                                </td>
-                            </tr>
-                        <tr>
-                            <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:125</a></code>
-</div>
-                            </td>
-                        </tr>
-            </tbody>
-        </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="entity"></a>
-                        <b>entity</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
-
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                                </td>
-                            </tr>
-                        <tr>
-                            <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:60</a></code>
-</div>
-                            </td>
-                        </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>currently viewed/main entity for which related entities are displayed in this component</p>
-</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="entityType"></a>
-                        <b>entityType</b>
+                        <a name="aria-describedby"></a>
+                        <b>aria-describedby</b>
                     </td>
                 </tr>
                 <tr>
@@ -528,169 +406,161 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                    <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                                 </td>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:63</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:98</a></code>
 </div>
                             </td>
                         </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>entity type of the related entities to be displayed</p>
-</div>
-                    </td>
-                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="filter"></a>
-                        <b>filter</b>
+                        <a name="disabled"></a>
+                        <b>disabled</b>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;E&gt;</a></code>
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                     </td>
                 </tr>
                             <tr>
                                 <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                    <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                                 </td>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:117</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:155</a></code>
 </div>
                             </td>
                         </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>This filter is applied before displaying the data.</p>
-</div>
-                    </td>
-                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="loaderMethod"></a>
-                        <b>loaderMethod</b>
+                        <a name="ngControl"></a>
+                        <b>ngControl</b>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self" >LoaderMethod</a></code>
+                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(NgControl, { optional: true, self: true })</code>
                     </td>
                 </tr>
                             <tr>
                                 <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                    <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                                 </td>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:80</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:91</a></code>
 </div>
                             </td>
                         </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>The special service or method to load data via an index or other special method.</p>
-</div>
-                    </td>
-                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="property"></a>
-                        <b>property</b>
+                        <a name="placeholder"></a>
+                        <b>placeholder</b>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>string | string[]</code>
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                     </td>
                 </tr>
                             <tr>
                                 <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                    <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                                 </td>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:75</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:99</a></code>
 </div>
                             </td>
                         </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>Property name of the related entities (type given in this.entityType) that holds the entity id
-to be matched with the id of the current main entity (given in this.entity).
-If not explicitly set, this will be inferred based on the defined relations between the entities.</p>
-<p>manually setting this is only necessary if you have multiple properties referencing the same entity type
-and you want to list only records related to one of them.
-For example: if you set <code>entityType = &quot;Project&quot;</code> (to display a list of projects here) and the Project entities have a properties &quot;participants&quot; and &quot;supervisors&quot; both storing references to User entities,
-you can set <code>property = &quot;supervisors&quot;</code> to only list those projects where the current User is supervisors, not participant.</p>
-</div>
-                    </td>
-                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="showInactive"></a>
-                        <b>showInactive</b>
+                        <a name="required"></a>
+                        <b>required</b>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>boolean | undefined</code>
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>undefined</code>
                     </td>
                 </tr>
                             <tr>
                                 <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                    <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                                 </td>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:122</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:102</a></code>
 </div>
                             </td>
                         </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <div class="io-description"><p>Whether inactive/archived records should be shown.</p>
-</div>
+                        <a name="value"></a>
+                        <b>value</b>
                     </td>
                 </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>T</code>
+
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4" colspan="2">
+                                    <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                                </td>
+                            </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:164</a></code>
+</div>
+                            </td>
+                        </tr>
             </tbody>
         </table>
 </section>
@@ -700,34 +570,28 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="showInactive"></a>
-                        <b>showInactive</b>
+                        <a name="valueChange"></a>
+                        <b>valueChange</b>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>boolean | undefined</code>
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
 
                     </td>
                 </tr>
                             <tr>
                                 <td class="col-md-4" colspan="2">
-                                    <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                    <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                                 </td>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:122</a></code>
+                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:172</a></code>
 </div>
                             </td>
                         </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <div class="io-description"><p>Whether inactive/archived records should be shown.</p>
-</div>
-                    </td>
-                </tr>
             </tbody>
         </table>
 </section>
@@ -742,31 +606,29 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getData"></a>
+                    <a name="blur"></a>
                     <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>getData</b></span>
-                        <a href="#getData"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>blur</b></span>
+                        <a href="#blur"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getData()</code>
+<code>blur()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:45</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:201</a></code>
 </div>
                         </td>
                     </tr>
@@ -776,7 +638,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                 </td>
@@ -787,32 +649,29 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getDefaultColumns"></a>
+                    <a name="focus"></a>
                     <span class="name">
-                            <span class="modifier">Protected</span>
-                            <span class="modifier"></span>
-                        <span ><b>getDefaultColumns</b></span>
-                        <a href="#getDefaultColumns"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>focus</b></span>
+                        <a href="#focus"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getDefaultColumns()</code>
+<code>focus()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:33</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:196</a></code>
 </div>
                         </td>
                     </tr>
@@ -822,7 +681,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig[]</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                 </td>
@@ -833,109 +692,30 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getNewEntryFunction"></a>
+                    <a name="onContainerClick"></a>
                     <span class="name">
-                            <span class="modifier">Public</span>
-                        <span ><b>getNewEntryFunction</b></span>
-                        <a href="#getNewEntryFunction"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>onContainerClick</b></span>
+                        <a href="#onContainerClick"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getNewEntryFunction()</code>
+<code>onContainerClick(event: MouseEvent)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="74"
-                                    class="link-to-prism">src/app/features/todos/todos-related-to-entity/todos-related-to-entity.component.ts:74</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Todo.html" target="_self" >Todo</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="initFilter"></a>
-                    <span class="name">
-                            <span class="modifier">Protected</span>
-                            <span class="modifier"></span>
-                        <span ><b>initFilter</b></span>
-                        <a href="#initFilter"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>initFilter()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:83</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:218</a></code>
 </div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;Todo&gt;</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="showDetails"></a>
-                    <span class="name">
-                        <span ><b>showDetails</b></span>
-                        <a href="#showDetails"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>showDetails(entity: <a href="../classes/Todo.html" target="_self">Todo</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="87"
-                                    class="link-to-prism">src/app/features/todos/todos-related-to-entity/todos-related-to-entity.component.ts:87</a></div>
                         </td>
                     </tr>
 
@@ -956,9 +736,9 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>entity</td>
+                                                <td>event</td>
                                             <td>
-                                                            <code><a href="../classes/Todo.html" target="_self" >Todo</a></code>
+                                                        <code>MouseEvent</code>
                                             </td>
 
                                             <td>
@@ -985,74 +765,29 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="createNewRecordFactory"></a>
+                    <a name="registerOnChange"></a>
                     <span class="name">
-                        <span ><b>createNewRecordFactory</b></span>
-                        <a href="#createNewRecordFactory"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>registerOnChange</b></span>
+                        <a href="#registerOnChange"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>createNewRecordFactory()</code>
+<code>registerOnChange(fn: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:360</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>() &#x3D;&gt; any</code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="getColumns"></a>
-                    <span class="name">
-                            <span class="modifier">Protected</span>
-                        <span ><b>getColumns</b></span>
-                        <a href="#getColumns"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getColumns(value: <a href="../classes/Config.html" target="_self">ColumnConfig[] | undefined</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:377</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:237</a></code>
 </div>
                         </td>
                     </tr>
@@ -1074,9 +809,9 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>value</td>
+                                                <td>fn</td>
                                             <td>
-                                                            <code><a href="../classes/Config.html" target="_self" >ColumnConfig[] | undefined</a></code>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
                                             </td>
 
                                             <td>
@@ -1089,7 +824,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >FormFieldConfig[]</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                             <div class="io-description">
@@ -1103,31 +838,29 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getProperty"></a>
+                    <a name="registerOnTouched"></a>
                     <span class="name">
-                            <span class="modifier">Protected</span>
-                        <span ><b>getProperty</b></span>
-                        <a href="#getProperty"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>registerOnTouched</b></span>
+                        <a href="#registerOnTouched"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getProperty()</code>
+<code>registerOnTouched(fn: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:220</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:241</a></code>
 </div>
                         </td>
                     </tr>
@@ -1135,14 +868,41 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Auto-detect which properties of the related entity type reference the current entity.
-Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;).</p>
-</div>
 
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fn</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>string | []</code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1151,31 +911,29 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="listenToEntityUpdates"></a>
+                    <a name="setDescribedByIds"></a>
                     <span class="name">
-                            <span class="modifier">Protected</span>
-                        <span ><b>listenToEntityUpdates</b></span>
-                        <a href="#listenToEntityUpdates"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>setDescribedByIds</b></span>
+                        <a href="#setDescribedByIds"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>listenToEntityUpdates()</code>
+<code>setDescribedByIds(ids: string[])</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:346</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:211</a></code>
 </div>
                         </td>
                     </tr>
@@ -1184,10 +942,216 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
             <tr>
                 <td class="col-md-4">
 
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>ids</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>unknown</code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setDisabledState"></a>
+                    <span class="name">
+                        <span ><b>setDisabledState</b></span>
+                        <a href="#setDisabledState"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setDisabledState(isDisabled: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:245</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>isDisabled</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="writeValue"></a>
+                    <span class="name">
+                        <span ><b>writeValue</b></span>
+                        <a href="#writeValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>writeValue(value: T, notifyFormControl: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:226</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Implementation for Angular ControlValueAccessor interface
+that links the form control value to the component value</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The new value to set</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>notifyFormControl</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Whether to notify the FormControl of this change (for internal updates)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1202,10 +1166,246 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="backgroundColorFn"></a>
+                    <a name="controlType"></a>
                     <span class="name">
-                        <span ><b>backgroundColorFn</b></span>
-                        <a href="#backgroundColorFn"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>controlType</b></span>
+                        <a href="#controlType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;custom-control&quot;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:114</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="elementRef"></a>
+                    <span class="name">
+                        <span ><b>elementRef</b></span>
+                        <a href="#elementRef"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject&lt;ElementRef&lt;HTMLElement&gt;&gt;(ElementRef)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:87</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="enabled"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>enabled</b></span>
+                        <a href="#enabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; !this._disabled())</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:80</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the control is currently enabled, as a signal (tracks <a href="disabled">disabled</a>).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorStateMatcher"></a>
+                    <span class="name">
+                        <span ><b>errorStateMatcher</b></span>
+                        <a href="#errorStateMatcher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(ErrorStateMatcher)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:88</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="id"></a>
+                    <span class="name">
+                        <span ><b>id</b></span>
+                        <a href="#id"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x60;custom-form-control-${CustomFormControlDirective.nextId++}&#x60;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:96</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="nextId"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>nextId</b></span>
+                        <a href="#nextId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>0</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:95</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onChange"></a>
+                    <span class="name">
+                        <span ><b>onChange</b></span>
+                        <a href="#onChange"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -1220,9 +1420,16 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
                     </td>
                 </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+</div>
+                            </td>
+                        </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/features/todos/todos-related-to-entity/todos-related-to-entity.component.ts:37</a></div>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:115</a></code>
+</div>
                         </td>
                     </tr>
 
@@ -1233,11 +1440,10 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="entityCtr"></a>
+                    <a name="onTouched"></a>
                     <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>entityCtr</b></span>
-                        <a href="#entityCtr"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>onTouched</b></span>
+                        <a href="#onTouched"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -1249,18 +1455,18 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal(Todo)</code>
+                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                             </td>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:31</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:116</a></code>
 </div>
                         </td>
                     </tr>
@@ -1272,11 +1478,10 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="_columns"></a>
+                    <a name="parentForm"></a>
                     <span class="name">
-                            <span class="modifier">Readonly</span>
-                        <span ><b>_columns</b></span>
-                        <a href="#_columns"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>parentForm</b></span>
+                        <a href="#parentForm"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -1288,31 +1493,18 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
-    const entity &#x3D; this.entity();
-    const rawCols &#x3D; this.getColumns(this.columns());
-    if (!entity) return rawCols;
-    return rawCols.map((column) &#x3D;&gt; {
-      if (typeof column.additional &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; column.additional !&#x3D;&#x3D; null) {
-        return {
-          ...column,
-          additional: { ...column.additional, relatedEntitiesParent: entity },
-        };
-      }
-      return column;
-    });
-  })</code>
+                        <i>Default value : </i><code>inject(NgForm, { optional: true })</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                             </td>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:88</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:92</a></code>
 </div>
                         </td>
                     </tr>
@@ -1324,11 +1516,10 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="columnsToDisplay"></a>
+                    <a name="parentFormGroup"></a>
                     <span class="name">
-                            <span class="modifier">Readonly</span>
-                        <span ><b>columnsToDisplay</b></span>
-                        <a href="#columnsToDisplay"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>parentFormGroup</b></span>
+                        <a href="#parentFormGroup"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -1340,27 +1531,18 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed(() &#x3D;&gt;
-    this._columns()
-      .filter((column) &#x3D;&gt; {
-        if (column?.hideFromTable) return false;
-        const numericValue &#x3D; ScreenSize[column?.visibleFrom];
-        if (numericValue &#x3D;&#x3D;&#x3D; undefined) return true;
-        return this.currentScreenSize() &gt;&#x3D; numericValue;
-      })
-      .map((c) &#x3D;&gt; c.id),
-  )</code>
+                        <i>Default value : </i><code>inject(FormGroupDirective, { optional: true })</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                             </td>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:103</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:93</a></code>
 </div>
                         </td>
                     </tr>
@@ -1372,11 +1554,10 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="data"></a>
+                    <a name="stateChanges"></a>
                     <span class="name">
-                            <span class="modifier">Readonly</span>
-                        <span ><b>data</b></span>
-                        <a href="#data"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>stateChanges</b></span>
+                        <a href="#stateChanges"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -1388,18 +1569,18 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;E[] | undefined&gt;(undefined)</code>
+                        <i>Default value : </i><code>new Subject&lt;void&gt;()</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                             </td>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:127</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:113</a></code>
 </div>
                         </td>
                     </tr>
@@ -1411,167 +1592,46 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="entityMapper"></a>
-                    <span class="name">
-                            <span class="modifier">Protected</span>
-                        <span ><b>entityMapper</b></span>
-                        <a href="#entityMapper"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>inject(EntityMapperService)</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                            </td>
-                        </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:51</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="filterObj"></a>
+                    <a name="valueSignal"></a>
                     <span class="name">
                             <span class="modifier">Readonly</span>
-                        <span ><b>filterObj</b></span>
-                        <a href="#filterObj"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>valueSignal</b></span>
+                        <a href="#valueSignal"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
+                        <i>Type : </i>    <code>Signal&lt;T&gt;</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal&lt;DataFilter&lt;E&gt;&gt;({})</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; this._value())</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                                <div class="io-line">Inherited from         <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
 </div>
                             </td>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:149</a></code>
+                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:77</a></code>
 </div>
                         </td>
                     </tr>
 
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="filterService"></a>
-                    <span class="name">
-                            <span class="modifier">Protected</span>
-                        <span ><b>filterService</b></span>
-                        <a href="#filterService"><span class="icon ion-ios-link"></span></a>
-                    </span>
+                    <div class="io-description"><p>The current value of the control as a signal.
+Authoritative in both modes: it reflects the bound <code>FormControl</code> (synced in <a href="ngDoCheck">ngDoCheck</a>)
+as well as <code>[(value)]</code> / <code>writeValue</code> updates.</p>
+</div>
                 </td>
             </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>inject(FilterService)</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                            </td>
-                        </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:54</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="relationProperty"></a>
-                    <span class="name">
-                            <span class="modifier">Protected</span>
-                            <span class="modifier">Readonly</span>
-                        <span ><b>relationProperty</b></span>
-                        <a href="#relationProperty"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>computed&lt;string | string[]&gt;(() &#x3D;&gt; {
-    const entity &#x3D; this.entity();
-    const entityCtr &#x3D; this.entityCtr();
-    if (!entity || !entityCtr) {
-      return [];
-    }
-
-    const resolvedProperty &#x3D; this.property() ?? this.getProperty();
-    return typeof resolvedProperty &#x3D;&#x3D;&#x3D; &quot;string&quot;
-      ? this.resolvePropertyPath(resolvedProperty)
-      : resolvedProperty.map((p) &#x3D;&gt; this.resolvePropertyPath(p));
-  })</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Inherited from         <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
-</div>
-                            </td>
-                        </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:137</a></code>
-</div>
-                        </td>
-                    </tr>
-
 
         </tbody>
     </table>
@@ -1581,119 +1641,41 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from &quot;@angular/core&quot;;
-import { FormsModule } from &quot;@angular/forms&quot;;
-import { MatSlideToggleModule } from &quot;@angular/material/slide-toggle&quot;;
-import { RELATED_ENTITIES_DEFAULT_CONFIGS } from &quot;app/utils/related-entities-default-config&quot;;
-import { EntitiesTableComponent } from &quot;../../../core/common-components/entities-table/entities-table.component&quot;;
-import { FormFieldConfig } from &quot;../../../core/common-components/entity-form/FormConfig&quot;;
-import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
-import { RelatedEntitiesComponent } from &quot;../../../core/entity-details/related-entities/related-entities.component&quot;;
-import { DatabaseIndexingService } from &quot;../../../core/entity/database-indexing/database-indexing.service&quot;;
-import { DataFilter } from &quot;../../../core/filter/filters/filters&quot;;
-import { FormDialogService } from &quot;../../../core/form-dialog/form-dialog.service&quot;;
-import { Todo } from &quot;../model/todo&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ChangeDetectionStrategy, Component, input } from &quot;@angular/core&quot;;
+import { ReactiveFormsModule } from &quot;@angular/forms&quot;;
+import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
+import { CustomFormControlDirective } from &quot;../../../common-components/basic-autocomplete/custom-form-control.directive&quot;;
+import { FormFieldConfig } from &quot;../../../common-components/entity-form/FormConfig&quot;;
+import { DynamicComponent } from &quot;../../../config/dynamic-components/dynamic-component.decorator&quot;;
+import { EditComponent } from &quot;../../../entity/entity-field-edit/dynamic-edit/edit-component.interface&quot;;
+import { JsonEditorComponent } from &quot;../json-editor.component&quot;;
 
-@DynamicComponent(&quot;TodosRelatedToEntity&quot;)
+/**
+ * Edit a field&#x27;s value as raw JSON, using the shared {@link JsonEditorComponent}
+ * as a form-field edit component.
+ */
+@DynamicComponent(&quot;EditJson&quot;)
 @Component({
+  selector: &quot;app-edit-json&quot;,
+  templateUrl: &quot;./edit-json.component.html&quot;,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: &quot;app-todos-related-to-entity&quot;,
-  templateUrl: &quot;./todos-related-to-entity.component.html&quot;,
-  styleUrls: [&quot;./todos-related-to-entity.component.scss&quot;],
-  imports: [EntitiesTableComponent, MatSlideToggleModule, FormsModule],
+  imports: [ReactiveFormsModule, JsonEditorComponent],
+  providers: [{ provide: MatFormFieldControl, useExisting: EditJsonComponent }],
 })
-export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent&lt;Todo&gt; {
-  private formDialog &#x3D; inject(FormDialogService);
-  private dbIndexingService &#x3D; inject(DatabaseIndexingService);
-
-  override entityCtr &#x3D; signal(Todo);
-
-  protected override getDefaultColumns(): FormFieldConfig[] {
-    return RELATED_ENTITIES_DEFAULT_CONFIGS[&quot;TodosRelatedToEntity&quot;].columns;
-  }
-
-  backgroundColorFn &#x3D; (r: Todo) &#x3D;&gt; {
-    if (!r.isActive) {
-      return &quot;#e0e0e0&quot;;
-    } else {
-      return r.getColor();
-    }
-  };
-
-  override getData() {
-    const relationProperty &#x3D; this.relationProperty();
-    if (Array.isArray(relationProperty)) {
-      return super.getData();
-    }
-
-    // TODO: move this generic index creation into schema
-    const relationPropertyKey &#x3D; relationProperty as keyof Todo;
-    this.dbIndexingService.generateIndexOnProperty(
-      &quot;todo_index&quot;,
-      Todo,
-      relationPropertyKey,
-      &quot;deadline&quot;,
-    );
-    const entityId &#x3D; this.entity()?.getId();
-    if (!entityId) {
-      return Promise.resolve([]);
-    }
-    return this.dbIndexingService.queryIndexDocs(
-      Todo,
-      &quot;todo_index/by_&quot; + relationPropertyKey,
-      {
-        startkey: [entityId, &quot;\uffff&quot;],
-        endkey: [entityId],
-        descending: true,
-      },
-    );
-  }
-
-  public getNewEntryFunction(): () &#x3D;&gt; Todo {
-    return () &#x3D;&gt; {
-      const newEntry &#x3D; new Todo();
-      const entityId &#x3D; this.entity()?.getId();
-      newEntry.relatedEntities &#x3D; entityId ? [entityId] : [];
-      return newEntry;
-    };
-  }
-
-  protected override initFilter(): DataFilter&lt;Todo&gt; {
-    return { isActive: true, ...super.initFilter() };
-  }
-
-  showDetails(entity: Todo) {
-    this.formDialog.openView(entity);
-  }
+export class EditJsonComponent
+  extends CustomFormControlDirective&lt;object&gt;
+  implements EditComponent
+{
+  formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
 }
 </code></pre>
     </div>
 
     <div class="tab-pane fade " id="templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;app-entities-table
-  [entityType]&#x3D;&quot;entityCtr()&quot;
-  [records]&#x3D;&quot;data()&quot;
-  [customColumns]&#x3D;&quot;_columns()&quot;
-  [newRecordFactory]&#x3D;&quot;getNewEntryFunction()&quot;
-  clickMode&#x3D;&quot;none&quot;
-  [filter]&#x3D;&quot;filterObj()&quot;
-  (entityClick)&#x3D;&quot;showDetails($event)&quot;
-  [getBackgroundColor]&#x3D;&quot;backgroundColorFn&quot;
-&gt;&lt;/app-entities-table&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;app-json-editor [formControl]&#x3D;&quot;formControl&quot;&gt;&lt;/app-json-editor&gt;
 </code></pre>
     </div>
 
-    <div class="tab-pane fade " id="styleData">
-                <p class="comment">
-                    <code>./todos-related-to-entity.component.scss</code>
-                </p>
-                <pre class="line-numbers"><code class="language-scss"></code></pre>
-    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
@@ -1720,10 +1702,10 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent&lt;T
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><app-entities-table  [entityType]="entityCtr()"  [records]="data()"  [customColumns]="_columns()"  [newRecordFactory]="getNewEntryFunction()"  clickMode="none"  [filter]="filterObj()"  (entityClick)="showDetails($event)"  [getBackgroundColor]="backgroundColorFn"></app-entities-table></div>'
+        var COMPONENT_TEMPLATE = '<div><app-json-editor [formControl]="formControl"></app-json-editor></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
-    var ACTUAL_COMPONENT = {'name': 'TodosRelatedToEntityComponent'};
+    var ACTUAL_COMPONENT = {'name': 'EditJsonComponent'};
 </script>
 <script src="../js/tree.js"></script>
 
@@ -1769,7 +1751,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent&lt;T
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
-            var COMPODOC_CURRENT_PAGE_URL = 'TodosRelatedToEntityComponent.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'EditJsonComponent.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 
