@@ -254,7 +254,6 @@
                                 <a href="#mapClicked" >mapClicked</a>
                             </li>
                             <li>
-                                    <span class="modifier">Async</span>
                                 <a href="#onSave" >onSave</a>
                             </li>
                             <li>
@@ -283,7 +282,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:70</a></div>
                             </td>
                         </tr>
 
@@ -322,8 +321,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="116"
-                                    class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:116</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -375,7 +374,6 @@
                 <td class="col-md-4">
                     <a name="onSave"></a>
                     <span class="name">
-                            <span class="modifier">Async</span>
                         <span ><b>onSave</b></span>
                         <a href="#onSave"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -383,16 +381,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>onSave()</code>
+<code>onSave()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="133"
-                                    class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:133</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="162"
+                                    class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:162</a></div>
                         </td>
                     </tr>
 
@@ -401,7 +398,7 @@
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                 </td>
@@ -428,8 +425,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="217"
-                                    class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:217</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/features/location/map-popup/map-popup.component.ts:170</a></div>
                         </td>
                     </tr>
 
@@ -671,8 +668,6 @@ export class MapPopupComponent {
   helpText: string &#x3D; $localize&#x60;Search an address or click on the map directly to select a different location&#x60;;
 
   selectedLocation: GeoLocation;
-  private lastSavedLocation: GeoLocation | undefined;
-  private manualAddressJustEdited &#x3D; false;
 
   constructor() {
     const data &#x3D; this.data;
@@ -681,9 +676,6 @@ export class MapPopupComponent {
       (data.marked as OpenStreetMapsSearchResult[]) ?? [],
     );
     this.selectedLocation &#x3D; data.selectedLocation;
-    this.lastSavedLocation &#x3D; data.selectedLocation
-      ? { ...data.selectedLocation }
-      : undefined;
     this.ensureGeoLookupInMarkedLocations();
     this.setDialogCloseBehavior(data);
     this.setHelpText(data);
@@ -724,92 +716,50 @@ export class MapPopupComponent {
       this.geoService.reverseLookup(newCoordinates),
     );
 
-    // Only update geoLookup. Do not carry over stale top-level address fields
-    // from the previously selected location — that causes conflicts where
-    // &#x60;geoLookup&#x60; points to a new place but &#x60;road/postcode/city&#x60; remain old.
-    this.updateLocation({
-      locationString: this.selectedLocation?.locationString,
-      geoLookup: geoResult,
-    });
-  }
+    // A map click always moves the pin. If there is already an address text or
+    // structured details, ask whether to overwrite them with the new location;
+    // otherwise just adopt the new location.
+    const hasExistingAddress &#x3D;
+      !!this.selectedLocation?.locationString ||
+      !!this.geoService.composeAddressFromParts(this.selectedLocation);
 
-  async onSave() {
-    if (this.isUnchanged()) {
-      this.closeDialog();
-      return;
+    if (hasExistingAddress) {
+      const result &#x3D; await this.confirmationDialog.getConfirmation(
+        $localize&#x60;Update address to this location?&#x60;,
+        $localize&#x60;You selected a new location on the map. Do you want to update the address text and details to this new spot?&#x60;,
+        [
+          {
+            text: $localize&#x60;Keep current text &amp; details&#x60;,
+            dialogResult: &quot;keep&quot;,
+            click: () &#x3D;&gt; {},
+          },
+          {
+            text: $localize&#x60;Update to new location&#x60;,
+            dialogResult: &quot;update&quot;,
+            click: () &#x3D;&gt; {},
+          },
+        ],
+      );
+
+      if (result !&#x3D;&#x3D; &quot;update&quot;) {
+        // Move the pin only; keep the existing text and structured parts exactly
+        // as they are (do NOT enrich, which would fill empty parts from the new
+        // lookup — the user declined to adopt the new location&#x27;s details).
+        this.selectedLocation &#x3D; {
+          ...this.selectedLocation,
+          geoLookup: geoResult,
+        };
+        this.markedLocations.next([geoResult]);
+        return;
+      }
     }
 
-    const manualAddress &#x3D; this.selectedLocation?.locationString ?? &quot;&quot;;
-    const lookupAddress &#x3D; this.selectedLocation?.geoLookup?.display_name ?? &quot;&quot;;
-
-    if (this.shouldShowConfirmation(manualAddress, lookupAddress)) {
-      const result &#x3D; await this.showAddressMismatchDialog();
-      await this.handleConfirmationResult(result, lookupAddress);
-      return;
-    }
-
-    this.saveAndClose();
+    // Adopt the new location fully: text and parts are re-derived from the
+    // fresh lookup (old parts are intentionally dropped).
+    this.updateLocation({ geoLookup: geoResult });
   }
 
-  private isUnchanged(): boolean {
-    return (
-      JSON.stringify(this.selectedLocation) &#x3D;&#x3D;&#x3D;
-      JSON.stringify(this.lastSavedLocation)
-    );
-  }
-
-  private shouldShowConfirmation(
-    manualAddress: string,
-    lookupAddress: string,
-  ): boolean {
-    return (
-      manualAddress &amp;&amp;
-      manualAddress !&#x3D;&#x3D; lookupAddress &amp;&amp;
-      !this.manualAddressJustEdited
-    );
-  }
-
-  private async showAddressMismatchDialog(): Promise&lt;
-    &quot;continue&quot; | &quot;update&quot; | undefined
-  &gt; {
-    const result &#x3D; await this.confirmationDialog.getConfirmation(
-      $localize&#x60;Address Mismatch&#x60;,
-      $localize&#x60;Address details captured does not match with the location on the map. What would you like to do?&#x60;,
-      [
-        {
-          text: $localize&#x60;Continue (with old address)&#x60;,
-          dialogResult: &quot;continue&quot;,
-          click: () &#x3D;&gt; {},
-        },
-        {
-          text: $localize&#x60;Update to new address&#x60;,
-          dialogResult: &quot;update&quot;,
-          click: () &#x3D;&gt; {},
-        },
-      ],
-    );
-    return result as &quot;continue&quot; | &quot;update&quot; | undefined;
-  }
-
-  private async handleConfirmationResult(
-    result: string | boolean | undefined,
-    lookupAddress: string,
-  ) {
-    if (result &#x3D;&#x3D;&#x3D; &quot;continue&quot;) {
-      this.saveAndClose();
-    } else if (result &#x3D;&#x3D;&#x3D; &quot;update&quot;) {
-      this.selectedLocation &#x3D; {
-        ...this.selectedLocation,
-        locationString: lookupAddress,
-      };
-      this.saveAndClose();
-    }
-    // If dialog closed without a result, do nothing (let user edit)
-  }
-
-  private saveAndClose() {
-    this.lastSavedLocation &#x3D; { ...this.selectedLocation };
-    this.manualAddressJustEdited &#x3D; false;
+  onSave() {
     this.closeDialog();
   }
 
@@ -831,16 +781,6 @@ export class MapPopupComponent {
         ...(updatedLocation ?? {}),
         locationString: displayName,
       };
-    }
-
-    // Detect if manual address was just edited
-    if (
-      this.selectedLocation?.locationString !&#x3D;&#x3D;
-        updatedLocation?.locationString &amp;&amp;
-      updatedLocation?.locationString !&#x3D;&#x3D;
-        updatedLocation?.geoLookup?.display_name
-    ) {
-      this.manualAddressJustEdited &#x3D; true;
     }
 
     this.selectedLocation &#x3D; updatedLocation;

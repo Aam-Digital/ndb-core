@@ -161,6 +161,9 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                <a href="#composeAddressFromParts" >composeAddressFromParts</a>
+                            </li>
+                            <li>
                                 <a href="#enrichGeoLocation" >enrichGeoLocation</a>
                             </li>
                             <li>
@@ -208,6 +211,80 @@
     <h3 id="methods">
         Methods
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="composeAddressFromParts"></a>
+                    <span class="name">
+                        <span ><b>composeAddressFromParts</b></span>
+                        <a href="#composeAddressFromParts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>composeAddressFromParts(location: <a href="../interfaces/GeoLocation.html" target="_self">GeoLocation | undefined</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:222</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Composes a display address string from a GeoLocation&#39;s structured parts
+(the reverse of what <a href="../miscellaneous/functions.html#enrichGeoLocation">enrichGeoLocation</a> derives from a lookup).</p>
+<p>Deliberately mirrors the format of <a href="reformatDisplayName">reformatDisplayName</a> (street,
+then postcode + city) and omits <code>country</code>: callers compare the composed
+string against a lookup&#39;s <code>display_name</code> to tell whether the address text
+was customized, so the two must be able to match.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>location</td>
+                                            <td>
+                                                            <code><a href="../interfaces/GeoLocation.html" target="_self" >GeoLocation | undefined</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -710,6 +787,24 @@ export class GeoService {
     location: GeoLocation | undefined,
   ): GeoLocation | undefined {
     return enrichGeoLocation(location);
+  }
+
+  /**
+   * Composes a display address string from a GeoLocation&#x27;s structured parts
+   * (the reverse of what {@link enrichGeoLocation} derives from a lookup).
+   *
+   * Deliberately mirrors the format of {@link reformatDisplayName} (street,
+   * then postcode + city) and omits &#x60;country&#x60;: callers compare the composed
+   * string against a lookup&#x27;s &#x60;display_name&#x60; to tell whether the address text
+   * was customized, so the two must be able to match.
+   */
+  composeAddressFromParts(location: GeoLocation | undefined): string {
+    if (!location) {
+      return &quot;&quot;;
+    }
+    return [this.formatStreet(location), this.formatPostcodeCity(location)]
+      .filter((x) &#x3D;&gt; !!x)
+      .join(&quot;, &quot;);
   }
 }
 

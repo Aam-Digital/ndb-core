@@ -182,8 +182,8 @@
                             <code>MatFormField</code>
                             <code>MatLabel</code>
                             <code>MatInput</code>
-                            <code>MatHint</code>
                             <code>MatTooltip</code>
+                            <code>MatExpansionModule</code>
                                 <code><a href="../components/AddressGpsLocationComponent.html" target="_self" >AddressGpsLocationComponent</a></code>
                 </td>
             </tr>
@@ -224,7 +224,8 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#manualAddressEnabled" >manualAddressEnabled</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hasDivergingText" >hasDivergingText</a>
                             </li>
                         </ul>
                     </td>
@@ -242,10 +243,14 @@
                                 <a href="#clearLocation" >clearLocation</a>
                             </li>
                             <li>
-                                <a href="#enableManualAddressEditing" >enableManualAddressEditing</a>
+                                <a href="#focusManualAddressInput" >focusManualAddressInput</a>
                             </li>
                             <li>
                                 <a href="#onGpsLocationSelected" >onGpsLocationSelected</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateAddressPart" >updateAddressPart</a>
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
@@ -324,7 +329,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:49</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:51</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -351,7 +356,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:46</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -381,7 +386,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:46</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -420,8 +425,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="69"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:69</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="65"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -441,24 +446,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="enableManualAddressEditing"></a>
+                    <a name="focusManualAddressInput"></a>
                     <span class="name">
-                        <span ><b>enableManualAddressEditing</b></span>
-                        <a href="#enableManualAddressEditing"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>focusManualAddressInput</b></span>
+                        <a href="#focusManualAddressInput"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>enableManualAddressEditing()</code>
+<code>focusManualAddressInput()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="56"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -494,8 +499,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="175"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:175</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="236"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:236</a></div>
                         </td>
                     </tr>
 
@@ -545,6 +550,87 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="updateAddressPart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateAddressPart</b></span>
+                        <a href="#updateAddressPart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateAddressPart(key: "road" | "house_number" | "postcode" | "city" | "country", value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:94</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>key</td>
+                                            <td>
+                                                        <code>&quot;road&quot; | &quot;house_number&quot; | &quot;postcode&quot; | &quot;city&quot; | &quot;country&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="updateFromAddressSearch"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -563,8 +649,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="135"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:135</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:196</a></div>
                         </td>
                     </tr>
 
@@ -697,8 +783,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="73"
-                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:73</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:139</a></div>
                         </td>
                     </tr>
 
@@ -754,10 +840,11 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="manualAddressEnabled"></a>
+                    <a name="hasDivergingText"></a>
                     <span class="name">
-                        <span ><b>manualAddressEnabled</b></span>
-                        <a href="#manualAddressEnabled"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hasDivergingText</b></span>
+                        <a href="#hasDivergingText"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -769,15 +856,23 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal(false)</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.isTextManuallyOverwritten(this.selectedLocation()),
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:51</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/features/location/address-edit/address-edit.component.ts:90</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Drives the in-panel hint that text and structured details are diverging.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -789,10 +884,10 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
+  computed,
   ElementRef,
   input,
   model,
-  signal,
   viewChild,
   ChangeDetectionStrategy,
   inject,
@@ -800,10 +895,12 @@
 import { AddressSearchComponent } from &quot;../address-search/address-search.component&quot;;
 import { GeoResult, GeoService } from &quot;../geo.service&quot;;
 import { GeoLocation } from &quot;../geo-location&quot;;
-import { MatFormField, MatHint, MatLabel } from &quot;@angular/material/form-field&quot;;
+import { MatFormField, MatLabel } from &quot;@angular/material/form-field&quot;;
 import { MatInput } from &quot;@angular/material/input&quot;;
 import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
+import { MatExpansionModule } from &quot;@angular/material/expansion&quot;;
 import { AddressGpsLocationComponent } from &quot;../address-gps-location/address-gps-location.component&quot;;
+import { ConfirmationDialogService } from &quot;../../../core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -816,8 +913,8 @@ import { AddressGpsLocationComponent } from &quot;../address-gps-location/addres
     MatFormField,
     MatLabel,
     MatInput,
-    MatHint,
     MatTooltip,
+    MatExpansionModule,
     AddressGpsLocationComponent,
   ],
   templateUrl: &quot;./address-edit.component.html&quot;,
@@ -837,26 +934,90 @@ export class AddressEditComponent {
    */
   disabled &#x3D; input&lt;boolean&gt;(false);
 
-  manualAddressEnabled &#x3D; signal(false);
-
   private readonly geoService &#x3D; inject(GeoService);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
 
-  enableManualAddressEditing() {
-    this.manualAddressEnabled.set(true);
-    // switch focus only after input has been enabled
+  focusManualAddressInput() {
+    // switch focus only after the panel&#x27;s content has rendered
     setTimeout(() &#x3D;&gt; this.manualAddressInput()?.nativeElement.focus(), 0);
   }
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation.set(this.geoService.enrichGeoLocation(selected));
-    this.manualAddressEnabled.set(
-      this.selectedLocation()?.geoLookup?.display_name !&#x3D;&#x3D;
-        this.selectedLocation()?.locationString,
-    );
   }
 
   clearLocation() {
     this.updateLocation(undefined);
+  }
+
+  /**
+   * Whether the address text was manually customized by the user, i.e. it no
+   * longer matches what we would derive from the structured parts or the mapped
+   * location. Inferred (no flag needed): a meaningful manual edit always makes
+   * the text diverge from both derivations, so this is self-detecting.
+   */
+  private isTextManuallyOverwritten(
+    location: GeoLocation | undefined,
+  ): boolean {
+    const text &#x3D; location?.locationString?.trim();
+    if (!text) {
+      return false;
+    }
+    const composedParts &#x3D; this.geoService
+      .composeAddressFromParts(location)
+      .trim();
+    const displayName &#x3D; location?.geoLookup?.display_name?.trim();
+    return text !&#x3D;&#x3D; composedParts &amp;&amp; text !&#x3D;&#x3D; displayName;
+  }
+
+  /** Drives the in-panel hint that text and structured details are diverging. */
+  readonly hasDivergingText &#x3D; computed(() &#x3D;&gt;
+    this.isTextManuallyOverwritten(this.selectedLocation()),
+  );
+
+  async updateAddressPart(
+    key: &quot;road&quot; | &quot;house_number&quot; | &quot;postcode&quot; | &quot;city&quot; | &quot;country&quot;,
+    value: string,
+  ) {
+    const current &#x3D; this.selectedLocation();
+    // Decide BEFORE applying the change: compare the current text against the
+    // OLD parts. Comparing against the new parts would always differ and would
+    // falsely ask on every edit.
+    const textOverwritten &#x3D; this.isTextManuallyOverwritten(current);
+
+    const updated: GeoLocation &#x3D; { ...current, [key]: value };
+    const updatedText &#x3D; this.geoService.composeAddressFromParts(updated);
+
+    if (!textOverwritten) {
+      // Text was auto-derived → keep it in sync automatically.
+      updated.locationString &#x3D; updatedText;
+      this.updateLocation(updated);
+      return;
+    }
+
+    // Text was manually customized → ask before overwriting it.
+    const result &#x3D; await this.confirmationDialog.getConfirmation(
+      $localize&#x60;Update address text?&#x60;,
+      $localize&#x60;You changed the address details, so they no longer match the customized address text. Which should be saved?\n\n**Current text:**\n${current?.locationString ?? &quot;&quot;}\n\n**Updated text:**\n${updatedText}&#x60;,
+      [
+        {
+          text: $localize&#x60;Keep current text&#x60;,
+          dialogResult: &quot;keep&quot;,
+          click: () &#x3D;&gt; {},
+        },
+        {
+          text: $localize&#x60;Update to match details&#x60;,
+          dialogResult: &quot;update&quot;,
+          click: () &#x3D;&gt; {},
+        },
+      ],
+    );
+
+    if (result &#x3D;&#x3D;&#x3D; &quot;update&quot;) {
+      updated.locationString &#x3D; updatedText;
+    }
+    // &quot;keep&quot; or dismissed: apply the part change but leave the custom text.
+    this.updateLocation(updated);
   }
 
   updateLocationString(value: string) {
@@ -868,13 +1029,8 @@ export class AddressEditComponent {
     }
 
     this.updateLocation({
+      ...this.selectedLocation(),
       locationString: manualAddress,
-      geoLookup: this.selectedLocation()?.geoLookup,
-      road: this.selectedLocation()?.road,
-      house_number: this.selectedLocation()?.house_number,
-      postcode: this.selectedLocation()?.postcode,
-      city: this.selectedLocation()?.city,
-      country: this.selectedLocation()?.country,
     });
   }
 
@@ -987,27 +1143,27 @@ export class AddressEditComponent {
     &lt;/div&gt;
   }
 
-  &lt;mat-form-field floatLabel&#x3D;&quot;always&quot; class&#x3D;&quot;full-width&quot;&gt;
-    &lt;mat-label i18n&gt;Selected Location&lt;/mat-label&gt;
-    &lt;textarea
-      #manualAddressInput
-      matInput
-      placeholder&#x3D;&quot;no location selected&quot;
-      i18n-placeholder
-      [value]&#x3D;&quot;
-        selectedLocation()?.locationString ??
-        selectedLocation()?.geoLookup?.display_name
-      &quot;
-      (change)&#x3D;&quot;updateLocationString(manualAddressInput.value)&quot;
-      [disabled]&#x3D;&quot;disabled() || !manualAddressEnabled()&quot;
-      rows&#x3D;&quot;2&quot;
-    &gt;&lt;/textarea&gt;
-
-    &lt;mat-hint&gt;
+  &lt;div class&#x3D;&quot;selected-location-display&quot;&gt;
+    &lt;span class&#x3D;&quot;location-label hint-text&quot; i18n&gt;Selected Location&lt;/span&gt;
+    &lt;div class&#x3D;&quot;location-value&quot;&gt;
       @if (
-        selectedLocation()?.geoLookup?.display_name !&#x3D;&#x3D;
-        selectedLocation()?.locationString
+        selectedLocation()?.locationString ||
+        selectedLocation()?.geoLookup?.display_name
       ) {
+        {{
+          selectedLocation()?.locationString ??
+            selectedLocation()?.geoLookup?.display_name
+        }}
+      } @else {
+        &lt;span class&#x3D;&quot;placeholder&quot; i18n&gt;no location selected&lt;/span&gt;
+      }
+    &lt;/div&gt;
+
+    @if (
+      selectedLocation()?.geoLookup?.display_name !&#x3D;&#x3D;
+      selectedLocation()?.locationString
+    ) {
+      &lt;div class&#x3D;&quot;location-hint hint-text&quot;&gt;
         @if (selectedLocation()?.geoLookup) {
           &lt;span
             matTooltip&#x3D;&quot;You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map.&quot;
@@ -1024,34 +1180,114 @@ export class AddressEditComponent {
             No location marked on map
           &lt;/span&gt;
         }
-        &lt;br /&gt;
+      &lt;/div&gt;
+    }
+  &lt;/div&gt;
+
+  @if (selectedLocation()) {
+    &lt;mat-expansion-panel
+      class&#x3D;&quot;address-details-panel&quot;
+      (opened)&#x3D;&quot;focusManualAddressInput()&quot;
+    &gt;
+      &lt;mat-expansion-panel-header&gt;
+        &lt;mat-panel-title i18n&gt;Address details&lt;/mat-panel-title&gt;
+        &lt;mat-panel-description i18n
+          &gt;Road · House no. · Postcode · City · Country&lt;/mat-panel-description
+        &gt;
+      &lt;/mat-expansion-panel-header&gt;
+
+      &lt;mat-form-field floatLabel&#x3D;&quot;always&quot; class&#x3D;&quot;full-width&quot;&gt;
+        &lt;mat-label i18n&gt;Full address text&lt;/mat-label&gt;
+        &lt;textarea
+          #manualAddressInput
+          matInput
+          matTooltip&#x3D;&quot;Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this.&quot;
+          i18n-matTooltip
+          [value]&#x3D;&quot;
+            selectedLocation()?.locationString ??
+            selectedLocation()?.geoLookup?.display_name ??
+            &#x27;&#x27;
+          &quot;
+          (change)&#x3D;&quot;updateLocationString(manualAddressInput.value)&quot;
+          [disabled]&#x3D;&quot;disabled()&quot;
+          rows&#x3D;&quot;2&quot;
+        &gt;&lt;/textarea&gt;
+      &lt;/mat-form-field&gt;
+
+      @if (hasDivergingText()) {
+        &lt;p class&#x3D;&quot;parts-mismatch-hint hint-text&quot; i18n&gt;
+          This address text has been customized — it no longer matches the
+          address details below or the mapped location.
+        &lt;/p&gt;
       }
 
-      @if (!disabled() &amp;&amp; selectedLocation()) {
-        &lt;span&gt;
+      &lt;div class&#x3D;&quot;address-parts-grid&quot;&gt;
+        &lt;mat-form-field class&#x3D;&quot;road-field&quot;&gt;
+          &lt;mat-label i18n&gt;Road&lt;/mat-label&gt;
+          &lt;input
+            matInput
+            #roadInput
+            [value]&#x3D;&quot;selectedLocation()?.road ?? &#x27;&#x27;&quot;
+            (change)&#x3D;&quot;updateAddressPart(&#x27;road&#x27;, roadInput.value)&quot;
+            [disabled]&#x3D;&quot;disabled()&quot;
+          /&gt;
+        &lt;/mat-form-field&gt;
+        &lt;mat-form-field class&#x3D;&quot;house-number-field&quot;&gt;
+          &lt;mat-label i18n&gt;House no.&lt;/mat-label&gt;
+          &lt;input
+            matInput
+            #houseNumberInput
+            [value]&#x3D;&quot;selectedLocation()?.house_number ?? &#x27;&#x27;&quot;
+            (change)&#x3D;&quot;updateAddressPart(&#x27;house_number&#x27;, houseNumberInput.value)&quot;
+            [disabled]&#x3D;&quot;disabled()&quot;
+          /&gt;
+        &lt;/mat-form-field&gt;
+        &lt;mat-form-field class&#x3D;&quot;postcode-field&quot;&gt;
+          &lt;mat-label i18n&gt;Postcode&lt;/mat-label&gt;
+          &lt;input
+            matInput
+            #postcodeInput
+            [value]&#x3D;&quot;selectedLocation()?.postcode ?? &#x27;&#x27;&quot;
+            (change)&#x3D;&quot;updateAddressPart(&#x27;postcode&#x27;, postcodeInput.value)&quot;
+            [disabled]&#x3D;&quot;disabled()&quot;
+          /&gt;
+        &lt;/mat-form-field&gt;
+        &lt;mat-form-field class&#x3D;&quot;city-field&quot;&gt;
+          &lt;mat-label i18n&gt;City&lt;/mat-label&gt;
+          &lt;input
+            matInput
+            #cityInput
+            [value]&#x3D;&quot;selectedLocation()?.city ?? &#x27;&#x27;&quot;
+            (change)&#x3D;&quot;updateAddressPart(&#x27;city&#x27;, cityInput.value)&quot;
+            [disabled]&#x3D;&quot;disabled()&quot;
+          /&gt;
+        &lt;/mat-form-field&gt;
+        &lt;mat-form-field class&#x3D;&quot;full-row&quot;&gt;
+          &lt;mat-label i18n&gt;Country&lt;/mat-label&gt;
+          &lt;input
+            matInput
+            #countryInput
+            [value]&#x3D;&quot;selectedLocation()?.country ?? &#x27;&#x27;&quot;
+            (change)&#x3D;&quot;updateAddressPart(&#x27;country&#x27;, countryInput.value)&quot;
+            [disabled]&#x3D;&quot;disabled()&quot;
+          /&gt;
+        &lt;/mat-form-field&gt;
+      &lt;/div&gt;
+
+      @if (!disabled()) {
+        &lt;div class&#x3D;&quot;text-align-end&quot;&gt;
           &lt;a
-            href&#x3D;&quot;&quot;
-            (click)&#x3D;&quot;enableManualAddressEditing(); $event.preventDefault()&quot;
-            matTooltip&#x3D;&quot;Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this.&quot;
-            i18n-matTooltip
-            i18n
-            &gt;Edit address text&lt;/a
-          &gt;
-        &lt;/span&gt;
-        &amp;nbsp;|&amp;nbsp;
-        &lt;span
-          &gt;&lt;a
             href&#x3D;&quot;&quot;
             (click)&#x3D;&quot;clearLocation(); $event.preventDefault()&quot;
             matTooltip&#x3D;&quot;Delete the selected location.&quot;
             i18n-matTooltip
             i18n
-            &gt;Clear&lt;/a
-          &gt;&lt;/span
-        &gt;
+            &gt;Clear location&lt;/a
+          &gt;
+        &lt;/div&gt;
       }
-    &lt;/mat-hint&gt;
-  &lt;/mat-form-field&gt;
+    &lt;/mat-expansion-panel&gt;
+  }
 &lt;/div&gt;
 </code></pre>
     </div>
@@ -1082,7 +1318,7 @@ export class AddressEditComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="address-edit-container full-width">  @if (!disabled()) {    <div class="flex-row gap-small align-center search-row">      <app-address-search        (locationSelected)="updateFromAddressSearch($event)"        class="address-input"      ></app-address-search>      <app-address-gps-location        (locationSelected)="onGpsLocationSelected($event)"      ></app-address-gps-location>    </div>  }  <mat-form-field floatLabel="always" class="full-width">    <mat-label i18n>Selected Location</mat-label>    <textarea      #manualAddressInput      matInput      placeholder="no location selected"      i18n-placeholder      [value]="        selectedLocation()?.locationString ??        selectedLocation()?.geoLookup?.display_name      "      (change)="updateLocationString(manualAddressInput.value)"      [disabled]="disabled() || !manualAddressEnabled()"      rows="2"    ></textarea>    <mat-hint>      @if (        selectedLocation()?.geoLookup?.display_name !==        selectedLocation()?.locationString      ) {        @if (selectedLocation()?.geoLookup) {          <span            matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."            i18n-matTooltip          >            {{ selectedLocation()?.geoLookup?.display_name }}          </span>        } @else {          <span            matTooltip="You have manually entered the address above without locating it on the map. To change the location on the map, use the address search field or click on the map."            i18n-matTooltip            i18n          >            No location marked on map          </span>        }        <br />      }      @if (!disabled() && selectedLocation()) {        <span>          <a            href=""            (click)="enableManualAddressEditing(); $event.preventDefault()"            matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."            i18n-matTooltip            i18n            >Edit address text</a          >        </span>        &nbsp;|&nbsp;        <span          ><a            href=""            (click)="clearLocation(); $event.preventDefault()"            matTooltip="Delete the selected location."            i18n-matTooltip            i18n            >Clear</a          ></span        >      }    </mat-hint>  </mat-form-field></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div class="address-edit-container full-width">  @if (!disabled()) {    <div class="flex-row gap-small align-center search-row">      <app-address-search        (locationSelected)="updateFromAddressSearch($event)"        class="address-input"      ></app-address-search>      <app-address-gps-location        (locationSelected)="onGpsLocationSelected($event)"      ></app-address-gps-location>    </div>  }  <div class="selected-location-display">    <span class="location-label hint-text" i18n>Selected Location</span>    <div class="location-value">      @if (        selectedLocation()?.locationString ||        selectedLocation()?.geoLookup?.display_name      ) {        {{          selectedLocation()?.locationString ??            selectedLocation()?.geoLookup?.display_name        }}      } @else {        <span class="placeholder" i18n>no location selected</span>      }    </div>    @if (      selectedLocation()?.geoLookup?.display_name !==      selectedLocation()?.locationString    ) {      <div class="location-hint hint-text">        @if (selectedLocation()?.geoLookup) {          <span            matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."            i18n-matTooltip          >            {{ selectedLocation()?.geoLookup?.display_name }}          </span>        } @else {          <span            matTooltip="You have manually entered the address above without locating it on the map. To change the location on the map, use the address search field or click on the map."            i18n-matTooltip            i18n          >            No location marked on map          </span>        }      </div>    }  </div>  @if (selectedLocation()) {    <mat-expansion-panel      class="address-details-panel"      (opened)="focusManualAddressInput()"    >      <mat-expansion-panel-header>        <mat-panel-title i18n>Address details</mat-panel-title>        <mat-panel-description i18n          >Road · House no. · Postcode · City · Country</mat-panel-description        >      </mat-expansion-panel-header>      <mat-form-field floatLabel="always" class="full-width">        <mat-label i18n>Full address text</mat-label>        <textarea          #manualAddressInput          matInput          matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."          i18n-matTooltip          [value]="            selectedLocation()?.locationString ??            selectedLocation()?.geoLookup?.display_name ??            \'\'          "          (change)="updateLocationString(manualAddressInput.value)"          [disabled]="disabled()"          rows="2"        ></textarea>      </mat-form-field>      @if (hasDivergingText()) {        <p class="parts-mismatch-hint hint-text" i18n>          This address text has been customized — it no longer matches the          address details below or the mapped location.        </p>      }      <div class="address-parts-grid">        <mat-form-field class="road-field">          <mat-label i18n>Road</mat-label>          <input            matInput            #roadInput            [value]="selectedLocation()?.road ?? \'\'"            (change)="updateAddressPart(\'road\', roadInput.value)"            [disabled]="disabled()"          />        </mat-form-field>        <mat-form-field class="house-number-field">          <mat-label i18n>House no.</mat-label>          <input            matInput            #houseNumberInput            [value]="selectedLocation()?.house_number ?? \'\'"            (change)="updateAddressPart(\'house_number\', houseNumberInput.value)"            [disabled]="disabled()"          />        </mat-form-field>        <mat-form-field class="postcode-field">          <mat-label i18n>Postcode</mat-label>          <input            matInput            #postcodeInput            [value]="selectedLocation()?.postcode ?? \'\'"            (change)="updateAddressPart(\'postcode\', postcodeInput.value)"            [disabled]="disabled()"          />        </mat-form-field>        <mat-form-field class="city-field">          <mat-label i18n>City</mat-label>          <input            matInput            #cityInput            [value]="selectedLocation()?.city ?? \'\'"            (change)="updateAddressPart(\'city\', cityInput.value)"            [disabled]="disabled()"          />        </mat-form-field>        <mat-form-field class="full-row">          <mat-label i18n>Country</mat-label>          <input            matInput            #countryInput            [value]="selectedLocation()?.country ?? \'\'"            (change)="updateAddressPart(\'country\', countryInput.value)"            [disabled]="disabled()"          />        </mat-form-field>      </div>      @if (!disabled()) {        <div class="text-align-end">          <a            href=""            (click)="clearLocation(); $event.preventDefault()"            matTooltip="Delete the selected location."            i18n-matTooltip            i18n            >Clear location</a          >        </div>      }    </mat-expansion-panel>  }</div></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminUserRolesComponent', 'selector': 'app-admin-user-roles'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
     var ACTUAL_COMPONENT = {'name': 'AddressEditComponent'};

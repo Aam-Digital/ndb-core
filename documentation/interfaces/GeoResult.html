@@ -430,6 +430,24 @@ export class GeoService {
   ): GeoLocation | undefined {
     return enrichGeoLocation(location);
   }
+
+  /**
+   * Composes a display address string from a GeoLocation&#x27;s structured parts
+   * (the reverse of what {@link enrichGeoLocation} derives from a lookup).
+   *
+   * Deliberately mirrors the format of {@link reformatDisplayName} (street,
+   * then postcode + city) and omits &#x60;country&#x60;: callers compare the composed
+   * string against a lookup&#x27;s &#x60;display_name&#x60; to tell whether the address text
+   * was customized, so the two must be able to match.
+   */
+  composeAddressFromParts(location: GeoLocation | undefined): string {
+    if (!location) {
+      return &quot;&quot;;
+    }
+    return [this.formatStreet(location), this.formatPostcodeCity(location)]
+      .filter((x) &#x3D;&gt; !!x)
+      .join(&quot;, &quot;);
+  }
 }
 
 export type OpenStreetMapsSearchResult &#x3D; GeoResult &amp; {
