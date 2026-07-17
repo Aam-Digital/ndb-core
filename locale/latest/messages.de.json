@@ -246,7 +246,6 @@
   "1191324740438751530": "Bitte eine gültige Zahl eintragen",
   "266664346458430650": "Ungültige Eingabe",
   "848068633991631534": "Speichern von {$PH} fehlgeschlagen: {$PH_1}",
-  "1784555372833983723": "Ihr Account hat nicht die nötigen Berechtigungen um diese Änderungen zu speichern: {$PH}",
   "6370500058550589280": "Änderungen laden?",
   "8180161184938665842": "Lokale Änderungen überlappen mit aktualisierten Daten, die vom Server synchronisiert wurden. Wollen Sie die lokalen Änderungen mit den aktuellsten Daten überschreiben?",
   "4377913418789938842": " Auch {$INTERPOLATION} inaktive anzeigen ",
@@ -1541,5 +1540,10 @@
   "373994441826234589": "The definition of what the report calculates: SQL queries for \"sql\" mode, or aggregation/export definitions for \"reporting\"/\"exporting\" mode.",
   "7638542020687742376": "Create and edit report configurations for aggregations, exports and SQL reports.",
   "4803626735063988862": "Configure a report that users can run to generate aggregated statistics or data exports.\nSee [Analyzing data through advanced reports](https://chatwoot.help/hc/aam-digital/articles/1782889956-analyzing-data-through-advanced-reports) for how to set up and use reports.",
-  "8409544799262519924": "Manage Reports"
+  "8409544799262519924": "Manage Reports",
+  "3220852476952327677": " or ",
+  "7764764525401658216": "Your permissions only allow the following value(s) here: {$PH}",
+  "3546667753315441669": "Your permissions do not allow the following value(s) here: {$PH}",
+  "860314143029987759": "Current user is not permitted to save these changes. Values required by your permissions - {$PH}",
+  "5248595452216085757": "Current user is not permitted to save these changes."
 }
