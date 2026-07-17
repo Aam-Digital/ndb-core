@@ -262,9 +262,11 @@ test("Import a multi-value entity reference from a single comma-separated column
     timeout: 15_000,
   });
 
-  // open the created note and confirm both schools are linked on the saved record
+  // open the created note and confirm both schools are linked on the saved record.
+  // the imported note has no date, so clear the list's default date-range filter first.
   await page.getByRole("navigation").getByText("Notes").click();
-  await page.getByText("Joint school meeting").click();
+  await page.getByRole("button", { name: "Reset date filter" }).click();
+  await page.getByRole("cell", { name: "Joint school meeting" }).click();
   const noteDetails = page.getByRole("dialog");
   await expect(noteDetails).toBeVisible();
   await expect(noteDetails.getByText("Springfield Elementary")).toBeVisible();
