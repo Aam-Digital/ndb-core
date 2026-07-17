@@ -29,6 +29,7 @@ import { RouteTarget } from "../../../route-target";
 import { ImportMatchExistingComponent } from "../update-existing/import-match-existing/import-match-existing.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -54,6 +55,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
     ImportColumnMappingComponent,
     ImportReviewDataComponent,
     WarningNotOptimizedForSmallScreenComponent,
+    HintBoxComponent,
   ],
 })
 export class ImportComponent {
@@ -87,6 +89,21 @@ export class ImportComponent {
     return (
       !!entityType &&
       (!this.ability.initialized || this.ability.can("update", entityType))
+    );
+  });
+
+  /**
+   * Whether the selected type cannot be created by the user.
+   * The dropdown already hides non-creatable types, but a type can also arrive
+   * via the entityType query parameter (e.g. a bookmarked link), so guard the
+   * selection here too instead of only failing at the final save.
+   */
+  cannotCreateSelectedType = computed(() => {
+    const entityType = this.importSettings().entityType;
+    return (
+      !!entityType &&
+      this.ability.initialized &&
+      this.ability.cannot("create", entityType)
     );
   });
 

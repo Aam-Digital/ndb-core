@@ -96,6 +96,21 @@ describe("ImportComponent", () => {
     expect(component.canUpdateSelectedType()).toBe(true);
   });
 
+  it("should flag a selected type the user cannot create (e.g. via query param)", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: "Child", action: "create", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    component.importSettings.set({ entityType: "Child" });
+    expect(component.cannotCreateSelectedType()).toBe(true);
+
+    component.importSettings.set({ entityType: "School" });
+    expect(component.cannotCreateSelectedType()).toBe(false);
+  });
+
   it("should update an empty column mapping upon loading rawData", async () => {
     component.onDataLoaded(testDataRaw);
 
