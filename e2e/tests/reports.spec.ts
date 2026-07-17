@@ -21,9 +21,10 @@ test("Generate a configured aggregation report and download CSV", async ({
   const reportConfig = createEntityOfType("ReportConfig", "e2e-basic-report");
   reportConfig.title = "E2E Basic Report";
   reportConfig.mode = "reporting";
+  reportConfig.description = "This report is created for e2e testing ...";
   reportConfig.reportDefinition = [
     {
-      query: "Child:toArray",
+      query: "Child:toArray[* admissionDate >= ? & admissionDate <= ?]",
       label: "All children",
     },
   ];
@@ -35,6 +36,12 @@ test("Generate a configured aggregation report and download CSV", async ({
   // Pick the report in the Select Report dropdown.
   await page.getByRole("combobox", { name: /Select Report/i }).click();
   await page.getByRole("option", { name: "E2E Basic Report" }).click();
+
+  // The aggregation report shows a date range selector and Calculate is
+  // disabled until a range is set. Fill the date range.
+  await page.getByRole("textbox", { name: "Start date" }).fill("01.01.2020");
+  await page.getByRole("textbox", { name: "End date" }).fill("31.12.2025");
+  await page.getByRole("textbox", { name: "End date" }).blur();
 
   // This report's query has no date placeholders, so no date-range selector is shown.
   await argosScreenshot(page, "reports-selected");
