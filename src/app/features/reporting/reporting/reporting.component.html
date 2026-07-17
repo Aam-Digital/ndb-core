@@ -47,6 +47,15 @@
   class="view-section"
 ></app-select-report>
 
+@if (currentReport()?.mode === "sql") {
+  <app-feature-disabled-info
+    class="view-section"
+    featureName="SQL reports"
+    i18n-featureName="ReportConfig SQL feature name"
+    [featureEnabled]="reportingBackendEnabled.value()"
+  ></app-feature-disabled-info>
+}
+
 @if (reportCalculation()) {
   @if (isStale()) {
     <div

@@ -92,19 +92,4 @@ describe("reportUsesDateRange", () => {
       }),
     ).toBe(true);
   });
-
-  it("always offers a date range for non-sql (in-browser) reports", () => {
-    expect(
-      reportUsesDateRange({
-        mode: "reporting",
-        reportDefinition: [{ query: "Child:toArray[*isActive=true]" }],
-      }),
-    ).toBe(true);
-    expect(
-      reportUsesDateRange({
-        mode: "exporting",
-        reportDefinition: [{ query: "EventNote:toArray" }],
-      }),
-    ).toBe(true);
-  });
 });

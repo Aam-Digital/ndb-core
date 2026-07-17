@@ -50,22 +50,4 @@ export class EditReportModeComponent
   readonly reportingBackendEnabled = resource({
     loader: () => this.sqlReportService.isReportingBackendEnabled(),
   });
-
-  readonly modeOptions: string[] = ["reporting", "exporting", "sql"];
-
-  private readonly modeLabels: Record<string, string> = {
-    reporting: $localize`:ReportConfig mode option:Reporting`,
-    exporting: $localize`:ReportConfig mode option:Exporting`,
-    sql: $localize`:ReportConfig mode option:SQL`,
-  };
-
-  /** short explanation of each mode, shown as a tooltip on the dropdown option */
-  readonly modeDescriptions: Record<string, string> = {
-    reporting: $localize`:ReportConfig mode description:Aggregated statistics (counts, groupings) calculated in the browser. No server-side reporting backend required.`,
-    exporting: $localize`:ReportConfig mode description:A flat export of the matching records. No server-side reporting backend required.`,
-    sql: $localize`:ReportConfig mode description:Custom server-side SQL queries for advanced reports. Requires the reporting backend to be enabled.`,
-  };
-
-  readonly modeToString = (mode: string): string =>
-    this.modeLabels[mode] ?? mode;
 }

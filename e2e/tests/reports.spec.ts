@@ -15,12 +15,14 @@ test("Generate a configured aggregation report and download CSV", async ({
     generateChild({ name: `Reports Child ${i}` }),
   );
 
-  // Seed a non-SQL aggregation ReportConfig so the Reports view has
-  // something to select. The query language is browser-side data
+  // Seed a non-SQL aggregation ReportConfig (with a description) so the Reports
+  // view has something to select. The query language is browser-side data
   // aggregation; "Child:toArray" yields all Child entities.
+  const description = "This report counts all children in the system.";
   const reportConfig = createEntityOfType("ReportConfig", "e2e-basic-report");
   reportConfig.title = "E2E Basic Report";
   reportConfig.mode = "reporting";
+  reportConfig.description = description;
   reportConfig.reportDefinition = [
     {
       query: "Child:toArray",
@@ -36,12 +38,11 @@ test("Generate a configured aggregation report and download CSV", async ({
   await page.getByRole("combobox", { name: /Select Report/i }).click();
   await page.getByRole("option", { name: "E2E Basic Report" }).click();
 
-  // The aggregation report shows a date range selector and Calculate is
-  // disabled until a range is set. Fill the date range.
-  await page.getByRole("textbox", { name: "Start date" }).fill("01.01.2024");
-  await page.getByRole("textbox", { name: "End date" }).fill("31.12.2025");
-  await page.getByRole("textbox", { name: "End date" }).blur();
+  // The report's description is shown in a collapsible "About this report" panel.
+  await page.getByRole("button", { name: /About this report/ }).click();
+  await expect(page.getByText(description)).toBeVisible();
 
+  // This report's query has no date placeholders, so no date-range selector is shown.
   await argosScreenshot(page, "reports-selected");
 
   // Run the report.
@@ -140,41 +141,4 @@ test("Editing a report's description via the admin view persists", async ({
   await expect(
     page.locator("#entity-field__description").getByRole("textbox"),
   ).toHaveValue(newDescription, { timeout: 10_000 });
-});
-
-test("Report description is shown above the results on the Reports view", async ({
-  page,
-}) => {
-  const users = generateUsers();
-  const children = range(3).map((i) =>
-    generateChild({ name: `Reports Child ${i}` }),
-  );
-
-  const description = "This report counts all children in the system.";
-  const reportConfig = createEntityOfType(
-    "ReportConfig",
-    "e2e-described-report",
-  );
-  reportConfig.title = "E2E Described Report";
-  reportConfig.mode = "reporting";
-  reportConfig.description = description;
-  reportConfig.aggregationDefinitions = [
-    { query: "Child:toArray", label: "All children" },
-  ];
-
-  await loadApp(page, [...users, ...children, reportConfig]);
-
-  await page.getByRole("navigation").getByText("Reports").click();
-
-  await page.getByRole("combobox", { name: /Select Report/i }).click();
-  await page.getByRole("option", { name: "E2E Described Report" }).click();
-
-  // The new collapsible "About this report" panel appears above the results.
-  await expect(
-    page.getByRole("button", { name: /About this report/ }),
-  ).toBeVisible({ timeout: 10_000 });
-  await page.getByRole("button", { name: /About this report/ }).click();
-  await expect(page.getByText(description)).toBeVisible();
-
-  await argosScreenshot(page, "report-description");
 });

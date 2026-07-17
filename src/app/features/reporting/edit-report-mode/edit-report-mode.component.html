@@ -1,13 +1,28 @@
 <mat-select [formControl]="formControl">
-  @for (mode of modeOptions; track mode) {
-    <mat-option
-      [value]="mode"
-      [matTooltip]="modeDescriptions[mode]"
-      matTooltipPosition="right"
-    >
-      {{ modeToString(mode) }}
-    </mat-option>
-  }
+  <mat-option
+    value="reporting"
+    matTooltip="Aggregated statistics (counts, groupings) calculated in the browser. No server-side reporting backend required."
+    i18n-matTooltip="ReportConfig mode description"
+    matTooltipPosition="right"
+  >
+    <span i18n="ReportConfig mode option">Reporting</span>
+  </mat-option>
+  <mat-option
+    value="exporting"
+    matTooltip="A flat export of the matching records. No server-side reporting backend required."
+    i18n-matTooltip="ReportConfig mode description"
+    matTooltipPosition="right"
+  >
+    <span i18n="ReportConfig mode option">Exporting</span>
+  </mat-option>
+  <mat-option
+    value="sql"
+    matTooltip="Custom server-side SQL queries for advanced reports. Requires the reporting backend to be enabled."
+    i18n-matTooltip="ReportConfig mode description"
+    matTooltipPosition="right"
+  >
+    <span i18n="ReportConfig mode option">SQL</span>
+  </mat-option>
 </mat-select>
 
 @if (valueSignal() === "sql") {
