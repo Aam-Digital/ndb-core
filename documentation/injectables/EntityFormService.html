@@ -219,8 +219,8 @@ new changes correctly to the entity.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -396,8 +396,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="42"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:42</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:47</a></div>
                         </td>
                     </tr>
 
@@ -497,8 +497,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="339"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:339</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="360"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:360</a></div>
                         </td>
                     </tr>
 
@@ -587,8 +587,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="249"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:249</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="268"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:268</a></div>
                         </td>
                     </tr>
 
@@ -682,6 +682,7 @@ import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { DynamicValidatorsService } from &quot;./dynamic-form-validators/dynamic-validators.service&quot;;
+import { PermissionConditionValidatorsService } from &quot;./dynamic-form-validators/permission-condition-validators&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { InvalidFormFieldError } from &quot;./invalid-form-field.error&quot;;
 import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-changes.service&quot;;
@@ -694,6 +695,7 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
+import { asArray } from &quot;app/utils/asArray&quot;;
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -705,6 +707,9 @@ export class EntityFormService {
   private entityMapper &#x3D; inject(EntityMapperService);
   private entitySchemaService &#x3D; inject(EntitySchemaService);
   private dynamicValidator &#x3D; inject(DynamicValidatorsService);
+  private readonly permissionConditionValidators &#x3D; inject(
+    PermissionConditionValidatorsService,
+  );
   private ability &#x3D; inject(EntityAbility);
   private unsavedChanges &#x3D; inject(UnsavedChangesService);
   private defaultValueService &#x3D; inject(DefaultValueService);
@@ -858,7 +863,7 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy);
+      this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
     }
     const group &#x3D; this.fb.group&lt;Partial&lt;T&gt;&gt;(formConfig);
 
@@ -886,6 +891,7 @@ export class EntityFormService {
     formConfig: { [key: string]: FormControl },
     field: FormFieldConfig,
     entity: Entity,
+    withPermissionCheck: boolean,
   ) {
     let value &#x3D; entity[field.id];
 
@@ -897,6 +903,19 @@ export class EntityFormService {
         field.id,
       );
       Object.assign(controlOptions, validators);
+    }
+
+    if (withPermissionCheck) {
+      const conditionValidator &#x3D; this.permissionConditionValidators.forField(
+        entity,
+        field.id,
+      );
+      if (conditionValidator) {
+        controlOptions.validators &#x3D; [
+          ...asArray(controlOptions.validators ?? []),
+          conditionValidator,
+        ];
+      }
     }
 
     formConfig[field.id] &#x3D; new FormControl(value, controlOptions);
@@ -1000,14 +1019,16 @@ export class EntityFormService {
     }
 
     if (!this.ability.can(action, entity, undefined, true)) {
-      const conditions &#x3D; this.ability
-        .rulesFor(action, entity.getType())
-        .map((r) &#x3D;&gt; r.conditions);
+      const requiredValues &#x3D;
+        this.permissionConditionValidators.describeRequiredValues(
+          action,
+          entity,
+        );
 
       throw new Error(
-        $localize&#x60;Current user is not permitted to save these changes: ${JSON.stringify(
-          conditions,
-        )}&#x60;,
+        requiredValues
+          ? $localize&#x60;Current user is not permitted to save these changes. Values required by your permissions - ${requiredValues}&#x60;
+          : $localize&#x60;Current user is not permitted to save these changes.&#x60;,
       );
     }
   }

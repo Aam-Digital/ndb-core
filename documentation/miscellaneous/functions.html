@@ -190,6 +190,9 @@
                             <a href="#buildMatchingSideConfig" title="src/app/features/matching-entities/matching-entities/matching-entities.component.ts" ><b>buildMatchingSideConfig</b>&nbsp;&nbsp;&nbsp;(src/.../matching-entities.component.ts)</a>
                         </li>
                         <li>
+                            <a href="#buildPermissionConditionValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" ><b>buildPermissionConditionValidator</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</a>
+                        </li>
+                        <li>
                             <a href="#buildReadonlyValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/readonly-after-set.validator.ts" ><b>buildReadonlyValidator</b>&nbsp;&nbsp;&nbsp;(src/.../readonly-after-set.validator.ts)</a>
                         </li>
                         <li>
@@ -250,6 +253,9 @@
                             <a href="#createEntityOfType" title="src/app/core/demo-data/create-entity-of-type.ts" ><b>createEntityOfType</b>&nbsp;&nbsp;&nbsp;(src/.../create-entity-of-type.ts)</a>
                         </li>
                         <li>
+                            <a href="#createFieldDecision" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" ><b>createFieldDecision</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</a>
+                        </li>
+                        <li>
                             <a href="#createSkillApiDummyData" title="src/app/features/skill/skill-api/skill-api-mock.ts" ><b>createSkillApiDummyData</b>&nbsp;&nbsp;&nbsp;(src/.../skill-api-mock.ts)</a>
                         </li>
                         <li>
@@ -263,6 +269,9 @@
                         </li>
                         <li>
                             <a href="#dateToString" title="src/app/utils/utils.ts" ><b>dateToString</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#describeConditionFragment" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" ><b>describeConditionFragment</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</a>
                         </li>
                         <li>
                             <a href="#descriptionForAgeValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/age-validators.ts" ><b>descriptionForAgeValidator</b>&nbsp;&nbsp;&nbsp;(src/.../age-validators.ts)</a>
@@ -4328,6 +4337,306 @@ and fill it with columns from comparison array if necessary</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../interfaces/MatchingSideConfig.html" target="_self" >MatchingSideConfig</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildPermissionConditionValidator"></a>
+                    <span class="name">
+                        <span ><b>buildPermissionConditionValidator</b></span>
+                        <a href="#buildPermissionConditionValidator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>buildPermissionConditionValidator(rules, fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, toDbFormat, formatValue?)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Create a form validator that checks a single field&#39;s value against the
+permission rule <code>conditions</code> restricting it, so that users see a normal
+field error instead of only a technical rejection when saving.</p>
+<p>The rules are evaluated in the given priority order (as returned by
+<code>ability.rulesFor</code>): the first rule whose condition matches the value
+decides, mirroring CASL&#39;s own precedence.</p>
+<p>Returns <code>null</code> if the field&#39;s value cannot be the reason for a denied save.
+Inverted (&quot;cannot&quot;) rules with conditions on several fields and conditions
+on properties without a form control (e.g. &quot;created.by&quot;) are not covered
+here and remain handled by the save-time permission check.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rules</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The relevant CASL rules for the action and entity type (<code>ability.rulesFor(...)</code>)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The form field / entity property to validate</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>toDbFormat</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>(value) &#x3D;&gt; value</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Transformation of the control value into database format,
+as rule conditions are evaluated against database-format entities</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>formatValue</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>Lookup of a human-readable display for a single
+(database-format) condition value, e.g. resolving enum ids to labels</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ValidatorFn | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createFieldDecision"></a>
+                    <span class="name">
+                        <span ><b>createFieldDecision</b></span>
+                        <a href="#createFieldDecision"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>createFieldDecision(rule: <a href="../interfaces/RuleWithConditions.html" target="_self">RuleWithConditions</a>, fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rule</td>
+                                            <td>
+                                                            <code><a href="../interfaces/RuleWithConditions.html" target="_self" >RuleWithConditions</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FieldDecision.html" target="_self" >FieldDecision</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="describeConditionFragment"></a>
+                    <span class="name">
+                        <span ><b>describeConditionFragment</b></span>
+                        <a href="#describeConditionFragment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>describeConditionFragment(fragment: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, formatValue)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Human-readable summary of a single permission condition fragment
+(the value of one key in a CASL rule&#39;s <code>conditions</code> object).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fragment</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The condition fragment to describe</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>formatValue</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>(value) &#x3D;&gt; String(value)</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Lookup of a human-readable display for a single value,
+e.g. resolving enum ids to labels</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">

@@ -2079,6 +2079,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/MultiTabDetectionService.html" data-type="entity-link" >MultiTabDetectionService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/PermissionConditionValidatorsService.html" data-type="entity-link" >PermissionConditionValidatorsService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/PermissionEnforcerService.html" data-type="entity-link" >PermissionEnforcerService</a>
                                 </li>
                                 <li class="link">
@@ -2523,6 +2526,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/FieldChange.html" data-type="entity-link" >FieldChange</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/FieldDecision.html" data-type="entity-link" >FieldDecision</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/FieldGroup.html" data-type="entity-link" >FieldGroup</a>
                             </li>
                             <li class="link">
@@ -2716,6 +2722,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/Role.html" data-type="entity-link" >Role</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RuleWithConditions.html" data-type="entity-link" >RuleWithConditions</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/SchemaEmbedDatatypeAdditional.html" data-type="entity-link" >SchemaEmbedDatatypeAdditional</a>

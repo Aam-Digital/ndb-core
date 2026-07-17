@@ -1,0 +1,725 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >PermissionConditionValidatorsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Derives form validators and human-readable messages from the <code>conditions</code>
+of the current user&#39;s permission rules, so unmet conditions surface as
+normal field errors instead of only a technical rejection when saving.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#describeRequiredValues" >describeRequiredValues</a>
+                            </li>
+                            <li>
+                                <a href="#forField" >forField</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="describeRequiredValues"></a>
+                    <span class="name">
+                        <span ><b>describeRequiredValues</b></span>
+                        <a href="#describeRequiredValues"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>describeRequiredValues(action: "create" | "update", entity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="63"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:63</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Human-readable summary of the values the current user&#39;s permission rule
+conditions require on the entity (empty string if no rule has conditions),
+e.g. to explain a denied save.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                        <code>&quot;create&quot; | &quot;update&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="forField"></a>
+                    <span class="name">
+                        <span ><b>forField</b></span>
+                        <a href="#forField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>forField(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="39"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validator reflecting the current user&#39;s permission rule conditions for the
+given field, or <code>null</code> if the field&#39;s value cannot be the reason for a
+denied save.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ValidatorFn | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { ValidatorFn } from &quot;@angular/forms&quot;;
+import { Ability, subject } from &quot;@casl/ability&quot;;
+import { Entity } from &quot;../../../entity/model/entity&quot;;
+import { EntitySchemaField } from &quot;../../../entity/schema/entity-schema-field&quot;;
+import { EntitySchemaService } from &quot;../../../entity/schema/entity-schema.service&quot;;
+import { ConfigurableEnumService } from &quot;../../../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
+import { ConfigurableEnumDatatype } from &quot;../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype&quot;;
+import { EntityAbility } from &quot;../../../permissions/ability/entity-ability&quot;;
+
+/**
+ * Minimal structural type of the CASL rules (see &#x60;Ability.rulesFor&#x60;)
+ * that condition validators are derived from.
+ */
+interface RuleWithConditions {
+  conditions?: Record&lt;string, any&gt;;
+  inverted?: boolean;
+}
+
+const MATCH_ACTION &#x3D; &quot;match&quot;;
+const MATCH_SUBJECT &#x3D; &quot;PermissionConditionCheck&quot;;
+
+/**
+ * Derives form validators and human-readable messages from the &#x60;conditions&#x60;
+ * of the current user&#x27;s permission rules, so unmet conditions surface as
+ * normal field errors instead of only a technical rejection when saving.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class PermissionConditionValidatorsService {
+  private readonly ability &#x3D; inject(EntityAbility);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+  private readonly enumService &#x3D; inject(ConfigurableEnumService);
+
+  /**
+   * Validator reflecting the current user&#x27;s permission rule conditions for the
+   * given field, or &#x60;null&#x60; if the field&#x27;s value cannot be the reason for a
+   * denied save.
+   */
+  forField(entity: Entity, fieldId: string): ValidatorFn | null {
+    const action &#x3D; entity.isNew ? &quot;create&quot; : &quot;update&quot;;
+    const rules &#x3D; this.ability.rulesFor(action, entity.getType());
+    const schemaField &#x3D; entity.getSchema().get(fieldId);
+
+    // rule conditions are evaluated against entities in database format
+    return buildPermissionConditionValidator(
+      rules,
+      fieldId,
+      (value) &#x3D;&gt;
+        this.entitySchemaService.valueToDatabaseFormat(
+          value,
+          schemaField,
+          entity,
+        ),
+      this.getConditionValueFormatter(schemaField),
+    );
+  }
+
+  /**
+   * Human-readable summary of the values the current user&#x27;s permission rule
+   * conditions require on the entity (empty string if no rule has conditions),
+   * e.g. to explain a denied save.
+   */
+  describeRequiredValues(action: &quot;create&quot; | &quot;update&quot;, entity: Entity): string {
+    return this.ability
+      .rulesFor(action, entity.getType())
+      .filter(
+        (r) &#x3D;&gt;
+          !r.inverted &amp;&amp; r.conditions &amp;&amp; Object.keys(r.conditions).length &gt; 0,
+      )
+      .map((r) &#x3D;&gt;
+        Object.entries(r.conditions)
+          .map(([field, fragment]) &#x3D;&gt; {
+            const schemaField &#x3D; entity.getSchema().get(field);
+            const description &#x3D; describeConditionFragment(
+              fragment,
+              this.getConditionValueFormatter(schemaField),
+            );
+            return &#x60;${schemaField?.label ?? field}: ${description}&#x60;;
+          })
+          .join(&quot;, &quot;),
+      )
+      .join($localize&#x60;:joining alternative permission conditions: or &#x60;);
+  }
+
+  /**
+   * Human-readable display of a single (database-format) condition value,
+   * resolving configurable-enum ids to their labels.
+   */
+  private getConditionValueFormatter(
+    schemaField: EntitySchemaField | undefined,
+  ): ((value: any) &#x3D;&gt; string) | undefined {
+    if (schemaField?.dataType !&#x3D;&#x3D; ConfigurableEnumDatatype.dataType) {
+      return undefined;
+    }
+    return (value) &#x3D;&gt;
+      this.enumService
+        .getEnumValues(schemaField.additional)
+        .find((option) &#x3D;&gt; option.id &#x3D;&#x3D;&#x3D; value)?.label ?? String(value);
+  }
+}
+
+/**
+ * A single per-field decision derived from one permission rule: if its
+ * condition fragment matches the field&#x27;s value, the rule decides the outcome
+ * (deny for inverted rules, grant otherwise).
+ */
+interface FieldDecision {
+  fragment: any;
+  inverted: boolean;
+  matcher: Ability;
+}
+
+/**
+ * Create a form validator that checks a single field&#x27;s value against the
+ * permission rule &#x60;conditions&#x60; restricting it, so that users see a normal
+ * field error instead of only a technical rejection when saving.
+ *
+ * The rules are evaluated in the given priority order (as returned by
+ * &#x60;ability.rulesFor&#x60;): the first rule whose condition matches the value
+ * decides, mirroring CASL&#x27;s own precedence.
+ *
+ * Returns &#x60;null&#x60; if the field&#x27;s value cannot be the reason for a denied save.
+ * Inverted (&quot;cannot&quot;) rules with conditions on several fields and conditions
+ * on properties without a form control (e.g. &quot;created.by&quot;) are not covered
+ * here and remain handled by the save-time permission check.
+ *
+ * @param rules The relevant CASL rules for the action and entity type (&#x60;ability.rulesFor(...)&#x60;)
+ * @param fieldId The form field / entity property to validate
+ * @param toDbFormat Transformation of the control value into database format,
+ *   as rule conditions are evaluated against database-format entities
+ * @param formatValue Lookup of a human-readable display for a single
+ *   (database-format) condition value, e.g. resolving enum ids to labels
+ */
+export function buildPermissionConditionValidator(
+  rules: RuleWithConditions[],
+  fieldId: string,
+  toDbFormat: (value: any) &#x3D;&gt; any &#x3D; (value) &#x3D;&gt; value,
+  formatValue?: (value: any) &#x3D;&gt; string,
+): ValidatorFn | null {
+  if (!rules.some((r) &#x3D;&gt; !r.inverted)) {
+    // without any granting rule the action is denied as a whole,
+    // which is handled by disabling the form, not per-field errors
+    return null;
+  }
+
+  const decisions: FieldDecision[] &#x3D; [];
+  let unconditionalGrant &#x3D; false;
+  for (const rule of rules) {
+    if (!rule.inverted) {
+      if (rule.conditions &amp;&amp; fieldId in rule.conditions) {
+        decisions.push(createFieldDecision(rule, fieldId));
+      } else {
+        // grants regardless of this field&#x27;s value; lower-priority rules
+        // can no longer change the outcome for this field
+        unconditionalGrant &#x3D; true;
+        break;
+      }
+    } else if (
+      rule.conditions &amp;&amp;
+      fieldId in rule.conditions &amp;&amp;
+      Object.keys(rule.conditions).length &#x3D;&#x3D;&#x3D; 1
+    ) {
+      decisions.push(createFieldDecision(rule, fieldId));
+    }
+    // inverted rules conditioned on other or several fields cannot be decided
+    // by this field&#x27;s value alone and are left to the save-time check
+  }
+
+  const disallowedFragments &#x3D; decisions
+    .filter((d) &#x3D;&gt; d.inverted)
+    .map((d) &#x3D;&gt; d.fragment);
+  if (disallowedFragments.length &#x3D;&#x3D;&#x3D; 0 &amp;&amp; unconditionalGrant) {
+    // no rule can reject based on this field&#x27;s value
+    return null;
+  }
+
+  const allowedValues &#x3D; unconditionalGrant
+    ? undefined
+    : decisions
+        .filter((d) &#x3D;&gt; !d.inverted)
+        .map((d) &#x3D;&gt; describeConditionFragment(d.fragment, formatValue))
+        .join(&quot; / &quot;);
+  const disallowedValues &#x3D; disallowedFragments
+    .map((fragment) &#x3D;&gt; describeConditionFragment(fragment, formatValue))
+    .join(&quot; / &quot;);
+
+  const errorMessage &#x3D; [
+    allowedValues
+      ? $localize&#x60;:form field error for value outside the user&#x27;s permissions:Your permissions only allow the following value(s) here\: ${allowedValues}&#x60;
+      : undefined,
+    disallowedValues
+      ? $localize&#x60;:form field error for a value denied by the user&#x27;s permissions:Your permissions do not allow the following value(s) here\: ${disallowedValues}&#x60;
+      : undefined,
+  ]
+    .filter((part) &#x3D;&gt; !!part)
+    .join(&quot; &quot;);
+  const error &#x3D; {
+    permissionCondition: { allowedValues, disallowedValues, errorMessage },
+  };
+
+  return (control) &#x3D;&gt; {
+    let value &#x3D; control.value;
+    if (value !&#x3D;&#x3D; undefined &amp;&amp; value !&#x3D;&#x3D; null) {
+      try {
+        value &#x3D; toDbFormat(value);
+      } catch {
+        // value cannot be evaluated reliably against the (database-format)
+        // conditions; leave the denial to the save-time permission check
+        return null;
+      }
+    }
+
+    const checkedObject &#x3D; subject(
+      MATCH_SUBJECT,
+      value &#x3D;&#x3D;&#x3D; undefined ? {} : { [fieldId]: value },
+    );
+    for (const decision of decisions) {
+      if (decision.matcher.can(MATCH_ACTION, checkedObject)) {
+        return decision.inverted ? error : null;
+      }
+    }
+    return unconditionalGrant ? null : error;
+  };
+}
+
+function createFieldDecision(
+  rule: RuleWithConditions,
+  fieldId: string,
+): FieldDecision {
+  const fragment &#x3D; rule.conditions[fieldId];
+  return {
+    fragment,
+    inverted: !!rule.inverted,
+    matcher: new Ability([
+      {
+        action: MATCH_ACTION,
+        subject: MATCH_SUBJECT,
+        conditions: { [fieldId]: fragment },
+      },
+    ]),
+  };
+}
+
+/**
+ * Human-readable summary of a single permission condition fragment
+ * (the value of one key in a CASL rule&#x27;s &#x60;conditions&#x60; object).
+ *
+ * @param fragment The condition fragment to describe
+ * @param formatValue Lookup of a human-readable display for a single value,
+ *   e.g. resolving enum ids to labels
+ */
+export function describeConditionFragment(
+  fragment: any,
+  formatValue: (value: any) &#x3D;&gt; string &#x3D; (value) &#x3D;&gt; String(value),
+): string {
+  if (fragment &#x3D;&#x3D;&#x3D; null) {
+    return String(fragment);
+  }
+  if (typeof fragment !&#x3D;&#x3D; &quot;object&quot;) {
+    return formatValue(fragment);
+  }
+  if (Array.isArray(fragment)) {
+    return fragment.map(formatValue).join(&quot;, &quot;);
+  }
+
+  const operators &#x3D; Object.entries(fragment);
+  if (operators.length &#x3D;&#x3D;&#x3D; 1) {
+    const [operator, value] &#x3D; operators[0];
+    if (operator &#x3D;&#x3D;&#x3D; &quot;$eq&quot;) {
+      return describeConditionFragment(value, formatValue);
+    }
+    if (operator &#x3D;&#x3D;&#x3D; &quot;$in&quot; &amp;&amp; Array.isArray(value)) {
+      return value.map(formatValue).join(&quot;, &quot;);
+    }
+  }
+  return JSON.stringify(fragment);
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'PermissionConditionValidatorsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
