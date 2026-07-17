@@ -160,9 +160,6 @@ export class MapPopupComponent {
   }
 
   onSave() {
-    // All divergence between the address text, the structured parts and the
-    // mapped location is now resolved at the moment of each edit (part edits
-    // and map clicks ask immediately), so saving just persists the result.
     this.closeDialog();
   }
 
