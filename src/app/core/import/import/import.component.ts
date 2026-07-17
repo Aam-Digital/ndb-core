@@ -166,7 +166,12 @@ export class ImportComponent {
   }
 
   onEntityTypeChange(newType: string) {
-    this.updateImportSettings({ entityType: newType });
+    // reset settings that reference the previous type's fields / link actions
+    this.updateImportSettings({
+      entityType: newType,
+      importExisting: undefined,
+      additionalActions: undefined,
+    });
     if (this.importSettings().columnMapping?.length) {
       this.onColumnMappingUpdate(
         this.importSettings().columnMapping.map(({ column }) => ({
