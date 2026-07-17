@@ -1545,5 +1545,9 @@
   "7764764525401658216": "Your permissions only allow the following value(s) here: {$PH}",
   "3546667753315441669": "Your permissions do not allow the following value(s) here: {$PH}",
   "860314143029987759": "Current user is not permitted to save these changes. Values required by your permissions - {$PH}",
-  "5248595452216085757": "Current user is not permitted to save these changes."
+  "5248595452216085757": "Current user is not permitted to save these changes.",
+  "2265702754001441711": " Only record types you have permission to create are available. ",
+  "1106484785554195588": "You don't have permission to import",
+  "7291118354203611864": " Importing data requires additional permissions that your account does not have. Please contact your system administrator to request access. ",
+  "8670985895850567174": " You don't have permission to create {$INTERPOLATION} records, so you cannot import them. "
 }
