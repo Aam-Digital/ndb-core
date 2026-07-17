@@ -1,9 +1,9 @@
 import {
   Component,
+  computed,
   ElementRef,
   input,
   model,
-  signal,
   viewChild,
   ChangeDetectionStrategy,
   inject,
@@ -11,10 +11,12 @@ import {
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { GeoLocation } from "../geo-location";
-import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
+import { MatExpansionModule } from "@angular/material/expansion";
 import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
+import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -27,8 +29,8 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
     MatFormField,
     MatLabel,
     MatInput,
-    MatHint,
     MatTooltip,
+    MatExpansionModule,
     AddressGpsLocationComponent,
   ],
   templateUrl: "./address-edit.component.html",
@@ -48,26 +50,90 @@ export class AddressEditComponent {
    */
   disabled = input<boolean>(false);
 
-  manualAddressEnabled = signal(false);
-
   private readonly geoService = inject(GeoService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
-  enableManualAddressEditing() {
-    this.manualAddressEnabled.set(true);
-    // switch focus only after input has been enabled
+  focusManualAddressInput() {
+    // switch focus only after the panel's content has rendered
     setTimeout(() => this.manualAddressInput()?.nativeElement.focus(), 0);
   }
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation.set(this.geoService.enrichGeoLocation(selected));
-    this.manualAddressEnabled.set(
-      this.selectedLocation()?.geoLookup?.display_name !==
-        this.selectedLocation()?.locationString,
-    );
   }
 
   clearLocation() {
     this.updateLocation(undefined);
+  }
+
+  /**
+   * Whether the address text was manually customized by the user, i.e. it no
+   * longer matches what we would derive from the structured parts or the mapped
+   * location. Inferred (no flag needed): a meaningful manual edit always makes
+   * the text diverge from both derivations, so this is self-detecting.
+   */
+  private isTextManuallyOverwritten(
+    location: GeoLocation | undefined,
+  ): boolean {
+    const text = location?.locationString?.trim();
+    if (!text) {
+      return false;
+    }
+    const composedParts = this.geoService
+      .composeAddressFromParts(location)
+      .trim();
+    const displayName = location?.geoLookup?.display_name?.trim();
+    return text !== composedParts && text !== displayName;
+  }
+
+  /** Drives the in-panel hint that text and structured details are diverging. */
+  readonly hasDivergingText = computed(() =>
+    this.isTextManuallyOverwritten(this.selectedLocation()),
+  );
+
+  async updateAddressPart(
+    key: "road" | "house_number" | "postcode" | "city" | "country",
+    value: string,
+  ) {
+    const current = this.selectedLocation();
+    // Decide BEFORE applying the change: compare the current text against the
+    // OLD parts. Comparing against the new parts would always differ and would
+    // falsely ask on every edit.
+    const textOverwritten = this.isTextManuallyOverwritten(current);
+
+    const updated: GeoLocation = { ...current, [key]: value };
+    const updatedText = this.geoService.composeAddressFromParts(updated);
+
+    if (!textOverwritten) {
+      // Text was auto-derived → keep it in sync automatically.
+      updated.locationString = updatedText;
+      this.updateLocation(updated);
+      return;
+    }
+
+    // Text was manually customized → ask before overwriting it.
+    const result = await this.confirmationDialog.getConfirmation(
+      $localize`Update address text?`,
+      $localize`You changed the address details, so they no longer match the customized address text. Which should be saved?\n\n**Current text:**\n${current?.locationString ?? ""}\n\n**Updated text:**\n${updatedText}`,
+      [
+        {
+          text: $localize`Keep current text`,
+          dialogResult: "keep",
+          click: () => {},
+        },
+        {
+          text: $localize`Update to match details`,
+          dialogResult: "update",
+          click: () => {},
+        },
+      ],
+    );
+
+    if (result === "update") {
+      updated.locationString = updatedText;
+    }
+    // "keep" or dismissed: apply the part change but leave the custom text.
+    this.updateLocation(updated);
   }
 
   updateLocationString(value: string) {
@@ -79,13 +145,8 @@ export class AddressEditComponent {
     }
 
     this.updateLocation({
+      ...this.selectedLocation(),
       locationString: manualAddress,
-      geoLookup: this.selectedLocation()?.geoLookup,
-      road: this.selectedLocation()?.road,
-      house_number: this.selectedLocation()?.house_number,
-      postcode: this.selectedLocation()?.postcode,
-      city: this.selectedLocation()?.city,
-      country: this.selectedLocation()?.country,
     });
   }
 
