@@ -319,7 +319,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:90</a></div>
                             </td>
                         </tr>
 
@@ -345,7 +345,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:59</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:62</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -371,7 +371,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:60</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:63</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -395,7 +395,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:60</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:63</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -428,8 +428,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -465,8 +465,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="111"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:111</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="123"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -542,7 +542,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:69</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -571,13 +571,22 @@
                         <i>Default value : </i><code>computed(() &#x3D;&gt;
     this.importAdditionalService
       .getActionsLinkingFor(this.entityType())
+      // an action links imported records into a related entity, which requires
+      // permission to update that related type (targetType may allow several types)
+      .filter(
+        (action) &#x3D;&gt;
+          !this.ability.initialized ||
+          asArray(action.targetType).some((type) &#x3D;&gt;
+            this.ability.can(&quot;update&quot;, type),
+          ),
+      )
       .sort(sortExportOnlyLast),
   )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:62</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -614,7 +623,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -657,6 +666,8 @@ import { EntityTypeLabelPipe } from &quot;../../../common-components/entity-type
 import { HelpButtonComponent } from &quot;../../../common-components/help-button/help-button.component&quot;;
 import { AdditionalImportAction } from &quot;../additional-import-action&quot;;
 import { ImportAdditionalService } from &quot;../import-additional.service&quot;;
+import { EntityAbility } from &quot;../../../permissions/ability/entity-ability&quot;;
+import { asArray } from &quot;../../../../utils/asArray&quot;;
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -684,6 +695,7 @@ import { ImportAdditionalService } from &quot;../import-additional.service&quot;
 })
 export class ImportAdditionalActionsComponent {
   private importAdditionalService &#x3D; inject(ImportAdditionalService);
+  private readonly ability &#x3D; inject(EntityAbility);
 
   entityType &#x3D; input&lt;string&gt;();
   importActions &#x3D; model&lt;AdditionalImportAction[]&gt;([]);
@@ -691,6 +703,15 @@ export class ImportAdditionalActionsComponent {
   availableImportActions &#x3D; computed(() &#x3D;&gt;
     this.importAdditionalService
       .getActionsLinkingFor(this.entityType())
+      // an action links imported records into a related entity, which requires
+      // permission to update that related type (targetType may allow several types)
+      .filter(
+        (action) &#x3D;&gt;
+          !this.ability.initialized ||
+          asArray(action.targetType).some((type) &#x3D;&gt;
+            this.ability.can(&quot;update&quot;, type),
+          ),
+      )
       .sort(sortExportOnlyLast),
   );
 
