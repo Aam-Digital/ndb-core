@@ -3,9 +3,13 @@ name: PR Title Lint
 # PR title becomes the commit subject on master that @semantic-release/commit-analyzer
 # reads to determine the next release version. Enforce Conventional Commits here
 # so an invalid/mistyped type doesn't silently produce a missing release.
+#
+# pull_request_target (not pull_request) so the check also runs on PRs from forks.
+# The action only reads the PR title from the event payload and never checks out
+# PR code, so running in the base-repo context is safe here.
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, synchronize, reopened]
 
 permissions:
