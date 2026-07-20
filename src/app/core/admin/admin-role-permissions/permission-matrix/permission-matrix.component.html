@@ -1,0 +1,73 @@
+@if (model().unsupportedRules.length > 0) {
+  <app-hint-box i18n>
+    {model().unsupportedRules.length, plural,
+      one {1 advanced rule is}
+      other {{{ model().unsupportedRules.length }} advanced rules are}
+    }
+    not shown in this matrix and only editable via JSON.
+  </app-hint-box>
+}
+
+<div class="table-container">
+  <table mat-table [dataSource]="model().rows" class="full-width table">
+    <ng-container matColumnDef="subject">
+      <th mat-header-cell *matHeaderCellDef i18n>Record type</th>
+      <td mat-cell *matCellDef="let row">
+        <div class="flex-row align-center gap-small">
+          @if (subjectIcon(row.subject)) {
+            <fa-icon [icon]="subjectIcon(row.subject)"></fa-icon>
+          }
+          <span>{{ subjectLabel(row.subject) }}</span>
+        </div>
+      </td>
+    </ng-container>
+
+    @for (action of crudActions; track action) {
+      <ng-container [matColumnDef]="action">
+        <th mat-header-cell *matHeaderCellDef>
+          @switch (action) {
+            @case ("read") {
+              <span i18n>Read</span>
+            }
+            @case ("create") {
+              <span i18n>Create</span>
+            }
+            @case ("update") {
+              <span i18n>Update</span>
+            }
+            @case ("delete") {
+              <span i18n>Delete</span>
+            }
+          }
+        </th>
+        <td mat-cell *matCellDef="let row">
+          @if (isAllowed(row, action) && getConditions(row, action)) {
+            <fa-icon
+              icon="filter"
+              class="conditional-icon"
+              i18n-matTooltip
+              matTooltip="Allowed only under certain conditions"
+            ></fa-icon>
+          } @else if (isAllowed(row, action)) {
+            <fa-icon icon="check" class="allowed-icon"></fa-icon>
+          } @else {
+            <span class="text-secondary">&ndash;</span>
+          }
+        </td>
+      </ng-container>
+    }
+
+    <ng-container matColumnDef="manage">
+      <th mat-header-cell *matHeaderCellDef i18n>Manage (all)</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox
+          [checked]="!!row.cells.manage?.allowed"
+          [disabled]="!editable()"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

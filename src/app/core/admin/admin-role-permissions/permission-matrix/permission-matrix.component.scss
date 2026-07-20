@@ -1,0 +1,9 @@
+@use "variables/colors";
+
+.allowed-icon {
+  color: colors.$success;
+}
+
+.conditional-icon {
+  color: colors.$primary;
+}
