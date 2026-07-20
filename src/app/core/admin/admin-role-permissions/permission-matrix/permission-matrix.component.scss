@@ -7,3 +7,29 @@
 .conditional-icon {
   color: colors.$primary;
 }
+
+// uniform icon size in all cells, whether rendered statically or inside the menu-trigger button
+.action-col fa-icon {
+  font-size: 16px;
+}
+
+.action-col {
+  text-align: center;
+  width: 90px;
+
+  ::ng-deep .mat-mdc-checkbox {
+    margin-left: -8px;
+  }
+}
+
+.subject-col {
+  min-width: 160px;
+}
+
+.remove-button {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.add-permission-field {
+  width: 280px;
+}

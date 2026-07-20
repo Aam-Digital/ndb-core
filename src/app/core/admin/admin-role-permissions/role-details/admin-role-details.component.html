@@ -10,10 +10,10 @@
     </button>
 
     @if (editing()) {
-      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
       <button mat-raised-button color="accent" (click)="save()" i18n>
         Save
       </button>
+      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
     } @else {
       <button mat-raised-button color="accent" (click)="startEditing()">
         <fa-icon icon="pen" class="standard-icon-with-text"></fa-icon>

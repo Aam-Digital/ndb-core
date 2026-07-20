@@ -11,8 +11,10 @@
 <div class="table-container">
   <table mat-table [dataSource]="model().rows" class="full-width table">
     <ng-container matColumnDef="subject">
-      <th mat-header-cell *matHeaderCellDef i18n>Record type</th>
-      <td mat-cell *matCellDef="let row">
+      <th mat-header-cell *matHeaderCellDef class="subject-col" i18n>
+        Record type
+      </th>
+      <td mat-cell *matCellDef="let row" class="subject-col">
         <div class="flex-row align-center gap-small">
           @if (subjectIcon(row.subject)) {
             <fa-icon [icon]="subjectIcon(row.subject)"></fa-icon>
@@ -24,7 +26,7 @@
 
     @for (action of crudActions; track action) {
       <ng-container [matColumnDef]="action">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef class="action-col">
           @switch (action) {
             @case ("read") {
               <span i18n>Read</span>
@@ -40,7 +42,7 @@
             }
           }
         </th>
-        <td mat-cell *matCellDef="let row; let i = index">
+        <td mat-cell *matCellDef="let row; let i = index" class="action-col">
           @if (editable() && !row.cells.manage?.allowed) {
             <button
               mat-icon-button
@@ -67,8 +69,10 @@
     }
 
     <ng-container matColumnDef="manage">
-      <th mat-header-cell *matHeaderCellDef i18n>Manage (all)</th>
-      <td mat-cell *matCellDef="let row; let i = index">
+      <th mat-header-cell *matHeaderCellDef class="action-col" i18n>
+        Manage (all)
+      </th>
+      <td mat-cell *matCellDef="let row; let i = index" class="action-col">
         <mat-checkbox
           [checked]="!!row.cells.manage?.allowed"
           [disabled]="!editable()"
@@ -82,6 +86,7 @@
       <td mat-cell *matCellDef="let row; let i = index">
         <button
           mat-icon-button
+          class="remove-button"
           (click)="removeRow(i)"
           i18n-matTooltip
           matTooltip="Remove all permissions for this record type"
