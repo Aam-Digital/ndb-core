@@ -20,21 +20,6 @@ describe("ReportConfig entity", () => {
   });
 });
 
-describe("ReportConfig entity", () => {
-  it("is an admin-managed entity with a route, labels and a title toString", () => {
-    // Entity.route getter normalizes to a leading slash
-    expect(ReportEntity.route).toBe("/admin/report-config");
-    expect(ReportEntity.isInternalEntity).toBe(true);
-    expect(ReportEntity.label).toBeTruthy();
-    expect(ReportEntity.labelPlural).toBeTruthy();
-    expect(ReportEntity.toStringAttributes).toContain("title");
-  });
-
-  it("has a description field in its schema", () => {
-    expect(ReportEntity.schema.has("description")).toBe(true);
-  });
-});
-
 describe("isHierarchicalReport", () => {
   it("returns false when the report is undefined", () => {
     expect(isHierarchicalReport(undefined)).toBe(false);

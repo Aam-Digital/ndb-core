@@ -112,7 +112,7 @@ export interface ReportDefinitionDto {
   query?: string;
 
   /** title (human-readable) for a set of hierarchically grouped sub-items */
-  groupTitle?: String;
+  groupTitle?: string;
 
   /** hierarchical child items, building a recursive set of report groups display in an indented way */
   items?: ReportDefinitionDto[];

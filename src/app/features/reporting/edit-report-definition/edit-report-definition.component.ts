@@ -170,7 +170,7 @@ export class EditReportDefinitionComponent
           key,
           depth,
           kind: "group",
-          groupTitle: item.groupTitle as string,
+          groupTitle: item.groupTitle,
         });
         out.push(...this.flatten(item.items, depth + 1, path));
       } else {

@@ -2,11 +2,11 @@
   <!-- reporting/exporting definitions are edited as raw JSON -->
   <app-json-editor [formControl]="formControl"></app-json-editor>
 } @else {
-  <div class="report-definition">
+  <div class="flex-column gap-small report-definition">
     @for (entry of entries(); track entry.key) {
-      <div class="definition-row" [style.margin-left.px]="entry.depth * 16">
+      <div [style.margin-left.px]="entry.depth * 16">
         @if (entry.kind === "group") {
-          <div class="group-row">
+          <div class="flex-row align-start gap-small">
             <fa-icon icon="layer-group" class="row-icon"></fa-icon>
             <input
               class="group-title-input"
@@ -15,6 +15,8 @@
               [disabled]="!enabled()"
               placeholder="Group title"
               i18n-placeholder
+              aria-label="Group title"
+              i18n-aria-label
               (change)="setGroupTitle(entry.path, $event)"
             />
             <button
@@ -29,7 +31,7 @@
             </button>
           </div>
         } @else {
-          <div class="query-row">
+          <div class="flex-row align-start gap-small">
             <app-edit-sql-query
               class="query-editor"
               [value]="entry.query ?? ''"
@@ -52,7 +54,7 @@
     }
 
     @if (enabled()) {
-      <div class="definition-actions">
+      <div class="flex-row gap-small margin-top-x-small">
         <button mat-stroked-button type="button" (click)="addQuery()">
           <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
           <span i18n>Add query</span>
