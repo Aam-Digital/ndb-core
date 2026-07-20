@@ -100,8 +100,8 @@ class ReportConfig extends Entity {
   @DatabaseField({
     label: $localize`:ReportConfig:Report definition`,
     description: $localize`:ReportConfig:The definition of what the report calculates: SQL queries for "sql" mode, or aggregation/export definitions for "reporting"/"exporting" mode.`,
-    // Part B replaces this with the structured "EditReportDefinition" editor (sql mode).
-    editComponent: "EditJson",
+    // Mode-aware: structured syntax-highlighting SQL editor for "sql" mode, raw JSON editor otherwise.
+    editComponent: "EditReportDefinition",
   })
   reportDefinition:
     ReportDefinitionDto[] | Aggregation[] | ExportColumnConfig[];
@@ -112,7 +112,7 @@ export interface ReportDefinitionDto {
   query?: string;
 
   /** title (human-readable) for a set of hierarchically grouped sub-items */
-  groupTitle?: String;
+  groupTitle?: string;
 
   /** hierarchical child items, building a recursive set of report groups display in an indented way */
   items?: ReportDefinitionDto[];

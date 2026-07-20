@@ -1,0 +1,69 @@
+@if (!isSql()) {
+  <!-- reporting/exporting definitions are edited as raw JSON -->
+  <app-json-editor [formControl]="formControl"></app-json-editor>
+} @else {
+  <div class="flex-column gap-small report-definition">
+    @for (entry of entries(); track entry.key) {
+      <div [style.margin-left.px]="entry.depth * 16">
+        @if (entry.kind === "group") {
+          <div class="flex-row align-start gap-small">
+            <fa-icon icon="layer-group" class="row-icon"></fa-icon>
+            <input
+              class="group-title-input"
+              type="text"
+              [value]="entry.groupTitle ?? ''"
+              [disabled]="!enabled()"
+              placeholder="Group title"
+              i18n-placeholder
+              aria-label="Group title"
+              i18n-aria-label
+              (change)="setGroupTitle(entry.path, $event)"
+            />
+            <button
+              mat-icon-button
+              type="button"
+              [disabled]="!enabled()"
+              (click)="remove(entry.path)"
+              matTooltip="Remove group"
+              i18n-matTooltip
+            >
+              <fa-icon icon="trash"></fa-icon>
+            </button>
+          </div>
+        } @else {
+          <div class="flex-row align-start gap-small">
+            <app-edit-sql-query
+              class="query-editor"
+              [value]="entry.query ?? ''"
+              [disabled]="!enabled()"
+              (valueChange)="setQuery(entry.path, $event)"
+            ></app-edit-sql-query>
+            <button
+              mat-icon-button
+              type="button"
+              [disabled]="!enabled()"
+              (click)="remove(entry.path)"
+              matTooltip="Remove query"
+              i18n-matTooltip
+            >
+              <fa-icon icon="trash"></fa-icon>
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    @if (enabled()) {
+      <div class="flex-row gap-small margin-top-x-small">
+        <button mat-stroked-button type="button" (click)="addQuery()">
+          <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add query</span>
+        </button>
+        <button mat-stroked-button type="button" (click)="addGroup()">
+          <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add group</span>
+        </button>
+      </div>
+    }
+  </div>
+}
