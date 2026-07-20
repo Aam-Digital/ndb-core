@@ -82,22 +82,24 @@
     </ng-container>
 
     <ng-container matColumnDef="rowActions">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let row; let i = index">
-        <button
-          mat-icon-button
-          class="remove-button"
-          (click)="removeRow(i)"
-          i18n-matTooltip
-          matTooltip="Remove all permissions for this record type"
-        >
-          <fa-icon icon="xmark"></fa-icon>
-        </button>
+      <th mat-header-cell *matHeaderCellDef class="row-actions-col"></th>
+      <td mat-cell *matCellDef="let row; let i = index" class="row-actions-col">
+        @if (editable()) {
+          <button
+            mat-icon-button
+            class="remove-button"
+            (click)="removeRow(i)"
+            i18n-matTooltip
+            matTooltip="Remove all permissions for this record type"
+          >
+            <fa-icon icon="xmark"></fa-icon>
+          </button>
+        }
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
   @if (editable()) {

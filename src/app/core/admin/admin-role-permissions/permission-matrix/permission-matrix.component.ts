@@ -2,7 +2,6 @@ import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   input,
   output,
@@ -56,15 +55,17 @@ export class PermissionMatrixComponent {
     "update",
     "delete",
   ];
-  readonly displayedColumns = computed(() => [
+  // rowActions column is always present (empty in view mode)
+  // so that column positions do not shift when toggling edit mode
+  readonly displayedColumns = [
     "subject",
     "read",
     "create",
     "update",
     "delete",
     "manage",
-    ...(this.editable() ? ["rowActions"] : []),
-  ]);
+    "rowActions",
+  ];
 
   subjectLabel(subject: string): string {
     if (subject === "all") {

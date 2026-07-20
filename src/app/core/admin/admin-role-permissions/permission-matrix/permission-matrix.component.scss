@@ -8,6 +8,11 @@
   color: colors.$primary;
 }
 
+// fixed layout keeps column positions identical in view and edit mode
+.table {
+  table-layout: fixed;
+}
+
 // uniform icon size in all cells, whether rendered statically or inside the menu-trigger button
 .action-col fa-icon {
   font-size: 16px;
@@ -15,15 +20,18 @@
 
 .action-col {
   text-align: center;
-  width: 90px;
+  width: 100px;
 
-  ::ng-deep .mat-mdc-checkbox {
-    margin-left: -8px;
+  button {
+    width: 36px;
+    height: 36px;
+    padding: 0;
   }
 }
 
-.subject-col {
-  min-width: 160px;
+.row-actions-col {
+  width: 56px;
+  text-align: center;
 }
 
 .remove-button {
