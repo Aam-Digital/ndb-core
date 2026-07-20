@@ -33,7 +33,53 @@ There are different modes for `ReportConfig`:
 
 Requirements: SQS
 
-Some useful SQL query snippets for Aam Digital contexts are collected here: [Aam Digital SQL Snippets](https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?usp=sharing)
+#### Available tables and columns
+
+Every entity type defined in the `Config:CONFIG_ENTITY` document becomes a SQL table (e.g. `Child`, `School`),
+with one column per configured field.
+
+In addition, the backend hard-wires some columns into every table.
+These are derived from internal metadata that every entity has, so they are available
+without being listed in the config document:
+
+| Column        | Source field | Description                                        |
+| ------------- | ------------ | -------------------------------------------------- |
+| `_id`         | `_id`        | full document id, e.g. `Child:123`                 |
+| `_rev`        | `_rev`       | CouchDB revision                                   |
+| `_created_at` | `created.at` | timestamp when the record was created (ISO format) |
+| `_created_by` | `created.by` | user who created the record                        |
+| `_updated_at` | `updated.at` | timestamp of the last edit (ISO format)            |
+| `_updated_by` | `updated.by` | user who made the last edit                        |
+| `inactive`    | `inactive`   | 1 if the record is archived                        |
+| `anonymized`  | `anonymized` | 1 if the record is anonymized                      |
+
+The `_` prefix marks columns that are generated from internal metadata rather than configured entity fields
+and avoids clashes with custom fields of the same name.
+For example, to count records created within the reporting period:
+
+```sql
+SELECT count(*) AS "newly registered"
+FROM Child
+WHERE _created_at BETWEEN $startDate AND $endDate
+```
+
+#### Human-readable labels for dropdown (configurable-enum) fields
+
+Dropdown fields store the option id (e.g. `gender = "M"`), not its label.
+The hard-wired `ConfigurableEnumOption` view provides one row per dropdown option
+(`enum_id`, `option_id`, `label`), so labels can be joined in directly:
+
+```sql
+SELECT c.name, COALESCE(g.label, c.gender) AS gender
+FROM Child c
+LEFT JOIN ConfigurableEnumOption g
+  ON g.enum_id = 'genders' AND g.option_id = c.gender
+```
+
+`enum_id` is the id of the enum definition without its `ConfigurableEnum:` prefix.
+The `COALESCE` keeps the raw id visible for values that have no matching option.
+The underlying raw `ConfigurableEnum` table (one row per enum, options as JSON array in `values`)
+is also available for special cases.
 
 #### Simple SQL Report
 
@@ -67,7 +113,7 @@ Use named placeholders in the SQL query (for example `$startDate` and `$endDate`
   },
   "reportDefinition": [
     {
-      "query": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE created_at BETWEEN $startDate AND $endDate"
+      "query": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE _created_at BETWEEN $startDate AND $endDate"
     }
   ]
 }
@@ -112,6 +158,94 @@ If a query returns multiple columns, only one value is shown as the row value an
 ```
 
 In the UI, grouped SQL reports are rendered as a hierarchical report view, while single-query SQL reports are shown as a flat table.
+
+#### SQL recipes
+
+Useful patterns for common Aam Digital reporting questions.
+
+##### Calculate age from date of birth
+
+```sql
+SELECT name,
+  (strftime('%Y', 'now') - strftime('%Y', dateOfBirth))
+    - (strftime('%m-%d', 'now') < strftime('%m-%d', dateOfBirth)) AS age
+FROM Child
+```
+
+##### Conditional counting ("COUNT IF")
+
+```sql
+SELECT COUNT(CASE WHEN c.gender = 'F' THEN c._id END) AS total_female FROM Child c
+```
+
+##### Attendance status of individual participants from EventNote
+
+`childrenAttendance` stores one `[childId, {status, remarks}]` pair per participant as a JSON array,
+which can be unpacked with [SQLite's `json_each()`](https://www.sqlite.org/json1.html#jeach):
+
+```sql
+SELECT json_extract(value, '$[0]') AS participant_id,
+  json_extract(value, '$[1].status') AS status,
+  json_extract(e.schools, '$[0]') AS team_id
+FROM EventNote e, json_each(e.childrenAttendance)
+JOIN Child AS c ON c._id = participant_id
+JOIN School AS s ON s._id = team_id
+```
+
+The same pattern calculates an attendance percentage per participant, filtered by event category:
+
+```sql
+SELECT json_extract(value, '$[0]') AS participant_id, e.category,
+  ROUND((SUM(CASE WHEN json_extract(value, '$[1].status') = 'PRESENT' THEN 1 ELSE 0 END) * 100.0
+    / COUNT(e._id)), 2) AS attendance_percentage
+FROM EventNote e, json_each(e.childrenAttendance)
+JOIN Child c ON c._id = json_extract(value, '$[0]')
+WHERE e.category IN ('LEARNING_GROUP', 'PIC') AND e.date BETWEEN $startDate AND $endDate
+GROUP BY c._id, e.category
+```
+
+##### Group by each option of a multi-select dropdown
+
+A multi-select (`isArray`) field is stored as a JSON array of option ids (e.g. `["pizza", "burger"]`).
+To count each selected option individually (a row counts towards every option it includes):
+
+```sql
+SELECT COALESCE(opt.label, sel.value) AS option, COUNT(*) AS count
+FROM Child c, json_each(c.favoriteFoods) sel
+LEFT JOIN ConfigurableEnumOption opt
+  ON opt.enum_id = 'favoriteFoods' AND opt.option_id = sel.value
+WHERE json_valid(c.favoriteFoods)
+GROUP BY option
+ORDER BY count DESC, option
+```
+
+##### Combine EventNote and Note rows for a joint query
+
+```sql
+SELECT n.subject, n.date FROM (SELECT * FROM EventNote UNION SELECT * FROM Note) n
+```
+
+WARNING: double-check that `Config:CONFIG_ENTITY` lists the same attributes in the exact same order
+for `entity:Note` and `entity:EventNote`.
+Otherwise the two queries will not be merged correctly and some columns may be missing data!
+
+##### Compare multiple records linked to one person (e.g. pre vs. post test results)
+
+Count children who have two linked observation records where the "post" value is higher than the "pre" value:
+
+```sql
+SELECT COUNT(DISTINCT c._id) AS "children who improved"
+FROM Child c
+INNER JOIN HistoricalEntityData hd_pre
+  ON c._id = hd_pre.relatedEntity AND hd_pre.type = 'PRE'
+INNER JOIN HistoricalEntityData hd_post
+  ON c._id = hd_post.relatedEntity AND hd_post.type = 'POST'
+WHERE hd_post.value > hd_pre.value
+```
+
+##### Known limitations
+
+- `CONCAT` is not supported; use the SQLite `||` operator instead (e.g. `firstname || ' ' || lastname`).
 
 ### JSON-Query Reports (legacy)
 
