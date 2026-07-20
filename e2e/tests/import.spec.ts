@@ -173,3 +173,102 @@ test("Import children with entity reference, date and enum column mappings", asy
   await expect(page.getByText("Bob Smith")).toBeVisible();
   await expect(page.getByText("Charlie Lee")).toBeVisible();
 });
+
+test("Import a multi-value entity reference from a single comma-separated column", async ({
+  page,
+}) => {
+  const users = generateUsers();
+
+  // Two schools to be referenced by name from one comma-separated cell
+  const school1 = createEntityOfType("School", "school-1");
+  school1["name"] = "Springfield Elementary";
+  const school2 = createEntityOfType("School", "school-2");
+  school2["name"] = "Shelbyville Academy";
+
+  await loadApp(page, [...users, school1, school2]);
+
+  await page.getByRole("navigation").getByText("Import").click();
+  await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
+
+  // "Groups" holds comma-separated school names; "GroupIds" a second condition
+  // mapped to the same field (multi-column matching) holding the internal ids
+  const csvContent = [
+    "Subject,Groups,GroupIds",
+    'Joint school meeting,"Springfield Elementary, Shelbyville Academy","School:school-1, School:school-2"',
+  ].join("\n");
+
+  const fileInput = page.locator('input[type="file"]');
+  await fileInput.setInputFiles({
+    name: "multi-value-note.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(csvContent),
+  });
+
+  await expect(page.getByText("1 rows detected")).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Step 2: import as Note (its "Groups" field is a multi-value entity reference)
+  await expect(page.getByText("Select the import target type")).toBeVisible();
+  await page.getByRole("textbox", { name: "Import as" }).fill("Note");
+  await page.getByRole("option", { name: "Note", exact: true }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Step 3: "Subject" and "Groups" auto-map by label; match the groups by school
+  // name, and map a second "GroupIds" column onto the same field matched by id
+  // (multi-column matching)
+  await expect(
+    page.getByText("Define which columns / fields will be imported"),
+  ).toBeVisible();
+
+  const groupsRow = page
+    .locator("app-edit-import-column-mapping")
+    .filter({ hasText: /^Groups/ });
+  await groupsRow.locator("mat-select").click();
+  await page.getByRole("option", { name: "Name", exact: true }).click();
+
+  const groupIdsRow = page
+    .locator("app-edit-import-column-mapping")
+    .filter({ hasText: "GroupIds" });
+  await groupIdsRow.getByRole("textbox", { name: "GroupIds" }).fill("Groups");
+  await page.getByRole("option", { name: "Groups", exact: true }).click();
+  await groupIdsRow.locator("mat-select").click();
+  await page.getByRole("option", { name: /internal unique/i }).click();
+
+  // multi-column matching indicator is shown on the mapping step
+  await argosScreenshot(page, "import-multi-column-matching-mapping");
+
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Step 4: both comma-separated names resolve to their records
+  await expect(
+    page.getByText("Review your mapped data to be imported"),
+  ).toBeVisible();
+  await expect(page.getByText("Springfield Elementary")).toBeVisible();
+  await expect(page.getByText("Shelbyville Academy")).toBeVisible();
+
+  await argosScreenshot(page, "import-multi-value-review-both-references");
+
+  await page.getByRole("button", { name: "Start Import" }).click();
+  const confirmDialog = page.getByRole("dialog");
+  await expect(
+    confirmDialog.getByText("1 records will be imported"),
+  ).toBeVisible();
+  await confirmDialog
+    .getByRole("button", { name: "Confirm & Run Import" })
+    .click();
+
+  // import runs to completion
+  await expect(page.getByText("Import completed")).toBeVisible({
+    timeout: 15_000,
+  });
+
+  // open the created note and confirm both schools are linked on the saved record.
+  // the imported note has no date, so clear the list's default date-range filter first.
+  await page.getByRole("navigation").getByText("Notes").click();
+  await page.getByRole("button", { name: "Reset date filter" }).click();
+  await page.getByRole("cell", { name: "Joint school meeting" }).click();
+  const noteDetails = page.getByRole("dialog");
+  await expect(noteDetails).toBeVisible();
+  await expect(noteDetails.getByText("Springfield Elementary")).toBeVisible();
+  await expect(noteDetails.getByText("Shelbyville Academy")).toBeVisible();
+});
