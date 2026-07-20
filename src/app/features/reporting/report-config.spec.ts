@@ -1,4 +1,24 @@
-import { isHierarchicalReport, ReportEntity, SqlReport } from "./report-config";
+import {
+  isHierarchicalReport,
+  reportUsesDateRange,
+  ReportEntity,
+  SqlReport,
+} from "./report-config";
+
+describe("ReportConfig entity", () => {
+  it("is an admin-managed entity with a route, labels and a title toString", () => {
+    // Entity.route getter normalizes to a leading slash
+    expect(ReportEntity.route).toBe("/admin/report-config");
+    expect(ReportEntity.isInternalEntity).toBe(true);
+    expect(ReportEntity.label).toBeTruthy();
+    expect(ReportEntity.labelPlural).toBeTruthy();
+    expect(ReportEntity.toStringAttributes).toContain("title");
+  });
+
+  it("has a description field in its schema", () => {
+    expect(ReportEntity.schema.has("description")).toBe(true);
+  });
+});
 
 describe("ReportConfig entity", () => {
   it("is an admin-managed entity with a route, labels and a title toString", () => {
@@ -54,5 +74,37 @@ describe("isHierarchicalReport", () => {
     ];
 
     expect(isHierarchicalReport(report)).toBe(true);
+  });
+});
+
+describe("reportUsesDateRange", () => {
+  it("returns false when the report is undefined", () => {
+    expect(reportUsesDateRange(undefined)).toBe(false);
+  });
+
+  it("detects the $startDate/$endDate placeholders in sql queries, incl. nested groups", () => {
+    expect(
+      reportUsesDateRange({
+        mode: "sql",
+        reportDefinition: [{ query: "SELECT * FROM c" }],
+      }),
+    ).toBe(false);
+
+    expect(
+      reportUsesDateRange({
+        mode: "sql",
+        reportDefinition: [
+          {
+            groupTitle: "G",
+            items: [
+              {
+                query:
+                  "SELECT * FROM c WHERE d BETWEEN $startDate AND $endDate",
+              },
+            ],
+          },
+        ],
+      }),
+    ).toBe(true);
   });
 });

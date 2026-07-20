@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   effect,
   inject,
   input,
@@ -41,7 +42,6 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
-import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -59,6 +59,8 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
 
@@ -121,14 +123,31 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly publicFormsService = inject(PublicFormsService);
+  private readonly ability = inject(EntityAbility);
   public publicFormConfigs: PublicFormConfig[] = [];
+
+  /**
+   * Whether the current user may import records of this type.
+   * Requires create permission on both the entity type and the ImportMetadata
+   * history record that every import writes at the end.
+   */
+  canImport = computed(() => {
+    if (!this.ability.initialized) {
+      return true;
+    }
+    const entityConstructor = this.entityConstructor();
+    return (
+      !!entityConstructor &&
+      this.ability.can("create", entityConstructor) &&
+      this.ability.can("create", ImportMetadata)
+    );
+  });
 
   allEntities = model<T[] | undefined>(undefined);
 
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
   defaultSort = input<Sort>();
-  exportConfig = input<ExportColumnConfig[]>();
 
   /**
    * The special service or method to load data via an index or other special method.
@@ -438,7 +457,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         schema,
         visibleColIds: cols,
         availableColumns,
-        exportConfig: this.exportConfig(),
       });
 
     this.dialog.open(ExportDialogComponent, {

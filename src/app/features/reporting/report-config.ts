@@ -82,7 +82,7 @@ class ReportConfig extends Entity {
    */
   @DatabaseField({
     label: $localize`:ReportConfig:Use report period (start & end date)`,
-    description: $localize`:ReportConfig:When enabled, the report uses the selected start and end date of the report period as parameters (SQL mode).`,
+    description: $localize`:ReportConfig:When you use time filters in your report, users see a date range selector to choose the start and end date for the report when calculating results.`,
     editComponent: "EditReportPeriodToggle",
   })
   transformations: {
@@ -100,7 +100,7 @@ class ReportConfig extends Entity {
   @DatabaseField({
     label: $localize`:ReportConfig:Report definition`,
     description: $localize`:ReportConfig:The definition of what the report calculates: SQL queries for "sql" mode, or aggregation/export definitions for "reporting"/"exporting" mode.`,
-    // Mode-aware: structured SQL editor for "sql" mode, raw JSON editor otherwise.
+    // Mode-aware: structured syntax-highlighting SQL editor for "sql" mode, raw JSON editor otherwise.
     editComponent: "EditReportDefinition",
   })
   reportDefinition:
@@ -205,4 +205,42 @@ export function isHierarchicalReport(
     reportDefinition.length > 1 ||
     reportDefinition.some((item) => !!item.groupTitle)
   );
+}
+
+/**
+ * Whether running this report offers a date-range (start & end date) input, derived from the
+ * date placeholders used in its queries so it stays in sync with the actual report definition:
+ * - "sql": the query uses the `$startDate` / `$endDate` placeholders.
+ * - "reporting"/"exporting": the in-browser query uses positional `?` placeholders (date args).
+ */
+export function reportUsesDateRange(
+  report: { mode?: string; reportDefinition?: unknown } | undefined,
+): boolean {
+  if (!report) {
+    return false;
+  }
+  const queries = collectQueryStrings(report.reportDefinition);
+  if (report.mode === "sql") {
+    return queries.some((query) => /\$startDate|\$endDate/.test(query));
+  }
+  return queries.some((query) => query.includes("?"));
+}
+
+/** Recursively collect every `query` string value from a report definition tree. */
+function collectQueryStrings(node: unknown): string[] {
+  if (Array.isArray(node)) {
+    return node.flatMap(collectQueryStrings);
+  }
+  if (node && typeof node === "object") {
+    const out: string[] = [];
+    for (const [key, value] of Object.entries(node)) {
+      if (key === "query" && typeof value === "string") {
+        out.push(value);
+      } else {
+        out.push(...collectQueryStrings(value));
+      }
+    }
+    return out;
+  }
+  return [];
 }

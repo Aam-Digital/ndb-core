@@ -138,7 +138,7 @@ export class ExampleComponent {
 - Implement proper permissions checking via CASL integration.
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
 - Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
-- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests
+- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. The unit-test runner is non-isolated, so mutating a shared entity's schema without restoring it leaks into other specs and causes order-dependent flaky failures
 - See `doc/compodoc_sources/how-to-guides/` for detailed guides on entities, datatypes, and more
 
 ### Configuration System
@@ -228,6 +228,17 @@ For CI-style runs with coverage, results are written to `coverage/` (lcov format
 - Provide demo data generators for new entities
 - Use `@faker-js/faker` for realistic test data
 - Follow existing demo data patterns in `core/demo-data/`
+
+---
+
+## Public GitHub Content (PRs, Issues, Comments, Commit Messages)
+
+This repository is public. Never include customer/project-identifying information or other
+production-system-specific data in anything posted to GitHub — no deployment/instance names,
+server hostnames, external partner URLs, user identifiers, or real record data. Share only
+generalized insights instead (e.g. "a large production instance", "an external webhook
+consumer"). Scrub quoted log or monitoring output before posting. Links to access-restricted
+internal tools (e.g. Sentry issues) are acceptable.
 
 ---
 

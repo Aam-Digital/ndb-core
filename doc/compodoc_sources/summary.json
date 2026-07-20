@@ -39,33 +39,33 @@
       },
       {
         "title": "Entity System",
-        "file": "concepts/entities.md",
+        "file": "../../src/app/core/entity/README.md",
         "children": [
           {
             "title": "Entity Schema",
-            "file": "concepts/entity-schema-system.md"
+            "file": "../../src/app/core/entity/schema/README.md"
           },
           {
             "title": "Archiving, Anonymizing and Deleting Entities",
-            "file": "concepts/entity-anonymization.md"
+            "file": "../../src/app/core/entity/entity-actions/README.md"
           }
         ]
       },
       {
         "title": "Configuration",
-        "file": "concepts/configuration.md"
-      },
-      {
-        "title": "Session and Authentication System",
-        "file": "concepts/session-system.md"
+        "file": "../../src/app/core/config/README.md"
       },
       {
         "title": "User Roles and Permissions",
-        "file": "concepts/permissions.md"
+        "file": "../../src/app/core/permissions/README.md"
       },
       {
         "title": "Security",
         "file": "concepts/security.md"
+      },
+      {
+        "title": "Internationalization (i18n)",
+        "file": "concepts/i18n.md"
       },
       {
         "title": "UX Guidelines",
@@ -74,10 +74,6 @@
       {
         "title": "Documentation Structure",
         "file": "concepts/documentation-structure.md"
-      },
-      {
-        "title": "Infrastructure",
-        "file": "concepts/infrastructure.md"
       }
     ]
   },
@@ -94,22 +90,10 @@
             "file": "how-to-guides/write-unit-tests.md"
           },
           {
-            "title": "Document Code",
-            "file": "how-to-guides/write-documentation.md"
-          },
-          {
             "title": "Review a Pull Request",
             "file": "how-to-guides/review-pull-request.md"
           }
         ]
-      },
-      {
-        "title": "Configure and Customize a System",
-        "file": "how-to-guides/configure-custom-system.md"
-      },
-      {
-        "title": "Navigate the Code Structure",
-        "file": "how-to-guides/navigate-code-structure.md"
       },
       {
         "title": "Create a New Entity Type",
@@ -132,12 +116,8 @@
         "file": "../../src/app/features/reporting/README.md"
       },
       {
-        "title": "Load and Save Data",
-        "file": "how-to-guides/load-and-save-data.md"
-      },
-      {
         "title": "End-to-end tests",
-        "file": "how-to-guides/end-to-end-tests.md"
+        "file": "../../e2e/README.md"
       },
       {
         "title": "Display Dialogs and Notifications",
@@ -149,33 +129,19 @@
       },
       {
         "title": "Log Errors",
-        "file": "how-to-guides/log-errors.md"
+        "file": "../../src/app/core/logging/README.md"
       },
       {
         "title": "Use Queries and Indices",
-        "file": "how-to-guides/use-queries-and-indices.md"
+        "file": "../../src/app/core/database/README.md"
       },
       {
         "title": "Generate Demo Data",
-        "file": "how-to-guides/generate-demo-data.md"
+        "file": "../../src/app/core/demo-data/README.md"
       },
       {
         "title": "Format Data Export",
-        "file": "how-to-guides/exports.md"
-      },
-      {
-        "title": "Build localizable (translatable) UI",
-        "file": "how-to-guides/build-localizable-components.md",
-        "children": [
-          {
-            "title": "Work with XLF",
-            "file": "how-to-guides/work-with-xlf.md"
-          },
-          {
-            "title": "Add Another Language",
-            "file": "how-to-guides/add-another-language.md"
-          }
-        ]
+        "file": "../../src/app/core/export/README.md"
       }
     ]
   },

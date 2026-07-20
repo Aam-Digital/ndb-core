@@ -19,7 +19,7 @@ import { ExportDialogComponent } from "../../../../core/export/export-dialog/exp
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ReportEntity } from "../../report-config";
+import { ReportEntity, reportUsesDateRange } from "../../report-config";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter.component";
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
@@ -105,8 +105,10 @@ export class SelectReportComponent {
   isDateRangeReport = computed<boolean>(() => {
     const report = this.selectedReport();
     if (!report) return false;
-    if (report.mode !== "sql") return true;
-    // v1 configs use neededArgs; v2/canonical use transformations
+    // Primary signal: whether the report's queries actually use date placeholders.
+    if (reportUsesDateRange(report)) return true;
+    // Fallback for legacy configs that declared the date args explicitly:
+    // v1 configs use neededArgs; v2/canonical use transformations.
     return (
       !!report.neededArgs?.find((a) => a === "from" || a === "startDate") ||
       !!report.neededArgs?.find((a) => a === "to" || a === "endDate") ||

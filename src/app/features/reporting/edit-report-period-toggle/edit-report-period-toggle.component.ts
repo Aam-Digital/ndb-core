@@ -2,31 +2,39 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  inject,
   input,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { reportUsesDateRange } from "../report-config";
 
 type Transformations = { [key: string]: string[] };
 
 /**
- * Friendly editor for a SQL report's `transformations`: a single toggle controlling whether
- * the report uses the selected report period (start & end date) as query parameters.
+ * Read-only indicator of whether the report uses the selected report period (start & end date).
  *
- * For now this only exposes the common date-range transformation; advanced/custom
- * transformations are not editable here.
+ * This is derived automatically from the report's queries (SQL `$startDate`/`$endDate` or the
+ * `?` placeholders of in-browser reports) rather than being toggled by hand — so it can never
+ * get out of sync with the actual query. For SQL reports the derived `transformations` are still
+ * written into the config, since the backend needs them to substitute the date parameters.
  */
 @DynamicComponent("EditReportPeriodToggle")
 @Component({
   selector: "app-edit-report-period-toggle",
   templateUrl: "./edit-report-period-toggle.component.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, MatSlideToggleModule],
+  imports: [ReactiveFormsModule, MatSlideToggleModule, MatTooltipModule],
   providers: [
     {
       provide: MatFormFieldControl,
@@ -36,9 +44,23 @@ type Transformations = { [key: string]: string[] };
 })
 export class EditReportPeriodToggleComponent
   extends CustomFormControlDirective<Transformations>
-  implements EditComponent
+  implements EditComponent, OnInit
 {
+  private readonly destroyRef = inject(DestroyRef);
+
   formFieldConfig = input<FormFieldConfig>();
+
+  /** the report's mode and definition, read from the sibling form controls */
+  private readonly mode = signal<string | undefined>(undefined);
+  private readonly reportDefinition = signal<unknown>(undefined);
+
+  /** whether the report's queries imply a date-range (start & end date) input */
+  readonly usesDateRange = computed<boolean>(() =>
+    reportUsesDateRange({
+      mode: this.mode(),
+      reportDefinition: this.reportDefinition(),
+    }),
+  );
 
   /** the canonical transformation object enabling the report period (start & end date) */
   static readonly REPORT_PERIOD_TRANSFORMATION: Transformations = {
@@ -46,26 +68,52 @@ export class EditReportPeriodToggleComponent
     endDate: ["SQL_TO_DATE"],
   };
 
-  /** the toggle is "on" when the report-period (start & end date) transformation is present */
-  readonly checked = computed<boolean>(() => {
-    const value = this.valueSignal();
-    return !!value?.["startDate"] || !!value?.["endDate"];
-  });
+  ngOnInit() {
+    const parent = this.formControl?.parent;
+    const modeControl = parent?.get("mode");
+    const definitionControl = parent?.get("reportDefinition");
 
-  setChecked(checked: boolean) {
-    // Preserve any other (non-period) transformation keys; only add/remove startDate & endDate.
+    this.mode.set(modeControl?.value);
+    this.reportDefinition.set(definitionControl?.value);
+
+    // React to the user editing the mode or the queries: recompute and keep the persisted
+    // `transformations` in step with the query placeholders (SQL only).
+    modeControl?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.mode.set(value);
+        this.syncTransformations();
+      });
+    definitionControl?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.reportDefinition.set(value);
+        this.syncTransformations();
+      });
+  }
+
+  /**
+   * For SQL reports, write the derived report-period `transformations` into the bound control
+   * so the backend receives them. Non-period transformation keys are preserved; non-SQL modes
+   * don't use `transformations` at all, so they are left untouched.
+   */
+  private syncTransformations(): void {
+    if (this.mode() !== "sql") {
+      return;
+    }
+
     const { startDate, endDate, ...rest } = this.valueSignal() ?? {};
-    const value: Transformations = checked
+    const next: Transformations = this.usesDateRange()
       ? {
           ...rest,
           ...EditReportPeriodToggleComponent.REPORT_PERIOD_TRANSFORMATION,
         }
       : rest;
 
-    // Write through the bound FormControl directly: unlike editors that bind an inner
-    // `[formControl]`, this toggle has no inner control accessor, so the directive's
-    // `onChange` is never registered and `this.value = …` would not reach the form.
-    this.formControl?.setValue(value);
+    if (JSON.stringify(this.valueSignal() ?? {}) === JSON.stringify(next)) {
+      return;
+    }
+    this.formControl?.setValue(next);
     this.formControl?.markAsDirty();
   }
 }

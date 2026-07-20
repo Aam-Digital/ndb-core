@@ -6,7 +6,7 @@ The format of this file can be adjusted through the configuration for the list v
 
 ## Config Format
 
-The configuration of the export format is part of the configuration of the [EntityListComponent](../../interfaces/EntityListConfig.html).
+The configuration of the export format is part of the list view configuration (`EntityListConfig`).
 
 E.g.
 
@@ -36,14 +36,14 @@ E.g.
 
 ## Configuring a Export
 
-The structure of the exports is according to the [ExportColumnConfig](../../interfaces/ExportColumnConfig.html).
+The structure of the exports is according to the `ExportColumnConfig`.
 
 The `label` property is optional and provides a title for this column.
 If nothing is provided the query (without dots) is used (e.g. for `"query": ".name"` the label will be `name`).
 
 The `query` has to be a valid [JSON-Query](https://github.com/auditassistant/json-query#queries).
 The query will be run on each entity of the list page that is visited (e.g. on each child).
-For further information about the query-syntax read the [Reports Guide](reports.md) which uses the same query language.
+For further information about the query-syntax read the [Reports guide](../../features/reporting/README.md) which uses the same query language.
 
 The `subQueries` is optional and expects an array of `ExportColumnConfigs`.
 The queries of the `subQueries` will be run for each result of the parent query.
@@ -98,3 +98,10 @@ Would create a `.csv` file according to the following table:
 | Peter | High School | 01/01/2020 | 01/01/2021 |
 | Peter | High School | 01/01/2021 |            |
 | Anna  | High School | 01/01/2021 |            |
+
+## Key files
+
+- `data-transformation-service/export-column-config.ts` — `ExportColumnConfig` interface (`label`, `query`, `subQueries`)
+- `data-transformation-service/data-transformation.service.ts` — `DataTransformationService`, runs the JSON-queries and flattens results into rows
+- `export-columns.service.ts` — `ExportColumnsService`, resolves the export columns for a list view
+- `download-service/download.service.ts` — `DownloadService`, turns the transformed data into a downloadable `.csv` file

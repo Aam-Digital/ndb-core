@@ -10,9 +10,6 @@ import { JsonEditorComponent } from "../json-editor.component";
 /**
  * Edit a field's value as raw JSON, using the shared {@link JsonEditorComponent}
  * as a form-field edit component.
- *
- * Reuses the existing vanilla-jsoneditor wrapper (including its tree-mode fallback for
- * very long strings, see #3821) by binding it through the standard `[formControl]`.
  */
 @DynamicComponent("EditJson")
 @Component({

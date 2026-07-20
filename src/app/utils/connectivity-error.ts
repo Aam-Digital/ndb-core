@@ -19,7 +19,13 @@ const CONNECTIVITY_ERROR_PATTERNS = [
  */
 export function isConnectivityError(err: any): boolean {
   if (!err) return false;
-  if (err?.name === "TimeoutError" || err?.name === "AbortError") return true;
+  // Check both `name` and `originalName`: a DatabaseException keeps its `name`
+  // as "DatabaseException" for Sentry grouping but preserves the wrapped error's
+  // name (e.g. "AbortError") in `originalName`.
+  const names = [err?.name, err?.originalName];
+  if (names.includes("TimeoutError") || names.includes("AbortError")) {
+    return true;
+  }
   if ([0, 502, 503, 504].includes(err?.status)) return true;
 
   const message = `${err?.message ?? ""} ${err?.reason ?? ""} ${err?.toString?.() ?? ""}`;

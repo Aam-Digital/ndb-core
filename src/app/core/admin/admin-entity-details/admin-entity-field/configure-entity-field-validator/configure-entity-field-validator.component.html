@@ -56,17 +56,43 @@
     }
   }
 
-  <!-- TODO: requires transformation of value to { pattern: string, message: string } before saving
-  <mat-form-field *ngIf="entitySchemaField.dataType === 'string'">
-    <mat-label i18n>Pattern (Regex)</mat-label>
-    <input formControlName="regex" matInput />
-    <app-help-button
-      matSuffix
-      text="Define a format (-> regular expression) that text values have to match to be valid."
-      i18n-text
-    ></app-help-button>
-  </mat-form-field>
-  -->
+  @if (isStringType()) {
+    <div class="flex-row flex-wrap gap-small">
+      <mat-form-field floatLabel="always" class="flex-grow">
+        <mat-label i18n>Pattern (Regex)</mat-label>
+        <input formControlName="pattern" matInput />
+        <app-help-button
+          matSuffix
+          text="Define a format (-> regular expression) that text values have to match to be valid."
+          i18n-text
+        ></app-help-button>
+        <mat-error i18n>Not a valid regular expression</mat-error>
+        <mat-hint align="start" i18n>
+          Learn about regular expressions at
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
+            target="_blank"
+            rel="noopener"
+          >
+            developer.mozilla.org
+          </a>
+        </mat-hint>
+      </mat-form-field>
+
+      <mat-form-field floatLabel="always" class="flex-grow">
+        <mat-label i18n>Validation Error Text for Pattern</mat-label>
+        <input formControlName="patternMessage" matInput />
+        <app-help-button
+          matSuffix
+          text="Optional custom message shown to users when their input does not match the pattern. If empty, a generic error message is displayed."
+          i18n-text
+        ></app-help-button>
+        <mat-hint align="start" i18n>
+          Shown when the entered value does not match the pattern above
+        </mat-hint>
+      </mat-form-field>
+    </div>
+  }
 
   <div>
     <mat-checkbox i18n formControlName="required">
@@ -87,4 +113,16 @@
       i18n-text
     ></app-help-button>
   </div>
+
+  @if (entitySchemaField().dataType === "string") {
+    <div>
+      <mat-checkbox i18n [formControl]="trimControl()">
+        Trim leading/trailing spaces automatically
+      </mat-checkbox>
+      <app-help-button
+        text="When enabled, leading and trailing spaces are automatically removed when saving this field."
+        i18n-text
+      ></app-help-button>
+    </div>
+  }
 </form>

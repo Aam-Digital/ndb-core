@@ -1,86 +1,102 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { UntypedFormGroup } from "@angular/forms";
-import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import {
+  NgControl,
+  UntypedFormControl,
+  UntypedFormGroup,
+} from "@angular/forms";
 import { EditReportPeriodToggleComponent } from "./edit-report-period-toggle.component";
 
-describe("EditReportPeriodToggleComponent", () => {
-  let component: EditReportPeriodToggleComponent;
-  let fixture: ComponentFixture<EditReportPeriodToggleComponent>;
-  let formGroup: UntypedFormGroup;
+const REPORT_PERIOD = {
+  startDate: ["SQL_FROM_DATE"],
+  endDate: ["SQL_TO_DATE"],
+};
 
+/** wire the component to a `transformations` control alongside sibling `mode` + `reportDefinition` controls */
+function create(
+  mode: string,
+  reportDefinition: unknown,
+  transformations: Record<string, string[]> = {},
+): {
+  component: EditReportPeriodToggleComponent;
+  formGroup: UntypedFormGroup;
+} {
+  const formGroup = new UntypedFormGroup({
+    mode: new UntypedFormControl(mode),
+    reportDefinition: new UntypedFormControl(reportDefinition),
+    transformations: new UntypedFormControl(transformations),
+  });
+  const fixture = TestBed.createComponent(EditReportPeriodToggleComponent);
+  const component = fixture.componentInstance;
+  component.ngControl = {
+    control: formGroup.get("transformations"),
+  } as NgControl;
+  fixture.componentRef.setInput("formFieldConfig", { id: "transformations" });
+  fixture.detectChanges();
+  return { component, formGroup };
+}
+
+describe("EditReportPeriodToggleComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EditReportPeriodToggleComponent, NoopAnimationsModule],
     }).compileComponents();
   });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(EditReportPeriodToggleComponent);
-    component = fixture.componentInstance;
-    formGroup = setupCustomFormControlEditComponent(
-      component,
-      "transformations",
-      {},
-      fixture,
-    );
-    fixture.detectChanges();
-  });
-
   it("should create", () => {
-    expect(component).toBeTruthy();
+    expect(create("sql", []).component).toBeTruthy();
   });
 
-  it("is unchecked when no transformations are set", () => {
-    expect(component.checked()).toBe(false);
+  it("derives usesDateRange from date placeholders ($start/$end for sql, ? for non-sql)", () => {
+    expect(
+      create("sql", [{ query: "SELECT * FROM c" }]).component.usesDateRange(),
+    ).toBe(false);
+    expect(
+      create("sql", [
+        { query: "SELECT * FROM c WHERE d BETWEEN $startDate AND $endDate" },
+      ]).component.usesDateRange(),
+    ).toBe(true);
+    expect(
+      create("reporting", [{ query: "X:toArray" }]).component.usesDateRange(),
+    ).toBe(false);
+    expect(
+      create("reporting", [
+        { query: "X:toArray[* date >= ? & date <= ?]" },
+      ]).component.usesDateRange(),
+    ).toBe(true);
   });
 
-  it("writes the report-period transformation into the bound control when toggled on and clears it when off", () => {
-    component.setChecked(true);
-    expect(formGroup.get("transformations").value).toEqual({
-      startDate: ["SQL_FROM_DATE"],
-      endDate: ["SQL_TO_DATE"],
-    });
-    expect(component.checked()).toBe(true);
-
-    component.setChecked(false);
+  it("writes the derived transformations when a SQL query starts using the date range", () => {
+    const { formGroup } = create("sql", [{ query: "SELECT * FROM c" }]);
     expect(formGroup.get("transformations").value).toEqual({});
-    expect(component.checked()).toBe(false);
+
+    formGroup
+      .get("reportDefinition")
+      .setValue([{ query: "SELECT * FROM c WHERE d > $startDate" }]);
+
+    expect(formGroup.get("transformations").value).toEqual(REPORT_PERIOD);
+    expect(formGroup.get("transformations").dirty).toBe(true);
   });
 
-  it("reflects an externally set transformations value as checked", () => {
-    formGroup.get("transformations").setValue({ startDate: ["SQL_FROM_DATE"] });
-    fixture.detectChanges();
-    expect(component.checked()).toBe(true);
+  it("clears the report-period transformations when the SQL query stops using the date range", () => {
+    const { formGroup } = create(
+      "sql",
+      [{ query: "SELECT * FROM c WHERE d BETWEEN $startDate AND $endDate" }],
+      { ...REPORT_PERIOD },
+    );
+
+    formGroup.get("reportDefinition").setValue([{ query: "SELECT * FROM c" }]);
+
+    expect(formGroup.get("transformations").value).toEqual({});
   });
 
-  it("is unchecked for a report that only has non-period transformations", () => {
-    formGroup.get("transformations").setValue({ custom: ["X"] });
-    fixture.detectChanges();
-    expect(component.checked()).toBe(false);
-  });
+  it("does not touch transformations for non-SQL reports", () => {
+    const { formGroup } = create("reporting", [{ query: "X:toArray" }]);
 
-  it("adds the report period without dropping other transformation keys", () => {
-    formGroup.get("transformations").setValue({ custom: ["X"] });
-    fixture.detectChanges();
+    formGroup
+      .get("reportDefinition")
+      .setValue([{ query: "X:toArray[* date >= ? & date <= ?]" }]);
 
-    component.setChecked(true);
-    expect(formGroup.get("transformations").value).toEqual({
-      custom: ["X"],
-      startDate: ["SQL_FROM_DATE"],
-      endDate: ["SQL_TO_DATE"],
-    });
-  });
-
-  it("removes only the period keys and preserves others when toggled off", () => {
-    formGroup.get("transformations").setValue({
-      custom: ["X"],
-      startDate: ["SQL_FROM_DATE"],
-      endDate: ["SQL_TO_DATE"],
-    });
-    fixture.detectChanges();
-
-    component.setChecked(false);
-    expect(formGroup.get("transformations").value).toEqual({ custom: ["X"] });
+    expect(formGroup.get("transformations").value).toEqual({});
   });
 });
