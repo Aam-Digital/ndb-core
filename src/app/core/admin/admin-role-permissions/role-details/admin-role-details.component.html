@@ -9,17 +9,16 @@
   </button>
 </div>
 
-<div class="flex-row flex-wrap gap-large margin-bottom-regular">
-  <div>
-    <div class="text-secondary" i18n>Role name</div>
-    <div>{{ roleName() }}</div>
-  </div>
-  @if (role()?.description) {
-    <div>
-      <div class="text-secondary" i18n>Description</div>
-      <div>{{ role()?.description }}</div>
-    </div>
-  }
+<div class="flex-row flex-wrap gap-regular margin-bottom-regular">
+  <mat-form-field>
+    <mat-label i18n>Role name</mat-label>
+    <input matInput [value]="roleName()" readonly />
+  </mat-form-field>
+
+  <mat-form-field class="flex-grow">
+    <mat-label i18n>Description</mat-label>
+    <input matInput [value]="role()?.description ?? ''" readonly />
+  </mat-form-field>
 </div>
 
 @if (model()) {

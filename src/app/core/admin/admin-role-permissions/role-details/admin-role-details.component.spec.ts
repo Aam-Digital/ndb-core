@@ -55,10 +55,11 @@ describe("AdminRoleDetailsComponent", () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    const text = fixture.nativeElement.textContent;
-    expect(text).toContain("user_app");
-    expect(text).toContain("Social workers");
-    expect(text).toContain("Child");
+    const inputValues = Array.from(
+      fixture.nativeElement.querySelectorAll("input[matinput]"),
+    ).map((i: HTMLInputElement) => i.value);
+    expect(inputValues).toEqual(["user_app", "Social workers"]);
+    expect(fixture.nativeElement.textContent).toContain("Child");
   });
 
   it("shows fallback hint for a role without any configured rules", async () => {
