@@ -59,6 +59,35 @@ describe("PermissionMatrixComponent", () => {
     expect(allRow.querySelectorAll(".allowed-icon").length).toBe(4);
   });
 
+  it("supports cell toggle, manage toggle, row removal and adding subjects in editable mode", () => {
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    component.setCellAllowed(0, "update", true);
+    expect(emitted[0].rows[0].cells.update).toEqual({ allowed: true });
+
+    component.setCellAllowed(0, "read", false);
+    expect(emitted[1].rows[0].cells.read).toBeUndefined();
+
+    component.setManage(0, true);
+    expect(emitted[2].rows[0].cells.manage).toEqual({ allowed: true });
+
+    component.removeRow(1);
+    expect(emitted[3].rows.map((r) => r.subject)).toEqual(["Child"]);
+
+    component.addSubject("School");
+    expect(emitted[4].rows.map((r) => r.subject)).toEqual([
+      "Child",
+      "all",
+      "School",
+    ]);
+    expect(emitted[4].rows[2].cells.read).toEqual({ allowed: true });
+
+    component.addSubject("Child");
+    expect(emitted.length).toBe(5);
+  });
+
   it("shows a hint when unsupported advanced rules exist", () => {
     fixture.componentRef.setInput("model", {
       rows: [],

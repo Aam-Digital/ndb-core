@@ -40,18 +40,27 @@
             }
           }
         </th>
-        <td mat-cell *matCellDef="let row">
-          @if (isAllowed(row, action) && getConditions(row, action)) {
-            <fa-icon
-              icon="filter"
-              class="conditional-icon"
-              i18n-matTooltip
-              matTooltip="Allowed only under certain conditions"
-            ></fa-icon>
-          } @else if (isAllowed(row, action)) {
-            <fa-icon icon="check" class="allowed-icon"></fa-icon>
+        <td mat-cell *matCellDef="let row; let i = index">
+          @if (editable() && !row.cells.manage?.allowed) {
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="cellMenu"
+              [matMenuTriggerData]="{ rowIndex: i, action: action, row: row }"
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  cellState;
+                  context: { row: row, action: action }
+                "
+              ></ng-container>
+            </button>
           } @else {
-            <span class="text-secondary">&ndash;</span>
+            <ng-container
+              *ngTemplateOutlet="
+                cellState;
+                context: { row: row, action: action }
+              "
+            ></ng-container>
           }
         </td>
       </ng-container>
@@ -59,15 +68,75 @@
 
     <ng-container matColumnDef="manage">
       <th mat-header-cell *matHeaderCellDef i18n>Manage (all)</th>
-      <td mat-cell *matCellDef="let row">
+      <td mat-cell *matCellDef="let row; let i = index">
         <mat-checkbox
           [checked]="!!row.cells.manage?.allowed"
           [disabled]="!editable()"
+          (change)="setManage(i, $event.checked)"
         ></mat-checkbox>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <ng-container matColumnDef="rowActions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        <button
+          mat-icon-button
+          (click)="removeRow(i)"
+          i18n-matTooltip
+          matTooltip="Remove all permissions for this record type"
+        >
+          <fa-icon icon="xmark"></fa-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
   </table>
+
+  @if (editable()) {
+    <div class="flex-row align-center gap-regular padding-regular">
+      <fa-icon icon="plus" class="text-secondary"></fa-icon>
+      <mat-form-field class="add-permission-field">
+        <mat-label i18n>Add permission for record type</mat-label>
+        <app-entity-type-select
+          [value]="undefined"
+          (valueChange)="addSubject($event)"
+        ></app-entity-type-select>
+      </mat-form-field>
+    </div>
+  }
 </div>
+
+<mat-menu #cellMenu="matMenu">
+  <ng-template matMenuContent let-rowIndex="rowIndex" let-action="action">
+    <button mat-menu-item (click)="setCellAllowed(rowIndex, action, true)">
+      <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Allowed</span>
+    </button>
+    <button mat-menu-item disabled>
+      <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Allowed only where&hellip;</span>
+    </button>
+    <button mat-menu-item (click)="setCellAllowed(rowIndex, action, false)">
+      <fa-icon icon="ban" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Not allowed</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<ng-template #cellState let-row="row" let-action="action">
+  @if (isAllowed(row, action) && getConditions(row, action)) {
+    <fa-icon
+      icon="filter"
+      class="conditional-icon"
+      i18n-matTooltip
+      matTooltip="Allowed only under certain conditions"
+    ></fa-icon>
+  } @else if (isAllowed(row, action)) {
+    <fa-icon icon="check" class="allowed-icon"></fa-icon>
+  } @else {
+    <span class="text-secondary">&ndash;</span>
+  }
+</ng-template>
