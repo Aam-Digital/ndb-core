@@ -3,10 +3,24 @@
     <app-view-title i18n>Role Permissions</app-view-title>
   </div>
 
-  <button mat-stroked-button color="accent" (click)="editJson()">
-    <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
-    <span i18n>JSON</span>
-  </button>
+  <div class="flex-row gap-small align-center">
+    <button mat-stroked-button color="accent" (click)="editJson()">
+      <fa-icon icon="code" class="standard-icon-with-text"></fa-icon>
+      <span i18n>JSON</span>
+    </button>
+
+    @if (editing()) {
+      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+      <button mat-raised-button color="accent" (click)="save()" i18n>
+        Save
+      </button>
+    } @else {
+      <button mat-raised-button color="accent" (click)="startEditing()">
+        <fa-icon icon="pen" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Edit</span>
+      </button>
+    }
+  </div>
 </div>
 
 <div class="flex-row flex-wrap gap-regular margin-bottom-regular">
@@ -22,10 +36,14 @@
 </div>
 
 @if (model()) {
-  <app-permission-matrix [model]="model()"></app-permission-matrix>
+  <app-permission-matrix
+    [model]="model()"
+    [editable]="editing()"
+    (modelChange)="onModelChange($event)"
+  ></app-permission-matrix>
 } @else {
   <p class="text-secondary" i18n>
     No permissions defined for this role yet. Users with this role only have the
-    permissions of the "default" role. Use the JSON editor to add rules for now.
+    permissions of the "default" role.
   </p>
 }

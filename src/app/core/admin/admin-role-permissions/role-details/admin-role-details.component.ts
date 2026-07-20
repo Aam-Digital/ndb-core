@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   signal,
 } from "@angular/core";
@@ -12,8 +13,13 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
 
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
+import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
-import { MatrixModel, rulesToMatrix } from "../permission-matrix";
+import {
+  MatrixModel,
+  matrixToRules,
+  rulesToMatrix,
+} from "../permission-matrix";
 import { PermissionMatrixComponent } from "../permission-matrix/permission-matrix.component";
 import {
   RolePermissionsService,
@@ -40,9 +46,14 @@ export class AdminRoleDetailsComponent {
   private readonly rolePermissionsService = inject(RolePermissionsService);
   private readonly jsonEditorService = inject(JsonEditorService);
 
+  private readonly unsavedChanges = inject(UnsavedChangesService);
+
   readonly roleName = signal("");
   readonly role = signal<RoleWithPermissions | undefined>(undefined);
   readonly model = signal<MatrixModel | undefined>(undefined);
+  readonly editing = signal(false);
+
+  private originalModel: MatrixModel | undefined;
 
   constructor() {
     inject(ActivatedRoute)
@@ -51,6 +62,9 @@ export class AdminRoleDetailsComponent {
         this.roleName.set(params.get("role") ?? "");
         this.loadRole();
       });
+    inject(DestroyRef).onDestroy(() =>
+      this.unsavedChanges.setUnsavedChanges(this, false),
+    );
   }
 
   async loadRole() {
@@ -60,16 +74,57 @@ export class AdminRoleDetailsComponent {
     this.model.set(role?.rules ? rulesToMatrix(role.rules) : undefined);
   }
 
+  startEditing() {
+    this.originalModel = JSON.parse(JSON.stringify(this.model() ?? null));
+    if (!this.model()) {
+      this.model.set({ rows: [], unsupportedRules: [] });
+    }
+    this.editing.set(true);
+  }
+
+  onModelChange(updated: MatrixModel) {
+    this.model.set(updated);
+    this.unsavedChanges.setUnsavedChanges(this, true);
+  }
+
+  cancel() {
+    this.model.set(this.originalModel ?? undefined);
+    this.editing.set(false);
+    this.unsavedChanges.setUnsavedChanges(this, false);
+  }
+
+  async save() {
+    await this.rolePermissionsService.saveRules(
+      this.roleName(),
+      matrixToRules(this.model()),
+    );
+    this.editing.set(false);
+    this.unsavedChanges.setUnsavedChanges(this, false);
+    await this.loadRole();
+  }
+
   /**
    * Edit this role's rules as raw JSON as a fallback for advanced use cases.
+   * While in edit mode this only updates the pending working state,
+   * otherwise changes are saved directly.
    */
   async editJson() {
+    const currentRules = this.editing()
+      ? matrixToRules(this.model() ?? { rows: [], unsupportedRules: [] })
+      : (this.role()?.rules ?? []);
     const updatedRules = await firstValueFrom(
-      this.jsonEditorService.openJsonEditorDialog(this.role()?.rules ?? []),
+      this.jsonEditorService.openJsonEditorDialog(currentRules),
     );
     if (!updatedRules) return;
 
-    await this.rolePermissionsService.saveRules(this.roleName(), updatedRules);
-    await this.loadRole();
+    if (this.editing()) {
+      this.onModelChange(rulesToMatrix(updatedRules));
+    } else {
+      await this.rolePermissionsService.saveRules(
+        this.roleName(),
+        updatedRules,
+      );
+      await this.loadRole();
+    }
   }
 }

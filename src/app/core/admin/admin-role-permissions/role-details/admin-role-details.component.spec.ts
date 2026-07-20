@@ -8,6 +8,8 @@ import { AdminRoleDetailsComponent } from "./admin-role-details.component";
 import { RolePermissionsService } from "../role-permissions.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
+import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("AdminRoleDetailsComponent", () => {
   let component: AdminRoleDetailsComponent;
@@ -37,6 +39,10 @@ describe("AdminRoleDetailsComponent", () => {
         { provide: RolePermissionsService, useValue: mockRolePermissions },
         { provide: JsonEditorService, useValue: mockJsonEditor },
         { provide: EntityRegistry, useValue: new EntityRegistry() },
+        {
+          provide: ConfirmationDialogService,
+          useValue: { getDiscardConfirmation: vi.fn().mockResolvedValue(true) },
+        },
         provideRouter([]),
         {
           provide: ActivatedRoute,
@@ -73,6 +79,43 @@ describe("AdminRoleDetailsComponent", () => {
     expect(fixture.nativeElement.textContent).toContain(
       "No permissions defined",
     );
+  });
+
+  it("tracks unsaved changes while editing and saves the working model as rules", async () => {
+    await fixture.whenStable();
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
+
+    component.startEditing();
+    component.onModelChange({
+      rows: [
+        { subject: "Child", cells: { read: { allowed: true } } },
+        { subject: "School", cells: { read: { allowed: true } } },
+      ],
+      unsupportedRules: [],
+    });
+    expect(unsavedChanges.pending()).toBe(true);
+
+    await component.save();
+
+    expect(mockRolePermissions.saveRules).toHaveBeenCalledWith("user_app", [
+      { subject: ["Child", "School"], action: "read" },
+    ]);
+    expect(component.editing()).toBe(false);
+    expect(unsavedChanges.pending()).toBe(false);
+  });
+
+  it("cancel discards working changes and clears unsaved state", async () => {
+    await fixture.whenStable();
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
+
+    component.startEditing();
+    component.onModelChange({ rows: [], unsupportedRules: [] });
+    component.cancel();
+
+    expect(component.editing()).toBe(false);
+    expect(unsavedChanges.pending()).toBe(false);
+    expect(component.model().rows.map((r) => r.subject)).toEqual(["Child"]);
+    expect(mockRolePermissions.saveRules).not.toHaveBeenCalled();
   });
 
   it("saves rules edited through the json editor", async () => {

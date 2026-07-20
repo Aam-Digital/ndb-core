@@ -1,4 +1,6 @@
+import { inject } from "@angular/core";
 import { Routes } from "@angular/router";
+import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.service";
 import { RoutedViewComponent } from "../ui/routed-view/routed-view.component";
 import { AdminOverviewComponent } from "./admin-overview/admin-overview.component";
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
@@ -49,6 +51,7 @@ export const adminRoutes: Routes = [
     path: "user-roles/:role",
     component: AdminRoleDetailsComponent,
     canActivate: [UserRoleGuard],
+    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
     data: {
       permittedUserRoles: ["account_manager", "admin_app"],
     },

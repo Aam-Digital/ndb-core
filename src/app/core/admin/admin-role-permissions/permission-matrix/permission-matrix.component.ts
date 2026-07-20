@@ -112,7 +112,8 @@ export class PermissionMatrixComponent {
     this.emitUpdated((m) => m.rows.splice(rowIndex, 1));
   }
 
-  addSubject(subject: string) {
+  addSubject(selected: string | string[]) {
+    const subject = Array.isArray(selected) ? selected[0] : selected;
     if (!subject || this.model().rows.some((r) => r.subject === subject)) {
       return;
     }
