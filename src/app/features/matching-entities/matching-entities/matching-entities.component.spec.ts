@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
 import { Entity } from "../../../core/entity/model/entity";
@@ -205,7 +204,7 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.sideDetails()![0].entityType).toEqual(
       testEntity.getType(),
     );
-    expect(component.sideDetails()![0].availableEntities).toBeUndefined();
+    expect(component.sideDetails()![0].dataSource).toBeUndefined();
     expect(component.sideDetails()![0].columns).toEqual(["_id", "_rev"]);
 
     expect(component.sideDetails()![1].selected()).toEqual([]);
@@ -213,7 +212,9 @@ describe("MatchingEntitiesComponent", () => {
       TestEntity.ENTITY_TYPE,
     );
     expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity.ENTITY_TYPE);
-    expect(component.sideDetails()![1].availableEntities).toEqual(allChildren);
+    expect(component.sideDetails()![1].dataSource.allRecords()).toEqual(
+      allChildren,
+    );
     expect(component.sideDetails()![1].columns).toEqual(["name", "phone"]);
   });
 

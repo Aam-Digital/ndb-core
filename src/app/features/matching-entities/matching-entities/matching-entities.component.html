@@ -44,7 +44,7 @@
             }
           }
           &nbsp;
-          @if (!side.availableEntities || lockedMatching()) {
+          @if (!side.dataSource?.allRecords() || lockedMatching()) {
             <fa-icon
               icon="lock"
               matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
@@ -109,7 +109,7 @@
 @if (!lockedMatching()) {
   <div class="flex-row flex-wrap gap-large">
     @for (side of sideDetails(); track $index) {
-      @if (side.availableEntities) {
+      @if (side.dataSource?.allRecords()) {
         <div class="flex-grow">
           <h3
             [style.color]="(side.entityType | entityType)?.color ?? 'black'"
@@ -129,13 +129,13 @@
             class="flex-row gap-regular flex-wrap"
             [filterConfig]="side.availableFilters"
             [entityType]="side.entityType | entityType"
-            [entities]="side.availableEntities"
+            [entities]="side.dataSource.allRecords()"
             (filterObjChange)="applySelectedFilters(side, $event)"
           ></app-filter>
 
           <app-entities-table
             [entityType]="side.entityType | entityType"
-            [records]="side.availableEntities"
+            [recordsDataSource]="side.dataSource"
             [customColumns]="side.columns"
             [editable]="false"
             clickMode="none"

@@ -1,14 +1,17 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Entity } from "../model/entity";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
 import { UpdatedEntity } from "../model/entity-update";
 import { Logging } from "../../logging/logging.service";
+import { TodoService } from "#src/app/features/todos/todo.service";
 
 export enum LoaderMethod {
   ChildrenService = "ChildrenService",
   HistoricalDataService = "HistoricalDataService",
   ChildrenServiceQueryRelations = "ChildrenServiceQueryRelations",
+  NotesRelatedToEntity = "NotesRelatedToEntity",
+  TodosRelatedToEntity = "TodosRelatedToEntity",
 }
 
 /**
@@ -20,8 +23,9 @@ export enum LoaderMethod {
   providedIn: "root",
 })
 export class EntitySpecialLoaderService {
-  private childrenService = inject(ChildrenService);
-  private historicalDataService = inject(HistoricalDataService);
+  private readonly childrenService = inject(ChildrenService);
+  private readonly historicalDataService = inject(HistoricalDataService);
+  private readonly todoService = inject(TodoService);
 
   loadData<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,
@@ -55,9 +59,10 @@ export class EntitySpecialLoaderService {
     return updatedEntity;
   }
 
-  async loadDataFor<E extends Entity = Entity>(
+  loadDataFor<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,
     entity: Entity,
+    property?: string,
   ): Promise<E[]> {
     switch (loaderMethod) {
       case LoaderMethod.HistoricalDataService:
@@ -67,6 +72,15 @@ export class EntitySpecialLoaderService {
       case LoaderMethod.ChildrenServiceQueryRelations:
         return this.childrenService.queryRelations(
           entity.getId(false),
+        ) as unknown as Promise<E[]>;
+      case LoaderMethod.NotesRelatedToEntity:
+        return this.childrenService.getNotesRelatedTo(
+          entity.getId(),
+        ) as unknown as Promise<E[]>;
+      case LoaderMethod.TodosRelatedToEntity:
+        return this.todoService.getTodosFor(
+          entity,
+          property,
         ) as unknown as Promise<E[]>;
     }
   }

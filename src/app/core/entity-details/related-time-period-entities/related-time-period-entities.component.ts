@@ -1,7 +1,7 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
-  ChangeDetectionStrategy,
   input,
 } from "@angular/core";
 import {
@@ -56,7 +56,8 @@ export class RelatedTimePeriodEntitiesComponent<
   backgroundColorFn = (r: E) => r.getColor();
 
   readonly hasCurrentlyActiveEntry = computed(
-    () => this.data()?.some((record) => record.isActive) ?? false,
+    () =>
+      this.dataSource.allRecords()?.some((record) => record.isActive) ?? false,
   );
 
   constructor() {
@@ -69,7 +70,7 @@ export class RelatedTimePeriodEntitiesComponent<
   override createNewRecordFactory() {
     return () => {
       const newRelation = super.createNewRecordFactory()();
-      const currentData = this.data();
+      const currentData = this.dataSource.allRecords();
 
       newRelation.start =
         currentData?.length && currentData[0].end

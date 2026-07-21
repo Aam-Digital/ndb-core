@@ -20,7 +20,7 @@
     </app-help-button>
   </div>
 
-  @let skippedRows = rawData?.length - mappedEntities().length;
+  @let skippedRows = rawData?.length - dataSource.allRecords().length;
   @if (skippedRows > 0) {
     <app-hint-box i18n>
       {{ skippedRows }} row(s) were skipped because no mappable data was found
@@ -42,7 +42,7 @@
   <app-entities-table
     [entityType]="entityConstructor"
     [columnsToDisplay]="displayColumns()"
-    [records]="mappedEntities()"
+    [recordsDataSource]="dataSource"
     clickMode="none"
     [editable]="false"
   >

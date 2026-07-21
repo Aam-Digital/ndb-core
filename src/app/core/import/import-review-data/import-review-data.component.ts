@@ -1,16 +1,16 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
-  SimpleChanges,
-  inject,
-  ChangeDetectionStrategy,
   signal,
+  SimpleChanges,
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { EntityConstructor } from "../../entity/model/entity";
 import { ImportCellError, ImportService } from "../import.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
@@ -42,6 +42,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,8 +92,9 @@ export class ImportReviewDataComponent implements OnChanges {
 
   @Output() importComplete = new EventEmitter<ImportMetadata>();
 
+  readonly dataSource = new InMemoryDataSource();
+
   isLoading = signal(false);
-  mappedEntities = signal<Entity[]>([]);
   displayColumns = signal<string[]>([]);
   transformationErrorColumns = signal<string[]>([]);
   MULTIPLE_MATCHING_ENTITIES_KEY =
@@ -153,7 +155,7 @@ export class ImportReviewDataComponent implements OnChanges {
         await this.showTransformationErrorDialog(result.errors);
       }
 
-      this.mappedEntities.set(
+      this.dataSource.allRecords.set(
         result.entities.sort((a, b) => {
           // sort _rev (existing records being updated) first, then new records
           if (a._rev === b._rev) return 0;
@@ -163,7 +165,7 @@ export class ImportReviewDataComponent implements OnChanges {
       );
     } catch (e) {
       Logging.error("Failed to transform import data", e);
-      this.mappedEntities.set([]);
+      this.dataSource.allRecords.set([]);
       this.transformationErrorColumns.set([]);
     }
 
@@ -194,7 +196,7 @@ export class ImportReviewDataComponent implements OnChanges {
           ImportDialogResult
         >(ImportConfirmSummaryComponent, {
           data: {
-            entitiesToImport: this.mappedEntities(),
+            entitiesToImport: this.dataSource.allRecords(),
             importSettings: {
               entityType: this.entityType,
               columnMapping: this.columnMapping,

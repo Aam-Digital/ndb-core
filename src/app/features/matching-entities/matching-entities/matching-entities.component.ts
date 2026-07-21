@@ -1,16 +1,18 @@
 import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
 import { AsyncPipe } from "@angular/common";
 import {
-  Component,
-  ElementRef,
-  input,
-  inject,
-  OnInit,
-  signal,
-  computed,
-  WritableSignal,
-  ViewChild,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  Injector,
+  input,
+  OnInit,
+  runInInjectionContext,
+  signal,
+  ViewChild,
+  WritableSignal,
 } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
@@ -56,12 +58,14 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
   filterObj: WritableSignal<DataFilter<Entity>>;
 
-  availableEntities?: Entity[];
+  dataSource?: InMemoryDataSource<Entity>;
   selectMatch?: (e) => void;
   entityType: string;
 
@@ -112,6 +116,7 @@ export class MatchingEntitiesComponent implements OnInit {
   private configService = inject(ConfigService);
   private entityRegistry = inject(EntityRegistry);
   private filterService = inject(FilterService);
+  private injector = inject(Injector);
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
   entity = input<Entity>();
@@ -148,9 +153,11 @@ export class MatchingEntitiesComponent implements OnInit {
       const filterObj = side.filterObj();
       if (Object.keys(filterObj).length > 0) {
         const predicate = this.filterService.getFilterPredicate(filterObj);
-        entities.push(...(side.availableEntities ?? []).filter(predicate));
+        entities.push(
+          ...(side.dataSource?.allRecords() ?? []).filter(predicate),
+        );
       } else {
-        entities.push(...(side.availableEntities ?? []));
+        entities.push(...(side.dataSource?.allRecords() ?? []));
       }
     });
     return entities;
@@ -234,9 +241,19 @@ export class MatchingEntitiesComponent implements OnInit {
     }
 
     if (!newSide.selected) {
-      newSide.availableEntities = await this.entityMapper.loadType(
-        newSide.entityType,
+      runInInjectionContext(
+        this.injector,
+        () => (newSide.dataSource = new InMemoryDataSource()),
       );
+      const records = await this.entityMapper
+        .loadType(newSide.entityType)
+        .catch((err) => {
+          Logging.error(
+            `Failed to initialize entities (${newSide.entityType}) for matching side ${sideIndex}. Reasons: ${err}`,
+          );
+          return [];
+        });
+      newSide.dataSource.allRecords.set(records);
       newSide.availableFilters = newSide.availableFilters ?? [];
       newSide.selected = signal<Entity[]>([]);
       newSide.highlightedSelected = signal<Entity | null>(null);
@@ -392,7 +409,7 @@ export class MatchingEntitiesComponent implements OnInit {
     this.lockedMatching.set(false);
 
     for (const side of this.sideDetails()) {
-      if (!side.availableEntities) {
+      if (!side.dataSource?.allRecords()) {
         continue;
       }
 
@@ -475,11 +492,11 @@ export class MatchingEntitiesComponent implements OnInit {
    * so the table can sort without custom sort functions.
    */
   private setDistanceValuesForSide(side: MatchingSide) {
-    if (!side.availableEntities?.length || !side.distanceColumn) {
+    if (!side.dataSource?.allRecords()?.length || !side.distanceColumn) {
       return;
     }
 
-    for (const entity of side.availableEntities) {
+    for (const entity of side.dataSource.allRecords()) {
       this.defineDistanceValue(entity, side);
     }
   }
