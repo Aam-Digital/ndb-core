@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import {
   createEmptyValueFilter,
   DataFilter,
@@ -20,8 +20,12 @@ import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum
 import { FilterService } from "../filter.service";
 import { defaultDateFilters } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
+import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatype";
 import { DateFilter } from "../filters/dateFilter";
+import { StringFilter } from "../filters/stringFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
@@ -186,6 +190,8 @@ export class FilterGeneratorService {
           label,
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
         );
+      } else if (this.isFreeTextField(type, schema)) {
+        filter = new StringFilter(filterConfig.id, label);
       } else if (
         // type: entity reference
         this.entities.has(filterConfig.type) ||
@@ -246,6 +252,29 @@ export class FilterGeneratorService {
       filters.push(filter);
     }
     return filters;
+  }
+
+  /**
+   * Whether the field is a free-text field that should be filtered
+   * with a text-search input (see {@link StringFilter}):
+   * dataType "string" or "long-text", edited with a plain text edit component.
+   */
+  private isFreeTextField(type: string, schema: EntitySchemaField): boolean {
+    if (
+      type !== StringDatatype.dataType &&
+      type !== LongTextDatatype.dataType
+    ) {
+      return false;
+    }
+
+    const editComponent =
+      schema.editComponent ??
+      this.schemaService.getDatatypeOrDefault(type)?.editComponent;
+    return (
+      editComponent === "EditText" ||
+      editComponent === "EditLongText" ||
+      editComponent === "EditEmail"
+    );
   }
 
   /**
