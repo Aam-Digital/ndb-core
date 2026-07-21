@@ -109,6 +109,7 @@
         <mat-label i18n>Add permission for record type</mat-label>
         <app-entity-type-select
           [value]="undefined"
+          [showInternalTypes]="true"
           (valueChange)="addSubject($event)"
         ></app-entity-type-select>
       </mat-form-field>
