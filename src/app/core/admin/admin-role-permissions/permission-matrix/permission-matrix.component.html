@@ -16,10 +16,12 @@
           Record type
         </th>
         <td mat-cell *matCellDef="let v" class="subject-col">
-          <div class="flex-row align-center gap-small">
-            @if (v.icon) {
-              <fa-icon [icon]="v.icon"></fa-icon>
-            }
+          <div class="flex-row align-center gap-regular">
+            <div class="subject-icon-badge">
+              @if (v.icon) {
+                <fa-icon [icon]="v.icon"></fa-icon>
+              }
+            </div>
             <span>{{ v.label }}</span>
           </div>
         </td>
@@ -70,10 +72,19 @@
       }
 
       <ng-container matColumnDef="manage">
-        <th mat-header-cell *matHeaderCellDef class="action-col" i18n>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="action-col manage-col"
+          i18n
+        >
           Manage (all)
         </th>
-        <td mat-cell *matCellDef="let v; let i = index" class="action-col">
+        <td
+          mat-cell
+          *matCellDef="let v; let i = index"
+          class="action-col manage-col"
+        >
           <mat-checkbox
             [checked]="!!v.row.cells.manage?.allowed"
             [disabled]="!editable() || v.row.subject === 'all'"

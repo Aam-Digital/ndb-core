@@ -71,3 +71,19 @@
 .empty-state {
   text-align: center;
 }
+
+.subject-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: colors.$grey-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// visually separate the manage wildcard column from the individual actions
+.manage-col {
+  border-left: 1px solid colors.$grey-transparent;
+}

@@ -55,7 +55,8 @@
     }
     @if (isNew()) {
       <mat-hint i18n>
-        Created in Keycloak and the configuration on Save.
+        The role is set up automatically when you save. Its name cannot be
+        changed later.
       </mat-hint>
     }
     @if (nameControl.hasError("required")) {
