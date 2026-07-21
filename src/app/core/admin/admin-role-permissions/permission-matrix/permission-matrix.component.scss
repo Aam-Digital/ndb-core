@@ -24,6 +24,12 @@
   height: 16px;
 }
 
+// same explicit size for the "not allowed" dash, inside and outside buttons
+.not-allowed-icon {
+  font-size: 14px;
+  line-height: 16px;
+}
+
 .action-col {
   text-align: center;
   width: 100px;
