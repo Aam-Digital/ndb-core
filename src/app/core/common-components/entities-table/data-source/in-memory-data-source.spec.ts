@@ -1,9 +1,9 @@
 import { TestBed } from "@angular/core/testing";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Entity } from "../../entity/model/entity";
 import { InMemoryDataSource } from "./in-memory-data-source";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("InMemoryDataSource", () => {
   let dataSource: InMemoryDataSource<Entity>;

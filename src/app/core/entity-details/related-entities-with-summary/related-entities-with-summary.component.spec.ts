@@ -113,7 +113,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     const summaries = component.summaries();
     delete summaries.groupBy;
     summaries.countProperty = "amount";
-    component.dataSource.filteredRecords.set(plainData);
+    component.recordsDataSource().filteredRecords.set(plainData);
 
     expect(getSummary().sum).toEqual(`6`);
     expect(getSummary().avg).toEqual(`3`);
