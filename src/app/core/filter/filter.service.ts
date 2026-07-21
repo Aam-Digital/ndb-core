@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { Entity } from "../entity/model/entity";
 import {
@@ -35,13 +35,16 @@ export class FilterService {
       return {} as DataFilter<T>;
     }
 
-    return {
-      $and: [
-        ...entityFilters.map((value: EntityFilter<T>): DataFilter<T> => {
-          return value.getFilter();
-        }),
-      ],
-    } as unknown as DataFilter<T>;
+    const filters = entityFilters
+      .map((value) => value.getFilter())
+      .filter((value) => value !== undefined);
+    if (filters.length > 0) {
+      return {
+        $and: [...filters],
+      } as unknown as DataFilter<T>;
+    } else {
+      return {} as DataFilter<T>;
+    }
   }
 
   /**
@@ -54,7 +57,7 @@ export class FilterService {
    * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
    */
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return this.filterFactory<T>(filter as MongoQuery<T>);
+    return this.filterFactory<T>((filter ?? {}) as MongoQuery<T>);
   }
 
   /**

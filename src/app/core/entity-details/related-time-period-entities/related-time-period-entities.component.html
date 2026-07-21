@@ -1,4 +1,4 @@
-@if (!hasCurrentlyActiveEntry() && !dataSource.isLoading()) {
+@if (!hasCurrentlyActiveEntry() && !recordsDataSource().isLoading()) {
   <app-pill class="hint-badge">
     Currently there is no active entry. To add a new entry, click on the
     <fa-icon class="color-accent" aria-label="add" icon="plus-circle"></fa-icon>
@@ -8,7 +8,7 @@
 
 <app-entities-table
   [entityType]="entityCtr()!"
-  [recordsDataSource]="dataSource"
+  [recordsDataSource]="recordsDataSource()"
   [filter]="filterObj()"
   [customColumns]="_columns()"
   [newRecordFactory]="createNewRecordFactory()"

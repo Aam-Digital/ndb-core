@@ -45,7 +45,7 @@ import {
   shouldSkipRowInteraction,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -81,10 +81,10 @@ export class EntitiesTableComponent<T extends Entity>
   ) as EntitiesTableSortStore<T>;
   protected readonly selectionStore = inject(
     EntitiesTableSelectionStore,
-  ) as EntitiesTableSelectionStore<T>;
+  ) as unknown as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
-  recordsDataSource = input.required<InMemoryDataSource<T>>();
+  recordsDataSource = input.required<EntitiesTableDataSource<T>>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
   });

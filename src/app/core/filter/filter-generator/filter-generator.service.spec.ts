@@ -90,7 +90,9 @@ describe("FilterGeneratorService", () => {
     let comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
+
+    // Enum options + empty option
+    expect(comparableOptions).toHaveLength(interactionTypes.length + 1);
     expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
     // enum name in additional field
@@ -108,7 +110,7 @@ describe("FilterGeneratorService", () => {
     comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
+    expect(comparableOptions).toHaveLength(interactionTypes.length + 1);
     expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
     // enum as array
@@ -126,7 +128,7 @@ describe("FilterGeneratorService", () => {
     comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
+    expect(comparableOptions).toHaveLength(interactionTypes.length + 1);
     expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
     const note = new Note();
@@ -135,9 +137,9 @@ describe("FilterGeneratorService", () => {
       defaultInteractionTypes[2],
     ];
 
-    expect(filter([note], filterOptions.options[1])).toEqual([note]);
     expect(filter([note], filterOptions.options[2])).toEqual([note]);
-    expect(filter([note], filterOptions.options[3])).toEqual([]);
+    expect(filter([note], filterOptions.options[3])).toEqual([note]);
+    expect(filter([note], filterOptions.options[4])).toEqual([]);
 
     Note.schema.delete("otherEnum");
   });
@@ -204,6 +206,7 @@ describe("FilterGeneratorService", () => {
     expectArrayWithExactContents(comparableOptions, [
       { key: "muslim", label: "muslim" },
       { key: "christian", label: "christian" },
+      { key: EMPTY_FILTER_OPTION_KEY, label: "not defined" },
     ]);
   });
 

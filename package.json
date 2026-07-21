@@ -75,6 +75,7 @@
     "pouchdb-adapter-indexeddb": "^9.0.0",
     "pouchdb-adapter-memory": "^9.0.0",
     "pouchdb-browser": "^9.0.0",
+    "pouchdb-find": "^9.0.0",
     "process": "^0.11.10",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",

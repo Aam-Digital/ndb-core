@@ -3,6 +3,7 @@ import { Logging } from "../../logging/logging.service";
 import { DatabaseException } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
+import pouchdbFind from "pouchdb-find";
 import { NgZone } from "@angular/core";
 import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
@@ -14,6 +15,7 @@ import { NotificationEvent } from "#src/app/features/notification/model/notifica
 
 // Register the newer "indexeddb" adapter alongside the default "idb" adapter
 PouchDB.plugin(indexeddbAdapter);
+PouchDB.plugin(pouchdbFind);
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -383,6 +385,49 @@ export class PouchDatabase extends Database {
     this.pouchDB = undefined;
     // keep this.changesFeed because some services are already subscribed to this reference
     this.databaseInitialized = new Subject();
+  }
+
+  async find(
+    prefix = "",
+    query = {},
+    page?: { limit: number; skip: number },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<any> {
+    const findOptions: PouchDB.Find.FindRequest<any> = {
+      selector: {
+        _id: { $lt: `${prefix}:\ufff0`, $gte: `${prefix}:` },
+        ...query,
+      },
+    };
+    if (Number.isInteger(page?.limit)) {
+      findOptions.limit = page.limit;
+    }
+    if (Number.isInteger(page?.skip)) {
+      findOptions.skip = page.skip;
+    }
+    const pouchDB = await this.getPouchDBOnceReady();
+    if (sort?.prop) {
+      // TODO delete indexes at one point? e.g. when column is removed
+      const indexRes = await pouchDB.createIndex({
+        index: {
+          name: prefix + "_" + sort.prop,
+          partial_filter_selector: {
+            _id: findOptions.selector._id,
+          },
+          fields: [sort.prop],
+        },
+      });
+      // deleted because already included in partial_filter_selector
+      delete findOptions.selector._id;
+      findOptions.sort = [{ [sort.prop]: sort.dir }];
+      findOptions.use_index = indexRes["id"];
+    }
+    try {
+      const res = await pouchDB.find(findOptions);
+      return res.docs;
+    } catch (err) {
+      throw new DatabaseException(err);
+    }
   }
 
   /**
