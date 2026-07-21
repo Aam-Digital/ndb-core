@@ -202,26 +202,15 @@ export class AdminRoleDetailsComponent {
 
   /**
    * Edit this role's rules as raw JSON as a fallback for advanced use cases.
-   * While in edit mode this only updates the pending working state,
-   * otherwise changes are saved directly.
+   * Only available in view mode, changes are saved directly.
    */
   async editJson() {
-    const currentRules = this.editing()
-      ? matrixToRules(this.model() ?? EMPTY_MODEL)
-      : (this.role()?.rules ?? []);
     const updatedRules = await firstValueFrom(
-      this.jsonEditorService.openJsonEditorDialog(currentRules),
+      this.jsonEditorService.openJsonEditorDialog(this.role()?.rules ?? []),
     );
     if (!updatedRules) return;
 
-    if (this.editing()) {
-      this.onModelChange(rulesToMatrix(updatedRules));
-    } else {
-      await this.rolePermissionsService.saveRules(
-        this.roleName(),
-        updatedRules,
-      );
-      await this.loadRole();
-    }
+    await this.rolePermissionsService.saveRules(this.roleName(), updatedRules);
+    await this.loadRole();
   }
 }
