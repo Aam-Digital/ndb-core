@@ -152,7 +152,7 @@ export class SelectReportComponent {
   openExportDialog() {
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.exportableData(),
+        allEntities: () => Promise.resolve(this.exportableData()),
         filename: this.baseExportFileName,
       },
     });

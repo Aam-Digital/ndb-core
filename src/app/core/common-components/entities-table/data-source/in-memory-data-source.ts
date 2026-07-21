@@ -54,6 +54,10 @@ export class InMemoryDataSource<
     return this.getRecords().then((records) => this.allRecords.set(records));
   }
 
+  override async getAllData(filtered = false): Promise<T[]> {
+    return filtered ? this.filteredRecords() : this.allRecords();
+  }
+
   private getRecords() {
     const loaderMethod = this.loadRecordConfig().loaderMethod;
     if (loaderMethod && this.entitySpecialLoader) {

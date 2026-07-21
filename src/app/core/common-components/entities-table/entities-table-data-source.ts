@@ -79,6 +79,13 @@ export abstract class EntitiesTableDataSource<
 
   protected abstract setRecords(): Promise<any>;
 
+  /**
+   * Load the full set of records (independent of the currently displayed page),
+   * for use cases like export that need all data rather than only what is currently rendered.
+   * @param filtered Whether to apply the current `dataFilter`, or return unfiltered records
+   */
+  abstract getAllData(filtered?: boolean): Promise<T[]>;
+
   protected listenToEntityUpdates() {
     const entityConstructor = this.loadRecordConfig().entityCtr;
     if (!entityConstructor) {

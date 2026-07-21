@@ -387,10 +387,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.recordsDataSource().allRecords(),
-        filteredData: this.recordsDataSource().filteredData.map(
-          (row) => row.record,
-        ),
+        allEntities: () => this.recordsDataSource().getAllData(false),
+        filteredData: () => this.recordsDataSource().getAllData(true),
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),

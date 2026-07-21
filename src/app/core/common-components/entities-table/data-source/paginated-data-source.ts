@@ -88,6 +88,17 @@ export class PaginatedDataSource<
     this.filteredRecords.set(res.slice(0, this.page.size));
   }
 
+  override async getAllData(filtered = false): Promise<T[]> {
+    if (!this.loadRecordConfig()) return [];
+
+    return this.entityMapper.findType(
+      this.loadRecordConfig().entityCtr,
+      filtered ? this.effectiveFilter : {},
+      undefined,
+      this.sortState,
+    );
+  }
+
   /**
    * Records are already paginated by the database query,
    * so the MatTableDataSource base class must not slice them again by page index.
