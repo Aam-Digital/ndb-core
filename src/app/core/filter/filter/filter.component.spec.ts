@@ -205,7 +205,7 @@ describe("FilterComponent", () => {
     });
 
     expect(emittedFilterObj).toEqual({
-      $and: [{ $or: [{ other: "Alipore" }] }],
+      $and: [{ other: "Alipore" }],
     } as any);
   });
 
@@ -261,11 +261,7 @@ describe("FilterComponent", () => {
     component.filterOptionSelected(avilableOptions, [t1.id]);
 
     expect(emittedFilterObj).toEqual({
-      $and: [
-        {
-          $or: [{ "category.id": t1.id }],
-        },
-      ],
+      $and: [{ "category.id": t1.id }],
     } as any);
   });
 });

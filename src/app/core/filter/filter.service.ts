@@ -57,7 +57,7 @@ export class FilterService {
    * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
    */
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return this.filterFactory<T>(filter as MongoQuery<T>);
+    return this.filterFactory<T>((filter ?? {}) as MongoQuery<T>);
   }
 
   /**
