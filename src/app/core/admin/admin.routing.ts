@@ -18,6 +18,8 @@ import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primar
 import { AdminAiAgentComponent } from "./admin-ai-agent/admin-ai-agent.component";
 import { AdminConfigCleanupComponent } from "./config-cleanup/admin-config-cleanup.component";
 
+const ROLE_MANAGEMENT_ROLES = ["account_manager", "admin_app"];
+
 export const adminRoutes: Routes = [
   {
     path: "",
@@ -44,7 +46,7 @@ export const adminRoutes: Routes = [
     component: AdminRolesListComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["account_manager", "admin_app"],
+      permittedUserRoles: ROLE_MANAGEMENT_ROLES,
     },
   },
   {
@@ -53,7 +55,7 @@ export const adminRoutes: Routes = [
     canActivate: [UserRoleGuard],
     canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
     data: {
-      permittedUserRoles: ["account_manager", "admin_app"],
+      permittedUserRoles: ROLE_MANAGEMENT_ROLES,
       newRole: true,
     },
   },
@@ -63,7 +65,7 @@ export const adminRoutes: Routes = [
     canActivate: [UserRoleGuard],
     canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
     data: {
-      permittedUserRoles: ["account_manager", "admin_app"],
+      permittedUserRoles: ROLE_MANAGEMENT_ROLES,
     },
   },
   {

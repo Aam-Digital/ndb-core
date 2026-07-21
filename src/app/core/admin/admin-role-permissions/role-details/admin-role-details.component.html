@@ -67,7 +67,7 @@
 
   <mat-form-field class="flex-grow">
     <mat-label i18n>Description</mat-label>
-    @if (descriptionEditable) {
+    @if (descriptionEditable()) {
       <input
         matInput
         [formControl]="descriptionControl"

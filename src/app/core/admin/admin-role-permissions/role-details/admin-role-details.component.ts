@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  computed,
   inject,
   signal,
 } from "@angular/core";
@@ -110,12 +111,12 @@ export class AdminRoleDetailsComponent {
   }
 
   /** description can only be stored for roles that exist in the authentication server */
-  get descriptionEditable(): boolean {
-    return this.isNew() || (this.editing() && !!this.role()?.keycloakRole);
-  }
+  readonly descriptionEditable = computed(
+    () => this.isNew() || (this.editing() && !!this.role()?.keycloakRole),
+  );
 
   startEditing() {
-    this.originalModel = JSON.parse(JSON.stringify(this.model() ?? null));
+    this.originalModel = structuredClone(this.model());
     if (!this.model()) {
       this.model.set(EMPTY_MODEL);
     }

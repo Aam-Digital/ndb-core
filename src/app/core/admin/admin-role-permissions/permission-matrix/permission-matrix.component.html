@@ -9,17 +9,17 @@
 }
 
 <div class="table-container">
-  <table mat-table [dataSource]="model().rows" class="full-width table">
+  <table mat-table [dataSource]="viewRows()" class="full-width table">
     <ng-container matColumnDef="subject">
       <th mat-header-cell *matHeaderCellDef class="subject-col" i18n>
         Record type
       </th>
-      <td mat-cell *matCellDef="let row" class="subject-col">
+      <td mat-cell *matCellDef="let v" class="subject-col">
         <div class="flex-row align-center gap-small">
-          @if (subjectIcon(row.subject)) {
-            <fa-icon [icon]="subjectIcon(row.subject)"></fa-icon>
+          @if (v.icon) {
+            <fa-icon [icon]="v.icon"></fa-icon>
           }
-          <span>{{ subjectLabel(row.subject) }}</span>
+          <span>{{ v.label }}</span>
         </div>
       </td>
     </ng-container>
@@ -42,17 +42,17 @@
             }
           }
         </th>
-        <td mat-cell *matCellDef="let row; let i = index" class="action-col">
-          @if (editable() && row.subject !== "all") {
+        <td mat-cell *matCellDef="let v; let i = index" class="action-col">
+          @if (editable() && v.row.subject !== "all") {
             <button
               mat-icon-button
               [matMenuTriggerFor]="cellMenu"
-              [matMenuTriggerData]="{ rowIndex: i, action: action, row: row }"
+              [matMenuTriggerData]="{ rowIndex: i, action: action, view: v }"
             >
               <ng-container
                 *ngTemplateOutlet="
                   cellState;
-                  context: { row: row, action: action }
+                  context: { row: v.row, action: action }
                 "
               ></ng-container>
             </button>
@@ -60,7 +60,7 @@
             <ng-container
               *ngTemplateOutlet="
                 cellState;
-                context: { row: row, action: action }
+                context: { row: v.row, action: action }
               "
             ></ng-container>
           }
@@ -72,10 +72,10 @@
       <th mat-header-cell *matHeaderCellDef class="action-col" i18n>
         Manage (all)
       </th>
-      <td mat-cell *matCellDef="let row; let i = index" class="action-col">
+      <td mat-cell *matCellDef="let v; let i = index" class="action-col">
         <mat-checkbox
-          [checked]="!!row.cells.manage?.allowed"
-          [disabled]="!editable() || row.subject === 'all'"
+          [checked]="!!v.row.cells.manage?.allowed"
+          [disabled]="!editable() || v.row.subject === 'all'"
           (change)="setManage(i, $event.checked)"
         ></mat-checkbox>
       </td>
@@ -83,7 +83,7 @@
 
     <ng-container matColumnDef="rowActions">
       <th mat-header-cell *matHeaderCellDef class="row-actions-col"></th>
-      <td mat-cell *matCellDef="let row; let i = index" class="row-actions-col">
+      <td mat-cell *matCellDef="let v; let i = index" class="row-actions-col">
         @if (editable()) {
           <button
             mat-icon-button
@@ -105,14 +105,16 @@
   @if (editable()) {
     <div class="flex-row align-center gap-regular padding-regular">
       <fa-icon icon="plus" class="text-secondary"></fa-icon>
-      <mat-form-field class="add-permission-field">
-        <mat-label i18n>Add permission for record type</mat-label>
-        <app-entity-type-select
-          [value]="undefined"
-          [showInternalTypes]="true"
-          (valueChange)="addSubject($event)"
-        ></app-entity-type-select>
-      </mat-form-field>
+      @if (addSelectVisible()) {
+        <mat-form-field class="add-permission-field">
+          <mat-label i18n>Add permission for record type</mat-label>
+          <app-entity-type-select
+            [value]="undefined"
+            [showInternalTypes]="true"
+            (valueChange)="addSubject($event)"
+          ></app-entity-type-select>
+        </mat-form-field>
+      }
 
       @if (!hasSubject("all")) {
         <button mat-stroked-button (click)="addSubject('all')">
@@ -129,21 +131,21 @@
     matMenuContent
     let-rowIndex="rowIndex"
     let-action="action"
-    let-row="row"
+    let-view="view"
   >
     <button mat-menu-item (click)="setCellAllowed(rowIndex, action, true)">
       <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
       <span i18n>Allowed</span>
     </button>
-    @if (!row.cells.manage?.allowed) {
+    @if (!view.row.cells.manage?.allowed) {
       <div
-        [matTooltipDisabled]="canHaveConditions(row.subject)"
+        [matTooltipDisabled]="view.conditionsEditable"
         i18n-matTooltip
         matTooltip="This record type has no fields that conditions could be defined on"
       >
         <button
           mat-menu-item
-          [disabled]="!canHaveConditions(row.subject)"
+          [disabled]="!view.conditionsEditable"
           (click)="openConditionDialog(rowIndex, action)"
         >
           <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>

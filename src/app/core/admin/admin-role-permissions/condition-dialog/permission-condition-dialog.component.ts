@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from "@angular/core";
@@ -64,33 +65,23 @@ export class PermissionConditionDialogComponent {
 
   readonly hadConditions = !!this.data.conditions;
 
-  /** working state in the { $or: [...] } row format of the conditions editor */
+  /**
+   * Working state in the { $or: [...] } row format of the conditions editor.
+   * Deliberately not a signal: the conditions editor mutates this object in place
+   * and the template does not need to react to its changes.
+   */
   editorConditions: any = toEditorFormat(this.data.conditions);
 
-  get entityLabel(): string {
-    return this.entityConstructor?.label ?? this.data.subject;
-  }
+  readonly entityLabel: string =
+    this.entityConstructor?.label ?? this.data.subject;
 
-  get combinatorHint(): string {
-    return this.combinator() === "any"
+  readonly combinatorHint = computed(() =>
+    this.combinator() === "any"
       ? $localize`Records match if any one of the conditions applies ("or" conditions).`
-      : $localize`Records match only if all conditions apply ("and" conditions).`;
-  }
+      : $localize`Records match only if all conditions apply ("and" conditions).`,
+  );
 
-  get actionLabel(): string {
-    switch (this.data.action) {
-      case "read":
-        return $localize`can read`;
-      case "create":
-        return $localize`can create`;
-      case "update":
-        return $localize`can update`;
-      case "delete":
-        return $localize`can delete`;
-      case "manage":
-        return $localize`can manage`;
-    }
-  }
+  readonly actionLabel: string = getActionLabel(this.data.action);
 
   onConditionsChange(conditions: any) {
     this.editorConditions = conditions;
@@ -120,6 +111,21 @@ export class PermissionConditionDialogComponent {
 
   cancel() {
     this.dialogRef.close(undefined);
+  }
+}
+
+function getActionLabel(action: EntityActionPermission): string {
+  switch (action) {
+    case "read":
+      return $localize`can read`;
+    case "create":
+      return $localize`can create`;
+    case "update":
+      return $localize`can update`;
+    case "delete":
+      return $localize`can delete`;
+    case "manage":
+      return $localize`can manage`;
   }
 }
 

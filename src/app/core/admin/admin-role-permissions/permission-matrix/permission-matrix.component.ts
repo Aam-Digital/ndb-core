@@ -2,9 +2,11 @@ import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
   output,
+  signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -74,7 +76,17 @@ export class PermissionMatrixComponent {
     "rowActions",
   ];
 
-  subjectLabel(subject: string): string {
+  /** rows with their subject label, icon and condition support resolved once per model change */
+  readonly viewRows = computed(() =>
+    this.model().rows.map((row) => ({
+      row,
+      label: this.subjectLabel(row.subject),
+      icon: this.subjectIcon(row.subject),
+      conditionsEditable: this.canHaveConditions(row.subject),
+    })),
+  );
+
+  private subjectLabel(subject: string): string {
     if (subject === "all") {
       return $localize`All record types`;
     }
@@ -84,7 +96,7 @@ export class PermissionMatrixComponent {
     return subject;
   }
 
-  subjectIcon(subject: string): string | undefined {
+  private subjectIcon(subject: string): string | undefined {
     return this.entityRegistry.has(subject)
       ? this.entityRegistry.get(subject).icon
       : undefined;
@@ -139,7 +151,7 @@ export class PermissionMatrixComponent {
    * Conditions can only be edited visually for entity types
    * that have user-facing fields to define conditions on.
    */
-  canHaveConditions(subject: string): boolean {
+  private canHaveConditions(subject: string): boolean {
     if (subject === "all" || !this.entityRegistry.has(subject)) {
       return false;
     }
@@ -177,8 +189,12 @@ export class PermissionMatrixComponent {
     return this.model().rows.some((r) => r.subject === subject);
   }
 
+  /** re-created after each selection so the add-dropdown resets to empty */
+  readonly addSelectVisible = signal(true);
+
   addSubject(selected: string | string[]) {
     const subject = Array.isArray(selected) ? selected[0] : selected;
+    this.resetAddSelect();
     if (!subject || this.model().rows.some((r) => r.subject === subject)) {
       return;
     }
@@ -191,8 +207,13 @@ export class PermissionMatrixComponent {
     this.emitUpdated((m) => m.rows.push({ subject, cells }));
   }
 
+  private resetAddSelect() {
+    this.addSelectVisible.set(false);
+    setTimeout(() => this.addSelectVisible.set(true));
+  }
+
   private emitUpdated(mutate: (model: MatrixModel) => void) {
-    const updated: MatrixModel = JSON.parse(JSON.stringify(this.model()));
+    const updated = structuredClone(this.model());
     mutate(updated);
     this.modelChange.emit(updated);
   }

@@ -156,5 +156,7 @@ export function matrixToRules(model: MatrixModel): DatabaseRule[] {
     ...(f.conditions !== undefined ? { conditions: f.conditions } : {}),
   }));
 
+  // unsupported rules are appended last on purpose: later rules take precedence
+  // in CASL, so restrictions (inverted rules) always win over the matrix's allow rules
   return [...rules, ...(model.unsupportedRules ?? [])];
 }

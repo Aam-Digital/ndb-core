@@ -5,14 +5,13 @@
 
 <mat-dialog-content>
   <p i18n>
-    <strong>{{ data.roleName }}</strong> {{ actionLabel }}
-    <strong>{{ entityLabel }}</strong> only where&hellip;
+    {{ data.roleName }} {{ actionLabel }} {{ entityLabel }} only where&hellip;
   </p>
 
   <app-conditions-editor
     [conditions]="editorConditions"
     [entityConstructor]="entityConstructor"
-    [hint]="combinatorHint"
+    [hint]="combinatorHint()"
     [showInternalIdField]="true"
     (conditionsChange)="onConditionsChange($event)"
   ></app-conditions-editor>
