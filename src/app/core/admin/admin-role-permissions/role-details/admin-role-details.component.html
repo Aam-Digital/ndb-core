@@ -39,6 +39,7 @@
   <app-permission-matrix
     [model]="model()"
     [editable]="editing()"
+    [roleName]="roleName()"
     (modelChange)="onModelChange($event)"
   ></app-permission-matrix>
 } @else {

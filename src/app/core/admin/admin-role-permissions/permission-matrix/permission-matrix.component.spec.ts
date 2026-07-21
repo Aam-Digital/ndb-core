@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatDialog } from "@angular/material/dialog";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import { of } from "rxjs";
 
 import { PermissionMatrixComponent } from "./permission-matrix.component";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -24,10 +26,16 @@ describe("PermissionMatrixComponent", () => {
     unsupportedRules: [],
   };
 
+  const mockDialog = { open: vi.fn() };
+
   beforeEach(async () => {
+    vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [PermissionMatrixComponent],
-      providers: [{ provide: EntityRegistry, useValue: new EntityRegistry() }],
+      providers: [
+        { provide: EntityRegistry, useValue: new EntityRegistry() },
+        { provide: MatDialog, useValue: mockDialog },
+      ],
     }).compileComponents();
 
     TestBed.inject(FaIconLibrary).addIconPacks(fas);
@@ -117,6 +125,29 @@ describe("PermissionMatrixComponent", () => {
     expect(cells.create).toEqual({ allowed: true });
     expect(cells.update).toEqual({ allowed: true });
     expect(cells.delete).toEqual({ allowed: true });
+  });
+
+  it("applies dialog result as cell conditions and keeps cell allowed", () => {
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    mockDialog.open.mockReturnValue({
+      afterClosed: () => of({ center: "x" }),
+    });
+    component.openConditionDialog(0, "create");
+    expect(emitted[0].rows[0].cells.create).toEqual({
+      allowed: true,
+      conditions: { center: "x" },
+    });
+
+    mockDialog.open.mockReturnValue({ afterClosed: () => of(null) });
+    component.openConditionDialog(0, "read");
+    expect(emitted[1].rows[0].cells.read).toEqual({ allowed: true });
+
+    mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+    component.openConditionDialog(0, "read");
+    expect(emitted.length).toBe(2);
   });
 
   it("shows a hint when unsupported advanced rules exist", () => {

@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>
+  <span i18n>Add Condition</span>
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</h2>
+
+<mat-dialog-content>
+  <p>
+    <strong>{{ data.roleName }}</strong>
+    @switch (data.action) {
+      @case ("read") {
+        <span i18n>can read</span>
+      }
+      @case ("create") {
+        <span i18n>can create</span>
+      }
+      @case ("update") {
+        <span i18n>can update</span>
+      }
+      @case ("delete") {
+        <span i18n>can delete</span>
+      }
+      @case ("manage") {
+        <span i18n>can manage</span>
+      }
+    }
+    <strong>{{ entityLabel }}</strong>
+    <span i18n>only where&hellip;</span>
+  </p>
+
+  <app-conditions-editor
+    [conditions]="editorConditions"
+    [entityConstructor]="entityConstructor"
+    (conditionsChange)="onConditionsChange($event)"
+  ></app-conditions-editor>
+
+  <div class="flex-row align-center gap-regular margin-top-regular">
+    <span class="text-secondary" i18n>
+      Records match if this applies to&hellip;
+    </span>
+    <mat-button-toggle-group
+      [value]="combinator()"
+      (change)="combinator.set($event.value)"
+      hideSingleSelectionIndicator
+    >
+      <mat-button-toggle value="any" i18n>Any</mat-button-toggle>
+      <mat-button-toggle value="all" i18n>All</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  @if (hadConditions) {
+    <button mat-button color="warn" (click)="removeConditions()" i18n>
+      Remove condition
+    </button>
+  }
+  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  <button mat-raised-button color="accent" (click)="apply()" i18n>
+    Apply Condition
+  </button>
+</mat-dialog-actions>

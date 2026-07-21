@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTableModule } from "@angular/material/table";
@@ -17,6 +18,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
+import {
+  PermissionConditionDialogComponent,
+  PermissionConditionDialogData,
+} from "../condition-dialog/permission-condition-dialog.component";
 import { EntityActionPermission } from "../../../permissions/permission-types";
 import { MatrixModel, MatrixRow } from "../permission-matrix";
 
@@ -44,9 +49,11 @@ import { MatrixModel, MatrixRow } from "../permission-matrix";
 })
 export class PermissionMatrixComponent {
   private readonly entityRegistry = inject(EntityRegistry);
+  private readonly dialog = inject(MatDialog);
 
   readonly model = input.required<MatrixModel>();
   readonly editable = input(false);
+  readonly roleName = input("");
   readonly modelChange = output<MatrixModel>();
 
   readonly crudActions: EntityActionPermission[] = [
@@ -126,6 +133,30 @@ export class PermissionMatrixComponent {
 
   removeRow(rowIndex: number) {
     this.emitUpdated((m) => m.rows.splice(rowIndex, 1));
+  }
+
+  openConditionDialog(rowIndex: number, action: EntityActionPermission) {
+    const row = this.model().rows[rowIndex];
+    this.dialog
+      .open(PermissionConditionDialogComponent, {
+        width: "600px",
+        data: {
+          roleName: this.roleName(),
+          action,
+          subject: row.subject,
+          conditions: row.cells[action]?.conditions,
+        } satisfies PermissionConditionDialogData,
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result === undefined) return;
+        this.emitUpdated((m) => {
+          m.rows[rowIndex].cells[action] = {
+            allowed: true,
+            ...(result ? { conditions: result } : {}),
+          };
+        });
+      });
   }
 
   hasSubject(subject: string): boolean {

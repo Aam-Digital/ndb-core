@@ -124,15 +124,22 @@
 </div>
 
 <mat-menu #cellMenu="matMenu">
-  <ng-template matMenuContent let-rowIndex="rowIndex" let-action="action">
+  <ng-template
+    matMenuContent
+    let-rowIndex="rowIndex"
+    let-action="action"
+    let-row="row"
+  >
     <button mat-menu-item (click)="setCellAllowed(rowIndex, action, true)">
       <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
       <span i18n>Allowed</span>
     </button>
-    <button mat-menu-item disabled>
-      <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Allowed only where&hellip;</span>
-    </button>
+    @if (row.subject !== "all" && !row.cells.manage?.allowed) {
+      <button mat-menu-item (click)="openConditionDialog(rowIndex, action)">
+        <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Allowed only where&hellip;</span>
+      </button>
+    }
     <button mat-menu-item (click)="setCellAllowed(rowIndex, action, false)">
       <fa-icon icon="ban" class="standard-icon-with-text"></fa-icon>
       <span i18n>Not allowed</span>
