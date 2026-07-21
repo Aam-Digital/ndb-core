@@ -13,9 +13,15 @@
   table-layout: fixed;
 }
 
-// uniform icon size in all cells, whether rendered statically or inside the menu-trigger button
+// uniform icon size in all cells: the menu-trigger icon-button otherwise
+// forces its svg to 24px via --mdc-icon-button-icon-size
 .action-col fa-icon {
   font-size: 16px;
+}
+
+.action-col ::ng-deep svg.svg-inline--fa {
+  width: 16px;
+  height: 16px;
 }
 
 .action-col {
@@ -23,6 +29,7 @@
   width: 100px;
 
   button {
+    --mdc-icon-button-icon-size: 16px;
     width: 36px;
     height: 36px;
     padding: 0;
@@ -32,6 +39,15 @@
 .row-actions-col {
   width: 56px;
   text-align: center;
+
+  button {
+    --mdc-icon-button-icon-size: 16px;
+  }
+
+  ::ng-deep svg.svg-inline--fa {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .remove-button {
