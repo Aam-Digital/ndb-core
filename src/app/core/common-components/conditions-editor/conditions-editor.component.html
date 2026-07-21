@@ -11,6 +11,7 @@
           <app-entity-field-select
             [entityType]="entityConstructor"
             [value]="getConditionField(condition)"
+            [showInternalIdField]="showInternalIdField"
             (valueChange)="onConditionFieldChange(conditionId, $event)"
           ></app-entity-field-select>
         </mat-form-field>

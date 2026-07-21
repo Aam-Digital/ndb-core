@@ -52,6 +52,9 @@ export class ConditionsEditorComponent implements OnInit {
   /** optional text replacing the default "any one criteria matches" explanation */
   @Input() hint?: string;
 
+  /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
+  @Input() showInternalIdField = false;
+
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});
