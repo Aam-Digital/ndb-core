@@ -81,7 +81,7 @@ export class EntitiesTableComponent<T extends Entity>
   ) as EntitiesTableSortStore<T>;
   protected readonly selectionStore = inject(
     EntitiesTableSelectionStore,
-  ) as EntitiesTableSelectionStore<T>;
+  ) as unknown as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
   recordsDataSource = input.required<EntitiesTableDataSource<T>>();
