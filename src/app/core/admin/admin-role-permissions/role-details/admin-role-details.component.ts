@@ -10,12 +10,12 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
 
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
@@ -45,9 +45,9 @@ const EMPTY_MODEL: MatrixModel = { rows: [], unsupportedRules: [] };
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTooltipModule,
     ReactiveFormsModule,
     FaIconComponent,
+    HelpButtonComponent,
   ],
   templateUrl: "./admin-role-details.component.html",
 })

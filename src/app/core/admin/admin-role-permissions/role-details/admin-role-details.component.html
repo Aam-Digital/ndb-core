@@ -37,16 +37,7 @@
 
 <div class="flex-row flex-wrap gap-regular margin-bottom-regular">
   <mat-form-field class="width-1-3">
-    <mat-label>
-      <span i18n>Role name</span>
-      @if (isNew()) {
-        <fa-icon
-          icon="question-circle"
-          matTooltip="The role is created in the user account server and the configuration when saving. The name cannot be changed after the role has been created."
-          i18n-matTooltip
-        ></fa-icon>
-      }
-    </mat-label>
+    <mat-label i18n>Role name</mat-label>
     @if (isNew()) {
       <input
         matInput
@@ -66,6 +57,13 @@
       <input matInput [value]="roleName()" readonly />
     }
   </mat-form-field>
+
+  @if (isNew()) {
+    <app-help-button
+      i18n-text
+      text="The role is created in the user account server and the configuration when saving. The name cannot be changed after the role has been created."
+    ></app-help-button>
+  }
 
   <mat-form-field class="flex-grow">
     <mat-label i18n>Description</mat-label>
