@@ -106,7 +106,6 @@ export class EntitiesTableComponent<T extends Entity>
   selectable = input<boolean>(false);
 
   // --- Outputs & Models ---
-  filteredRecordsChange = output<T[]>();
   entityClick = output<T>();
   selectedRecords = model<T[]>([]);
   showInactive = model<boolean>(false);
@@ -177,12 +176,6 @@ export class EntitiesTableComponent<T extends Entity>
   }
 
   constructor() {
-    effect(() => {
-      this.filteredRecordsChange.emit(
-        this.recordsDataSource().filteredRecords(),
-      );
-    });
-
     effect(() => {
       this.recordsDataSource().dataFilter.set(this.effectiveFilter());
     });

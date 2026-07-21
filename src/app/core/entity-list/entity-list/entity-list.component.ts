@@ -151,7 +151,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   filterObj = model<DataFilter<T>>({});
   filterString = "";
-  filteredData = [];
   filterFreetext: string;
 
   get selectedColumnGroupIndex(): number {
@@ -357,7 +356,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     this.dialog.open(ExportDialogComponent, {
       data: {
         allEntities: this.dataSource.allRecords(),
-        filteredData: this.filteredData,
+        filteredData: this.dataSource.filteredRecords(),
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),
