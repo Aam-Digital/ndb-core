@@ -10,7 +10,6 @@ import {
   model,
   OnInit,
   output,
-  runInInjectionContext,
   untracked,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
@@ -58,12 +57,9 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
-import {
-  availableDataSources,
-  DataSourceType,
-} from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { ExportColumnConfig } from "#src/app/core/export/data-transformation-service/export-column-config";
+import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/datasource-resolver";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -145,14 +141,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   defaultSort = input<Sort>();
   exportConfig = input<ExportColumnConfig[]>();
   dataSource = input<DataSourceType>();
-  recordsDataSource = computed(() => {
-    const currentSource = this.dataSource();
-    const DataSourceClass =
-      availableDataSources[currentSource] ?? InMemoryDataSource;
-    return runInInjectionContext(this.injector, () =>
-      untracked(() => new DataSourceClass<T>()),
-    );
-  });
+  recordsDataSource = computed(() =>
+    resolveDataSource<T>(this.injector, this.dataSource()),
+  );
 
   /**
    * The special service or method to load data via an index or other special method.

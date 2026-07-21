@@ -7,9 +7,7 @@ import {
   Injector,
   input,
   model,
-  runInInjectionContext,
   signal,
-  untracked,
 } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
@@ -31,16 +29,10 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
-import {
-  availableDataSources,
-  DataSourceType,
-} from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
-import {
-  EntitiesTableDataSource,
-  LoadRecordConfig,
-} from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
+import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/datasource-resolver";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -89,14 +81,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
   columns = input<ColumnConfig[]>([]);
 
   dataSource = input<DataSourceType>();
-  recordsDataSource = computed<EntitiesTableDataSource<E>>(() => {
-    const currentSource = this.dataSource();
-    const DataSourceClass =
-      availableDataSources[currentSource] ?? InMemoryDataSource;
-    return runInInjectionContext(this.injector, () =>
-      untracked(() => new DataSourceClass<E>()),
-    );
-  });
+  recordsDataSource = computed(() =>
+    resolveDataSource<E>(this.injector, this.dataSource()),
+  );
 
   readonly _columns = computed(() => {
     const entity = this.entity();
