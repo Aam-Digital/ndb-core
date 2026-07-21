@@ -134,11 +134,21 @@
       <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
       <span i18n>Allowed</span>
     </button>
-    @if (row.subject !== "all" && !row.cells.manage?.allowed) {
-      <button mat-menu-item (click)="openConditionDialog(rowIndex, action)">
-        <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
-        <span i18n>Allowed only where&hellip;</span>
-      </button>
+    @if (!row.cells.manage?.allowed) {
+      <div
+        [matTooltipDisabled]="canHaveConditions(row.subject)"
+        i18n-matTooltip
+        matTooltip="This record type has no fields that conditions could be defined on"
+      >
+        <button
+          mat-menu-item
+          [disabled]="!canHaveConditions(row.subject)"
+          (click)="openConditionDialog(rowIndex, action)"
+        >
+          <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Allowed only where&hellip;</span>
+        </button>
+      </div>
     }
     <button mat-menu-item (click)="setCellAllowed(rowIndex, action, false)">
       <fa-icon icon="ban" class="standard-icon-with-text"></fa-icon>

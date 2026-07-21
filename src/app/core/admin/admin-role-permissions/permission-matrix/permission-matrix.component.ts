@@ -135,6 +135,20 @@ export class PermissionMatrixComponent {
     this.emitUpdated((m) => m.rows.splice(rowIndex, 1));
   }
 
+  /**
+   * Conditions can only be edited visually for entity types
+   * that have user-facing fields to define conditions on.
+   */
+  canHaveConditions(subject: string): boolean {
+    if (subject === "all" || !this.entityRegistry.has(subject)) {
+      return false;
+    }
+    const schema = this.entityRegistry.get(subject).schema;
+    return [...schema.values()].some(
+      (field) => !field.isInternalField && !!field.label,
+    );
+  }
+
   openConditionDialog(rowIndex: number, action: EntityActionPermission) {
     const row = this.model().rows[rowIndex];
     this.dialog

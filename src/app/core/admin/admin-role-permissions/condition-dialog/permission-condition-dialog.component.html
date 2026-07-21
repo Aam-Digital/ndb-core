@@ -4,27 +4,9 @@
 </h2>
 
 <mat-dialog-content>
-  <p>
-    <strong>{{ data.roleName }}</strong>
-    @switch (data.action) {
-      @case ("read") {
-        <span i18n>can read</span>
-      }
-      @case ("create") {
-        <span i18n>can create</span>
-      }
-      @case ("update") {
-        <span i18n>can update</span>
-      }
-      @case ("delete") {
-        <span i18n>can delete</span>
-      }
-      @case ("manage") {
-        <span i18n>can manage</span>
-      }
-    }
-    <strong>{{ entityLabel }}</strong>
-    <span i18n>only where&hellip;</span>
+  <p i18n>
+    <strong>{{ data.roleName }}</strong> {{ actionLabel }}
+    <strong>{{ entityLabel }}</strong> only where&hellip;
   </p>
 
   <app-conditions-editor

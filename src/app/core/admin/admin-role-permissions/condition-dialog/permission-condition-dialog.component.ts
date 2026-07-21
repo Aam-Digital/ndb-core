@@ -71,6 +71,21 @@ export class PermissionConditionDialogComponent {
     return this.entityConstructor?.label ?? this.data.subject;
   }
 
+  get actionLabel(): string {
+    switch (this.data.action) {
+      case "read":
+        return $localize`can read`;
+      case "create":
+        return $localize`can create`;
+      case "update":
+        return $localize`can update`;
+      case "delete":
+        return $localize`can delete`;
+      case "manage":
+        return $localize`can manage`;
+    }
+  }
+
   onConditionsChange(conditions: any) {
     this.editorConditions = conditions;
   }
