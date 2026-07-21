@@ -49,6 +49,9 @@ export class ConditionsEditorComponent implements OnInit {
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
 
+  /** optional text replacing the default "any one criteria matches" explanation */
+  @Input() hint?: string;
+
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});

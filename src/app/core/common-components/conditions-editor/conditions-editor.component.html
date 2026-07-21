@@ -44,9 +44,15 @@
       </div>
     }
 
-    <div class="hint margin-top-regular" i18n>
-      Condition applies if any one of the selected criteria matches ("or"
-      conditions).
+    <div class="hint margin-top-regular">
+      @if (hint) {
+        {{ hint }}
+      } @else {
+        <ng-container i18n>
+          Condition applies if any one of the selected criteria matches ("or"
+          conditions).
+        </ng-container>
+      }
     </div>
 
     <div class="button-row flex-row gap-small">

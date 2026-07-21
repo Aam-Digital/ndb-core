@@ -71,6 +71,12 @@ export class PermissionConditionDialogComponent {
     return this.entityConstructor?.label ?? this.data.subject;
   }
 
+  get combinatorHint(): string {
+    return this.combinator() === "any"
+      ? $localize`Records match if any one of the conditions applies ("or" conditions).`
+      : $localize`Records match only if all conditions apply ("and" conditions).`;
+  }
+
   get actionLabel(): string {
     switch (this.data.action) {
       case "read":
