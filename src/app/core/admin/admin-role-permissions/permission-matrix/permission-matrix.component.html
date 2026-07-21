@@ -43,7 +43,7 @@
           }
         </th>
         <td mat-cell *matCellDef="let row; let i = index" class="action-col">
-          @if (editable()) {
+          @if (editable() && row.subject !== "all") {
             <button
               mat-icon-button
               [matMenuTriggerFor]="cellMenu"
@@ -75,7 +75,7 @@
       <td mat-cell *matCellDef="let row; let i = index" class="action-col">
         <mat-checkbox
           [checked]="!!row.cells.manage?.allowed"
-          [disabled]="!editable()"
+          [disabled]="!editable() || row.subject === 'all'"
           (change)="setManage(i, $event.checked)"
         ></mat-checkbox>
       </td>
