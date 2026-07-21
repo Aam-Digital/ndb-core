@@ -23,13 +23,31 @@ import { skip, Subscription } from "rxjs";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { take } from "rxjs/operators";
 
+/**
+ * Configuration object that is necessary if data should be loaded by the datasource
+ */
 export interface LoadRecordConfig<T extends Entity> {
+  /**
+   * Constructor of the entity type to be loaded
+   */
   entityCtr: EntityConstructor<T>;
+  /**
+   * Set this if entities only related to another entity should be loaded
+   */
   forEntity?: Entity;
+  /**
+   * Property through which the relation can be resolved
+   */
   relationProperty?: keyof Entity;
+  /**
+   * Select if a special loader method should be used for this entity
+   */
   loaderMethod?: LoaderMethod;
 }
 
+/**
+ * A data source that loads all data at once and sort/filters/paginates fully in-memory
+ */
 export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   TableRow<T>
 > {
