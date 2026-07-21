@@ -137,9 +137,13 @@ export class PermissionMatrixComponent {
     if (!subject || this.model().rows.some((r) => r.subject === subject)) {
       return;
     }
-    this.emitUpdated((m) =>
-      m.rows.push({ subject, cells: { read: { allowed: true } } }),
-    );
+    // the "all" wildcard row grants full access ({subject: "all", action: "manage"}),
+    // new entity rows start with read only
+    const cells: MatrixRow["cells"] =
+      subject === "all"
+        ? { manage: { allowed: true } }
+        : { read: { allowed: true } };
+    this.emitUpdated((m) => m.rows.push({ subject, cells }));
   }
 
   private emitUpdated(mutate: (model: MatrixModel) => void) {

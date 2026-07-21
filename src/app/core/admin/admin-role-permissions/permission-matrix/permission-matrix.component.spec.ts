@@ -88,6 +88,22 @@ describe("PermissionMatrixComponent", () => {
     expect(emitted.length).toBe(5);
   });
 
+  it("adds the all wildcard row with full manage access", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    component.addSubject("all");
+
+    expect(emitted[0].rows).toEqual([
+      { subject: "all", cells: { manage: { allowed: true } } },
+    ]);
+  });
+
   it("downgrades manage wildcard to explicit remaining actions when one action is disallowed", () => {
     fixture.componentRef.setInput("editable", true);
     const emitted: MatrixModel[] = [];
