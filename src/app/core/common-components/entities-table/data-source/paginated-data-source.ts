@@ -142,7 +142,10 @@ export class PaginatedDataSource<
 
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
     // isActive is not available in the database
-    delete filter["isActive"];
+    if (filter["isActive"]) {
+      filter["inactive"] = filter["isActive"];
+      delete filter["isActive"];
+    }
     const filterString = JSON.stringify(filter);
     // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
     const updatedString = filterString.replace(/("\w+)\.id(?=":)/g, "$1");
