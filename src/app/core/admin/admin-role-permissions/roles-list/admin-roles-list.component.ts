@@ -9,7 +9,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 import { MatTableModule } from "@angular/material/table";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
 
@@ -34,6 +34,7 @@ import {
     MatPaginatorModule,
     MatButtonModule,
     FaIconComponent,
+    RouterLink,
   ],
   templateUrl: "./admin-roles-list.component.html",
 })

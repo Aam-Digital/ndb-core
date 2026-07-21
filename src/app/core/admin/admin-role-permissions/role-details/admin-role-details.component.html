@@ -1,6 +1,10 @@
 <div class="flex-row flex-wrap">
   <div class="flex-grow">
-    <app-view-title i18n>Role Permissions</app-view-title>
+    @if (isNew()) {
+      <app-view-title i18n>New Role</app-view-title>
+    } @else {
+      <app-view-title i18n>Role Permissions</app-view-title>
+    }
   </div>
 
   <div class="flex-row gap-small align-center">
@@ -19,6 +23,12 @@
         <fa-icon icon="pen" class="standard-icon-with-text"></fa-icon>
         <span i18n>Edit</span>
       </button>
+      @if (role() && !role().isVirtual) {
+        <button mat-stroked-button (click)="deleteRole()">
+          <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Delete</span>
+        </button>
+      }
     }
   </div>
 </div>
@@ -26,12 +36,42 @@
 <div class="flex-row flex-wrap gap-regular margin-bottom-regular">
   <mat-form-field>
     <mat-label i18n>Role name</mat-label>
-    <input matInput [value]="roleName()" readonly />
+    @if (isNew()) {
+      <input
+        matInput
+        [formControl]="nameControl"
+        i18n-placeholder
+        placeholder="e.g. field_supervisor"
+      />
+      @if (nameControl.hasError("pattern")) {
+        <mat-error i18n>
+          Only letters, numbers, "_" and "-" are allowed.
+        </mat-error>
+      }
+      @if (nameControl.hasError("duplicate")) {
+        <mat-error i18n>A role with this name already exists.</mat-error>
+      }
+      <mat-hint i18n>
+        Created in the user account server and the configuration on Save. The
+        name can't be changed later.
+      </mat-hint>
+    } @else {
+      <input matInput [value]="roleName()" readonly />
+    }
   </mat-form-field>
 
   <mat-form-field class="flex-grow">
     <mat-label i18n>Description</mat-label>
-    <input matInput [value]="role()?.description ?? ''" readonly />
+    @if (descriptionEditable) {
+      <input
+        matInput
+        [formControl]="descriptionControl"
+        i18n-placeholder
+        placeholder="What is this role for?"
+      />
+    } @else {
+      <input matInput [value]="role()?.description ?? ''" readonly />
+    }
   </mat-form-field>
 </div>
 
@@ -39,7 +79,6 @@
   <app-permission-matrix
     [model]="model()"
     [editable]="editing()"
-    [roleName]="roleName()"
     (modelChange)="onModelChange($event)"
   ></app-permission-matrix>
 } @else {

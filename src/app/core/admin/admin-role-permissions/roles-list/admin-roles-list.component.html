@@ -3,10 +3,22 @@
     <app-view-title i18n>Roles & Permissions</app-view-title>
   </div>
 
-  <button mat-stroked-button color="accent" (click)="editJson()">
-    <fa-icon icon="wrench" class="standard-icon-with-text"></fa-icon>
-    <span i18n>Edit JSON</span>
-  </button>
+  <div class="flex-row gap-small align-center">
+    <button mat-stroked-button color="accent" (click)="editJson()">
+      <fa-icon icon="wrench" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Edit JSON</span>
+    </button>
+
+    <button
+      mat-stroked-button
+      color="accent"
+      class="standard-add-button"
+      routerLink="new"
+    >
+      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Add New Role</span>
+    </button>
+  </div>
 </div>
 
 <p i18n class="margin-bottom-regular">

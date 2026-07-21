@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ActivatedRoute, provideRouter } from "@angular/router";
+import { ActivatedRoute, Router, provideRouter } from "@angular/router";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { of } from "rxjs";
@@ -17,6 +17,9 @@ describe("AdminRoleDetailsComponent", () => {
   const mockRolePermissions = {
     loadRoles: vi.fn(),
     saveRules: vi.fn().mockResolvedValue(undefined),
+    createRole: vi.fn(),
+    deleteRole: vi.fn(),
+    updateRoleDescription: vi.fn().mockResolvedValue(true),
   };
   const mockJsonEditor = { openJsonEditorDialog: vi.fn() };
 
@@ -41,12 +44,18 @@ describe("AdminRoleDetailsComponent", () => {
         { provide: EntityRegistry, useValue: new EntityRegistry() },
         {
           provide: ConfirmationDialogService,
-          useValue: { getDiscardConfirmation: vi.fn().mockResolvedValue(true) },
+          useValue: {
+            getDiscardConfirmation: vi.fn().mockResolvedValue(true),
+            getConfirmation: vi.fn().mockResolvedValue(true),
+          },
         },
         provideRouter([]),
         {
           provide: ActivatedRoute,
-          useValue: { paramMap: of(new Map([["role", "user_app"]])) },
+          useValue: {
+            paramMap: of(new Map([["role", "user_app"]])),
+            snapshot: { data: {} },
+          },
         },
       ],
     }).compileComponents();
@@ -116,6 +125,47 @@ describe("AdminRoleDetailsComponent", () => {
     expect(unsavedChanges.pending()).toBe(false);
     expect(component.model().rows.map((r) => r.subject)).toEqual(["Child"]);
     expect(mockRolePermissions.saveRules).not.toHaveBeenCalled();
+  });
+
+  it("creates a new role only with valid unique name and navigates to its detail view", async () => {
+    component.isNew.set(true);
+    component.editing.set(true);
+    component.model.set({ rows: [], unsupportedRules: [] });
+    mockRolePermissions.createRole.mockResolvedValue({ keycloakSynced: true });
+    const navigateSpy = vi
+      .spyOn(TestBed.inject(Router), "navigate")
+      .mockResolvedValue(true);
+
+    component.nameControl.setValue("bad name!");
+    await component.save();
+    expect(mockRolePermissions.createRole).not.toHaveBeenCalled();
+
+    component.nameControl.setValue("field_supervisor");
+    component.descriptionControl.setValue("Sups");
+    await component.save();
+
+    expect(mockRolePermissions.createRole).toHaveBeenCalledWith(
+      "field_supervisor",
+      "Sups",
+      [],
+    );
+    expect(navigateSpy).toHaveBeenCalled();
+  });
+
+  it("deletes the role after confirmation and navigates back to the list", async () => {
+    await fixture.whenStable();
+    mockRolePermissions.deleteRole.mockResolvedValue({ keycloakSynced: true });
+    const navigateSpy = vi
+      .spyOn(TestBed.inject(Router), "navigate")
+      .mockResolvedValue(true);
+
+    await component.deleteRole();
+
+    expect(
+      TestBed.inject(ConfirmationDialogService).getConfirmation,
+    ).toHaveBeenCalled();
+    expect(mockRolePermissions.deleteRole).toHaveBeenCalledWith("user_app");
+    expect(navigateSpy).toHaveBeenCalled();
   });
 
   it("saves rules edited through the json editor", async () => {

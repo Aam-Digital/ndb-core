@@ -48,6 +48,16 @@ export const adminRoutes: Routes = [
     },
   },
   {
+    path: "user-roles/new",
+    component: AdminRoleDetailsComponent,
+    canActivate: [UserRoleGuard],
+    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
+    data: {
+      permittedUserRoles: ["account_manager", "admin_app"],
+      newRole: true,
+    },
+  },
+  {
     path: "user-roles/:role",
     component: AdminRoleDetailsComponent,
     canActivate: [UserRoleGuard],

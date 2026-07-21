@@ -16,6 +16,9 @@ describe("RolePermissionsService", () => {
   };
   const mockUserAdmin = {
     getAllRoles: vi.fn(),
+    createRole: vi.fn(),
+    deleteRole: vi.fn(),
+    updateRole: vi.fn(),
   };
 
   beforeEach(() => {
@@ -95,6 +98,66 @@ describe("RolePermissionsService", () => {
     const roles = await service.loadRoles();
 
     expect(roles.map((r) => r.name)).toContain("user_app");
+  });
+
+  it("createRole creates the keycloak role and saves rules to config", async () => {
+    mockEntityMapper.load.mockResolvedValue(
+      new Config(Config.PERMISSION_KEY, {}),
+    );
+    mockUserAdmin.createRole.mockReturnValue(of(undefined));
+
+    const result = await service.createRole("field_supervisor", "Sups", [
+      { subject: "Child", action: "read" },
+    ]);
+
+    expect(result.keycloakSynced).toBe(true);
+    expect(mockUserAdmin.createRole).toHaveBeenCalledWith({
+      name: "field_supervisor",
+      description: "Sups",
+    });
+    const savedConfig = mockEntityMapper.save.mock.calls
+      .map(([e]) => e)
+      .find((e) => e.getId() === "Config:Permissions");
+    expect(savedConfig.data.field_supervisor).toEqual([
+      { subject: "Child", action: "read" },
+    ]);
+  });
+
+  it("createRole still saves config when keycloak sync fails and reports it", async () => {
+    mockEntityMapper.load.mockResolvedValue(
+      new Config(Config.PERMISSION_KEY, {}),
+    );
+    mockUserAdmin.createRole.mockReturnValue(
+      throwError(() => new Error("403")),
+    );
+
+    const result = await service.createRole("field_supervisor", "", []);
+
+    expect(result.keycloakSynced).toBe(false);
+    const savedConfig = mockEntityMapper.save.mock.calls
+      .map(([e]) => e)
+      .find((e) => e.getId() === "Config:Permissions");
+    expect(savedConfig.data.field_supervisor).toEqual([]);
+  });
+
+  it("deleteRole removes the config entry and deletes the keycloak role", async () => {
+    mockEntityMapper.load.mockResolvedValue(
+      new Config(Config.PERMISSION_KEY, {
+        field_supervisor: [{ subject: "Child", action: "read" }],
+        user_app: [],
+      }),
+    );
+    mockUserAdmin.deleteRole.mockReturnValue(of(undefined));
+
+    const result = await service.deleteRole("field_supervisor");
+
+    expect(result.keycloakSynced).toBe(true);
+    expect(mockUserAdmin.deleteRole).toHaveBeenCalledWith("field_supervisor");
+    const savedConfig = mockEntityMapper.save.mock.calls
+      .map(([e]) => e)
+      .find((e) => e.getId() === "Config:Permissions");
+    expect(savedConfig.data.field_supervisor).toBeUndefined();
+    expect(savedConfig.data.user_app).toEqual([]);
   });
 
   it("saveRules writes timestamped backup config before saving updated permissions", async () => {

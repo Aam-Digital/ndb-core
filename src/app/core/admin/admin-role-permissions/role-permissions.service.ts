@@ -6,6 +6,7 @@ import { catchError } from "rxjs/operators";
 
 import { Config } from "../../config/config";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { Logging } from "../../logging/logging.service";
 import {
   DatabaseRule,
   DatabaseRules,
@@ -104,6 +105,68 @@ export class RolePermissionsService {
     }
 
     return roles;
+  }
+
+  /**
+   * Create a new role in the authentication server and save its rules to the config.
+   * The config entry is written even if the authentication server sync fails,
+   * which is reported back via the keycloakSynced flag.
+   */
+  async createRole(
+    name: string,
+    description: string,
+    rules: DatabaseRule[],
+  ): Promise<{ keycloakSynced: boolean }> {
+    let keycloakSynced = true;
+    try {
+      await firstValueFrom(
+        this.userAdminService.createRole({ name, description }),
+      );
+    } catch (err) {
+      Logging.warn("Failed to create role in authentication server", err);
+      keycloakSynced = false;
+    }
+
+    await this.saveRules(name, rules);
+    return { keycloakSynced };
+  }
+
+  /**
+   * Remove a role from the permissions config and the authentication server.
+   */
+  async deleteRole(name: string): Promise<{ keycloakSynced: boolean }> {
+    const config = await this.loadPermissionsConfig();
+    const data = { ...(config.data ?? {}) };
+    delete data[name];
+    await this.saveWithBackup(config, data);
+
+    let keycloakSynced = true;
+    try {
+      await firstValueFrom(this.userAdminService.deleteRole(name));
+    } catch (err) {
+      Logging.warn("Failed to delete role in authentication server", err);
+      keycloakSynced = false;
+    }
+    return { keycloakSynced };
+  }
+
+  /**
+   * Update a role's description in the authentication server.
+   * @returns whether the update succeeded
+   */
+  async updateRoleDescription(
+    name: string,
+    description: string,
+  ): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.userAdminService.updateRole(name, { description }),
+      );
+      return true;
+    } catch (err) {
+      Logging.warn("Failed to update role in authentication server", err);
+      return false;
+    }
   }
 
   /**
