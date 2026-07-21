@@ -106,8 +106,9 @@ describe("ActivityAttendanceSectionComponent", () => {
     component.attendanceData.reload();
     fixture.detectChanges();
     await fixture.whenStable();
+    fixture.detectChanges();
 
-    expect(component.records()).toEqual(oldRecords);
+    expect(component.dataSource.allRecords()).toEqual(oldRecords);
     expect(component.isFallbackToOlder()).toBe(true);
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
@@ -122,8 +123,9 @@ describe("ActivityAttendanceSectionComponent", () => {
     component.attendanceData.reload();
     fixture.detectChanges();
     await fixture.whenStable();
+    fixture.detectChanges();
 
-    expect(component.records()).toEqual([]);
+    expect(component.dataSource.allRecords()).toEqual([]);
     expect(component.isFallbackToOlder()).toBe(false);
   });
 

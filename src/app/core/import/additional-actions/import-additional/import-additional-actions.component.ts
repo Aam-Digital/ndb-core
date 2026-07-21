@@ -28,6 +28,8 @@ import { EntityTypeLabelPipe } from "../../../common-components/entity-type-labe
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AdditionalImportAction } from "../additional-import-action";
 import { ImportAdditionalService } from "../import-additional.service";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { asArray } from "../../../../utils/asArray";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -55,6 +57,7 @@ import { ImportAdditionalService } from "../import-additional.service";
 })
 export class ImportAdditionalActionsComponent {
   private importAdditionalService = inject(ImportAdditionalService);
+  private readonly ability = inject(EntityAbility);
 
   entityType = input<string>();
   importActions = model<AdditionalImportAction[]>([]);
@@ -62,6 +65,15 @@ export class ImportAdditionalActionsComponent {
   availableImportActions = computed(() =>
     this.importAdditionalService
       .getActionsLinkingFor(this.entityType())
+      // an action links imported records into a related entity, which requires
+      // permission to update that related type (targetType may allow several types)
+      .filter(
+        (action) =>
+          !this.ability.initialized ||
+          asArray(action.targetType).some((type) =>
+            this.ability.can("update", type),
+          ),
+      )
       .sort(sortExportOnlyLast),
   );
 
