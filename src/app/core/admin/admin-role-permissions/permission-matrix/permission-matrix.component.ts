@@ -9,6 +9,7 @@ import {
   signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -37,6 +38,7 @@ import { MatrixModel, MatrixRow } from "../permission-matrix";
   imports: [
     NgTemplateOutlet,
     MatTableModule,
+    MatCardModule,
     MatCheckboxModule,
     MatButtonModule,
     MatMenuModule,
@@ -189,11 +191,15 @@ export class PermissionMatrixComponent {
     return this.model().rows.some((r) => r.subject === subject);
   }
 
+  /** whether the record-type picker is shown instead of the "Add Permission" button */
+  readonly addPickerOpen = signal(false);
+
   /** re-created after each selection so the add-dropdown resets to empty */
   readonly addSelectVisible = signal(true);
 
   addSubject(selected: string | string[]) {
     const subject = Array.isArray(selected) ? selected[0] : selected;
+    this.addPickerOpen.set(false);
     this.resetAddSelect();
     if (!subject || this.model().rows.some((r) => r.subject === subject)) {
       return;

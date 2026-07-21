@@ -130,6 +130,7 @@ describe("AdminRoleDetailsComponent", () => {
   it("creates a new role only with valid unique name and navigates to its detail view", async () => {
     component.isNew.set(true);
     component.editing.set(true);
+    component.nameControl.enable();
     component.model.set({ rows: [], unsupportedRules: [] });
     mockRolePermissions.createRole.mockResolvedValue({ keycloakSynced: true });
     const navigateSpy = vi

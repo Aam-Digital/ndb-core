@@ -16,7 +16,13 @@
     }
 
     @if (editing()) {
-      <button mat-raised-button color="accent" (click)="save()" i18n>
+      <button
+        mat-raised-button
+        color="accent"
+        [disabled]="isNew() && nameControl.invalid"
+        (click)="save()"
+        i18n
+      >
         Save
       </button>
       <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
@@ -38,45 +44,41 @@
 <div class="flex-row flex-wrap gap-regular margin-bottom-regular">
   <mat-form-field class="width-1-3">
     <mat-label i18n>Role name</mat-label>
+    <input
+      matInput
+      [formControl]="nameControl"
+      i18n-placeholder
+      placeholder="e.g. field_supervisor"
+    />
+    @if (!isNew()) {
+      <fa-icon icon="lock" matSuffix></fa-icon>
+    }
     @if (isNew()) {
-      <input
-        matInput
-        [formControl]="nameControl"
-        i18n-placeholder
-        placeholder="e.g. field_supervisor"
-      />
-      @if (nameControl.hasError("pattern")) {
-        <mat-error i18n>
-          Only letters, numbers, "_" and "-" are allowed.
-        </mat-error>
-      }
-      @if (nameControl.hasError("duplicate")) {
-        <mat-error i18n>A role with this name already exists.</mat-error>
-      }
-    } @else {
-      <input matInput [value]="roleName()" readonly />
+      <mat-hint i18n>
+        Created in Keycloak and the configuration on Save.
+      </mat-hint>
+    }
+    @if (nameControl.hasError("required")) {
+      <mat-error i18n>This field is required</mat-error>
+    }
+    @if (nameControl.hasError("pattern")) {
+      <mat-error i18n>
+        Only letters, numbers, "_" and "-" are allowed.
+      </mat-error>
+    }
+    @if (nameControl.hasError("duplicate")) {
+      <mat-error i18n>A role with this name already exists.</mat-error>
     }
   </mat-form-field>
 
-  @if (isNew()) {
-    <app-help-button
-      i18n-text
-      text="The role is created in the user account server and the configuration when saving. The name cannot be changed after the role has been created."
-    ></app-help-button>
-  }
-
   <mat-form-field class="flex-grow">
     <mat-label i18n>Description</mat-label>
-    @if (descriptionEditable()) {
-      <input
-        matInput
-        [formControl]="descriptionControl"
-        i18n-placeholder
-        placeholder="What is this role for?"
-      />
-    } @else {
-      <input matInput [value]="role()?.description ?? ''" readonly />
-    }
+    <input
+      matInput
+      [formControl]="descriptionControl"
+      i18n-placeholder
+      placeholder="What is this role for?"
+    />
   </mat-form-field>
 </div>
 
@@ -84,6 +86,7 @@
   <app-permission-matrix
     [model]="model()"
     [editable]="editing()"
+    [roleName]="roleName()"
     (modelChange)="onModelChange($event)"
   ></app-permission-matrix>
 } @else {

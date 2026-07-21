@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   computed,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -16,7 +17,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
 
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
@@ -48,7 +48,6 @@ const EMPTY_MODEL: MatrixModel = { rows: [], unsupportedRules: [] };
     MatInputModule,
     ReactiveFormsModule,
     FaIconComponent,
-    HelpButtonComponent,
   ],
   templateUrl: "./admin-role-details.component.html",
 })
@@ -83,11 +82,23 @@ export class AdminRoleDetailsComponent {
     if (this.route.snapshot.data["newRole"]) {
       this.initNewRole();
     } else {
+      this.nameControl.disable();
       this.route.paramMap.subscribe((params) => {
         this.roleName.set(params.get("role") ?? "");
+        this.nameControl.setValue(this.roleName());
         this.loadRole();
       });
     }
+
+    // keep the description form state in sync with the edit mode
+    effect(() => {
+      if (this.descriptionEditable()) {
+        this.descriptionControl.enable();
+      } else {
+        this.descriptionControl.disable();
+      }
+    });
+
     inject(DestroyRef).onDestroy(() =>
       this.unsavedChanges.setUnsavedChanges(this, false),
     );
