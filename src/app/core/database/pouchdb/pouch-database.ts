@@ -1,5 +1,6 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
 import { Logging } from "../../logging/logging.service";
+import { DatabaseException } from "./database-exception";
 import PouchDB from "pouchdb-browser";
 import indexeddbAdapter from "pouchdb-adapter-indexeddb";
 import pouchdbFind from "pouchdb-find";
@@ -105,6 +106,20 @@ export class PouchDatabase extends Database {
   }
 
   /**
+   * Hook wrapping an idempotent read (`get`/`allDocs`/`query`) so subclasses
+   * can transparently retry transient failures.
+   *
+   * The base implementation runs the operation exactly once (no retry).
+   * {@link RemotePouchDatabase} overrides this to re-issue reads that fail with
+   * a transient network abort/timeout, which recovers e.g. a connection gone
+   * stale after the tab was suspended. Only reads use this hook — writes must
+   * run exactly once and are never routed through it.
+   */
+  protected async withReadRetry<T>(operation: () => Promise<T>): Promise<T> {
+    return operation();
+  }
+
+  /**
    * Load a single document by id from the database.
    * (see {@link Database})
    * @param id The primary key of the document to be loaded
@@ -117,7 +132,9 @@ export class PouchDatabase extends Database {
     returnUndefined?: boolean,
   ): Promise<any> {
     try {
-      return await (await this.getPouchDBOnceReady()).get(id, options);
+      return await this.withReadRetry(async () =>
+        (await this.getPouchDBOnceReady()).get(id, options),
+      );
     } catch (err) {
       if (err.status === 404) {
         Logging.debug("Doc not found in database: " + id);
@@ -142,7 +159,9 @@ export class PouchDatabase extends Database {
    */
   async allDocs(options?: GetAllOptions) {
     try {
-      const result = await (await this.getPouchDBOnceReady()).allDocs(options);
+      const result = await this.withReadRetry(async () =>
+        (await this.getPouchDBOnceReady()).allDocs(options),
+      );
       return result.rows.map((row) => row.doc);
     } catch (err) {
       throw new DatabaseException(
@@ -425,14 +444,14 @@ export class PouchDatabase extends Database {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions,
   ): Promise<any> {
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.query(fun, options))
-      .catch((err) => {
-        throw new DatabaseException(
-          err,
-          typeof fun === "string" ? fun : undefined,
-        );
-      });
+    return this.withReadRetry(() =>
+      this.getPouchDBOnceReady().then((pouchDB) => pouchDB.query(fun, options)),
+    ).catch((err) => {
+      throw new DatabaseException(
+        err,
+        typeof fun === "string" ? fun : undefined,
+      );
+    });
   }
 
   /**
@@ -547,21 +566,4 @@ export class PouchDatabase extends Database {
   }
 }
 
-/**
- * This overwrites PouchDB's error class which only logs limited information
- */
-export class DatabaseException extends Error {
-  entityId?: string;
-
-  constructor(
-    error: PouchDB.Core.Error | { message: string; [key: string]: any },
-    entityId?: string,
-  ) {
-    super(error?.message || "Database error");
-
-    this.entityId = entityId;
-    Object.assign(this, error);
-    // Restore class name after Object.assign overwrites it with PouchDB's name (e.g. "not_found")
-    this.name = "DatabaseException";
-  }
-}
+export { DatabaseException } from "./database-exception";

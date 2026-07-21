@@ -30,6 +30,7 @@ import { AttendanceSummaryComponent } from "../attendance-summary/attendance-sum
 import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**
  * Displays attendance analysis for a given "recurring activity"
@@ -48,6 +49,7 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
     MatButtonModule,
     AttendanceCalendarComponent,
     AttendanceSummaryComponent,
+    FaIconComponent,
   ],
 })
 @UntilDestroy()
@@ -70,17 +72,71 @@ export class ActivityAttendanceSectionComponent {
   attendanceData = resource({
     params: () => ({ entity: this.entity(), loadAll: this.loadAll() }),
     loader: async ({ params: { entity, loadAll } }) => {
-      if (!entity) return [];
-      return loadAll
-        ? await this.attendanceService.getActivityAttendances(entity)
-        : await this.attendanceService.getActivityAttendances(
+      const emptyResult = {
+        records: [] as ActivityAttendance[],
+        isFallbackToOlder: false,
+        hasMoreRecords: false,
+      };
+      if (!entity) {
+        return emptyResult;
+      }
+      if (loadAll) {
+        return {
+          ...emptyResult,
+          records: await this.attendanceService.getActivityAttendances(entity),
+        };
+      }
+
+      let from = moment().startOf("month").subtract(6, "months").toDate();
+      let records = await this.attendanceService.getActivityAttendances(
+        entity,
+        from,
+      );
+      let isFallbackToOlder = false;
+
+      if (records.length === 0) {
+        // fall back to the most recent month with data (if any)
+        const latestEventDate =
+          await this.attendanceService.getLatestEventDate(entity);
+        if (latestEventDate) {
+          from = moment(latestEventDate).startOf("month").toDate();
+          records = await this.attendanceService.getActivityAttendances(
             entity,
-            moment().startOf("month").subtract(6, "months").toDate(),
+            from,
           );
+          isFallbackToOlder = records.length > 0;
+        }
+      }
+
+      return {
+        records,
+        isFallbackToOlder,
+        hasMoreRecords: await this.hasRecordsBefore(entity, from),
+      };
     },
   });
+
+  /** Whether any events exist before the given date (i.e. more records can be loaded). */
+  private async hasRecordsBefore(entity: Entity, date: Date) {
+    const earliestEventDate =
+      await this.attendanceService.getEarliestEventDate(entity);
+    return (
+      !!earliestEventDate && moment(earliestEventDate).isBefore(date, "day")
+    );
+  }
+
   private readonly allRecords = computed(
-    () => this.attendanceData.value() ?? [],
+    () => this.attendanceData.value()?.records ?? [],
+  );
+
+  /** Whether older records are displayed because the default time range had none. */
+  isFallbackToOlder = computed(
+    () => this.attendanceData.value()?.isFallbackToOlder ?? false,
+  );
+
+  /** Whether events older than the currently displayed records exist and can be loaded. */
+  hasMoreRecords = computed(
+    () => this.attendanceData.value()?.hasMoreRecords ?? false,
   );
 
   entityCtr = ActivityAttendance;

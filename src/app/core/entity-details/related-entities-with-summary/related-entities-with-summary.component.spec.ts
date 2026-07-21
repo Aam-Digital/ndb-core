@@ -77,20 +77,19 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("produces an empty summary when there are no records", () => {
-    component.recordsDataSource().allRecords.set([]);
-    component.updateSummary([]);
-    expect(getSummary().sum).toHaveLength(0);
-    expect(getSummary().avg).toHaveLength(0);
-  });
-
   function setRecordsAndGenerateSummary(
     ...records: Partial<TestEntityWithAmount>[]
   ) {
     const data = records.map(TestEntityWithAmount.create);
     component.recordsDataSource().allRecords.set(data);
-    component.updateSummary(data);
+    component.recordsDataSource().filteredRecords.set(data);
   }
+
+  it("produces an empty summary when there are no records", () => {
+    setRecordsAndGenerateSummary();
+    expect(getSummary().sum).toHaveLength(0);
+    expect(getSummary().avg).toHaveLength(0);
+  });
 
   it("produces a singleton summary when there is a single record", () => {
     setRecordsAndGenerateSummary({ category: "PENCIL", amount: 1 });
@@ -108,13 +107,13 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     expect(getSummary().avg).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
   });
 
-  it("produces a singly summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
+  it("produces a single summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
     const plainData = [{ amount: 1 }, { amount: 5 }] as any[];
     component.recordsDataSource().allRecords.set(plainData);
     const summaries = component.summaries();
     delete summaries.groupBy;
     summaries.countProperty = "amount";
-    component.updateSummary(plainData);
+    component.dataSource.filteredRecords.set(plainData);
 
     expect(getSummary().sum).toEqual(`6`);
     expect(getSummary().avg).toEqual(`3`);
@@ -201,7 +200,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.recordsDataSource().allRecords());
+      component
+        .recordsDataSource()
+        .filteredRecords.set(component.recordsDataSource().allRecords());
 
       expect(getSummary().sum).toEqual(`PENCIL: 1, PAPER: 2`);
       expect(component.recordsDataSource().allRecords()).toEqual(data);
@@ -225,7 +226,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       updates.next({ entity: update1, type: "new" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.recordsDataSource().allRecords());
+      component
+        .recordsDataSource()
+        .filteredRecords.set(component.recordsDataSource().allRecords());
 
       expect(component.recordsDataSource().allRecords()).toEqual([update1]);
       expect(getSummary().sum).toBe(`PENCIL: 1`);
@@ -235,7 +238,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       updates.next({ entity: update2, type: "update" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.recordsDataSource().allRecords());
+      component
+        .recordsDataSource()
+        .filteredRecords.set(component.recordsDataSource().allRecords());
 
       expect(component.recordsDataSource().allRecords()).toEqual([update2]);
       expect(getSummary().sum).toBe(`PENCIL: 2`);
@@ -245,7 +250,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       updates.next({ entity: unrelatedUpdate, type: "new" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.recordsDataSource().allRecords());
+      component
+        .recordsDataSource()
+        .filteredRecords.set(component.recordsDataSource().allRecords());
       // No change
       expect(component.recordsDataSource().allRecords()).toEqual([update2]);
       expect(getSummary().sum).toBe(`PENCIL: 2`);

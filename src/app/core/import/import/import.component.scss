@@ -27,6 +27,12 @@ mat-stepper {
   overflow-x: auto;
 }
 
+.permission-message {
+  max-width: 480px;
+  margin: sizes.$large auto 0;
+  text-align: center;
+}
+
 .stepper-navigation {
   display: flex;
   flex-direction: row;

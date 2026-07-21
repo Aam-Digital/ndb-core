@@ -59,7 +59,7 @@ import {
   NewMatchAction,
 } from "./matching-entities-config";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
-import { LoggingService } from "#src/app/core/logging/logging.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -117,7 +117,6 @@ export class MatchingEntitiesComponent implements OnInit {
   private entityRegistry = inject(EntityRegistry);
   private filterService = inject(FilterService);
   private injector = inject(Injector);
-  private logger = inject(LoggingService);
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
   entity = input<Entity>();
@@ -249,7 +248,7 @@ export class MatchingEntitiesComponent implements OnInit {
       const records = await this.entityMapper
         .loadType(newSide.entityType)
         .catch((err) => {
-          this.logger.error(
+          Logging.error(
             `Failed to initialize entities (${newSide.entityType}) for matching side ${sideIndex}. Reasons: ${err}`,
           );
           return [];

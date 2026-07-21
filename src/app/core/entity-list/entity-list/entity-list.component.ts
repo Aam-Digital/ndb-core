@@ -43,7 +43,6 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
-import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -56,12 +55,15 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import {
   availableDataSources,
   DataSourceType,
 } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { ExportColumnConfig } from "#src/app/core/export/data-transformation-service/export-column-config";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -116,9 +118,27 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly formDialog = inject(FormDialogService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly publicFormsService = inject(PublicFormsService);
+  private readonly ability = inject(EntityAbility);
   private readonly injector = inject(Injector);
 
   public publicFormConfigs: PublicFormConfig[] = [];
+
+  /**
+   * Whether the current user may import records of this type.
+   * Requires create permission on both the entity type and the ImportMetadata
+   * history record that every import writes at the end.
+   */
+  canImport = computed(() => {
+    if (!this.ability.initialized) {
+      return true;
+    }
+    const entityConstructor = this.entityConstructor();
+    return (
+      !!entityConstructor &&
+      this.ability.can("create", entityConstructor) &&
+      this.ability.can("create", ImportMetadata)
+    );
+  });
 
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
@@ -169,8 +189,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   filterObj = model<DataFilter<T>>({});
   filterString = "";
-  filteredData = [];
-  filterFreetext: string;
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -302,7 +320,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   applyFilter(filterValue: string) {
     // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
-    this.filterFreetext = filterValue.trim().toLowerCase();
+    this.recordsDataSource().filter = filterValue.trim().toLowerCase();
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -370,13 +388,14 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         schema,
         visibleColIds: cols,
         availableColumns,
-        exportConfig: this.exportConfig(),
       });
 
     this.dialog.open(ExportDialogComponent, {
       data: {
         allEntities: this.recordsDataSource().allRecords(),
-        filteredData: this.filteredData,
+        filteredData: this.recordsDataSource().filteredData.map(
+          (row) => row.record,
+        ),
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),

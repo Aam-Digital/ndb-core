@@ -15,15 +15,16 @@ test("Generate a configured aggregation report and download CSV", async ({
     generateChild({ name: `Reports Child ${i}` }),
   );
 
-  // Seed a non-SQL aggregation ReportConfig so the Reports view has
-  // something to select. The query language is browser-side data
-  // aggregation; "Child:toArray" yields all Child entities.
+  // Seed a non-SQL aggregation ReportConfig so the Reports view has something to
+  // select. The query language is browser-side data aggregation; "Child:toArray"
+  // yields all Child entities.
   const reportConfig = createEntityOfType("ReportConfig", "e2e-basic-report");
   reportConfig.title = "E2E Basic Report";
   reportConfig.mode = "reporting";
+  reportConfig.description = "This report is created for e2e testing ...";
   reportConfig.reportDefinition = [
     {
-      query: "Child:toArray",
+      query: "Child:toArray[* admissionDate >= ? & admissionDate <= ?]",
       label: "All children",
     },
   ];
@@ -38,10 +39,11 @@ test("Generate a configured aggregation report and download CSV", async ({
 
   // The aggregation report shows a date range selector and Calculate is
   // disabled until a range is set. Fill the date range.
-  await page.getByRole("textbox", { name: "Start date" }).fill("01.01.2024");
+  await page.getByRole("textbox", { name: "Start date" }).fill("01.01.2020");
   await page.getByRole("textbox", { name: "End date" }).fill("31.12.2025");
   await page.getByRole("textbox", { name: "End date" }).blur();
 
+  // This report's query has no date placeholders, so no date-range selector is shown.
   await argosScreenshot(page, "reports-selected");
 
   // Run the report.
@@ -65,4 +67,79 @@ test("Generate a configured aggregation report and download CSV", async ({
   }
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/\.csv|\.xlsx/);
+});
+
+test("Reports are manageable from Admin Overview → Templates and Forms", async ({
+  page,
+}) => {
+  const users = generateUsers();
+
+  const reportConfig = createEntityOfType("ReportConfig", "e2e-admin-report");
+  reportConfig.title = "E2E Admin Report";
+  reportConfig.mode = "sql";
+  reportConfig.reportDefinition = [{ query: "SELECT name FROM children" }];
+
+  await loadApp(page, [...users, reportConfig]);
+
+  // Navigate to Admin Overview and open the "Templates and Forms" section.
+  await page.getByRole("navigation").getByText("Admin").click();
+  await page.getByRole("navigation").getByText("Admin Overview").click();
+
+  const templatesPanel = page
+    .locator("mat-expansion-panel")
+    .filter({ hasText: "Templates and Forms" });
+  await templatesPanel
+    .getByRole("button", { name: /Templates and Forms/ })
+    .click();
+
+  // The dynamically-registered "Reports" entry opens the report admin list.
+  await templatesPanel.getByText("Reports", { exact: true }).click();
+
+  await expect(
+    page.getByRole("cell", { name: "E2E Admin Report" }),
+  ).toBeVisible({ timeout: 10_000 });
+
+  await argosScreenshot(page, "report-admin-list");
+});
+
+test("Editing a report's description via the admin view persists", async ({
+  page,
+}) => {
+  const users = generateUsers();
+
+  const reportConfig = createEntityOfType("ReportConfig", "e2e-edit-report");
+  reportConfig.title = "E2E Editable Report";
+  reportConfig.mode = "sql";
+  reportConfig.description = "Original description";
+  reportConfig.reportDefinition = [{ query: "SELECT name FROM children" }];
+
+  await loadApp(page, [...users, reportConfig]);
+
+  // Reach the report admin list via the Reports view context menu ("Manage Reports").
+  await page.getByRole("navigation").getByText("Reports").click();
+  await page
+    .locator("button[mat-icon-button][color='primary']")
+    .first()
+    .click();
+  await page.getByRole("menuitem", { name: "Manage Reports" }).click();
+
+  // Open the report's details and edit the description.
+  await page.getByRole("cell", { name: "E2E Editable Report" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
+
+  const newDescription = "Edited by e2e test";
+  const descriptionField = page
+    .locator("#entity-field__description")
+    .getByRole("textbox");
+  await descriptionField.fill(newDescription);
+
+  await argosScreenshot(page, "report-admin-details");
+
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+
+  // After saving, the details view returns to read mode (disabled fields) showing the new value.
+  await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
+  await expect(
+    page.locator("#entity-field__description").getByRole("textbox"),
+  ).toHaveValue(newDescription, { timeout: 10_000 });
 });

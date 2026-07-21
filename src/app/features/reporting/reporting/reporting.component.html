@@ -16,53 +16,22 @@
   </div>
 
   <mat-menu #contextMenu>
-    @if (currentReport()) {
-      <button
-        mat-menu-item
-        (click)="editReportConfig(currentReport())"
-        angulartics2On="click"
-        angularticsCategory="Reporting"
-        angularticsAction="editConfig"
-        *appDisabledEntityOperation="{
-          entity: currentReport(),
-          operation: 'create',
-        }"
-        matTooltip="Warning! This is still an experimental feature. Use with care."
-        i18n-matTooltip
-      >
-        <fa-icon
-          class="color-accent standard-icon-with-text"
-          icon="tools"
-        ></fa-icon>
-        <span i18n>Edit Current Report Template</span>
-      </button>
-    } @else {
-      <button mat-menu-item [disabled]="true">
-        <fa-icon
-          class="color-accent standard-icon-with-text"
-          icon="tools"
-        ></fa-icon>
-        <em i18n>To edit first select report</em>
-      </button>
-    }
-
     <button
       mat-menu-item
-      onClick="
-        window.open(
-          'https://chatwoot.help/hc/aam-digital/articles/1749191412-analysing-data-dashboards-reports',
-          '_blank'
-        )
-      "
+      [routerLink]="[reportAdminLink]"
+      *appDisabledEntityOperation="{
+        entity: reportEntity,
+        operation: 'create',
+      }"
       angulartics2On="click"
       angularticsCategory="Reporting"
-      angularticsAction="help"
+      angularticsAction="manageReports"
     >
       <fa-icon
         class="color-accent standard-icon-with-text"
-        icon="question-circle"
+        icon="gear"
       ></fa-icon>
-      <span i18n>Learn about Reports</span>
+      <span i18n>Manage Reports</span>
     </button>
   </mat-menu>
 </app-view-actions>
@@ -77,6 +46,15 @@
   (selectedReportChange)="currentReport.set($event); onReportCriteriaChange()"
   class="view-section"
 ></app-select-report>
+
+@if (currentReport()?.mode === "sql") {
+  <app-feature-disabled-info
+    class="view-section"
+    featureName="SQL reports"
+    i18n-featureName="ReportConfig SQL feature name"
+    [featureEnabled]="reportingBackendEnabled.value()"
+  ></app-feature-disabled-info>
+}
 
 @if (reportCalculation()) {
   @if (isStale()) {

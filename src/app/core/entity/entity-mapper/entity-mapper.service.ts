@@ -38,8 +38,8 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
  * to the database and back - ensuring they you always receive instances of {@link Entity} subclasses, that you can
  * simply treat them as normal javascript class instances without worrying about database persistance logic.
  *
- * To understand more about how to use the Entity system in your own modules, refer to the How-To Guides:
- * - [How to Load and Save Data]{@link /additional-documentation/how-to-guides/load-and-save-data.html}
+ * To understand more about how to use the Entity system in your own modules, refer to the developer documentation:
+ * - [Loading and Saving Data]{@link /additional-documentation/concepts/entity-system.html}
  * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
 @Injectable({ providedIn: "root" })

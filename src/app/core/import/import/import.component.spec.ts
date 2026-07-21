@@ -9,6 +9,7 @@ import { ImportMetadata } from "../import-metadata";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { Router } from "@angular/router";
 import { parse } from "papaparse";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("ImportComponent", () => {
   let component: ImportComponent;
@@ -63,6 +64,51 @@ describe("ImportComponent", () => {
     expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
     expect(navigateSpy).toHaveBeenCalledWith([""], expect.anything());
     expect(navigateSpy).toHaveBeenCalledWith(["/import"], expect.anything());
+  });
+
+  it("should block the whole import when user cannot create ImportMetadata", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: "ImportMetadata", action: "create", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    // cannotImport is evaluated on construction, so create a fresh instance
+    const blockedComponent =
+      TestBed.createComponent(ImportComponent).componentInstance;
+    expect(blockedComponent.cannotImport).toBe(true);
+    expect(component.cannotImport).toBe(false);
+  });
+
+  it("should not allow updating existing records without update permission", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: "Child", action: "update", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    component.importSettings.set({ entityType: "Child" });
+    expect(component.canUpdateSelectedType()).toBe(false);
+
+    component.importSettings.set({ entityType: "School" });
+    expect(component.canUpdateSelectedType()).toBe(true);
+  });
+
+  it("should flag a selected type the user cannot create (e.g. via query param)", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: "Child", action: "create", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    component.importSettings.set({ entityType: "Child" });
+    expect(component.cannotCreateSelectedType()).toBe(true);
+
+    component.importSettings.set({ entityType: "School" });
+    expect(component.cannotCreateSelectedType()).toBe(false);
   });
 
   it("should update an empty column mapping upon loading rawData", async () => {

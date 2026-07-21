@@ -3,6 +3,35 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 } @else {
+  @if (isFallbackToOlder()) {
+    <div
+      class="flex-row flex-wrap align-center gap-small margin-bottom-regular margin-top-regular"
+    >
+      <fa-icon class="color-error" icon="triangle-exclamation"></fa-icon>
+      <span
+        class="color-error"
+        i18n="
+          attendance fallback hint|explains that older records are shown because
+          there are no records within the default recent time range
+        "
+        >No records within the last 6 months. Showing the most recent records
+        instead.</span
+      >
+      @if (hasMoreRecords()) {
+        <button
+          i18n="
+            load-all button|load all records, not only the ones from the last 6
+            months
+          "
+          mat-flat-button
+          color="accent"
+          (click)="loadAll.set(true)"
+        >
+          Load all records
+        </button>
+      }
+    </div>
+  }
   <div class="flex-row flex-wrap gap-large">
     <app-attendance-calendar
       class="flex-grow"
@@ -46,13 +75,16 @@
     Also show unrelated
   </mat-slide-toggle>
   &nbsp;
-  <button
-    i18n="
-      load-all button|load all records, not only the ones from the last 6 months
-    "
-    mat-stroked-button
-    (click)="loadAll.set(true)"
-  >
-    Load all records
-  </button>
+  @if (!isFallbackToOlder() && hasMoreRecords()) {
+    <button
+      i18n="
+        load-all button|load all records, not only the ones from the last 6
+        months
+      "
+      mat-stroked-button
+      (click)="loadAll.set(true)"
+    >
+      Load all records
+    </button>
+  }
 </div>
