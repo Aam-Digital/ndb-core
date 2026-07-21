@@ -60,6 +60,7 @@ import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-act
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { ExportColumnConfig } from "#src/app/core/export/data-transformation-service/export-column-config";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/datasource-resolver";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -143,6 +144,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   dataSource = input<DataSourceType>();
   recordsDataSource = computed(() =>
     resolveDataSource<T>(this.injector, this.dataSource()),
+  );
+  showFreetextFilter = computed(
+    () => this.recordsDataSource() instanceof InMemoryDataSource,
   );
 
   /**

@@ -14,6 +14,9 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { environment } from "#src/environments/environment";
+import { SessionType } from "#src/app/core/session/session-type";
+import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -334,5 +337,16 @@ describe("EntityListComponent", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should use the PaginatedDataSource and disable the freetext filter in online mode", () => {
+    const tmpSessionType = environment.session_type;
+    environment.session_type = SessionType.online;
+    createComponent();
+
+    expect(component.showFreetextFilter()).toBe(false);
+    expect(component.recordsDataSource()).toBeInstanceOf(PaginatedDataSource);
+
+    environment.session_type = tmpSessionType;
   });
 });
