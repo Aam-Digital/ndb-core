@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   inject,
@@ -6,7 +7,6 @@ import {
   linkedSignal,
   output,
   signal,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
@@ -15,7 +15,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { Angulartics2Module } from "angulartics2";
-import { ExportDialogComponent } from "../../../../core/export/export-dialog/export-dialog.component";
+import { ExportDialogComponent } from "#src/app/core/export/export-dialog/export-dialog.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";

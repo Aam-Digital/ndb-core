@@ -145,7 +145,7 @@ export class PaginatedDataSource<
     delete filter["isActive"];
     const filterString = JSON.stringify(filter);
     // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
-    const updatedString = filterString.replace(/("\w+)\.id(?="\:)/g, "$1");
+    const updatedString = filterString.replace(/("\w+)\.id(?=":)/g, "$1");
     return JSON.parse(updatedString);
   }
 }
