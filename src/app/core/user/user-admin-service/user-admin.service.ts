@@ -62,6 +62,28 @@ export abstract class UserAdminService {
   abstract getAllRoles(): Observable<Role[]>;
 
   /**
+   * Create a new realm role in the authentication server
+   * @throws {@link UserAdminApiError} status=409 if the role already exists
+   */
+  abstract createRole(
+    role: Pick<Role, "name" | "description">,
+  ): Observable<void>;
+
+  /**
+   * Update the description of an existing realm role
+   */
+  abstract updateRole(
+    roleName: string,
+    update: Pick<Role, "description">,
+  ): Observable<void>;
+
+  /**
+   * Delete a realm role from the authentication server.
+   * Users currently having the role lose it.
+   */
+  abstract deleteRole(roleName: string): Observable<void>;
+
+  /**
    * Get all users registered in the authentication server (Keycloak) for this realm
    * @returns An array of all user accounts with their details, including only non-technical roles
    */

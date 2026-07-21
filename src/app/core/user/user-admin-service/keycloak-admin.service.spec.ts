@@ -253,6 +253,66 @@ describe("KeycloakAdminService", () => {
     userReq.flush("Access denied", { status: 403, statusText: "Forbidden" });
   });
 
+  it("should create a realm role", () => {
+    let created = false;
+    service
+      .createRole({ name: "field_supervisor", description: "Supervisors" })
+      .subscribe(() => (created = true));
+
+    const req = httpTestingController.expectOne(`${BASE_URL}/roles`);
+    expect(req.request.method).toEqual("POST");
+    expect(req.request.body).toEqual({
+      name: "field_supervisor",
+      description: "Supervisors",
+    });
+    req.flush({});
+    expect(created).toBe(true);
+  });
+
+  it("should map 409 on role creation to a role-exists error", () => {
+    let error: UserAdminApiError;
+    service
+      .createRole({ name: "existing_role" })
+      .subscribe({ error: (err) => (error = err) });
+
+    httpTestingController
+      .expectOne(`${BASE_URL}/roles`)
+      .flush("conflict", { status: 409, statusText: "Conflict" });
+
+    expect(error).toBeInstanceOf(UserAdminApiError);
+    expect(error.status).toBe(409);
+  });
+
+  it("should update a realm role description", () => {
+    let updated = false;
+    service
+      .updateRole("field_supervisor", { description: "changed" })
+      .subscribe(() => (updated = true));
+
+    const req = httpTestingController.expectOne(
+      `${BASE_URL}/roles/field_supervisor`,
+    );
+    expect(req.request.method).toEqual("PUT");
+    expect(req.request.body).toEqual({
+      name: "field_supervisor",
+      description: "changed",
+    });
+    req.flush({});
+    expect(updated).toBe(true);
+  });
+
+  it("should delete a realm role", () => {
+    let deleted = false;
+    service.deleteRole("field_supervisor").subscribe(() => (deleted = true));
+
+    const req = httpTestingController.expectOne(
+      `${BASE_URL}/roles/field_supervisor`,
+    );
+    expect(req.request.method).toEqual("DELETE");
+    req.flush({});
+    expect(deleted).toBe(true);
+  });
+
   it("should handle offline scenario", async () => {
     // Simulate being offline by mocking a network connectivity error
     service.getAllUsers().subscribe({
