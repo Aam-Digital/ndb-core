@@ -53,7 +53,6 @@
       @if (nameControl.hasError("duplicate")) {
         <mat-error i18n>A role with this name already exists.</mat-error>
       }
-      <mat-hint i18n>The name can't be changed later.</mat-hint>
     } @else {
       <input matInput [value]="roleName()" readonly />
     }
