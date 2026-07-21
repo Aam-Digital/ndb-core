@@ -172,7 +172,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   filterObj = model<DataFilter<T>>({});
   filterString = "";
-  filterFreetext: string;
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -304,7 +303,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   applyFilter(filterValue: string) {
     // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
-    this.filterFreetext = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   private displayColumnGroupByName(columnGroupName: string) {

@@ -97,7 +97,6 @@ export class EntitiesTableComponent<T extends Entity>
       transform: (value) => value ?? {},
     },
   );
-  filterFreetext = input<string>();
   showEntityColor = input<boolean>(false);
   getBackgroundColor = input<(rec: T) => string>();
   clickMode = input<"popup" | "navigate" | "popup-details" | "none">("popup");
@@ -178,11 +177,6 @@ export class EntitiesTableComponent<T extends Entity>
   constructor() {
     effect(() => {
       this.recordsDataSource().dataFilter.set(this.effectiveFilter());
-    });
-
-    effect(() => {
-      // TODO somehow on resizing the screen this throws an error (cannot read length of undefined)
-      this.recordsDataSource().filter = this.filterFreetext() ?? "";
     });
 
     effect(() => {
