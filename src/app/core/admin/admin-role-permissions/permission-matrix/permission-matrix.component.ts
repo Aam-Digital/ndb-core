@@ -97,10 +97,25 @@ export class PermissionMatrixComponent {
     allowed: boolean,
   ) {
     this.emitUpdated((m) => {
+      const cells = m.rows[rowIndex].cells;
+
+      if (!allowed && action !== "manage" && cells.manage?.allowed) {
+        // downgrade the manage wildcard to explicit permissions for the remaining actions
+        delete cells.manage;
+        for (const crudAction of this.crudActions) {
+          if (crudAction === action) {
+            delete cells[crudAction];
+          } else {
+            cells[crudAction] = { allowed: true };
+          }
+        }
+        return;
+      }
+
       if (allowed) {
-        m.rows[rowIndex].cells[action] = { allowed: true };
+        cells[action] = { allowed: true };
       } else {
-        delete m.rows[rowIndex].cells[action];
+        delete cells[action];
       }
     });
   }
@@ -111,6 +126,10 @@ export class PermissionMatrixComponent {
 
   removeRow(rowIndex: number) {
     this.emitUpdated((m) => m.rows.splice(rowIndex, 1));
+  }
+
+  hasSubject(subject: string): boolean {
+    return this.model().rows.some((r) => r.subject === subject);
   }
 
   addSubject(selected: string | string[]) {

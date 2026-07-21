@@ -88,6 +88,21 @@ describe("PermissionMatrixComponent", () => {
     expect(emitted.length).toBe(5);
   });
 
+  it("downgrades manage wildcard to explicit remaining actions when one action is disallowed", () => {
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    component.setCellAllowed(1, "read", false);
+
+    const cells = emitted[0].rows[1].cells;
+    expect(cells.manage).toBeUndefined();
+    expect(cells.read).toBeUndefined();
+    expect(cells.create).toEqual({ allowed: true });
+    expect(cells.update).toEqual({ allowed: true });
+    expect(cells.delete).toEqual({ allowed: true });
+  });
+
   it("shows a hint when unsupported advanced rules exist", () => {
     fixture.componentRef.setInput("model", {
       rows: [],
