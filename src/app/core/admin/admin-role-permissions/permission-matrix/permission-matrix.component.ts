@@ -18,6 +18,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
@@ -45,6 +46,7 @@ import { MatrixModel, MatrixRow } from "../permission-matrix";
     MatTooltipModule,
     MatFormFieldModule,
     FaIconComponent,
+    FaDynamicIconComponent,
     HintBoxComponent,
     EntityTypeSelectComponent,
   ],
