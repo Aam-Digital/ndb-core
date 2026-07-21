@@ -53,12 +53,10 @@
     @if (!isNew()) {
       <fa-icon icon="lock" matSuffix></fa-icon>
     }
-    @if (isNew()) {
-      <mat-hint i18n>
-        The role is set up automatically when you save. Its name cannot be
-        changed later.
-      </mat-hint>
-    }
+    <mat-hint i18n>
+      The role is created in Keycloak (user account server) and its name cannot
+      be changed afterwards.
+    </mat-hint>
     @if (nameControl.hasError("required")) {
       <mat-error i18n>This field is required</mat-error>
     }
