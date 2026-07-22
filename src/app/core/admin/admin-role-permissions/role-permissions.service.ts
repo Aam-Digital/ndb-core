@@ -6,7 +6,7 @@ import { catchError } from "rxjs/operators";
 
 import { Config } from "../../config/config";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Logging } from "../../logging/logging.service";
+import { SessionSubject } from "../../session/auth/session-info";
 import {
   DatabaseRule,
   DatabaseRules,
@@ -48,6 +48,7 @@ export class RolePermissionsService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly userAdminService = inject(UserAdminService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly sessionInfo = inject(SessionSubject);
 
   loadPermissionsConfig(): Promise<Config<DatabaseRules>> {
     return this.entityMapper
@@ -108,65 +109,56 @@ export class RolePermissionsService {
   }
 
   /**
-   * Create a new role in the authentication server and save its rules to the config.
-   * The config entry is written even if the authentication server sync fails,
-   * which is reported back via the keycloakSynced flag.
+   * Whether the logged-in user is allowed to create/delete roles in the
+   * authentication server (i.e. holds the "manage-realm" client role).
+   * Returns true when the capability cannot be determined from the token
+   * (so a capable admin is never wrongly blocked).
    */
-  async createRole(
-    name: string,
-    description: string,
-    rules: DatabaseRule[],
-  ): Promise<{ keycloakSynced: boolean }> {
-    let keycloakSynced = true;
-    try {
-      await firstValueFrom(
-        this.userAdminService.createRole({ name, description }),
-      );
-    } catch (err) {
-      Logging.warn("Failed to create role in authentication server", err);
-      keycloakSynced = false;
-    }
-
-    await this.saveRules(name, rules);
-    return { keycloakSynced };
+  canManageRoles(): boolean {
+    const realmManagementRoles = this.sessionInfo.value?.realmManagementRoles;
+    // undefined = token does not carry client roles -> unknown -> allow
+    return (
+      realmManagementRoles === undefined ||
+      realmManagementRoles.includes("manage-realm") ||
+      realmManagementRoles.includes("realm-admin")
+    );
   }
 
   /**
-   * Remove a role from the permissions config and the authentication server.
+   * Create a new role in the authentication server and save its rules to the config.
+   * The realm role is created first; if that fails the config is left untouched
+   * (a config-only role would be unassignable).
+   * @throws when the role could not be created in the authentication server
    */
-  async deleteRole(name: string): Promise<{ keycloakSynced: boolean }> {
+  async createRole(name: string, description: string, rules: DatabaseRule[]) {
+    await firstValueFrom(
+      this.userAdminService.createRole({ name, description }),
+    );
+    await this.saveRules(name, rules);
+  }
+
+  /**
+   * Remove a role from the authentication server and the permissions config.
+   * The realm role is deleted first; if that fails the config is left untouched.
+   * @throws when the role could not be deleted in the authentication server
+   */
+  async deleteRole(name: string) {
+    await firstValueFrom(this.userAdminService.deleteRole(name));
+
     const config = await this.loadPermissionsConfig();
     const data = { ...(config.data ?? {}) };
     delete data[name];
     await this.saveWithBackup(config, data);
-
-    let keycloakSynced = true;
-    try {
-      await firstValueFrom(this.userAdminService.deleteRole(name));
-    } catch (err) {
-      Logging.warn("Failed to delete role in authentication server", err);
-      keycloakSynced = false;
-    }
-    return { keycloakSynced };
   }
 
   /**
    * Update a role's description in the authentication server.
-   * @returns whether the update succeeded
+   * @throws when the update fails
    */
-  async updateRoleDescription(
-    name: string,
-    description: string,
-  ): Promise<boolean> {
-    try {
-      await firstValueFrom(
-        this.userAdminService.updateRole(name, { description }),
-      );
-      return true;
-    } catch (err) {
-      Logging.warn("Failed to update role in authentication server", err);
-      return false;
-    }
+  async updateRoleDescription(name: string, description: string) {
+    await firstValueFrom(
+      this.userAdminService.updateRole(name, { description }),
+    );
   }
 
   /**

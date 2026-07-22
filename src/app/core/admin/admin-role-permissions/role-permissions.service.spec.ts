@@ -5,6 +5,7 @@ import { EMPTY, of, throwError } from "rxjs";
 import { RolePermissionsService } from "./role-permissions.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
+import { SessionSubject } from "../../session/auth/session-info";
 import { Config } from "../../config/config";
 
 describe("RolePermissionsService", () => {
@@ -20,15 +21,23 @@ describe("RolePermissionsService", () => {
     deleteRole: vi.fn(),
     updateRole: vi.fn(),
   };
+  const sessionInfo = new SessionSubject();
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockEntityMapper.save.mockResolvedValue(undefined);
+    sessionInfo.next({
+      id: "admin",
+      name: "admin",
+      roles: [],
+      realmManagementRoles: ["manage-realm"],
+    });
 
     TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: UserAdminService, useValue: mockUserAdmin },
+        { provide: SessionSubject, useValue: sessionInfo },
         {
           provide: MatSnackBar,
           useValue: { open: () => ({ onAction: () => EMPTY }) },
@@ -100,17 +109,16 @@ describe("RolePermissionsService", () => {
     expect(roles.map((r) => r.name)).toContain("user_app");
   });
 
-  it("createRole creates the keycloak role and saves rules to config", async () => {
+  it("createRole creates the keycloak role first and then saves rules to config", async () => {
     mockEntityMapper.load.mockResolvedValue(
       new Config(Config.PERMISSION_KEY, {}),
     );
     mockUserAdmin.createRole.mockReturnValue(of(undefined));
 
-    const result = await service.createRole("field_supervisor", "Sups", [
+    await service.createRole("field_supervisor", "Sups", [
       { subject: "Child", action: "read" },
     ]);
 
-    expect(result.keycloakSynced).toBe(true);
     expect(mockUserAdmin.createRole).toHaveBeenCalledWith({
       name: "field_supervisor",
       description: "Sups",
@@ -123,7 +131,7 @@ describe("RolePermissionsService", () => {
     ]);
   });
 
-  it("createRole still saves config when keycloak sync fails and reports it", async () => {
+  it("createRole fails hard and writes nothing to config when the keycloak role cannot be created", async () => {
     mockEntityMapper.load.mockResolvedValue(
       new Config(Config.PERMISSION_KEY, {}),
     );
@@ -131,16 +139,17 @@ describe("RolePermissionsService", () => {
       throwError(() => new Error("403")),
     );
 
-    const result = await service.createRole("field_supervisor", "", []);
+    await expect(
+      service.createRole("field_supervisor", "", []),
+    ).rejects.toThrow("403");
 
-    expect(result.keycloakSynced).toBe(false);
     const savedConfig = mockEntityMapper.save.mock.calls
       .map(([e]) => e)
       .find((e) => e.getId() === "Config:Permissions");
-    expect(savedConfig.data.field_supervisor).toEqual([]);
+    expect(savedConfig).toBeUndefined();
   });
 
-  it("deleteRole removes the config entry and deletes the keycloak role", async () => {
+  it("deleteRole deletes the keycloak role first and then removes the config entry", async () => {
     mockEntityMapper.load.mockResolvedValue(
       new Config(Config.PERMISSION_KEY, {
         field_supervisor: [{ subject: "Child", action: "read" }],
@@ -149,15 +158,48 @@ describe("RolePermissionsService", () => {
     );
     mockUserAdmin.deleteRole.mockReturnValue(of(undefined));
 
-    const result = await service.deleteRole("field_supervisor");
+    await service.deleteRole("field_supervisor");
 
-    expect(result.keycloakSynced).toBe(true);
     expect(mockUserAdmin.deleteRole).toHaveBeenCalledWith("field_supervisor");
     const savedConfig = mockEntityMapper.save.mock.calls
       .map(([e]) => e)
       .find((e) => e.getId() === "Config:Permissions");
     expect(savedConfig.data.field_supervisor).toBeUndefined();
     expect(savedConfig.data.user_app).toEqual([]);
+  });
+
+  it("deleteRole fails hard and leaves the config untouched when the keycloak role cannot be deleted", async () => {
+    mockEntityMapper.load.mockResolvedValue(
+      new Config(Config.PERMISSION_KEY, {
+        field_supervisor: [{ subject: "Child", action: "read" }],
+      }),
+    );
+    mockUserAdmin.deleteRole.mockReturnValue(
+      throwError(() => new Error("403")),
+    );
+
+    await expect(service.deleteRole("field_supervisor")).rejects.toThrow("403");
+
+    const savedConfig = mockEntityMapper.save.mock.calls
+      .map(([e]) => e)
+      .find((e) => e.getId() === "Config:Permissions");
+    expect(savedConfig).toBeUndefined();
+  });
+
+  it("canManageRoles reflects the realm-management roles in the session", () => {
+    expect(service.canManageRoles()).toBe(true);
+
+    sessionInfo.next({
+      id: "u",
+      name: "u",
+      roles: [],
+      realmManagementRoles: ["manage-users"],
+    });
+    expect(service.canManageRoles()).toBe(false);
+
+    // unknown capability (token without client roles) is treated as allowed
+    sessionInfo.next({ id: "u", name: "u", roles: [] });
+    expect(service.canManageRoles()).toBe(true);
   });
 
   it("saveRules writes timestamped backup config before saving updated permissions", async () => {

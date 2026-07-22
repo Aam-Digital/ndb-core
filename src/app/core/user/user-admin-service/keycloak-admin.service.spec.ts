@@ -313,6 +313,17 @@ describe("KeycloakAdminService", () => {
     expect(deleted).toBe(true);
   });
 
+  it("should treat deleting an already-missing role (404) as success", () => {
+    let deleted = false;
+    service.deleteRole("orphan_role").subscribe(() => (deleted = true));
+
+    const req = httpTestingController.expectOne(
+      `${BASE_URL}/roles/orphan_role`,
+    );
+    req.flush("not found", { status: 404, statusText: "Not Found" });
+    expect(deleted).toBe(true);
+  });
+
   it("should handle offline scenario", async () => {
     // Simulate being offline by mocking a network connectivity error
     service.getAllUsers().subscribe({

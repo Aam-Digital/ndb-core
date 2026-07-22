@@ -9,15 +9,21 @@
       <span i18n>Edit JSON</span>
     </button>
 
-    <button
-      mat-stroked-button
-      color="accent"
-      class="standard-add-button"
-      routerLink="new"
+    <span
+      [matTooltip]="addDisabledTooltip"
+      [matTooltipDisabled]="canManageRoles"
     >
-      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Add New Role</span>
-    </button>
+      <button
+        mat-stroked-button
+        color="accent"
+        class="standard-add-button"
+        [routerLink]="canManageRoles ? 'new' : null"
+        [disabled]="!canManageRoles"
+      >
+        <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Add New Role</span>
+      </button>
+    </span>
   </div>
 </div>
 

@@ -311,7 +311,12 @@ export class KeycloakAdminService extends UserAdminService {
   override deleteRole(roleName: string): Observable<void> {
     return this.http.delete(`${this.keycloakUrl}/roles/${roleName}`).pipe(
       map(() => undefined),
-      catchError((err) => throwError(() => this.transformStandardError(err))),
+      catchError((err) => {
+        // a role that no longer exists in the realm is treated as already deleted,
+        // so config-only ("orphan") roles can still be cleaned up
+        if (err?.status === 404) return of(undefined);
+        return throwError(() => this.transformStandardError(err));
+      }),
     );
   }
 

@@ -16,6 +16,7 @@ describe("AdminRolesListComponent", () => {
     loadRoles: vi.fn(),
     loadPermissionsConfig: vi.fn(),
     savePermissionsConfig: vi.fn().mockResolvedValue(undefined),
+    canManageRoles: vi.fn().mockReturnValue(true),
   };
   const mockJsonEditor = {
     openJsonEditorDialog: vi.fn(),

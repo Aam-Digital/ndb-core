@@ -143,8 +143,15 @@
   </div>
 
   @if (viewRows().length === 0) {
-    <div class="empty-state text-secondary padding-regular" i18n>
-      No permissions yet. Add one below.
+    <div class="empty-state text-secondary padding-regular">
+      @if (editable()) {
+        <span i18n>No permissions yet. Add one below.</span>
+      } @else {
+        <span i18n>
+          No permissions defined for this role yet. Users with this role only
+          have the permissions of the "default" role.
+        </span>
+      }
     </div>
   }
 

@@ -9,6 +9,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 import { MatTableModule } from "@angular/material/table";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
@@ -33,6 +34,7 @@ import {
     MatTableModule,
     MatPaginatorModule,
     MatButtonModule,
+    MatTooltipModule,
     FaIconComponent,
     RouterLink,
   ],
@@ -55,6 +57,11 @@ export class AdminRolesListComponent implements OnInit {
   });
 
   readonly displayedColumns = ["name", "description", "permissions"];
+
+  /** whether the user may create/delete roles in the authentication server */
+  readonly canManageRoles = this.rolePermissionsService.canManageRoles();
+
+  readonly addDisabledTooltip = $localize`Your account does not have permission to create roles in the user account server.`;
 
   ngOnInit() {
     this.loadRoles();

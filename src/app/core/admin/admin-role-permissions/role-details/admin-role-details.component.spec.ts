@@ -16,14 +16,18 @@ describe("AdminRoleDetailsComponent", () => {
   const mockRolePermissions = {
     loadRoles: vi.fn(),
     saveRules: vi.fn().mockResolvedValue(undefined),
-    createRole: vi.fn(),
-    deleteRole: vi.fn(),
-    updateRoleDescription: vi.fn().mockResolvedValue(true),
+    createRole: vi.fn().mockResolvedValue(undefined),
+    deleteRole: vi.fn().mockResolvedValue(undefined),
+    updateRoleDescription: vi.fn().mockResolvedValue(undefined),
+    canManageRoles: vi.fn().mockReturnValue(true),
   };
 
   beforeEach(async () => {
     vi.clearAllMocks();
     mockRolePermissions.saveRules.mockResolvedValue(undefined);
+    mockRolePermissions.createRole.mockResolvedValue(undefined);
+    mockRolePermissions.deleteRole.mockResolvedValue(undefined);
+    mockRolePermissions.canManageRoles.mockReturnValue(true);
     mockRolePermissions.loadRoles.mockResolvedValue([
       {
         name: "user_app",
@@ -131,7 +135,6 @@ describe("AdminRoleDetailsComponent", () => {
     component.editing.set(true);
     component.nameControl.enable();
     component.model.set({ rows: [], unsupportedRules: [] });
-    mockRolePermissions.createRole.mockResolvedValue({ keycloakSynced: true });
     const navigateSpy = vi
       .spyOn(TestBed.inject(Router), "navigate")
       .mockResolvedValue(true);
@@ -152,9 +155,25 @@ describe("AdminRoleDetailsComponent", () => {
     expect(navigateSpy).toHaveBeenCalled();
   });
 
+  it("does not navigate when creating the role fails", async () => {
+    component.isNew.set(true);
+    component.editing.set(true);
+    component.nameControl.enable();
+    component.model.set({ rows: [], unsupportedRules: [] });
+    mockRolePermissions.createRole.mockRejectedValue(new Error("403"));
+    const navigateSpy = vi
+      .spyOn(TestBed.inject(Router), "navigate")
+      .mockResolvedValue(true);
+
+    component.nameControl.setValue("field_supervisor");
+    await component.save();
+
+    expect(mockRolePermissions.createRole).toHaveBeenCalled();
+    expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
   it("deletes the role after confirmation and navigates back to the list", async () => {
     await fixture.whenStable();
-    mockRolePermissions.deleteRole.mockResolvedValue({ keycloakSynced: true });
     const navigateSpy = vi
       .spyOn(TestBed.inject(Router), "navigate")
       .mockResolvedValue(true);
@@ -166,5 +185,18 @@ describe("AdminRoleDetailsComponent", () => {
     ).toHaveBeenCalled();
     expect(mockRolePermissions.deleteRole).toHaveBeenCalledWith("user_app");
     expect(navigateSpy).toHaveBeenCalled();
+  });
+
+  it("does not navigate when deleting the role fails", async () => {
+    await fixture.whenStable();
+    mockRolePermissions.deleteRole.mockRejectedValue(new Error("403"));
+    const navigateSpy = vi
+      .spyOn(TestBed.inject(Router), "navigate")
+      .mockResolvedValue(true);
+
+    await component.deleteRole();
+
+    expect(mockRolePermissions.deleteRole).toHaveBeenCalledWith("user_app");
+    expect(navigateSpy).not.toHaveBeenCalled();
   });
 });

@@ -25,10 +25,19 @@
         <span i18n>Edit</span>
       </button>
       @if (role() && !role().isVirtual) {
-        <button mat-stroked-button (click)="deleteRole()">
-          <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
-          <span i18n>Delete</span>
-        </button>
+        <span
+          [matTooltip]="deleteDisabledTooltip"
+          [matTooltipDisabled]="canManageRoles"
+        >
+          <button
+            mat-stroked-button
+            [disabled]="!canManageRoles"
+            (click)="deleteRole()"
+          >
+            <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
+            <span i18n>Delete</span>
+          </button>
+        </span>
       }
     }
   </div>
@@ -75,16 +84,9 @@
   </mat-form-field>
 </div>
 
-@if (model()) {
-  <app-permission-matrix
-    [model]="model()"
-    [editable]="editing()"
-    [roleName]="roleName()"
-    (modelChange)="onModelChange($event)"
-  ></app-permission-matrix>
-} @else {
-  <p class="text-secondary" i18n>
-    No permissions defined for this role yet. Users with this role only have the
-    permissions of the "default" role.
-  </p>
-}
+<app-permission-matrix
+  [model]="model()"
+  [editable]="editing()"
+  [roleName]="roleName()"
+  (modelChange)="onModelChange($event)"
+></app-permission-matrix>

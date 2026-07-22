@@ -12,9 +12,11 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
+import { Logging } from "../../../logging/logging.service";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
@@ -44,6 +46,7 @@ const EMPTY_MODEL: MatrixModel = { rows: [], unsupportedRules: [] };
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatTooltipModule,
     ReactiveFormsModule,
     FaIconComponent,
   ],
@@ -60,7 +63,7 @@ export class AdminRoleDetailsComponent {
 
   readonly roleName = signal("");
   readonly role = signal<RoleWithPermissions | undefined>(undefined);
-  readonly model = signal<MatrixModel | undefined>(undefined);
+  readonly model = signal<MatrixModel>(EMPTY_MODEL);
   readonly editing = signal(false);
   readonly isNew = signal(false);
 
@@ -72,7 +75,7 @@ export class AdminRoleDetailsComponent {
   ]);
   readonly descriptionControl = new FormControl("");
 
-  private originalModel: MatrixModel | undefined;
+  private originalModel: MatrixModel = EMPTY_MODEL;
   private existingRoleNames = new Set<string>();
 
   constructor() {
@@ -113,21 +116,28 @@ export class AdminRoleDetailsComponent {
     const roles = await this.rolePermissionsService.loadRoles();
     const role = roles.find((r) => r.name === this.roleName());
     this.role.set(role);
-    this.model.set(role?.rules ? rulesToMatrix(role.rules) : undefined);
+    this.model.set(rulesToMatrix(role?.rules ?? []));
     this.descriptionControl.setValue(role?.description ?? "");
     this.descriptionControl.markAsPristine();
   }
 
-  /** description can only be stored for roles that exist in the authentication server */
+  /** whether the user may create/delete/update roles in the authentication server */
+  readonly canManageRoles = this.rolePermissionsService.canManageRoles();
+
+  readonly deleteDisabledTooltip = $localize`Your account does not have permission to delete roles in the user account server.`;
+
+  /**
+   * Description is stored in the authentication server, so it can only be edited
+   * for existing realm-backed roles when the user is allowed to manage roles.
+   */
   readonly descriptionEditable = computed(
-    () => this.isNew() || (this.editing() && !!this.role()?.keycloakRole),
+    () =>
+      this.canManageRoles &&
+      (this.isNew() || (this.editing() && !!this.role()?.keycloakRole)),
   );
 
   startEditing() {
     this.originalModel = structuredClone(this.model());
-    if (!this.model()) {
-      this.model.set(EMPTY_MODEL);
-    }
     this.editing.set(true);
   }
 
@@ -142,7 +152,7 @@ export class AdminRoleDetailsComponent {
       this.router.navigate([".."], { relativeTo: this.route });
       return;
     }
-    this.model.set(this.originalModel ?? undefined);
+    this.model.set(this.originalModel);
     this.descriptionControl.setValue(this.role()?.description ?? "");
     this.descriptionControl.markAsPristine();
     this.editing.set(false);
@@ -159,11 +169,17 @@ export class AdminRoleDetailsComponent {
       matrixToRules(this.model()),
     );
     if (this.descriptionControl.dirty && this.role()?.keycloakRole) {
-      const updated = await this.rolePermissionsService.updateRoleDescription(
-        this.roleName(),
-        this.descriptionControl.value ?? "",
-      );
-      if (!updated) this.showKeycloakSyncWarning();
+      try {
+        await this.rolePermissionsService.updateRoleDescription(
+          this.roleName(),
+          this.descriptionControl.value ?? "",
+        );
+      } catch (err) {
+        this.showError(
+          $localize`Permissions saved, but the role description could not be updated.`,
+          err,
+        );
+      }
     }
     this.editing.set(false);
     this.unsavedChanges.setUnsavedChanges(this, false);
@@ -175,12 +191,19 @@ export class AdminRoleDetailsComponent {
     if (this.nameControl.invalid) return;
 
     const name = this.nameControl.value;
-    const result = await this.rolePermissionsService.createRole(
-      name,
-      this.descriptionControl.value ?? "",
-      matrixToRules(this.model() ?? EMPTY_MODEL),
-    );
-    if (!result.keycloakSynced) this.showKeycloakSyncWarning();
+    try {
+      await this.rolePermissionsService.createRole(
+        name,
+        this.descriptionControl.value ?? "",
+        matrixToRules(this.model()),
+      );
+    } catch (err) {
+      this.showError(
+        $localize`Could not create the role. Your account may not have permission to create roles in the user account server.`,
+        err,
+      );
+      return;
+    }
 
     this.unsavedChanges.setUnsavedChanges(this, false);
     await this.router.navigate(["..", name], {
@@ -196,18 +219,20 @@ export class AdminRoleDetailsComponent {
     );
     if (!confirmed) return;
 
-    const result = await this.rolePermissionsService.deleteRole(
-      this.roleName(),
-    );
-    if (!result.keycloakSynced) this.showKeycloakSyncWarning();
+    try {
+      await this.rolePermissionsService.deleteRole(this.roleName());
+    } catch (err) {
+      this.showError(
+        $localize`Could not delete the role. Your account may not have permission to delete roles in the user account server.`,
+        err,
+      );
+      return;
+    }
     await this.router.navigate([".."], { relativeTo: this.route });
   }
 
-  private showKeycloakSyncWarning() {
-    this.snackBar.open(
-      $localize`Could not sync the role with the user account server. Permissions are saved, but the role may not be assignable to accounts. Contact your technical support team.`,
-      undefined,
-      { duration: 8000 },
-    );
+  private showError(message: string, error: unknown) {
+    Logging.error("Role management action failed", error);
+    this.snackBar.open(message, undefined, { duration: 8000 });
   }
 }
