@@ -1,0 +1,92 @@
+<div class="flex-row flex-wrap">
+  <div class="flex-grow">
+    @if (isNew()) {
+      <app-view-title i18n>New Role</app-view-title>
+    } @else {
+      <app-view-title i18n>Role Permissions</app-view-title>
+    }
+  </div>
+
+  <div class="flex-row gap-small align-center">
+    @if (editing()) {
+      <button
+        mat-raised-button
+        color="accent"
+        [disabled]="isNew() && nameControl.invalid"
+        (click)="save()"
+        i18n
+      >
+        Save
+      </button>
+      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+    } @else {
+      <button mat-raised-button color="accent" (click)="startEditing()">
+        <fa-icon icon="pen" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Edit</span>
+      </button>
+      @if (role() && !role().isVirtual) {
+        <span
+          [matTooltip]="deleteDisabledTooltip"
+          [matTooltipDisabled]="canManageRoles"
+        >
+          <button
+            mat-stroked-button
+            [disabled]="!canManageRoles"
+            (click)="deleteRole()"
+          >
+            <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
+            <span i18n>Delete</span>
+          </button>
+        </span>
+      }
+    }
+  </div>
+</div>
+
+<div class="flex-row flex-wrap align-start gap-regular margin-bottom-regular">
+  <mat-form-field>
+    <mat-label i18n>Role name</mat-label>
+    <input
+      matInput
+      [formControl]="nameControl"
+      i18n-placeholder
+      placeholder="e.g. field_supervisor"
+    />
+    @if (!isNew()) {
+      <fa-icon icon="lock" matSuffix></fa-icon>
+    }
+    <mat-hint i18n>
+      The role is created in Keycloak (user account server) and its name cannot
+      be changed afterwards.
+    </mat-hint>
+    @if (nameControl.hasError("required")) {
+      <mat-error i18n>This field is required</mat-error>
+    }
+    @if (nameControl.hasError("pattern")) {
+      <mat-error i18n>
+        Only letters, numbers, "_" and "-" are allowed.
+      </mat-error>
+    }
+    @if (nameControl.hasError("duplicate")) {
+      <mat-error i18n>A role with this name already exists.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field class="flex-grow">
+    <mat-label i18n>Description</mat-label>
+    <textarea
+      matInput
+      [formControl]="descriptionControl"
+      rows="2"
+      i18n-placeholder
+      placeholder="What is this role for?"
+    ></textarea>
+  </mat-form-field>
+</div>
+
+<app-permission-matrix
+  [model]="model()"
+  [editable]="editing()"
+  [roleName]="roleName()"
+  (modelChange)="onModelChange($event)"
+></app-permission-matrix>

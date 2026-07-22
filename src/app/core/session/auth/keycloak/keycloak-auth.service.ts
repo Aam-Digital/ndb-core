@@ -269,6 +269,8 @@ export class KeycloakAuthService {
       // TODO: access from resource_access.app.roles and also resource_access.realm-management.roles === manage-users ?
       roles: parsedToken["_couchdb.roles"],
       email: parsedToken.email,
+      realmManagementRoles:
+        parsedToken.resource_access?.["realm-management"]?.roles,
     };
 
     if (parsedToken.username) {

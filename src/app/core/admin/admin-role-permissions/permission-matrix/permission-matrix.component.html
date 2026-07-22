@@ -1,0 +1,186 @@
+@if (model().unsupportedRules.length > 0) {
+  <app-hint-box i18n>
+    {model().unsupportedRules.length, plural,
+      one {1 advanced rule is}
+      other {{{ model().unsupportedRules.length }} advanced rules are}
+    }
+    not shown in this matrix and only editable via JSON.
+  </app-hint-box>
+}
+
+<div class="table-container">
+  <div class="table-scroll">
+    <table mat-table [dataSource]="viewRows()" class="full-width table">
+      <ng-container matColumnDef="subject">
+        <th mat-header-cell *matHeaderCellDef class="subject-col" i18n>
+          Record type
+        </th>
+        <td mat-cell *matCellDef="let v" class="subject-col">
+          @if (v.row.subject === "all") {
+            <div class="flex-row align-center gap-regular">
+              <div class="wildcard-badge">
+                <fa-icon icon="asterisk"></fa-icon>
+              </div>
+              <div>
+                <div>{{ v.label }}</div>
+                <div class="text-secondary wildcard-subtitle" i18n>
+                  wildcard, grants full access, edited as a whole
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="flex-row align-center gap-small">
+              @if (v.icon) {
+                <app-fa-dynamic-icon [icon]="v.icon"></app-fa-dynamic-icon>
+              }
+              <span>{{ v.label }}</span>
+            </div>
+          }
+        </td>
+      </ng-container>
+
+      @for (action of crudActions; track action) {
+        <ng-container [matColumnDef]="action">
+          <th mat-header-cell *matHeaderCellDef class="action-col">
+            {{ actionLabel(action) }}
+          </th>
+          <td mat-cell *matCellDef="let v; let i = index" class="action-col">
+            <div class="cell-stack">
+              <mat-checkbox
+                [checked]="v.manageAllowed || v.actionStates[action].allowed"
+                [disabled]="!editable() || v.manageAllowed"
+                (change)="setCellAllowed(i, action, $event.checked)"
+              ></mat-checkbox>
+
+              @if (v.actionStates[action].hasCondition && !v.manageAllowed) {
+                <!-- condition chip: editable in edit mode, read-only otherwise -->
+                <span
+                  class="cell-condition-chip"
+                  [class.readonly]="!editable()"
+                  [matTooltip]="v.actionStates[action].summary"
+                  (click)="editable() && openConditionDialog(i, action)"
+                >
+                  <fa-icon icon="filter"></fa-icon>
+                  <span class="cell-condition-text">{{
+                    v.actionStates[action].summary
+                  }}</span>
+                  @if (editable()) {
+                    <fa-icon
+                      icon="xmark"
+                      class="cell-condition-remove"
+                      i18n-matTooltip
+                      matTooltip="Remove condition"
+                      (click)="
+                        $event.stopPropagation(); removeCondition(i, action)
+                      "
+                    ></fa-icon>
+                  }
+                </span>
+              } @else if (
+                editable() &&
+                v.actionStates[action].allowed &&
+                !v.manageAllowed &&
+                v.conditionsEditable
+              ) {
+                <button
+                  class="cell-condition-link"
+                  (click)="openConditionDialog(i, action)"
+                >
+                  <fa-icon icon="filter"></fa-icon>
+                  <span i18n>only where&hellip;</span>
+                </button>
+              }
+            </div>
+          </td>
+        </ng-container>
+      }
+
+      <ng-container matColumnDef="manage">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="action-col manage-col"
+          i18n
+        >
+          Manage (all)
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let v; let i = index"
+          class="action-col manage-col"
+        >
+          <mat-checkbox
+            [checked]="v.manageAllowed"
+            [disabled]="!editable() || v.row.subject === 'all'"
+            (change)="setManage(i, $event.checked)"
+          ></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rowActions">
+        <th mat-header-cell *matHeaderCellDef class="row-actions-col"></th>
+        <td mat-cell *matCellDef="let v; let i = index" class="row-actions-col">
+          @if (editable()) {
+            <button
+              mat-icon-button
+              (click)="removeRow(i)"
+              i18n-matTooltip
+              matTooltip="Remove all permissions for this record type"
+            >
+              <fa-icon icon="trash"></fa-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.wildcard-row]="row.row.subject === 'all'"
+      ></tr>
+    </table>
+  </div>
+
+  @if (viewRows().length === 0) {
+    <div class="empty-state text-secondary padding-regular">
+      @if (editable()) {
+        <span i18n>No permissions yet. Add one below.</span>
+      } @else {
+        <span i18n>
+          No permissions defined for this role yet. Users with this role only
+          have the permissions of the "default" role.
+        </span>
+      }
+    </div>
+  }
+
+  @if (editable()) {
+    <div class="flex-row align-center gap-regular padding-regular">
+      @if (!addPickerOpen()) {
+        <button mat-button color="accent" (click)="addPickerOpen.set(true)">
+          <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add Permission</span>
+        </button>
+      } @else {
+        @if (addSelectVisible()) {
+          <mat-form-field class="add-permission-field">
+            <mat-label i18n>Add permission for record type</mat-label>
+            <app-entity-type-select
+              [value]="undefined"
+              [showInternalTypes]="true"
+              (valueChange)="addSubject($event)"
+            ></app-entity-type-select>
+          </mat-form-field>
+        }
+
+        @if (!hasSubject("all")) {
+          <button mat-stroked-button (click)="addSubject('all')">
+            <fa-icon icon="asterisk" class="standard-icon-with-text"></fa-icon>
+            <span i18n>All record types (wildcard)</span>
+          </button>
+        }
+      }
+    </div>
+  }
+</div>

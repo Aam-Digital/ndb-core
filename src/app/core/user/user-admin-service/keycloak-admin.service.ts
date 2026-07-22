@@ -269,6 +269,57 @@ export class KeycloakAdminService extends UserAdminService {
       .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));
   }
 
+  override createRole(
+    role: Pick<Role, "name" | "description">,
+  ): Observable<void> {
+    return this.http
+      .post(`${this.keycloakUrl}/roles`, {
+        name: role.name,
+        description: role.description,
+      })
+      .pipe(
+        map(() => undefined),
+        catchError((originalError) =>
+          throwError(() => {
+            if (originalError?.status === 409) {
+              return new UserAdminApiError(
+                409,
+                $localize`:User API error:A role with this name already exists.`,
+              );
+            }
+            return this.transformStandardError(originalError);
+          }),
+        ),
+      );
+  }
+
+  override updateRole(
+    roleName: string,
+    update: Pick<Role, "description">,
+  ): Observable<void> {
+    return this.http
+      .put(`${this.keycloakUrl}/roles/${roleName}`, {
+        name: roleName,
+        description: update.description,
+      })
+      .pipe(
+        map(() => undefined),
+        catchError((err) => throwError(() => this.transformStandardError(err))),
+      );
+  }
+
+  override deleteRole(roleName: string): Observable<void> {
+    return this.http.delete(`${this.keycloakUrl}/roles/${roleName}`).pipe(
+      map(() => undefined),
+      catchError((err) => {
+        // a role that no longer exists in the realm is treated as already deleted,
+        // so config-only ("orphan") roles can still be cleaned up
+        if (err?.status === 404) return of(undefined);
+        return throwError(() => this.transformStandardError(err));
+      }),
+    );
+  }
+
   /**
    * Fetches all users with their roles.
    */

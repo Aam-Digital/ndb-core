@@ -1,0 +1,125 @@
+@use "variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+// same table styling as the user accounts list (user-list component)
+.table-container {
+  position: relative;
+  @include mat-elevation.elevation(2);
+  background-color: white;
+}
+
+.table {
+  box-shadow: none;
+}
+
+// on small screens the table keeps its minimum width and scrolls horizontally
+.table-scroll {
+  overflow-x: auto;
+}
+
+.action-col {
+  text-align: center;
+}
+
+// visually separate the manage wildcard column from the individual actions
+.manage-col {
+  border-left: 1px solid colors.$grey-transparent;
+}
+
+// stacked cell: checkbox on top, condition affordance below.
+// capped width so a long condition summary cannot overflow across the row.
+.cell-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 150px;
+}
+
+// subtle "only where…" link revealed under a ticked cell
+.cell-condition-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 11px;
+  color: colors.$muted;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    color: colors.$accent;
+  }
+}
+
+// chip showing the configured condition in plain words
+.cell-condition-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 140px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  background-color: colors.$background-secondary;
+  color: colors.$accent;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+
+  // read-only (view mode): same look, not interactive
+  &.readonly {
+    cursor: default;
+
+    &:hover {
+      filter: none;
+    }
+  }
+}
+
+.cell-condition-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.cell-condition-remove {
+  cursor: pointer;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.wildcard-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: colors.$background-secondary;
+  color: colors.$primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wildcard-subtitle {
+  font-size: 12px;
+}
+
+.wildcard-row {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.add-permission-field {
+  width: 280px;
+}
+
+.empty-state {
+  text-align: center;
+}
