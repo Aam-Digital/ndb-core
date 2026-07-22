@@ -40,6 +40,14 @@ export interface EntityListConfig {
    * Default is to sort by the first column.
    */
   defaultSort?: Sort;
+
+  /**
+   * If true, show a banner on this (admin) list that lets admins review and edit
+   * which user roles can "use" or "manage" this feature entity type.
+   * Intended for internal "feature" entity types (e.g. EmailTemplate,
+   * TemplateExport, ReportConfig) whose access is controlled per role.
+   */
+  managePermissions?: boolean;
 }
 
 export interface ColumnGroupsConfig {

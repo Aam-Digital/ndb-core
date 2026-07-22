@@ -1,0 +1,12 @@
+.banner {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.banner-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}

@@ -1,0 +1,117 @@
+<h2 mat-dialog-title i18n="Feature permission dialog title">
+  Permissions for {{ entityLabel }}
+</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  @if (roles() === undefined) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  } @else if (loadError()) {
+    <app-hint-box type="warning">
+      <span i18n>
+        Could not load the list of user roles. Please try again later or edit
+        permissions in the advanced settings.
+      </span>
+    </app-hint-box>
+  } @else {
+    <p class="text-secondary" i18n="Feature permission dialog explanation">
+      Select which user roles can use or manage this feature.
+    </p>
+
+    @if (hasComplexRules()) {
+      <app-hint-box type="warning" class="margin-bottom-regular">
+        <span i18n>
+          Some roles (marked with a lock) get access from a global or advanced
+          permission rule and are shown read-only here. Changes you make below
+          keep those advanced rules untouched. To edit them, use the
+        </span>
+        <a
+          routerLink="/admin/user-roles"
+          mat-dialog-close
+          i18n="link to advanced permissions editor"
+        >
+          advanced permissions editor</a
+        >.
+      </app-hint-box>
+    }
+
+    <table class="permission-table full-width">
+      <thead>
+        <tr>
+          <th i18n="Role column header">Role</th>
+          <th
+            class="checkbox-col"
+            matTooltip="'Use' lets a role work with this feature (e.g. generate exports or send emails from templates) without being able to add or edit its records."
+            i18n-matTooltip="Use permission tooltip"
+            i18n="Use permission column header"
+          >
+            Use
+          </th>
+          <th
+            class="checkbox-col"
+            matTooltip="'Manage' lets a role add, edit and delete the records of this feature."
+            i18n-matTooltip="Manage permission tooltip"
+            i18n="Manage permission column header"
+          >
+            Manage
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of roles(); track row.role) {
+          <tr [class.readonly-row]="!row.editable">
+            <td>
+              {{ row.label }}
+              @if (!row.editable) {
+                <fa-icon
+                  icon="lock"
+                  class="readonly-icon"
+                  matTooltip="This role's access comes from a global or advanced permission rule and can only be changed in the advanced permissions editor."
+                  i18n-matTooltip="read-only role tooltip"
+                ></fa-icon>
+              }
+            </td>
+            <td class="checkbox-col">
+              <mat-checkbox
+                [checked]="row.use || row.manage"
+                [disabled]="!row.editable || row.manage"
+                (change)="row.use = $event.checked"
+                matTooltip="Included automatically when 'Manage' is selected."
+                i18n-matTooltip="Use checkbox disabled tooltip"
+                [matTooltipDisabled]="!row.editable || !row.manage"
+                [attr.aria-label]="'Use ' + entityLabel + ' as ' + row.label"
+              ></mat-checkbox>
+            </td>
+            <td class="checkbox-col">
+              <mat-checkbox
+                [checked]="row.manage"
+                [disabled]="!row.editable"
+                (change)="row.manage = $event.checked"
+                [attr.aria-label]="'Manage ' + entityLabel + ' as ' + row.label"
+              ></mat-checkbox>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3" class="text-secondary" i18n>
+              No user roles available to configure.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close i18n="Cancel button">Cancel</button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="confirm()"
+    [disabled]="roles() === undefined || loadError() || saving()"
+    i18n="Confirm button"
+  >
+    Confirm
+  </button>
+</mat-dialog-actions>

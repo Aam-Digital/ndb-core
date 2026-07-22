@@ -92,6 +92,7 @@ const viewConfigs: ViewConfig[] = [
       entityType: TemplateExport.ENTITY_TYPE,
       columns: ["title", "description", "applicableForEntityTypes"],
       filters: [{ id: "applicableForEntityTypes" }],
+      managePermissions: true,
     } as EntityListConfig,
   },
 

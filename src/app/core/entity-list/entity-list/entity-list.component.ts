@@ -63,6 +63,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
+import { FeaturePermissionBannerComponent } from "../../permissions/feature-permission/feature-permission-banner/feature-permission-banner.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -104,6 +105,7 @@ import { BulkOperationStateService } from "../../entity/entity-actions/bulk-oper
     ViewActionsComponent,
     EntityLoadPipe,
     EntityBulkActionsComponent,
+    FeaturePermissionBannerComponent,
   ],
 })
 @UntilDestroy()
@@ -179,6 +181,12 @@ export class EntityListComponent<T extends Entity> implements OnInit {
    * Whether the list's default row coloring should reflect each entity's color.
    */
   showEntityColor = input<boolean>(false);
+
+  /**
+   * Whether to show the "manage feature permissions" banner for admins on this list.
+   * @see EntityListConfig.managePermissions
+   */
+  managePermissions = input<boolean>(false);
 
   columnsToDisplay: string[];
 
