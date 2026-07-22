@@ -1,89 +1,125 @@
 @use "variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
 
-.allowed-icon {
-  color: colors.$success;
+// same table styling as the user accounts list (user-list component)
+.table-container {
+  position: relative;
+  @include mat-elevation.elevation(2);
+  background-color: white;
 }
 
-.conditional-icon {
-  color: colors.$primary;
-}
-
-// fixed layout keeps column positions identical in view and edit mode
 .table {
-  table-layout: fixed;
+  box-shadow: none;
 }
 
-// uniform icon size in all cells: the menu-trigger icon-button otherwise
-// forces its svg to 24px via --mdc-icon-button-icon-size
-.action-col fa-icon {
-  font-size: 16px;
-}
-
-.action-col ::ng-deep svg.svg-inline--fa {
-  width: 16px;
-  height: 16px;
-}
-
-// same explicit size for the "not allowed" dash, inside and outside buttons
-.not-allowed-icon {
-  font-size: 14px;
-  line-height: 16px;
+// on small screens the table keeps its minimum width and scrolls horizontally
+.table-scroll {
+  overflow-x: auto;
 }
 
 .action-col {
   text-align: center;
-  width: 100px;
-
-  button {
-    --mdc-icon-button-icon-size: 16px;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-  }
 }
 
-.row-actions-col {
-  width: 56px;
-  text-align: center;
-
-  button {
-    --mdc-icon-button-icon-size: 16px;
-  }
-
-  ::ng-deep svg.svg-inline--fa {
-    width: 16px;
-    height: 16px;
-  }
+// visually separate the manage wildcard column from the individual actions
+.manage-col {
+  border-left: 1px solid colors.$grey-transparent;
 }
 
-.remove-button {
-  color: colors.$grey-darker;
+// stacked cell: checkbox on top, condition affordance below.
+// capped width so a long condition summary cannot overflow across the row.
+.cell-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 150px;
 }
 
-.add-permission-field {
-  width: 280px;
-}
-
-.matrix-card {
+// subtle "only where…" link revealed under a ticked cell
+.cell-condition-link {
+  background: none;
+  border: none;
   padding: 0;
+  cursor: pointer;
+  font-size: 11px;
+  color: colors.$muted;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    color: colors.$accent;
+  }
 }
 
-.empty-state {
-  text-align: center;
+// chip showing the configured condition in plain words
+.cell-condition-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 140px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  background-color: colors.$background-secondary;
+  color: colors.$accent;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+
+  // read-only (view mode): same look, not interactive
+  &.readonly {
+    cursor: default;
+
+    &:hover {
+      filter: none;
+    }
+  }
 }
 
-.subject-icon-badge {
-  width: 36px;
-  height: 36px;
+.cell-condition-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.cell-condition-remove {
+  cursor: pointer;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.wildcard-badge {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: colors.$grey-medium;
+  background-color: colors.$background-secondary;
+  color: colors.$primary;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-// visually separate the manage wildcard column from the individual actions
-.manage-col {
-  border-left: 1px solid colors.$grey-transparent;
+.wildcard-subtitle {
+  font-size: 12px;
+}
+
+.wildcard-row {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.add-permission-field {
+  width: 280px;
+}
+
+.empty-state {
+  text-align: center;
 }

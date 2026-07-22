@@ -8,65 +8,89 @@
   </app-hint-box>
 }
 
-<mat-card appearance="outlined" class="matrix-card">
-  <div class="table-container">
+<div class="table-container">
+  <div class="table-scroll">
     <table mat-table [dataSource]="viewRows()" class="full-width table">
       <ng-container matColumnDef="subject">
         <th mat-header-cell *matHeaderCellDef class="subject-col" i18n>
           Record type
         </th>
         <td mat-cell *matCellDef="let v" class="subject-col">
-          <div class="flex-row align-center gap-regular">
-            <div class="subject-icon-badge">
+          @if (v.row.subject === "all") {
+            <div class="flex-row align-center gap-regular">
+              <div class="wildcard-badge">
+                <fa-icon icon="asterisk"></fa-icon>
+              </div>
+              <div>
+                <div>{{ v.label }}</div>
+                <div class="text-secondary wildcard-subtitle" i18n>
+                  wildcard, grants full access, edited as a whole
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="flex-row align-center gap-small">
               @if (v.icon) {
                 <app-fa-dynamic-icon [icon]="v.icon"></app-fa-dynamic-icon>
               }
+              <span>{{ v.label }}</span>
             </div>
-            <span>{{ v.label }}</span>
-          </div>
+          }
         </td>
       </ng-container>
 
       @for (action of crudActions; track action) {
         <ng-container [matColumnDef]="action">
           <th mat-header-cell *matHeaderCellDef class="action-col">
-            @switch (action) {
-              @case ("read") {
-                <span i18n>Read</span>
-              }
-              @case ("create") {
-                <span i18n>Create</span>
-              }
-              @case ("update") {
-                <span i18n>Update</span>
-              }
-              @case ("delete") {
-                <span i18n>Delete</span>
-              }
-            }
+            {{ actionLabel(action) }}
           </th>
           <td mat-cell *matCellDef="let v; let i = index" class="action-col">
-            @if (editable() && v.row.subject !== "all") {
-              <button
-                mat-icon-button
-                [matMenuTriggerFor]="cellMenu"
-                [matMenuTriggerData]="{ rowIndex: i, action: action, view: v }"
-              >
-                <ng-container
-                  *ngTemplateOutlet="
-                    cellState;
-                    context: { row: v.row, action: action }
-                  "
-                ></ng-container>
-              </button>
-            } @else {
-              <ng-container
-                *ngTemplateOutlet="
-                  cellState;
-                  context: { row: v.row, action: action }
-                "
-              ></ng-container>
-            }
+            <div class="cell-stack">
+              <mat-checkbox
+                [checked]="v.manageAllowed || v.actionStates[action].allowed"
+                [disabled]="!editable() || v.manageAllowed"
+                (change)="setCellAllowed(i, action, $event.checked)"
+              ></mat-checkbox>
+
+              @if (v.actionStates[action].hasCondition && !v.manageAllowed) {
+                <!-- condition chip: editable in edit mode, read-only otherwise -->
+                <span
+                  class="cell-condition-chip"
+                  [class.readonly]="!editable()"
+                  [matTooltip]="v.actionStates[action].summary"
+                  (click)="editable() && openConditionDialog(i, action)"
+                >
+                  <fa-icon icon="filter"></fa-icon>
+                  <span class="cell-condition-text">{{
+                    v.actionStates[action].summary
+                  }}</span>
+                  @if (editable()) {
+                    <fa-icon
+                      icon="xmark"
+                      class="cell-condition-remove"
+                      i18n-matTooltip
+                      matTooltip="Remove condition"
+                      (click)="
+                        $event.stopPropagation(); removeCondition(i, action)
+                      "
+                    ></fa-icon>
+                  }
+                </span>
+              } @else if (
+                editable() &&
+                v.actionStates[action].allowed &&
+                !v.manageAllowed &&
+                v.conditionsEditable
+              ) {
+                <button
+                  class="cell-condition-link"
+                  (click)="openConditionDialog(i, action)"
+                >
+                  <fa-icon icon="filter"></fa-icon>
+                  <span i18n>only where&hellip;</span>
+                </button>
+              }
+            </div>
           </td>
         </ng-container>
       }
@@ -86,7 +110,7 @@
           class="action-col manage-col"
         >
           <mat-checkbox
-            [checked]="!!v.row.cells.manage?.allowed"
+            [checked]="v.manageAllowed"
             [disabled]="!editable() || v.row.subject === 'all'"
             (change)="setManage(i, $event.checked)"
           ></mat-checkbox>
@@ -99,19 +123,22 @@
           @if (editable()) {
             <button
               mat-icon-button
-              class="remove-button"
               (click)="removeRow(i)"
               i18n-matTooltip
               matTooltip="Remove all permissions for this record type"
             >
-              <fa-icon icon="xmark"></fa-icon>
+              <fa-icon icon="trash"></fa-icon>
             </button>
           }
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.wildcard-row]="row.row.subject === 'all'"
+      ></tr>
     </table>
   </div>
 
@@ -149,53 +176,4 @@
       }
     </div>
   }
-</mat-card>
-
-<mat-menu #cellMenu="matMenu">
-  <ng-template
-    matMenuContent
-    let-rowIndex="rowIndex"
-    let-action="action"
-    let-view="view"
-  >
-    <button mat-menu-item (click)="setCellAllowed(rowIndex, action, true)">
-      <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Allowed</span>
-    </button>
-    @if (!view.row.cells.manage?.allowed) {
-      <div
-        [matTooltipDisabled]="view.conditionsEditable"
-        i18n-matTooltip
-        matTooltip="This record type has no fields that conditions could be defined on"
-      >
-        <button
-          mat-menu-item
-          [disabled]="!view.conditionsEditable"
-          (click)="openConditionDialog(rowIndex, action)"
-        >
-          <fa-icon icon="filter" class="standard-icon-with-text"></fa-icon>
-          <span i18n>Allowed only where&hellip;</span>
-        </button>
-      </div>
-    }
-    <button mat-menu-item (click)="setCellAllowed(rowIndex, action, false)">
-      <fa-icon icon="minus" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Not allowed</span>
-    </button>
-  </ng-template>
-</mat-menu>
-
-<ng-template #cellState let-row="row" let-action="action">
-  @if (isAllowed(row, action) && getConditions(row, action)) {
-    <fa-icon
-      icon="filter"
-      class="conditional-icon"
-      i18n-matTooltip
-      matTooltip="Allowed only under certain conditions"
-    ></fa-icon>
-  } @else if (isAllowed(row, action)) {
-    <fa-icon icon="check" class="allowed-icon"></fa-icon>
-  } @else {
-    <span class="text-secondary not-allowed-icon">&ndash;</span>
-  }
-</ng-template>
+</div>

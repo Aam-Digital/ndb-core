@@ -89,6 +89,18 @@ describe("permission-matrix", () => {
     expect(result).toEqual(expect.arrayContaining(rules));
   });
 
+  it("preserves extra rule properties like reason through a round-trip", () => {
+    const rules: DatabaseRule[] = [
+      {
+        subject: "SiteSettings",
+        action: "read",
+        reason: "[system-default] site settings read access",
+      } as DatabaseRule,
+    ];
+
+    expect(matrixToRules(rulesToMatrix(rules))).toEqual(rules);
+  });
+
   it("groups actions with identical conditions into one rule when converting back", () => {
     const model = rulesToMatrix([
       {

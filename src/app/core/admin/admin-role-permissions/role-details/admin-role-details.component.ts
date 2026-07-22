@@ -14,12 +14,10 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { firstValueFrom } from "rxjs";
 
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
-import { JsonEditorService } from "../../json-editor/json-editor.service";
 import {
   MatrixModel,
   matrixToRules,
@@ -53,7 +51,6 @@ const EMPTY_MODEL: MatrixModel = { rows: [], unsupportedRules: [] };
 })
 export class AdminRoleDetailsComponent {
   private readonly rolePermissionsService = inject(RolePermissionsService);
-  private readonly jsonEditorService = inject(JsonEditorService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
@@ -212,19 +209,5 @@ export class AdminRoleDetailsComponent {
       undefined,
       { duration: 8000 },
     );
-  }
-
-  /**
-   * Edit this role's rules as raw JSON as a fallback for advanced use cases.
-   * Only available in view mode, changes are saved directly.
-   */
-  async editJson() {
-    const updatedRules = await firstValueFrom(
-      this.jsonEditorService.openJsonEditorDialog(this.role()?.rules ?? []),
-    );
-    if (!updatedRules) return;
-
-    await this.rolePermissionsService.saveRules(this.roleName(), updatedRules);
-    await this.loadRole();
   }
 }

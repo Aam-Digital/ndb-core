@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,16 +8,15 @@ import {
   signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatMenuModule } from "@angular/material/menu";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { describeConditionFragment } from "../../../common-components/entity-form/dynamic-form-validators/permission-condition-validators";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
@@ -29,20 +27,30 @@ import {
 import { EntityActionPermission } from "../../../permissions/permission-types";
 import { MatrixModel, MatrixRow } from "../permission-matrix";
 
+/** display state of one action cell */
+interface CellState {
+  /**
+   * allowed by its own rule. Each action (and "manage") is an independent
+   * permission, so this does not reflect the broader "manage" wildcard.
+   */
+  allowed: boolean;
+  hasCondition: boolean;
+  /** readable summary of the condition, empty when none */
+  summary: string;
+}
+
 /**
  * Display a role's permission rules as a matrix of
  * record types (rows) and actions (columns).
+ * Conditions restricting an action are shown as a readable summary under the record type.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-permission-matrix",
   imports: [
-    NgTemplateOutlet,
     MatTableModule,
-    MatCardModule,
     MatCheckboxModule,
     MatButtonModule,
-    MatMenuModule,
     MatTooltipModule,
     MatFormFieldModule,
     FaIconComponent,
@@ -68,6 +76,7 @@ export class PermissionMatrixComponent {
     "update",
     "delete",
   ];
+
   // rowActions column is always present (empty in view mode)
   // so that column positions do not shift when toggling edit mode
   readonly displayedColumns = [
@@ -80,15 +89,70 @@ export class PermissionMatrixComponent {
     "rowActions",
   ];
 
-  /** rows with their subject label, icon and condition support resolved once per model change */
+  /** rows with subject label/icon and per-action cell states resolved once per model change */
   readonly viewRows = computed(() =>
     this.model().rows.map((row) => ({
       row,
       label: this.subjectLabel(row.subject),
       icon: this.subjectIcon(row.subject),
       conditionsEditable: this.canHaveConditions(row.subject),
+      // "manage" grants every action, so the individual actions are shown as
+      // covered (checked, not individually editable) when it is set
+      manageAllowed: row.subject === "all" || !!row.cells.manage?.allowed,
+      actionStates: Object.fromEntries(
+        this.crudActions.map((action) => {
+          const cell = row.cells[action];
+          const state: CellState = {
+            allowed: !!cell?.allowed,
+            hasCondition: !!cell?.conditions,
+            summary: cell?.conditions
+              ? this.describeConditions(cell.conditions, row.subject)
+              : "",
+          };
+          return [action, state];
+        }),
+      ) as Record<EntityActionPermission, CellState>,
     })),
   );
+
+  actionLabel(action: EntityActionPermission): string {
+    switch (action) {
+      case "read":
+        return $localize`Read`;
+      case "create":
+        return $localize`Create`;
+      case "update":
+        return $localize`Update`;
+      case "delete":
+        return $localize`Delete`;
+      case "manage":
+        return $localize`Manage`;
+    }
+  }
+
+  /** human-readable summary of a CASL conditions object, e.g. "Center: Alipore and Gender: male" */
+  private describeConditions(conditions: any, subject: string): string {
+    if (!conditions || typeof conditions !== "object") return "";
+    const ctor = this.entityRegistry.has(subject)
+      ? this.entityRegistry.get(subject)
+      : undefined;
+    const fieldLabel = (key: string) => ctor?.schema.get(key)?.label ?? key;
+    const describeObject = (obj: any): string =>
+      Object.entries(obj)
+        .map(
+          ([key, value]) =>
+            `${fieldLabel(key)}: ${describeConditionFragment(value)}`,
+        )
+        .join($localize` and `);
+
+    if (Array.isArray(conditions.$or)) {
+      return conditions.$or.map(describeObject).join($localize` or `);
+    }
+    if (Array.isArray(conditions.$and)) {
+      return conditions.$and.map(describeObject).join($localize` and `);
+    }
+    return describeObject(conditions);
+  }
 
   private subjectLabel(subject: string): string {
     if (subject === "all") {
@@ -106,14 +170,6 @@ export class PermissionMatrixComponent {
       : undefined;
   }
 
-  isAllowed(row: MatrixRow, action: EntityActionPermission): boolean {
-    return !!(row.cells[action]?.allowed || row.cells.manage?.allowed);
-  }
-
-  getConditions(row: MatrixRow, action: EntityActionPermission) {
-    return row.cells[action]?.conditions ?? row.cells.manage?.conditions;
-  }
-
   setCellAllowed(
     rowIndex: number,
     action: EntityActionPermission,
@@ -121,20 +177,6 @@ export class PermissionMatrixComponent {
   ) {
     this.emitUpdated((m) => {
       const cells = m.rows[rowIndex].cells;
-
-      if (!allowed && action !== "manage" && cells.manage?.allowed) {
-        // downgrade the manage wildcard to explicit permissions for the remaining actions
-        delete cells.manage;
-        for (const crudAction of this.crudActions) {
-          if (crudAction === action) {
-            delete cells[crudAction];
-          } else {
-            cells[crudAction] = { allowed: true };
-          }
-        }
-        return;
-      }
-
       if (allowed) {
         cells[action] = { allowed: true };
       } else {
@@ -143,12 +185,26 @@ export class PermissionMatrixComponent {
     });
   }
 
+  /**
+   * "Manage (all)" is the CASL wildcard action: it grants every action
+   * (including any beyond the four listed). It is a permission of its own,
+   * not derived from the individual action checkboxes, so toggling it does
+   * not add or remove the individual action rules.
+   */
   setManage(rowIndex: number, checked: boolean) {
     this.setCellAllowed(rowIndex, "manage", checked);
   }
 
   removeRow(rowIndex: number) {
     this.emitUpdated((m) => m.rows.splice(rowIndex, 1));
+  }
+
+  /** clear the condition of an action, keeping the action itself allowed */
+  removeCondition(rowIndex: number, action: EntityActionPermission) {
+    this.emitUpdated((m) => {
+      const cell = m.rows[rowIndex].cells[action];
+      if (cell) delete cell.conditions;
+    });
   }
 
   /**
@@ -179,7 +235,10 @@ export class PermissionMatrixComponent {
       })
       .afterClosed()
       .subscribe((result) => {
-        if (result === undefined) return;
+        // the dialog only returns a real result on Apply (a conditions object)
+        // or "Remove condition" (null); cancelling / closing (undefined or the
+        // shared close button's empty string) must leave the cell untouched
+        if (result !== null && typeof result !== "object") return;
         this.emitUpdated((m) => {
           m.rows[rowIndex].cells[action] = {
             allowed: true,

@@ -45,7 +45,7 @@ describe("PermissionMatrixComponent", () => {
     fixture.detectChanges();
   });
 
-  it("renders one row per subject with allowed and conditional cells marked", () => {
+  it("renders one row per subject and summarizes conditions as a readable chip", () => {
     const rows = fixture.nativeElement.querySelectorAll("tr[mat-row]");
     expect(rows.length).toBe(2);
 
@@ -54,17 +54,28 @@ describe("PermissionMatrixComponent", () => {
     expect(text).toContain("All record types");
 
     const childRow = rows[0];
-    expect(childRow.querySelectorAll(".allowed-icon").length).toBe(1);
-    expect(childRow.querySelectorAll(".conditional-icon").length).toBe(1);
+    // read and create are allowed (both rendered as checked, read carries a condition)
+    const checkedBoxes = childRow.querySelectorAll(
+      "mat-checkbox.mat-mdc-checkbox-checked",
+    );
+    expect(checkedBoxes.length).toBe(2);
+    // the condition is shown as a readable chip next to its checkbox
+    const chip = childRow.querySelector(".cell-condition-chip");
+    expect(chip).not.toBeNull();
+    expect(chip.textContent).toContain("center: x");
   });
 
-  it("shows manage as checked checkbox and implies allowed for all actions of that row", () => {
+  it("shows the wildcard all row as fully allowed via disabled checkboxes", () => {
     const rows = fixture.nativeElement.querySelectorAll("tr[mat-row]");
     const allRow = rows[1];
 
-    const checkbox = allRow.querySelector("mat-checkbox input");
-    expect(checkbox.checked).toBe(true);
-    expect(allRow.querySelectorAll(".allowed-icon").length).toBe(4);
+    const boxes = allRow.querySelectorAll("mat-checkbox");
+    // 4 action columns + the manage column, all checked and disabled
+    expect(boxes.length).toBe(5);
+    boxes.forEach((box: HTMLElement) => {
+      expect(box.classList).toContain("mat-mdc-checkbox-checked");
+      expect(box.classList).toContain("mat-mdc-checkbox-disabled");
+    });
   });
 
   it("supports cell toggle, manage toggle, row removal and adding subjects in editable mode", () => {
@@ -112,19 +123,45 @@ describe("PermissionMatrixComponent", () => {
     ]);
   });
 
-  it("downgrades manage wildcard to explicit remaining actions when one action is disallowed", () => {
+  it("keeps the four actions independent and does not merge them into manage-all", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [
+        {
+          subject: "Child",
+          cells: {
+            read: { allowed: true },
+            create: { allowed: true },
+            update: { allowed: true },
+          },
+        },
+      ],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
     fixture.componentRef.setInput("editable", true);
     const emitted: MatrixModel[] = [];
     component.modelChange.subscribe((m) => emitted.push(m));
 
-    component.setCellAllowed(1, "read", false);
+    component.setCellAllowed(0, "delete", true);
 
-    const cells = emitted[0].rows[1].cells;
+    // ticking all four must NOT switch on the broader "manage" wildcard
+    const cells = emitted[0].rows[0].cells;
     expect(cells.manage).toBeUndefined();
-    expect(cells.read).toBeUndefined();
-    expect(cells.create).toEqual({ allowed: true });
-    expect(cells.update).toEqual({ allowed: true });
     expect(cells.delete).toEqual({ allowed: true });
+  });
+
+  it("toggles manage as its own permission without touching the individual actions", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [{ subject: "Child", cells: { read: { allowed: true } } }],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    component.setManage(0, true);
+
+    expect(emitted[0].rows[0].cells.manage).toEqual({ allowed: true });
+    expect(emitted[0].rows[0].cells.read).toEqual({ allowed: true });
   });
 
   it("applies dialog result as cell conditions and keeps cell allowed", () => {
@@ -146,6 +183,12 @@ describe("PermissionMatrixComponent", () => {
     expect(emitted[1].rows[0].cells.read).toEqual({ allowed: true });
 
     mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+    component.openConditionDialog(0, "read");
+    expect(emitted.length).toBe(2);
+
+    // the shared close button closes with an empty string; this must be
+    // treated as "cancel", not as removing the condition
+    mockDialog.open.mockReturnValue({ afterClosed: () => of("") });
     component.openConditionDialog(0, "read");
     expect(emitted.length).toBe(2);
   });

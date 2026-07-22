@@ -37,6 +37,7 @@ import {
     RouterLink,
   ],
   templateUrl: "./admin-roles-list.component.html",
+  styleUrl: "./admin-roles-list.component.scss",
 })
 export class AdminRolesListComponent implements OnInit {
   private readonly rolePermissionsService = inject(RolePermissionsService);

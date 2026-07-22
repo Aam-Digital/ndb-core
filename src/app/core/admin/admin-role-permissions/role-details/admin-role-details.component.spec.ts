@@ -6,7 +6,6 @@ import { of } from "rxjs";
 
 import { AdminRoleDetailsComponent } from "./admin-role-details.component";
 import { RolePermissionsService } from "../role-permissions.service";
-import { JsonEditorService } from "../../json-editor/json-editor.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -21,7 +20,6 @@ describe("AdminRoleDetailsComponent", () => {
     deleteRole: vi.fn(),
     updateRoleDescription: vi.fn().mockResolvedValue(true),
   };
-  const mockJsonEditor = { openJsonEditorDialog: vi.fn() };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -40,7 +38,6 @@ describe("AdminRoleDetailsComponent", () => {
       imports: [AdminRoleDetailsComponent],
       providers: [
         { provide: RolePermissionsService, useValue: mockRolePermissions },
-        { provide: JsonEditorService, useValue: mockJsonEditor },
         { provide: EntityRegistry, useValue: new EntityRegistry() },
         {
           provide: ConfirmationDialogService,
@@ -70,10 +67,12 @@ describe("AdminRoleDetailsComponent", () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    const inputValues = Array.from(
-      fixture.nativeElement.querySelectorAll("input[matinput]"),
-    ).map((i: HTMLInputElement) => i.value);
-    expect(inputValues).toEqual(["user_app", "Social workers"]);
+    const fieldValues = Array.from(
+      fixture.nativeElement.querySelectorAll(
+        "input[matinput], textarea[matinput]",
+      ),
+    ).map((i: HTMLInputElement | HTMLTextAreaElement) => i.value);
+    expect(fieldValues).toEqual(["user_app", "Social workers"]);
     expect(fixture.nativeElement.textContent).toContain("Child");
   });
 
@@ -167,21 +166,5 @@ describe("AdminRoleDetailsComponent", () => {
     ).toHaveBeenCalled();
     expect(mockRolePermissions.deleteRole).toHaveBeenCalledWith("user_app");
     expect(navigateSpy).toHaveBeenCalled();
-  });
-
-  it("saves rules edited through the json editor", async () => {
-    await fixture.whenStable();
-    const edited = [{ subject: "School", action: "read" }];
-    mockJsonEditor.openJsonEditorDialog.mockReturnValue(of(edited));
-
-    await component.editJson();
-
-    expect(mockJsonEditor.openJsonEditorDialog).toHaveBeenCalledWith([
-      { subject: "Child", action: "read" },
-    ]);
-    expect(mockRolePermissions.saveRules).toHaveBeenCalledWith(
-      "user_app",
-      edited,
-    );
   });
 });
