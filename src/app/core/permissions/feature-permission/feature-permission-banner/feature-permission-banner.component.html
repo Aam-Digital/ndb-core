@@ -1,0 +1,14 @@
+@if (canManage()) {
+  <app-hint-box type="info" class="banner">
+    <div class="banner-content">
+      <span i18n="Feature permission banner text">
+        Access to this feature is controlled by user roles.
+      </span>
+      <button mat-button color="accent" (click)="openDialog()">
+        <span i18n="Configure feature permissions button"
+          >Configure Permissions</span
+        >
+      </button>
+    </div>
+  </app-hint-box>
+}

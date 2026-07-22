@@ -86,6 +86,7 @@ const viewConfigs: ViewConfig[] = [
       entityType: PublicFormConfig.ENTITY_TYPE,
       columns: ["title", "description", "entity"],
       filters: [{ id: "entity" }],
+      managePermissions: true,
     } as EntityListConfig,
   },
 

@@ -27,6 +27,12 @@
       }
     </app-view-actions>
 
+    @if (managePermissions() && entityConstructor()) {
+      <app-feature-permission-banner
+        [entityType]="entityConstructor()!"
+      ></app-feature-permission-banner>
+    }
+
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
@@ -85,6 +91,12 @@
         </button>
       </div>
     </app-view-actions>
+
+    @if (managePermissions() && entityConstructor()) {
+      <app-feature-permission-banner
+        [entityType]="entityConstructor()!"
+      ></app-feature-permission-banner>
+    }
 
     @if (selectedRows()) {
       <div class="bulk-action-spacing">
