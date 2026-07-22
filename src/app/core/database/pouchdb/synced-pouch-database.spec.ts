@@ -336,32 +336,36 @@ describe("SyncedPouchDatabase", () => {
     }
   });
 
-  it("should recover and keep syncing after a sync stalls with no progress", async () => {
+  it("should fail a stalled sync (not complete it) and keep retrying", async () => {
     vi.useFakeTimers();
     try {
       const { mockLocalDb } = mockPouchDatabaseService();
-      // a push that stalls forever: the sync promise never settles and emits no
-      // progress events (a stale/half-open connection; writes have no timeout).
+      // a push that stalls: the thenable never settles on its own and only
+      // resolves when cancel() is called - as PouchDB's replication does.
       mockLocalDb.sync.mockImplementation(() => {
-        const handler = mockSyncHandler();
-        handler.then = () => new Promise(() => {});
-        return handler;
+        let resolve: (v: any) => void;
+        return {
+          on: vi.fn().mockReturnThis(),
+          cancel: vi.fn(() => resolve?.({})),
+          then: (onFulfilled: any, onRejected: any) =>
+            new Promise((r) => (resolve = r)).then(onFulfilled, onRejected),
+        };
       });
-      const mockChanges = new Subject();
-      vi.spyOn(service, "changes").mockReturnValue(mockChanges);
+      const states: SyncState[] = [];
+      service.localSyncState.subscribe((s) => states.push(s));
 
       loginState.next(LoginState.LOGGED_IN);
       await vi.advanceTimersByTimeAsync(1000);
       expect(mockLocalDb.sync).toHaveBeenCalledTimes(1); // first sync starts, then stalls
 
-      // user keeps saving edits locally while many sync intervals pass
-      for (let i = 0; i < 10; i++) {
-        mockChanges.next({});
-        await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
-      }
+      await vi.advanceTimersByTimeAsync(
+        service.SYNC_STALL_TIMEOUT + service.SYNC_INTERVAL,
+      );
 
-      // the stalled sync must not block liveSync forever: sync is retried so the
-      // locally-saved edits can still upload
+      // the stalled sync is reported FAILED (not COMPLETED, which would falsely
+      // record a successful sync) and liveSync retries so offline edits still upload
+      expect(states).toContain(SyncState.FAILED);
+      expect(states).not.toContain(SyncState.COMPLETED);
       expect(mockLocalDb.sync.mock.calls.length).toBeGreaterThan(1);
 
       await stopPeriodicTimer();

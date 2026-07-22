@@ -204,8 +204,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
         Logging.debug(`sync stalled, cancelling to allow retry`, {
           db: this.dbName,
         });
-        syncHandler.cancel();
+        // Reject BEFORE cancelling: PouchDB's replication thenable resolves
+        // (fires "complete") on cancel(), so cancelling first could let
+        // Promise.race take the success path and mark a stalled sync COMPLETED.
         rejectStalled(new SyncStalledError());
+        syncHandler.cancel();
       }, this.SYNC_STALL_TIMEOUT);
     };
 
