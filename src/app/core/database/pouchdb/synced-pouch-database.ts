@@ -43,6 +43,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
   POUCHDB_SYNC_BATCH_SIZE = 100;
   SYNC_INTERVAL = 30000;
 
+  /**
+   * Abort a sync that makes no progress within this window (ms).
+   * Push writes have no per-request abort timeout, so a stale/half-open
+   * connection can leave the replication promise unsettled forever - which would
+   * keep syncState at STARTED and block liveSync from starting any further sync.
+   * Chosen well above a normal sync's duration so only a genuinely stalled sync
+   * is cancelled; the timer resets on every replication progress event.
+   */
+  SYNC_STALL_TIMEOUT = 120000;
+
   private readonly navigator: Navigator;
   private readonly loginStateSubject: LoginStateSubject;
   private readonly alertService?: AlertService;
@@ -180,12 +190,35 @@ export class SyncedPouchDatabase extends PouchDatabase {
       ? this.ngZone.runOutsideAngular(createSyncHandler)
       : createSyncHandler();
 
+    // Guard against a stalled sync (see SYNC_STALL_TIMEOUT): if replication makes
+    // no progress within the timeout, cancel it so the promise settles and
+    // liveSync can retry, instead of staying blocked in STARTED forever.
+    let stallTimer: ReturnType<typeof setTimeout>;
+    let rejectStalled: (err: any) => void;
+    const stallGuard = new Promise<never>((_, reject) => {
+      rejectStalled = reject;
+    });
+    const armStallTimer = () => {
+      clearTimeout(stallTimer);
+      stallTimer = setTimeout(() => {
+        Logging.debug(`sync stalled, cancelling to allow retry`, {
+          db: this.dbName,
+        });
+        syncHandler.cancel();
+        rejectStalled(new SyncStalledError());
+      }, this.SYNC_STALL_TIMEOUT);
+    };
+
     syncHandler.on("change", (info) => {
+      armStallTimer();
       lastSyncedDocIds =
         info?.change?.docs?.map((d) => d._id).filter(Boolean) ?? [];
     });
+    syncHandler.on("active", () => armStallTimer());
+    syncHandler.on("paused", () => armStallTimer());
+    armStallTimer();
 
-    return syncHandler
+    return Promise.race([syncHandler, stallGuard])
       .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
@@ -217,7 +250,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
             err,
             `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
           );
-        } else if (this.isSyncConnectivityError(err)) {
+        } else if (
+          this.isSyncConnectivityError(err) ||
+          err instanceof SyncStalledError
+        ) {
           Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
         } else if (err?.status === 401 || err?.statusCode === 401) {
           // expired session; the fetch layer already triggers re-login
@@ -229,6 +265,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
         throw err;
       })
       .finally(() => {
+        clearTimeout(stallTimer);
         if (isFirstSync) {
           this.remoteDatabase.trackLostPermissions = true;
         }
@@ -369,3 +406,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
 }
 
 type SyncResult = PouchDB.Replication.SyncResultComplete<any>;
+
+/** Thrown internally when a sync is cancelled for making no progress. */
+class SyncStalledError extends Error {}

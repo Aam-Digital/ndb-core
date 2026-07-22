@@ -67,6 +67,7 @@ describe("SyncedPouchDatabase", () => {
   function mockSyncHandler(result: any = {}, shouldReject = false): any {
     const handler = {
       on: vi.fn().mockReturnThis(),
+      cancel: vi.fn(),
       then(onFulfilled, onRejected) {
         const promise = shouldReject
           ? Promise.reject(result)
@@ -330,6 +331,40 @@ describe("SyncedPouchDatabase", () => {
       // stop periodic timer:
       service.liveSyncEnabled = false;
       await vi.advanceTimersByTimeAsync(LONG_SYNC_TIME);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should recover and keep syncing after a sync stalls with no progress", async () => {
+    vi.useFakeTimers();
+    try {
+      const { mockLocalDb } = mockPouchDatabaseService();
+      // a push that stalls forever: the sync promise never settles and emits no
+      // progress events (a stale/half-open connection; writes have no timeout).
+      mockLocalDb.sync.mockImplementation(() => {
+        const handler = mockSyncHandler();
+        handler.then = () => new Promise(() => {});
+        return handler;
+      });
+      const mockChanges = new Subject();
+      vi.spyOn(service, "changes").mockReturnValue(mockChanges);
+
+      loginState.next(LoginState.LOGGED_IN);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(mockLocalDb.sync).toHaveBeenCalledTimes(1); // first sync starts, then stalls
+
+      // user keeps saving edits locally while many sync intervals pass
+      for (let i = 0; i < 10; i++) {
+        mockChanges.next({});
+        await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL);
+      }
+
+      // the stalled sync must not block liveSync forever: sync is retried so the
+      // locally-saved edits can still upload
+      expect(mockLocalDb.sync.mock.calls.length).toBeGreaterThan(1);
+
+      await stopPeriodicTimer();
     } finally {
       vi.useRealTimers();
     }
