@@ -47,7 +47,9 @@ export const permissionsKeyRename: MigrationDefinition = {
 
     const data = doc.data;
     if (!data || typeof data !== "object" || Array.isArray(data)) {
-      ctx.log.info("Config:Permissions has no rules object; nothing to migrate");
+      ctx.log.info(
+        "Config:Permissions has no rules object; nothing to migrate",
+      );
       return { changed: false, status: "no-change" };
     }
 
