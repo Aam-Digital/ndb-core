@@ -224,7 +224,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should skip adding permission when it already exists", async () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [
+      _public: [
         { subject: "Child", action: "create" },
         {
           subject: [
@@ -246,7 +246,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should skip adding permission when it exists in a grouped/array subject", async () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [
+      _public: [
         { subject: ["Child", "School"], action: "create" },
         {
           subject: [
@@ -306,6 +306,33 @@ describe("PublicFormPermissionService", () => {
 
     await service.addPublicCreatePermission("Child");
 
+    const saved = mockEntityMapper.save.mock.calls[0][0] as Config<any>;
+    expect(saved.data._public).toBeDefined();
+    expect(saved.data.public).toBeUndefined();
+  });
+
+  it("should persist the legacy migration even when all required rules already exist", async () => {
+    const existingConfig = new Config(Config.PERMISSION_KEY, {
+      public: [
+        {
+          subject: [
+            "Config",
+            "SiteSettings",
+            "PublicFormConfig",
+            "ConfigurableEnum",
+          ],
+          action: "read",
+        },
+        { subject: "Child", action: "create" },
+      ],
+    });
+    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockEntityMapper.save.mockResolvedValue(undefined);
+
+    await service.addPublicCreatePermission("Child");
+
+    // no new rule is needed, but the legacy -> _public migration must still be saved
+    expect(mockEntityMapper.save).toHaveBeenCalledTimes(1);
     const saved = mockEntityMapper.save.mock.calls[0][0] as Config<any>;
     expect(saved.data._public).toBeDefined();
     expect(saved.data.public).toBeUndefined();

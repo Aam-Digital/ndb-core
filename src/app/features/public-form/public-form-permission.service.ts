@@ -187,6 +187,7 @@ export class PublicFormPermissionService {
 
     // migrate any legacy section key to the underscore-prefixed name so we
     // never write both spellings (the read path prefers the new key)
+    const migratedLegacyPublic = LEGACY_PUBLIC_KEY in permissionsConfig.data;
     if (
       permissionsConfig.data[LEGACY_PUBLIC_KEY] &&
       !permissionsConfig.data[PUBLIC_SECTION_KEY]
@@ -248,7 +249,8 @@ export class PublicFormPermissionService {
       });
     }
 
-    if (!createExists || !formReadExists) {
+    // also persist when we only migrated a legacy section (no new rule added)
+    if (migratedLegacyPublic || !createExists || !formReadExists) {
       await this.entityMapper.save(permissionsConfig, true);
     }
   }
