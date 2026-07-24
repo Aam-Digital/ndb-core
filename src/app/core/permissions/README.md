@@ -56,7 +56,7 @@ _Flow:_
 3. `getRulesForUser(user)` merges rules: for authenticated users, `[...admin-default, ...role-rules]` (rule order same as frontend).
 4. Rules are interpolated and passed to `PermissionService.getAbilityFor(user)`.
 5. Every access point (changes feed, bulk-doc, REST write, design-doc) calls `.can()` on this ability or goes through `isAllowedTo()`.
-6. CASL's deny-by-default means unauthenticated (anonymous) users only get access via `permission.public` rules.
+6. CASL's deny-by-default means unauthenticated (anonymous) users only get access via the `_public` rules (legacy `public` read as a fallback).
 
 _Choke points:_
 
@@ -96,7 +96,7 @@ Permissions use JSON format with a role → rules mapping:
 {
   "_id": "Config:Permissions",
   "data": {
-    "default": [
+    "_default": [
       {
         "subject": "Config",
         "action": "read"
@@ -133,8 +133,10 @@ Permissions use JSON format with a role → rules mapping:
 
 - **`subject`**: The entity type(s) — e.g., `Child`, `School`, `Note`, or `all` for any type
 - **`action`**: What users can do — `read`, `create`, `update`, `delete`, or `manage` (all operations)
-- **`default`**: Rules applied to all authenticated users (regardless of role)
-- **Combining roles**: If a user has multiple roles, their rules are appended in order (the `default` rules first, then each role's rules). CASL evaluates them so that the **last matching rule wins** — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later `"inverted": true` rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.
+- **`_default`**: Rules applied to all authenticated users (regardless of role)
+- **`_public`**: Rules applied to anonymous (not logged-in) visitors
+- **Reserved section keys**: `_default` and `_public` are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with `_` is ignored when resolving rules. Older documents may still use the non-prefixed `default` / `public` names; these are read as a fallback and migrated to the underscore form by the `oneoff-20260724-permissions-key-rename` migration (see `cli/migration/`). `_default` and `_public` are the only allowed underscore-prefixed keys; do not create realm roles, or any other rule section, whose name starts with `_`.
+- **Combining roles**: If a user has multiple roles, their rules are appended in order (the `_default` rules first, then each role's rules). CASL evaluates them so that the **last matching rule wins** — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later `"inverted": true` rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.
 
 ### Restricting access (inverted rules)
 
