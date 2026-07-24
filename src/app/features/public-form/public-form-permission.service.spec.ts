@@ -158,7 +158,7 @@ describe("PublicFormPermissionService", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
       expect.objectContaining({
         data: {
-          public: [
+          _public: [
             {
               subject: [
                 "Config",
@@ -173,7 +173,7 @@ describe("PublicFormPermissionService", () => {
               action: "create",
             },
           ],
-          default: [{ subject: "all", action: "manage" }],
+          _default: [{ subject: "all", action: "manage" }],
         },
       }),
       true,
@@ -203,7 +203,7 @@ describe("PublicFormPermissionService", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
       expect.objectContaining({
         data: {
-          public: [
+          _public: [
             {
               subject: [
                 "Config",
@@ -278,7 +278,7 @@ describe("PublicFormPermissionService", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
       expect.objectContaining({
         data: {
-          public: [
+          _public: [
             { subject: "Child", action: "read" },
             {
               subject: [
@@ -295,5 +295,19 @@ describe("PublicFormPermissionService", () => {
       }),
       true,
     );
+  });
+
+  it("should migrate a legacy public section to the renamed _public key", async () => {
+    const existingConfig = new Config(Config.PERMISSION_KEY, {
+      public: [{ subject: "Child", action: "read" }],
+    });
+    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockEntityMapper.save.mockResolvedValue(undefined);
+
+    await service.addPublicCreatePermission("Child");
+
+    const saved = mockEntityMapper.save.mock.calls[0][0] as Config<any>;
+    expect(saved.data._public).toBeDefined();
+    expect(saved.data.public).toBeUndefined();
   });
 });

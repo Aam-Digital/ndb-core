@@ -2,7 +2,12 @@ import { AlertService } from "app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { inject, Injectable } from "@angular/core";
 import { Config } from "../../core/config/config";
-import { DatabaseRules } from "../../core/permissions/permission-types";
+import {
+  DatabaseRules,
+  DEFAULT_SECTION_KEY,
+  LEGACY_PUBLIC_KEY,
+  PUBLIC_SECTION_KEY,
+} from "../../core/permissions/permission-types";
 import { SessionSubject } from "../../core/session/auth/session-info";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 
@@ -51,7 +56,10 @@ export class PublicFormPermissionService {
       if (!permissionsConfig?.data) {
         return false; // No permissions config means "public" users have no access
       }
-      const publicRules = permissionsConfig.data.public || [];
+      const publicRules =
+        permissionsConfig.data[PUBLIC_SECTION_KEY] ??
+        permissionsConfig.data[LEGACY_PUBLIC_KEY] ??
+        [];
       return publicRules.some(
         (rule) =>
           this.subjectMatches(rule.subject, entityType) &&
@@ -177,23 +185,38 @@ export class PublicFormPermissionService {
       permissionsConfig.data = {};
     }
 
-    if (!permissionsConfig.data.public) {
-      permissionsConfig.data.public = [];
+    // migrate any legacy section key to the underscore-prefixed name so we
+    // never write both spellings (the read path prefers the new key)
+    if (
+      permissionsConfig.data[LEGACY_PUBLIC_KEY] &&
+      !permissionsConfig.data[PUBLIC_SECTION_KEY]
+    ) {
+      permissionsConfig.data[PUBLIC_SECTION_KEY] =
+        permissionsConfig.data[LEGACY_PUBLIC_KEY];
+    }
+    delete permissionsConfig.data[LEGACY_PUBLIC_KEY];
+
+    if (!permissionsConfig.data[PUBLIC_SECTION_KEY]) {
+      permissionsConfig.data[PUBLIC_SECTION_KEY] = [];
     }
 
     // Only add default rule if creating a new config
     if (isNewConfig) {
       // all logged-in users should continue to have full access (which is default without a permission doc):
-      permissionsConfig.data.default = [{ subject: "all", action: "manage" }];
+      permissionsConfig.data[DEFAULT_SECTION_KEY] = [
+        { subject: "all", action: "manage" },
+      ];
     }
 
+    const publicRules = permissionsConfig.data[PUBLIC_SECTION_KEY];
+
     // basic read permissions on config elements is required for public forms to work:
-    const hasPublicFormConfigRead = permissionsConfig.data.public.some(
+    const hasPublicFormConfigRead = publicRules.some(
       (rule) =>
         this.subjectMatches(rule.subject, "PublicFormConfig") &&
         (rule.action === "read" || rule.action === "manage"),
     );
-    const hasConfigRead = permissionsConfig.data.public.some(
+    const hasConfigRead = publicRules.some(
       (rule) =>
         this.subjectMatches(rule.subject, "Config") &&
         (rule.action === "read" || rule.action === "manage"),
@@ -201,7 +224,7 @@ export class PublicFormPermissionService {
     const formReadExists = hasPublicFormConfigRead && hasConfigRead;
 
     if (!formReadExists) {
-      permissionsConfig.data.public.push({
+      publicRules.push({
         subject: [
           "Config",
           "SiteSettings",
@@ -213,13 +236,13 @@ export class PublicFormPermissionService {
     }
 
     // Check if public create permission already exists to avoid duplicates
-    const createExists = permissionsConfig.data.public.some(
+    const createExists = publicRules.some(
       (rule) =>
         this.subjectMatches(rule.subject, entityType) &&
         (rule.action === "create" || rule.action === "manage"),
     );
     if (!createExists) {
-      permissionsConfig.data.public.push({
+      publicRules.push({
         subject: entityType,
         action: "create",
       });

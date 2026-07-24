@@ -1,5 +1,14 @@
 import { inject, Injectable } from "@angular/core";
-import { DatabaseRule, DatabaseRules } from "../permission-types";
+import {
+  DatabaseRule,
+  DatabaseRules,
+  DEFAULT_SECTION_KEY,
+  LEGACY_DEFAULT_KEY,
+  LEGACY_PUBLIC_KEY,
+  PUBLIC_SECTION_KEY,
+  RESERVED_ROLE_PREFIX,
+  RESERVED_RULE_CONFIG_KEYS,
+} from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
@@ -81,14 +90,23 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const sessionInfo = this.sessionInfo.value;
     if (!sessionInfo) {
-      return rules.public ?? [];
+      return rules[PUBLIC_SECTION_KEY] ?? rules[LEGACY_PUBLIC_KEY] ?? [];
     }
 
     const rawUserRules: DatabaseRule[] = [];
-    if (rules.default) {
-      rawUserRules.push(...rules.default);
+    const defaultRules =
+      rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY];
+    if (defaultRules) {
+      rawUserRules.push(...defaultRules);
     }
     sessionInfo.roles.forEach((role) => {
+      // reserved section keys and underscore-prefixed names never resolve as roles
+      if (
+        role.startsWith(RESERVED_ROLE_PREFIX) ||
+        RESERVED_RULE_CONFIG_KEYS.includes(role)
+      ) {
+        return;
+      }
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });
