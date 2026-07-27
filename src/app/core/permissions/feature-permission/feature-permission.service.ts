@@ -165,6 +165,11 @@ export class FeaturePermissionService {
     );
 
     for (const { role, use, manage } of updates) {
+      // never edit the shared baseline sections through the per-role grid
+      if (role === "default" || role === "public") {
+        continue;
+      }
+
       // keep every rule we don't own, then re-add the selected owned rules
       const preserved = (config.data[role] ?? []).filter(
         (rule) => !this.isGridOwnedRule(rule, entityType),
@@ -185,7 +190,8 @@ export class FeaturePermissionService {
     }
 
     await this.entityMapper.save(backup);
-    await this.entityMapper.save(config);
+    // force past rev conflicts: the AbilityService also holds this doc live
+    await this.entityMapper.save(config, true);
     return backup;
   }
 
@@ -206,12 +212,14 @@ export class FeaturePermissionService {
   /**
    * A rule is "owned" by the grid (and thus safe to read/rewrite) only if it
    * grants a single feature action to exactly this entity type without any
-   * conditions or inversion.
+   * conditions or inversion. Managed `[system-default]` rules (written by the
+   * backend to guarantee a baseline) are never owned, so they are left untouched.
    */
   private isGridOwnedRule(rule: DatabaseRule, entityType: string): boolean {
     return (
       !rule.inverted &&
       !rule.conditions &&
+      !rule.reason?.includes("[system-default]") &&
       rule.subject === entityType &&
       (rule.action === FEATURE_USE_ACTION ||
         rule.action === FEATURE_MANAGE_ACTION)

@@ -36,8 +36,9 @@ export class FeaturePermissionBannerComponent {
   /** the feature entity type whose permissions are managed here */
   readonly entityType = input.required<EntityConstructor>();
 
+  /** whether the current user may edit the permissions config */
   readonly canManage = computed(() =>
-    this.entityType() ? this.permissionService.hasAdminPermission() : false,
+    this.permissionService.hasAdminPermission(),
   );
 
   openDialog(): void {

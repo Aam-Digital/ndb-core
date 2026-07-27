@@ -15,7 +15,6 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { RouterLink } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -38,8 +37,10 @@ export interface FeaturePermissionDialogData {
 
 /** per-role row shown in the dialog grid */
 interface RolePermissionRow {
+  /** technical role name (shown as the primary label) */
   role: string;
-  label: string;
+  /** human-readable description from the auth server, if available */
+  description?: string;
   use: boolean;
   manage: boolean;
   /** false when the row is read-only (access comes from an uneditable rule) */
@@ -62,7 +63,6 @@ interface RolePermissionRow {
     MatCheckboxModule,
     MatTooltipModule,
     MatProgressBarModule,
-    RouterLink,
     FaIconComponent,
     DialogCloseComponent,
     HintBoxComponent,
@@ -83,14 +83,13 @@ export class FeaturePermissionDialogComponent implements OnInit {
 
   /** `undefined` while loading */
   readonly roles = signal<RolePermissionRow[] | undefined>(undefined);
-  readonly hasComplexRules = signal(false);
   readonly loadError = signal(false);
   readonly saving = signal(false);
 
   async ngOnInit(): Promise<void> {
     try {
-      const labels = await this.loadRoleLabels();
-      const roleNames = [...labels.keys()];
+      const descriptions = await this.loadRoles();
+      const roleNames = [...descriptions.keys()];
 
       if (roleNames.length === 0) {
         this.loadError.set(true);
@@ -106,13 +105,12 @@ export class FeaturePermissionDialogComponent implements OnInit {
       this.roles.set(
         state.roles.map((role) => ({
           role: role.role,
-          label: labels.get(role.role) || role.role,
+          description: descriptions.get(role.role),
           use: role.use,
           manage: role.manage,
           editable: role.editable,
         })),
       );
-      this.hasComplexRules.set(state.hasComplexRules);
     } catch (error) {
       Logging.error("Failed to load feature permissions", error);
       this.loadError.set(true);
@@ -121,20 +119,20 @@ export class FeaturePermissionDialogComponent implements OnInit {
   }
 
   /**
-   * Collect the roles to display as a name -> label map. Roles known to the auth
-   * server (Keycloak) provide human-readable labels; roles already present in the
-   * permissions config are merged in so the dialog still works when the Keycloak
-   * admin API is not reachable.
+   * Collect the roles to display as a name -> description map. Roles known to the
+   * auth server (Keycloak) provide a human-readable description; roles already
+   * present in the permissions config are merged in (without a description) so the
+   * dialog still works when the Keycloak admin API is not reachable.
    */
-  private async loadRoleLabels(): Promise<Map<string, string>> {
-    const labels = new Map<string, string>();
+  private async loadRoles(): Promise<Map<string, string | undefined>> {
+    const roles = new Map<string, string | undefined>();
 
     try {
       const allRoles = await firstValueFrom(
         this.userAdminService.getAllRoles(),
       );
       for (const role of allRoles) {
-        labels.set(role.name, role.description || role.name);
+        roles.set(role.name, role.description || undefined);
       }
     } catch (error) {
       Logging.debug(
@@ -146,12 +144,28 @@ export class FeaturePermissionDialogComponent implements OnInit {
     const configuredRoles =
       await this.permissionService.getConfiguredRoleNames();
     for (const role of configuredRoles) {
-      if (!labels.has(role)) {
-        labels.set(role, role);
+      if (!roles.has(role)) {
+        roles.set(role, undefined);
       }
     }
 
-    return labels;
+    return roles;
+  }
+
+  /** Update a single role's "Use" state, replacing the array so OnPush re-renders. */
+  setUse(role: string, checked: boolean): void {
+    this.roles.update((rows) =>
+      rows.map((row) => (row.role === role ? { ...row, use: checked } : row)),
+    );
+  }
+
+  /** Update a single role's "Manage" state, replacing the array so OnPush re-renders. */
+  setManage(role: string, checked: boolean): void {
+    this.roles.update((rows) =>
+      rows.map((row) =>
+        row.role === role ? { ...row, manage: checked } : row,
+      ),
+    );
   }
 
   async confirm(): Promise<void> {
@@ -190,13 +204,22 @@ export class FeaturePermissionDialogComponent implements OnInit {
       { duration: 8000 },
     );
     snackBarRef.onAction().subscribe(async () => {
-      const config = await this.entityMapper.load(
-        Config,
-        Config.PERMISSION_KEY,
-      );
-      config.data = backup.data;
-      await this.entityMapper.save(config);
-      await this.entityMapper.remove(backup);
+      try {
+        const config = await this.entityMapper.load(
+          Config,
+          Config.PERMISSION_KEY,
+        );
+        config.data = backup.data;
+        await this.entityMapper.save(config, true);
+        await this.entityMapper.remove(backup);
+      } catch (error) {
+        Logging.error("Failed to undo permission change", error);
+        this.snackBar.open(
+          $localize`Could not undo the change. Please try again.`,
+          undefined,
+          { duration: 5000 },
+        );
+      }
     });
   }
 }

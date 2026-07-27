@@ -346,11 +346,60 @@ describe("FeaturePermissionService", () => {
 
       expect(roles).toEqual(["user_app", "admin_app", "assistant_app"]);
     });
+  });
 
-    it("should return an empty list when no config exists", async () => {
-      mockEntityMapper.load.mockRejectedValue(new Error("not found"));
+  describe("system-default and baseline guards", () => {
+    it("should show a [system-default] rule as effective but read-only", async () => {
+      mockConfig({
+        assistant_app: [
+          { subject: ENTITY_TYPE, action: "read", reason: "[system-default]" },
+        ],
+      });
 
-      expect(await service.getConfiguredRoleNames()).toEqual([]);
+      const state = await service.getPermissions(ENTITY_TYPE, [
+        "assistant_app",
+      ]);
+
+      expect(state.roles[0]).toEqual({
+        role: "assistant_app",
+        use: true,
+        manage: false,
+        editable: false,
+      });
+    });
+
+    it("should never modify the 'default' or 'public' sections", async () => {
+      mockConfig({
+        default: [{ subject: "all", action: "manage" }],
+        public: [{ subject: ENTITY_TYPE, action: "read" }],
+      });
+
+      await service.setPermissions(ENTITY_TYPE, [
+        { role: "default", use: false, manage: true },
+        { role: "public", use: false, manage: false },
+      ]);
+
+      expect(savedPermissions()).toEqual({
+        default: [{ subject: "all", action: "manage" }],
+        public: [{ subject: ENTITY_TYPE, action: "read" }],
+      });
+    });
+
+    it("should preserve a [system-default] rule when unchecking a role", async () => {
+      mockConfig({
+        assistant_app: [
+          { subject: ENTITY_TYPE, action: "read", reason: "[system-default]" },
+          { subject: ENTITY_TYPE, action: "read" },
+        ],
+      });
+
+      await service.setPermissions(ENTITY_TYPE, [
+        { role: "assistant_app", use: false, manage: false },
+      ]);
+
+      expect(savedPermissions().assistant_app).toEqual([
+        { subject: ENTITY_TYPE, action: "read", reason: "[system-default]" },
+      ]);
     });
   });
 });
