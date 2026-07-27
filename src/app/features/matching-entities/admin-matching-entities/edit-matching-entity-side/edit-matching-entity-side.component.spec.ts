@@ -46,7 +46,7 @@ describe("EditMatchingEntitySideComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should offer the calculated 'distance' column for selection", () => {
+  it("should offer the special columns 'distance' and record preview for selection", () => {
     const columnsManager = fixture.debugElement.queryAll(
       By.directive(AdminListManagerComponent),
     )[0];
@@ -56,8 +56,10 @@ describe("EditMatchingEntitySideComponent", () => {
 
     fieldSelect.autocompleteForm.setValue("");
 
-    expect(fieldSelect.autocompleteOptions().map((o) => o.asValue)).toContain(
-      "distance",
-    );
+    const offeredFields = fieldSelect
+      .autocompleteOptions()
+      .map((o) => o.asValue);
+    expect(offeredFields).toContain("distance");
+    expect(offeredFields).toContain("_id");
   });
 });
