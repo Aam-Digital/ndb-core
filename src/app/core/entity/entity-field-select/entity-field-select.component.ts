@@ -77,7 +77,15 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
     return this.getAllFieldProps(entityType.schema);
   });
 
-  protected override optionsSource = computed(() => this.fieldOptions());
+  /**
+   * Explicitly given options take precedence over the entity's schema fields,
+   * so that callers can offer additional, calculated columns (e.g. "distance")
+   * that do not exist as a field in the schema.
+   */
+  protected override optionsSource = computed(() => {
+    const explicitOptions = this.options();
+    return explicitOptions?.length ? explicitOptions : this.fieldOptions();
+  });
 
   private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
     return [...schema.entries()]
