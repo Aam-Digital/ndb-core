@@ -19,6 +19,18 @@ import { $localize } from "@angular/localize/init"; // import needed to make thi
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity, EntityConstructor } from "../model/entity";
 import { asArray } from "../../../utils/asArray";
+import { splitArrayValue } from "../../import/split-array-value";
+import type { ColumnMapping } from "../../import/column-mapping";
+import type { ImportProcessingContext } from "../../import/import-processing-context";
+
+/**
+ * A single column mapped to a target field during import, with the raw cell
+ * value from the current row.
+ */
+export interface ColumnImportInput {
+  mapping: ColumnMapping;
+  rawCell: unknown;
+}
 
 /**
  * Definition of an export column contributed by a datatype.
@@ -191,6 +203,93 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
     importProcessingContext?: any,
   ): Promise<EntityType> {
     return this.transformToObjectFormat(val, schemaField);
+  }
+
+  /**
+   * Map all columns mapped to one target field to the value(s) stored there.
+   *
+   * ImportService calls this once per target field per row with every column
+   * mapped to that field. The default handles trimming and array splitting and
+   * delegates each individual value to {@link importMapFunction}. Datatypes that
+   * need to consider several columns together (e.g. matching an entity by more
+   * than one property) override this.
+   *
+   * @param schemaField the target property the value(s) are imported into
+   * @param columns every column mapped to this field, with its raw cell value
+   * @param importProcessingContext shared context across columns and rows
+   * @returns the value to store: a single value (isArray=false) or array
+   *   (isArray=true), or undefined if nothing was mapped
+   */
+  async importMatchField(
+    schemaField: EntitySchemaField,
+    columns: ColumnImportInput[],
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise<unknown> {
+    let value: unknown;
+    // if several columns map to the same field, the last one with a value wins
+    for (const column of columns) {
+      const mapped = await this.mapColumnValue(
+        schemaField,
+        column,
+        importProcessingContext,
+      );
+      if (mapped !== undefined) {
+        value = mapped;
+      }
+    }
+    return value;
+  }
+
+  /**
+   * Map a single column's raw cell to this field's value: trim and (for array
+   * fields) split the cell, then delegate each value to {@link importMapFunction}.
+   */
+  private async mapColumnValue(
+    schemaField: EntitySchemaField,
+    { mapping, rawCell }: ColumnImportInput,
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise<unknown> {
+    if (rawCell === undefined || rawCell === null) {
+      return undefined;
+    }
+    const additionalSettings =
+      importProcessingContext?.importSettings?.additionalSettings;
+
+    let val: unknown = rawCell;
+    const shouldTrim =
+      typeof val === "string" &&
+      schemaField.trim !== false &&
+      additionalSettings?.trimValues !== false;
+    if (shouldTrim) {
+      val = (val as string).trim();
+    }
+
+    const shouldSplit =
+      schemaField.isArray && (mapping.additional?.enableSplitting ?? true);
+    if (!shouldSplit) {
+      return this.importMapFunction(
+        val,
+        schemaField,
+        mapping.additional,
+        importProcessingContext,
+      );
+    }
+
+    // split the cell and map each item individually
+    const separator = additionalSettings?.multiValueSeparator ?? ",";
+    const mapped: unknown[] = [];
+    for (const rawValue of splitArrayValue(val, separator)) {
+      const item = await this.importMapFunction(
+        rawValue,
+        { ...schemaField, isArray: false },
+        mapping.additional,
+        importProcessingContext,
+      );
+      if (item !== undefined && item !== null && item !== "") {
+        mapped.push(item);
+      }
+    }
+    return [...new Set(mapped)];
   }
 
   /**
