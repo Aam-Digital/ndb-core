@@ -162,8 +162,13 @@ export class DatabaseResolverService {
   }
 
   /**
-   * Record storage health (persistence permission and quota usage) as remote
-   * logging context, to document the risk of browser storage eviction.
+   * Request persistent storage (exempting the origin from the browser's
+   * best-effort eviction under disk pressure / inactivity) and record storage
+   * health (persistence permission and quota usage) as remote logging
+   * context, to document the risk of browser storage eviction.
+   *
+   * The browser may silently deny the request (e.g. Chrome bases the grant on
+   * a site engagement heuristic); this is best-effort and never blocks login.
    */
   private async logStorageHealth() {
     try {
@@ -171,7 +176,17 @@ export class DatabaseResolverService {
       if (!storage) {
         return;
       }
-      const persisted = await storage.persisted?.();
+
+      let persisted = await storage.persisted?.();
+      if (!persisted && storage.persist) {
+        persisted = await storage.persist();
+        Logging.debug(
+          persisted
+            ? "Persistent storage granted"
+            : "Persistent storage request denied by browser",
+        );
+      }
+
       const estimate = await storage.estimate?.();
       Logging.addContext("Aam Digital storage", {
         persisted,
@@ -179,7 +194,7 @@ export class DatabaseResolverService {
         quota: estimate?.quota,
       });
     } catch (err) {
-      Logging.debug("Could not read storage health", err);
+      Logging.debug("Could not read/request storage health", err);
     }
   }
 

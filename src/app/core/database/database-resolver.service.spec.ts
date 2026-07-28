@@ -11,6 +11,7 @@ import {
   DbConfig,
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
@@ -139,5 +140,62 @@ describe("DatabaseResolverService", () => {
     } as SessionInfo);
 
     expect(defaultDb.init).toHaveBeenCalledWith("test-user-app");
+  });
+
+  describe("storage persistence", () => {
+    function setupWithNavigator(mockNavigator: Partial<Navigator>) {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: DatabaseFactoryService, useValue: factory },
+          { provide: IndexeddbMigrationService, useValue: migrationServiceSpy },
+          { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
+        ],
+      });
+      const svc = TestBed.inject(DatabaseResolverService);
+      // @ts-ignore - forcing this for stable test conditions
+      svc["sessionType"] = SessionType.mock;
+      return svc;
+    }
+
+    it("should request persistent storage if not already persisted", async () => {
+      const persist = vi.fn().mockResolvedValue(true);
+      const mockNavigator: Partial<Navigator> = {
+        storage: {
+          persisted: vi.fn().mockResolvedValue(false),
+          persist,
+          estimate: vi.fn().mockResolvedValue({ usage: 1, quota: 2 }),
+        } as unknown as StorageManager,
+      };
+      const svc = setupWithNavigator(mockNavigator);
+
+      await svc.initDatabasesForSession({
+        name: "test-user",
+        id: "test-uuid",
+        roles: [],
+      } as SessionInfo);
+
+      expect(persist).toHaveBeenCalled();
+    });
+
+    it("should not request persistent storage if already persisted", async () => {
+      const persist = vi.fn();
+      const mockNavigator: Partial<Navigator> = {
+        storage: {
+          persisted: vi.fn().mockResolvedValue(true),
+          persist,
+          estimate: vi.fn().mockResolvedValue({ usage: 1, quota: 2 }),
+        } as unknown as StorageManager,
+      };
+      const svc = setupWithNavigator(mockNavigator);
+
+      await svc.initDatabasesForSession({
+        name: "test-user",
+        id: "test-uuid",
+        roles: [],
+      } as SessionInfo);
+
+      expect(persist).not.toHaveBeenCalled();
+    });
   });
 });
