@@ -2,7 +2,7 @@ import { environment } from "./environments/environment";
 import { Logging } from "./app/core/logging/logging.service";
 import { FirebaseConfiguration } from "./app/features/notification/notification-config.interface";
 import { SessionType } from "./app/core/session/session-type";
-import { PUBLIC_FORM_ROUTE } from "./app/features/public-form/public-form-routing";
+import { PUBLIC_FORM_ROUTE } from "./app/features/public-form/public-form-route";
 
 /**
  * Overwrite environment settings with the settings from the `config.json` if present.
