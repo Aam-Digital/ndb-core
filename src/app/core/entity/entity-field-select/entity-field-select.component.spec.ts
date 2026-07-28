@@ -29,19 +29,24 @@ describe("EntityFieldSelectComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should offer the explicitly given options, including fields that are not part of the entity schema", () => {
+  it("should merge the explicitly given options with the fields inferred from the entity schema", () => {
     fixture.componentRef.setInput("entityType", TestEntity);
     fixture.componentRef.setInput("options", [
-      { id: "name", label: "Name" },
+      { id: "name", label: "Custom Name" },
       { id: "distance", label: "Distance" },
     ]);
     fixture.detectChanges();
 
     component.autocompleteForm.setValue("");
 
-    expect(component.autocompleteOptions().map((o) => o.asValue)).toEqual([
-      "name",
-      "distance",
-    ]);
+    const offeredOptions = component.autocompleteOptions();
+    const offeredIds = offeredOptions.map((o) => o.asValue);
+    expect(offeredIds).toContain("distance");
+    expect(offeredIds).toContain("other");
+    // a field given both ways is offered once, with the explicit config winning
+    expect(offeredIds.filter((id) => id === "name")).toEqual(["name"]);
+    expect(offeredOptions.find((o) => o.asValue === "name").asString).toBe(
+      "Custom Name",
+    );
   });
 });
