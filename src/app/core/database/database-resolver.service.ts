@@ -14,7 +14,7 @@ import {
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
-import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "../../utils/di-tokens";
+import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 import { Logging } from "../logging/logging.service";
 
 /**

@@ -12,6 +12,7 @@ import {
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
@@ -143,31 +144,31 @@ describe("DatabaseResolverService", () => {
   });
 
   describe("storage persistence", () => {
-    function setupWithNavigator(mockNavigator: Partial<Navigator>) {
+    function setupWithNavigator(isPersisted: boolean) {
+      const storage = {
+        persisted: vi.fn().mockResolvedValue(isPersisted),
+        persist: vi.fn().mockResolvedValue(true),
+        estimate: vi.fn().mockResolvedValue({ usage: 1, quota: 2 }),
+      };
+
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
+        imports: [MockedTestingModule.withState()],
         providers: [
           { provide: DatabaseFactoryService, useValue: factory },
           { provide: IndexeddbMigrationService, useValue: migrationServiceSpy },
-          { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
+          { provide: NAVIGATOR_TOKEN, useValue: { storage } },
         ],
       });
       const svc = TestBed.inject(DatabaseResolverService);
+
       // @ts-ignore - forcing this for stable test conditions
       svc["sessionType"] = SessionType.mock;
-      return svc;
+      return { svc, storage };
     }
 
     it("should request persistent storage if not already persisted", async () => {
-      const persist = vi.fn().mockResolvedValue(true);
-      const mockNavigator: Partial<Navigator> = {
-        storage: {
-          persisted: vi.fn().mockResolvedValue(false),
-          persist,
-          estimate: vi.fn().mockResolvedValue({ usage: 1, quota: 2 }),
-        } as unknown as StorageManager,
-      };
-      const svc = setupWithNavigator(mockNavigator);
+      const { svc, storage } = setupWithNavigator(false);
 
       await svc.initDatabasesForSession({
         name: "test-user",
@@ -175,19 +176,11 @@ describe("DatabaseResolverService", () => {
         roles: [],
       } as SessionInfo);
 
-      expect(persist).toHaveBeenCalled();
+      expect(storage.persist).toHaveBeenCalled();
     });
 
     it("should not request persistent storage if already persisted", async () => {
-      const persist = vi.fn();
-      const mockNavigator: Partial<Navigator> = {
-        storage: {
-          persisted: vi.fn().mockResolvedValue(true),
-          persist,
-          estimate: vi.fn().mockResolvedValue({ usage: 1, quota: 2 }),
-        } as unknown as StorageManager,
-      };
-      const svc = setupWithNavigator(mockNavigator);
+      const { svc, storage } = setupWithNavigator(true);
 
       await svc.initDatabasesForSession({
         name: "test-user",
@@ -195,7 +188,7 @@ describe("DatabaseResolverService", () => {
         roles: [],
       } as SessionInfo);
 
-      expect(persist).not.toHaveBeenCalled();
+      expect(storage.persist).not.toHaveBeenCalled();
     });
   });
 });
