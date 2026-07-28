@@ -1,0 +1,679 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >SyncStalledError</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/database/pouchdb/synced-pouch-database.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Thrown internally when a sync is cancelled for making no progress.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code>Error</code>
+            </p>
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { PouchDatabase } from &quot;./pouch-database&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
+import { NgZone } from &quot;@angular/core&quot;;
+import { RemotePouchDatabase } from &quot;./remote-pouch-database&quot;;
+import {
+  debounceTime,
+  filter,
+  mergeMap,
+  takeUntil,
+  takeWhile,
+} from &quot;rxjs/operators&quot;;
+import { SyncState } from &quot;../../session/session-states/sync-state.enum&quot;;
+import {
+  LoginStateSubject,
+  SyncStateSubject,
+} from &quot;../../session/session-type&quot;;
+import { EMPTY, from, interval, merge, of } from &quot;rxjs&quot;;
+import { LoginState } from &quot;../../session/session-states/login-state.enum&quot;;
+import { NotAvailableOfflineError } from &quot;../../session/not-available-offline.error&quot;;
+import { AlertService } from &quot;../../alerts/alert.service&quot;;
+import { QueryOptions } from &quot;../database&quot;;
+import {
+  PouchdbCorruptionRecoveryService,
+  isKnownMultiTabDatabaseCorruption,
+} from &quot;./pouchdb-corruption-recovery.service&quot;;
+import { isConnectivityError } from &quot;#src/app/utils/connectivity-error&quot;;
+
+/**
+ * An alternative implementation of PouchDatabase that additionally
+ * provides functionality to sync with a remote CouchDB.
+ */
+export class SyncedPouchDatabase extends PouchDatabase {
+  static LAST_SYNC_KEY_PREFIX &#x3D; &quot;LAST_SYNC_&quot;;
+
+  get LAST_SYNC_KEY(): string | undefined {
+    if (!this.pouchDB?.name) {
+      return undefined;
+    }
+    return SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
+  }
+
+  POUCHDB_SYNC_BATCH_SIZE &#x3D; 100;
+  SYNC_INTERVAL &#x3D; 30000;
+
+  /**
+   * Abort a sync that makes no progress within this window (ms).
+   * Push writes have no per-request abort timeout, so a stale/half-open
+   * connection can leave the replication promise unsettled forever - which would
+   * keep syncState at STARTED and block liveSync from starting any further sync.
+   *
+   * The timer resets on every replication progress event, so this is an
+   * inactivity window per batch (see POUCHDB_SYNC_BATCH_SIZE) and not a budget
+   * for the total sync duration - a long initial sync of a large database keeps
+   * resetting the timer and is never cancelled while it makes progress.
+   * The window still has to cover the slowest legitimate gap between events:
+   * the checkpoint lookup and first &#x60;_changes&#x60; response before any batch
+   * arrives, and a single batch of documents with attachments over a poor
+   * connection. If that gap is exceeded no batch completes, so no checkpoint is
+   * written and every retry restarts from the same position - which is why this
+   * is set generously rather than close to a normal sync&#x27;s duration.
+   */
+  SYNC_STALL_TIMEOUT &#x3D; 300000;
+
+  private readonly navigator: Navigator;
+  private readonly loginStateSubject: LoginStateSubject;
+  private readonly alertService?: AlertService;
+  private readonly corruptionRecovery?: PouchdbCorruptionRecoveryService;
+  private remoteDatabase: RemotePouchDatabase;
+  private syncState: SyncStateSubject &#x3D; new SyncStateSubject();
+
+  /**
+   * Get the internal sync state subject for this database (not the global one).
+   * Useful for observing when this specific database&#x27;s sync completes.
+   */
+  get localSyncState(): SyncStateSubject {
+    return this.syncState;
+  }
+
+  /**
+   * Get the underlying remote PouchDB instance.
+   * Can be used as a replication source for background migration.
+   */
+  getRemotePouchDB(): PouchDB.Database {
+    return this.remoteDatabase?.getPouchDB();
+  }
+
+  constructor(
+    dbName: string,
+    authService: KeycloakAuthService,
+    globalSyncState: SyncStateSubject,
+    navigator: Navigator,
+    loginStateSubject: LoginStateSubject,
+    ngZone?: NgZone,
+    alertService?: AlertService,
+    corruptionRecovery?: PouchdbCorruptionRecoveryService,
+  ) {
+    super(dbName, globalSyncState, ngZone);
+    this.navigator &#x3D; navigator;
+    this.loginStateSubject &#x3D; loginStateSubject;
+    this.alertService &#x3D; alertService;
+    this.corruptionRecovery &#x3D; corruptionRecovery;
+
+    this.remoteDatabase &#x3D; new RemotePouchDatabase(
+      dbName,
+      authService,
+      undefined,
+      ngZone,
+      this.alertService,
+    );
+
+    this.logSyncContext();
+    this.syncState
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((state) &#x3D;&gt; state &#x3D;&#x3D;&#x3D; SyncState.COMPLETED),
+      )
+      .subscribe(() &#x3D;&gt; {
+        const lastSyncTime &#x3D; new Date().toISOString();
+        localStorage.setItem(this.LAST_SYNC_KEY, lastSyncTime);
+        this.logSyncContext();
+      });
+
+    // forward sync state to global sync state (combining state from all synced databases)
+    this.syncState
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state: SyncState) &#x3D;&gt; this.globalSyncState.next(state));
+
+    // Start live sync whenever the user is logged in.
+    // Note: if the user logged in offline (no Keycloak token), syncing will
+    // hit a 401 and the RemotePouchDatabase fetch interceptor will trigger a
+    // Keycloak login redirect. This is intentional — we want users to
+    // authenticate online when connectivity is available.
+    this.loginStateSubject
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((state) &#x3D;&gt; state &#x3D;&#x3D;&#x3D; LoginState.LOGGED_IN),
+      )
+      .subscribe(() &#x3D;&gt; this.liveSync());
+  }
+
+  /**
+   * Initializes the PouchDB with local indexeddb as well as a remote server connection for syncing.
+   * @param dbName local database name (for the current user)
+   * @param remoteDbName (optional) remote database name (if different from local browser database name)
+   */
+  override init(dbName?: string, remoteDbName?: string) {
+    super.init(dbName ?? this.dbName, undefined, true);
+
+    // keep remote database on default name (e.g. &quot;app&quot; instead of &quot;user_uuid-app&quot;)
+    this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
+  }
+
+  private async logSyncContext() {
+    const lastSyncTime &#x3D; localStorage.getItem(this.LAST_SYNC_KEY);
+    Logging.addContext(&quot;Aam Digital sync&quot;, {
+      &quot;last sync completed&quot;: lastSyncTime,
+    });
+  }
+
+  /**
+   * Execute a (one-time) sync between the local and server database.
+   */
+  async sync(
+    options: PouchDB.Replication.SyncOptions &#x3D; {},
+  ): Promise&lt;SyncResult&gt; {
+    if (!this.navigator.onLine) {
+      Logging.debug(&quot;Not syncing because offline&quot;);
+      this.syncState.next(SyncState.UNSYNCED);
+      return {};
+    }
+
+    const localDb &#x3D; await this.getPouchDBOnceReady();
+
+    const localInfo &#x3D; await localDb.info();
+    const isFirstSync &#x3D; localInfo.doc_count &#x3D;&#x3D;&#x3D; 0;
+    if (isFirstSync) {
+      // On first sync there are no local docs, so skip lost-permission tracking &amp; purge
+      this.remoteDatabase.trackLostPermissions &#x3D; false;
+    }
+
+    this.syncState.next(SyncState.STARTED);
+
+    // Track the last batch of synced doc IDs for diagnostics on write failures
+    let lastSyncedDocIds: string[] &#x3D; [];
+
+    // Run PouchDB sync/replication outside Angular zone to:
+    //  - avoid wasted change-detection cycles for internal sync chatter
+    //  - prevent expected internal rejections (e.g. transient 404s for
+    //    not-yet-existing remote DBs) from being routed to Angular&#x27;s
+    //    ErrorHandler / Sentry. Outer .then/.catch below still handle them
+    //    explicitly and re-enter the zone for state updates.
+    const createSyncHandler &#x3D; () &#x3D;&gt;
+      localDb.sync(this.remoteDatabase.getPouchDB(), {
+        batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
+        ...options,
+      });
+    const syncHandler &#x3D; this.ngZone
+      ? this.ngZone.runOutsideAngular(createSyncHandler)
+      : createSyncHandler();
+
+    // Guard against a stalled sync (see SYNC_STALL_TIMEOUT): if replication makes
+    // no progress within the timeout, cancel it so the promise settles and
+    // liveSync can retry, instead of staying blocked in STARTED forever.
+    let stallTimer: ReturnType&lt;typeof setTimeout&gt;;
+    let rejectStalled: (err: any) &#x3D;&gt; void;
+    const stallGuard &#x3D; new Promise&lt;never&gt;((_, reject) &#x3D;&gt; {
+      rejectStalled &#x3D; reject;
+    });
+    const armStallTimer &#x3D; () &#x3D;&gt; {
+      clearTimeout(stallTimer);
+      stallTimer &#x3D; setTimeout(() &#x3D;&gt; {
+        Logging.debug(&#x60;sync stalled, cancelling to allow retry&#x60;, {
+          db: this.dbName,
+        });
+        // Reject BEFORE cancelling: PouchDB&#x27;s replication thenable resolves
+        // (fires &quot;complete&quot;) on cancel(), so cancelling first could let
+        // Promise.race take the success path and mark a stalled sync COMPLETED.
+        rejectStalled(new SyncStalledError());
+        syncHandler.cancel();
+      }, this.SYNC_STALL_TIMEOUT);
+    };
+
+    syncHandler.on(&quot;change&quot;, (info) &#x3D;&gt; {
+      armStallTimer();
+      lastSyncedDocIds &#x3D;
+        info?.change?.docs?.map((d) &#x3D;&gt; d._id).filter(Boolean) ?? [];
+    });
+    syncHandler.on(&quot;active&quot;, () &#x3D;&gt; armStallTimer());
+    syncHandler.on(&quot;paused&quot;, () &#x3D;&gt; armStallTimer());
+    armStallTimer();
+
+    return Promise.race([syncHandler, stallGuard])
+      .then(async (res) &#x3D;&gt; {
+        if (res) res[&quot;dbName&quot;] &#x3D; this.dbName; // add for debugging information
+        Logging.debug(&quot;sync completed&quot;, res);
+        if (!isFirstSync) {
+          await this.purgeDocsWithLostPermissions();
+        }
+        this.syncState.next(SyncState.COMPLETED);
+        return res as SyncResult;
+      })
+      .catch((err) &#x3D;&gt; {
+        // Handle 404 errors for notifications database (may not exist yet if no event was triggered)
+        if (this.isNotificationsDatabase() &amp;&amp; err?.status &#x3D;&#x3D;&#x3D; 404) {
+          Logging.debug(
+            &quot;Notifications database does not exist yet on server - this may be expected&quot;,
+            err,
+          );
+          this.syncState.next(SyncState.COMPLETED);
+          return {};
+        }
+
+        if (this.isDocumentWriteError(err)) {
+          Logging.warn(
+            &#x60;sync failed: document write error (possible oversized document)&#x60;,
+            { db: this.dbName, lastSyncedBatch: lastSyncedDocIds },
+            err,
+          );
+        } else if (isKnownMultiTabDatabaseCorruption(err)) {
+          this.corruptionRecovery?.handleKnownMultiTabCorruption(
+            err,
+            &#x60;sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
+          );
+        } else if (
+          this.isSyncConnectivityError(err) ||
+          err instanceof SyncStalledError
+        ) {
+          Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
+        } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
+          // expired session; the fetch layer already triggers re-login
+          Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
+        } else {
+          Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
+        }
+        this.syncState.next(SyncState.FAILED);
+        throw err;
+      })
+      .finally(() &#x3D;&gt; {
+        clearTimeout(stallTimer);
+        if (isFirstSync) {
+          this.remoteDatabase.trackLostPermissions &#x3D; true;
+        }
+      });
+  }
+
+  override async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
+    try {
+      return await super.put(object, forceOverwrite);
+    } catch (err) {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        &#x60;put failed [${this.dbName}]: likely multi-tab IndexedDB corruption&#x60;,
+      );
+      throw err;
+    }
+  }
+
+  override query(
+    fun: string | ((doc: any, emit: any) &#x3D;&gt; void),
+    options: QueryOptions,
+  ): Promise&lt;any&gt; {
+    return super.query(fun, options).catch((err) &#x3D;&gt; {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        &#x60;query failed [${this.dbName}]: likely multi-tab IndexedDB corruption&#x60;,
+      );
+      throw err;
+    });
+  }
+
+  private isDocumentWriteError(err: any): boolean {
+    const message &#x3D; err?.message || err?.reason || String(err);
+    return (
+      message.includes(&quot;Maximum call stack size exceeded&quot;) ||
+      message.includes(&quot;IDBObjectStore&quot;) ||
+      message.includes(&quot;Failed to execute&quot;)
+    );
+  }
+
+  private isSyncConnectivityError(err: any): boolean {
+    if (isConnectivityError(err)) return true;
+    const message &#x3D; err?.message || err?.reason || String(err);
+    return message.includes(&quot;getCheckpoint&quot;);
+  }
+
+  /**
+   * Purge local documents for which the server reported lost permissions
+   * during the most recent sync&#x27;s &#x60;_changes&#x60; calls.
+   */
+  private async purgeDocsWithLostPermissions(): Promise&lt;void&gt; {
+    const lostPermissionIds &#x3D; this.remoteDatabase
+      .collectAndClearLostPermissions()
+      // design docs for indices are managed locally (and shouldn&#x27;t be synced anyway)
+      .filter((id) &#x3D;&gt; !id.startsWith(&quot;_design/&quot;));
+
+    for (const _id of lostPermissionIds) {
+      try {
+        const purged &#x3D; await this.purge(_id);
+        if (purged) {
+          Logging.debug(&#x60;Purged doc with lost permissions: ${_id}&#x60;);
+        } else {
+          Logging.debug(&#x60;Skipped purge for ${_id} (does not exist locally)&#x60;);
+        }
+      } catch (err) {
+        Logging.warn(&#x60;Error trying to purge doc&#x60;, _id, err);
+      }
+    }
+  }
+
+  /**
+   * Force a full re-check against the remote DB without deleting local data.
+   * Uses &#x60;checkpoint: false&#x60; once so PouchDB ignores previous checkpoints for this run.
+   */
+  async resetSync(): Promise&lt;void&gt; {
+    Logging.debug(&#x60;triggering full re-sync for &quot;${this.dbName}&quot;&#x60;);
+    await this.sync({ checkpoint: false });
+  }
+
+  /**
+   * Ensure the database is synced with the remote server.
+   * Throws {@link NotAvailableOfflineError} if offline.
+   * Otherwise triggers a one-time sync and resolves when complete.
+   */
+  async ensureSynced(): Promise&lt;void&gt; {
+    if (!this.navigator.onLine) {
+      throw new NotAvailableOfflineError(
+        &quot;Failed to ensure synced. Cannot sync database while offline.&quot;,
+      );
+    }
+
+    await this.sync();
+
+    if (this.syncState.value &#x3D;&#x3D;&#x3D; SyncState.UNSYNCED) {
+      throw new NotAvailableOfflineError(
+        &quot;Failed to ensure synced. SyncState still reported as UNSYNCED.&quot;,
+      );
+    }
+  }
+
+  /**
+   * Continuous syncing in background.
+   */
+  liveSyncEnabled: boolean;
+
+  liveSync() {
+    this.liveSyncEnabled &#x3D; true;
+
+    merge(
+      // do an initial sync immediately
+      of(true),
+      // re-sync at regular interval
+      interval(this.SYNC_INTERVAL),
+      // and immediately sync to upload any local changes
+      this.changes(),
+    )
+      .pipe(
+        debounceTime(500),
+        mergeMap(() &#x3D;&gt; {
+          if (this.syncState.value &#x3D;&#x3D; SyncState.STARTED) {
+            return EMPTY;
+          } else {
+            // catch errors so the outer observable stays alive without re-subscribing
+            // (re-subscribing via retry would leak EventEmitter listeners on PouchDB)
+            // sync() already logs errors and updates syncState before re-throwing
+            return from(
+              this.sync().catch((err) &#x3D;&gt; {
+                Logging.debug(&quot;liveSync: swallowed sync error&quot;, err);
+              }),
+            );
+          }
+        }),
+        takeWhile(() &#x3D;&gt; this.liveSyncEnabled),
+        takeUntil(this.destroy$),
+      )
+      .subscribe();
+  }
+}
+
+type SyncResult &#x3D; PouchDB.Replication.SyncResultComplete&lt;any&gt;;
+
+/** Thrown internally when a sync is cancelled for making no progress. */
+class SyncStalledError extends Error {}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'SyncStalledError.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

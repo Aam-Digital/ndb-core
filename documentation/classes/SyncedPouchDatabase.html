@@ -185,6 +185,9 @@ provides functionality to sync with a remote CouchDB.</p>
                                 <a href="#SYNC_INTERVAL" >SYNC_INTERVAL</a>
                             </li>
                             <li>
+                                <a href="#SYNC_STALL_TIMEOUT" >SYNC_STALL_TIMEOUT</a>
+                            </li>
+                            <li>
                                 <a href="#adapter" >adapter</a>
                             </li>
                             <li>
@@ -360,7 +363,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:86</a></div>
                             </td>
                         </tr>
 
@@ -538,7 +541,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="335" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:335</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="384" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:384</a></div>
                         </td>
                     </tr>
 
@@ -610,6 +613,56 @@ provides functionality to sync with a remote CouchDB.</p>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SYNC_STALL_TIMEOUT"></a>
+                    <span class="name">
+                        <span ><b>SYNC_STALL_TIMEOUT</b></span>
+                        <a href="#SYNC_STALL_TIMEOUT"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>300000</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:63</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Abort a sync that makes no progress within this window (ms).
+Push writes have no per-request abort timeout, so a stale/half-open
+connection can leave the replication promise unsettled forever - which would
+keep syncState at STARTED and block liveSync from starting any further sync.</p>
+<p>The timer resets on every replication progress event, so this is an
+inactivity window per batch (see POUCHDB_SYNC_BATCH_SIZE) and not a budget
+for the total sync duration - a long initial sync of a large database keeps
+resetting the timer and is never cancelled while it makes progress.
+The window still has to cover the slowest legitimate gap between events:
+the checkpoint lookup and first <code>_changes</code> response before any batch
+arrives, and a single batch of documents with attachments over a poor
+connection. If that gap is exceeded no batch completes, so no checkpoint is
+written and every retry restarts from the same position - which is why this
+is set generously rather than close to a normal sync&#39;s duration.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -899,8 +952,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="316"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:316</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="365"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:365</a></div>
                         </td>
                     </tr>
 
@@ -940,8 +993,8 @@ Otherwise triggers a one-time sync and resolves when complete.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="65"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:65</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -988,7 +1041,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:128</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:147</a></code>
 </div>
                         </td>
                     </tr>
@@ -1078,8 +1131,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="337"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:337</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="386"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:386</a></div>
                         </td>
                     </tr>
 
@@ -1124,7 +1177,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:238</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:287</a></code>
 </div>
                         </td>
                     </tr>
@@ -1217,7 +1270,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:250</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:299</a></code>
 </div>
                         </td>
                     </tr>
@@ -1298,8 +1351,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="306"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:306</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="355"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:355</a></div>
                         </td>
                     </tr>
 
@@ -1340,8 +1393,8 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="145"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:145</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="164"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:164</a></div>
                         </td>
                     </tr>
 
@@ -2686,7 +2739,7 @@ run exactly once and are never routed through it.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:57</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:76</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2753,6 +2806,25 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   POUCHDB_SYNC_BATCH_SIZE &#x3D; 100;
   SYNC_INTERVAL &#x3D; 30000;
+
+  /**
+   * Abort a sync that makes no progress within this window (ms).
+   * Push writes have no per-request abort timeout, so a stale/half-open
+   * connection can leave the replication promise unsettled forever - which would
+   * keep syncState at STARTED and block liveSync from starting any further sync.
+   *
+   * The timer resets on every replication progress event, so this is an
+   * inactivity window per batch (see POUCHDB_SYNC_BATCH_SIZE) and not a budget
+   * for the total sync duration - a long initial sync of a large database keeps
+   * resetting the timer and is never cancelled while it makes progress.
+   * The window still has to cover the slowest legitimate gap between events:
+   * the checkpoint lookup and first &#x60;_changes&#x60; response before any batch
+   * arrives, and a single batch of documents with attachments over a poor
+   * connection. If that gap is exceeded no batch completes, so no checkpoint is
+   * written and every retry restarts from the same position - which is why this
+   * is set generously rather than close to a normal sync&#x27;s duration.
+   */
+  SYNC_STALL_TIMEOUT &#x3D; 300000;
 
   private readonly navigator: Navigator;
   private readonly loginStateSubject: LoginStateSubject;
@@ -2891,12 +2963,38 @@ export class SyncedPouchDatabase extends PouchDatabase {
       ? this.ngZone.runOutsideAngular(createSyncHandler)
       : createSyncHandler();
 
+    // Guard against a stalled sync (see SYNC_STALL_TIMEOUT): if replication makes
+    // no progress within the timeout, cancel it so the promise settles and
+    // liveSync can retry, instead of staying blocked in STARTED forever.
+    let stallTimer: ReturnType&lt;typeof setTimeout&gt;;
+    let rejectStalled: (err: any) &#x3D;&gt; void;
+    const stallGuard &#x3D; new Promise&lt;never&gt;((_, reject) &#x3D;&gt; {
+      rejectStalled &#x3D; reject;
+    });
+    const armStallTimer &#x3D; () &#x3D;&gt; {
+      clearTimeout(stallTimer);
+      stallTimer &#x3D; setTimeout(() &#x3D;&gt; {
+        Logging.debug(&#x60;sync stalled, cancelling to allow retry&#x60;, {
+          db: this.dbName,
+        });
+        // Reject BEFORE cancelling: PouchDB&#x27;s replication thenable resolves
+        // (fires &quot;complete&quot;) on cancel(), so cancelling first could let
+        // Promise.race take the success path and mark a stalled sync COMPLETED.
+        rejectStalled(new SyncStalledError());
+        syncHandler.cancel();
+      }, this.SYNC_STALL_TIMEOUT);
+    };
+
     syncHandler.on(&quot;change&quot;, (info) &#x3D;&gt; {
+      armStallTimer();
       lastSyncedDocIds &#x3D;
         info?.change?.docs?.map((d) &#x3D;&gt; d._id).filter(Boolean) ?? [];
     });
+    syncHandler.on(&quot;active&quot;, () &#x3D;&gt; armStallTimer());
+    syncHandler.on(&quot;paused&quot;, () &#x3D;&gt; armStallTimer());
+    armStallTimer();
 
-    return syncHandler
+    return Promise.race([syncHandler, stallGuard])
       .then(async (res) &#x3D;&gt; {
         if (res) res[&quot;dbName&quot;] &#x3D; this.dbName; // add for debugging information
         Logging.debug(&quot;sync completed&quot;, res);
@@ -2928,7 +3026,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
             err,
             &#x60;sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
           );
-        } else if (this.isSyncConnectivityError(err)) {
+        } else if (
+          this.isSyncConnectivityError(err) ||
+          err instanceof SyncStalledError
+        ) {
           Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
         } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
           // expired session; the fetch layer already triggers re-login
@@ -2940,6 +3041,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
         throw err;
       })
       .finally(() &#x3D;&gt; {
+        clearTimeout(stallTimer);
         if (isFirstSync) {
           this.remoteDatabase.trackLostPermissions &#x3D; true;
         }
@@ -3080,6 +3182,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
 }
 
 type SyncResult &#x3D; PouchDB.Replication.SyncResultComplete&lt;any&gt;;
+
+/** Thrown internally when a sync is cancelled for making no progress. */
+class SyncStalledError extends Error {}
 </code></pre>
     </div>
 </div>

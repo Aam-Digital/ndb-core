@@ -1796,6 +1796,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/SyncedPouchDatabase.html" data-type="entity-link" >SyncedPouchDatabase</a>
                             </li>
                             <li class="link">
+                                <a href="classes/SyncStalledError.html" data-type="entity-link" >SyncStalledError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/TemplateExport.html" data-type="entity-link" >TemplateExport</a>
                             </li>
                             <li class="link">
