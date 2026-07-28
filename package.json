@@ -113,6 +113,7 @@
     "@typescript-eslint/eslint-plugin": "^8.64.0",
     "@typescript-eslint/parser": "^8.64.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "age-encryption": "^0.3.0",
     "angular-eslint": "^21.4.0",
     "babel-loader": "^10.1.1",
     "commander": "^15.0.0",
