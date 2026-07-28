@@ -93,13 +93,16 @@
       <td>{{ storageInfo() || "No information" }}</td>
     </tr>
     <tr>
-      <td>Persistent storage</td>
+      <td i18n>Persistent storage</td>
       <td>
-        @if (storagePersistent()) {
-          Yes
-        } @else {
-          No
+        `@if` (storagePersistent() === true) {
+          <span i18n>Yes</span>
+        } `@else` if (storagePersistent() === false) {
+          <span i18n>No</span>
+        } `@else` {
+          <span i18n>No information</span>
         }
+      </td>
       </td>
     </tr>
     <tr>
