@@ -5,8 +5,11 @@ import {
   E2E_REF_DATE,
   expect,
   loadApp,
+  readCsvRows,
+  selectFilterOption,
   test,
 } from "#e2e/fixtures.js";
+import type { Entity } from "#src/app/core/entity/model/entity.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
@@ -136,6 +139,29 @@ test("List filter narrows results and clears restore full list", async ({
     page.getByRole("cell", { name: "Tollygunge Child 0" }),
   ).not.toBeVisible();
 
+  // Downloading with the "Current (filtered)" scope exports only the records
+  // left by the filter, not the whole list.
+  await page.locator("button[mat-icon-button][color='primary']").click();
+  await page.getByRole("menuitem", { name: /download/i }).click();
+
+  const exportDialog = page.getByRole("dialog");
+  await expect(
+    exportDialog.getByRole("heading", { name: "Download Data" }),
+  ).toBeVisible();
+  await exportDialog.getByRole("radio", { name: "CSV" }).click();
+  await exportDialog.getByRole("radio", { name: "Current (filtered)" }).click();
+
+  const downloadPromise = page.waitForEvent("download");
+  await exportDialog.getByRole("button", { name: "Download" }).click();
+  const exported = await readCsvRows(await downloadPromise);
+
+  expect(exported).toHaveLength(alipore.length);
+  expect(exported.every((row) => row.includes("Alipore Child"))).toBe(true);
+  expect(exported.some((row) => row.includes("Tollygunge"))).toBe(false);
+
+  // the dialog closes itself once the download has been triggered
+  await expect(exportDialog).not.toBeVisible();
+
   // Clear all filters via the top-level "Clear" button (matTooltip "Clear all filters").
   await page.getByRole("button", { name: "Clear" }).click();
 
@@ -145,6 +171,264 @@ test("List filter narrows results and clears restore full list", async ({
   ).toBeVisible();
   await expect(
     page.getByRole("cell", { name: "Tollygunge Child 0" }),
+  ).toBeVisible();
+});
+
+const MATCHING_SCHOOL_NAME = "Alpha School";
+const OTHER_SCHOOL_NAME = "Beta School";
+
+/** Default page size of the list paginator. */
+const PAGE_SIZE = 10;
+
+/**
+ * Names of the children matching both filters, in alphabetical order.
+ * 14 records so that the filtered result spans two pages.
+ */
+const MATCHING_NAMES = range(1, 15).map(
+  (i) => `Match ${String(i).padStart(2, "0")}`,
+);
+
+/**
+ * A decoy sorting between "Match 12" and "Match 13", i.e. into the middle of
+ * the *second* page of the filtered result. It only matches the School filter,
+ * so it must not show up there — proving filters are applied to the whole
+ * dataset and not just to the records rendered on the current page.
+ */
+const PAGE_TWO_DECOY_NAME = "Match 12 Decoy";
+
+/**
+ * Archived records that match both filters. They sort after every active match,
+ * so switching "Include archived records" on extends the second page.
+ */
+const ARCHIVED_NAMES = ["Match 15 Archived", "Match 16 Archived"];
+
+/**
+ * The only record in the test data with an "Email" value. All other children
+ * leave that field empty, so sorting by Email shows where records without a
+ * value end up.
+ */
+const EMAIL_HOLDER_NAME = "Decoy Center 1";
+
+function createChildForList(opts: {
+  name: string;
+  /** doubles as the entity id; the list sorts by this column initially */
+  projectNumber: string;
+  center: { id: string; label: string };
+  school?: Entity;
+  archived?: boolean;
+  email?: string;
+}) {
+  const child = generateChild({
+    id: opts.projectNumber,
+    name: opts.name,
+    inactive: opts.archived,
+  });
+  assignCenter(child, opts.center);
+  if (opts.school) {
+    child["schoolId"] = opts.school.getId();
+  }
+  if (opts.email) {
+    child["email"] = opts.email;
+  }
+  return child;
+}
+
+test("Combining filters keeps sorting consistent across paginated pages", async ({
+  page,
+}) => {
+  const users = generateUsers();
+  const matchingSchool = createEntityOfType("School", "school-alpha");
+  matchingSchool["name"] = MATCHING_SCHOOL_NAME;
+  const otherSchool = createEntityOfType("School", "school-beta");
+  otherSchool["name"] = OTHER_SCHOOL_NAME;
+
+  // Children matching both filters. Their projectNumber — the column the list
+  // sorts by initially — runs opposite to the alphabetical name order, so
+  // sorting by "Name" has to visibly reorder the rows.
+  const matchingChildren = MATCHING_NAMES.map((name, i) =>
+    createChildForList({
+      name,
+      projectNumber: `M${String(MATCHING_NAMES.length - i).padStart(2, "0")}`,
+      center: CENTER_ALIPORE,
+      school: matchingSchool,
+    }),
+  );
+
+  // Children matching only one of the two filters (or neither). Most of their
+  // names sort before "Match ...", so they would surface on the first page if
+  // either filter were dropped; PAGE_TWO_DECOY_NAME sorts into the second page.
+  const decoyChildren = [
+    createChildForList({
+      name: PAGE_TWO_DECOY_NAME,
+      projectNumber: "DP1",
+      center: CENTER_TOLLYGUNGE,
+      school: matchingSchool,
+    }),
+    ...range(3).map((i) =>
+      createChildForList({
+        name: `Decoy Center ${i}`,
+        projectNumber: `DC${i}`,
+        center: CENTER_ALIPORE,
+        school: otherSchool,
+        email:
+          `Decoy Center ${i}` === EMAIL_HOLDER_NAME
+            ? "decoy@example.com"
+            : undefined,
+      }),
+    ),
+    ...range(3).map((i) =>
+      createChildForList({
+        name: `Decoy School ${i}`,
+        projectNumber: `DS${i}`,
+        center: CENTER_TOLLYGUNGE,
+        school: matchingSchool,
+      }),
+    ),
+    ...range(2).map((i) =>
+      createChildForList({
+        name: `Decoy None ${i}`,
+        projectNumber: `DN${i}`,
+        center: CENTER_TOLLYGUNGE,
+      }),
+    ),
+  ];
+
+  // Archived records match both filters but are hidden until the list's
+  // "Include archived records" toggle is switched on. Their names sort after
+  // all the active matches, so they extend the second page.
+  const archivedChildren = ARCHIVED_NAMES.map((name, i) =>
+    createChildForList({
+      name,
+      projectNumber: `MA${i}`,
+      center: CENTER_ALIPORE,
+      school: matchingSchool,
+      archived: true,
+    }),
+  );
+
+  await loadApp(page, [
+    ...users,
+    matchingSchool,
+    otherSchool,
+    ...matchingChildren,
+    ...decoyChildren,
+    ...archivedChildren,
+  ]);
+
+  await page.getByRole("navigation").getByText("Children").click();
+
+  const nameCells = page.locator("app-entities-table td.mat-column-name");
+  const paginatorRange = page.locator(".mat-mdc-paginator-range-label");
+  const nameHeader = page.getByRole("columnheader", { name: "Name" });
+
+  // All 23 children before filtering.
+  await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 23\s*$/);
+
+  // Combine an enum filter and an entity-reference filter.
+  await selectFilterOption(page, "Center", CENTER_ALIPORE.label);
+  await selectFilterOption(page, "School", MATCHING_SCHOOL_NAME);
+
+  // Only children matching *both* filters remain — spanning two pages.
+  await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 14\s*$/);
+  await expect(nameCells).toHaveCount(PAGE_SIZE);
+
+  // Still in the initial sort order (by project number, i.e. reverse names).
+  await expect(nameCells.first()).toHaveText(MATCHING_NAMES.at(-1));
+
+  // Sort by name, which reorders the filtered result.
+  await nameHeader.click();
+  await expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
+  await expect(nameCells).toHaveText(MATCHING_NAMES.slice(0, PAGE_SIZE));
+
+  await argosScreenshot(page, "children-filtered-sorted-page-1");
+
+  // The second page continues the sorted, filtered result.
+  await page.getByRole("button", { name: "Next page" }).click();
+
+  await expect(paginatorRange).toHaveText(/^\s*11 - 14 of 14\s*$/);
+  await expect(nameCells).toHaveCount(MATCHING_NAMES.length - PAGE_SIZE);
+  await expect(nameCells).toHaveText(MATCHING_NAMES.slice(PAGE_SIZE));
+
+  // The decoy sorting into this page is filtered out, although it was never
+  // rendered on the first page.
+  await expect(
+    page.getByRole("cell", { name: PAGE_TWO_DECOY_NAME, exact: true }),
+  ).toHaveCount(0);
+
+  await argosScreenshot(page, "children-filtered-sorted-page-2");
+
+  // Archived records that match the filters show up only when explicitly
+  // included, and the page we are on recomputes without being left.
+  const archivedToggle = page.getByRole("switch", {
+    name: "Include archived records",
+  });
+  await archivedToggle.click();
+  await expect(paginatorRange).toHaveText(/^\s*11 - 16 of 16\s*$/);
+  await expect(nameCells).toHaveText([
+    ...MATCHING_NAMES.slice(PAGE_SIZE),
+    ...ARCHIVED_NAMES,
+  ]);
+
+  await archivedToggle.click();
+  await expect(paginatorRange).toHaveText(/^\s*11 - 14 of 14\s*$/);
+
+  // Sorting the other way round while on the second page. The list deliberately
+  // keeps the current page index instead of jumping back to the first page.
+  await nameHeader.click();
+  await expect(nameHeader).toHaveAttribute("aria-sort", "descending");
+  await expect(paginatorRange).toHaveText(/^\s*11 - 14 of 14\s*$/);
+  await expect(nameCells).toHaveText(
+    [...MATCHING_NAMES].reverse().slice(PAGE_SIZE),
+  );
+
+  // Narrowing the filter so that the result no longer reaches the current page:
+  // the list falls back to a page that exists rather than showing nothing.
+  await selectFilterOption(page, "School", MATCHING_SCHOOL_NAME);
+  await selectFilterOption(page, "School", OTHER_SCHOOL_NAME);
+
+  await expect(paginatorRange).toHaveText(/^\s*1 - 3 of 3\s*$/);
+  await expect(nameCells).toHaveCount(3);
+
+  // Records without a value for the sorted column go last ascending and first
+  // descending, so both ends of the list are reachable by flipping the sort.
+  const emailHeader = page.getByRole("columnheader", { name: "Email" });
+  await emailHeader.click();
+  await expect(emailHeader).toHaveAttribute("aria-sort", "ascending");
+  await expect(nameCells.first()).toHaveText(EMAIL_HOLDER_NAME);
+
+  await emailHeader.click();
+  await expect(emailHeader).toHaveAttribute("aria-sort", "descending");
+  await expect(nameCells.last()).toHaveText(EMAIL_HOLDER_NAME);
+
+  // NOTE: sorting by a column where all records share the same value (so that
+  // ordering is decided purely by the tie-breaker) is deliberately not asserted
+  // here: descending currently returns the ascending order for tied records,
+  // because the rows are sorted once by the sort store and a second time by the
+  // MatTableDataSource, and `tableSort`'s trailing reverse() cancels itself out
+  // for equal values.
+
+  // Selecting several options within one filter matches any of them.
+  await selectFilterOption(page, "School", OTHER_SCHOOL_NAME);
+  await selectFilterOption(page, "School", MATCHING_SCHOOL_NAME);
+  await selectFilterOption(page, "Center", CENTER_TOLLYGUNGE.label);
+
+  await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 18\s*$/);
+
+  // The "not defined" option matches exactly the records missing that value.
+  await selectFilterOption(page, "Center", CENTER_ALIPORE.label);
+  await selectFilterOption(page, "Center", CENTER_TOLLYGUNGE.label);
+  await selectFilterOption(page, "School", MATCHING_SCHOOL_NAME);
+  await selectFilterOption(page, "School", "not defined");
+
+  await expect(paginatorRange).toHaveText(/^\s*1 - 2 of 2\s*$/);
+  // Both records are tied under the active sort, so only their presence is
+  // asserted — see the note on tied records above.
+  await expect(nameCells).toHaveCount(2);
+  await expect(
+    page.getByRole("cell", { name: "Decoy None 0", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("cell", { name: "Decoy None 1", exact: true }),
   ).toBeVisible();
 });
 

@@ -1,6 +1,12 @@
 import { range } from "lodash-es";
 
-import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
+import {
+  argosScreenshot,
+  expect,
+  loadApp,
+  selectFilterOption,
+  test,
+} from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 
@@ -139,14 +145,51 @@ test("Bulk-merge two records combines them into one", async ({ page }) => {
   await expect(page.getByRole("cell", { name: CHILD_A_NAME })).toBeVisible();
 });
 
+// Center enum values from configurable-enums.json (id: label)
+const CENTER_ALIPORE = { id: "C1", label: "Alipore" };
+const CENTER_TOLLYGUNGE = { id: "C2", label: "Tollygunge" };
+
+/**
+ * 14 children in Alipore, so filtering by that center still leaves two pages
+ * (page size 10). Their names run opposite to their projectNumber — the column
+ * the list sorts by initially — so sorting by "Name" visibly reorders them.
+ */
+const BULK_NAMES = range(1, 15).map(
+  (i) => `Bulk ${String(i).padStart(2, "0")}`,
+);
+
+/** Default page size of the list paginator. */
+const PAGE_SIZE = 10;
+
+function assignCenter(
+  child: ReturnType<typeof generateChild>,
+  center: { id: string; label: string },
+) {
+  (child as unknown as { center: { id: string; label: string } }).center =
+    center;
+}
+
 test.describe("Bulk selection with sorting", () => {
   test.beforeEach(async ({ page }) => {
     // Generate demo data
     const users = generateUsers();
-    const children = range(10).map(() => generateChild());
+    const children = BULK_NAMES.map((name, i) => {
+      const child = generateChild({
+        name,
+        id: `B${String(BULK_NAMES.length - i).padStart(2, "0")}`,
+      });
+      assignCenter(child, CENTER_ALIPORE);
+      return child;
+    });
+    // Records excluded by the Center filter used below.
+    const otherCenterChildren = range(4).map((i) => {
+      const child = generateChild({ name: `Other Center ${i}`, id: `O${i}` });
+      assignCenter(child, CENTER_TOLLYGUNGE);
+      return child;
+    });
 
     // Load the app with demo data
-    await loadApp(page, [...users, ...children]);
+    await loadApp(page, [...users, ...children, ...otherCenterChildren]);
 
     // Navigate to the children list page
     await page.getByRole("navigation").getByText("Children").click();
@@ -218,5 +261,100 @@ test.describe("Bulk selection with sorting", () => {
     }
 
     await argosScreenshot(page, "bulk-selection-range-sorted");
+  });
+
+  test("Bulk selection and editing operate on the filtered, sorted result across pages", async ({
+    page,
+  }) => {
+    const rows = page.locator("app-entities-table tbody tr");
+    const nameCells = page.locator("app-entities-table td.mat-column-name");
+    const paginatorRange = page.locator(".mat-mdc-paginator-range-label");
+    const headerCheckbox = page
+      .locator("app-entities-table mat-checkbox")
+      .first();
+
+    await page.locator("button[mat-icon-button][color='primary']").click();
+    await page
+      .getByRole("menuitem", { name: "bulk actions Bulk Actions" })
+      .click();
+    await expect(headerCheckbox).toBeVisible();
+
+    // Narrow to the 14 Alipore children — still two pages — and sort by name so
+    // the rendered order differs from the order the records were loaded in.
+    await selectFilterOption(page, "Center", CENTER_ALIPORE.label);
+    await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 14\s*$/);
+
+    const nameHeader = page.getByRole("columnheader", { name: "Name" });
+    await nameHeader.click();
+    await expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
+
+    await page.getByRole("button", { name: "Next page" }).click();
+    await expect(nameCells).toHaveText(BULK_NAMES.slice(PAGE_SIZE));
+
+    // Shift-selecting a range on the second page must select the rows as
+    // rendered there, not records taken from an unsorted or first-page window.
+    await rows.nth(0).click();
+    await rows.nth(2).click({ modifiers: ["Shift"] });
+
+    for (const index of [0, 1, 2]) {
+      await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
+    }
+    await expect(rows.nth(3).locator("mat-checkbox input")).not.toBeChecked();
+
+    await argosScreenshot(page, "bulk-selection-filtered-page-2");
+
+    // "Select all" covers the whole filtered result, not just the visible page.
+    await headerCheckbox.click();
+    await expect(rows).toHaveCount(BULK_NAMES.length - PAGE_SIZE);
+    for (let index = 0; index < BULK_NAMES.length - PAGE_SIZE; index++) {
+      await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
+    }
+
+    await page.getByRole("button", { name: "Prev page" }).click();
+    await expect(rows).toHaveCount(PAGE_SIZE);
+    for (let index = 0; index < PAGE_SIZE; index++) {
+      await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
+    }
+
+    // Clear the selection and pick just the first two records of page 2.
+    await headerCheckbox.click();
+    await expect(rows.nth(0).locator("mat-checkbox input")).not.toBeChecked();
+
+    await page.getByRole("button", { name: "Next page" }).click();
+    await rows.nth(0).click();
+    await rows.nth(1).click();
+
+    // Bulk-editing them out of the active filter must update the filtered
+    // result and the paginator while we are on the second page.
+    await page
+      .locator("app-entity-bulk-actions")
+      .locator("input")
+      .first()
+      .click();
+    await page.getByRole("option", { name: "Bulk Edit" }).click();
+
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await dialog
+      .locator("mat-form-field")
+      .filter({ hasText: "Property to update" })
+      .locator("input")
+      .first()
+      .click();
+    await page.getByRole("option", { name: "Center", exact: true }).click();
+
+    // the enum field renders as chips; its dropdown opens via the caret suffix
+    await dialog.locator("#entity-field__center .fa-caret-down").click();
+    await page
+      .getByRole("option", { name: CENTER_TOLLYGUNGE.label, exact: true })
+      .click();
+
+    await dialog.getByRole("button", { name: "Save" }).click();
+    await expect(dialog).not.toBeVisible();
+
+    await expect(paginatorRange).toHaveText(/^\s*11 - 12 of 12\s*$/, {
+      timeout: 10_000,
+    });
+    await expect(nameCells).toHaveText(BULK_NAMES.slice(PAGE_SIZE + 2));
   });
 });
