@@ -2638,9 +2638,9 @@ export class PouchDatabase extends Database {
       newObject._rev &#x3D; existingObject._rev;
       return this.put(newObject);
     } else {
-      existingError.message &#x3D; &#x60;${
-        existingError.message
-      } (unable to resolve) ID: ${JSON.stringify(newObject)}&#x60;;
+      // only include the document&#x27;s ID here: the full document would leak
+      // record contents into logs and fragment Sentry grouping per document
+      existingError.message &#x3D; &#x60;${existingError.message} (unable to resolve) ID: ${newObject._id}&#x60;;
       throw new DatabaseException(existingError);
     }
   }
