@@ -1,7 +1,16 @@
 import { execFileSync } from "child_process";
-import { existsSync, readFileSync } from "fs";
+import {
+  existsSync,
+  readFileSync,
+  realpathSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "fs";
 import { homedir } from "os";
-import { join } from "path";
+import { join, resolve } from "path";
+import { Decrypter, Encrypter } from "age-encryption";
+import { createPromptSession, type PromptSession } from "./prompt.js";
 
 export interface SystemCredentials {
   url: string;
@@ -29,14 +38,25 @@ type RawCredential = {
   category?: string;
 };
 
-/** Files with this suffix are decrypted on the fly with `age` (passphrase-based). */
+/** Files with this suffix are decrypted on the fly with a passphrase (age format). */
 const ENCRYPTED_SUFFIX = ".age";
 
-export function getCredentials(credentialsPath?: string): CredentialsFile {
+/** Suffix of the copy kept when a credentials file is overwritten. */
+const BACKUP_SUFFIX = ".bak";
+
+/**
+ * The passphrase entered for the first `.age` file this process reads or
+ * writes, reused for every later `.age` operation in the same run. Without
+ * this, `credentials merge` would ask for a passphrase to decrypt the target
+ * and then ask again — for a *different* one — to write it back.
+ */
+let sessionPassphrase: string | undefined;
+
+export async function getCredentials(
+  credentialsPath?: string,
+): Promise<CredentialsFile> {
   const path = credentialsPath ?? resolveCredentialsPath();
-  const content = path.endsWith(ENCRYPTED_SUFFIX)
-    ? decryptWithAge(path)
-    : readFileSync(path, "utf-8");
+  const content = await readCredentialsContent(path);
 
   let parsed: unknown;
   try {
@@ -99,32 +119,215 @@ export function getCredentials(credentialsPath?: string): CredentialsFile {
 }
 
 /**
- * Decrypt an age-encrypted credentials file into memory (never to disk).
- * `age` prompts for the passphrase on the terminal; only the decrypted
- * JSON is captured from stdout.
+ * Read a credentials file as raw JSON text, transparently decrypting `.age`
+ * files. Unlike {@link getCredentials} this does no normalisation, so the
+ * result can be edited and written back without baking in resolved urls or
+ * dropping unknown fields.
  */
-function decryptWithAge(path: string): string {
+export async function readCredentialsContent(path: string): Promise<string> {
+  return path.endsWith(ENCRYPTED_SUFFIX)
+    ? decryptWithPassphrase(path)
+    : readFileSync(path, "utf-8");
+}
+
+/**
+ * Write raw credentials JSON back to `path`, encrypting with a passphrase
+ * when the path ends in `.age`. The plaintext is only ever held in memory, so
+ * it never touches the disk.
+ *
+ * By default this reuses {@link sessionPassphrase} — the passphrase this
+ * process already used to decrypt or encrypt a `.age` file — so a `merge`
+ * that reads the target and writes it back only asks once. Pass
+ * `forceNewPassphrase` to rotate it instead, which still asks (with
+ * confirmation) exactly once.
+ *
+ * The new content goes to a temp file that is only renamed into place once
+ * encryption succeeded, and the previous file is kept as `<path>.bak` — a
+ * failed or interrupted write must not cost the only copy of the secrets.
+ */
+export async function writeCredentialsContent(
+  path: string,
+  content: string,
+  options: { forceNewPassphrase?: boolean } = {},
+): Promise<void> {
+  const tmpPath = `${path}.tmp`;
   try {
-    return execFileSync("age", ["--decrypt", path], {
-      encoding: "utf-8",
-      // stdout is captured (the plaintext); stdin/stderr stay attached to the
-      // terminal so age can show its passphrase prompt.
-      stdio: ["inherit", "pipe", "inherit"],
-    });
-  } catch (e: unknown) {
-    if (e instanceof Error && (e as NodeJS.ErrnoException).code === "ENOENT") {
-      throw new Error(
-        `Could not run 'age' to decrypt ${path}. Install it first ` +
-          `(e.g. 'sudo apt install age' or 'brew install age'). See cli/README.md.`,
-      );
+    if (path.endsWith(ENCRYPTED_SUFFIX)) {
+      await encryptWithPassphrase(content, tmpPath, options);
+    } else {
+      writeFileSync(tmpPath, content, { encoding: "utf-8", mode: 0o600 });
     }
-    throw new Error(
-      `Failed to decrypt ${path} with age (wrong passphrase or corrupt file?).`,
-    );
+  } catch (e: unknown) {
+    rmSync(tmpPath, { force: true });
+    throw e;
+  }
+
+  if (existsSync(path)) {
+    renameSync(path, `${path}${BACKUP_SUFFIX}`);
+  }
+  renameSync(tmpPath, path);
+}
+
+/** Path of the backup {@link writeCredentialsContent} leaves behind. */
+export function backupPathFor(path: string): string {
+  return `${path}${BACKUP_SUFFIX}`;
+}
+
+/**
+ * Whether two paths point at the same file, resolving symlinks where possible.
+ * `realpathSync` throws for a path that does not exist yet (a legitimate case
+ * for a merge target on first run), so fall back to plain path resolution.
+ */
+export function isSameFile(a: string, b: string): boolean {
+  return canonicalPath(a) === canonicalPath(b);
+}
+
+function canonicalPath(path: string): string {
+  try {
+    return realpathSync(path);
+  } catch {
+    return resolve(path);
   }
 }
 
-function resolveCredentialsPath(): string {
+/**
+ * Delete a plaintext secrets file, overwriting it first where the platform
+ * offers a tool for it. Falls back to a plain unlink so the file is gone either
+ * way. Returns whether the file is actually gone, so callers do not report a
+ * deletion that did not happen.
+ */
+export function secureDelete(path: string): boolean {
+  const overwriteCommands: [string, string[]][] = [
+    ["shred", ["--remove", path]],
+    ["rm", ["-P", path]], // macOS
+  ];
+  for (const [command, args] of overwriteCommands) {
+    try {
+      execFileSync(command, args, { stdio: "ignore" });
+      return !existsSync(path);
+    } catch {
+      // try the next one
+    }
+  }
+  try {
+    rmSync(path, { force: true });
+  } catch {
+    return false;
+  }
+  return !existsSync(path);
+}
+
+/**
+ * Decrypt an age-passphrase-encrypted credentials file into memory (never to
+ * disk). Reuses {@link sessionPassphrase} when this run already has one —
+ * e.g. a `.age` merge target read after the source file was already asked
+ * about — and caches whatever passphrase actually worked for later writes.
+ */
+async function decryptWithPassphrase(path: string): Promise<string> {
+  const data = readFileSync(path);
+  const passphrase =
+    sessionPassphrase ?? (await askPassphrase("Enter passphrase:"));
+
+  const decrypter = new Decrypter();
+  decrypter.addPassphrase(passphrase);
+  let plaintext: string;
+  try {
+    plaintext = await decrypter.decrypt(data, "text");
+  } catch {
+    throw new Error(
+      `Failed to decrypt ${path} (wrong passphrase or corrupt file?).`,
+    );
+  }
+  sessionPassphrase = passphrase;
+  return plaintext;
+}
+
+/**
+ * Encrypt `content` to `outPath` with a passphrase, reusing
+ * {@link sessionPassphrase} by default (see {@link writeCredentialsContent}).
+ * With no cached passphrase — nothing was decrypted this run, e.g. a
+ * first-time `credentials merge` creating a brand new `.age` file — or with
+ * `forceNewPassphrase`, a fresh one is requested with confirmation.
+ */
+async function encryptWithPassphrase(
+  content: string,
+  outPath: string,
+  options: { forceNewPassphrase?: boolean } = {},
+): Promise<void> {
+  const passphrase =
+    !options.forceNewPassphrase && sessionPassphrase
+      ? sessionPassphrase
+      : await askNewPassphrase();
+
+  const encrypter = new Encrypter();
+  encrypter.setPassphrase(passphrase);
+  const encrypted = await encrypter.encrypt(content);
+  writeFileSync(outPath, encrypted);
+  sessionPassphrase = passphrase;
+}
+
+/**
+ * A prompt session supplied by the caller (e.g. `credentials merge`, which
+ * already has one open for its category/confirm questions), used instead of
+ * an ad hoc one when set. Two separate readline interfaces racing for the
+ * same piped or pasted stdin can each drain more of it than they consume —
+ * one line typed ahead for a *different* prompt then vanishes instead of
+ * answering it — so every prompt in one command run has to share a session.
+ * See {@link setPassphrasePromptSession}.
+ */
+let externalPromptSession: PromptSession | undefined;
+
+/**
+ * Route this module's passphrase prompts through `session` instead of a
+ * throwaway one per call. Pass `undefined` to go back to the default. The
+ * caller keeps owning `session` — this module never closes it.
+ */
+export function setPassphrasePromptSession(
+  session: PromptSession | undefined,
+): void {
+  externalPromptSession = session;
+}
+
+async function withPromptSession<T>(
+  fn: (session: PromptSession) => Promise<T>,
+): Promise<T> {
+  if (externalPromptSession) return fn(externalPromptSession);
+  const session = createPromptSession();
+  try {
+    return await fn(session);
+  } finally {
+    session.close();
+  }
+}
+
+async function askPassphrase(question: string): Promise<string> {
+  const passphrase = await withPromptSession((session) =>
+    session.askHidden(question),
+  );
+  // `askHidden` returns "" both for a blank Enter and for closed/exhausted
+  // stdin (e.g. Ctrl-D, or a script that piped fewer lines than expected) —
+  // treat it as "nothing entered" rather than trying an empty passphrase.
+  if (!passphrase) {
+    throw new Error("No passphrase entered.");
+  }
+  return passphrase;
+}
+
+async function askNewPassphrase(): Promise<string> {
+  return withPromptSession(async (session) => {
+    const first = await session.askHidden("Enter new passphrase:");
+    if (!first) {
+      throw new Error("No passphrase entered — nothing was written.");
+    }
+    const confirm = await session.askHidden("Confirm new passphrase:");
+    if (first !== confirm) {
+      throw new Error("Passphrases did not match — nothing was written.");
+    }
+    return first;
+  });
+}
+
+export function resolveCredentialsPath(): string {
   // Checked in order, first match wins. The default location is `cli/`; the
   // repo root is kept for back-compat; `~/.config/ndb-cli/` is an opt-in
   // out-of-repo location that cannot be committed by accident. Within each
