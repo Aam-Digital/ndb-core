@@ -95,14 +95,13 @@
     <tr>
       <td i18n>Persistent storage</td>
       <td>
-        `@if` (storagePersistent() === true) {
+        @if (storagePersistent() === true) {
           <span i18n>Yes</span>
-        } `@else` if (storagePersistent() === false) {
+        } @else if (storagePersistent() === false) {
           <span i18n>No</span>
-        } `@else` {
+        } @else {
           <span i18n>No information</span>
         }
-      </td>
       </td>
     </tr>
     <tr>

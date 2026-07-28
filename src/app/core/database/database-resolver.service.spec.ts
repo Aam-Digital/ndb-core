@@ -11,8 +11,7 @@ import {
   DbConfig,
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
-import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
-import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
@@ -155,20 +154,27 @@ describe("DatabaseResolverService", () => {
   });
 
   describe("storage persistence", () => {
+    /**
+     * Set up a service instance with a mocked navigator.storage.
+     * This cannot use MockedTestingModule, which replaces the
+     * DatabaseResolverService under test with a stub.
+     */
     function setupWithNavigator(isPersisted: boolean) {
       const storage = {
         persisted: vi.fn().mockResolvedValue(isPersisted),
         persist: vi.fn().mockResolvedValue(true),
         estimate: vi.fn().mockResolvedValue({ usage: 1, quota: 2 }),
-      };
+      } as unknown as StorageManager;
 
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
-        imports: [MockedTestingModule.withState()],
         providers: [
           { provide: DatabaseFactoryService, useValue: factory },
           { provide: IndexeddbMigrationService, useValue: migrationServiceSpy },
-          { provide: NAVIGATOR_TOKEN, useValue: { storage } },
+          {
+            provide: NAVIGATOR_TOKEN,
+            useValue: { storage } as Partial<Navigator>,
+          },
         ],
       });
       const svc = TestBed.inject(DatabaseResolverService);
@@ -178,16 +184,37 @@ describe("DatabaseResolverService", () => {
       return { svc, storage };
     }
 
+    const testSession = {
+      name: "test-user",
+      id: "test-uuid",
+      roles: [],
+    } as SessionInfo;
+
+    /**
+     * The storage check is intentionally not awaited during session init
+     * (in Firefox persist() can prompt the user and must not block login),
+     * so drain the pending microtasks before asserting on it.
+     */
+    const flushStorageCheck = () =>
+      new Promise((resolve) => setTimeout(resolve));
+
     it("should request persistent storage if not already persisted", async () => {
       const { svc, storage } = setupWithNavigator(false);
 
-      await svc.initDatabasesForSession({
-        name: "test-user",
-        id: "test-uuid",
-        roles: [],
-      } as SessionInfo);
+      await svc.initDatabasesForSession(testSession);
+      await flushStorageCheck();
 
       expect(storage.persist).toHaveBeenCalled();
+    });
+
+    it("should not request persistent storage if already persisted", async () => {
+      const { svc, storage } = setupWithNavigator(true);
+
+      await svc.initDatabasesForSession(testSession);
+      await flushStorageCheck();
+
+      expect(storage.persisted).toHaveBeenCalled();
+      expect(storage.persist).not.toHaveBeenCalled();
     });
   });
 });
