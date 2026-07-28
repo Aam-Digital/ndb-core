@@ -21,6 +21,16 @@
   text-align: center;
 }
 
+// give each row vertical breathing room so a stacked condition chip
+// does not sit flush against the row divider, and top-align every cell
+// so the checkboxes line up across columns even when one column is taller
+// (a condition chip / "only where…" affordance stacked under its checkbox)
+td.mat-mdc-cell {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  vertical-align: top;
+}
+
 // visually separate the manage wildcard column from the individual actions
 .manage-col {
   border-left: 1px solid colors.$grey-transparent;
@@ -59,7 +69,7 @@
   align-items: center;
   gap: 4px;
   max-width: 140px;
-  padding: 1px 6px;
+  padding: 3px 8px;
   border-radius: 10px;
   font-size: 11px;
   background-color: colors.$background-secondary;
@@ -94,6 +104,13 @@
   &:hover {
     opacity: 1;
   }
+}
+
+// internal/system entity types are greyed out via the global "text-secondary"
+// class; only the small lock icon needs a local size tweak
+.internal-type-icon {
+  font-size: 11px;
+  opacity: 0.7;
 }
 
 .wildcard-badge {

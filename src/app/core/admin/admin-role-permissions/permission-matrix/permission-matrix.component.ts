@@ -95,6 +95,7 @@ export class PermissionMatrixComponent {
       row,
       label: this.subjectLabel(row.subject),
       icon: this.subjectIcon(row.subject),
+      isInternal: this.isInternalSubject(row.subject),
       conditionsEditable: this.canHaveConditions(row.subject),
       // "manage" grants every action, so the individual actions are shown as
       // covered (checked, not individually editable) when it is set
@@ -159,15 +160,40 @@ export class PermissionMatrixComponent {
       return $localize`All record types`;
     }
     if (this.entityRegistry.has(subject)) {
-      return this.entityRegistry.get(subject).label ?? subject;
+      // internal types have no user-facing label; prettify their raw key
+      // (e.g. "ConfigurableEnum" -> "Configurable Enum") so it stays readable
+      return (
+        this.entityRegistry.get(subject).label ?? this.prettifyKey(subject)
+      );
     }
     return subject;
+  }
+
+  private prettifyKey(key: string): string {
+    return key
+      .replace(/[_-]+/g, " ")
+      .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   private subjectIcon(subject: string): string | undefined {
     return this.entityRegistry.has(subject)
       ? this.entityRegistry.get(subject).icon
       : undefined;
+  }
+
+  /**
+   * Internal/system entity types are only defined in code to store system data
+   * and are not meant for user customization (they carry no user-facing label).
+   * They are shown greyed out to signal that permissions on them are advanced.
+   */
+  private isInternalSubject(subject: string): boolean {
+    if (subject === "all" || !this.entityRegistry.has(subject)) {
+      return false;
+    }
+    const type = this.entityRegistry.get(subject);
+    return !!type.isInternalEntity || !type.label;
   }
 
   setCellAllowed(

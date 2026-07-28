@@ -27,7 +27,7 @@ describe("AdminRolesListComponent", () => {
     mockRolePermissions.savePermissionsConfig.mockResolvedValue(undefined);
     mockRolePermissions.loadRoles.mockResolvedValue([
       {
-        name: "default",
+        name: "_default",
         isVirtual: true,
         description: "Base permissions",
         rules: [
@@ -62,7 +62,7 @@ describe("AdminRolesListComponent", () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent;
-    expect(text).toContain("default");
+    expect(text).toContain("_default");
     expect(text).toContain("2 rules");
     expect(text).toContain("volunteer");
     expect(text).toContain("No permissions defined");

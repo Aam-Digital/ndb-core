@@ -4,11 +4,6 @@
   </div>
 
   <div class="flex-row gap-small align-center">
-    <button mat-stroked-button color="accent" (click)="editJson()">
-      <fa-icon icon="wrench" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Edit JSON</span>
-    </button>
-
     <span
       [matTooltip]="addDisabledTooltip"
       [matTooltipDisabled]="canManageRoles"
@@ -24,6 +19,21 @@
         <span i18n>Add New Role</span>
       </button>
     </span>
+
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="moreMenu"
+      i18n-aria-label
+      aria-label="More options"
+    >
+      <fa-icon icon="ellipsis-vertical"></fa-icon>
+    </button>
+    <mat-menu #moreMenu="matMenu">
+      <button mat-menu-item (click)="editJson()">
+        <fa-icon icon="wrench" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Edit JSON</span>
+      </button>
+    </mat-menu>
   </div>
 </div>
 
@@ -54,11 +64,11 @@
               other {{{ role.rules.length }} rules}
             }
           </span>
-        } @else if (role.name === "public") {
+        } @else if (role.name === publicRole) {
           <span class="text-secondary" i18n>No permissions defined</span>
         } @else {
           <span class="text-secondary" i18n>
-            No permissions defined, falls back to "default"
+            No permissions defined, falls back to "_default"
           </span>
         }
       </td>

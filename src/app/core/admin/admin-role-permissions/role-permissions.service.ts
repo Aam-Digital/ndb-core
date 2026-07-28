@@ -15,6 +15,18 @@ import { Role } from "../../user/user-admin-service/user-account";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 
 /**
+ * Reserved permission rules that apply to every logged-in user, combined with
+ * their assigned roles. Stored under this key in the Config:Permissions document.
+ */
+export const DEFAULT_ROLE = "_default";
+
+/**
+ * Reserved permission rules that apply before login (e.g. public forms).
+ * Stored under this key in the Config:Permissions document.
+ */
+export const PUBLIC_ROLE = "_public";
+
+/**
  * A user role and its configured permission rules,
  * merged from the Config:Permissions document and the authentication server (Keycloak).
  */
@@ -24,7 +36,7 @@ export interface RoleWithPermissions {
   description?: string;
 
   /**
-   * Virtual roles ("default", "public") only exist in the permissions config
+   * Virtual roles ("_default", "_public") only exist in the permissions config
    * and have no matching realm role in the authentication server.
    */
   isVirtual: boolean;
@@ -34,7 +46,7 @@ export interface RoleWithPermissions {
   /**
    * The permission rules configured for this role.
    * undefined if the role has no entry in the permissions config yet
-   * (in which case only the "default" rules apply to its users).
+   * (in which case only the "_default" rules apply to its users).
    */
   rules?: DatabaseRule[];
 }
@@ -58,7 +70,7 @@ export class RolePermissionsService {
 
   /**
    * All roles, merged from permissions config keys and realm roles:
-   * always starting with the virtual "default" and "public" roles,
+   * always starting with the virtual "_default" and "_public" roles,
    * followed by all other config keys and remaining realm roles.
    */
   async loadRoles(): Promise<RoleWithPermissions[]> {
@@ -70,21 +82,21 @@ export class RolePermissionsService {
 
     const roles: RoleWithPermissions[] = [
       {
-        name: "default",
+        name: DEFAULT_ROLE,
         isVirtual: true,
         description: $localize`Base permissions that apply to every logged-in user, combined with their other roles`,
-        rules: rules.default,
+        rules: rules[DEFAULT_ROLE],
       },
       {
-        name: "public",
+        name: PUBLIC_ROLE,
         isVirtual: true,
         description: $localize`Permissions that apply before login (e.g. public registration forms)`,
-        rules: rules.public,
+        rules: rules[PUBLIC_ROLE],
       },
     ];
 
     for (const key of Object.keys(rules)) {
-      if (key === "default" || key === "public") continue;
+      if (key === DEFAULT_ROLE || key === PUBLIC_ROLE) continue;
       const keycloakRole = keycloakRoles.find((r) => r.name === key);
       roles.push({
         name: key,

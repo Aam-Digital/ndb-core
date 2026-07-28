@@ -7,6 +7,7 @@ import {
   signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
 import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -18,6 +19,7 @@ import { ViewTitleComponent } from "../../../common-components/view-title/view-t
 import { Logging } from "../../../logging/logging.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
 import {
+  PUBLIC_ROLE,
   RolePermissionsService,
   RoleWithPermissions,
 } from "../role-permissions.service";
@@ -34,6 +36,7 @@ import {
     MatTableModule,
     MatPaginatorModule,
     MatButtonModule,
+    MatMenuModule,
     MatTooltipModule,
     FaIconComponent,
     RouterLink,
@@ -57,6 +60,8 @@ export class AdminRolesListComponent implements OnInit {
   });
 
   readonly displayedColumns = ["name", "description", "permissions"];
+
+  readonly publicRole = PUBLIC_ROLE;
 
   /** whether the user may create/delete roles in the authentication server */
   readonly canManageRoles = this.rolePermissionsService.canManageRoles();

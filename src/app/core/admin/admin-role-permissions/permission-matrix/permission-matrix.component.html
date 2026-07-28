@@ -29,11 +29,22 @@
               </div>
             </div>
           } @else {
-            <div class="flex-row align-center gap-small">
+            <div
+              class="flex-row align-center gap-small"
+              [class.text-secondary]="v.isInternal"
+            >
               @if (v.icon) {
                 <app-fa-dynamic-icon [icon]="v.icon"></app-fa-dynamic-icon>
               }
               <span>{{ v.label }}</span>
+              @if (v.isInternal) {
+                <fa-icon
+                  icon="lock"
+                  class="internal-type-icon"
+                  i18n-matTooltip
+                  matTooltip="Internal system type, not meant for regular customization"
+                ></fa-icon>
+              }
             </div>
           }
         </td>
@@ -149,7 +160,7 @@
       } @else {
         <span i18n>
           No permissions defined for this role yet. Users with this role only
-          have the permissions of the "default" role.
+          have the permissions of the "_default" role.
         </span>
       }
     </div>

@@ -47,10 +47,10 @@ describe("RolePermissionsService", () => {
     service = TestBed.inject(RolePermissionsService);
   });
 
-  it("merges config role keys with keycloak roles and marks default/public as virtual", async () => {
+  it("merges config role keys with keycloak roles and marks _default/_public as virtual", async () => {
     mockEntityMapper.load.mockResolvedValue(
       new Config(Config.PERMISSION_KEY, {
-        default: [{ subject: "Child", action: "read" }],
+        _default: [{ subject: "Child", action: "read" }],
         user_app: [{ subject: "all", action: "manage" }],
       }),
     );
@@ -64,13 +64,13 @@ describe("RolePermissionsService", () => {
     const roles = await service.loadRoles();
 
     expect(roles.map((r) => r.name)).toEqual([
-      "default",
-      "public",
+      "_default",
+      "_public",
       "user_app",
       "volunteer",
     ]);
-    expect(roles.find((r) => r.name === "default").isVirtual).toBe(true);
-    expect(roles.find((r) => r.name === "public").isVirtual).toBe(true);
+    expect(roles.find((r) => r.name === "_default").isVirtual).toBe(true);
+    expect(roles.find((r) => r.name === "_public").isVirtual).toBe(true);
     expect(roles.find((r) => r.name === "user_app").isVirtual).toBe(false);
     expect(roles.find((r) => r.name === "volunteer").rules).toBeUndefined();
     expect(roles.find((r) => r.name === "user_app").description).toBe(
@@ -81,7 +81,7 @@ describe("RolePermissionsService", () => {
     ]);
   });
 
-  it("returns default and public even when Config:Permissions does not exist and still lists keycloak roles", async () => {
+  it("returns _default and _public even when Config:Permissions does not exist and still lists keycloak roles", async () => {
     mockEntityMapper.load.mockRejectedValue({ status: 404 });
     mockUserAdmin.getAllRoles.mockReturnValue(
       of([{ id: "2", name: "volunteer" }]),
@@ -90,8 +90,8 @@ describe("RolePermissionsService", () => {
     const roles = await service.loadRoles();
 
     expect(roles.map((r) => r.name)).toEqual([
-      "default",
-      "public",
+      "_default",
+      "_public",
       "volunteer",
     ]);
   });

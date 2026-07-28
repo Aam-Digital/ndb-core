@@ -6,6 +6,7 @@ import { of } from "rxjs";
 
 import { PermissionMatrixComponent } from "./permission-matrix.component";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { Entity } from "../../../entity/model/entity";
 import { MatrixModel } from "../permission-matrix";
 
 describe("PermissionMatrixComponent", () => {
@@ -28,12 +29,14 @@ describe("PermissionMatrixComponent", () => {
 
   const mockDialog = { open: vi.fn() };
 
+  const entityRegistry = new EntityRegistry();
+
   beforeEach(async () => {
     vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [PermissionMatrixComponent],
       providers: [
-        { provide: EntityRegistry, useValue: new EntityRegistry() },
+        { provide: EntityRegistry, useValue: entityRegistry },
         { provide: MatDialog, useValue: mockDialog },
       ],
     }).compileComponents();
@@ -191,6 +194,28 @@ describe("PermissionMatrixComponent", () => {
     mockDialog.open.mockReturnValue({ afterClosed: () => of("") });
     component.openConditionDialog(0, "read");
     expect(emitted.length).toBe(2);
+  });
+
+  it("greys out internal system types and shows their key as a readable label", () => {
+    class ConfigurableEnum extends Entity {
+      static override isInternalEntity = true;
+    }
+    entityRegistry.add("ConfigurableEnum", ConfigurableEnum);
+
+    fixture.componentRef.setInput("model", {
+      rows: [
+        { subject: "ConfigurableEnum", cells: { read: { allowed: true } } },
+      ],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.detectChanges();
+
+    // internal types are greyed via the global "text-secondary" class and
+    // carry the lock icon; their raw key is prettified to a readable label
+    const subjectCell = fixture.nativeElement.querySelector(".text-secondary");
+    expect(subjectCell).not.toBeNull();
+    expect(subjectCell.querySelector(".internal-type-icon")).not.toBeNull();
+    expect(subjectCell.textContent).toContain("Configurable Enum");
   });
 
   it("shows a hint when unsupported advanced rules exist", () => {
