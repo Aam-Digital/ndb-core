@@ -90,7 +90,17 @@
     </tr>
     <tr>
       <td>Storage usage</td>
-      <td>{{ storageInfo || "No information" }}</td>
+      <td>{{ storageInfo() || "No information" }}</td>
+    </tr>
+    <tr>
+      <td>Persistent storage</td>
+      <td>
+        @if (storagePersistent()) {
+          Yes
+        } @else {
+          No
+        }
+      </td>
     </tr>
     <tr>
       <td>Database documents</td>
