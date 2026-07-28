@@ -360,7 +360,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
         {
           db: this.dbName,
           count: lostPermissionIds.length,
-          ids: lostPermissionIds,
         },
       );
     }

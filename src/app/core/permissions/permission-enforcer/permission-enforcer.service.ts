@@ -164,14 +164,14 @@ export class PermissionEnforcerService {
   ): Promise<void> {
     // wait for config service to be ready before using the entity mapper
     await firstValueFrom(this.configService.configUpdates);
-    const purgedIds: string[] = [];
+    let purgedCount = 0;
     for (const subject of subjects) {
       const entities = await this.entityMapper.loadType(subject);
       for (const entity of entities) {
         if (this.ability.cannot("read", entity)) {
           try {
             await this.dbResolver.getDatabase().purge(entity.getId());
-            purgedIds.push(entity.getId());
+            purgedCount++;
             Logging.debug(
               `Purged locally inaccessible entity: ${entity.getId()}`,
             );
@@ -182,11 +182,11 @@ export class PermissionEnforcerService {
       }
     }
 
-    if (purgedIds.length > 0) {
+    if (purgedCount > 0) {
       // deleting local data based on changed permission rules - log for traceability of possible data loss
       Logging.warn(
         "Purged local entities that current permission rules deny reading",
-        { count: purgedIds.length, ids: purgedIds },
+        { count: purgedCount },
       );
     }
   }
