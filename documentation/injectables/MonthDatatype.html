@@ -239,6 +239,10 @@ Uses the import value mapping properties of the general DateDatatype.</p>
                                 <a href="#getExportColumns" >getExportColumns</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#importMatchField" >importMatchField</a>
+                            </li>
+                            <li>
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
                             </li>
                             <li>
@@ -792,7 +796,7 @@ Uses the import value mapping properties of the general DateDatatype.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:232</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:331</a></code>
 </div>
                         </td>
                     </tr>
@@ -851,6 +855,128 @@ can add a human-readable name column alongside the ID column).</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="importMatchField"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>importMatchField</b></span>
+                        <a href="#importMatchField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>importMatchField(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, columns: <a href="../interfaces/ColumnImportInput.html" target="_self">ColumnImportInput[]</a>, importProcessingContext?: <a href="../classes/ImportProcessingContext.html" target="_self">ImportProcessingContext</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:223</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Map all columns mapped to one target field to the value(s) stored there.</p>
+<p>ImportService calls this once per target field per row with every column
+mapped to that field. The default handles trimming and array splitting and
+delegates each individual value to <a href="importMapFunction">importMapFunction</a>. Datatypes that
+need to consider several columns together (e.g. matching an entity by more
+than one property) override this.</p>
+<p>  (isArray=true), or undefined if nothing was mapped</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the target property the value(s) are imported into</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>columns</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ColumnImportInput.html" target="_self" >ColumnImportInput[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>every column mapped to this field, with its raw cell value</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>importProcessingContext</td>
+                                            <td>
+                                                            <code><a href="../classes/ImportProcessingContext.html" target="_self" >ImportProcessingContext</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>shared context across columns and rows</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;unknown&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the value to store: a single value (isArray=false) or array
+(isArray=true), or undefined if nothing was mapped</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="normalizeSchemaField"></a>
                     <span class="name">
                         <span ><b>normalizeSchemaField</b></span>
@@ -873,7 +999,7 @@ can add a human-readable name column alongside the ID column).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:217</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:316</a></code>
 </div>
                         </td>
                     </tr>
@@ -958,7 +1084,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:253</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
 </div>
                         </td>
                     </tr>
@@ -1244,7 +1370,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:122</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:134</a></code>
 </div>
                         </td>
                     </tr>

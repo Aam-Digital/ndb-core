@@ -2316,6 +2316,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ColumnGroupsConfig.html" data-type="entity-link" >ColumnGroupsConfig</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/ColumnImportInput.html" data-type="entity-link" >ColumnImportInput</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/ColumnMapping.html" data-type="entity-link" >ColumnMapping</a>
                             </li>
                             <li class="link">
@@ -2452,6 +2455,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityListConfig.html" data-type="entity-link" >EntityListConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EntityMatchCriterion.html" data-type="entity-link" >EntityMatchCriterion</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityMenuItem.html" data-type="entity-link" >EntityMenuItem</a>

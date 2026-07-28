@@ -323,6 +323,18 @@ Use an empty string for the primary/default column.</p>
 import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
 import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
+import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
+import type { ColumnMapping } from &quot;../../import/column-mapping&quot;;
+import type { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
+
+/**
+ * A single column mapped to a target field during import, with the raw cell
+ * value from the current row.
+ */
+export interface ColumnImportInput {
+  mapping: ColumnMapping;
+  rawCell: unknown;
+}
 
 /**
  * Definition of an export column contributed by a datatype.
@@ -495,6 +507,93 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
     importProcessingContext?: any,
   ): Promise&lt;EntityType&gt; {
     return this.transformToObjectFormat(val, schemaField);
+  }
+
+  /**
+   * Map all columns mapped to one target field to the value(s) stored there.
+   *
+   * ImportService calls this once per target field per row with every column
+   * mapped to that field. The default handles trimming and array splitting and
+   * delegates each individual value to {@link importMapFunction}. Datatypes that
+   * need to consider several columns together (e.g. matching an entity by more
+   * than one property) override this.
+   *
+   * @param schemaField the target property the value(s) are imported into
+   * @param columns every column mapped to this field, with its raw cell value
+   * @param importProcessingContext shared context across columns and rows
+   * @returns the value to store: a single value (isArray&#x3D;false) or array
+   *   (isArray&#x3D;true), or undefined if nothing was mapped
+   */
+  async importMatchField(
+    schemaField: EntitySchemaField,
+    columns: ColumnImportInput[],
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise&lt;unknown&gt; {
+    let value: unknown;
+    // if several columns map to the same field, the last one with a value wins
+    for (const column of columns) {
+      const mapped &#x3D; await this.mapColumnValue(
+        schemaField,
+        column,
+        importProcessingContext,
+      );
+      if (mapped !&#x3D;&#x3D; undefined) {
+        value &#x3D; mapped;
+      }
+    }
+    return value;
+  }
+
+  /**
+   * Map a single column&#x27;s raw cell to this field&#x27;s value: trim and (for array
+   * fields) split the cell, then delegate each value to {@link importMapFunction}.
+   */
+  private async mapColumnValue(
+    schemaField: EntitySchemaField,
+    { mapping, rawCell }: ColumnImportInput,
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise&lt;unknown&gt; {
+    if (rawCell &#x3D;&#x3D;&#x3D; undefined || rawCell &#x3D;&#x3D;&#x3D; null) {
+      return undefined;
+    }
+    const additionalSettings &#x3D;
+      importProcessingContext?.importSettings?.additionalSettings;
+
+    let val: unknown &#x3D; rawCell;
+    const shouldTrim &#x3D;
+      typeof val &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
+      schemaField.trim !&#x3D;&#x3D; false &amp;&amp;
+      additionalSettings?.trimValues !&#x3D;&#x3D; false;
+    if (shouldTrim) {
+      val &#x3D; (val as string).trim();
+    }
+
+    const shouldSplit &#x3D;
+      schemaField.isArray &amp;&amp; (mapping.additional?.enableSplitting ?? true);
+    if (!shouldSplit) {
+      return this.importMapFunction(
+        val,
+        schemaField,
+        mapping.additional,
+        importProcessingContext,
+      );
+    }
+
+    // split the cell and map each item individually
+    const separator &#x3D; additionalSettings?.multiValueSeparator ?? &quot;,&quot;;
+    const mapped: unknown[] &#x3D; [];
+    for (const rawValue of splitArrayValue(val, separator)) {
+      const item &#x3D; await this.importMapFunction(
+        rawValue,
+        { ...schemaField, isArray: false },
+        mapping.additional,
+        importProcessingContext,
+      );
+      if (item !&#x3D;&#x3D; undefined &amp;&amp; item !&#x3D;&#x3D; null &amp;&amp; item !&#x3D;&#x3D; &quot;&quot;) {
+        mapped.push(item);
+      }
+    }
+    return [...new Set(mapped)];
   }
 
   /**

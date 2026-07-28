@@ -176,9 +176,6 @@
                                 <li>
                                     <a href="#refEntityCtor" >refEntityCtor</a>
                                 </li>
-                                <li>
-                                    <a href="#filteredEntities" >filteredEntities</a>
-                                </li>
                             </ul>
                         </td>
                     </tr>
@@ -197,7 +194,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="312" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:312</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="376" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:376</a></div>
                             </td>
                         </tr>
 
@@ -274,7 +271,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="328" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:328</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="385" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:385</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -296,7 +293,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="332" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:332</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="389" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:389</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -352,7 +349,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="339" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:339</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="396" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:396</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -374,7 +371,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="343" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:343</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="400" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:400</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -414,85 +411,6 @@
                     </tr>
             </tbody>
         </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="filteredEntities"></a>
-                        <span class="name"><b>filteredEntities</b><a href="#filteredEntities"><span class="icon ion-ios-link"></span></a></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>get</b><code>filteredEntities()</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="351" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:351</a></div>
-                                </td>
-                            </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-description"><p>Entities already filter by any other column conditions
-(in database format for easier comparison!)</p>
-</div>
-
-                                <div class="io-description">
-                                    <b>Returns : </b>    <code>any[]</code>
-
-                                </div>
-                        </td>
-                    </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>set</b><code>filteredEntities(value: any[])</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="359" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:359</a></div>
-                                </td>
-                            </tr>
-                    <tr>
-                        <td class="col-md-4">
-
-                                <div class="io-description">
-                                        <b>Parameters :</b>
-                                        <table class="params">
-                                            <thead>
-                                                <tr>
-                                                    <td>Name</td>
-                                                        <td>Type</td>
-                                                    <td>Optional</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                    <tr>
-                                                            <td>value</td>
-                                                    
-                                                            <td>
-                                                                        <code>any[]</code>
-                                                            </td>
-                                                    
-                                                        <td>
-                                                                No
-                                                        </td>
-                                                        
-                                                    </tr>
-                                            </tbody>
-                                        </table>
-                                </div>
-                                <div class="io-description">
-                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                                </div>
-                        </td>
-                    </tr>
-            </tbody>
-        </table>
 </section>
     </div>
 
@@ -505,9 +423,14 @@ import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapp
 import { EntityActionsService } from &quot;../../entity/entity-actions/entity-actions.service&quot;;
 import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
+import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
+import { ColumnMapping } from &quot;../../import/column-mapping&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
-import { ExportColumnMapping } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import {
+  ColumnImportInput,
+  ExportColumnMapping,
+} from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
 
 /**
@@ -555,73 +478,140 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Maps a value from an import to an actual entity in the database.
+   * Matches an import row to actual entities in the database
+   * (per-field entry point, see DefaultDatatype.importMatchField).
    *
-   * Finds all column mappings targeting this field, resolves each column&#x27;s comparison value
-   * (applying any configured value mapping), and progressively filters candidate entities
-   * until a unique match is found.
+   * Splits every mapped column&#x27;s cell into individual values, resolves any
+   * per-column value mapping, then searches candidate entities for each
+   * combination of one value per column:
    *
-   * @param val The value from an import that should be mapped to an entity reference.
-   * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
-   * @param additional The field of the referenced entity that should be compared with the val.
-   *   Can be a plain string (legacy) or an object &#x60;{ refField: string, valueMapping?: any }&#x60;.
-   * @param importProcessingContext context to share information across calls for multiple columns and rows.
-   * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
+   * Case target field isArray&#x3D;&#x3D;&#x3D;false:
+   * simple:
+   *  IMPORT: { x: &quot;x1&quot;, y: &quot;y1&quot; }
+   *  --&gt; matches { x: &quot;x1&quot;, y: &quot;y1&quot; } (if there is a single unique match)
+   * complex, multi-value import:
+   *  IMPORT: { x: &quot;x1,x2&quot;, y: &quot;y1,y2&quot; }
+   *  --&gt; matches { x1, y1 } OR { x2, y2 } OR { x1, y2 } OR { x2, y1 } (if there is a single combination that matches)
+   *
+   * Case target field isArray&#x3D;&#x3D;&#x3D;true:
+   * simple:
+   *  IMPORT: { x: &quot;x1&quot;, y: &quot;y1&quot; }
+   *  --&gt; matches every record with { x: &quot;x1&quot;, y: &quot;y1&quot; }
+   * complex, multi-value import:
+   *  IMPORT: { x: &quot;x1,x2&quot;, y: &quot;y1,y2&quot; }
+   *  --&gt; matches every record for any combination { x1, y1 }, { x2, y2 }, { x1, y2 }, { x2, y1 }
+   *
+   * @param schemaField the target field the value(s) are imported into
+   * @param columns every column mapped to this field, with its raw cell value
+   * @param importProcessingContext context shared across columns and rows
+   * @returns the id of the single match (isArray&#x3D;false) or the deduped ids of
+   *   all matches (isArray&#x3D;true), or undefined / [] if nothing matched
    */
-  override async importMapFunction(
-    val: any,
+  override async importMatchField(
     schemaField: EntitySchemaField,
-    additional: string | EntityAdditional,
+    columns: ColumnImportInput[],
     importProcessingContext: ImportProcessingContext,
-  ): Promise&lt;string | undefined&gt; {
-    const fieldConfig &#x3D; normalizeEntityAdditional(additional);
-    if (!fieldConfig?.refField || val &#x3D;&#x3D; null) {
-      return undefined;
-    }
-
+  ): Promise&lt;string | string[] | undefined&gt; {
     const context &#x3D; new EntityFieldImportContext(
       importProcessingContext,
       schemaField,
     );
-
     await this.loadImportMapEntities(schemaField.additional, context);
+    const candidates &#x3D; context.entities ?? [];
 
-    const columnMappings &#x3D; this.getColumnMappingsForField(
-      schemaField.id,
+    const criteria &#x3D; await this.buildMatchCriteria(
+      columns,
+      context,
       importProcessingContext,
     );
-
-    for (const mapping of columnMappings) {
-      const mappingConfig &#x3D; normalizeEntityAdditional(mapping.additional);
-      const rawValue &#x3D; importProcessingContext.row[mapping.column];
-
-      const expectedValue &#x3D; await this.resolveColumnValue(
-        rawValue,
-        mappingConfig?.refField,
-        mappingConfig?.valueMapping,
-        context,
-        importProcessingContext,
-      );
-
-      context.filteredEntities &#x3D; context.filteredEntities.filter(
-        (entity) &#x3D;&gt;
-          normalizeValue(entity[mappingConfig?.refField]) &#x3D;&#x3D;&#x3D; expectedValue,
-      );
+    if (criteria.length &#x3D;&#x3D;&#x3D; 0) {
+      return schemaField.isArray ? [] : undefined;
     }
 
-    return this.pickSingleMatch(context.filteredEntities);
+    // A candidate matches when, for every mapped column, its referenced field
+    // value is one of that column&#x27;s (possibly multiple) values. A mapped column
+    // with no value yields an empty list that matches nothing, so an incomplete
+    // row cannot match.
+    const matchedIds &#x3D; candidates
+      .filter((entity) &#x3D;&gt;
+        criteria.every((criterion) &#x3D;&gt;
+          criterion.values.includes(normalizeValue(entity[criterion.refField])),
+        ),
+      )
+      .map((entity) &#x3D;&gt; entity._id);
+    const uniqueIds &#x3D; [...new Set(matchedIds)];
+
+    if (schemaField.isArray) {
+      return uniqueIds;
+    }
+    if (uniqueIds.length &#x3D;&#x3D;&#x3D; 1) {
+      return uniqueIds[0];
+    }
+    if (uniqueIds.length &gt; 1) {
+      Logging.debug(
+        &quot;No unique match found in EntityDatatype importMatchField&quot;,
+        uniqueIds.length,
+      );
+    }
+    return undefined;
   }
 
   /**
-   * Returns all column mappings that target the given field.
+   * Build one match criterion per mapped column: the referenced field to
+   * compare and the acceptable (normalized) values parsed from the column cell.
    */
-  private getColumnMappingsForField(
-    fieldId: string,
+  private async buildMatchCriteria(
+    columns: ColumnImportInput[],
+    context: EntityFieldImportContext,
     importProcessingContext: ImportProcessingContext,
-  ) {
-    return importProcessingContext.importSettings.columnMapping.filter(
-      (m) &#x3D;&gt; m.propertyName &#x3D;&#x3D;&#x3D; fieldId,
-    );
+  ): Promise&lt;EntityMatchCriterion[]&gt; {
+    const separator &#x3D;
+      importProcessingContext.importSettings.additionalSettings
+        ?.multiValueSeparator ?? &quot;,&quot;;
+
+    const criteria: EntityMatchCriterion[] &#x3D; [];
+    for (const { mapping, rawCell } of columns) {
+      const config &#x3D; normalizeEntityAdditional(mapping.additional);
+      if (!config?.refField) {
+        // column not usable as an identifier for this field
+        continue;
+      }
+
+      const values: string[] &#x3D; [];
+      for (const rawValue of this.splitCellValues(
+        rawCell,
+        mapping,
+        separator,
+      )) {
+        values.push(
+          await this.resolveColumnValue(
+            rawValue,
+            config.refField,
+            config.valueMapping,
+            context,
+            importProcessingContext,
+          ),
+        );
+      }
+      criteria.push({ refField: config.refField, values });
+    }
+    return criteria;
+  }
+
+  /**
+   * Split a raw cell into the individual values to match, honoring the column&#x27;s
+   * enableSplitting flag.
+   */
+  private splitCellValues(
+    rawCell: unknown,
+    mapping: ColumnMapping,
+    separator: string,
+  ): unknown[] {
+    if (rawCell &#x3D;&#x3D;&#x3D; undefined || rawCell &#x3D;&#x3D;&#x3D; null) {
+      return [];
+    }
+    const enableSplitting &#x3D; mapping.additional?.enableSplitting ?? true;
+    return enableSplitting ? splitArrayValue(rawCell, separator) : [rawCell];
   }
 
   /**
@@ -659,22 +649,6 @@ export class EntityDatatype extends StringDatatype {
       refFieldSchema,
     );
     return normalizeValue(dbFormat);
-  }
-
-  /**
-   * Returns the entity ID if exactly one candidate remains, otherwise undefined.
-   */
-  private pickSingleMatch(candidates: any[]): string | undefined {
-    if (candidates.length &#x3D;&#x3D;&#x3D; 1) {
-      return candidates[0]._id;
-    }
-    if (candidates.length &gt; 1) {
-      Logging.debug(
-        &quot;No unique match found in EntityDatatype importMapFunction&quot;,
-        candidates.length,
-      );
-    }
-    return undefined;
   }
 
   /**
@@ -748,6 +722,15 @@ export class EntityDatatype extends StringDatatype {
 }
 
 /**
+ * One matching condition derived from a mapped import column: candidates must
+ * have &#x60;refField&#x60; equal to one of the (normalized) &#x60;values&#x60;.
+ */
+interface EntityMatchCriterion {
+  refField: string;
+  values: string[];
+}
+
+/**
  * Structure for the &#x60;additional&#x60; field of an entity reference ColumnMapping.
  * Can be a plain string (legacy) or an object with optional valueMapping config.
  */
@@ -792,18 +775,10 @@ function normalizeValue(val: any): string {
  * Manage cache access to the current import processing context.
  */
 class EntityFieldImportContext {
-  private contextKey: string;
-
   constructor(
     private globalContext: ImportProcessingContext,
     private schemaField: EntitySchemaField,
-  ) {
-    this.contextKey &#x3D; &#x60;${schemaField.id}_${globalContext.rowIndex}&#x60;;
-
-    if (!globalContext[this.contextKey]) {
-      globalContext[this.contextKey] &#x3D; {};
-    }
-  }
+  ) {}
 
   /**
    * Entities (in database format for easier comparison!)
@@ -825,22 +800,6 @@ class EntityFieldImportContext {
 
   set refEntityCtor(value: EntityConstructor) {
     this.globalContext[&#x60;ctor_${this.schemaField.additional}&#x60;] &#x3D; value;
-  }
-
-  /**
-   * Entities already filter by any other column conditions
-   * (in database format for easier comparison!)
-   */
-  get filteredEntities(): any[] {
-    return (
-      this.globalContext[this.contextKey].filteredEntities ??
-      this.entities ??
-      []
-    );
-  }
-
-  set filteredEntities(value: any[]) {
-    this.globalContext[this.contextKey].filteredEntities &#x3D; value;
   }
 }
 </code></pre>
