@@ -20,7 +20,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
-import { splitArrayValue } from "app/core/import/import.service";
+import { splitArrayValue } from "app/core/import/split-array-value";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { KeyValuePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
