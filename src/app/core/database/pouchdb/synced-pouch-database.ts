@@ -151,10 +151,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
     this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
   }
 
+  /** doc counts of the most recent completed sync (for logging context) */
+  private lastSyncStats?: { pushed?: number; pulled?: number };
+
   private async logSyncContext() {
     const lastSyncTime = localStorage.getItem(this.LAST_SYNC_KEY);
     Logging.addContext("Aam Digital sync", {
+      db: this.dbName,
       "last sync completed": lastSyncTime,
+      "last sync docs pushed": this.lastSyncStats?.pushed,
+      "last sync docs pulled": this.lastSyncStats?.pulled,
     });
   }
 
@@ -228,12 +234,25 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
     syncHandler.on("active", () => armStallTimer());
     syncHandler.on("paused", () => armStallTimer());
+    // per-doc rejections (e.g. 401/403 during push) that do not fail the
+    // overall sync and would otherwise leave a doc silently unsynced
+    syncHandler.on("denied", (err) =>
+      Logging.warn(
+        "sync: server denied replication of a document",
+        { db: this.dbName },
+        err,
+      ),
+    );
     armStallTimer();
 
     return Promise.race([syncHandler, stallGuard])
       .then(async (res) => {
         if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
+        this.lastSyncStats = {
+          pushed: (res as SyncResult)?.push?.docs_written,
+          pulled: (res as SyncResult)?.pull?.docs_written,
+        };
         if (!isFirstSync) {
           await this.purgeDocsWithLostPermissions();
         }
@@ -333,6 +352,18 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .collectAndClearLostPermissions()
       // design docs for indices are managed locally (and shouldn't be synced anyway)
       .filter((id) => !id.startsWith("_design/"));
+
+    if (lostPermissionIds.length > 0) {
+      // deleting local data based on server response - log for traceability of possible data loss
+      Logging.warn(
+        "sync: purging local docs after server reported lost permissions",
+        {
+          db: this.dbName,
+          count: lostPermissionIds.length,
+          ids: lostPermissionIds,
+        },
+      );
+    }
 
     for (const _id of lostPermissionIds) {
       try {
