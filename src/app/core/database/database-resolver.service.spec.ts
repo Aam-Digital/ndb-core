@@ -190,31 +190,22 @@ describe("DatabaseResolverService", () => {
       roles: [],
     } as SessionInfo;
 
-    /**
-     * The storage check is intentionally not awaited during session init
-     * (in Firefox persist() can prompt the user and must not block login),
-     * so drain the pending microtasks before asserting on it.
-     */
-    const flushStorageCheck = () =>
-      new Promise((resolve) => setTimeout(resolve));
-
-    it("should request persistent storage if not already persisted", async () => {
+    it("should request persistent storage on session init", async () => {
       const { svc, storage } = setupWithNavigator(false);
 
       await svc.initDatabasesForSession(testSession);
-      await flushStorageCheck();
 
       expect(storage.persist).toHaveBeenCalled();
     });
 
-    it("should not request persistent storage if already persisted", async () => {
+    it("should still request persistent storage when already granted", async () => {
+      // persist() is idempotent and resolves true without re-prompting,
+      // so it is called unconditionally rather than gated behind persisted()
       const { svc, storage } = setupWithNavigator(true);
 
       await svc.initDatabasesForSession(testSession);
-      await flushStorageCheck();
 
-      expect(storage.persisted).toHaveBeenCalled();
-      expect(storage.persist).not.toHaveBeenCalled();
+      expect(storage.persist).toHaveBeenCalled();
     });
   });
 });

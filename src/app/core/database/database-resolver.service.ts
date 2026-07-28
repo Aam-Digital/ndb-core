@@ -184,15 +184,14 @@ export class DatabaseResolverService {
         return;
       }
 
-      let persisted = await storage.persisted();
-      if (!persisted) {
-        persisted = await storage.persist();
-        Logging.debug(
-          persisted
-            ? "Persistent storage granted"
-            : "Persistent storage request denied by browser",
-        );
-      }
+      // idempotent: resolves true immediately if the permission was already
+      // granted, so this can safely run on every session without re-prompting
+      const persisted = await storage.persist();
+      Logging.debug(
+        persisted
+          ? "Persistent storage granted"
+          : "Persistent storage request denied by browser",
+      );
 
       const estimate = await storage.estimate?.();
       Logging.debug("Storage estimate", estimate);
