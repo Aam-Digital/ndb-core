@@ -48,10 +48,19 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Push writes have no per-request abort timeout, so a stale/half-open
    * connection can leave the replication promise unsettled forever - which would
    * keep syncState at STARTED and block liveSync from starting any further sync.
-   * Chosen well above a normal sync's duration so only a genuinely stalled sync
-   * is cancelled; the timer resets on every replication progress event.
+   *
+   * The timer resets on every replication progress event, so this is an
+   * inactivity window per batch (see POUCHDB_SYNC_BATCH_SIZE) and not a budget
+   * for the total sync duration - a long initial sync of a large database keeps
+   * resetting the timer and is never cancelled while it makes progress.
+   * The window still has to cover the slowest legitimate gap between events:
+   * the checkpoint lookup and first `_changes` response before any batch
+   * arrives, and a single batch of documents with attachments over a poor
+   * connection. If that gap is exceeded no batch completes, so no checkpoint is
+   * written and every retry restarts from the same position - which is why this
+   * is set generously rather than close to a normal sync's duration.
    */
-  SYNC_STALL_TIMEOUT = 120000;
+  SYNC_STALL_TIMEOUT = 300000;
 
   private readonly navigator: Navigator;
   private readonly loginStateSubject: LoginStateSubject;
