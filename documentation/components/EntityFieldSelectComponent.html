@@ -2680,7 +2680,18 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed(() &#x3D;&gt; this.fieldOptions())</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const optionsById &#x3D; new Map&lt;string, FormFieldConfig&gt;();
+    for (const option of this.options() ?? []) {
+      optionsById.set(option.id, option);
+    }
+    for (const inferredOption of this.fieldOptions()) {
+      if (!optionsById.has(inferredOption.id)) {
+        optionsById.set(inferredOption.id, inferredOption);
+      }
+    }
+    return [...optionsById.values()];
+  })</code>
                     </td>
                 </tr>
                         <tr>
@@ -2691,11 +2702,20 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:80</a></code>
+                                <div class="io-line">Defined in         <code><a href="../components/BasicAutocompleteComponent.html#source" target="_self" >BasicAutocompleteComponent:86</a></code>
 </div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Explicitly given options are merged with the fields inferred from the entity&#39;s schema,
+so that callers can offer additional, calculated columns (e.g. &quot;distance&quot;)
+that do not exist as a field in the schema.
+An explicit config takes precedence over the inferred field of the same id.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -3992,7 +4012,24 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent&lt;
     return this.getAllFieldProps(entityType.schema);
   });
 
-  protected override optionsSource &#x3D; computed(() &#x3D;&gt; this.fieldOptions());
+  /**
+   * Explicitly given options are merged with the fields inferred from the entity&#x27;s schema,
+   * so that callers can offer additional, calculated columns (e.g. &quot;distance&quot;)
+   * that do not exist as a field in the schema.
+   * An explicit config takes precedence over the inferred field of the same id.
+   */
+  protected override optionsSource &#x3D; computed(() &#x3D;&gt; {
+    const optionsById &#x3D; new Map&lt;string, FormFieldConfig&gt;();
+    for (const option of this.options() ?? []) {
+      optionsById.set(option.id, option);
+    }
+    for (const inferredOption of this.fieldOptions()) {
+      if (!optionsById.has(inferredOption.id)) {
+        optionsById.set(inferredOption.id, inferredOption);
+      }
+    }
+    return [...optionsById.values()];
+  });
 
   private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
     return [...schema.entries()]

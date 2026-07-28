@@ -283,7 +283,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/common-components/entity-fields-menu/entity-fields-menu.component.ts:69</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/common-components/entity-fields-menu/entity-fields-menu.component.ts:72</a></div>
                             </td>
                         </tr>
 
@@ -434,7 +434,10 @@
 
         return mappedField;
       })
-      .filter((field) &#x3D;&gt; !field.isInternalField &amp;&amp; field.label);
+      .filter(
+        (field) &#x3D;&gt;
+          field[&quot;_customField&quot;] || (!field.isInternalField &amp;&amp; field.label),
+      );
 
     const deduplicatedFieldsById: Record&lt;string, FormFieldConfig&gt; &#x3D; {};
     for (const field of fieldsConfig) {
@@ -551,7 +554,10 @@ export class EntityFieldsMenuComponent implements OnInit {
 
         return mappedField;
       })
-      .filter((field) &#x3D;&gt; !field.isInternalField &amp;&amp; field.label);
+      .filter(
+        (field) &#x3D;&gt;
+          field[&quot;_customField&quot;] || (!field.isInternalField &amp;&amp; field.label),
+      );
 
     const deduplicatedFieldsById: Record&lt;string, FormFieldConfig&gt; &#x3D; {};
     for (const field of fieldsConfig) {

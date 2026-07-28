@@ -703,12 +703,17 @@ export class MatchingEntitiesComponent implements OnInit {
     return { ...this.globalConfig, ...structuredClone(routeConf) };
   });
 
-  private columnsState: [ColumnConfig, ColumnConfig][] &#x3D; [];
+  /**
+   * Columns of the summary comparison view, as a working copy of the configured columns
+   * so that generated configs (like the calculated &quot;distance&quot; column) can be filled in
+   * without changing the given config.
+   */
+  readonly comparisonColumns &#x3D; signal&lt;[ColumnConfig, ColumnConfig][]&gt;([]);
 
   // TODO: fill selection on hover already?
 
   async ngOnInit() {
-    this.columnsState &#x3D; this.cloneColumns(this.resolvedColumns());
+    this.comparisonColumns.set(this.cloneColumns(this.resolvedColumns()));
     const sides: [MatchingSide, MatchingSide] &#x3D; [
       await this.initSideDetails(this.resolvedLeftSide(), 0),
       await this.initSideDetails(this.resolvedRightSide(), 1),
@@ -729,7 +734,7 @@ export class MatchingEntitiesComponent implements OnInit {
   ): Promise&lt;MatchingSide&gt; {
     const newSide &#x3D; buildMatchingSideConfig(
       side,
-      this.columnsState,
+      this.comparisonColumns(),
       sideIndex,
     ) as MatchingSide;
 
@@ -965,14 +970,21 @@ export class MatchingEntitiesComponent implements OnInit {
       side.columns[sideIndex] &#x3D; columnConfig;
       side.distanceColumn &#x3D; columnConfig.additional;
       this.setDistanceValuesForSide(side);
-      const colIndex &#x3D; this.columnsState.findIndex((row) &#x3D;&gt; {
+      const columns &#x3D; this.comparisonColumns();
+      const colIndex &#x3D; columns.findIndex((row) &#x3D;&gt; {
         const col &#x3D; row[index];
         return typeof col &#x3D;&#x3D;&#x3D; &quot;string&quot;
           ? col &#x3D;&#x3D;&#x3D; &quot;distance&quot;
           : col?.id &#x3D;&#x3D;&#x3D; &quot;distance&quot;;
       });
       if (colIndex !&#x3D;&#x3D; -1) {
-        this.columnsState[colIndex][index] &#x3D; columnConfig;
+        const updatedColumns &#x3D; [...columns];
+        updatedColumns[colIndex] &#x3D; [...updatedColumns[colIndex]] as [
+          ColumnConfig,
+          ColumnConfig,
+        ];
+        updatedColumns[colIndex][index] &#x3D; columnConfig;
+        this.comparisonColumns.set(updatedColumns);
       }
     }
   }
