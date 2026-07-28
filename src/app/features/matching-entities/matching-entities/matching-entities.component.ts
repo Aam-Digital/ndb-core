@@ -179,12 +179,17 @@ export class MatchingEntitiesComponent implements OnInit {
     return { ...this.globalConfig, ...structuredClone(routeConf) };
   });
 
-  private columnsState: [ColumnConfig, ColumnConfig][] = [];
+  /**
+   * Columns of the summary comparison view, as a working copy of the configured columns
+   * so that generated configs (like the calculated "distance" column) can be filled in
+   * without changing the given config.
+   */
+  readonly comparisonColumns = signal<[ColumnConfig, ColumnConfig][]>([]);
 
   // TODO: fill selection on hover already?
 
   async ngOnInit() {
-    this.columnsState = this.cloneColumns(this.resolvedColumns());
+    this.comparisonColumns.set(this.cloneColumns(this.resolvedColumns()));
     const sides: [MatchingSide, MatchingSide] = [
       await this.initSideDetails(this.resolvedLeftSide(), 0),
       await this.initSideDetails(this.resolvedRightSide(), 1),
@@ -205,7 +210,7 @@ export class MatchingEntitiesComponent implements OnInit {
   ): Promise<MatchingSide> {
     const newSide = buildMatchingSideConfig(
       side,
-      this.columnsState,
+      this.comparisonColumns(),
       sideIndex,
     ) as MatchingSide;
 
@@ -441,14 +446,21 @@ export class MatchingEntitiesComponent implements OnInit {
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
       this.setDistanceValuesForSide(side);
-      const colIndex = this.columnsState.findIndex((row) => {
+      const columns = this.comparisonColumns();
+      const colIndex = columns.findIndex((row) => {
         const col = row[index];
         return typeof col === "string"
           ? col === "distance"
           : col?.id === "distance";
       });
       if (colIndex !== -1) {
-        this.columnsState[colIndex][index] = columnConfig;
+        const updatedColumns = [...columns];
+        updatedColumns[colIndex] = [...updatedColumns[colIndex]] as [
+          ColumnConfig,
+          ColumnConfig,
+        ];
+        updatedColumns[colIndex][index] = columnConfig;
+        this.comparisonColumns.set(updatedColumns);
       }
     }
   }

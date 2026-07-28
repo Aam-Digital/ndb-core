@@ -7,6 +7,9 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { By } from "@angular/platform-browser";
+import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 
 describe("EditMatchingEntitySideComponent", () => {
   let component: EditMatchingEntitySideComponent;
@@ -41,5 +44,22 @@ describe("EditMatchingEntitySideComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should offer the special columns 'distance' and record preview for selection", () => {
+    const columnsManager = fixture.debugElement.queryAll(
+      By.directive(AdminListManagerComponent),
+    )[0];
+    const fieldSelect: EntityFieldSelectComponent = columnsManager.query(
+      By.directive(EntityFieldSelectComponent),
+    ).componentInstance;
+
+    fieldSelect.autocompleteForm.setValue("");
+
+    const offeredFields = fieldSelect
+      .autocompleteOptions()
+      .map((o) => o.asValue);
+    expect(offeredFields).toContain("distance");
+    expect(offeredFields).toContain("_id");
   });
 });

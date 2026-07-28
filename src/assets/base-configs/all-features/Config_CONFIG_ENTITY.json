@@ -40,7 +40,14 @@
           "entityType": "Child"
         },
         {
-          "entityType": "School"
+          "entityType": "School",
+          "subMenu": [
+            {
+              "label": "Matching View",
+              "icon": "people-arrows",
+              "link": "/matching"
+            }
+          ]
         },
         {
           "label": "Attendance",
