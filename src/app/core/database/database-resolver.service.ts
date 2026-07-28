@@ -70,9 +70,16 @@ export class DatabaseResolverService {
   }
 
   async destroyDatabases() {
+    DatabaseResolverService.clearLastSyncMarkers();
     for (const db of this.databases.values()) {
       await db.destroy();
     }
+  }
+
+  static clearLastSyncMarkers() {
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith(SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX))
+      .forEach((key) => localStorage.removeItem(key));
   }
 
   /**
@@ -112,7 +119,7 @@ export class DatabaseResolverService {
 
     // must run before init() below, which would (re-)create an empty database
     await this.checkForVanishedLocalDatabase(this.dbConfig);
-    this.logStorageHealth();
+    this.checkStorageHealth();
 
     this.initializeAppDatabaseForCurrentUser(session);
   }
@@ -170,7 +177,7 @@ export class DatabaseResolverService {
    * The browser may silently deny the request (e.g. Chrome bases the grant on
    * a site engagement heuristic); this is best-effort and never blocks login.
    */
-  private async logStorageHealth() {
+  private async checkStorageHealth() {
     try {
       const storage = this.navigator?.storage;
       if (!storage) {

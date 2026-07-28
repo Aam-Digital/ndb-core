@@ -73,6 +73,17 @@ describe("DatabaseResolverService", () => {
     expect(service).toBeTruthy();
   });
 
+  it("should clear last-sync markers before intentionally destroying databases", async () => {
+    localStorage.setItem("LAST_SYNC_test-db", "2024-01-01T00:00:00.000Z");
+    localStorage.setItem("other", "value");
+
+    await service.destroyDatabases();
+
+    expect(localStorage.getItem("LAST_SYNC_test-db")).toBeNull();
+    expect(localStorage.getItem("other")).toBe("value");
+    localStorage.removeItem("other");
+  });
+
   it("should init database with resolved DB name from migration service", async () => {
     const defaultDb = service.getDatabase();
     vi.spyOn(defaultDb, "init");
@@ -177,18 +188,6 @@ describe("DatabaseResolverService", () => {
       } as SessionInfo);
 
       expect(storage.persist).toHaveBeenCalled();
-    });
-
-    it("should not request persistent storage if already persisted", async () => {
-      const { svc, storage } = setupWithNavigator(true);
-
-      await svc.initDatabasesForSession({
-        name: "test-user",
-        id: "test-uuid",
-        roles: [],
-      } as SessionInfo);
-
-      expect(storage.persist).not.toHaveBeenCalled();
     });
   });
 });

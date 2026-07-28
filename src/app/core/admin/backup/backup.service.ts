@@ -103,6 +103,7 @@ export class BackupService {
       return;
     }
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+    DatabaseResolverService.clearLastSyncMarkers();
 
     // Delete all IndexedDB databases
     // (keep Sentry's offline queue so pending diagnostic logs about the reset
