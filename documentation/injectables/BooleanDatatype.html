@@ -263,7 +263,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>transformToDatabaseFormat(value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                    <code>transformToDatabaseFormat(value: unknown)</code>
                 </td>
             </tr>
 
@@ -300,7 +300,7 @@
                                         <tr>
                                                 <td>value</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                                        <code>unknown</code>
                                             </td>
 
                                             <td>
@@ -313,7 +313,7 @@
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
@@ -338,7 +338,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>transformToObjectFormat(value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                    <code>transformToObjectFormat(value: unknown)</code>
                 </td>
             </tr>
 
@@ -375,7 +375,7 @@
                                         <tr>
                                                 <td>value</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                                        <code>unknown</code>
                                             </td>
 
                                             <td>
@@ -388,7 +388,7 @@
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
@@ -1320,12 +1320,30 @@ export class BooleanDatatype extends DiscreteDatatype&lt;boolean, boolean&gt; {
   override editComponent &#x3D; &quot;EditBoolean&quot;;
   override viewComponent &#x3D; &quot;DisplayCheckmark&quot;;
 
-  override transformToDatabaseFormat(value: boolean) {
-    return value;
+  override transformToDatabaseFormat(value) {
+    return this.parseBoolean(value);
   }
 
-  override transformToObjectFormat(value: boolean) {
-    return value;
+  override transformToObjectFormat(value) {
+    return this.parseBoolean(value);
+  }
+
+  /**
+   * Coerce values into a real boolean.
+   * Values from import or external sources may arrive as strings (&quot;true&quot;/&quot;false&quot;)
+   * or numbers (1/0) and need to be normalized so storage and display stay consistent.
+   */
+  private parseBoolean(value) {
+    if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
+      return value;
+    }
+    if (typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      const normalized &#x3D; value.trim().toLowerCase();
+      return (
+        normalized &#x3D;&#x3D;&#x3D; &quot;true&quot; || normalized &#x3D;&#x3D;&#x3D; &quot;1&quot; || normalized &#x3D;&#x3D;&#x3D; &quot;yes&quot;
+      );
+    }
+    return !!value;
   }
 }
 </code></pre>
