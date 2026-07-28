@@ -43,7 +43,7 @@
           "entityType": "School",
           "subMenu": [
             {
-              "label": "Matchig View",
+              "label": "Matching View",
               "icon": "people-arrows",
               "link": "/matching"
             }
