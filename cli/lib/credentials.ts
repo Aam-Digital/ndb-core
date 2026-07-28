@@ -1,4 +1,4 @@
-import { execFileSync } from "child_process";
+import { execFileSync } from "node:child_process";
 import {
   existsSync,
   readFileSync,
@@ -6,9 +6,9 @@ import {
   renameSync,
   rmSync,
   writeFileSync,
-} from "fs";
-import { homedir } from "os";
-import { join, resolve } from "path";
+} from "node:fs";
+import { homedir } from "node:os";
+import { join, resolve } from "node:path";
 import { Decrypter, Encrypter } from "age-encryption";
 import { createPromptSession, type PromptSession } from "./prompt.js";
 
@@ -222,17 +222,32 @@ export function secureDelete(path: string): boolean {
  * disk). Reuses {@link sessionPassphrase} when this run already has one —
  * e.g. a `.age` merge target read after the source file was already asked
  * about — and caches whatever passphrase actually worked for later writes.
+ *
+ * A cached passphrase that turns out not to fit this file (source and target
+ * encrypted with different passphrases) is not fatal: it's discarded and the
+ * operator is prompted for the right one instead of aborting the whole run.
  */
 async function decryptWithPassphrase(path: string): Promise<string> {
-  const data = readFileSync(path);
-  const passphrase =
-    sessionPassphrase ?? (await askPassphrase("Enter passphrase:"));
+  const data = new Uint8Array(readFileSync(path));
 
-  const decrypter = new Decrypter();
-  decrypter.addPassphrase(passphrase);
+  const tryDecrypt = (passphrase: string): Promise<string> => {
+    const decrypter = new Decrypter();
+    decrypter.addPassphrase(passphrase);
+    return decrypter.decrypt(data, "text");
+  };
+
+  if (sessionPassphrase) {
+    try {
+      return await tryDecrypt(sessionPassphrase);
+    } catch {
+      // Cached passphrase doesn't fit this file — fall through and prompt.
+    }
+  }
+
+  const passphrase = await askPassphrase("Enter passphrase:");
   let plaintext: string;
   try {
-    plaintext = await decrypter.decrypt(data, "text");
+    plaintext = await tryDecrypt(passphrase);
   } catch {
     throw new Error(
       `Failed to decrypt ${path} (wrong passphrase or corrupt file?).`,

@@ -19,13 +19,14 @@ export async function loadCredentials(opts: {
 
   const orgs = OrgRunner.filterOrgs(file.orgs, opts);
   if (orgs.length === 0) {
-    const filter = opts.org
-      ? `--org "${opts.org}"`
-      : opts.category
-        ? `--category "${opts.category}"`
-        : "all";
-    console.error(`\nNo orgs matched ${filter}.\n`);
+    console.error(`\nNo orgs matched ${describeFilter(opts)}.\n`);
     return null;
   }
   return { orgs, keycloak: file.keycloak };
+}
+
+function describeFilter(opts: { org?: string; category?: string }): string {
+  if (opts.org) return `--org "${opts.org}"`;
+  if (opts.category) return `--category "${opts.category}"`;
+  return "all";
 }

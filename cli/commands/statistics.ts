@@ -43,7 +43,7 @@ export function registerStatisticsCommand(program: Command): void {
           const parsedUrl = new URL(
             org.url.includes("://") ? org.url : `https://${org.url}`,
           );
-          const realm = parsedUrl.hostname.split(".")[0];
+          const realm = org.name?.trim() || parsedUrl.hostname.split(".")[0];
           users = await getUsersFromKeycloak(realm, token, keycloak);
         } catch {
           console.warn("Couldn't get users from Keycloak for", org.url);

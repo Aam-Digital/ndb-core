@@ -4,7 +4,7 @@ import type { SystemCredentials } from "../lib/credentials.js";
 import { loadCredentials } from "../lib/load-credentials.js";
 import { printConnectivity } from "../lib/org-output.js";
 import { OrgRunner, type OrgOutcome } from "../lib/org-runner.js";
-import { askConfirmation } from "../lib/prompt.js";
+import { askYesNo, createPromptSession } from "../lib/prompt.js";
 import { withTimeout } from "../lib/timeout.js";
 import { ConsoleLogger } from "../migration/console-logger.js";
 import {
@@ -101,35 +101,44 @@ export function registerMigrateCommand(program: Command): void {
       printBanner("MIGRATE", migration);
       const outcomes: OrgOutcome<MigrationOutcome>[] = [];
       let skippedCount = 0;
-      for (const org of reachable) {
-        const couchdb = new Couchdb(org.url, org.password, org.username);
-        console.log();
+      // One session for every org's confirmation — reopening a readline
+      // interface per question discards whatever stdin already buffered,
+      // dropping answers typed or piped ahead of their prompt.
+      const prompt = createPromptSession();
+      try {
+        for (const org of reachable) {
+          const couchdb = new Couchdb(org.url, org.password, org.username);
+          console.log();
 
-        const preview = await runOnOrg(couchdb, org, true);
-        printOutcome({ org, result: preview }, false, !!opts.verbose);
+          const preview = await runOnOrg(couchdb, org, true);
+          printOutcome({ org, result: preview }, false, !!opts.verbose);
 
-        if (opts.dryRun || !preview.result.changed) {
-          outcomes.push({ org, result: preview });
-          continue;
-        }
-
-        if (!opts.yes) {
-          const confirmed = await askConfirmation(
-            `Apply ${preview.writeStats.intended} change(s) to ${OrgRunner.orgLabel(org)}? [y/N]`,
-          );
-          if (!confirmed) {
-            console.log("Skipped.");
-            // Excluded from `outcomes` on purpose: it was never applied, so
-            // counting it as "changed" (its dry-run status) would misreport
-            // what actually happened to this org.
-            skippedCount++;
+          if (opts.dryRun || !preview.result.changed) {
+            outcomes.push({ org, result: preview });
             continue;
           }
-        }
 
-        const applied = await runOnOrg(couchdb, org, false);
-        printOutcome({ org, result: applied }, true, !!opts.verbose);
-        outcomes.push({ org, result: applied });
+          if (!opts.yes) {
+            const confirmed = await askYesNo(
+              prompt,
+              `Apply ${preview.writeStats.intended} change(s) to ${OrgRunner.orgLabel(org)}? [y/N]`,
+            );
+            if (!confirmed) {
+              console.log("Skipped.");
+              // Excluded from `outcomes` on purpose: it was never applied, so
+              // counting it as "changed" (its dry-run status) would misreport
+              // what actually happened to this org.
+              skippedCount++;
+              continue;
+            }
+          }
+
+          const applied = await runOnOrg(couchdb, org, false);
+          printOutcome({ org, result: applied }, true, !!opts.verbose);
+          outcomes.push({ org, result: applied });
+        }
+      } finally {
+        prompt.close();
       }
 
       if (opts.dryRun) {

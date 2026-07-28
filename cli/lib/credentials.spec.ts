@@ -184,7 +184,7 @@ describe("getCredentials", () => {
       expect(mockAskHidden).toHaveBeenCalledWith("Enter passphrase:");
       expect(mockAddPassphrase).toHaveBeenCalledWith("s3cr3t-phrase");
       expect(mockDecrypt).toHaveBeenCalledWith(
-        Buffer.from("ciphertext"),
+        new Uint8Array(Buffer.from("ciphertext")),
         "text",
       );
       expect(result.orgs[0].password).toBe("s3cr3t");
@@ -230,6 +230,28 @@ describe("getCredentials", () => {
         /No passphrase entered/,
       );
       expect(mockDecrypt).not.toHaveBeenCalled();
+    });
+
+    it("re-prompts when the cached passphrase doesn't fit a later file", async () => {
+      vi.mocked(fs.readFileSync).mockReturnValue(Buffer.from("ciphertext"));
+      mockAskHidden
+        .mockResolvedValueOnce("first-phrase")
+        .mockResolvedValueOnce("second-phrase");
+      mockDecrypt
+        .mockResolvedValueOnce(
+          JSON.stringify([{ name: "a", password: "pw-a" }]),
+        )
+        .mockRejectedValueOnce(new Error("bad MAC"))
+        .mockResolvedValueOnce(
+          JSON.stringify([{ name: "b", password: "pw-b" }]),
+        );
+
+      const { getCredentials } = await import("./credentials");
+      await getCredentials("/x/a.json.age");
+      const result = await getCredentials("/x/b.json.age");
+
+      expect(mockAskHidden).toHaveBeenCalledTimes(2);
+      expect(result.orgs[0].password).toBe("pw-b");
     });
   });
 });

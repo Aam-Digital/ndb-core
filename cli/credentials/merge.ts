@@ -242,7 +242,7 @@ export function knownCategories(file: RawCredentialsFile): string[] {
   const categories = file.orgs
     .map((org) => org.category?.trim())
     .filter((category): category is string => !!category);
-  return [...new Set(categories)].sort();
+  return [...new Set(categories)].sort((a, b) => a.localeCompare(b));
 }
 
 /**

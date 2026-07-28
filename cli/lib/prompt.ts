@@ -1,4 +1,4 @@
-import * as readline from "readline";
+import * as readline from "node:readline";
 
 /**
  * A readline session that stays open across several questions. Closing and
@@ -71,6 +71,13 @@ export async function askYesNo(
   return answer === "y" || answer === "yes";
 }
 
+/**
+ * Convenience for a command that asks exactly one yes/no question. A command
+ * that asks several questions (e.g. one per org in a loop) must open its own
+ * {@link createPromptSession} and call {@link askYesNo} directly instead —
+ * opening and closing a session per question loses buffered stdin between
+ * calls (see {@link createPromptSession}).
+ */
 export async function askConfirmation(question: string): Promise<boolean> {
   const prompt = createPromptSession();
   try {

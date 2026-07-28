@@ -84,7 +84,7 @@ automatically on startup. A value already exported in the shell takes precedence
 
 ### Generating credentials.json on the server
 
-Use [scripts/collect-credentials.sh](../ndb-setup/scripts/collect-credentials.sh) from the `ndb-setup` repo on the server, then copy the resulting `credentials.json` into the `cli/` directory.
+Use [ndb-setup scripts/collect-credentials.sh](https://github.com/Aam-Digital/ndb-setup/blob/master/scripts/collect-credentials.sh) from the `ndb-setup` repo on the server, then copy the resulting `credentials.json` into the `cli/` directory.
 
 If you already have a credentials file, don't replace it — run [`credentials merge`](#merging-new-credentials-into-your-existing-file) instead, so your local additions survive.
 

@@ -1,5 +1,5 @@
-import { existsSync } from "fs";
-import { join } from "path";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import type { Command } from "commander";
 import {
   applyOrgOverrides,
@@ -24,6 +24,17 @@ import {
   createPromptSession,
   type PromptSession,
 } from "../lib/prompt.js";
+
+/**
+ * Thrown by the merge steps below to unwind straight to the command's
+ * `process.exit(code)` — the message (if any) is already printed by the
+ * thrower, so the catch site only needs the code.
+ */
+class CliExit extends Error {
+  constructor(readonly code: number) {
+    super();
+  }
+}
 
 export function registerCredentialsCommand(program: Command): void {
   const credentialsCmd = program
@@ -69,27 +80,7 @@ export function registerCredentialsCommand(program: Command): void {
       const prompt = createPromptSession();
       setPassphrasePromptSession(prompt);
       try {
-        let incoming: RawCredentialsFile;
-        let target: Awaited<ReturnType<typeof resolveMergeTarget>>;
-        try {
-          incoming = await readCredentialsFile(file);
-          if (incoming.orgs.length === 0) {
-            console.error(`\n${file} contains no orgs — nothing to merge.\n`);
-            return process.exit(2);
-          }
-          target = await resolveMergeTarget(opts.credentials);
-          // Merging a file into itself would write the target and then shred it.
-          if (isSameFile(file, target.path)) {
-            console.error(
-              `\n${file} is the credentials file itself — there is nothing to merge into.` +
-                `\nCopy the server file somewhere else, or name a different target with --credentials.\n`,
-            );
-            return process.exit(2);
-          }
-        } catch (e: unknown) {
-          console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
-          return process.exit(2);
-        }
+        const { incoming, target } = await resolveSourceAndTarget(file, opts);
 
         const result = mergeCredentials(target.existing, incoming.orgs, {
           prune: !!opts.prune,
@@ -100,11 +91,18 @@ export function registerCredentialsCommand(program: Command): void {
           console.log("(--dry-run) Nothing written.\n");
           return;
         }
+        // Rotation only means anything for an encrypted target, so a plaintext
+        // target with nothing else to merge still takes the no-op path below
+        // rather than writing and shredding the source for a "rotation" that
+        // can't actually happen.
+        const requestsRotation =
+          !!opts.newPassphrase && target.path.endsWith(".age");
         const prunesSomething = result.pruned && result.missing.length > 0;
         if (
           result.added.length === 0 &&
           result.updated.length === 0 &&
-          !prunesSomething
+          !prunesSomething &&
+          !requestsRotation
         ) {
           // No write happened, so the source is not shredded either — the operator
           // may still want it for something else.
@@ -117,77 +115,157 @@ export function registerCredentialsCommand(program: Command): void {
           console.log();
           return;
         }
-        let merged: RawCredentialsFile;
-        try {
-          merged = applyOrgOverrides(
-            result.merged,
-            await collectOrgDetails(result, target.existing, opts, prompt),
-          );
 
-          // Without DOMAIN an org that has no explicit url makes getCredentials
-          // throw — the merged file would be unreadable by every later command,
-          // and the source is about to be shredded.
-          const unresolvable = result.addedIndices
-            .filter((index) => !merged.orgs[index].url?.trim())
-            .map((index) => merged.orgs[index].name);
-          if (!process.env["DOMAIN"] && unresolvable.length > 0) {
-            console.error(
-              `\nDOMAIN is not set and no url was given for: ${unresolvable.join(", ")}.` +
-                `\nThe merged file would fail to load. Set DOMAIN or give each org a url.\n`,
-            );
-            return process.exit(2);
-          }
+        const merged = await buildMergedFile(
+          result,
+          target,
+          file,
+          opts,
+          prompt,
+        );
+        if (!merged) return;
 
-          // Both destructive actions are named: this prompt is the last gate
-          // before the target is rewritten *and* the source file is destroyed.
-          const question = opts.keepSource
-            ? `Write ${target.path}? [y/N]`
-            : `Write ${target.path} and shred ${file}? [y/N]`;
-          if (!opts.yes && !(await askYesNo(prompt, question))) {
-            console.log("\nAborted — nothing written.\n");
-            return;
-          }
-        } catch (e: unknown) {
-          console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
-          return process.exit(2);
-        }
-
-        try {
-          await writeCredentialsContent(
-            target.path,
-            JSON.stringify(merged, null, 2) + "\n",
-            { forceNewPassphrase: !!opts.newPassphrase },
-          );
-        } catch (e: unknown) {
-          console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
-          return process.exit(1);
-        }
-        console.log(`\nWritten: ${target.path}`);
-        if (target.existed) {
-          console.log(
-            `Previous version kept at: ${backupPathFor(target.path)}`,
-          );
-        }
-
-        // Only ever after a confirmed, successful write — the source is the last
-        // remaining copy until the merged file is safely on disk.
-        if (opts.keepSource) {
-          console.log(
-            `\n${file} still holds passwords in plaintext — shred it when done.`,
-          );
-        } else if (secureDelete(file)) {
-          console.log(`Shredded source file: ${file}`);
-        } else {
-          console.warn(
-            `\nCould not shred ${file} — it still holds passwords in plaintext.`,
-          );
-        }
-        console.log();
+        await commitMerge(target, merged, file, opts);
+      } catch (e: unknown) {
+        if (e instanceof CliExit) return process.exit(e.code);
+        console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
+        return process.exit(1);
       } finally {
         setPassphrasePromptSession(undefined);
         prompt.close();
       }
     });
+}
+
+/**
+ * Load the source file and figure out which local file it merges into,
+ * rejecting the cases that would make the rest of the command nonsensical
+ * (an empty source, or the source and target being the same file).
+ */
+async function resolveSourceAndTarget(
+  file: string,
+  opts: { credentials?: string },
+): Promise<{
+  incoming: RawCredentialsFile;
+  target: Awaited<ReturnType<typeof resolveMergeTarget>>;
+}> {
+  try {
+    const incoming = await readCredentialsFile(file);
+    if (incoming.orgs.length === 0) {
+      console.error(`\n${file} contains no orgs — nothing to merge.\n`);
+      throw new CliExit(2);
+    }
+    const target = await resolveMergeTarget(opts.credentials);
+    // Merging a file into itself would write the target and then shred it.
+    if (isSameFile(file, target.path)) {
+      console.error(
+        `\n${file} is the credentials file itself — there is nothing to merge into.` +
+          `\nCopy the server file somewhere else, or name a different target with --credentials.\n`,
+      );
+      throw new CliExit(2);
+    }
+    return { incoming, target };
+  } catch (e: unknown) {
+    if (e instanceof CliExit) throw e;
+    console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
+    throw new CliExit(2);
+  }
+}
+
+/**
+ * Fill in the added orgs' optional fields, validate the result is loadable,
+ * and get the operator's final go-ahead before anything is written. Returns
+ * `null` when the operator declined — as opposed to `CliExit`, that's a
+ * normal, silent stop rather than an error.
+ */
+async function buildMergedFile(
+  result: MergeResult,
+  target: { path: string; existing: RawCredentialsFile },
+  file: string,
+  opts: {
+    newCategory?: string;
+    newUsername?: string;
+    yes?: boolean;
+    keepSource?: boolean;
+  },
+  prompt: PromptSession,
+): Promise<RawCredentialsFile | null> {
+  try {
+    const merged = applyOrgOverrides(
+      result.merged,
+      await collectOrgDetails(result, target.existing, opts, prompt),
+    );
+
+    // Without DOMAIN an org that has no explicit url makes getCredentials
+    // throw — the merged file would be unreadable by every later command,
+    // and the source is about to be shredded.
+    const unresolvable = result.addedIndices
+      .filter((index) => !merged.orgs[index].url?.trim())
+      .map((index) => merged.orgs[index].name);
+    if (!process.env["DOMAIN"] && unresolvable.length > 0) {
+      console.error(
+        `\nDOMAIN is not set and no url was given for: ${unresolvable.join(", ")}.` +
+          `\nThe merged file would fail to load. Set DOMAIN or give each org a url.\n`,
+      );
+      throw new CliExit(2);
+    }
+
+    // Both destructive actions are named: this prompt is the last gate
+    // before the target is rewritten *and* the source file is destroyed.
+    const question = opts.keepSource
+      ? `Write ${target.path}? [y/N]`
+      : `Write ${target.path} and shred ${file}? [y/N]`;
+    if (!opts.yes && !(await askYesNo(prompt, question))) {
+      console.log("\nAborted — nothing written.\n");
+      return null;
+    }
+    return merged;
+  } catch (e: unknown) {
+    if (e instanceof CliExit) throw e;
+    console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
+    throw new CliExit(2);
+  }
+}
+
+/**
+ * Write the merged file and, once that succeeded, retire the source —
+ * shredding it unless the operator asked to keep it.
+ */
+async function commitMerge(
+  target: { path: string; existed: boolean },
+  merged: RawCredentialsFile,
+  file: string,
+  opts: { keepSource?: boolean; newPassphrase?: boolean },
+): Promise<void> {
+  try {
+    await writeCredentialsContent(
+      target.path,
+      JSON.stringify(merged, null, 2) + "\n",
+      { forceNewPassphrase: !!opts.newPassphrase },
+    );
+  } catch (e: unknown) {
+    console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
+    throw new CliExit(1);
+  }
+  console.log(`\nWritten: ${target.path}`);
+  if (target.existed) {
+    console.log(`Previous version kept at: ${backupPathFor(target.path)}`);
+  }
+
+  // Only ever after a confirmed, successful write — the source is the last
+  // remaining copy until the merged file is safely on disk.
+  if (opts.keepSource) {
+    console.log(
+      `\n${file} still holds passwords in plaintext — shred it when done.`,
+    );
+  } else if (secureDelete(file)) {
+    console.log(`Shredded source file: ${file}`);
+  } else {
+    console.warn(
+      `\nCould not shred ${file} — it still holds passwords in plaintext.`,
+    );
+  }
+  console.log();
 }
 
 /**

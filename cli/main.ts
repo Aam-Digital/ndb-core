@@ -1,5 +1,5 @@
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { Command } from "commander";
 import { registerCheckCommand } from "./commands/check.js";
 import { registerCouchdbCommand } from "./commands/couchdb.js";
