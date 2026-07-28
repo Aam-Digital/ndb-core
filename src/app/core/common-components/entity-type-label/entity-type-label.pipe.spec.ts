@@ -41,7 +41,13 @@ describe("EntityTypeLabelPipeEntity", () => {
     );
   });
 
-  it("throws error on invalid entity type", () => {
-    expect(() => pipe.transform("unknown type")).toThrow();
+  it("falls back to the raw key for an unregistered entity type", () => {
+    expect(pipe.transform("unknown type")).toBe("unknown type");
+  });
+
+  it("keeps labels for known types and falls back to the raw key for unknown types in an array", () => {
+    expect(
+      pipe.transform([EntityTypeLabelPipeEntity.ENTITY_TYPE, "unknown type"]),
+    ).toBe(`${EntityTypeLabelPipeEntity.label} / unknown type`);
   });
 });
