@@ -20,9 +20,24 @@ const maxWorkers = workersOverride?.endsWith("%")
   : Number(workersOverride) ||
     Math.max(1, Math.min(4, availableParallelism() - 1));
 
+/**
+ * Run only a slice of the spec files, as `<index>/<count>` (e.g. `2/4`).
+ *
+ * Isolation costs wall time, because every spec file re-imports the Angular module
+ * graph into a fresh environment. CI splits the suite across parallel shards to win
+ * that back; locally you normally want the whole suite, so this stays unset.
+ *
+ * Spread rather than assigned inline: Vitest reads `shard` at runtime, but types it
+ * on `UserConfig` rather than the `InlineConfig` that `defineConfig({ test })` expects.
+ */
+const shard = process.env.VITEST_SHARD
+  ? { shard: process.env.VITEST_SHARD }
+  : {};
+
 export default defineConfig({
   test: {
     globals: true,
+    pool: "threads",
     maxWorkers,
     /**
      * Run every spec file in its own environment.
@@ -34,15 +49,7 @@ export default defineConfig({
      * running next, so failures land on innocent specs and move between runs.
      */
     isolate: true,
-    /**
-     * Run only a slice of the spec files, as `<index>/<count>` (e.g. `2/4`).
-     *
-     * Isolation costs wall time, because every spec file re-imports the Angular
-     * module graph into a fresh environment. CI splits the suite across parallel
-     * shards to win that back; locally you normally want the whole suite, so
-     * this stays unset.
-     */
-    shard: process.env.VITEST_SHARD || undefined,
+    ...shard,
     sequence: {
       hooks: "list",
     },
