@@ -4,7 +4,10 @@
 } @else {
   <div class="flex-column gap-small report-definition">
     @for (entry of entries(); track entry.key) {
-      <div [style.margin-left.px]="entry.depth * 16">
+      <div
+        [class.nested-row]="entry.depth > 0"
+        [style.margin-left.px]="entry.depth * 16"
+      >
         @if (entry.kind === "group") {
           <div class="flex-row align-start gap-small">
             <fa-icon icon="layer-group" class="row-icon"></fa-icon>
@@ -19,6 +22,26 @@
               i18n-aria-label
               (change)="setGroupTitle(entry.path, $event)"
             />
+            @if (enabled()) {
+              <button
+                mat-icon-button
+                type="button"
+                (click)="addQueryToGroup(entry.path)"
+                matTooltip="Add query to this group"
+                i18n-matTooltip
+              >
+                <fa-icon icon="plus"></fa-icon>
+              </button>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="addSubGroup(entry.path)"
+                matTooltip="Add sub-group to this group"
+                i18n-matTooltip
+              >
+                <fa-icon icon="layer-group"></fa-icon>
+              </button>
+            }
             <button
               mat-icon-button
               type="button"

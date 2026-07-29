@@ -143,6 +143,28 @@ export class EditReportDefinitionComponent
     ]);
   }
 
+  /** append a new empty query to the group at the given path */
+  addQueryToGroup(path: number[]): void {
+    this.addToGroup(path, { query: "" });
+  }
+
+  /** append a new empty sub-group to the group at the given path */
+  addSubGroup(path: number[]): void {
+    this.addToGroup(path, {
+      groupTitle: $localize`:ReportConfig:New group`,
+      items: [],
+    });
+  }
+
+  private addToGroup(path: number[], node: ReportDefinitionDto): void {
+    this.commit(
+      this.mapAtPath(this.tree(), path, (group) => ({
+        ...group,
+        items: [...(group.items ?? []), node],
+      })),
+    );
+  }
+
   // -- tree helpers --------------------------------------------------------
 
   private commit(next: ReportDefinitionDto[]): void {

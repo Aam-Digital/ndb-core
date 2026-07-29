@@ -91,6 +91,19 @@ describe("EditReportDefinitionComponent", () => {
     expect(formGroup.get("reportDefinition").dirty).toBe(true);
   });
 
+  it("adds a query and a sub-group into an existing group", () => {
+    component.addGroup();
+    component.addQueryToGroup([0]);
+    component.addSubGroup([0]);
+
+    expect(formGroup.get("reportDefinition").value).toEqual([
+      {
+        groupTitle: "New group",
+        items: [{ query: "" }, { groupTitle: "New group", items: [] }],
+      },
+    ]);
+  });
+
   it("removes a nested item by path", () => {
     formGroup
       .get("reportDefinition")

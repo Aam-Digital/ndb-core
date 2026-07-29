@@ -15,3 +15,9 @@
   margin-top: 12px;
   color: rgba(0, 0, 0, 0.54);
 }
+
+/* indent guide making it clear which queries/groups are nested inside a group */
+.nested-row {
+  border-left: 2px solid rgba(0, 0, 0, 0.12);
+  padding-left: 8px;
+}
