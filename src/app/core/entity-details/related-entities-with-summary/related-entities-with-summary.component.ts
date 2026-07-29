@@ -1,11 +1,8 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   input,
-  signal,
-  ViewChild,
 } from "@angular/core";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -24,12 +21,9 @@ import { RelatedEntitiesComponent } from "../related-entities/related-entities.c
   templateUrl: "./related-entities-with-summary.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
-export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
-  extends RelatedEntitiesComponent<E>
-  implements AfterViewInit
-{
-  @ViewChild(EntitiesTableComponent, { static: true })
-  entitiesTable: EntitiesTableComponent<E>;
+export class RelatedEntitiesWithSummaryComponent<
+  E extends Entity = Entity,
+> extends RelatedEntitiesComponent<E> {
   /**
    * Configuration of what numbers should be summarized below the table.
    */
@@ -40,23 +34,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
     average?: boolean;
   }>();
 
-  private readonly filteredData = signal<E[]>([]);
   protected readonly summary = computed(() => this.buildSummary());
-
-  ngAfterViewInit() {
-    this.entitiesTable.filteredRecordsChange.subscribe((data) => {
-      this.updateSummary(data);
-    });
-  }
-
-  /**
-   * update the summary or generate a new one.
-   * The summary contains no duplicates and is in a
-   * human-readable format
-   */
-  updateSummary(filteredData: E[]) {
-    this.filteredData.set(filteredData);
-  }
 
   private buildSummary() {
     const summaries = this.summaries();
@@ -68,7 +46,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
       string | undefined,
       { count: number; sum: number }
     >();
-    const filteredData = this.filteredData();
+    const filteredData = this.dataSource.filteredRecords();
 
     filteredData.forEach((m) => {
       const amount = Number(m[summaries.countProperty]);

@@ -2,8 +2,6 @@ import { inject, ModuleWithProviders, NgModule } from "@angular/core";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { mockEntityMapperProvider } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { AnalyticsService } from "../core/analytics/analytics.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { RouterTestingModule } from "@angular/router/testing";
 import { SessionType } from "../core/session/session-type";
 import { Entity } from "../core/entity/model/entity";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
@@ -28,10 +26,8 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from "@angular/common/http";
-import { LoggingService } from "../core/logging/logging.service";
 import { getDefaultConfigEntity } from "app/core/config/testing-config-service";
 import { getDefaultEnumEntities } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
-import { vi } from "vitest";
 import { Papa } from "ngx-papaparse";
 import { parse, unparse } from "papaparse";
 
@@ -49,12 +45,7 @@ import { parse, unparse } from "papaparse";
  * If you need a REAL database (e.g. for indices/views) then use the {@link DatabaseTestingModule} instead.
  */
 @NgModule({
-  imports: [
-    AppModule,
-    NoopAnimationsModule,
-    RouterTestingModule,
-    ReactiveFormsModule,
-  ],
+  imports: [AppModule, ReactiveFormsModule],
   providers: [
     { provide: SwRegistrationOptions, useValue: { enabled: false } },
     {
@@ -90,9 +81,6 @@ export class MockedTestingModule {
     data: Entity[] = [createEntityOfType("User", TEST_USER)],
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
-    const mockLoggingService: Pick<LoggingService, "warn"> = {
-      warn: vi.fn(),
-    };
 
     return {
       ngModule: MockedTestingModule,
@@ -103,7 +91,6 @@ export class MockedTestingModule {
           deps: [EntitySchemaService],
         },
 
-        { provide: LoggingService, useValue: mockLoggingService },
         ...mockEntityMapperProvider([
           ...data,
           getDefaultConfigEntity(),

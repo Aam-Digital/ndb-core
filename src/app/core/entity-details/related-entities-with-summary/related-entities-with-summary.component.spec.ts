@@ -77,20 +77,19 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("produces an empty summary when there are no records", () => {
-    component.data.set([]);
-    component.updateSummary([]);
-    expect(getSummary().sum).toHaveLength(0);
-    expect(getSummary().avg).toHaveLength(0);
-  });
-
   function setRecordsAndGenerateSummary(
     ...records: Partial<TestEntityWithAmount>[]
   ) {
     const data = records.map(TestEntityWithAmount.create);
-    component.data.set(data);
-    component.updateSummary(data);
+    component.dataSource.allRecords.set(data);
+    component.dataSource.filteredRecords.set(data);
   }
+
+  it("produces an empty summary when there are no records", () => {
+    setRecordsAndGenerateSummary();
+    expect(getSummary().sum).toHaveLength(0);
+    expect(getSummary().avg).toHaveLength(0);
+  });
 
   it("produces a singleton summary when there is a single record", () => {
     setRecordsAndGenerateSummary({ category: "PENCIL", amount: 1 });
@@ -108,13 +107,13 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     expect(getSummary().avg).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
   });
 
-  it("produces a singly summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
+  it("produces a single summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
     const plainData = [{ amount: 1 }, { amount: 5 }] as any[];
-    component.data.set(plainData);
+    component.dataSource.allRecords.set(plainData);
     const summaries = component.summaries();
     delete summaries.groupBy;
     summaries.countProperty = "amount";
-    component.updateSummary(plainData);
+    component.dataSource.filteredRecords.set(plainData);
 
     expect(getSummary().sum).toEqual(`6`);
     expect(getSummary().avg).toEqual(`3`);
@@ -201,10 +200,12 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data());
+      component.dataSource.filteredRecords.set(
+        component.dataSource.allRecords(),
+      );
 
       expect(getSummary().sum).toEqual(`PENCIL: 1, PAPER: 2`);
-      expect(component.data()).toEqual(data);
+      expect(component.dataSource.allRecords()).toEqual(data);
     } finally {
       vi.useRealTimers();
     }
@@ -225,9 +226,11 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       updates.next({ entity: update1, type: "new" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data());
+      component.dataSource.filteredRecords.set(
+        component.dataSource.allRecords(),
+      );
 
-      expect(component.data()).toEqual([update1]);
+      expect(component.dataSource.allRecords()).toEqual([update1]);
       expect(getSummary().sum).toBe(`PENCIL: 1`);
 
       const update2 = update1.copy() as TestEntityWithAmount;
@@ -235,9 +238,11 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       updates.next({ entity: update2, type: "update" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data());
+      component.dataSource.filteredRecords.set(
+        component.dataSource.allRecords(),
+      );
 
-      expect(component.data()).toEqual([update2]);
+      expect(component.dataSource.allRecords()).toEqual([update2]);
       expect(getSummary().sum).toBe(`PENCIL: 2`);
 
       const unrelatedUpdate = update1.copy() as TestEntityWithAmount;
@@ -245,9 +250,11 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       updates.next({ entity: unrelatedUpdate, type: "new" });
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      component.updateSummary(component.data());
+      component.dataSource.filteredRecords.set(
+        component.dataSource.allRecords(),
+      );
       // No change
-      expect(component.data()).toEqual([update2]);
+      expect(component.dataSource.allRecords()).toEqual([update2]);
       expect(getSummary().sum).toBe(`PENCIL: 2`);
     } finally {
       vi.useRealTimers();
