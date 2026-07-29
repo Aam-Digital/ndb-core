@@ -23,6 +23,18 @@ const maxWorkers = workersOverride?.endsWith("%")
 export default defineConfig({
   test: {
     globals: true,
+    /**
+     * Use jsdom, not happy-dom.
+     *
+     * The Angular unit-test builder picks happy-dom whenever it merely *resolves*
+     * in node_modules — here only as a transitive dependency; `jsdom` is what this
+     * project actually declares. That default breaks zone.js, which patches DOM
+     * classes by copying enumerable prototype members: happy-dom declares them as
+     * ES class methods (non-enumerable), so the patched `MutationObserver` ends up
+     * with nothing but a constructor. Any spec opening a CDK overlay then fails in
+     * teardown with "_detachContentMutationObserver.observe is not a function".
+     */
+    environment: "jsdom",
     maxWorkers,
     sequence: {
       hooks: "list",
