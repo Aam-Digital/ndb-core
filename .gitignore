@@ -2,6 +2,7 @@
 
 # Claude Code worktrees (local only, must never be committed as submodules)
 .claude/worktrees/
+.pi-subagents/
 
 /src/assets/config.json
 /src/assets/firebase-config.json

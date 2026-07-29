@@ -16,17 +16,22 @@ import { Config } from "../config/config";
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
+import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
+import { createFakeStorage } from "../../utils/test-utils/fake-storage";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
   let entityMapper: MockEntityMapperService;
 
+  let storage: Storage;
+
   beforeEach(waitForAsync(() => {
-    localStorage.clear();
+    storage = createFakeStorage();
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, ConfigurableEnumModule],
       providers: [
+        { provide: LOCAL_STORAGE_TOKEN, useValue: storage },
         ...mockEntityMapperProvider([new Config(Config.CONFIG_KEY, {})]),
         EntityAbility,
       ],
@@ -100,8 +105,6 @@ describe("SiteSettingsService", () => {
   it("should store any settings update in localStorage", async () => {
     vi.useFakeTimers();
     try {
-      const localStorageSetItemSpy = vi.spyOn(Storage.prototype, "setItem");
-
       const settings = SiteSettings.create({
         siteName: "test",
         defaultLanguage: availableLocales.values[0],
@@ -110,14 +113,10 @@ describe("SiteSettingsService", () => {
       entityMapper.save(settings);
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(localStorageSetItemSpy).toHaveBeenCalledWith(
-        service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
-        expect.any(String),
-      );
-      expect(vi.mocked(localStorageSetItemSpy).mock.lastCall[1]).toMatch(
-        `"siteName":"${settings.siteName}"`,
-      );
-      expect(vi.mocked(localStorageSetItemSpy).mock.lastCall[1]).toMatch(
+      const stored = storage.getItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+      expect(stored).toEqual(expect.any(String));
+      expect(stored).toMatch(`"siteName":"${settings.siteName}"`);
+      expect(stored).toMatch(
         `"defaultLanguage":"${settings.defaultLanguage.id}"`,
       );
     } finally {
@@ -127,11 +126,12 @@ describe("SiteSettingsService", () => {
 
   it("should init settings from localStorage during startup", async () => {
     vi.useFakeTimers();
-    let localStorageGetItemSpy: ReturnType<typeof vi.spyOn>;
     try {
       const settings = SiteSettings.create({ siteName: "local storage test" });
-      localStorageGetItemSpy = vi.spyOn(Storage.prototype, "getItem");
-      localStorageGetItemSpy.mockReturnValue(JSON.stringify(settings));
+      storage.setItem(
+        service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
+        JSON.stringify(settings),
+      );
 
       const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
 
@@ -140,7 +140,6 @@ describe("SiteSettingsService", () => {
 
       expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
     } finally {
-      localStorageGetItemSpy?.mockRestore();
       vi.useRealTimers();
     }
   });

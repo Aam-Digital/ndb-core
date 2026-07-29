@@ -5,7 +5,7 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subject, of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -207,7 +207,7 @@ describe("EntityListComponent", () => {
       entityUpdates.next({ entity: entity, type: "new" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.allEntities()).toEqual([entity]);
+      expect(component.dataSource.allRecords()).toEqual([entity]);
     } finally {
       vi.useRealTimers();
     }
@@ -224,11 +224,11 @@ describe("EntityListComponent", () => {
       initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.allEntities.set([entity]);
+      component.dataSource.allRecords.set([entity]);
       entityUpdates.next({ entity: entity, type: "remove" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.allEntities()).toEqual([]);
+      expect(component.dataSource.allRecords()).toEqual([]);
     } finally {
       vi.useRealTimers();
     }

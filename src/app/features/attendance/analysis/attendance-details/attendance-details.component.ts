@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
 } from "@angular/core";
@@ -18,6 +19,7 @@ import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * Displays detailed attendance data for a calculated attendance time period (`ActivityAttendance`).
@@ -46,15 +48,13 @@ export class AttendanceDetailsComponent {
     forChild: string;
     attendance: ActivityAttendance;
   }>(MAT_DIALOG_DATA);
+  readonly dataSource = new InMemoryDataSource();
 
   entity = input(this.data.attendance);
   forChild = input(this.data.forChild);
 
   eventEntityType = computed(() =>
     this.entity()?.events[0]?.entity?.getConstructor(),
-  );
-  eventEntities = computed<Entity[]>(
-    () => this.entity()?.events.map((e) => e.entity) ?? [],
   );
 
   eventsColumns: FormFieldConfig[] = [
@@ -83,6 +83,13 @@ export class AttendanceDetailsComponent {
       },
     },
   ];
+
+  constructor() {
+    effect(() => {
+      const events = this.entity()?.events.map((e) => e.entity);
+      this.dataSource.allRecords.set(events);
+    });
+  }
 
   showEventDetails(event: Entity) {
     this.formDialog.openView(event);

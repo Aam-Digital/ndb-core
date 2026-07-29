@@ -31,15 +31,23 @@ describe("SupportComponent", () => {
   const userEntity = new Entity(TEST_USER);
   const mockSW = { isEnabled: false };
   let mockDB: Partial<SyncedPouchDatabase>;
+  const storageEstimate = vi.fn();
+  const storagePersisted = vi.fn();
   const mockWindow = {
     navigator: {
       userAgent: "mock user agent",
+      storage: {
+        estimate: storageEstimate,
+        persisted: storagePersisted,
+      },
       serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
     },
   };
 
   beforeEach(async () => {
     localStorage.clear();
+    storageEstimate.mockReset();
+    storagePersisted.mockReset();
     const testDbName = TEST_USER + "-" + Entity.DATABASE;
     mockDB = Object.create(SyncedPouchDatabase.prototype);
     Object.defineProperty(mockDB, "LAST_SYNC_KEY", {
@@ -103,6 +111,23 @@ describe("SupportComponent", () => {
     expect(component.swStatus).toBe("not enabled");
     expect(component.userAgent).toBe("mock user agent");
     expect(component.dbInfo).toBe("1 (update sequence 2)");
+  });
+
+  it("should display the storage estimate", async () => {
+    storageEstimate.mockResolvedValue({
+      usage: 1572864,
+      quota: 10485760,
+    });
+    storagePersisted.mockResolvedValue(true);
+
+    await component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(component.storageInfo()).toBe("1.50MB / 10.00MB");
+    expect(component.storagePersistent()).toBe(true);
+    expect(fixture.nativeElement.textContent).toContain("1.50MB / 10.00MB");
+    expect(fixture.nativeElement.textContent).toContain("Persistent storage");
+    expect(fixture.nativeElement.textContent).toContain("Yes");
   });
 
   it("should correctly read sync and remote login status from local storage", async () => {

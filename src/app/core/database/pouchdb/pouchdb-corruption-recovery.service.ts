@@ -75,6 +75,10 @@ We are working on improvements to allow this in the future.`,
   }
 
   private resetApplication() {
+    // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
+    Logging.warn(
+      "Resetting application data after suspected local database corruption (user confirmed)",
+    );
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
     this.location.pathname = "";
   }

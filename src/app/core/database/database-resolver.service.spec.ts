@@ -11,6 +11,7 @@ import {
   DbConfig,
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
@@ -69,6 +70,17 @@ describe("DatabaseResolverService", () => {
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should clear last-sync markers before intentionally destroying databases", async () => {
+    localStorage.setItem("LAST_SYNC_test-db", "2024-01-01T00:00:00.000Z");
+    localStorage.setItem("other", "value");
+
+    await service.destroyDatabases();
+
+    expect(localStorage.getItem("LAST_SYNC_test-db")).toBeNull();
+    expect(localStorage.getItem("other")).toBe("value");
+    localStorage.removeItem("other");
   });
 
   it("should init database with resolved DB name from migration service", async () => {
@@ -139,5 +151,61 @@ describe("DatabaseResolverService", () => {
     } as SessionInfo);
 
     expect(defaultDb.init).toHaveBeenCalledWith("test-user-app");
+  });
+
+  describe("storage persistence", () => {
+    /**
+     * Set up a service instance with a mocked navigator.storage.
+     * This cannot use MockedTestingModule, which replaces the
+     * DatabaseResolverService under test with a stub.
+     */
+    function setupWithNavigator(isPersisted: boolean) {
+      const storage = {
+        persisted: vi.fn().mockResolvedValue(isPersisted),
+        persist: vi.fn().mockResolvedValue(true),
+        estimate: vi.fn().mockResolvedValue({ usage: 1, quota: 2 }),
+      } as unknown as StorageManager;
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: DatabaseFactoryService, useValue: factory },
+          { provide: IndexeddbMigrationService, useValue: migrationServiceSpy },
+          {
+            provide: NAVIGATOR_TOKEN,
+            useValue: { storage } as Partial<Navigator>,
+          },
+        ],
+      });
+      const svc = TestBed.inject(DatabaseResolverService);
+
+      // @ts-ignore - forcing this for stable test conditions
+      svc["sessionType"] = SessionType.mock;
+      return { svc, storage };
+    }
+
+    const testSession = {
+      name: "test-user",
+      id: "test-uuid",
+      roles: [],
+    } as SessionInfo;
+
+    it("should request persistent storage on session init", async () => {
+      const { svc, storage } = setupWithNavigator(false);
+
+      await svc.initDatabasesForSession(testSession);
+
+      expect(storage.persist).toHaveBeenCalled();
+    });
+
+    it("should still request persistent storage when already granted", async () => {
+      // persist() is idempotent and resolves true without re-prompting,
+      // so it is called unconditionally rather than gated behind persisted()
+      const { svc, storage } = setupWithNavigator(true);
+
+      await svc.initDatabasesForSession(testSession);
+
+      expect(storage.persist).toHaveBeenCalled();
+    });
   });
 });
