@@ -232,8 +232,8 @@ this store is responsible only for holding the mutable state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="196"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:196</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="204"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:204</a></div>
                         </td>
                     </tr>
 
@@ -301,8 +301,8 @@ this store is responsible only for holding the mutable state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="222"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:222</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="230"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:230</a></div>
                         </td>
                     </tr>
 
@@ -383,15 +383,15 @@ Returns whether the event came from a checkbox target.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="212"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:212</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="220"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:220</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Selects or unselects all currently sorted rows.</p>
+                        <div class="io-description"><p>Selects or unselects all rows loaded into the table.</p>
 </div>
 
                             <div class="io-description">
@@ -452,8 +452,8 @@ Returns whether the event came from a checkbox target.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="201"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:201</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="209"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:209</a></div>
                         </td>
                     </tr>
 
@@ -541,14 +541,14 @@ Returns whether the event came from a checkbox target.</p>
                     <td class="col-md-4">
                         <i>Default value : </i><code>computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    const total &#x3D; this.context?.selectableRows().length ?? 0;
     return selected.length &gt; 0 &amp;&amp; selected.length &#x3D;&#x3D;&#x3D; total;
   })</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="183" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:183</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="191" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:191</a></div>
                         </td>
                     </tr>
 
@@ -577,14 +577,14 @@ Returns whether the event came from a checkbox target.</p>
                     <td class="col-md-4">
                         <i>Default value : </i><code>computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    const total &#x3D; this.context?.selectableRows().length ?? 0;
     return selected.length &gt; 0 &amp;&amp; selected.length &lt; total;
   })</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="189" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:189</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="197" class="link-to-prism">src/app/core/common-components/entities-table/entities-table-selection.ts:197</a></div>
                         </td>
                     </tr>
 
@@ -621,7 +621,8 @@ export interface MouseSelectionUpdate&lt;T extends Entity&gt; {
  */
 export interface MouseSelectionInput&lt;T extends Entity&gt; {
   selectedRecords: T[];
-  selectedRows: TableRow&lt;T&gt;[];
+  /** rows of the page the interaction happened on, in displayed order */
+  currentPageRows: TableRow&lt;T&gt;[];
   row: TableRow&lt;T&gt;;
   shiftKey: boolean;
   lastSelectedRow: TableRow&lt;T&gt; | null;
@@ -679,13 +680,13 @@ export function toggleRecordSelection&lt;T extends Entity&gt;(
  */
 export function applyRangeSelection&lt;T extends Entity&gt;(
   selectedRecords: T[],
-  selectedRows: TableRow&lt;T&gt;[],
+  rows: TableRow&lt;T&gt;[],
   range: { start: number; end: number },
   shouldCheck: boolean,
 ): T[] {
   const updatedSelection &#x3D; [...selectedRecords];
   for (let index &#x3D; range.start; index &lt;&#x3D; range.end; index++) {
-    const row &#x3D; selectedRows[index];
+    const row &#x3D; rows[index];
     const isSelected &#x3D; updatedSelection.includes(row.record);
 
     if (shouldCheck &amp;&amp; !isSelected) {
@@ -705,15 +706,20 @@ export function updateSelectionFromMouseDown&lt;T extends Entity&gt;(
 ): MouseSelectionUpdate&lt;T&gt; {
   const {
     selectedRecords,
-    selectedRows,
+    currentPageRows,
     row,
     shiftKey,
     lastSelectedRow,
     lastSelection,
   } &#x3D; input;
-  const currentIndex &#x3D; selectedRows.indexOf(row);
+  // match by record, as the row wrappers are re-created whenever filter or sorting change
+  const currentIndex &#x3D; currentPageRows.findIndex(
+    (pageRow) &#x3D;&gt; pageRow.record &#x3D;&#x3D;&#x3D; row.record,
+  );
   const anchorIndex &#x3D; lastSelectedRow
-    ? selectedRows.indexOf(lastSelectedRow)
+    ? currentPageRows.findIndex(
+        (pageRow) &#x3D;&gt; pageRow.record &#x3D;&#x3D;&#x3D; lastSelectedRow.record,
+      )
     : -1;
   const canRangeSelect &#x3D;
     shiftKey &amp;&amp; !!lastSelectedRow &amp;&amp; anchorIndex !&#x3D;&#x3D; -1 &amp;&amp; currentIndex !&#x3D;&#x3D; -1;
@@ -729,7 +735,7 @@ export function updateSelectionFromMouseDown&lt;T extends Entity&gt;(
     return {
       selectedRecords: applyRangeSelection(
         selectedRecords,
-        selectedRows,
+        currentPageRows,
         { start, end },
         shouldCheck,
       ),
@@ -762,8 +768,10 @@ type ModelSignal&lt;T&gt; &#x3D; ReadSignal&lt;T&gt; &amp; { set(value: T): void
  */
 export interface EntitiesTableSelectionContext&lt;T extends Entity&gt; {
   selectedRecords: ModelSignal&lt;T[]&gt;;
-  sortedRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
-  getCurrentPageRows: () &#x3D;&gt; TableRow&lt;T&gt;[];
+  /** rows that &quot;select all&quot; applies to, i.e. all rows loaded into the table */
+  selectableRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
+  /** rows of the currently displayed page, in displayed order */
+  currentPageRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
 }
 
 /**
@@ -781,13 +789,13 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
 
   readonly allRowsSelected &#x3D; computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    const total &#x3D; this.context?.selectableRows().length ?? 0;
     return selected.length &gt; 0 &amp;&amp; selected.length &#x3D;&#x3D;&#x3D; total;
   });
 
   readonly selectionIndeterminate &#x3D; computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    const total &#x3D; this.context?.selectableRows().length ?? 0;
     return selected.length &gt; 0 &amp;&amp; selected.length &lt; total;
   });
 
@@ -807,10 +815,10 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
     );
   }
 
-  /** Selects or unselects all currently sorted rows. */
+  /** Selects or unselects all rows loaded into the table. */
   selectAllRows(checked: boolean) {
     this.context.selectedRecords.set(
-      checked ? this.context.sortedRows().map((r) &#x3D;&gt; r.record) : [],
+      checked ? this.context.selectableRows().map((r) &#x3D;&gt; r.record) : [],
     );
   }
 
@@ -819,10 +827,9 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
    * Returns whether the event came from a checkbox target.
    */
   handleSelectableRowMouseDown(event: MouseEvent, row: TableRow&lt;T&gt;): boolean {
-    const selectedRows &#x3D; this.context.getCurrentPageRows();
     const nextState &#x3D; updateSelectionFromMouseDown({
       selectedRecords: this.context.selectedRecords(),
-      selectedRows,
+      currentPageRows: this.context.currentPageRows(),
       row,
       shiftKey: event.shiftKey,
       lastSelectedRow: this.lastSelectedRow(),

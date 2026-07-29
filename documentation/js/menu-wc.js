@@ -1703,6 +1703,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/ImportProcessingContext.html" data-type="entity-link" >ImportProcessingContext</a>
                             </li>
                             <li class="link">
+                                <a href="classes/InMemoryDataSource.html" data-type="entity-link" >InMemoryDataSource</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/InvalidEnumOptionException.html" data-type="entity-link" >InvalidEnumOptionException</a>
                             </li>
                             <li class="link">
@@ -2617,6 +2620,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/LinkExternalProfileDialogData.html" data-type="entity-link" >LinkExternalProfileDialogData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/LoadRecordConfig.html" data-type="entity-link" >LoadRecordConfig</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/LocationImportConfig.html" data-type="entity-link" >LocationImportConfig</a>

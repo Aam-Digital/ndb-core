@@ -166,9 +166,9 @@
                             <ul class="index-list">
                                 <li>
                                             <span class="modifier">Optional</span>
-                                        <a href="#availableEntities" 
+                                        <a href="#dataSource" 
 >
-                                            availableEntities
+                                            dataSource
                                         </a>
                                 </li>
                                 <li>
@@ -229,9 +229,9 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="availableEntities"></a>
-                                        <span class="name "><b>availableEntities</b>
-                                            <a href="#availableEntities">
+                                        <a name="dataSource"></a>
+                                        <span class="name "><b>dataSource</b>
+                                            <a href="#dataSource">
                                                 <span class="icon ion-ios-link"></span>
                                             </a>
                                         </span>
@@ -239,7 +239,7 @@
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>availableEntities:         <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                        <code>dataSource:     <code>InMemoryDataSource&lt;Entity&gt;</code>
 </code>
                                     </td>
                                 </tr>
@@ -247,7 +247,7 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            <i>Type : </i>    <code>InMemoryDataSource&lt;Entity&gt;</code>
 
                                         </td>
                                     </tr>
@@ -525,16 +525,18 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityTypePipe } from &quot;#src/app/core/common-components/entity-type/entity-type.pipe&quot;;
 import { AsyncPipe } from &quot;@angular/common&quot;;
 import {
-  Component,
-  ElementRef,
-  input,
-  inject,
-  OnInit,
-  signal,
-  computed,
-  WritableSignal,
-  ViewChild,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  Injector,
+  input,
+  OnInit,
+  runInInjectionContext,
+  signal,
+  ViewChild,
+  WritableSignal,
 } from &quot;@angular/core&quot;;
 import { MatButtonModule, MatIconButton } from &quot;@angular/material/button&quot;;
 import { MatMenuModule } from &quot;@angular/material/menu&quot;;
@@ -580,12 +582,14 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from &quot;./matching-entities-config&quot;;
+import { InMemoryDataSource } from &quot;#src/app/core/common-components/entities-table/in-memory-data-source&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
   filterObj: WritableSignal&lt;DataFilter&lt;Entity&gt;&gt;;
 
-  availableEntities?: Entity[];
+  dataSource?: InMemoryDataSource&lt;Entity&gt;;
   selectMatch?: (e) &#x3D;&gt; void;
   entityType: string;
 
@@ -636,6 +640,7 @@ export class MatchingEntitiesComponent implements OnInit {
   private configService &#x3D; inject(ConfigService);
   private entityRegistry &#x3D; inject(EntityRegistry);
   private filterService &#x3D; inject(FilterService);
+  private injector &#x3D; inject(Injector);
   static DEFAULT_CONFIG_KEY &#x3D; &quot;appConfig:matching-entities&quot;;
 
   entity &#x3D; input&lt;Entity&gt;();
@@ -672,9 +677,11 @@ export class MatchingEntitiesComponent implements OnInit {
       const filterObj &#x3D; side.filterObj();
       if (Object.keys(filterObj).length &gt; 0) {
         const predicate &#x3D; this.filterService.getFilterPredicate(filterObj);
-        entities.push(...(side.availableEntities ?? []).filter(predicate));
+        entities.push(
+          ...(side.dataSource?.allRecords() ?? []).filter(predicate),
+        );
       } else {
-        entities.push(...(side.availableEntities ?? []));
+        entities.push(...(side.dataSource?.allRecords() ?? []));
       }
     });
     return entities;
@@ -763,9 +770,19 @@ export class MatchingEntitiesComponent implements OnInit {
     }
 
     if (!newSide.selected) {
-      newSide.availableEntities &#x3D; await this.entityMapper.loadType(
-        newSide.entityType,
+      runInInjectionContext(
+        this.injector,
+        () &#x3D;&gt; (newSide.dataSource &#x3D; new InMemoryDataSource()),
       );
+      const records &#x3D; await this.entityMapper
+        .loadType(newSide.entityType)
+        .catch((err) &#x3D;&gt; {
+          Logging.error(
+            &#x60;Failed to initialize entities (${newSide.entityType}) for matching side ${sideIndex}. Reasons: ${err}&#x60;,
+          );
+          return [];
+        });
+      newSide.dataSource.allRecords.set(records);
       newSide.availableFilters &#x3D; newSide.availableFilters ?? [];
       newSide.selected &#x3D; signal&lt;Entity[]&gt;([]);
       newSide.highlightedSelected &#x3D; signal&lt;Entity | null&gt;(null);
@@ -921,7 +938,7 @@ export class MatchingEntitiesComponent implements OnInit {
     this.lockedMatching.set(false);
 
     for (const side of this.sideDetails()) {
-      if (!side.availableEntities) {
+      if (!side.dataSource?.allRecords()) {
         continue;
       }
 
@@ -1011,11 +1028,11 @@ export class MatchingEntitiesComponent implements OnInit {
    * so the table can sort without custom sort functions.
    */
   private setDistanceValuesForSide(side: MatchingSide) {
-    if (!side.availableEntities?.length || !side.distanceColumn) {
+    if (!side.dataSource?.allRecords()?.length || !side.distanceColumn) {
       return;
     }
 
-    for (const entity of side.availableEntities) {
+    for (const entity of side.dataSource.allRecords()) {
       this.defineDistanceValue(entity, side);
     }
   }

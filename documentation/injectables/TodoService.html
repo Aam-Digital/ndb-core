@@ -159,6 +159,10 @@
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
+                                <a href="#getTodosFor" >getTodosFor</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#uncompleteTodo" >uncompleteTodo</a>
                             </li>
                         </ul>
@@ -201,8 +205,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="16"
-                                    class="link-to-prism">src/app/features/todos/todo.service.ts:16</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/app/features/todos/todo.service.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -252,6 +256,90 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getTodosFor"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTodosFor</b></span>
+                        <a href="#getTodosFor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTodosFor(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, relationProperty: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="23"
+                                    class="link-to-prism">src/app/features/todos/todo.service.ts:23</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load Todo entities related to the given entity through a database index on
+the given relation property (ordered by deadline).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>relationProperty</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Todo.html" target="_self" >Promise&lt;Todo[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="uncompleteTodo"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -270,8 +358,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="46"
-                                    class="link-to-prism">src/app/features/todos/todo.service.ts:46</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/features/todos/todo.service.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -323,12 +411,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { AlertService } from &quot;../../core/alerts/alert.service&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { DatabaseIndexingService } from &quot;../../core/entity/database-indexing/database-indexing.service&quot;;
 import { Todo } from &quot;./model/todo&quot;;
 import moment from &quot;moment/moment&quot;;
 import { CurrentUserSubject } from &quot;../../core/session/current-user-subject&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
 
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -337,6 +427,30 @@ export class TodoService {
   private currentUser &#x3D; inject(CurrentUserSubject);
   private alertService &#x3D; inject(AlertService);
   private entityMapper &#x3D; inject(EntityMapperService);
+  private dbIndexing &#x3D; inject(DatabaseIndexingService);
+
+  /**
+   * Load Todo entities related to the given entity through a database index on
+   * the given relation property (ordered by deadline).
+   */
+  async getTodosFor(entity: Entity, relationProperty: string): Promise&lt;Todo[]&gt; {
+    // TODO: move this generic index creation into schema
+    this.dbIndexing.generateIndexOnProperty(
+      &quot;todo_index&quot;,
+      Todo,
+      relationProperty as keyof Todo,
+      &quot;deadline&quot;,
+    );
+    return this.dbIndexing.queryIndexDocs(
+      Todo,
+      &quot;todo_index/by_&quot; + relationProperty,
+      {
+        startkey: [entity.getId(), &quot;\uffff&quot;],
+        endkey: [entity.getId()],
+        descending: true,
+      },
+    );
+  }
 
   async completeTodo(todo: Todo) {
     const nextTodo &#x3D; await this.createNextRepetition(todo);

@@ -1,0 +1,952 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >InMemoryDataSource</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/common-components/entities-table/in-memory-data-source.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>A data source that loads all data at once and sort/filters/paginates fully in-memory</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code>MatTableDataSource</code>
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#allRecords" >allRecords</a>
+                            </li>
+                            <li>
+                                <a href="#dataFilter" >dataFilter</a>
+                            </li>
+                            <li>
+                                <a href="#displayedData" >displayedData</a>
+                            </li>
+                            <li>
+                                <a href="#filteredRecords" >filteredRecords</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#filterPredicate" >filterPredicate</a>
+                            </li>
+                            <li>
+                                <a href="#isLoading" >isLoading</a>
+                            </li>
+                            <li>
+                                <a href="#loadRecordConfig" >loadRecordConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#renderedRows" >renderedRows</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#sortData" >sortData</a>
+                            </li>
+                            <li>
+                                <a href="#sortValueFns" >sortValueFns</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#data" >data</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:106</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allRecords"></a>
+                    <span class="name">
+                        <span ><b>allRecords</b></span>
+                        <a href="#allRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:68</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dataFilter"></a>
+                    <span class="name">
+                        <span ><b>dataFilter</b></span>
+                        <a href="#dataFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;DataFilter&lt;T&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:66</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="displayedData"></a>
+                    <span class="name">
+                        <span ><b>displayedData</b></span>
+                        <a href="#displayedData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;TableRow&lt;T&gt;[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:74</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The rows handed to the table as input data, in the order they were loaded.
+Sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filteredRecords"></a>
+                    <span class="name">
+                        <span ><b>filteredRecords</b></span>
+                        <a href="#filteredRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:69</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filterPredicate"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>filterPredicate</b></span>
+                        <a href="#filterPredicate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:95</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isLoading"></a>
+                    <span class="name">
+                        <span ><b>isLoading</b></span>
+                        <a href="#isLoading"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(true)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:81</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRecordConfig"></a>
+                    <span class="name">
+                        <span ><b>loadRecordConfig</b></span>
+                        <a href="#loadRecordConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;LoadRecordConfig&lt;T&gt;&gt;(undefined)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:80</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="renderedRows"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>renderedRows</b></span>
+                        <a href="#renderedRows"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>toSignal(this.connect(), { requireSync: true })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:79</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The rows as currently rendered by the table:
+filtered, sorted and reduced to the current page.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortData"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>sortData</b></span>
+                        <a href="#sortData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:98</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortValueFns"></a>
+                    <span class="name">
+                        <span ><b>sortValueFns</b></span>
+                        <a href="#sortValueFns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;SortValueFns&lt;T&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:67</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+
+            <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="data"></a>
+                        <span class="name"><b>data</b><a href="#data"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>data()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:85</a></div>
+                                </td>
+                            </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>set</b><code>data(data: <a href="../interfaces/TableRow.html" target="_self">TableRow&lt;T&gt;[]</a>)</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/common-components/entities-table/in-memory-data-source.ts:89</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+
+                                <div class="io-description">
+                                        <b>Parameters :</b>
+                                        <table class="params">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                        <td>Type</td>
+                                                    <td>Optional</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                            <td>data</td>
+                                                    
+                                                            <td>
+                                                                            <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
+                                                            </td>
+                                                    
+                                                        <td>
+                                                                No
+                                                        </td>
+                                                        
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                </div>
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+</section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
+import { TableRow } from &quot;#src/app/core/common-components/entities-table/table-row&quot;;
+import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
+import { MatTableDataSource } from &quot;@angular/material/table&quot;;
+import { DestroyRef, effect, inject, signal } from &quot;@angular/core&quot;;
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from &quot;@angular/core/rxjs-interop&quot;;
+import { FilterService } from &quot;#src/app/core/filter/filter.service&quot;;
+import { entityFilterPredicate } from &quot;#src/app/core/filter/filter-generator/filter-predicate&quot;;
+import {
+  SortValueFns,
+  tableSort,
+} from &quot;#src/app/core/common-components/entities-table/table-sort/table-sort&quot;;
+import {
+  EntitySpecialLoaderService,
+  LoaderMethod,
+} from &quot;#src/app/core/entity/entity-special-loader/entity-special-loader.service&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import {
+  applyUpdate,
+  UpdatedEntity,
+} from &quot;#src/app/core/entity/model/entity-update&quot;;
+import { skip, Subscription } from &quot;rxjs&quot;;
+import { BulkOperationStateService } from &quot;#src/app/core/entity/entity-actions/bulk-operation-state.service&quot;;
+import { take } from &quot;rxjs/operators&quot;;
+
+/**
+ * Configuration object that is necessary if data should be loaded by the datasource
+ */
+export interface LoadRecordConfig&lt;T extends Entity&gt; {
+  /**
+   * Constructor of the entity type to be loaded
+   */
+  entityCtr: EntityConstructor&lt;T&gt;;
+  /**
+   * Set this if entities only related to another entity should be loaded
+   */
+  forEntity?: Entity;
+  /**
+   * Property through which the relation can be resolved
+   */
+  relationProperty?: keyof Entity;
+  /**
+   * Select if a special loader method should be used for this entity
+   */
+  loaderMethod?: LoaderMethod;
+}
+
+/**
+ * A data source that loads all data at once and sort/filters/paginates fully in-memory
+ */
+export class InMemoryDataSource&lt;T extends Entity&gt; extends MatTableDataSource&lt;
+  TableRow&lt;T&gt;
+&gt; {
+  private readonly filterService &#x3D; inject(FilterService);
+  private readonly entitySpecialLoader &#x3D; inject(EntitySpecialLoaderService, {
+    optional: true,
+  });
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly bulkOperationState &#x3D; inject(BulkOperationStateService);
+  private readonly destroyRef &#x3D; inject(DestroyRef);
+
+  dataFilter &#x3D; signal&lt;DataFilter&lt;T&gt;&gt;({});
+  sortValueFns &#x3D; signal&lt;SortValueFns&lt;T&gt;&gt;({});
+  allRecords &#x3D; signal&lt;T[]&gt;([]);
+  filteredRecords &#x3D; signal&lt;T[]&gt;([]);
+  /**
+   * The rows handed to the table as input data, in the order they were loaded.
+   * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   */
+  displayedData &#x3D; signal&lt;TableRow&lt;T&gt;[]&gt;([]);
+  /**
+   * The rows as currently rendered by the table:
+   * filtered, sorted and reduced to the current page.
+   */
+  readonly renderedRows &#x3D; toSignal(this.connect(), { requireSync: true });
+  loadRecordConfig &#x3D; signal&lt;LoadRecordConfig&lt;T&gt;&gt;(undefined);
+  isLoading &#x3D; signal(true);
+
+  // NOTE: overriding only the setter would hide the inherited &#x60;get data&#x60;,
+  // so &#x60;dataSource.data&#x60; would return &#x60;undefined&#x60;. Provide both accessors.
+  override get data(): TableRow&lt;T&gt;[] {
+    return super.data;
+  }
+
+  override set data(data: TableRow&lt;T&gt;[]) {
+    // expose signal containing current data
+    this.displayedData.set(data);
+    super.data &#x3D; data;
+  }
+
+  override filterPredicate &#x3D; (data: TableRow&lt;T&gt;, filter: string) &#x3D;&gt;
+    entityFilterPredicate(data.record, filter);
+
+  override sortData &#x3D; (data, sort) &#x3D;&gt;
+    tableSort&lt;T, keyof T&gt;(data, {
+      active: (sort.active as keyof T) ?? &quot;&quot;,
+      direction: sort.direction,
+      sortValueFns: this.sortValueFns(),
+    });
+
+  // Make sure only one update subscription is active
+  private updateSubscription: Subscription;
+
+  constructor() {
+    super();
+    // Wait for first change of &#x60;allRecords&#x60; to show that loading is done
+    toObservable(this.allRecords)
+      .pipe(skip(1), take(1))
+      .subscribe(() &#x3D;&gt; this.isLoading.set(false));
+
+    effect(() &#x3D;&gt; {
+      this.data &#x3D; this.filteredRecords().map((record) &#x3D;&gt; ({ record }));
+    });
+    effect(() &#x3D;&gt; {
+      const records &#x3D; this.allRecords();
+      const filter &#x3D; this.dataFilter();
+      const predicate &#x3D; this.filterService.getFilterPredicate(filter);
+      this.filteredRecords.set(records.filter(predicate));
+    });
+    effect(() &#x3D;&gt; {
+      if (this.loadRecordConfig()) {
+        // If config is provided, this class loads the data and listens to updates
+        this.getRecords().then((records) &#x3D;&gt; this.allRecords.set(records));
+        this.listenToEntityUpdates();
+      }
+    });
+  }
+
+  private getRecords() {
+    const loaderMethod &#x3D; this.loadRecordConfig().loaderMethod;
+    if (loaderMethod &amp;&amp; this.entitySpecialLoader) {
+      const forEntity &#x3D; this.loadRecordConfig().forEntity;
+      if (forEntity) {
+        return this.entitySpecialLoader.loadDataFor(
+          loaderMethod,
+          forEntity,
+          this.loadRecordConfig().relationProperty,
+        );
+      } else {
+        return this.entitySpecialLoader.loadData(loaderMethod);
+      }
+    }
+
+    const entityConstructor &#x3D; this.loadRecordConfig().entityCtr;
+    if (!entityConstructor) {
+      return Promise.resolve([]);
+    }
+    return this.entityMapper.loadType(entityConstructor);
+  }
+
+  private listenToEntityUpdates() {
+    const entityConstructor &#x3D; this.loadRecordConfig().entityCtr;
+    if (!entityConstructor) {
+      return;
+    }
+
+    this.updateSubscription?.unsubscribe();
+    this.updateSubscription &#x3D; this.entityMapper
+      .receiveUpdates(entityConstructor)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(async (updatedEntity: UpdatedEntity&lt;T&gt;) &#x3D;&gt; {
+        if (this.bulkOperationState.isBulkOperationInProgress()) {
+          await this.handleUpdateDuringBulkOperation(updatedEntity);
+          return;
+        }
+
+        //get specially enhanced entity if necessary
+        const loaderMethod &#x3D; this.loadRecordConfig().loaderMethod;
+        if (loaderMethod &amp;&amp; this.entitySpecialLoader) {
+          updatedEntity &#x3D; await this.entitySpecialLoader.extendUpdatedEntity(
+            loaderMethod,
+            updatedEntity,
+          );
+        }
+        this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
+      });
+  }
+
+  private async handleUpdateDuringBulkOperation(
+    updatedEntity: UpdatedEntity&lt;T&gt;,
+  ) {
+    //buffer updates during bulk operations to avoid UI performance issues
+    const inProgress &#x3D; this.bulkOperationState.updateBulkOperationProgress(
+      updatedEntity,
+      false,
+    );
+    if (!inProgress) {
+      // reload the list once
+      this.allRecords.set(await this.getRecords());
+      // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
+      setTimeout(() &#x3D;&gt; {
+        requestAnimationFrame(() &#x3D;&gt; {
+          this.bulkOperationState.completeBulkOperation();
+        });
+      });
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'InMemoryDataSource.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

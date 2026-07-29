@@ -166,6 +166,12 @@
                         <td class="col-md-4">
                             <ul class="index-list">
                                 <li>
+                                        <a href="#currentPageRows" 
+>
+                                            currentPageRows
+                                        </a>
+                                </li>
+                                <li>
                                         <a href="#lastSelectedRow" 
 >
                                             lastSelectedRow
@@ -190,12 +196,6 @@
                                         </a>
                                 </li>
                                 <li>
-                                        <a href="#selectedRows" 
->
-                                            selectedRows
-                                        </a>
-                                </li>
-                                <li>
                                         <a href="#shiftKey" 
 >
                                             shiftKey
@@ -212,6 +212,45 @@
 
             <section data-compodoc="block-properties">
                 <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="currentPageRows"></a>
+                                        <span class="name "><b>currentPageRows</b>
+                                            <a href="#currentPageRows">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>currentPageRows:         <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>rows of the page the interaction happened on, in displayed order</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <table class="table table-sm table-bordered">
                         <tbody>
                                 <tr>
@@ -348,39 +387,6 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="selectedRows"></a>
-                                        <span class="name "><b>selectedRows</b>
-                                            <a href="#selectedRows">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>selectedRows:         <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
-
-                                        </td>
-                                    </tr>
-
-
-
-
-
-                        </tbody>
-                    </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
                                         <a name="shiftKey"></a>
                                         <span class="name "><b>shiftKey</b>
                                             <a href="#shiftKey">
@@ -439,7 +445,8 @@ export interface MouseSelectionUpdate&lt;T extends Entity&gt; {
  */
 export interface MouseSelectionInput&lt;T extends Entity&gt; {
   selectedRecords: T[];
-  selectedRows: TableRow&lt;T&gt;[];
+  /** rows of the page the interaction happened on, in displayed order */
+  currentPageRows: TableRow&lt;T&gt;[];
   row: TableRow&lt;T&gt;;
   shiftKey: boolean;
   lastSelectedRow: TableRow&lt;T&gt; | null;
@@ -497,13 +504,13 @@ export function toggleRecordSelection&lt;T extends Entity&gt;(
  */
 export function applyRangeSelection&lt;T extends Entity&gt;(
   selectedRecords: T[],
-  selectedRows: TableRow&lt;T&gt;[],
+  rows: TableRow&lt;T&gt;[],
   range: { start: number; end: number },
   shouldCheck: boolean,
 ): T[] {
   const updatedSelection &#x3D; [...selectedRecords];
   for (let index &#x3D; range.start; index &lt;&#x3D; range.end; index++) {
-    const row &#x3D; selectedRows[index];
+    const row &#x3D; rows[index];
     const isSelected &#x3D; updatedSelection.includes(row.record);
 
     if (shouldCheck &amp;&amp; !isSelected) {
@@ -523,15 +530,20 @@ export function updateSelectionFromMouseDown&lt;T extends Entity&gt;(
 ): MouseSelectionUpdate&lt;T&gt; {
   const {
     selectedRecords,
-    selectedRows,
+    currentPageRows,
     row,
     shiftKey,
     lastSelectedRow,
     lastSelection,
   } &#x3D; input;
-  const currentIndex &#x3D; selectedRows.indexOf(row);
+  // match by record, as the row wrappers are re-created whenever filter or sorting change
+  const currentIndex &#x3D; currentPageRows.findIndex(
+    (pageRow) &#x3D;&gt; pageRow.record &#x3D;&#x3D;&#x3D; row.record,
+  );
   const anchorIndex &#x3D; lastSelectedRow
-    ? selectedRows.indexOf(lastSelectedRow)
+    ? currentPageRows.findIndex(
+        (pageRow) &#x3D;&gt; pageRow.record &#x3D;&#x3D;&#x3D; lastSelectedRow.record,
+      )
     : -1;
   const canRangeSelect &#x3D;
     shiftKey &amp;&amp; !!lastSelectedRow &amp;&amp; anchorIndex !&#x3D;&#x3D; -1 &amp;&amp; currentIndex !&#x3D;&#x3D; -1;
@@ -547,7 +559,7 @@ export function updateSelectionFromMouseDown&lt;T extends Entity&gt;(
     return {
       selectedRecords: applyRangeSelection(
         selectedRecords,
-        selectedRows,
+        currentPageRows,
         { start, end },
         shouldCheck,
       ),
@@ -580,8 +592,10 @@ type ModelSignal&lt;T&gt; &#x3D; ReadSignal&lt;T&gt; &amp; { set(value: T): void
  */
 export interface EntitiesTableSelectionContext&lt;T extends Entity&gt; {
   selectedRecords: ModelSignal&lt;T[]&gt;;
-  sortedRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
-  getCurrentPageRows: () &#x3D;&gt; TableRow&lt;T&gt;[];
+  /** rows that &quot;select all&quot; applies to, i.e. all rows loaded into the table */
+  selectableRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
+  /** rows of the currently displayed page, in displayed order */
+  currentPageRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
 }
 
 /**
@@ -599,13 +613,13 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
 
   readonly allRowsSelected &#x3D; computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    const total &#x3D; this.context?.selectableRows().length ?? 0;
     return selected.length &gt; 0 &amp;&amp; selected.length &#x3D;&#x3D;&#x3D; total;
   });
 
   readonly selectionIndeterminate &#x3D; computed(() &#x3D;&gt; {
     const selected &#x3D; this.context?.selectedRecords() ?? [];
-    const total &#x3D; this.context?.sortedRows().length ?? 0;
+    const total &#x3D; this.context?.selectableRows().length ?? 0;
     return selected.length &gt; 0 &amp;&amp; selected.length &lt; total;
   });
 
@@ -625,10 +639,10 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
     );
   }
 
-  /** Selects or unselects all currently sorted rows. */
+  /** Selects or unselects all rows loaded into the table. */
   selectAllRows(checked: boolean) {
     this.context.selectedRecords.set(
-      checked ? this.context.sortedRows().map((r) &#x3D;&gt; r.record) : [],
+      checked ? this.context.selectableRows().map((r) &#x3D;&gt; r.record) : [],
     );
   }
 
@@ -637,10 +651,9 @@ export class EntitiesTableSelectionStore&lt;T extends Entity&gt; {
    * Returns whether the event came from a checkbox target.
    */
   handleSelectableRowMouseDown(event: MouseEvent, row: TableRow&lt;T&gt;): boolean {
-    const selectedRows &#x3D; this.context.getCurrentPageRows();
     const nextState &#x3D; updateSelectionFromMouseDown({
       selectedRecords: this.context.selectedRecords(),
-      selectedRows,
+      currentPageRows: this.context.currentPageRows(),
       row,
       shiftKey: event.shiftKey,
       lastSelectedRow: this.lastSelectedRow(),

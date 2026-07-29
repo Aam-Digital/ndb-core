@@ -257,8 +257,8 @@ The EntityMapper can be initialized with Entities that are passed as the second 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="88"
-                                    class="link-to-prism">src/app/utils/mocked-testing.module.ts:88</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/utils/mocked-testing.module.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -332,8 +332,6 @@ The EntityMapper can be initialized with Entities that are passed as the second 
 import { LoginState } from &quot;../core/session/session-states/login-state.enum&quot;;
 import { mockEntityMapperProvider } from &quot;../core/entity/entity-mapper/mock-entity-mapper-service&quot;;
 import { AnalyticsService } from &quot;../core/analytics/analytics.service&quot;;
-import { NoopAnimationsModule } from &quot;@angular/platform-browser/animations&quot;;
-import { RouterTestingModule } from &quot;@angular/router/testing&quot;;
 import { SessionType } from &quot;../core/session/session-type&quot;;
 import { Entity } from &quot;../core/entity/model/entity&quot;;
 import { DatabaseIndexingService } from &quot;../core/entity/database-indexing/database-indexing.service&quot;;
@@ -358,10 +356,8 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from &quot;@angular/common/http&quot;;
-import { LoggingService } from &quot;../core/logging/logging.service&quot;;
 import { getDefaultConfigEntity } from &quot;app/core/config/testing-config-service&quot;;
 import { getDefaultEnumEntities } from &quot;../core/basic-datatypes/configurable-enum/configurable-enum-testing&quot;;
-import { vi } from &quot;vitest&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
 import { parse, unparse } from &quot;papaparse&quot;;
 
@@ -379,12 +375,7 @@ import { parse, unparse } from &quot;papaparse&quot;;
  * If you need a REAL database (e.g. for indices/views) then use the {@link DatabaseTestingModule} instead.
  */
 @NgModule({
-  imports: [
-    AppModule,
-    NoopAnimationsModule,
-    RouterTestingModule,
-    ReactiveFormsModule,
-  ],
+  imports: [AppModule, ReactiveFormsModule],
   providers: [
     { provide: SwRegistrationOptions, useValue: { enabled: false } },
     {
@@ -420,9 +411,6 @@ export class MockedTestingModule {
     data: Entity[] &#x3D; [createEntityOfType(&quot;User&quot;, TEST_USER)],
   ): ModuleWithProviders&lt;MockedTestingModule&gt; {
     environment.session_type &#x3D; SessionType.mock;
-    const mockLoggingService: Pick&lt;LoggingService, &quot;warn&quot;&gt; &#x3D; {
-      warn: vi.fn(),
-    };
 
     return {
       ngModule: MockedTestingModule,
@@ -433,7 +421,6 @@ export class MockedTestingModule {
           deps: [EntitySchemaService],
         },
 
-        { provide: LoggingService, useValue: mockLoggingService },
         ...mockEntityMapperProvider([
           ...data,
           getDefaultConfigEntity(),

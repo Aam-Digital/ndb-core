@@ -169,7 +169,6 @@
                                 <a href="#loadData" >loadData</a>
                             </li>
                             <li>
-                                    <span class="modifier">Async</span>
                                 <a href="#loadDataFor" >loadDataFor</a>
                             </li>
                         </ul>
@@ -212,8 +211,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -299,8 +298,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="26"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:26</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="30"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:30</a></div>
                         </td>
                     </tr>
 
@@ -360,7 +359,6 @@
                 <td class="col-md-4">
                     <a name="loadDataFor"></a>
                     <span class="name">
-                            <span class="modifier">Async</span>
                         <span ><b>loadDataFor</b></span>
                         <a href="#loadDataFor"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -368,16 +366,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>loadDataFor(loaderMethod: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+<code>loadDataFor(loaderMethod: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entity: <a href="../classes/Entity.html" target="_self">Entity</a>, property?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:62</a></div>
                         </td>
                     </tr>
 
@@ -429,6 +426,18 @@
 
 
                                         </tr>
+                                        <tr>
+                                                <td>property</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -449,17 +458,20 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Entity } from &quot;../model/entity&quot;;
 import { ChildrenService } from &quot;../../../child-dev-project/children/children.service&quot;;
 import { HistoricalDataService } from &quot;./historical-data/historical-data.service&quot;;
 import { UpdatedEntity } from &quot;../model/entity-update&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { TodoService } from &quot;#src/app/features/todos/todo.service&quot;;
 
 export enum LoaderMethod {
   ChildrenService &#x3D; &quot;ChildrenService&quot;,
   HistoricalDataService &#x3D; &quot;HistoricalDataService&quot;,
   ChildrenServiceQueryRelations &#x3D; &quot;ChildrenServiceQueryRelations&quot;,
+  NotesRelatedToEntity &#x3D; &quot;NotesRelatedToEntity&quot;,
+  TodosRelatedToEntity &#x3D; &quot;TodosRelatedToEntity&quot;,
 }
 
 /**
@@ -471,8 +483,9 @@ export enum LoaderMethod {
   providedIn: &quot;root&quot;,
 })
 export class EntitySpecialLoaderService {
-  private childrenService &#x3D; inject(ChildrenService);
-  private historicalDataService &#x3D; inject(HistoricalDataService);
+  private readonly childrenService &#x3D; inject(ChildrenService);
+  private readonly historicalDataService &#x3D; inject(HistoricalDataService);
+  private readonly todoService &#x3D; inject(TodoService);
 
   loadData&lt;E extends Entity &#x3D; Entity&gt;(
     loaderMethod: LoaderMethod,
@@ -506,9 +519,10 @@ export class EntitySpecialLoaderService {
     return updatedEntity;
   }
 
-  async loadDataFor&lt;E extends Entity &#x3D; Entity&gt;(
+  loadDataFor&lt;E extends Entity &#x3D; Entity&gt;(
     loaderMethod: LoaderMethod,
     entity: Entity,
+    property?: string,
   ): Promise&lt;E[]&gt; {
     switch (loaderMethod) {
       case LoaderMethod.HistoricalDataService:
@@ -518,6 +532,15 @@ export class EntitySpecialLoaderService {
       case LoaderMethod.ChildrenServiceQueryRelations:
         return this.childrenService.queryRelations(
           entity.getId(false),
+        ) as unknown as Promise&lt;E[]&gt;;
+      case LoaderMethod.NotesRelatedToEntity:
+        return this.childrenService.getNotesRelatedTo(
+          entity.getId(),
+        ) as unknown as Promise&lt;E[]&gt;;
+      case LoaderMethod.TodosRelatedToEntity:
+        return this.todoService.getTodosFor(
+          entity,
+          property,
         ) as unknown as Promise&lt;E[]&gt;;
     }
   }
