@@ -14,6 +14,7 @@ import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/co
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 import { environment } from "../../../environments/environment";
 import { hasRemoteSession } from "../session/session-type";
+import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -23,6 +24,7 @@ import { hasRemoteSession } from "../session/session-type";
 })
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private title = inject(Title);
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private schemaService = inject(EntitySchemaService);
   private enumService = inject(ConfigurableEnumService);
 
@@ -140,7 +142,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     let localStorageSettings: SiteSettings;
 
     try {
-      const stored = localStorage.getItem(this.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+      const stored = this.localStorage.getItem(
+        this.SITE_SETTINGS_LOCAL_STORAGE_KEY,
+      );
       if (stored) {
         localStorageSettings = this.schemaService.loadDataIntoEntity(
           new SiteSettings(),
@@ -166,7 +170,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     this.entityUpdated.subscribe((settings) => {
       const dbFormat =
         this.schemaService.transformEntityToDatabaseFormat(settings);
-      localStorage.setItem(
+      this.localStorage.setItem(
         this.SITE_SETTINGS_LOCAL_STORAGE_KEY,
         JSON.stringify(dbFormat),
       );

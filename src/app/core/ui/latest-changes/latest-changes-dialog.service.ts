@@ -20,6 +20,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { environment } from "../../../../environments/environment";
 import { LatestChangesService } from "./latest-changes.service";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * Manage the changelog information and display it to the user
@@ -28,6 +29,7 @@ import { LatestChangesService } from "./latest-changes.service";
 @Injectable({ providedIn: "root" })
 export class LatestChangesDialogService {
   private dialog = inject(MatDialog);
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private latestChangesService = inject(LatestChangesService);
 
   public static readonly VERSION_KEY = "AppVersion";
@@ -57,7 +59,7 @@ export class LatestChangesDialogService {
   }
 
   private updateCurrentVersion() {
-    window.localStorage.setItem(
+    this.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       this.getCurrentVersion(),
     );
@@ -67,7 +69,7 @@ export class LatestChangesDialogService {
    * Display the latest changes info box automatically if the current user has not seen this version before.
    */
   public showLatestChangesIfUpdated() {
-    const previousVersion = window.localStorage.getItem(
+    const previousVersion = this.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY,
     );
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
