@@ -25,6 +25,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { Logging } from "../../logging/logging.service";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +47,7 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
   styleUrl: "./setup-wizard.component.scss",
 })
 export class SetupWizardComponent implements OnInit {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private entityMapper = inject(EntityMapperService);
   private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, {
     optional: true,
@@ -76,7 +78,7 @@ export class SetupWizardComponent implements OnInit {
   }
 
   private loadLocalStatus() {
-    const storedStatus = localStorage.getItem(this.LOCAL_STORAGE_KEY);
+    const storedStatus = this.localStorage.getItem(this.LOCAL_STORAGE_KEY);
     if (storedStatus) {
       const parsedStatus = JSON.parse(storedStatus);
 
@@ -94,7 +96,7 @@ export class SetupWizardComponent implements OnInit {
       this.completedSteps.push(newStep);
     }
 
-    localStorage.setItem(
+    this.localStorage.setItem(
       this.LOCAL_STORAGE_KEY,
       JSON.stringify({
         currentStep: this.currentStep,

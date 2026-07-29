@@ -14,7 +14,7 @@ function isFunction(value: unknown): value is TestFunction {
 }
 
 function wrapWithProxyZone(fn: TestFunction): TestFunction {
-  return function proxyZoneWrapped(this: unknown, ...args: unknown[]) {
+  function runInProxyZone(this: unknown, args: unknown[]) {
     const ZoneCtor = (globalThis as any).Zone;
     const ProxyZoneSpecCtor = ZoneCtor?.ProxyZoneSpec;
 
@@ -24,6 +24,20 @@ function wrapWithProxyZone(fn: TestFunction): TestFunction {
 
     const proxyZone = ZoneCtor.current.fork(new (ProxyZoneSpecCtor as any)());
     return proxyZone.run(fn, this, args);
+  }
+
+  // Preserve the callback's arity. Vitest inspects the first parameter to decide
+  // whether a test or hook uses fixtures, and rejects a rest parameter with
+  // "The 1st argument inside a fixture must use object destructuring pattern".
+  // A zero-argument callback therefore has to stay zero-argument once wrapped.
+  if (fn.length === 0) {
+    return function proxyZoneWrapped(this: unknown) {
+      return runInProxyZone.call(this, []);
+    };
+  }
+
+  return function proxyZoneWrapped(this: unknown, ...args: unknown[]) {
+    return runInProxyZone.call(this, args);
   };
 }
 

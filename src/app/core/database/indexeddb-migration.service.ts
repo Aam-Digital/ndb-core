@@ -5,7 +5,11 @@ import { SyncState } from "../session/session-states/sync-state.enum";
 import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Logging } from "../logging/logging.service";
-import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "../../utils/di-tokens";
+import {
+  NAVIGATOR_TOKEN,
+  WINDOW_TOKEN,
+  LOCAL_STORAGE_TOKEN,
+} from "../../utils/di-tokens";
 import { filter, first } from "rxjs/operators";
 import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
@@ -30,6 +34,7 @@ const DB_MIGRATED_PREFIX = "DB_MIGRATED_";
  */
 @Injectable({ providedIn: "root" })
 export class IndexeddbMigrationService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly navigator = inject<Navigator>(NAVIGATOR_TOKEN, {
     optional: true,
@@ -67,7 +72,7 @@ export class IndexeddbMigrationService {
 
     const oldDbExists = await this.legacyDbExists(session);
     if (!oldDbExists && !this.isMigrated(session)) {
-      localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
+      this.localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
       await this.trackResolveScenario("indexeddb_fresh-install");
       Logging.debug(
         "IndexeddbMigration: no legacy DB found; assuming fresh install and setting 'migrated' flag",
@@ -215,11 +220,13 @@ export class IndexeddbMigrationService {
   }
 
   private isMigrated(session: SessionInfo): boolean {
-    return localStorage.getItem(DB_MIGRATED_PREFIX + session.id) === "true";
+    return (
+      this.localStorage.getItem(DB_MIGRATED_PREFIX + session.id) === "true"
+    );
   }
 
   private setMigrated(session: SessionInfo): void {
-    localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
+    this.localStorage.setItem(DB_MIGRATED_PREFIX + session.id, "true");
     Logging.debug(
       `IndexeddbMigration: migration flag set for user ${session.id}`,
     );
@@ -326,7 +333,7 @@ export class IndexeddbMigrationService {
       }
     }
 
-    localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
+    this.localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
     Logging.debug(
       `IndexeddbMigration: cleanup complete for user ${session.id}; migration flag removed`,
     );

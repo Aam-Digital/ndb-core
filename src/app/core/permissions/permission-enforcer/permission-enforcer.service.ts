@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -30,6 +30,7 @@ import { Logging } from "../../logging/logging.service";
  */
 @Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private sessionInfo = inject(SessionSubject);
   private ability = inject(EntityAbility);
   private entityMapper = inject(EntityMapperService);
@@ -99,11 +100,11 @@ export class PermissionEnforcerService {
     }
 
     // update stored rules to check for future changes
-    window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+    this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }
 
   private userRulesChanged(newRules: string): boolean {
-    const storedRules = window.localStorage.getItem(this.getUserStorageKey());
+    const storedRules = this.localStorage.getItem(this.getUserStorageKey());
     return storedRules !== newRules;
   }
 

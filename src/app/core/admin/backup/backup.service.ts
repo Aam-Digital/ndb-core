@@ -3,7 +3,7 @@ import { Database } from "../../database/database";
 import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { Logging } from "../../logging/logging.service";
 
 /**
@@ -13,6 +13,7 @@ import { Logging } from "../../logging/logging.service";
   providedIn: "root",
 })
 export class BackupService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private dbResolver = inject(DatabaseResolverService);
 
   private db: Database;
@@ -88,7 +89,7 @@ export class BackupService {
     // view indexing, and other async operations. IDB databases are deleted on
     // the fresh page (before Angular bootstraps) where no connections exist,
     // avoiding race conditions with PouchDB's internal IDB transactions.
-    localStorage.clear();
+    this.localStorage.clear();
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
     this.location.pathname = "";
   }

@@ -5,6 +5,7 @@ import {
   effect,
   input,
   signal,
+  inject,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -12,6 +13,7 @@ import {
   PageEvent,
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
+import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +23,7 @@ import { MatTableDataSource } from "@angular/material/table";
   imports: [MatPaginatorModule],
 })
 export class ListPaginatorComponent<E> {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   readonly LOCAL_STORAGE_KEY = "PAGINATION-";
   readonly pageSizeOptions = [10, 20, 50, 100];
 
@@ -64,14 +67,14 @@ export class ListPaginatorComponent<E> {
 
   private getSavedPageSize(): number {
     return Number.parseInt(
-      localStorage.getItem(
+      this.localStorage.getItem(
         this.LOCAL_STORAGE_KEY + this.idForSavingPagination(),
       ),
     );
   }
 
   private savePageSize(size: number) {
-    localStorage.setItem(
+    this.localStorage.setItem(
       this.LOCAL_STORAGE_KEY + this.idForSavingPagination(),
       size?.toString(),
     );

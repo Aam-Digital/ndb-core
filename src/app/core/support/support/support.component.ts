@@ -5,7 +5,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { HttpClient } from "@angular/common/http";
@@ -41,6 +41,7 @@ import { Clipboard } from "@angular/cdk/clipboard";
   ],
 })
 export class SupportComponent implements OnInit {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private syncState = inject(SyncStateSubject);
   private sessionSubject = inject(SessionSubject);
   private currentUserSubject = inject(CurrentUserSubject);
@@ -101,12 +102,12 @@ export class SupportComponent implements OnInit {
     const lastSyncKey =
       db instanceof SyncedPouchDatabase ? db.LAST_SYNC_KEY : undefined;
     this.lastSync =
-      (lastSyncKey && localStorage.getItem(lastSyncKey)) || "never";
+      (lastSyncKey && this.localStorage.getItem(lastSyncKey)) || "never";
   }
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
+      this.localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
   }
 
   private async initStorageInfo() {

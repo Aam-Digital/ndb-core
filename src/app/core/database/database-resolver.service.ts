@@ -16,6 +16,7 @@ import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 import { Logging } from "../logging/logging.service";
+import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Manages access to individual databases,
@@ -25,6 +26,7 @@ import { Logging } from "../logging/logging.service";
   providedIn: "root",
 })
 export class DatabaseResolverService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly databaseFactory = inject(DatabaseFactoryService);
   private readonly migrationService = inject(IndexeddbMigrationService);
   private readonly window = inject<Window>(WINDOW_TOKEN, { optional: true });
@@ -76,6 +78,11 @@ export class DatabaseResolverService {
     }
   }
 
+  /**
+   * Static, so it cannot use the injected LOCAL_STORAGE_TOKEN and touches the
+   * real localStorage directly. Callers that need this mockable should make it
+   * an instance method first.
+   */
   static clearLastSyncMarkers() {
     Object.keys(localStorage)
       .filter((key) => key.startsWith(SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX))
@@ -135,7 +142,7 @@ export class DatabaseResolverService {
   private async checkForVanishedLocalDatabase(dbConfig: DbConfig) {
     try {
       const dbName = dbConfig.dbNames.app;
-      const lastSyncTime = localStorage.getItem(
+      const lastSyncTime = this.localStorage.getItem(
         SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + dbName,
       );
       // indexedDB.databases() is not available in all browsers (then: undefined)
