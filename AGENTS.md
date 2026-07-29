@@ -138,7 +138,7 @@ export class ExampleComponent {
 - Implement proper permissions checking via CASL integration.
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
 - Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
-- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. Mutating a shared entity's schema without restoring it leaks into the other specs in the same file and causes order-dependent flaky failures
+- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. The unit-test runner is non-isolated, so mutating a shared entity's schema without restoring it leaks into other specs and causes order-dependent flaky failures
 - See `doc/compodoc_sources/how-to-guides/` for detailed guides on entities, datatypes, and more
 
 ### Configuration System
@@ -233,24 +233,25 @@ systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=0 \
   npm run test -- --watch=false
 ```
 
-#### Test isolation
+#### Shared state between spec files
 
-[`vitest-base.config.ts`](vitest-base.config.ts) sets `isolate: true`. The Angular
-unit-test builder defaults it to `false`, which makes every spec file share one module
-registry, one `environment` singleton and one TestBed per worker — so async work that
-outlives a spec file throws into whichever file runs next, and failures land on innocent
-specs and move between runs.
+The unit-test runner is **not** isolated: the Angular builder leaves Vitest's `isolate`
+at `false`, so every spec file in a worker shares one module registry, one `environment`
+singleton, one TestBed — and one jsdom `localStorage`. Anything a spec mutates and does
+not restore leaks into whichever file runs next, so the damage surfaces in an innocent
+spec and moves between runs.
 
-A practical consequence: **a spec must register every entity type it relies on**, by
-importing the model (the `@DatabaseEntity` decorator does the registering). Do not depend
-on some other spec file having imported it — that only ever worked by accident. If a spec
-passes in the full suite but fails via `--include='**/that-file.spec.ts'`, this is why.
+Practical rules:
 
-Isolation costs wall time, because every spec file re-imports the Angular module graph
-into a fresh environment. CI wins that back by splitting the suite across parallel shards
-(see [`_qa-unit.yaml`](.github/workflows/_qa-unit.yaml)); coverage is published from a
-separate job that merges the per-shard lcov files. Locally you normally want the whole
-suite, so sharding stays off unless you set `VITEST_SHARD=<index>/<count>`.
+- **Never stub a shared prototype.** `vi.spyOn(Storage.prototype, ...)` and friends patch
+  an object owned by the worker process, so even `isolate: true` would not undo it. Inject
+  a fake instead — for storage, provide [`LOCAL_STORAGE_TOKEN`](src/app/utils/di-tokens.ts)
+  with [`createFakeStorage()`](src/app/utils/test-utils/fake-storage.ts).
+- **Restore from a hook, not the end of a test body**, so the restore still runs when an
+  assertion fails partway through.
+- **Register every entity type a spec relies on** by importing the model (the
+  `@DatabaseEntity` decorator registers it). Do not depend on another spec file having
+  imported it.
 
 ### End-to-End Testing (Playwright)
 

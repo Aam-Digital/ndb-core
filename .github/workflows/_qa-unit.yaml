@@ -37,21 +37,12 @@ jobs:
   test-unit:
     needs: toolchain
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # for QLTY code coverage (https://docs.qlty.sh/migration/coverage)
     env:
       TZ: Europe/Berlin
       FORCE_COLOR: 1
-      # Each spec file runs in its own environment (see vitest-base.config.ts),
-      # which costs too much wall time for a single runner. Split across shards.
-      # If a shard ever approaches the timeout, add entries to the matrix below.
-      VITEST_SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
-      # The config caps workers at 4, which resolves to 3 here (4 cores - 1) and
-      # is what Vitest would pick anyway. Runners have 16 GB, so use all 4.
-      VITEST_MAX_WORKERS: 4
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -69,31 +60,8 @@ jobs:
           key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}
       - run: npm run test-ci
 
-      - name: Upload coverage for this shard
-        if: ${{ !inputs.is-fork }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-shard-${{ matrix.shard }}
-          path: coverage/**/lcov.info
-          if-no-files-found: error
-
-  # Coverage is only meaningful once every shard has reported, so publish it from
-  # a single job that merges the per-shard lcov files.
-  coverage:
-    needs: test-unit
-    if: ${{ !inputs.is-fork }}
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write # for QLTY code coverage (https://docs.qlty.sh/migration/coverage)
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download coverage from all shards
-        uses: actions/download-artifact@v4
-        with:
-          pattern: coverage-shard-*
-          path: coverage-shards
-
       - uses: qltysh/qlty-action/coverage@a2277a908db90c4c868832fb9204521fb940fdb4 # v1
+        if: ${{ !inputs.is-fork }}
         with:
           oidc: true
-          files: coverage-shards/**/lcov.info
+          files: coverage/**/lcov.info
