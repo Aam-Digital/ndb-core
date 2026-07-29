@@ -37,6 +37,7 @@ import { Subject, Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * This service handles the user session.
@@ -45,6 +46,7 @@ import { EntityConfigReadyService } from "../../entity/entity-config-ready.servi
  */
 @Injectable()
 export class SessionManagerService {
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private remoteAuthService = inject(KeycloakAuthService);
   private localAuthService = inject(LocalAuthService);
   private sessionInfo = inject(SessionSubject);
@@ -210,7 +212,7 @@ export class SessionManagerService {
         // This will forward to the keycloak logout page
         await this.remoteAuthService.logout();
       } else {
-        localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
+        this.localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
       }
     }
     // resetting app state
@@ -229,8 +231,8 @@ export class SessionManagerService {
   }
 
   clearRemoteSessionIfNecessary() {
-    if (localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
-      localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
+    if (this.localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
+      this.localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
       // The remote logout below redirects through Keycloak and back to /login.
       // Skip the silent SSO check on that next page load to avoid a needless
       // multi-second spinner.

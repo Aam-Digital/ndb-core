@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { map } from "rxjs/operators";
+import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Interaction with the third-party-authentication API Module.
@@ -13,6 +14,7 @@ import { map } from "rxjs/operators";
   providedIn: "root",
 })
 export class ThirdPartyAuthenticationService {
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly LOCAL_STORAGE_KEY = "tpa_session";
   private readonly API_URL =
     environment.API_PROXY_PREFIX + "/v1/third-party-authentication";
@@ -45,14 +47,14 @@ export class ThirdPartyAuthenticationService {
 
   private storeSessionId(sessionId: string | null) {
     if (sessionId) {
-      localStorage.setItem(this.LOCAL_STORAGE_KEY, sessionId);
+      this.localStorage.setItem(this.LOCAL_STORAGE_KEY, sessionId);
     } else {
-      localStorage.removeItem(this.LOCAL_STORAGE_KEY);
+      this.localStorage.removeItem(this.LOCAL_STORAGE_KEY);
     }
   }
 
   getSessionId(): string | null {
-    return localStorage.getItem(this.LOCAL_STORAGE_KEY);
+    return this.localStorage.getItem(this.LOCAL_STORAGE_KEY);
   }
 
   async getRedirectUrl(): Promise<string | undefined> {

@@ -24,6 +24,7 @@ import { Logging } from "../../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * Check with the server whether a new version of the app is available in order to notify the user.
@@ -34,6 +35,7 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
  */
 @Injectable({ providedIn: "root" })
 export class UpdateManagerService {
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private appRef = inject(ApplicationRef);
   private updates = inject(SwUpdate);
   private snackBar = inject(MatSnackBar);
@@ -48,11 +50,11 @@ export class UpdateManagerService {
       Logging.error("App is in unrecoverable state: " + err.reason);
       this.location.reload();
     });
-    const currentVersion = localStorage.getItem(
+    const currentVersion = this.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY,
     );
     if (currentVersion && currentVersion.startsWith(this.UPDATE_PREFIX)) {
-      localStorage.setItem(
+      this.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace(this.UPDATE_PREFIX, ""),
       );
@@ -96,7 +98,7 @@ export class UpdateManagerService {
 
   private updateIfPossible() {
     const currentVersion =
-      localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || "";
+      this.localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || "";
     if (currentVersion.startsWith(this.UPDATE_PREFIX)) {
       // Sometimes this is triggered multiple times for one update
       return;
@@ -104,7 +106,7 @@ export class UpdateManagerService {
 
     if (this.unsavedChanges.pending()) {
       // app cannot be safely reloaded
-      localStorage.setItem(
+      this.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         this.UPDATE_PREFIX + currentVersion,
       );
@@ -115,7 +117,7 @@ export class UpdateManagerService {
         )
         .onAction()
         .subscribe(() => {
-          localStorage.setItem(
+          this.localStorage.setItem(
             LatestChangesDialogService.VERSION_KEY,
             currentVersion,
           );

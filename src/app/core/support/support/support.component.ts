@@ -27,6 +27,7 @@ import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
 import { Clipboard } from "@angular/cdk/clipboard";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +42,7 @@ import { Clipboard } from "@angular/cdk/clipboard";
   ],
 })
 export class SupportComponent implements OnInit {
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private syncState = inject(SyncStateSubject);
   private sessionSubject = inject(SessionSubject);
   private currentUserSubject = inject(CurrentUserSubject);
@@ -101,12 +103,12 @@ export class SupportComponent implements OnInit {
     const lastSyncKey =
       db instanceof SyncedPouchDatabase ? db.LAST_SYNC_KEY : undefined;
     this.lastSync =
-      (lastSyncKey && localStorage.getItem(lastSyncKey)) || "never";
+      (lastSyncKey && this.localStorage.getItem(lastSyncKey)) || "never";
   }
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
+      this.localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
   }
 
   private async initStorageInfo() {

@@ -11,6 +11,7 @@ import { firstValueFrom } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { Logging } from "../../logging/logging.service";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * This service checks whether the relevant rules for the current user changed
@@ -30,6 +31,7 @@ import { Logging } from "../../logging/logging.service";
  */
 @Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private sessionInfo = inject(SessionSubject);
   private ability = inject(EntityAbility);
   private entityMapper = inject(EntityMapperService);
@@ -99,11 +101,11 @@ export class PermissionEnforcerService {
     }
 
     // update stored rules to check for future changes
-    window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+    this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }
 
   private userRulesChanged(newRules: string): boolean {
-    const storedRules = window.localStorage.getItem(this.getUserStorageKey());
+    const storedRules = this.localStorage.getItem(this.getUserStorageKey());
     return storedRules !== newRules;
   }
 

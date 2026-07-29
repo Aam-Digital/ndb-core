@@ -7,6 +7,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { filter } from "rxjs";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Service that provides the currently active locale and applies a newly selected one.
@@ -16,6 +17,7 @@ import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 })
 @UntilDestroy()
 export class LanguageService {
+  private localStorage = inject(LOCAL_STORAGE_TOKEN);
   private baseLocale = inject(LOCALE_ID);
   private window = inject<Window>(WINDOW_TOKEN);
   private siteSettings = inject(SiteSettingsService);
@@ -45,19 +47,19 @@ export class LanguageService {
   }
 
   /**
-   * Switch the current locale and persist it in localStorage.
+   * Switch the current locale and persist it in this.localStorage.
    * @param newLocale
    */
   switchLocale(newLocale: string): void {
-    const currentLocale = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
+    const currentLocale = this.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
     if (newLocale === currentLocale || !newLocale) return;
 
-    localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, newLocale);
+    this.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, newLocale);
     this.window.location.reload();
   }
 
   initDefaultLanguage(): void {
-    const languageSelected = this.window.localStorage.getItem(
+    const languageSelected = this.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );
 
@@ -74,8 +76,7 @@ export class LanguageService {
    */
   getCurrentLocale(): string {
     return (
-      this.window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ||
-      this.baseLocale
+      this.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || this.baseLocale
     );
   }
 }
