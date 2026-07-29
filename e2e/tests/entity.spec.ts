@@ -340,8 +340,6 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
   await expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
   await expect(nameCells).toHaveText(MATCHING_NAMES.slice(0, PAGE_SIZE));
 
-  await argosScreenshot(page, "children-filtered-sorted-page-1");
-
   // The second page continues the sorted, filtered result.
   await page.getByRole("button", { name: "Next page" }).click();
 

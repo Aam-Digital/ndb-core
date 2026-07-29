@@ -258,7 +258,6 @@ test("Bulk selection follows the rendered order through sorting, filtering and p
   await shiftSelectFirstThreeRows();
   await expect(rows.nth(3).locator("mat-checkbox input")).not.toBeChecked();
 
-  await argosScreenshot(page, "bulk-selection-filtered-page-2");
   await clearSelection();
 
   // "Select all" covers the whole filtered result, not just the visible page.

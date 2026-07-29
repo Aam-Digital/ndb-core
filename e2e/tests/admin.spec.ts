@@ -42,8 +42,6 @@ test("Edit existing Name field to set and reset default value", async ({
   await page.waitForLoadState("networkidle");
   await expect(page.getByText("Details View & Fields")).toBeVisible();
 
-  await argosScreenshot(page, "admin-details");
-
   const nameTextbox = page.locator("mat-form-field").getByText("Name");
   await expect(nameTextbox).toBeVisible();
 
@@ -225,8 +223,6 @@ test("Configure automated status update and verify UI", async ({ page }) => {
 
   // Click Save button to save the automation rule
   await page.getByRole("button", { name: "Save" }).first().click();
-
-  await argosScreenshot(page, "automation-rule-saved");
 
   // Now back in the main field configuration dialog, click Apply button
   await page.getByRole("button", { name: "Apply" }).first().click();
