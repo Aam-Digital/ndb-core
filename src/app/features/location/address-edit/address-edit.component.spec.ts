@@ -39,6 +39,12 @@ describe("AddressEditComponent", () => {
       enrichGeoLocation: vi.fn((loc: GeoLocation | undefined) =>
         enrichGeoLocation(loc),
       ),
+      composeAddressFromParts: vi.fn((loc: GeoLocation | undefined) => {
+        if (!loc) return "";
+        const street = [loc.road, loc.house_number].filter(Boolean).join(" ");
+        const postcodeCity = [loc.postcode, loc.city].filter(Boolean).join(" ");
+        return [street, postcodeCity].filter((x) => !!x).join(", ");
+      }),
     };
     mockGeoService.lookup.mockReturnValue(of([]));
 
@@ -233,5 +239,134 @@ describe("AddressEditComponent", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should update a single part and preserve siblings", async () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Main St 42, 12345 Berlin",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+
+    await component.updateAddressPart("city", "Tempelhof");
+
+    expect(component.selectedLocation()).toMatchObject({
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Tempelhof",
+      country: "Germany",
+    });
+  });
+
+  it("should auto-update the text (no prompt) when editing a part and the text was not manually overwritten", async () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Main St 42, 12345 Berlin",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+
+    await component.updateAddressPart("city", "Tempelhof");
+
+    expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    expect(component.selectedLocation()?.locationString).toBe(
+      "Main St 42, 12345 Tempelhof",
+    );
+  });
+
+  it("should auto-update the text (no prompt) for an amenity-prefixed lookup where text equals display_name", async () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      geoLookup: {
+        lat: 1,
+        lon: 1,
+        display_name: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      } as OpenStreetMapsSearchResult,
+      road: "Rollbergstraße",
+      house_number: "28A",
+      postcode: "12053",
+      city: "Berlin",
+    });
+
+    await component.updateAddressPart("city", "Neukölln");
+
+    expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    expect(component.selectedLocation()?.locationString).toBe(
+      "Rollbergstraße 28A, 12053 Neukölln",
+    );
+  });
+
+  it("should ask before overwriting a manually customized text and update it on confirm", async () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Grandma's house near the old bridge",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+    mockConfirmationDialog.getConfirmation.mockResolvedValue("update");
+
+    await component.updateAddressPart("city", "Tempelhof");
+
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(component.selectedLocation()?.locationString).toBe(
+      "Main St 42, 12345 Tempelhof",
+    );
+    expect(component.selectedLocation()?.city).toBe("Tempelhof");
+  });
+
+  it("should keep the customized text but still apply the part when the user declines", async () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Grandma's house near the old bridge",
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    });
+    mockConfirmationDialog.getConfirmation.mockResolvedValue("keep");
+
+    await component.updateAddressPart("city", "Tempelhof");
+
+    expect(component.selectedLocation()?.locationString).toBe(
+      "Grandma's house near the old bridge",
+    );
+    expect(component.selectedLocation()?.city).toBe("Tempelhof");
+  });
+
+  it("should not show a diverging-text hint on load for an amenity-prefixed lookup", () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      geoLookup: {
+        lat: 1,
+        lon: 1,
+        display_name: "Impact Hub, Rollbergstraße 28A, 12053 Berlin",
+      } as OpenStreetMapsSearchResult,
+      road: "Rollbergstraße",
+      house_number: "28A",
+      postcode: "12053",
+      city: "Berlin",
+    });
+
+    expect(component.hasDivergingText()).toBe(false);
+  });
+
+  it("should show a diverging-text hint when the text is manually customized", () => {
+    fixture.componentRef.setInput("selectedLocation", {
+      locationString: "My custom place name",
+      road: "Rollbergstraße",
+      house_number: "28A",
+      postcode: "12053",
+      city: "Berlin",
+    });
+
+    expect(component.hasDivergingText()).toBe(true);
   });
 });

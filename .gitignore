@@ -215,8 +215,7 @@ fabric.properties
 # CLI local config — never commit
 cli/.env
 
-# CLI credentials (operator-local only) — never commit, encrypted or not
-credentials.json
-credentials.json.age
-cli/credentials.json
-cli/credentials.json.age
+# CLI credentials (operator-local only) — never commit, encrypted or not.
+# The wildcard also covers the .bak/.tmp files that `credentials merge` creates.
+credentials.json*
+cli/credentials.json*

@@ -297,4 +297,11 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.ColorInputComponent,
       ),
   ],
+  [
+    "EditJson",
+    () =>
+      import("./admin/json-editor/edit-json/edit-json.component").then(
+        (c) => c.EditJsonComponent,
+      ),
+  ],
 ];

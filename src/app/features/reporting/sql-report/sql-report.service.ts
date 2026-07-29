@@ -2,9 +2,10 @@ import { Injectable, inject } from "@angular/core";
 import { SqlReport } from "../report-config";
 import { HttpClient } from "@angular/common/http";
 import moment from "moment";
-import { map, switchMap, takeWhile } from "rxjs/operators";
-import { firstValueFrom, interval, lastValueFrom, Observable } from "rxjs";
+import { catchError, map, switchMap, takeWhile } from "rxjs/operators";
+import { firstValueFrom, interval, lastValueFrom, Observable, of } from "rxjs";
 import { environment } from "../../../../environments/environment";
+import { Logging } from "../../../core/logging/logging.service";
 
 /**
  * represents a TableRow of a SqlReportDataEntry
@@ -52,6 +53,30 @@ export class SqlReportService {
   private http = inject(HttpClient);
 
   static readonly API_URL = environment.API_PROXY_PREFIX + "/v1/reporting";
+
+  private _isReportingBackendEnabledPromise: Promise<boolean> | undefined;
+
+  /**
+   * Whether the server-side reporting backend (SQS) required for "sql" reports is available,
+   * as reported by the `/actuator/features` endpoint (`reporting` feature flag).
+   * "reporting" and "exporting" reports are calculated in-browser and do not need this.
+   */
+  isReportingBackendEnabled(): Promise<boolean> {
+    if (this._isReportingBackendEnabledPromise === undefined) {
+      this._isReportingBackendEnabledPromise = firstValueFrom(
+        this.http.get(environment.API_PROXY_PREFIX + "/actuator/features").pipe(
+          map((res) => res?.["reporting"]?.enabled ?? false),
+          catchError((err) => {
+            // if aam-services backend is not running --> 502
+            // if aam-services reporting module disabled --> 404
+            Logging.debug("Reporting API not available", err);
+            return of(false);
+          }),
+        ),
+      );
+    }
+    return this._isReportingBackendEnabledPromise;
+  }
 
   /**
    * Get the combines results of the SQL statements in the report

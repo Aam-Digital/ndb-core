@@ -13,6 +13,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -282,6 +283,19 @@ describe("EntityListComponent", () => {
       afterClosed: () => of(result),
     } as any;
   }
+
+  it("should not allow import when user cannot create ImportMetadata", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: "ImportMetadata", action: "create", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    createComponent();
+
+    expect(component.canImport()).toBe(false);
+  });
 
   it("should offer all schema export columns and preselect the visible ones", async () => {
     vi.useFakeTimers();

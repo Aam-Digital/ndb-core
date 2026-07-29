@@ -162,6 +162,62 @@ describe("EntityFormService", () => {
     TestEntity.schema.delete("result");
   });
 
+  it("should add validators for fields restricted by permission conditions", async () => {
+    TestBed.inject(EntityAbility).update([
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "manage",
+        conditions: { name: "permitted name" },
+      },
+    ]);
+
+    const form = await createForm(
+      [{ id: "name" }, { id: "other" }],
+      new TestEntity(),
+    );
+    const nameControl = form.formGroup.get("name");
+
+    nameControl.setValue("some other name");
+    expect(nameControl.errors["permissionCondition"].errorMessage).toContain(
+      "permitted name",
+    );
+
+    nameControl.setValue("permitted name");
+    expect(nameControl.valid).toBe(true);
+
+    // field not part of the rule conditions stays unrestricted
+    const otherControl = form.formGroup.get("other");
+    otherControl.setValue("anything");
+    expect(otherControl.valid).toBe(true);
+  });
+
+  it("should add validators for fields denied by inverted permission rules", async () => {
+    TestBed.inject(EntityAbility).update([
+      { subject: TestEntity.ENTITY_TYPE, action: "manage" },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "manage",
+        inverted: true,
+        conditions: { name: "forbidden name" },
+      },
+    ]);
+
+    // an existing entity, as for "create" the field is disabled through the
+    // condition-less permission check on the empty new entity instead
+    const entity = new TestEntity();
+    entity.name = "original name";
+    entity._rev = "1";
+
+    const form = await createForm([{ id: "name" }], entity);
+    const nameControl = form.formGroup.get("name");
+
+    nameControl.setValue("forbidden name");
+    expect(nameControl.errors["permissionCondition"]).toBeTruthy();
+
+    nameControl.setValue("any other name");
+    expect(nameControl.valid).toBe(true);
+  });
+
   it("should use create permissions to disable fields when creating a new entity", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([

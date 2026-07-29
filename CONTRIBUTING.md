@@ -85,7 +85,6 @@ If you participate in the development, either by fixing a bug or implementing a 
 
 - Reference an issue on GitHub in your commits or comments by writing the issue number (e.g. `#15` to reference issue #15)
 - Use the "Draft" state of GitHub PRs if this is still "work in progress" and should not be reviewed yet.
-Also consider adding `[WIP]` to the beginning of the PR title
 - If you have a lot of trivial commits in your working feature branch (such as fixed typos, fixed codestyle warnings, ...) you may squash some commits for better readability of the git history.
   This can be done with a git rebase on your feature branch (please **never** rebase the master branch).
   Further information can be found in the [Git Book](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History).

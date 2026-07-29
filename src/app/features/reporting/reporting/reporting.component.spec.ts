@@ -24,9 +24,9 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
-import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
 import { Angulartics2Module } from "angulartics2";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 import type { Mock } from "vitest";
 import moment from "moment";
 
@@ -46,6 +46,7 @@ type SqlReportServiceMock = {
   createReportCalculation: Mock;
   waitForReportData: Mock;
   fetchReportCalculationData: Mock;
+  isReportingBackendEnabled: Mock;
 };
 
 describe("ReportingComponent", () => {
@@ -102,6 +103,7 @@ describe("ReportingComponent", () => {
       createReportCalculation: vi.fn(),
       waitForReportData: vi.fn(),
       fetchReportCalculationData: vi.fn(),
+      isReportingBackendEnabled: vi.fn().mockResolvedValue(true),
     };
     await TestBed.configureTestingModule({
       imports: [
@@ -125,18 +127,13 @@ describe("ReportingComponent", () => {
           useValue: { entityRegistry },
         },
         {
-          provide: JsonEditorService,
-          useValue: {
-            openJsonEditorDialog: vi.fn(),
-          },
-        },
-        {
           provide: EntityAbility,
           useValue: {
             cannot: vi.fn().mockReturnValue(false),
             on: vi.fn().mockReturnValue(() => undefined),
           },
         },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
       ],
     }).compileComponents();
   });

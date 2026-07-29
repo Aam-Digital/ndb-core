@@ -44,9 +44,11 @@ import { MatIconButton } from "@angular/material/button";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
-import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
-import { MatTooltip } from "@angular/material/tooltip";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { RouterLink } from "@angular/router";
+import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
+import { FeatureDisabledInfoComponent } from "#src/app/core/common-components/feature-disabled-info/feature-disabled-info.component";
 
 /** A shown calculation older than this (seconds) is treated as stale/outdated. */
 const STALE_THRESHOLD_SECONDS = 60; // 1 minute
@@ -73,7 +75,9 @@ const STALE_THRESHOLD_SECONDS = 60; // 1 minute
     DisableEntityOperationDirective,
     MatMenu,
     MatMenuItem,
-    MatTooltip,
+    MatExpansionModule,
+    RouterLink,
+    FeatureDisabledInfoComponent,
   ],
 })
 export class ReportingComponent {
@@ -81,8 +85,12 @@ export class ReportingComponent {
   private dataTransformationService = inject(DataTransformationService);
   private sqlReportService = inject(SqlReportService);
   private entityMapper = inject(EntityMapperService);
-  private readonly jsonEditorService = inject(JsonEditorService);
   private configService = inject(ConfigService);
+
+  /** runtime route to the report admin list (Admin Overview → Templates and Forms) */
+  protected readonly reportAdminLink = getEntityRuntimeRoute(ReportEntity);
+  /** entity type used to permission-gate the "Manage Reports" admin link */
+  protected readonly reportEntity = ReportEntity;
 
   private reportsResource = resource({
     loader: () =>
@@ -96,6 +104,14 @@ export class ReportingComponent {
   mode = computed<ReportEntity["mode"]>(
     () => this.currentReport()?.mode ?? "reporting",
   );
+
+  /**
+   * Whether the server-side reporting backend required for "sql" reports is available;
+   * used to warn the user when they select an SQL report but the feature isn't enabled.
+   */
+  readonly reportingBackendEnabled = resource({
+    loader: () => this.sqlReportService.isReportingBackendEnabled(),
+  });
   /** whether the current SQL report renders as a hierarchical group/count table */
   isHierarchicalReport = computed(() =>
     isHierarchicalReport(this.currentReport()),
@@ -336,26 +352,5 @@ export class ReportingComponent {
     this.isRefreshing.set(false);
     this.reportCalculation.set(null);
     this.data.set([]);
-  }
-
-  editReportConfig(report: ReportEntity) {
-    const reportDetails: Partial<ReportEntity> = {
-      title: report.title,
-      mode: report.mode,
-    };
-    // explicitly map the relevant properties (canonical reportDefinition only;
-    // legacy aggregationDefinition(s) are consolidated into reportDefinition by migration)
-    if (report.reportDefinition)
-      reportDetails.reportDefinition = report.reportDefinition;
-
-    this.jsonEditorService
-      .openJsonEditorDialog(reportDetails)
-      .subscribe(async (result) => {
-        if (!result) {
-          return;
-        }
-
-        await this.entityMapper.save(Object.assign(report, result));
-      });
   }
 }
