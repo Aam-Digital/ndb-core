@@ -246,6 +246,12 @@ importing the model (the `@DatabaseEntity` decorator does the registering). Do n
 on some other spec file having imported it — that only ever worked by accident. If a spec
 passes in the full suite but fails via `--include='**/that-file.spec.ts'`, this is why.
 
+Isolation costs wall time, because every spec file re-imports the Angular module graph
+into a fresh environment. CI wins that back by splitting the suite across parallel shards
+(see [`_qa-unit.yaml`](.github/workflows/_qa-unit.yaml)); coverage is published from a
+separate job that merges the per-shard lcov files. Locally you normally want the whole
+suite, so sharding stays off unless you set `VITEST_SHARD=<index>/<count>`.
+
 ### End-to-End Testing (Playwright)
 
 - Run tests: `npm run e2e`

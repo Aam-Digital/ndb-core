@@ -34,6 +34,15 @@ export default defineConfig({
      * running next, so failures land on innocent specs and move between runs.
      */
     isolate: true,
+    /**
+     * Run only a slice of the spec files, as `<index>/<count>` (e.g. `2/4`).
+     *
+     * Isolation costs wall time, because every spec file re-imports the Angular
+     * module graph into a fresh environment. CI splits the suite across parallel
+     * shards to win that back; locally you normally want the whole suite, so
+     * this stays unset.
+     */
+    shard: process.env.VITEST_SHARD || undefined,
     sequence: {
       hooks: "list",
     },
