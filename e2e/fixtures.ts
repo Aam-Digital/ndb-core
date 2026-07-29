@@ -144,13 +144,16 @@ export async function selectFilterOption(
  */
 export async function readCsvRows(download: Download): Promise<string[]> {
   const stream = await download.createReadStream();
-  const chunks: Buffer[] = [];
+  // decoding in the stream keeps multi-byte characters intact across chunks
+  stream.setEncoding("utf-8");
+
+  const chunks: string[] = [];
   for await (const chunk of stream) {
-    chunks.push(chunk as Buffer);
+    chunks.push(chunk as string);
   }
 
-  return Buffer.concat(chunks)
-    .toString("utf-8")
+  return chunks
+    .join("")
     .split("\n")
     .map((line) => line.trim())
     .filter((line) => line.length > 0)
