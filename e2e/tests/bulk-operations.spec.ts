@@ -169,192 +169,147 @@ function assignCenter(
     center;
 }
 
-test.describe("Bulk selection with sorting", () => {
-  test.beforeEach(async ({ page }) => {
-    // Generate demo data
-    const users = generateUsers();
-    const children = BULK_NAMES.map((name, i) => {
-      const child = generateChild({
-        name,
-        id: `B${String(BULK_NAMES.length - i).padStart(2, "0")}`,
-      });
-      assignCenter(child, CENTER_ALIPORE);
-      return child;
+test("Bulk selection follows the rendered order through sorting, filtering and pagination", async ({
+  page,
+}) => {
+  const users = generateUsers();
+  const children = BULK_NAMES.map((name, i) => {
+    const child = generateChild({
+      name,
+      id: `B${String(BULK_NAMES.length - i).padStart(2, "0")}`,
     });
-    // Records excluded by the Center filter used below.
-    const otherCenterChildren = range(4).map((i) => {
-      const child = generateChild({ name: `Other Center ${i}`, id: `O${i}` });
-      assignCenter(child, CENTER_TOLLYGUNGE);
-      return child;
-    });
-
-    // Load the app with demo data
-    await loadApp(page, [...users, ...children, ...otherCenterChildren]);
-
-    // Navigate to the children list page
-    await page.getByRole("navigation").getByText("Children").click();
-    await page.waitForLoadState("networkidle");
+    assignCenter(child, CENTER_ALIPORE);
+    return child;
+  });
+  // Records excluded by the Center filter used below.
+  const otherCenterChildren = range(4).map((i) => {
+    const child = generateChild({ name: `Other Center ${i}`, id: `O${i}` });
+    assignCenter(child, CENTER_TOLLYGUNGE);
+    return child;
   });
 
-  test("Bulk selection range with sorting by shift-click rows", async ({
-    page,
-  }) => {
-    await expect(page.locator("app-entities-table")).toBeVisible();
+  await loadApp(page, [...users, ...children, ...otherCenterChildren]);
 
-    await page.locator("button[mat-icon-button][color='primary']").click();
-    await page
-      .getByRole("menuitem", { name: "bulk actions Bulk Actions" })
-      .click();
-    await expect(
-      page.locator("app-entities-table mat-checkbox").first(),
-    ).toBeVisible();
+  await page.getByRole("navigation").getByText("Children").click();
+  await expect(page.locator("app-entities-table")).toBeVisible();
 
-    // First, test with default sort order (should work)
-    const firstRow = page.locator("app-entities-table tbody tr").first();
-    const thirdRow = page.locator("app-entities-table tbody tr").nth(2);
+  const rows = page.locator("app-entities-table tbody tr");
+  const nameCells = page.locator("app-entities-table td.mat-column-name");
+  const paginatorRange = page.locator(".mat-mdc-paginator-range-label");
+  const headerCheckbox = page
+    .locator("app-entities-table mat-checkbox")
+    .first();
+  const nameHeader = page.getByRole("columnheader", { name: "Name" });
 
-    // Click first row to select it
-    await firstRow.click();
-    await expect(firstRow.locator("mat-checkbox input")).toBeChecked();
-
-    // Shift-click third row to select range
-    await thirdRow.click({ modifiers: ["Shift"] });
-
-    // Verify that first three rows are selected
-    for (let i = 0; i < 3; i++) {
-      await expect(
-        page
-          .locator("app-entities-table tbody tr")
-          .nth(i)
-          .locator("mat-checkbox input"),
-      ).toBeChecked();
-    }
-
-    // Clear selected rows
-    await page.locator("app-entities-table mat-checkbox").first().click();
-    await page.locator("app-entities-table mat-checkbox").first().click();
-
-    // Now test with changed sort order
-    // Click on a sortable column header (like "name")
-    await page.getByRole("columnheader", { name: "Name" }).click();
-
-    // Wait deterministically for sort indicator to appear on the column header.
-    await expect(
-      page.getByRole("columnheader", { name: "Name" }),
-    ).toHaveAttribute("aria-sort", /ascending|descending/);
-
-    // Try the same selection pattern after sorting
-    await firstRow.click();
-    await expect(firstRow.locator("mat-checkbox input")).toBeChecked();
-
-    // Shift-click third row to select range
-    await thirdRow.click({ modifiers: ["Shift"] });
-
-    // Verify that first three rows are selected (this should work after our fix)
-    for (let i = 0; i < 3; i++) {
-      await expect(
-        page
-          .locator("app-entities-table tbody tr")
-          .nth(i)
-          .locator("mat-checkbox input"),
-      ).toBeChecked();
-    }
-
-    await argosScreenshot(page, "bulk-selection-range-sorted");
-  });
-
-  test("Bulk selection and editing operate on the filtered, sorted result across pages", async ({
-    page,
-  }) => {
-    const rows = page.locator("app-entities-table tbody tr");
-    const nameCells = page.locator("app-entities-table td.mat-column-name");
-    const paginatorRange = page.locator(".mat-mdc-paginator-range-label");
-    const headerCheckbox = page
-      .locator("app-entities-table mat-checkbox")
-      .first();
-
-    await page.locator("button[mat-icon-button][color='primary']").click();
-    await page
-      .getByRole("menuitem", { name: "bulk actions Bulk Actions" })
-      .click();
-    await expect(headerCheckbox).toBeVisible();
-
-    // Narrow to the 14 Alipore children — still two pages — and sort by name so
-    // the rendered order differs from the order the records were loaded in.
-    await selectFilterOption(page, "Center", CENTER_ALIPORE.label);
-    await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 14\s*$/);
-
-    const nameHeader = page.getByRole("columnheader", { name: "Name" });
-    await nameHeader.click();
-    await expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
-
-    await page.getByRole("button", { name: "Next page" }).click();
-    await expect(nameCells).toHaveText(BULK_NAMES.slice(PAGE_SIZE));
-
-    // Shift-selecting a range on the second page must select the rows as
-    // rendered there, not records taken from an unsorted or first-page window.
+  /** Select the first three rows of the current page by shift-clicking. */
+  async function shiftSelectFirstThreeRows() {
     await rows.nth(0).click();
+    await expect(rows.nth(0).locator("mat-checkbox input")).toBeChecked();
     await rows.nth(2).click({ modifiers: ["Shift"] });
 
     for (const index of [0, 1, 2]) {
       await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
     }
-    await expect(rows.nth(3).locator("mat-checkbox input")).not.toBeChecked();
+  }
 
-    await argosScreenshot(page, "bulk-selection-filtered-page-2");
-
-    // "Select all" covers the whole filtered result, not just the visible page.
-    await headerCheckbox.click();
-    await expect(rows).toHaveCount(BULK_NAMES.length - PAGE_SIZE);
-    for (let index = 0; index < BULK_NAMES.length - PAGE_SIZE; index++) {
-      await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
+  /**
+   * Unselect everything, from any starting state. The header checkbox only
+   * clears when it is fully checked, so a partial selection has to be turned
+   * into a complete one first.
+   */
+  async function clearSelection() {
+    const headerInput = headerCheckbox.locator("input");
+    if (!(await headerInput.isChecked())) {
+      await headerCheckbox.click();
+      await expect(headerInput).toBeChecked();
     }
 
-    await page.getByRole("button", { name: "Prev page" }).click();
-    await expect(rows).toHaveCount(PAGE_SIZE);
-    for (let index = 0; index < PAGE_SIZE; index++) {
-      await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
-    }
-
-    // Clear the selection and pick just the first two records of page 2.
     await headerCheckbox.click();
     await expect(rows.nth(0).locator("mat-checkbox input")).not.toBeChecked();
+  }
 
-    await page.getByRole("button", { name: "Next page" }).click();
-    await rows.nth(0).click();
-    await rows.nth(1).click();
+  await page.locator("button[mat-icon-button][color='primary']").click();
+  await page
+    .getByRole("menuitem", { name: "bulk actions Bulk Actions" })
+    .click();
+  await expect(headerCheckbox).toBeVisible();
 
-    // Bulk-editing them out of the active filter must update the filtered
-    // result and the paginator while we are on the second page.
-    await page
-      .locator("app-entity-bulk-actions")
-      .locator("input")
-      .first()
-      .click();
-    await page.getByRole("option", { name: "Bulk Edit" }).click();
+  // 1. In the list's initial order.
+  await shiftSelectFirstThreeRows();
+  await clearSelection();
 
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-    await dialog
-      .locator("mat-form-field")
-      .filter({ hasText: "Property to update" })
-      .locator("input")
-      .first()
-      .click();
-    await page.getByRole("option", { name: "Center", exact: true }).click();
+  // 2. After sorting, where the rendered order differs from the order the
+  //    records were loaded in.
+  await nameHeader.click();
+  await expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
 
-    // the enum field renders as chips; its dropdown opens via the caret suffix
-    await dialog.locator("#entity-field__center .fa-caret-down").click();
-    await page
-      .getByRole("option", { name: CENTER_TOLLYGUNGE.label, exact: true })
-      .click();
+  await shiftSelectFirstThreeRows();
+  await argosScreenshot(page, "bulk-selection-range-sorted");
+  await clearSelection();
 
-    await dialog.getByRole("button", { name: "Save" }).click();
-    await expect(dialog).not.toBeVisible();
+  // 3. On a second page of a filtered result, where the rows are neither the
+  //    first ones nor in the order the records were loaded in.
+  await selectFilterOption(page, "Center", CENTER_ALIPORE.label);
+  await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 14\s*$/);
 
-    await expect(paginatorRange).toHaveText(/^\s*11 - 12 of 12\s*$/, {
-      timeout: 10_000,
-    });
-    await expect(nameCells).toHaveText(BULK_NAMES.slice(PAGE_SIZE + 2));
+  await page.getByRole("button", { name: "Next page" }).click();
+  await expect(nameCells).toHaveText(BULK_NAMES.slice(PAGE_SIZE));
+
+  await shiftSelectFirstThreeRows();
+  await expect(rows.nth(3).locator("mat-checkbox input")).not.toBeChecked();
+
+  await argosScreenshot(page, "bulk-selection-filtered-page-2");
+  await clearSelection();
+
+  // "Select all" covers the whole filtered result, not just the visible page.
+  await headerCheckbox.click();
+  await expect(rows).toHaveCount(BULK_NAMES.length - PAGE_SIZE);
+  for (let index = 0; index < BULK_NAMES.length - PAGE_SIZE; index++) {
+    await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
+  }
+
+  await page.getByRole("button", { name: "Prev page" }).click();
+  await expect(rows).toHaveCount(PAGE_SIZE);
+  for (let index = 0; index < PAGE_SIZE; index++) {
+    await expect(rows.nth(index).locator("mat-checkbox input")).toBeChecked();
+  }
+
+  // Clear the selection and pick just the first two records of page 2.
+  await clearSelection();
+  await page.getByRole("button", { name: "Next page" }).click();
+  await rows.nth(0).click();
+  await rows.nth(1).click();
+
+  // Bulk-editing them out of the active filter must update the filtered result
+  // and the paginator while we are on the second page.
+  await page
+    .locator("app-entity-bulk-actions")
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: "Bulk Edit" }).click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await dialog
+    .locator("mat-form-field")
+    .filter({ hasText: "Property to update" })
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: "Center", exact: true }).click();
+
+  // the enum field renders as chips; its dropdown opens via the caret suffix
+  await dialog.locator("#entity-field__center .fa-caret-down").click();
+  await page
+    .getByRole("option", { name: CENTER_TOLLYGUNGE.label, exact: true })
+    .click();
+
+  await dialog.getByRole("button", { name: "Save" }).click();
+  await expect(dialog).not.toBeVisible();
+
+  await expect(paginatorRange).toHaveText(/^\s*11 - 12 of 12\s*$/, {
+    timeout: 10_000,
   });
+  await expect(nameCells).toHaveText(BULK_NAMES.slice(PAGE_SIZE + 2));
 });
