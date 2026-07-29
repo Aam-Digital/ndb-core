@@ -4,6 +4,7 @@ import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Create and load backups of the database.
@@ -78,6 +79,11 @@ export class BackupService {
       return;
     }
 
+    // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
+    Logging.warn(
+      "Resetting application: user confirmed deletion of all local data",
+    );
+
     // Reload the page first to kill all PouchDB connections, in-flight sync,
     // view indexing, and other async operations. IDB databases are deleted on
     // the fresh page (before Angular bootstraps) where no connections exist,
@@ -97,18 +103,23 @@ export class BackupService {
       return;
     }
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+    DatabaseResolverService.clearLastSyncMarkers();
 
     // Delete all IndexedDB databases
+    // (keep Sentry's offline queue so pending diagnostic logs about the reset
+    // itself still reach remote logging after the reload)
     const dbs = await indexedDB.databases();
     await Promise.all(
-      dbs.map(
-        ({ name }) =>
-          new Promise<void>((resolve, reject) => {
-            const del = indexedDB.deleteDatabase(name);
-            del.onsuccess = () => resolve();
-            del.onerror = () => reject(del.error);
-          }),
-      ),
+      dbs
+        .filter(({ name }) => name !== "sentry-offline")
+        .map(
+          ({ name }) =>
+            new Promise<void>((resolve, reject) => {
+              const del = indexedDB.deleteDatabase(name);
+              del.onsuccess = () => resolve();
+              del.onerror = () => reject(del.error);
+            }),
+        ),
     );
 
     // Unregister all service workers
