@@ -1,34 +1,17 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Injectable, inject } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
 import {
-    LoginStateSubject,
-    SyncStateSubject,
-    hasRemoteSession,
+  LoginStateSubject,
+  SyncStateSubject,
+  hasRemoteSession,
 } from "../session-type";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { NAVIGATOR_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -37,7 +20,6 @@ import { Subject, Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
-import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * This service handles the user session.

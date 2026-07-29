@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -11,7 +11,6 @@ import { firstValueFrom } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { Logging } from "../../logging/logging.service";
-import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * This service checks whether the relevant rules for the current user changed

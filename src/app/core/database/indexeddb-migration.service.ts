@@ -5,14 +5,17 @@ import { SyncState } from "../session/session-states/sync-state.enum";
 import { computeDbNames, computeLegacyDbNames } from "./db-name-helpers";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Logging } from "../logging/logging.service";
-import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "../../utils/di-tokens";
+import {
+  NAVIGATOR_TOKEN,
+  WINDOW_TOKEN,
+  LOCAL_STORAGE_TOKEN,
+} from "../../utils/di-tokens";
 import { filter, first } from "rxjs/operators";
 import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import type { AnalyticsService } from "../analytics/analytics.service";
-import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 
 export interface DbConfig {
   dbNames: { app: string; notifications: string };

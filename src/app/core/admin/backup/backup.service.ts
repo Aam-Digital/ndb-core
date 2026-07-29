@@ -3,9 +3,8 @@ import { Database } from "../../database/database";
 import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { Logging } from "../../logging/logging.service";
-import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * Create and load backups of the database.

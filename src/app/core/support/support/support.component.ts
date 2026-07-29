@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
-import { WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { HttpClient } from "@angular/common/http";
@@ -27,7 +27,6 @@ import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
 import { Clipboard } from "@angular/cdk/clipboard";
-import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
