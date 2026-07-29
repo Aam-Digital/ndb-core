@@ -32,10 +32,18 @@ describe("AdminRoleDetailsComponent", () => {
       {
         name: "user_app",
         isVirtual: false,
+        isProtected: false,
         description: "Social workers",
         rules: [{ subject: "Child", action: "read" }],
       },
-      { name: "volunteer", isVirtual: false },
+      { name: "volunteer", isVirtual: false, isProtected: false },
+      {
+        name: "account_manager",
+        isVirtual: false,
+        isProtected: true,
+        description: "Technical role",
+        rules: [],
+      },
     ]);
 
     await TestBed.configureTestingModule({
@@ -198,5 +206,23 @@ describe("AdminRoleDetailsComponent", () => {
 
     expect(mockRolePermissions.deleteRole).toHaveBeenCalledWith("user_app");
     expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
+  it("protects a technical role: no delete button and read-only description", async () => {
+    component.roleName.set("account_manager");
+    await component.loadRole();
+    fixture.detectChanges();
+
+    expect(component.isProtected()).toBe(true);
+    // view mode: no delete button is rendered for a protected role
+    const deleteButton = Array.from(
+      fixture.nativeElement.querySelectorAll("button"),
+    ).find((b: HTMLButtonElement) => b.textContent?.includes("Delete"));
+    expect(deleteButton).toBeUndefined();
+
+    // the description stays read-only even after entering edit mode
+    component.startEditing();
+    expect(component.descriptionEditable()).toBe(false);
+    expect(component.descriptionControl.disabled).toBe(true);
   });
 });

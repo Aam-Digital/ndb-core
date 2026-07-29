@@ -29,6 +29,7 @@ describe("AdminRolesListComponent", () => {
       {
         name: "_default",
         isVirtual: true,
+        isProtected: true,
         description: "Base permissions",
         rules: [
           { subject: "Child", action: "read" },
@@ -38,6 +39,7 @@ describe("AdminRolesListComponent", () => {
       {
         name: "volunteer",
         isVirtual: false,
+        isProtected: false,
         description: "Part-time volunteers",
       },
     ]);
@@ -66,6 +68,11 @@ describe("AdminRolesListComponent", () => {
     expect(text).toContain("2 rules");
     expect(text).toContain("volunteer");
     expect(text).toContain("No permissions defined");
+
+    // protected roles carry a lock icon, ordinary roles do not
+    const rows = fixture.nativeElement.querySelectorAll("tr[mat-row]");
+    expect(rows[0].querySelector(".protected-role-icon")).not.toBeNull();
+    expect(rows[1].querySelector(".protected-role-icon")).toBeNull();
   });
 
   it("opens json editor with current config and saves the edited permissions", async () => {

@@ -126,13 +126,18 @@ export class AdminRoleDetailsComponent {
 
   readonly deleteDisabledTooltip = $localize`Your account does not have permission to delete roles in the user account server.`;
 
+  /** protected roles (reserved + technical) cannot be deleted or have their description edited */
+  readonly isProtected = computed(() => !!this.role()?.isProtected);
+
   /**
    * Description is stored in the authentication server, so it can only be edited
    * for existing realm-backed roles when the user is allowed to manage roles.
+   * Protected roles keep their description read-only.
    */
   readonly descriptionEditable = computed(
     () =>
       this.canManageRoles &&
+      !this.isProtected() &&
       (this.isNew() || (this.editing() && !!this.role()?.keycloakRole)),
   );
 

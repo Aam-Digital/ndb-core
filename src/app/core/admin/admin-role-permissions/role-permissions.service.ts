@@ -27,6 +27,18 @@ export const DEFAULT_ROLE = "_default";
 export const PUBLIC_ROLE = "_public";
 
 /**
+ * Technical roles that serve a special function in the authentication server
+ * (e.g. granting account-management API access, or opting a user out of
+ * email 2FA). They must not be deleted from this admin UI, and their
+ * description is managed elsewhere, so it stays read-only here.
+ * They may still carry additional permission rules like any other role.
+ */
+export const INTERNAL_ROLES: string[] = [
+  UserAdminService.ACCOUNT_MANAGER_ROLE,
+  "no-email-2fa",
+];
+
+/**
  * A user role and its configured permission rules,
  * merged from the Config:Permissions document and the authentication server (Keycloak).
  */
@@ -40,6 +52,12 @@ export interface RoleWithPermissions {
    * and have no matching realm role in the authentication server.
    */
   isVirtual: boolean;
+
+  /**
+   * Whether the role is protected from deletion and description edits:
+   * the virtual reserved roles and the technical {@link INTERNAL_ROLES}.
+   */
+  isProtected: boolean;
 
   keycloakRole?: Role;
 
@@ -84,12 +102,14 @@ export class RolePermissionsService {
       {
         name: DEFAULT_ROLE,
         isVirtual: true,
+        isProtected: true,
         description: $localize`Base permissions that apply to every logged-in user, combined with their other roles`,
         rules: rules[DEFAULT_ROLE],
       },
       {
         name: PUBLIC_ROLE,
         isVirtual: true,
+        isProtected: true,
         description: $localize`Permissions that apply before login (e.g. public registration forms)`,
         rules: rules[PUBLIC_ROLE],
       },
@@ -101,6 +121,7 @@ export class RolePermissionsService {
       roles.push({
         name: key,
         isVirtual: false,
+        isProtected: INTERNAL_ROLES.includes(key),
         keycloakRole,
         description: keycloakRole?.description,
         rules: rules[key],
@@ -112,6 +133,7 @@ export class RolePermissionsService {
       roles.push({
         name: keycloakRole.name,
         isVirtual: false,
+        isProtected: INTERNAL_ROLES.includes(keycloakRole.name),
         keycloakRole,
         description: keycloakRole.description,
       });

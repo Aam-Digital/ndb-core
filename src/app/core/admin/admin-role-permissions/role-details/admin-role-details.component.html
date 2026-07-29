@@ -24,7 +24,7 @@
         <fa-icon icon="pen" class="standard-icon-with-text"></fa-icon>
         <span i18n>Edit</span>
       </button>
-      @if (role() && !role().isVirtual) {
+      @if (role() && !isProtected()) {
         <span
           [matTooltip]="deleteDisabledTooltip"
           [matTooltipDisabled]="canManageRoles"

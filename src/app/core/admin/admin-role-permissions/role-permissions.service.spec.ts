@@ -81,6 +81,27 @@ describe("RolePermissionsService", () => {
     ]);
   });
 
+  it("marks virtual reserved roles and technical internal roles as protected", async () => {
+    mockEntityMapper.load.mockResolvedValue(
+      new Config(Config.PERMISSION_KEY, {}),
+    );
+    mockUserAdmin.getAllRoles.mockReturnValue(
+      of([
+        { id: "1", name: "account_manager" },
+        { id: "2", name: "user_app" },
+      ]),
+    );
+
+    const roles = await service.loadRoles();
+
+    expect(roles.find((r) => r.name === "_default").isProtected).toBe(true);
+    expect(roles.find((r) => r.name === "_public").isProtected).toBe(true);
+    expect(roles.find((r) => r.name === "account_manager").isProtected).toBe(
+      true,
+    );
+    expect(roles.find((r) => r.name === "user_app").isProtected).toBe(false);
+  });
+
   it("returns _default and _public even when Config:Permissions does not exist and still lists keycloak roles", async () => {
     mockEntityMapper.load.mockRejectedValue({ status: 404 });
     mockUserAdmin.getAllRoles.mockReturnValue(
