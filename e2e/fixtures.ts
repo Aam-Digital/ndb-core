@@ -122,9 +122,7 @@ export async function selectFilterOption(
   filterLabel: string,
   optionLabel: string,
 ): Promise<void> {
-  const field = page
-    .locator("mat-form-field")
-    .filter({ hasText: filterLabel });
+  const field = page.locator("mat-form-field").filter({ hasText: filterLabel });
 
   // The field holds a display input and a search input, swapping which of the
   // two is hidden depending on whether the dropdown is open.
