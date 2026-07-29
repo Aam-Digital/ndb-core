@@ -16,11 +16,11 @@
  */
 
 import {
-    Component,
-    OnInit,
-    inject,
-    ChangeDetectionStrategy,
-    signal,
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";

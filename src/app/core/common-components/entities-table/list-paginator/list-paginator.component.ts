@@ -1,16 +1,16 @@
 import {
-    Component,
-    ViewChild,
-    ChangeDetectionStrategy,
-    effect,
-    input,
-    signal,
-    inject,
+  Component,
+  ViewChild,
+  ChangeDetectionStrategy,
+  effect,
+  input,
+  signal,
+  inject,
 } from "@angular/core";
 import {
-    MatPaginator,
-    MatPaginatorModule,
-    PageEvent,
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";

@@ -9,8 +9,8 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
 import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import {
-    DbConfig,
-    IndexeddbMigrationService,
+  DbConfig,
+  IndexeddbMigrationService,
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
