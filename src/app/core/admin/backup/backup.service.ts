@@ -14,7 +14,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
   providedIn: "root",
 })
 export class BackupService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private dbResolver = inject(DatabaseResolverService);
 
   private db: Database;

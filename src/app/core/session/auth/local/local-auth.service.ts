@@ -11,7 +11,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
   providedIn: "root",
 })
 export class LocalAuthService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly STORED_USER_PREFIX = "USER-";
 
   /**

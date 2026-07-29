@@ -31,7 +31,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
  */
 @Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private sessionInfo = inject(SessionSubject);
   private ability = inject(EntityAbility);
   private entityMapper = inject(EntityMapperService);

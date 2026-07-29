@@ -19,9 +19,9 @@ import { Injectable, inject } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
 import {
-  LoginStateSubject,
-  SyncStateSubject,
-  hasRemoteSession,
+    LoginStateSubject,
+    SyncStateSubject,
+    hasRemoteSession,
 } from "../session-type";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
@@ -46,7 +46,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
  */
 @Injectable()
 export class SessionManagerService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private remoteAuthService = inject(KeycloakAuthService);
   private localAuthService = inject(LocalAuthService);
   private sessionInfo = inject(SessionSubject);

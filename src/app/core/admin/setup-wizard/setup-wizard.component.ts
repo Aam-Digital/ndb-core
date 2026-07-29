@@ -1,14 +1,14 @@
 import {
-  Component,
-  OnInit,
-  inject,
-  ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    inject,
+    ChangeDetectionStrategy,
 } from "@angular/core";
 import {
-  MatStep,
-  MatStepper,
-  MatStepperIcon,
-  MatStepperNext,
+    MatStep,
+    MatStepper,
+    MatStepperIcon,
+    MatStepperNext,
 } from "@angular/material/stepper";
 import { MatActionList, MatListItem } from "@angular/material/list";
 import { RouterLink } from "@angular/router";
@@ -16,9 +16,9 @@ import { MatButton } from "@angular/material/button";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../config/config";
 import {
-  CONFIG_SETUP_WIZARD_ID,
-  SetupWizardConfig,
-  SetupWizardStep,
+    CONFIG_SETUP_WIZARD_ID,
+    SetupWizardConfig,
+    SetupWizardStep,
 } from "./setup-wizard-config";
 import { MarkdownComponent } from "ngx-markdown";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -47,7 +47,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
   styleUrl: "./setup-wizard.component.scss",
 })
 export class SetupWizardComponent implements OnInit {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private entityMapper = inject(EntityMapperService);
   private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, {
     optional: true,

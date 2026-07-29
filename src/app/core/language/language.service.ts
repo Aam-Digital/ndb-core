@@ -17,7 +17,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 })
 @UntilDestroy()
 export class LanguageService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private baseLocale = inject(LOCALE_ID);
   private window = inject<Window>(WINDOW_TOKEN);
   private siteSettings = inject(SiteSettingsService);

@@ -12,12 +12,12 @@ import { ThirdPartyAuthenticationService } from "../../../../features/third-part
 import { reuseFirstAsync } from "#src/app/utils/reuse-first-async";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
 import {
-  defer,
-  firstValueFrom,
-  Subscription,
-  throwError,
-  timer,
-  TimeoutError,
+    defer,
+    firstValueFrom,
+    Subscription,
+    throwError,
+    timer,
+    TimeoutError,
 } from "rxjs";
 import { retry, timeout } from "rxjs/operators";
 import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
@@ -65,7 +65,7 @@ function isRetryableNetworkError(err: any): boolean {
  */
 @Injectable()
 export class KeycloakAuthService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
   accessToken?: string;
 

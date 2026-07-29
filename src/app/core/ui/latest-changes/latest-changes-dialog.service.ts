@@ -29,7 +29,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 @Injectable({ providedIn: "root" })
 export class LatestChangesDialogService {
   private dialog = inject(MatDialog);
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private latestChangesService = inject(LatestChangesService);
 
   public static readonly VERSION_KEY = "AppVersion";

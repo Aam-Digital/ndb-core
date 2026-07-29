@@ -35,7 +35,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
  */
 @Injectable({ providedIn: "root" })
 export class UpdateManagerService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private appRef = inject(ApplicationRef);
   private updates = inject(SwUpdate);
   private snackBar = inject(MatSnackBar);

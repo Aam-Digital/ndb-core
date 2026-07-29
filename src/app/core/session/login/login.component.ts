@@ -16,11 +16,11 @@
  */
 
 import {
-  Component,
-  OnInit,
-  inject,
-  ChangeDetectionStrategy,
-  signal,
+    Component,
+    OnInit,
+    inject,
+    ChangeDetectionStrategy,
+    signal,
 } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -65,7 +65,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
   ],
 })
 export class LoginComponent implements OnInit {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   sessionManager = inject(SessionManagerService);

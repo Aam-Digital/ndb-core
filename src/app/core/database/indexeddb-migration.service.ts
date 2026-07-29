@@ -31,7 +31,7 @@ const DB_MIGRATED_PREFIX = "DB_MIGRATED_";
  */
 @Injectable({ providedIn: "root" })
 export class IndexeddbMigrationService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly navigator = inject<Navigator>(NAVIGATOR_TOKEN, {
     optional: true,

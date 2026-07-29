@@ -14,7 +14,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
   providedIn: "root",
 })
 export class ThirdPartyAuthenticationService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly LOCAL_STORAGE_KEY = "tpa_session";
   private readonly API_URL =
     environment.API_PROXY_PREFIX + "/v1/third-party-authentication";

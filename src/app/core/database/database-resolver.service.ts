@@ -9,8 +9,8 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
 import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import {
-  DbConfig,
-  IndexeddbMigrationService,
+    DbConfig,
+    IndexeddbMigrationService,
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
@@ -26,7 +26,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
   providedIn: "root",
 })
 export class DatabaseResolverService {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly databaseFactory = inject(DatabaseFactoryService);
   private readonly migrationService = inject(IndexeddbMigrationService);
   private readonly window = inject<Window>(WINDOW_TOKEN, { optional: true });

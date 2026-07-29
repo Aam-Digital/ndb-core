@@ -1,16 +1,16 @@
 import {
-  Component,
-  ViewChild,
-  ChangeDetectionStrategy,
-  effect,
-  input,
-  signal,
-  inject,
+    Component,
+    ViewChild,
+    ChangeDetectionStrategy,
+    effect,
+    input,
+    signal,
+    inject,
 } from "@angular/core";
 import {
-  MatPaginator,
-  MatPaginatorModule,
-  PageEvent,
+    MatPaginator,
+    MatPaginatorModule,
+    PageEvent,
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
@@ -23,7 +23,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
   imports: [MatPaginatorModule],
 })
 export class ListPaginatorComponent<E> {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   readonly LOCAL_STORAGE_KEY = "PAGINATION-";
   readonly pageSizeOptions = [10, 20, 50, 100];
 

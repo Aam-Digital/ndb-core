@@ -24,7 +24,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 })
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   private title = inject(Title);
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private schemaService = inject(EntitySchemaService);
   private enumService = inject(ConfigurableEnumService);
 

@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
@@ -42,7 +42,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
   ],
 })
 export class SupportComponent implements OnInit {
-  private localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private syncState = inject(SyncStateSubject);
   private sessionSubject = inject(SessionSubject);
   private currentUserSubject = inject(CurrentUserSubject);
