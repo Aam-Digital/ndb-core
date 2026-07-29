@@ -3,7 +3,11 @@ import { TableRow } from "#src/app/core/common-components/entities-table/table-r
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatTableDataSource } from "@angular/material/table";
 import { DestroyRef, effect, inject, signal } from "@angular/core";
-import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from "@angular/core/rxjs-interop";
 import { FilterService } from "#src/app/core/filter/filter.service";
 import { entityFilterPredicate } from "#src/app/core/filter/filter-generator/filter-predicate";
 import {
@@ -63,7 +67,16 @@ export class InMemoryDataSource<T extends Entity> extends MatTableDataSource<
   sortValueFns = signal<SortValueFns<T>>({});
   allRecords = signal<T[]>([]);
   filteredRecords = signal<T[]>([]);
+  /**
+   * The rows handed to the table as input data, in the order they were loaded.
+   * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   */
   displayedData = signal<TableRow<T>[]>([]);
+  /**
+   * The rows as currently rendered by the table:
+   * filtered, sorted and reduced to the current page.
+   */
+  readonly renderedRows = toSignal(this.connect(), { requireSync: true });
   loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
   isLoading = signal(true);
 
