@@ -37,7 +37,6 @@ const shard = process.env.VITEST_SHARD
 export default defineConfig({
   test: {
     globals: true,
-    pool: "threads",
     maxWorkers,
     /**
      * Run every spec file in its own environment.
