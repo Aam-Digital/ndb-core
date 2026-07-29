@@ -541,7 +541,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="384" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:384</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="414" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:414</a></div>
                         </td>
                     </tr>
 
@@ -952,8 +952,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="365"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:365</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="395"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:395</a></div>
                         </td>
                     </tr>
 
@@ -1131,8 +1131,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="386"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:386</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="416"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:416</a></div>
                         </td>
                     </tr>
 
@@ -1177,7 +1177,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:287</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:306</a></code>
 </div>
                         </td>
                     </tr>
@@ -1270,7 +1270,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:299</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:318</a></code>
 </div>
                         </td>
                     </tr>
@@ -1351,8 +1351,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="355"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:355</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="385"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:385</a></div>
                         </td>
                     </tr>
 
@@ -1393,8 +1393,8 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="164"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:164</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:170</a></div>
                         </td>
                     </tr>
 
@@ -2915,10 +2915,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
     this.remoteDatabase.init(remoteDbName, { trackLostPermissions: true });
   }
 
+  /** doc counts of the most recent completed sync (for logging context) */
+  private lastSyncStats?: { pushed?: number; pulled?: number };
+
   private async logSyncContext() {
     const lastSyncTime &#x3D; localStorage.getItem(this.LAST_SYNC_KEY);
     Logging.addContext(&quot;Aam Digital sync&quot;, {
+      db: this.dbName,
       &quot;last sync completed&quot;: lastSyncTime,
+      &quot;last sync docs pushed&quot;: this.lastSyncStats?.pushed,
+      &quot;last sync docs pulled&quot;: this.lastSyncStats?.pulled,
     });
   }
 
@@ -2992,12 +2998,25 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
     syncHandler.on(&quot;active&quot;, () &#x3D;&gt; armStallTimer());
     syncHandler.on(&quot;paused&quot;, () &#x3D;&gt; armStallTimer());
+    // per-doc rejections (e.g. 401/403 during push) that do not fail the
+    // overall sync and would otherwise leave a doc silently unsynced
+    syncHandler.on(&quot;denied&quot;, (err) &#x3D;&gt;
+      Logging.warn(
+        &quot;sync: server denied replication of a document&quot;,
+        { db: this.dbName },
+        err,
+      ),
+    );
     armStallTimer();
 
     return Promise.race([syncHandler, stallGuard])
       .then(async (res) &#x3D;&gt; {
         if (res) res[&quot;dbName&quot;] &#x3D; this.dbName; // add for debugging information
         Logging.debug(&quot;sync completed&quot;, res);
+        this.lastSyncStats &#x3D; {
+          pushed: (res as SyncResult)?.push?.docs_written,
+          pulled: (res as SyncResult)?.pull?.docs_written,
+        };
         if (!isFirstSync) {
           await this.purgeDocsWithLostPermissions();
         }
@@ -3097,6 +3116,17 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .collectAndClearLostPermissions()
       // design docs for indices are managed locally (and shouldn&#x27;t be synced anyway)
       .filter((id) &#x3D;&gt; !id.startsWith(&quot;_design/&quot;));
+
+    if (lostPermissionIds.length &gt; 0) {
+      // deleting local data based on server response - log for traceability of possible data loss
+      Logging.warn(
+        &quot;sync: purging local docs after server reported lost permissions&quot;,
+        {
+          db: this.dbName,
+          count: lostPermissionIds.length,
+        },
+      );
+    }
 
     for (const _id of lostPermissionIds) {
       try {

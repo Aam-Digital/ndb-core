@@ -210,8 +210,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -430,6 +430,10 @@ We are working on improvements to allow this in the future.&#x60;,
   }
 
   private resetApplication() {
+    // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
+    Logging.warn(
+      &quot;Resetting application data after suspected local database corruption (user confirmed)&quot;,
+    );
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, &quot;1&quot;);
     this.location.pathname &#x3D; &quot;&quot;;
   }

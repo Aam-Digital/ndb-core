@@ -411,7 +411,8 @@ export class PermissionEnforcerService {
       // Legacy idb adapter: purge() not available — fall back to destroy + reload when needed.
       const subjects &#x3D; this.getSubjectsWithReadRestrictions(userRules);
       if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
-        Logging.debug(
+        // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
+        Logging.warn(
           &quot;Detected changed permissions for user. Destroying local db due to lost permissions ...&quot;,
         );
         this.analyticsService.eventTrack(
@@ -494,12 +495,14 @@ export class PermissionEnforcerService {
   ): Promise&lt;void&gt; {
     // wait for config service to be ready before using the entity mapper
     await firstValueFrom(this.configService.configUpdates);
+    let purgedCount &#x3D; 0;
     for (const subject of subjects) {
       const entities &#x3D; await this.entityMapper.loadType(subject);
       for (const entity of entities) {
         if (this.ability.cannot(&quot;read&quot;, entity)) {
           try {
             await this.dbResolver.getDatabase().purge(entity.getId());
+            purgedCount++;
             Logging.debug(
               &#x60;Purged locally inaccessible entity: ${entity.getId()}&#x60;,
             );
@@ -508,6 +511,14 @@ export class PermissionEnforcerService {
           }
         }
       }
+    }
+
+    if (purgedCount &gt; 0) {
+      // deleting local data based on changed permission rules - log for traceability of possible data loss
+      Logging.warn(
+        &quot;Purged local entities that current permission rules deny reading&quot;,
+        { count: purgedCount },
+      );
     }
   }
 
