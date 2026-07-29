@@ -246,8 +246,8 @@ After a successful login, the database for the current user is initialised.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -287,8 +287,8 @@ If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="231"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:231</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="215"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:215</a></div>
                         </td>
                     </tr>
 
@@ -324,8 +324,8 @@ If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="189"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:189</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:173</a></div>
                         </td>
                     </tr>
 
@@ -365,8 +365,8 @@ If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="197"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:197</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="181"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:181</a></div>
                         </td>
                     </tr>
 
@@ -405,8 +405,8 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="148"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:148</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="132"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:132</a></div>
                         </td>
                     </tr>
 
@@ -476,8 +476,8 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="110"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:110</a></div>
                         </td>
                     </tr>
 
@@ -517,8 +517,8 @@ Should only be called if there is an internet connection</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="140"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:140</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:124</a></div>
                         </td>
                     </tr>
 
@@ -565,7 +565,7 @@ Should only be called if there is an internet connection</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:60</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:44</a></div>
                         </td>
                     </tr>
 
@@ -598,7 +598,7 @@ Should only be called if there is an internet connection</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -635,7 +635,7 @@ import { LoginState } from &quot;../session-states/login-state.enum&quot;;
 import { Router } from &quot;@angular/router&quot;;
 import { KeycloakAuthService } from &quot;../auth/keycloak/keycloak-auth.service&quot;;
 import { LocalAuthService } from &quot;../auth/local/local-auth.service&quot;;
-import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { NAVIGATOR_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { CurrentUserSubject } from &quot;../current-user-subject&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
@@ -652,6 +652,7 @@ import { EntityConfigReadyService } from &quot;../../entity/entity-config-ready.
  */
 @Injectable()
 export class SessionManagerService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private remoteAuthService &#x3D; inject(KeycloakAuthService);
   private localAuthService &#x3D; inject(LocalAuthService);
   private sessionInfo &#x3D; inject(SessionSubject);
@@ -817,7 +818,7 @@ export class SessionManagerService {
         // This will forward to the keycloak logout page
         await this.remoteAuthService.logout();
       } else {
-        localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, &quot;1&quot;);
+        this.localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, &quot;1&quot;);
       }
     }
     // resetting app state
@@ -836,8 +837,8 @@ export class SessionManagerService {
   }
 
   clearRemoteSessionIfNecessary() {
-    if (localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
-      localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
+    if (this.localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
+      this.localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
       // The remote logout below redirects through Keycloak and back to /login.
       // Skip the silent SSO check on that next page load to avoid a needless
       // multi-second spinner.

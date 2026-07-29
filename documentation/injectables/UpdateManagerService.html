@@ -198,7 +198,7 @@ and can click that to reload the app with the new version.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:28</a></div>
                             </td>
                         </tr>
 
@@ -233,8 +233,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="133"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:133</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="117"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:117</a></div>
                         </td>
                     </tr>
 
@@ -274,8 +274,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="68"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:68</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -315,8 +315,8 @@ and can click that to reload the app with the new version.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="80"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:80</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/update-manager.service.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -347,7 +347,7 @@ import { concat, interval } from &quot;rxjs&quot;;
 import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { LatestChangesDialogService } from &quot;./latest-changes-dialog.service&quot;;
-import { LOCATION_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-changes.service&quot;;
 
 /**
@@ -359,6 +359,7 @@ import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-ch
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class UpdateManagerService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private appRef &#x3D; inject(ApplicationRef);
   private updates &#x3D; inject(SwUpdate);
   private snackBar &#x3D; inject(MatSnackBar);
@@ -373,11 +374,11 @@ export class UpdateManagerService {
       Logging.error(&quot;App is in unrecoverable state: &quot; + err.reason);
       this.location.reload();
     });
-    const currentVersion &#x3D; localStorage.getItem(
+    const currentVersion &#x3D; this.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY,
     );
     if (currentVersion &amp;&amp; currentVersion.startsWith(this.UPDATE_PREFIX)) {
-      localStorage.setItem(
+      this.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace(this.UPDATE_PREFIX, &quot;&quot;),
       );
@@ -421,7 +422,7 @@ export class UpdateManagerService {
 
   private updateIfPossible() {
     const currentVersion &#x3D;
-      localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || &quot;&quot;;
+      this.localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || &quot;&quot;;
     if (currentVersion.startsWith(this.UPDATE_PREFIX)) {
       // Sometimes this is triggered multiple times for one update
       return;
@@ -429,7 +430,7 @@ export class UpdateManagerService {
 
     if (this.unsavedChanges.pending()) {
       // app cannot be safely reloaded
-      localStorage.setItem(
+      this.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         this.UPDATE_PREFIX + currentVersion,
       );
@@ -440,7 +441,7 @@ export class UpdateManagerService {
         )
         .onAction()
         .subscribe(() &#x3D;&gt; {
-          localStorage.setItem(
+          this.localStorage.setItem(
             LatestChangesDialogService.VERSION_KEY,
             currentVersion,
           );

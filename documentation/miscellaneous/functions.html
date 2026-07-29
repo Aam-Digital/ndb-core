@@ -253,6 +253,9 @@
                             <a href="#createEntityOfType" title="src/app/core/demo-data/create-entity-of-type.ts" ><b>createEntityOfType</b>&nbsp;&nbsp;&nbsp;(src/.../create-entity-of-type.ts)</a>
                         </li>
                         <li>
+                            <a href="#createFakeStorage" title="src/app/utils/test-utils/fake-storage.ts" ><b>createFakeStorage</b>&nbsp;&nbsp;&nbsp;(src/.../fake-storage.ts)</a>
+                        </li>
+                        <li>
                             <a href="#createFieldDecision" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" ><b>createFieldDecision</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</a>
                         </li>
                         <li>
@@ -7532,6 +7535,80 @@ because the dynamically migrated config is not ready at the time of demo data ge
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/utils/test-utils/fake-storage.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createFakeStorage"></a>
+                    <span class="name">
+                        <span ><b>createFakeStorage</b></span>
+                        <a href="#createFakeStorage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>createFakeStorage(initial: Record)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>An in-memory stand-in for <code>localStorage</code>, to be provided for
+<a href="../miscellaneous/variables.html#LOCAL_STORAGE_TOKEN">LOCAL_STORAGE_TOKEN</a> in tests.</p>
+<p>Prefer this over <code>vi.spyOn(Storage.prototype, ...)</code>: <code>Storage.prototype</code> lives
+in the worker process rather than the module registry, so Vitest&#39;s <code>isolate</code>
+does not undo such a stub. An unrestored one leaks into every later spec file
+and silently makes unrelated tests read a fake localStorage.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>initial</td>
+                                            <td>
+                                                        <code>Record</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Storage</code>
 
                         </div>
                             <div class="io-description">

@@ -248,14 +248,18 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:86</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Static, so it cannot use the injected LOCAL_STORAGE_TOKEN and touches the
+real localStorage directly. Callers that need this mockable should make it
+an instance method first.</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -287,8 +291,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="74"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:74</a></div>
                         </td>
                     </tr>
 
@@ -324,8 +328,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="57"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:57</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -395,8 +399,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="255"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:255</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="262"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:262</a></div>
                         </td>
                     </tr>
 
@@ -434,8 +438,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="119"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:119</a></div>
                         </td>
                     </tr>
 
@@ -507,8 +511,8 @@ i.e. configuring the access for that account after login
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="231"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:231</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="238"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:238</a></div>
                         </td>
                     </tr>
 
@@ -578,8 +582,8 @@ to avoid flooding to console with errors.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="91"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:91</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="98"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:98</a></div>
                         </td>
                     </tr>
 
@@ -622,8 +626,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="68"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:68</a></div>
                         </td>
                     </tr>
 
@@ -661,8 +665,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -703,7 +707,7 @@ forcing a full re-check on the next sync without deleting any data.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/database/database-resolver.service.ts:45</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/database/database-resolver.service.ts:47</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -744,6 +748,7 @@ import { environment } from &quot;../../../environments/environment&quot;;
 import { SessionType } from &quot;../session/session-type&quot;;
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
+import { LOCAL_STORAGE_TOKEN } from &quot;../../utils/di-tokens&quot;;
 
 /**
  * Manages access to individual databases,
@@ -753,6 +758,7 @@ import { Logging } from &quot;../logging/logging.service&quot;;
   providedIn: &quot;root&quot;,
 })
 export class DatabaseResolverService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private readonly databaseFactory &#x3D; inject(DatabaseFactoryService);
   private readonly migrationService &#x3D; inject(IndexeddbMigrationService);
   private readonly window &#x3D; inject&lt;Window&gt;(WINDOW_TOKEN, { optional: true });
@@ -804,6 +810,11 @@ export class DatabaseResolverService {
     }
   }
 
+  /**
+   * Static, so it cannot use the injected LOCAL_STORAGE_TOKEN and touches the
+   * real localStorage directly. Callers that need this mockable should make it
+   * an instance method first.
+   */
   static clearLastSyncMarkers() {
     Object.keys(localStorage)
       .filter((key) &#x3D;&gt; key.startsWith(SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX))
@@ -863,7 +874,7 @@ export class DatabaseResolverService {
   private async checkForVanishedLocalDatabase(dbConfig: DbConfig) {
     try {
       const dbName &#x3D; dbConfig.dbNames.app;
-      const lastSyncTime &#x3D; localStorage.getItem(
+      const lastSyncTime &#x3D; this.localStorage.getItem(
         SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + dbName,
       );
       // indexedDB.databases() is not available in all browsers (then: undefined)

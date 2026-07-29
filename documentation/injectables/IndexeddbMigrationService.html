@@ -229,8 +229,8 @@ a migration flag is set and the user is prompted to reload.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="291"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:291</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="298"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:298</a></div>
                         </td>
                     </tr>
 
@@ -306,8 +306,8 @@ Only runs if the migration flag is set for the given session.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="54"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:54</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -382,8 +382,8 @@ Only runs if the migration flag is set for the given session.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="118"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:118</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="123"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -486,7 +486,7 @@ replication complete, the migration flag is set and the user is prompted to relo
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:43</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:48</a></div>
                         </td>
                     </tr>
 
@@ -512,7 +512,11 @@ import { SyncState } from &quot;../session/session-states/sync-state.enum&quot;;
 import { computeDbNames, computeLegacyDbNames } from &quot;./db-name-helpers&quot;;
 import { ConfirmationDialogService } from &quot;../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
-import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from &quot;../../utils/di-tokens&quot;;
+import {
+  NAVIGATOR_TOKEN,
+  WINDOW_TOKEN,
+  LOCAL_STORAGE_TOKEN,
+} from &quot;../../utils/di-tokens&quot;;
 import { filter, first } from &quot;rxjs/operators&quot;;
 import PouchDB from &quot;pouchdb-browser&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
@@ -537,6 +541,7 @@ const DB_MIGRATED_PREFIX &#x3D; &quot;DB_MIGRATED_&quot;;
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class IndexeddbMigrationService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
   private readonly navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN, {
     optional: true,
@@ -574,7 +579,7 @@ export class IndexeddbMigrationService {
 
     const oldDbExists &#x3D; await this.legacyDbExists(session);
     if (!oldDbExists &amp;&amp; !this.isMigrated(session)) {
-      localStorage.setItem(DB_MIGRATED_PREFIX + session.id, &quot;true&quot;);
+      this.localStorage.setItem(DB_MIGRATED_PREFIX + session.id, &quot;true&quot;);
       await this.trackResolveScenario(&quot;indexeddb_fresh-install&quot;);
       Logging.debug(
         &quot;IndexeddbMigration: no legacy DB found; assuming fresh install and setting &#x27;migrated&#x27; flag&quot;,
@@ -722,11 +727,13 @@ export class IndexeddbMigrationService {
   }
 
   private isMigrated(session: SessionInfo): boolean {
-    return localStorage.getItem(DB_MIGRATED_PREFIX + session.id) &#x3D;&#x3D;&#x3D; &quot;true&quot;;
+    return (
+      this.localStorage.getItem(DB_MIGRATED_PREFIX + session.id) &#x3D;&#x3D;&#x3D; &quot;true&quot;
+    );
   }
 
   private setMigrated(session: SessionInfo): void {
-    localStorage.setItem(DB_MIGRATED_PREFIX + session.id, &quot;true&quot;);
+    this.localStorage.setItem(DB_MIGRATED_PREFIX + session.id, &quot;true&quot;);
     Logging.debug(
       &#x60;IndexeddbMigration: migration flag set for user ${session.id}&#x60;,
     );
@@ -833,7 +840,7 @@ export class IndexeddbMigrationService {
       }
     }
 
-    localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
+    this.localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
     Logging.debug(
       &#x60;IndexeddbMigration: cleanup complete for user ${session.id}; migration flag removed&#x60;,
     );

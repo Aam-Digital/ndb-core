@@ -192,7 +192,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/language/language.service.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/language/language.service.ts:23</a></div>
                             </td>
                         </tr>
 
@@ -225,8 +225,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="75"
-                                    class="link-to-prism">src/app/core/language/language.service.ts:75</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/core/language/language.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -265,8 +265,8 @@ First tries to read the value from localStorage, otherwise falls back to base lo
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/core/language/language.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/core/language/language.service.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -302,15 +302,15 @@ First tries to read the value from localStorage, otherwise falls back to base lo
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="51"
-                                    class="link-to-prism">src/app/core/language/language.service.ts:51</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/core/language/language.service.ts:52</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Switch the current locale and persist it in localStorage.</p>
+                        <div class="io-description"><p>Switch the current locale and persist it in this.localStorage.</p>
 </div>
 
                             <div class="io-description">
@@ -360,7 +360,7 @@ First tries to read the value from localStorage, otherwise falls back to base lo
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, LOCALE_ID } from &quot;@angular/core&quot;;
 import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
 import { LANGUAGE_LOCAL_STORAGE_KEY } from &quot;./language-statics&quot;;
-import { WINDOW_TOKEN } from &quot;../../utils/di-tokens&quot;;
+import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../utils/di-tokens&quot;;
 import { SiteSettings } from &quot;../site-settings/site-settings&quot;;
 import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
 import { SiteSettingsService } from &quot;../site-settings/site-settings.service&quot;;
@@ -375,6 +375,7 @@ import { UpdatedEntity } from &quot;#src/app/core/entity/model/entity-update&quo
 })
 @UntilDestroy()
 export class LanguageService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private baseLocale &#x3D; inject(LOCALE_ID);
   private window &#x3D; inject&lt;Window&gt;(WINDOW_TOKEN);
   private siteSettings &#x3D; inject(SiteSettingsService);
@@ -404,19 +405,19 @@ export class LanguageService {
   }
 
   /**
-   * Switch the current locale and persist it in localStorage.
+   * Switch the current locale and persist it in this.localStorage.
    * @param newLocale
    */
   switchLocale(newLocale: string): void {
-    const currentLocale &#x3D; localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
+    const currentLocale &#x3D; this.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
     if (newLocale &#x3D;&#x3D;&#x3D; currentLocale || !newLocale) return;
 
-    localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, newLocale);
+    this.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, newLocale);
     this.window.location.reload();
   }
 
   initDefaultLanguage(): void {
-    const languageSelected &#x3D; this.window.localStorage.getItem(
+    const languageSelected &#x3D; this.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );
 
@@ -433,8 +434,7 @@ export class LanguageService {
    */
   getCurrentLocale(): string {
     return (
-      this.window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ||
-      this.baseLocale
+      this.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || this.baseLocale
     );
   }
 }

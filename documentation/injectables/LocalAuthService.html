@@ -207,8 +207,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="19"
-                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:19</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="21"
+                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:21</a></div>
                         </td>
                     </tr>
 
@@ -247,8 +247,8 @@ Users without a local IndexedDB are filtered out (e.g. stale entries from online
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/core/session/auth/local/local-auth.service.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -303,10 +303,11 @@ Has no effect in online-only mode, since no local database is available.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 import { SessionInfo } from &quot;../session-info&quot;;
 import { environment } from &quot;../../../../../environments/environment&quot;;
 import { SessionType } from &quot;../../session-type&quot;;
+import { LOCAL_STORAGE_TOKEN } from &quot;../../../../utils/di-tokens&quot;;
 
 /**
  * Manages the offline login.
@@ -315,6 +316,7 @@ import { SessionType } from &quot;../../session-type&quot;;
   providedIn: &quot;root&quot;,
 })
 export class LocalAuthService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private readonly STORED_USER_PREFIX &#x3D; &quot;USER-&quot;;
 
   /**
@@ -322,7 +324,7 @@ export class LocalAuthService {
    * Users without a local IndexedDB are filtered out (e.g. stale entries from online-only logins).
    */
   async getStoredUsers(): Promise&lt;SessionInfo[]&gt; {
-    const users: SessionInfo[] &#x3D; Object.entries(localStorage)
+    const users: SessionInfo[] &#x3D; Object.entries(this.localStorage)
       .filter(([key]) &#x3D;&gt; key.startsWith(this.STORED_USER_PREFIX))
       .map(([_, user]) &#x3D;&gt; JSON.parse(user));
 
@@ -366,7 +368,7 @@ export class LocalAuthService {
     }
     // If API is not available, allow all stored users (safe fallback)
     return new Set(
-      Object.entries(localStorage)
+      Object.entries(this.localStorage)
         .filter(([key]) &#x3D;&gt; key.startsWith(this.STORED_USER_PREFIX))
         .map(([_, user]) &#x3D;&gt; {
           const u: SessionInfo &#x3D; JSON.parse(user);
@@ -383,7 +385,7 @@ export class LocalAuthService {
     if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
       return;
     }
-    localStorage.setItem(
+    this.localStorage.setItem(
       this.STORED_USER_PREFIX + user.name,
       JSON.stringify(user),
     );

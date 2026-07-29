@@ -382,6 +382,9 @@
                             <a href="#LG" title="src/app/utils/media/screen-size-observer.service.ts" ><b>LG</b>&nbsp;&nbsp;&nbsp;(src/.../screen-size-observer.service.ts)</a>
                         </li>
                         <li>
+                            <a href="#LOCAL_STORAGE_TOKEN" title="src/app/utils/di-tokens.ts" ><b>LOCAL_STORAGE_TOKEN</b>&nbsp;&nbsp;&nbsp;(src/.../di-tokens.ts)</a>
+                        </li>
+                        <li>
                             <a href="#LOCALE_ENUM_ID" title="src/app/core/language/languages.ts" ><b>LOCALE_ENUM_ID</b>&nbsp;&nbsp;&nbsp;(src/.../languages.ts)</a>
                         </li>
                         <li>
@@ -6418,6 +6421,45 @@ is considered desktop.</p>
     <h3>src/app/utils/di-tokens.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="LOCAL_STORAGE_TOKEN"></a>
+                    <span class="name">
+                        <span ><b>LOCAL_STORAGE_TOKEN</b></span>
+                        <a href="#LOCAL_STORAGE_TOKEN"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new InjectionToken&lt;Storage&gt;(
+  &quot;Window localStorage object&quot;,
+  { providedIn: &quot;root&quot;, factory: () &#x3D;&gt; localStorage },
+)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Use this instead of referencing <code>localStorage</code> directly.</p>
+<p>Tests otherwise have to stub <code>Storage.prototype</code>, which belongs to the worker
+process rather than the module registry — Vitest&#39;s <code>isolate</code> does not undo it,
+so an unrestored stub leaks into every later spec file and makes unrelated
+tests read a fake localStorage. Injecting a fake avoids that entirely.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
         <tbody>
             <tr>
                 <td class="col-md-4">

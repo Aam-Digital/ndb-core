@@ -226,8 +226,8 @@ on request or automatically on the first visit of a new version after update.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="38"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:38</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="40"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:40</a></div>
                         </td>
                     </tr>
 
@@ -267,8 +267,8 @@ on request or automatically on the first visit of a new version after update.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="46"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:46</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="48"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:48</a></div>
                         </td>
                     </tr>
 
@@ -343,8 +343,8 @@ on request or automatically on the first visit of a new version after update.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="69"
-                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:69</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:71</a></div>
                         </td>
                     </tr>
 
@@ -394,7 +394,7 @@ on request or automatically on the first visit of a new version after update.</p
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/ui/latest-changes/latest-changes-dialog.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -412,6 +412,7 @@ import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import { ChangelogComponent } from &quot;./changelog/changelog.component&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { LatestChangesService } from &quot;./latest-changes.service&quot;;
+import { LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 
 /**
  * Manage the changelog information and display it to the user
@@ -420,6 +421,7 @@ import { LatestChangesService } from &quot;./latest-changes.service&quot;;
 @Injectable({ providedIn: &quot;root&quot; })
 export class LatestChangesDialogService {
   private dialog &#x3D; inject(MatDialog);
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private latestChangesService &#x3D; inject(LatestChangesService);
 
   public static readonly VERSION_KEY &#x3D; &quot;AppVersion&quot;;
@@ -449,7 +451,7 @@ export class LatestChangesDialogService {
   }
 
   private updateCurrentVersion() {
-    window.localStorage.setItem(
+    this.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       this.getCurrentVersion(),
     );
@@ -459,7 +461,7 @@ export class LatestChangesDialogService {
    * Display the latest changes info box automatically if the current user has not seen this version before.
    */
   public showLatestChangesIfUpdated() {
-    const previousVersion &#x3D; window.localStorage.getItem(
+    const previousVersion &#x3D; this.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY,
     );
     if (previousVersion &amp;&amp; this.getCurrentVersion() !&#x3D;&#x3D; previousVersion) {

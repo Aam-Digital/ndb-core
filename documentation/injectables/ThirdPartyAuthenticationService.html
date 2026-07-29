@@ -211,8 +211,8 @@ see <a href="https://github.com/Aam-Digital/aam-services/blob/main/docs/modules/
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/features/third-party-authentication/third-party-authentication.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/features/third-party-authentication/third-party-authentication.service.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -248,8 +248,8 @@ see <a href="https://github.com/Aam-Digital/aam-services/blob/main/docs/modules/
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="54"
-                                    class="link-to-prism">src/app/features/third-party-authentication/third-party-authentication.service.ts:54</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="56"
+                                    class="link-to-prism">src/app/features/third-party-authentication/third-party-authentication.service.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -285,8 +285,8 @@ see <a href="https://github.com/Aam-Digital/aam-services/blob/main/docs/modules/
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="29"
-                                    class="link-to-prism">src/app/features/third-party-authentication/third-party-authentication.service.ts:29</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="31"
+                                    class="link-to-prism">src/app/features/third-party-authentication/third-party-authentication.service.ts:31</a></div>
                         </td>
                     </tr>
 
@@ -349,6 +349,7 @@ import { HttpClient } from &quot;@angular/common/http&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { map } from &quot;rxjs/operators&quot;;
+import { LOCAL_STORAGE_TOKEN } from &quot;../../utils/di-tokens&quot;;
 
 /**
  * Interaction with the third-party-authentication API Module.
@@ -358,6 +359,7 @@ import { map } from &quot;rxjs/operators&quot;;
   providedIn: &quot;root&quot;,
 })
 export class ThirdPartyAuthenticationService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private readonly LOCAL_STORAGE_KEY &#x3D; &quot;tpa_session&quot;;
   private readonly API_URL &#x3D;
     environment.API_PROXY_PREFIX + &quot;/v1/third-party-authentication&quot;;
@@ -390,14 +392,14 @@ export class ThirdPartyAuthenticationService {
 
   private storeSessionId(sessionId: string | null) {
     if (sessionId) {
-      localStorage.setItem(this.LOCAL_STORAGE_KEY, sessionId);
+      this.localStorage.setItem(this.LOCAL_STORAGE_KEY, sessionId);
     } else {
-      localStorage.removeItem(this.LOCAL_STORAGE_KEY);
+      this.localStorage.removeItem(this.LOCAL_STORAGE_KEY);
     }
   }
 
   getSessionId(): string | null {
-    return localStorage.getItem(this.LOCAL_STORAGE_KEY);
+    return this.localStorage.getItem(this.LOCAL_STORAGE_KEY);
   }
 
   async getRedirectUrl(): Promise&lt;string | undefined&gt; {

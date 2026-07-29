@@ -231,8 +231,8 @@ re-sync.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="47"
-                                    class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:47</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="48"
+                                    class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:48</a></div>
                         </td>
                     </tr>
 
@@ -310,7 +310,7 @@ re-sync.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -333,7 +333,7 @@ re-sync.</p>
 import { DatabaseRule } from &quot;../permission-types&quot;;
 import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
-import { LOCATION_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { AnalyticsService } from &quot;../../analytics/analytics.service&quot;;
 import { EntityAbility } from &quot;../ability/entity-ability&quot;;
 import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
@@ -361,6 +361,7 @@ import { Logging } from &quot;../../logging/logging.service&quot;;
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class PermissionEnforcerService {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private sessionInfo &#x3D; inject(SessionSubject);
   private ability &#x3D; inject(EntityAbility);
   private entityMapper &#x3D; inject(EntityMapperService);
@@ -430,11 +431,11 @@ export class PermissionEnforcerService {
     }
 
     // update stored rules to check for future changes
-    window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+    this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }
 
   private userRulesChanged(newRules: string): boolean {
-    const storedRules &#x3D; window.localStorage.getItem(this.getUserStorageKey());
+    const storedRules &#x3D; this.localStorage.getItem(this.getUserStorageKey());
     return storedRules !&#x3D;&#x3D; newRules;
   }
 

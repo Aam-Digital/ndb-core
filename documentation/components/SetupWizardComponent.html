@@ -302,8 +302,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="108"
+                                    class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:108</a></div>
                         </td>
                     </tr>
 
@@ -339,8 +339,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="91"
-                                    class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:91</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="93"
+                                    class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:93</a></div>
                         </td>
                     </tr>
 
@@ -416,7 +416,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:58</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -447,7 +447,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:57</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -479,7 +479,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -505,7 +505,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:56</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard.component.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -545,6 +545,7 @@ import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { MatDialogRef } from &quot;@angular/material/dialog&quot;;
 import { ViewTitleComponent } from &quot;../../common-components/view-title/view-title.component&quot;;
+import { LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -566,6 +567,7 @@ import { ViewTitleComponent } from &quot;../../common-components/view-title/view
   styleUrl: &quot;./setup-wizard.component.scss&quot;,
 })
 export class SetupWizardComponent implements OnInit {
+  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private entityMapper &#x3D; inject(EntityMapperService);
   private dialogRef &#x3D; inject&lt;MatDialogRef&lt;any&gt;&gt;(MatDialogRef, {
     optional: true,
@@ -596,7 +598,7 @@ export class SetupWizardComponent implements OnInit {
   }
 
   private loadLocalStatus() {
-    const storedStatus &#x3D; localStorage.getItem(this.LOCAL_STORAGE_KEY);
+    const storedStatus &#x3D; this.localStorage.getItem(this.LOCAL_STORAGE_KEY);
     if (storedStatus) {
       const parsedStatus &#x3D; JSON.parse(storedStatus);
 
@@ -614,7 +616,7 @@ export class SetupWizardComponent implements OnInit {
       this.completedSteps.push(newStep);
     }
 
-    localStorage.setItem(
+    this.localStorage.setItem(
       this.LOCAL_STORAGE_KEY,
       JSON.stringify({
         currentStep: this.currentStep,
