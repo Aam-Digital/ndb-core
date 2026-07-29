@@ -138,7 +138,7 @@ export class ExampleComponent {
 - Implement proper permissions checking via CASL integration.
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
 - Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
-- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. The unit-test runner is non-isolated, so mutating a shared entity's schema without restoring it leaks into other specs and causes order-dependent flaky failures
+- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. Mutating a shared entity's schema without restoring it leaks into the other specs in the same file and causes order-dependent flaky failures
 - See `doc/compodoc_sources/how-to-guides/` for detailed guides on entities, datatypes, and more
 
 ### Configuration System
@@ -207,6 +207,44 @@ When developing new functionality:
 - Run tests: `npm run test -- --watch=false --include='**/relevant-file.spec.ts'`
 - Run the full CI-style unit test suite with coverage: `npm run test-ci`
 - See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
+
+#### Memory usage
+
+Every Vitest worker runs a full Angular TestBed + jsdom, so peak RAM is essentially
+"workers × ~600 MB". Vitest's default worker count is `cpus - 1`, i.e. 17 workers on an
+18-core laptop — enough to exhaust its RAM. Note that non-interactive runs (CI, agents)
+get the _higher_ default, because watch mode halves it.
+
+[`vitest-base.config.ts`](vitest-base.config.ts) therefore caps `maxWorkers` at 4. On an
+18-core / 32 GB laptop `npm run test` (no coverage) then peaks around 2.9 GB across at most
+6 worker processes — 4 running plus a couple still tearing down — and takes ~9 minutes.
+`npm run test-ci` adds v8 coverage on top of that.
+
+The cap is inert on CI: `ubuntu-latest` has 4 cores, where it resolves to 3, which is
+already Vitest's own default there.
+
+Tune with `VITEST_MAX_WORKERS`, as a count (`4`) or a share of the cores (`50%`) — lower
+it when running tests alongside a dev server, raise it to trade RAM for wall time.
+
+For a hard ceiling that survives a mistuned knob, run the suite in a memory-capped cgroup:
+
+```bash
+systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=0 \
+  npm run test -- --watch=false
+```
+
+#### Test isolation
+
+[`vitest-base.config.ts`](vitest-base.config.ts) sets `isolate: true`. The Angular
+unit-test builder defaults it to `false`, which makes every spec file share one module
+registry, one `environment` singleton and one TestBed per worker — so async work that
+outlives a spec file throws into whichever file runs next, and failures land on innocent
+specs and move between runs.
+
+A practical consequence: **a spec must register every entity type it relies on**, by
+importing the model (the `@DatabaseEntity` decorator does the registering). Do not depend
+on some other spec file having imported it — that only ever worked by accident. If a spec
+passes in the full suite but fails via `--include='**/that-file.spec.ts'`, this is why.
 
 ### End-to-End Testing (Playwright)
 
