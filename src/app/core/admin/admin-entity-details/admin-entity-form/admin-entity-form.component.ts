@@ -152,22 +152,20 @@ export class AdminEntityFormComponent {
   );
 
   /**
-   * Ids of the fields currently used in the form (null while not initialized yet).
+   * Configurations of the fields currently used in the form (null while not initialized yet).
    * The dummy form only has to be rebuilt when these change,
    * not when other details like a field group header are edited.
    */
-  private readonly usedFieldIds = computed(() => {
+  private readonly usedFieldConfigurations = computed(() => {
     if (!this.config() || !this.entityType()) {
       return null;
     }
-    return this.getUsedFields(this.fieldGroups())
-      .map((field) => toFormFieldConfig(field).id)
-      .join(",");
+    return JSON.stringify(this.getUsedFields(this.fieldGroups()));
   });
 
   constructor() {
     effect(() => {
-      if (this.usedFieldIds() === null) {
+      if (this.usedFieldConfigurations() === null) {
         return;
       }
 
