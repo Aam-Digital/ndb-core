@@ -805,7 +805,8 @@
                     {
                       "fields": [
                         "photo",
-                        "schoolId"
+                        "schoolId",
+                        "responsibleUser"
                       ]
                     },
                     {
@@ -1340,6 +1341,12 @@
           "dataType": "entity",
           "additional": "School",
           "label": "Linked School",
+          "anonymize": "retain"
+        },
+        "responsibleUser": {
+          "dataType": "entity",
+          "additional": "User",
+          "label": "Responsible User",
           "anonymize": "retain"
         },
         "center": {
