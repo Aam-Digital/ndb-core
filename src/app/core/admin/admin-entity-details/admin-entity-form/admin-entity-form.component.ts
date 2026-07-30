@@ -200,16 +200,26 @@ export class AdminEntityFormComponent {
     });
   }
 
+  /** counter to discard the results of outdated, concurrent initForm calls */
+  private initFormVersion = 0;
+
   private async initForm() {
+    const version = ++this.initFormVersion;
     const dummyEntity = new (this.entityType() as any)();
-    this.dummyEntity.set(dummyEntity);
 
     const dummyForm = await this.entityFormService.createEntityForm(
       [...this.getUsedFields(this.fieldGroups()), ...this.availableFields()],
       dummyEntity,
       this.destroyRef,
     );
+    if (version !== this.initFormVersion) {
+      // a newer initForm has been started in the meantime, its result takes precedence
+      return;
+    }
+
     dummyForm.formGroup.disable();
+    // set both together so that entity and form always match
+    this.dummyEntity.set(dummyEntity);
     this.dummyForm.set(dummyForm);
   }
 

@@ -4,6 +4,7 @@ import { EntityForm } from "#src/app/core/common-components/entity-form/entity-f
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
+import { By } from "@angular/platform-browser";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of } from "rxjs";
@@ -349,6 +350,31 @@ describe("AdminEntityFormComponent", () => {
     expect(mockFormService.createEntityForm.mock.calls.length).toBe(
       createFormCallsBefore,
     );
+  });
+
+  it("should update the preview of a field whose schema was changed", async () => {
+    vi.useFakeTimers();
+    const originalSchema = TestEntity.schema.get("name");
+    try {
+      const previewLabels = () =>
+        fixture.debugElement
+          .queryAll(By.css("app-entity-field-edit"))
+          .map((field) => field.componentInstance._field()?.label);
+      fixture.detectChanges();
+      expect(previewLabels()).toContain("Name");
+
+      TestBed.inject(AdminEntityService).updateSchemaField(TestEntity, "name", {
+        ...originalSchema,
+        label: "Full Legal Title",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
+
+      expect(previewLabels()).toContain("Full Legal Title");
+    } finally {
+      TestEntity.schema.set("name", originalSchema);
+      vi.useRealTimers();
+    }
   });
 
   it("should prefill label when creating new field with search text", async () => {
