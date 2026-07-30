@@ -11,13 +11,15 @@ describe("LocalAuthService", () => {
   let service: LocalAuthService;
   let testUser: SessionInfo;
   let mockDatabases: ReturnType<typeof vi.fn>;
+  let storage: Storage;
   const originalSessionType = environment.session_type;
 
   beforeEach(() => {
+    storage = createFakeStorage();
     TestBed.configureTestingModule({
       providers: [
         LocalAuthService,
-        { provide: LOCAL_STORAGE_TOKEN, useValue: createFakeStorage() },
+        { provide: LOCAL_STORAGE_TOKEN, useValue: storage },
       ],
     });
     service = TestBed.inject(LocalAuthService);
@@ -71,6 +73,8 @@ describe("LocalAuthService", () => {
 
     service.saveUser(testUser);
 
-    expect(localStorage.getItem("USER-" + testUser.name)).toBeNull();
+    // assert on the injected storage, not the shared jsdom `localStorage`,
+    // which other spec files in the same worker may have written to
+    expect(storage.getItem("USER-" + testUser.name)).toBeNull();
   });
 });
