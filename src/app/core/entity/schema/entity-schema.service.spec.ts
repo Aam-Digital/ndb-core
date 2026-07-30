@@ -21,8 +21,8 @@ import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EntitySchemaField } from "./entity-schema-field";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
@@ -265,12 +265,22 @@ export function testDatatype<D extends DefaultDatatype>(
 
     beforeEach(waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [MockedTestingModule.withState()],
+        providers: [
+          EntitySchemaService,
+          // only the datatype these tests exercise, rather than a whole module - this
+          // block runs inside every spec calling testDatatype(), so importing
+          // MockedTestingModule here booted the AppModule in all of them
+          {
+            provide: DefaultDatatype,
+            useClass: ConfigurableEnumDatatype,
+            multi: true,
+          },
+          {
+            provide: ConfigurableEnumService,
+            useValue: { getEnumValues: () => defaultInteractionTypes },
+          },
+        ],
       });
-      vi.spyOn(
-        TestBed.inject(ConfigurableEnumService),
-        "getEnumValues",
-      ).mockReturnValue(defaultInteractionTypes);
       entitySchemaService = TestBed.inject(EntitySchemaService);
     }));
 
