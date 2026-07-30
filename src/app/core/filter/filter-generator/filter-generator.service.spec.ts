@@ -9,7 +9,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import moment from "moment";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { FilterService } from "../filter.service";
 import {
   EMPTY_FILTER_OPTION_KEY,
@@ -17,7 +17,24 @@ import {
   SelectableFilter,
 } from "../filters/filters";
 import { Entity } from "../../entity/model/entity";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  entityRegistry,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { getDefaultEnumEntities } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { entityAbilityFactory } from "../../permissions/ability/testing-entity-ability-factory";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
@@ -32,12 +49,38 @@ describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let filterService: FilterService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
+      providers: [
+        FilterGeneratorService,
+        FilterService,
+        EntitySchemaService,
+        DynamicPlaceholderValueService,
+        ConfigurableEnumService,
+        ...mockEntityMapperProvider(getDefaultEnumEntities()),
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: EntityAbility,
+          useFactory: entityAbilityFactory,
+          deps: [EntitySchemaService],
+        },
+        // only the datatypes of the entity schemas under test, rather than a whole module
+        {
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
+        { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+        // EntityDatatype only uses this to offer entity actions, which filters don't
+        { provide: EntityActionsService, useValue: {} },
+      ],
     });
     service = TestBed.inject(FilterGeneratorService);
     filterService = TestBed.inject(FilterService);
+    await TestBed.inject(ConfigurableEnumService).preLoadEnums();
   }));
 
   it("should be created", () => {
@@ -158,7 +201,10 @@ describe("FilterGeneratorService", () => {
     csr4.schoolId = school1.getId();
     const schema = ChildSchoolRelation.schema.get("schoolId");
     const originalSchemaAdditional = schema.additional;
+    const originalSchemaLabel = schema.label;
     schema.additional = TestEntity.ENTITY_TYPE;
+    // the model itself defines no label for this field, it usually comes from the app config
+    schema.label = "School";
 
     const filterOptions = (
       await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
@@ -177,6 +223,7 @@ describe("FilterGeneratorService", () => {
     expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
 
     schema.additional = originalSchemaAdditional;
+    schema.label = originalSchemaLabel;
   });
 
   it("should create filters with all possible options on default", async () => {
