@@ -136,53 +136,60 @@ describe("FilterGeneratorService", () => {
     expect(comparableOptions).toHaveLength(interactionTypes.length);
     expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
-    // enum name in additional field
-    const schemaAdditional = {
-      id: "otherEnum",
-      dataType: schema.dataType,
-      additional: schema.additional,
-    };
-    Note.schema.set("otherEnum", schemaAdditional);
+    try {
+      // enum name in additional field
+      const schemaAdditional = {
+        id: "otherEnum",
+        dataType: schema.dataType,
+        additional: schema.additional,
+      };
+      Note.schema.set("otherEnum", schemaAdditional);
 
-    filterOptions = (
-      await service.generate([{ id: "otherEnum" }], Note, [])
-    )[0] as ConfigurableEnumFilter<Note>;
+      filterOptions = (
+        await service.generate([{ id: "otherEnum" }], Note, [])
+      )[0] as ConfigurableEnumFilter<Note>;
 
-    comparableOptions = filterOptions.options.map((option) => {
-      return { key: option.key, label: option.label };
-    });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
-    expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
+      comparableOptions = filterOptions.options.map((option) => {
+        return { key: option.key, label: option.label };
+      });
+      expect(comparableOptions).toHaveLength(interactionTypes.length);
+      expect(comparableOptions).toEqual(
+        expect.arrayContaining(interactionTypes),
+      );
 
-    // enum as array
-    const schemaArray: FormFieldConfig = {
-      id: "otherEnum",
-      dataType: schema.dataType,
-      isArray: true,
-      additional: schema.additional,
-    };
-    Note.schema.set("otherEnum", schemaArray);
+      // enum as array
+      const schemaArray: FormFieldConfig = {
+        id: "otherEnum",
+        dataType: schema.dataType,
+        isArray: true,
+        additional: schema.additional,
+      };
+      Note.schema.set("otherEnum", schemaArray);
 
-    filterOptions = (
-      await service.generate([{ id: "otherEnum" }], Note, [])
-    )[0] as ConfigurableEnumFilter<Note>;
-    comparableOptions = filterOptions.options.map((option) => {
-      return { key: option.key, label: option.label };
-    });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
-    expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
+      filterOptions = (
+        await service.generate([{ id: "otherEnum" }], Note, [])
+      )[0] as ConfigurableEnumFilter<Note>;
+      comparableOptions = filterOptions.options.map((option) => {
+        return { key: option.key, label: option.label };
+      });
+      expect(comparableOptions).toHaveLength(interactionTypes.length);
+      expect(comparableOptions).toEqual(
+        expect.arrayContaining(interactionTypes),
+      );
 
-    const note = new Note();
-    note["otherEnum"] = [
-      defaultInteractionTypes[1],
-      defaultInteractionTypes[2],
-    ];
+      const note = new Note();
+      note["otherEnum"] = [
+        defaultInteractionTypes[1],
+        defaultInteractionTypes[2],
+      ];
 
-    expect(filter([note], filterOptions.options[1])).toEqual([note]);
-    expect(filter([note], filterOptions.options[2])).toEqual([note]);
-    expect(filter([note], filterOptions.options[3])).toEqual([]);
-
-    Note.schema.delete("otherEnum");
+      expect(filter([note], filterOptions.options[1])).toEqual([note]);
+      expect(filter([note], filterOptions.options[2])).toEqual([note]);
+      expect(filter([note], filterOptions.options[3])).toEqual([]);
+    } finally {
+      // restore even on a failed assertion, the schema is shared across spec files
+      Note.schema.delete("otherEnum");
+    }
   });
 
   it("should create an entity filter", async () => {
@@ -206,24 +213,27 @@ describe("FilterGeneratorService", () => {
     // the model itself defines no label for this field, it usually comes from the app config
     schema.label = "School";
 
-    const filterOptions = (
-      await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
-    )[0] as EntityFilter<TestEntity>;
+    try {
+      const filterOptions = (
+        await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
+      )[0] as EntityFilter<TestEntity>;
 
-    expect(filterOptions.label).toEqual(schema.label);
-    expect(filterOptions.name).toEqual("schoolId");
-    const allRelations = [csr1, csr2, csr3, csr4];
-    const school1Filter: FilterSelectionOption<Entity> =
-      filterOptions.options.find((opt) => opt.key === school1.getId());
-    expect(school1Filter.label).toEqual(school1.name);
-    expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
-    const school2Filter: FilterSelectionOption<Entity> =
-      filterOptions.options.find((opt) => opt.key === school2.getId());
-    expect(school2Filter.label).toEqual(school2.name);
-    expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
-
-    schema.additional = originalSchemaAdditional;
-    schema.label = originalSchemaLabel;
+      expect(filterOptions.label).toEqual(schema.label);
+      expect(filterOptions.name).toEqual("schoolId");
+      const allRelations = [csr1, csr2, csr3, csr4];
+      const school1Filter: FilterSelectionOption<Entity> =
+        filterOptions.options.find((opt) => opt.key === school1.getId());
+      expect(school1Filter.label).toEqual(school1.name);
+      expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
+      const school2Filter: FilterSelectionOption<Entity> =
+        filterOptions.options.find((opt) => opt.key === school2.getId());
+      expect(school2Filter.label).toEqual(school2.name);
+      expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
+    } finally {
+      // restore even on a failed assertion, the schema is shared across spec files
+      schema.additional = originalSchemaAdditional;
+      schema.label = originalSchemaLabel;
+    }
   });
 
   it("should create filters with all possible options on default", async () => {
@@ -413,22 +423,25 @@ describe("FilterGeneratorService", () => {
     const originalSchemaAdditional = schema.additional;
     schema.additional = TestEntity.ENTITY_TYPE;
 
-    const filter = (
-      await service.generate([{ id: "schoolId" }], ChildSchoolRelation, data)
-    )[0] as EntityFilter<ChildSchoolRelation>;
+    try {
+      const filter = (
+        await service.generate([{ id: "schoolId" }], ChildSchoolRelation, data)
+      )[0] as EntityFilter<ChildSchoolRelation>;
 
-    const emptyOption = filter.options.find(
-      (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
-    );
-    expect(emptyOption).toBeTruthy();
+      const emptyOption = filter.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+      expect(emptyOption).toBeTruthy();
 
-    const filtered = filterService.getFilterPredicate(emptyOption.filter);
-    expect(data.filter((item) => filtered(item))).toEqual([
-      relationWithNull,
-      relationWithUndefined,
-    ]);
-
-    schema.additional = originalSchemaAdditional;
+      const filtered = filterService.getFilterPredicate(emptyOption.filter);
+      expect(data.filter((item) => filtered(item))).toEqual([
+        relationWithNull,
+        relationWithUndefined,
+      ]);
+    } finally {
+      // restore even on a failed assertion, the schema is shared across spec files
+      schema.additional = originalSchemaAdditional;
+    }
   });
 
   it("should handle array values (multi-select fields) and show invalid options correctly", async () => {
