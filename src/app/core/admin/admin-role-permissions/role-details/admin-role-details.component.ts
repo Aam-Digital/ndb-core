@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  OnInit,
   computed,
   effect,
   inject,
@@ -52,7 +53,7 @@ const EMPTY_MODEL: MatrixModel = { rows: [], unsupportedRules: [] };
   ],
   templateUrl: "./admin-role-details.component.html",
 })
-export class AdminRoleDetailsComponent {
+export class AdminRoleDetailsComponent implements OnInit {
   private readonly rolePermissionsService = inject(RolePermissionsService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly snackBar = inject(MatSnackBar);
@@ -79,17 +80,6 @@ export class AdminRoleDetailsComponent {
   private existingRoleNames = new Set<string>();
 
   constructor() {
-    if (this.route.snapshot.data["newRole"]) {
-      this.initNewRole();
-    } else {
-      this.nameControl.disable();
-      this.route.paramMap.subscribe((params) => {
-        this.roleName.set(params.get("role") ?? "");
-        this.nameControl.setValue(this.roleName());
-        this.loadRole();
-      });
-    }
-
     // keep the description form state in sync with the edit mode
     effect(() => {
       if (this.descriptionEditable()) {
@@ -102,6 +92,19 @@ export class AdminRoleDetailsComponent {
     inject(DestroyRef).onDestroy(() =>
       this.unsavedChanges.setUnsavedChanges(this, false),
     );
+  }
+
+  ngOnInit() {
+    if (this.route.snapshot.data["newRole"]) {
+      void this.initNewRole();
+    } else {
+      this.nameControl.disable();
+      this.route.paramMap.subscribe((params) => {
+        this.roleName.set(params.get("role") ?? "");
+        this.nameControl.setValue(this.roleName());
+        void this.loadRole();
+      });
+    }
   }
 
   private async initNewRole() {

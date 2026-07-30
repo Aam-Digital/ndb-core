@@ -198,7 +198,7 @@ describe("PermissionMatrixComponent", () => {
 
   it("greys out internal system types and shows their key as a readable label", () => {
     class ConfigurableEnum extends Entity {
-      static override isInternalEntity = true;
+      static override readonly isInternalEntity = true;
     }
     entityRegistry.add("ConfigurableEnum", ConfigurableEnum);
 
