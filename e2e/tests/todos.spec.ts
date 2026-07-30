@@ -396,9 +396,6 @@ test("Task lifecycle: archive hides task; complete moves it to completed filter"
   const taskRow = page.getByRole("row").filter({ hasText: TASK_SUBJECT });
   await expect(taskRow.getByText(/by demo-admin on/)).toBeVisible();
 
-  // [screenshot] table view showing the completed column
-  await argosScreenshot(page, "task-completed-table");
-
   // Open the completed task from the list to show the "completed" field
   await page.getByRole("cell", { name: TASK_SUBJECT }).click();
 
