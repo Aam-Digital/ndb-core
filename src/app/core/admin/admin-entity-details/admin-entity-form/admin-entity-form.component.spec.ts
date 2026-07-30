@@ -322,6 +322,35 @@ describe("AdminEntityFormComponent", () => {
     }
   });
 
+  it("should keep the group header input while typing, without rebuilding the form", async () => {
+    // the parent (e.g. AdminEntityDetailsComponent) feeds the emitted config back into the input
+    component.configChange.subscribe((newConfig) =>
+      fixture.componentRef.setInput("config", newConfig),
+    );
+    const getHeaderInput = () =>
+      fixture.nativeElement.querySelector(
+        "app-admin-section-header input",
+      ) as HTMLInputElement;
+
+    const inputBefore = getHeaderInput();
+    inputBefore.focus();
+    const createFormCallsBefore =
+      mockFormService.createEntityForm.mock.calls.length;
+
+    inputBefore.value = "Group 1x";
+    inputBefore.dispatchEvent(new Event("input"));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(getHeaderInput()).toBe(inputBefore);
+    expect(document.activeElement).toBe(inputBefore);
+    expect(component.fieldGroups()[0].header).toBe("Group 1x");
+    expect(mockFormService.createEntityForm.mock.calls.length).toBe(
+      createFormCallsBefore,
+    );
+  });
+
   it("should prefill label when creating new field with search text", async () => {
     vi.useFakeTimers();
     try {

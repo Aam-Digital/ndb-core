@@ -15,6 +15,7 @@ import {
   input,
   linkedSignal,
   output,
+  untracked,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -116,9 +117,21 @@ export class AdminEntityFormComponent {
    * `availableFields` and `connectedGroups` derive from this signal,
    * so all structural changes automatically propagate.
    */
-  fieldGroups = linkedSignal<FieldGroup[]>(() =>
-    structuredClone(this.config()?.fieldGroups ?? []),
-  );
+  fieldGroups = linkedSignal<FormConfig | undefined, FieldGroup[]>({
+    source: this.config,
+    computation: (config, previous) => {
+      const incoming = config?.fieldGroups ?? [];
+      if (
+        previous &&
+        JSON.stringify(previous.value) === JSON.stringify(incoming)
+      ) {
+        // the config input only re-states what this component emitted itself,
+        // so keep the existing objects instead of replacing them with clones
+        return previous.value;
+      }
+      return structuredClone(incoming);
+    },
+  });
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
     label: $localize`:Label drag and drop item:Create New Field`,
@@ -138,16 +151,28 @@ export class AdminEntityFormComponent {
     },
   );
 
+  /**
+   * Ids of the fields currently used in the form (null while not initialized yet).
+   * The dummy form only has to be rebuilt when these change,
+   * not when other details like a field group header are edited.
+   */
+  private readonly usedFieldIds = computed(() => {
+    if (!this.config() || !this.entityType()) {
+      return null;
+    }
+    return this.getUsedFields(this.fieldGroups())
+      .map((field) => toFormFieldConfig(field).id)
+      .join(",");
+  });
+
   constructor() {
     effect(() => {
-      const config = this.config();
-      const entityType = this.entityType();
-
-      if (!config || !entityType) {
+      if (this.usedFieldIds() === null) {
         return;
       }
 
-      void this.initForm();
+      // initForm reads several signals that must not re-trigger this effect
+      untracked(() => void this.initForm());
     });
 
     this.adminEntityService.entitySchemaUpdated

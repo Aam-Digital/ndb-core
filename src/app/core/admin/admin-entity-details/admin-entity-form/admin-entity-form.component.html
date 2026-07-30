@@ -9,7 +9,7 @@
     [class.fieldsOnlyMode]="fieldsOnlyMode()"
   >
     <!-- FIELD GROUPS -->
-    @for (group of fieldGroups(); track group; let i = $index) {
+    @for (group of fieldGroups(); track i; let i = $index) {
       <div class="entity-form-cell admin-form-column section-container" cdkDrag>
         @if (!fieldsOnlyMode()) {
           <div class="flex-row align-center">
