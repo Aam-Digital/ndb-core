@@ -2,9 +2,12 @@ import { TestBed } from "@angular/core/testing";
 import { NotificationService } from "./notification.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { MockedTestingModule } from "app/utils/mocked-testing.module";
 import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { Observable, of, throwError } from "rxjs";
+import { AlertService } from "app/core/alerts/alert.service";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { SessionSubject } from "app/core/session/auth/session-info";
+import { DatabaseResolverService } from "app/core/database/database-resolver.service";
 
 class MockKeycloakAuthService {
   addAuthHeader(headers: Record<string, string>) {
@@ -29,11 +32,16 @@ describe("NotificationService", () => {
       delete: vi.fn(),
     };
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
       providers: [
+        NotificationService,
         { provide: KeycloakAuthService, useClass: MockKeycloakAuthService },
         { provide: AngularFireMessaging, useValue: mockFireMessaging },
         { provide: HttpClient, useValue: mockHttpClient },
+        // only constructed, not used by the device registration checks under test
+        { provide: AlertService, useValue: {} },
+        { provide: EntityMapperService, useValue: {} },
+        { provide: DatabaseResolverService, useValue: {} },
+        SessionSubject,
       ],
     });
     service = TestBed.inject(NotificationService);
