@@ -31,13 +31,20 @@ import { UserAdminService } from "app/core/user/user-admin-service/user-admin.se
 import { FileService } from "app/features/file/file.service";
 import { of } from "rxjs";
 import { Logging } from "../../logging/logging.service";
+import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
+      providers: [
+        EntitySchemaService,
+        // only the datatypes these tests exercise, rather than a whole module
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
+      ],
     });
     service = TestBed.inject(EntitySchemaService);
   });
