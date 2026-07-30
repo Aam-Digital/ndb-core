@@ -6,7 +6,6 @@ import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import {
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
@@ -50,8 +49,16 @@ describe("Schema data type: configurable-enum", () => {
     enumService.getEnumValues.mockReturnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
-      providers: [{ provide: ConfigurableEnumService, useValue: enumService }],
+      providers: [
+        EntitySchemaService,
+        // only the datatype under test, rather than a whole module
+        {
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
+        { provide: ConfigurableEnumService, useValue: enumService },
+      ],
     });
 
     entitySchemaService =
