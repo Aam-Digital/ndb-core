@@ -1562,7 +1562,7 @@ to avoid breaking note details with a default config from AdminModule</p>
         router.navigateByUrl(url, { skipLocationChange: true });
 
         // Preload all dynamic component chunks in the background for offline availability
-        preloadDynamicComponents(componentRegistry);
+        preloadDynamicComponents(componentRegistry, destroyRef);
       });
   },
 )</code>

@@ -24,71 +24,71 @@
 <title>cluster_DemoDataModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="8,-70 8,-268 774,-268 774,-70 8,-70"/>
 </g>
-<g id="clust7" class="cluster">
-<title>cluster_DemoDataModule_providers</title>
-<polygon fill="none" stroke="black" points="330,-78 330,-130 766,-130 766,-78 330,-78"/>
-</g>
 <g id="clust2" class="cluster">
 <title>cluster_DemoDataModule_declarations</title>
-<polygon fill="none" stroke="black" points="16,-78 16,-130 322,-130 322,-78 16,-78"/>
+<polygon fill="none" stroke="black" points="460,-78 460,-130 766,-130 766,-78 460,-78"/>
 </g>
 <g id="clust5" class="cluster">
 <title>cluster_DemoDataModule_exports</title>
-<polygon fill="none" stroke="black" points="265,-208 265,-260 575,-260 575,-208 265,-208"/>
+<polygon fill="none" stroke="black" points="170,-208 170,-260 480,-260 480,-208 170,-208"/>
+</g>
+<g id="clust7" class="cluster">
+<title>cluster_DemoDataModule_providers</title>
+<polygon fill="none" stroke="black" points="16,-78 16,-130 452,-130 452,-78 16,-78"/>
 </g>
 <!-- DemoDataGeneratingProgressDialogComponent -->
 <g id="node1" class="node">
 <title>DemoDataGeneratingProgressDialogComponent</title>
-<polygon fill="#ffffb3" stroke="black" points="314.47,-122 23.53,-122 23.53,-86 314.47,-86 314.47,-122"/>
-<text text-anchor="middle" x="169" y="-99.8" font-family="Times,serif" font-size="14.00">DemoDataGeneratingProgressDialogComponent</text>
+<polygon fill="#ffffb3" stroke="black" points="758.47,-122 467.53,-122 467.53,-86 758.47,-86 758.47,-122"/>
+<text text-anchor="middle" x="613" y="-99.8" font-family="Times,serif" font-size="14.00">DemoDataGeneratingProgressDialogComponent</text>
 </g>
 <!-- DemoDataModule -->
 <g id="node2" class="node">
 <title>DemoDataModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="480.19,-187 477.19,-191 456.19,-191 453.19,-187 359.81,-187 359.81,-151 480.19,-151 480.19,-187"/>
-<text text-anchor="middle" x="420" y="-164.8" font-family="Times,serif" font-size="14.00">DemoDataModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="385.19,-187 382.19,-191 361.19,-191 358.19,-187 264.81,-187 264.81,-151 385.19,-151 385.19,-187"/>
+<text text-anchor="middle" x="325" y="-164.8" font-family="Times,serif" font-size="14.00">DemoDataModule</text>
 </g>
 <!-- DemoDataGeneratingProgressDialogComponent&#45;&gt;DemoDataModule -->
 <g id="edge1" class="edge">
 <title>DemoDataGeneratingProgressDialogComponent&#45;&gt;DemoDataModule</title>
-<path fill="none" stroke="black" d="M293.62,-122.11C293.62,-141.34 293.62,-169 293.62,-169 293.62,-169 349.77,-169 349.77,-169"/>
-<polygon fill="black" stroke="black" points="349.77,-172.5 359.77,-169 349.77,-165.5 349.77,-172.5"/>
+<path fill="none" stroke="black" d="M615.11,-122.11C615.11,-141.34 615.11,-169 615.11,-169 615.11,-169 395.11,-169 395.11,-169"/>
+<polygon fill="black" stroke="black" points="395.11,-165.5 385.11,-169 395.11,-172.5 395.11,-165.5"/>
 </g>
 <!-- DemoDataGeneratingProgressDialogComponent  -->
 <g id="node3" class="node">
 <title>DemoDataGeneratingProgressDialogComponent </title>
-<polygon fill="#fb8072" stroke="black" points="566.97,-252 273.03,-252 273.03,-216 566.97,-216 566.97,-252"/>
-<text text-anchor="middle" x="420" y="-229.8" font-family="Times,serif" font-size="14.00">DemoDataGeneratingProgressDialogComponent </text>
+<polygon fill="#fb8072" stroke="black" points="471.97,-252 178.03,-252 178.03,-216 471.97,-216 471.97,-252"/>
+<text text-anchor="middle" x="325" y="-229.8" font-family="Times,serif" font-size="14.00">DemoDataGeneratingProgressDialogComponent </text>
 </g>
 <!-- DemoDataModule&#45;&gt;DemoDataGeneratingProgressDialogComponent  -->
 <g id="edge2" class="edge">
 <title>DemoDataModule&#45;&gt;DemoDataGeneratingProgressDialogComponent </title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M420,-187.11C420,-187.11 420,-205.99 420,-205.99"/>
-<polygon fill="black" stroke="black" points="416.5,-205.99 420,-215.99 423.5,-205.99 416.5,-205.99"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M325,-187.11C325,-187.11 325,-205.99 325,-205.99"/>
+<polygon fill="black" stroke="black" points="321.5,-205.99 325,-215.99 328.5,-205.99 321.5,-205.99"/>
 </g>
 <!-- DemoDataInitializerService -->
 <g id="node4" class="node">
 <title>DemoDataInitializerService</title>
-<ellipse fill="#fdb462" stroke="black" cx="639" cy="-104" rx="119.21" ry="18"/>
-<text text-anchor="middle" x="639" y="-99.8" font-family="Times,serif" font-size="14.00">DemoDataInitializerService</text>
+<ellipse fill="#fdb462" stroke="black" cx="325" cy="-104" rx="119.21" ry="18"/>
+<text text-anchor="middle" x="325" y="-99.8" font-family="Times,serif" font-size="14.00">DemoDataInitializerService</text>
 </g>
 <!-- DemoDataInitializerService&#45;&gt;DemoDataModule -->
 <g id="edge3" class="edge">
 <title>DemoDataInitializerService&#45;&gt;DemoDataModule</title>
-<path fill="none" stroke="black" d="M543.32,-115.03C543.32,-133.57 543.32,-169 543.32,-169 543.32,-169 490.21,-169 490.21,-169"/>
-<polygon fill="black" stroke="black" points="490.21,-165.5 480.21,-169 490.21,-172.5 490.21,-165.5"/>
+<path fill="none" stroke="black" d="M325,-122.11C325,-122.11 325,-140.99 325,-140.99"/>
+<polygon fill="black" stroke="black" points="321.5,-140.99 325,-150.99 328.5,-140.99 321.5,-140.99"/>
 </g>
 <!-- DemoDataService -->
 <g id="node5" class="node">
 <title>DemoDataService</title>
-<ellipse fill="#fdb462" stroke="black" cx="420" cy="-104" rx="81.64" ry="18"/>
-<text text-anchor="middle" x="420" y="-99.8" font-family="Times,serif" font-size="14.00">DemoDataService</text>
+<ellipse fill="#fdb462" stroke="black" cx="106" cy="-104" rx="81.64" ry="18"/>
+<text text-anchor="middle" x="106" y="-99.8" font-family="Times,serif" font-size="14.00">DemoDataService</text>
 </g>
 <!-- DemoDataService&#45;&gt;DemoDataModule -->
 <g id="edge4" class="edge">
 <title>DemoDataService&#45;&gt;DemoDataModule</title>
-<path fill="none" stroke="black" d="M420,-122.11C420,-122.11 420,-140.99 420,-140.99"/>
-<polygon fill="black" stroke="black" points="416.5,-140.99 420,-150.99 423.5,-140.99 416.5,-140.99"/>
+<path fill="none" stroke="black" d="M182.92,-110.47C182.92,-126.91 182.92,-169 182.92,-169 182.92,-169 254.74,-169 254.74,-169"/>
+<polygon fill="black" stroke="black" points="254.74,-172.5 264.74,-169 254.74,-165.5 254.74,-172.5"/>
 </g>
 </g>
 </svg>
