@@ -15,6 +15,8 @@ import {
   input,
   linkedSignal,
   output,
+  signal,
+  untracked,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -103,8 +105,13 @@ export class AdminEntityFormComponent {
    */
   readonly fieldsOnlyMode = input<boolean>();
 
-  dummyEntity: Entity;
-  dummyForm: EntityForm<any>;
+  /**
+   * Dummy entity and form backing the form preview.
+   * These are signals so that rebuilding them updates the rendered field components,
+   * which extend their config (e.g. the label) from the entity type's schema.
+   */
+  readonly dummyEntity = signal<Entity | undefined>(undefined);
+  readonly dummyForm = signal<EntityForm<any> | undefined>(undefined);
 
   availableFields = linkedSignal<ColumnConfig[]>(() =>
     this.computeAvailableFieldsList(),
@@ -116,9 +123,21 @@ export class AdminEntityFormComponent {
    * `availableFields` and `connectedGroups` derive from this signal,
    * so all structural changes automatically propagate.
    */
-  fieldGroups = linkedSignal<FieldGroup[]>(() =>
-    structuredClone(this.config()?.fieldGroups ?? []),
-  );
+  fieldGroups = linkedSignal<FormConfig | undefined, FieldGroup[]>({
+    source: this.config,
+    computation: (config, previous) => {
+      const incoming = config?.fieldGroups ?? [];
+      if (
+        previous &&
+        JSON.stringify(previous.value) === JSON.stringify(incoming)
+      ) {
+        // the config input only re-states what this component emitted itself,
+        // so keep the existing objects instead of replacing them with clones
+        return previous.value;
+      }
+      return structuredClone(incoming);
+    },
+  });
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
     label: $localize`:Label drag and drop item:Create New Field`,
@@ -138,16 +157,26 @@ export class AdminEntityFormComponent {
     },
   );
 
+  /**
+   * Configurations of the fields currently used in the form (null while not initialized yet).
+   * The dummy form only has to be rebuilt when these change,
+   * not when other details like a field group header are edited.
+   */
+  private readonly usedFieldConfigurations = computed(() => {
+    if (!this.config() || !this.entityType()) {
+      return null;
+    }
+    return JSON.stringify(this.getUsedFields(this.fieldGroups()));
+  });
+
   constructor() {
     effect(() => {
-      const config = this.config();
-      const entityType = this.entityType();
-
-      if (!config || !entityType) {
+      if (this.usedFieldConfigurations() === null) {
         return;
       }
 
-      void this.initForm();
+      // initForm reads several signals that must not re-trigger this effect
+      untracked(() => void this.initForm());
     });
 
     this.adminEntityService.entitySchemaUpdated
@@ -171,14 +200,27 @@ export class AdminEntityFormComponent {
     });
   }
 
+  /** counter to discard the results of outdated, concurrent initForm calls */
+  private initFormVersion = 0;
+
   private async initForm() {
-    this.dummyEntity = new (this.entityType() as any)();
-    this.dummyForm = await this.entityFormService.createEntityForm(
+    const version = ++this.initFormVersion;
+    const dummyEntity = new (this.entityType() as any)();
+
+    const dummyForm = await this.entityFormService.createEntityForm(
       [...this.getUsedFields(this.fieldGroups()), ...this.availableFields()],
-      this.dummyEntity,
+      dummyEntity,
       this.destroyRef,
     );
-    this.dummyForm.formGroup.disable();
+    if (version !== this.initFormVersion) {
+      // a newer initForm has been started in the meantime, its result takes precedence
+      return;
+    }
+
+    dummyForm.formGroup.disable();
+    // set both together so that entity and form always match
+    this.dummyEntity.set(dummyEntity);
+    this.dummyForm.set(dummyForm);
   }
 
   private getUsedFields(fieldGroups: FieldGroup[]): ColumnConfig[] {
@@ -429,8 +471,8 @@ export class AdminEntityFormComponent {
       }
     }
 
-    this.dummyForm.formGroup.addControl(newFieldId, new FormControl());
-    this.dummyForm.formGroup.disable();
+    this.dummyForm().formGroup.addControl(newFieldId, new FormControl());
+    this.dummyForm().formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newFieldId);
     this.fieldGroups.update((g) => [...g]); // notify signal of in-place mutation
   }
@@ -453,8 +495,8 @@ export class AdminEntityFormComponent {
       return;
     }
 
-    this.dummyForm.formGroup.addControl(newTextField.id, new FormControl());
-    this.dummyForm.formGroup.disable();
+    this.dummyForm().formGroup.addControl(newTextField.id, new FormControl());
+    this.dummyForm().formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newTextField);
     this.fieldGroups.update((g) => [...g]);
 
