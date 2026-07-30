@@ -1550,6 +1550,6 @@
   "1106484785554195588": "Sie haben keine Berechtigung zum Importieren",
   "7291118354203611864": "Für den Datenimport sind zusätzliche Berechtigungen erforderlich, über die Ihr Konto nicht verfügt. Bitte wenden Sie sich an Ihren Systemadministrator, um Zugriff zu beantragen. ",
   "8670985895850567174": "Sie haben keine Berechtigung zum Erstellen von {$INTERPOLATION} Datensätzen und können diese daher nicht importieren. ",
-  "5078278731520632804": "Persistent storage",
-  "6318216385094974109": "No information"
+  "5078278731520632804": "Persistenter Speicher",
+  "6318216385094974109": "keine Informationen"
 }
