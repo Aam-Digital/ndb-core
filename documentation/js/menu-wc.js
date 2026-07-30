@@ -409,13 +409,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/DatabaseTestingModule.html" data-type="entity-link" >DatabaseTestingModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-DatabaseTestingModule-7f9acb0218dd7cbafdcf40616ed279f81ecc8dd808d48c72117d62dcfe53a3350386a925964fc2ad07b928118ebc4838f57c8371e5274c40b2527155141833ee"' : 'data-bs-target="#xs-injectables-links-module-DatabaseTestingModule-7f9acb0218dd7cbafdcf40616ed279f81ecc8dd808d48c72117d62dcfe53a3350386a925964fc2ad07b928118ebc4838f57c8371e5274c40b2527155141833ee"' }>
+                                        'data-bs-target="#injectables-links-module-DatabaseTestingModule-4108dfe2638bc88f4fc908a2fdcdefd59fa048519fedee75cf97b0737ccf4e909c7f766973a308e9e95f562f5fa0e751db1f0b4659c0b3d2afcebf463706de41"' : 'data-bs-target="#xs-injectables-links-module-DatabaseTestingModule-4108dfe2638bc88f4fc908a2fdcdefd59fa048519fedee75cf97b0737ccf4e909c7f766973a308e9e95f562f5fa0e751db1f0b4659c0b3d2afcebf463706de41"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-DatabaseTestingModule-7f9acb0218dd7cbafdcf40616ed279f81ecc8dd808d48c72117d62dcfe53a3350386a925964fc2ad07b928118ebc4838f57c8371e5274c40b2527155141833ee"' :
-                                        'id="xs-injectables-links-module-DatabaseTestingModule-7f9acb0218dd7cbafdcf40616ed279f81ecc8dd808d48c72117d62dcfe53a3350386a925964fc2ad07b928118ebc4838f57c8371e5274c40b2527155141833ee"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-DatabaseTestingModule-4108dfe2638bc88f4fc908a2fdcdefd59fa048519fedee75cf97b0737ccf4e909c7f766973a308e9e95f562f5fa0e751db1f0b4659c0b3d2afcebf463706de41"' :
+                                        'id="xs-injectables-links-module-DatabaseTestingModule-4108dfe2638bc88f4fc908a2fdcdefd59fa048519fedee75cf97b0737ccf4e909c7f766973a308e9e95f562f5fa0e751db1f0b4659c0b3d2afcebf463706de41"' }>
                                         <li class="link">
                                             <a href="injectables/ConfigService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ConfigService</a>
                                         </li>
