@@ -1,4 +1,5 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, Signal, computed, inject } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import moment from "moment";
 import { firstValueFrom, of } from "rxjs";
@@ -25,6 +26,23 @@ export const DEFAULT_ROLE = "_default";
  * Stored under this key in the Config:Permissions document.
  */
 export const PUBLIC_ROLE = "_public";
+
+/**
+ * Legacy unprefixed keys for the reserved roles, still read by the runtime
+ * permission enforcer until the reserved-name migration renames them.
+ * Read here as a fallback so an un-migrated config shows its base rules under
+ * the reserved rows instead of exposing them as ordinary, deletable roles.
+ */
+const LEGACY_DEFAULT_ROLE = "default";
+const LEGACY_PUBLIC_ROLE = "public";
+
+/** all keys that must never appear as ordinary, deletable roles in the list */
+const RESERVED_RULE_KEYS = [
+  DEFAULT_ROLE,
+  PUBLIC_ROLE,
+  LEGACY_DEFAULT_ROLE,
+  LEGACY_PUBLIC_ROLE,
+];
 
 /**
  * Technical roles that serve a special function in the authentication server
@@ -80,6 +98,25 @@ export class RolePermissionsService {
   private readonly snackBar = inject(MatSnackBar);
   private readonly sessionInfo = inject(SessionSubject);
 
+  private readonly session = toSignal(this.sessionInfo);
+
+  /**
+   * Whether the logged-in user is allowed to create/delete roles in the
+   * authentication server (i.e. holds the "manage-realm" client role).
+   * Reactive, so it settles correctly if the session resolves after init.
+   * True when the capability cannot be determined from the token
+   * (so a capable admin is never wrongly blocked).
+   */
+  readonly canManageRoles: Signal<boolean> = computed(() => {
+    const realmManagementRoles = this.session()?.realmManagementRoles;
+    // undefined = token does not carry client roles -> unknown -> allow
+    return (
+      realmManagementRoles === undefined ||
+      realmManagementRoles.includes("manage-realm") ||
+      realmManagementRoles.includes("realm-admin")
+    );
+  });
+
   loadPermissionsConfig(): Promise<Config<DatabaseRules>> {
     return this.entityMapper
       .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
@@ -104,19 +141,19 @@ export class RolePermissionsService {
         isVirtual: true,
         isProtected: true,
         description: $localize`Base permissions that apply to every logged-in user, combined with their other roles`,
-        rules: rules[DEFAULT_ROLE],
+        rules: rules[DEFAULT_ROLE] ?? rules[LEGACY_DEFAULT_ROLE],
       },
       {
         name: PUBLIC_ROLE,
         isVirtual: true,
         isProtected: true,
         description: $localize`Permissions that apply before login (e.g. public registration forms)`,
-        rules: rules[PUBLIC_ROLE],
+        rules: rules[PUBLIC_ROLE] ?? rules[LEGACY_PUBLIC_ROLE],
       },
     ];
 
     for (const key of Object.keys(rules)) {
-      if (key === DEFAULT_ROLE || key === PUBLIC_ROLE) continue;
+      if (RESERVED_RULE_KEYS.includes(key)) continue;
       const keycloakRole = keycloakRoles.find((r) => r.name === key);
       roles.push({
         name: key,
@@ -140,22 +177,6 @@ export class RolePermissionsService {
     }
 
     return roles;
-  }
-
-  /**
-   * Whether the logged-in user is allowed to create/delete roles in the
-   * authentication server (i.e. holds the "manage-realm" client role).
-   * Returns true when the capability cannot be determined from the token
-   * (so a capable admin is never wrongly blocked).
-   */
-  canManageRoles(): boolean {
-    const realmManagementRoles = this.sessionInfo.value?.realmManagementRoles;
-    // undefined = token does not carry client roles -> unknown -> allow
-    return (
-      realmManagementRoles === undefined ||
-      realmManagementRoles.includes("manage-realm") ||
-      realmManagementRoles.includes("realm-admin")
-    );
   }
 
   /**

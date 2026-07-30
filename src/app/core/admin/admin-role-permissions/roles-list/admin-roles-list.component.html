@@ -6,14 +6,14 @@
   <div class="flex-row gap-small align-center">
     <span
       [matTooltip]="addDisabledTooltip"
-      [matTooltipDisabled]="canManageRoles"
+      [matTooltipDisabled]="canManageRoles()"
     >
       <button
         mat-stroked-button
         color="accent"
         class="standard-add-button"
-        [routerLink]="canManageRoles ? 'new' : null"
-        [disabled]="!canManageRoles"
+        [routerLink]="canManageRoles() ? 'new' : null"
+        [disabled]="!canManageRoles()"
       >
         <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
         <span i18n>Add New Role</span>
@@ -76,11 +76,11 @@
               other {{{ role.rules.length }} rules}
             }
           </span>
-        } @else if (role.name === publicRole) {
+        } @else if (role.name === publicRole || role.name === defaultRole) {
           <span class="text-secondary" i18n>No permissions defined</span>
         } @else {
           <span class="text-secondary" i18n>
-            No permissions defined, falls back to "_default"
+            No permissions defined, falls back to the base role
           </span>
         }
       </td>
@@ -90,7 +90,10 @@
     <tr
       mat-row
       *matRowDef="let row; columns: displayedColumns"
+      tabindex="0"
       (click)="openRoleDetails(row)"
+      (keydown.enter)="openRoleDetails(row)"
+      (keydown.space)="$event.preventDefault(); openRoleDetails(row)"
       class="clickable-row"
     ></tr>
   </table>

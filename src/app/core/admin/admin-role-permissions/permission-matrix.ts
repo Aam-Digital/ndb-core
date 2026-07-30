@@ -40,6 +40,14 @@ export interface MatrixModel {
    * non-string subjects). Preserved verbatim and re-emitted on save.
    */
   unsupportedRules: DatabaseRule[];
+
+  /**
+   * Original index of each {@link unsupportedRules} entry within the source
+   * rule list, so they can be re-inserted at their original position on save.
+   * CASL applies later rules with higher precedence, so keeping an inverted
+   * rule ahead of (or behind) an allow rule preserves the intended outcome.
+   */
+  unsupportedRuleIndices?: number[];
 }
 
 const MATRIX_ACTIONS: EntityActionPermission[] = [
@@ -75,11 +83,13 @@ function extractExtra(rule: DatabaseRule): Record<string, any> | undefined {
 export function rulesToMatrix(rules: DatabaseRule[]): MatrixModel {
   const rows: MatrixRow[] = [];
   const unsupportedRules: DatabaseRule[] = [];
+  const unsupportedRuleIndices: number[] = [];
 
-  for (const rule of rules ?? []) {
+  (rules ?? []).forEach((rule, index) => {
     if (!isSupported(rule)) {
       unsupportedRules.push(rule);
-      continue;
+      unsupportedRuleIndices.push(index);
+      return;
     }
 
     const subjects = (
@@ -106,9 +116,9 @@ export function rulesToMatrix(rules: DatabaseRule[]): MatrixModel {
         };
       }
     }
-  }
+  });
 
-  return { rows, unsupportedRules };
+  return { rows, unsupportedRules, unsupportedRuleIndices };
 }
 
 /**
@@ -182,7 +192,22 @@ export function matrixToRules(model: MatrixModel): DatabaseRule[] {
       }) as DatabaseRule,
   );
 
-  // unsupported rules are appended last on purpose: later rules take precedence
-  // in CASL, so restrictions (inverted rules) always win over the matrix's allow rules
-  return [...rules, ...(model.unsupportedRules ?? [])];
+  const unsupported = model.unsupportedRules ?? [];
+  const indices = model.unsupportedRuleIndices;
+  if (!indices || indices.length !== unsupported.length) {
+    // no position info (e.g. freshly built model): append last
+    return [...rules, ...unsupported];
+  }
+
+  // re-insert each unsupported rule near its original position so its CASL
+  // precedence relative to the matrix rules is preserved (an inverted rule that
+  // came before an allow rule must not suddenly win after a round-trip)
+  const result = [...rules];
+  unsupported
+    .map((rule, i) => ({ rule, index: indices[i] }))
+    .sort((a, b) => a.index - b.index)
+    .forEach(({ rule, index }) =>
+      result.splice(Math.min(index, result.length), 0, rule),
+    );
+  return result;
 }

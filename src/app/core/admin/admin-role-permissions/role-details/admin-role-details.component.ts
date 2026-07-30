@@ -8,6 +8,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -31,8 +32,10 @@ import {
   RolePermissionsService,
   RoleWithPermissions,
 } from "../role-permissions.service";
+import { UserAdminApiError } from "../../../user/user-admin-service/user-admin.service";
 
-const EMPTY_MODEL: MatrixModel = { rows: [], unsupportedRules: [] };
+/** fresh empty matrix model; a factory (not a shared const) so callers can never alias a mutable object */
+const emptyModel = (): MatrixModel => ({ rows: [], unsupportedRules: [] });
 
 /**
  * Details of one user role, showing its permission rules as an editable matrix.
@@ -61,22 +64,24 @@ export class AdminRoleDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   private readonly unsavedChanges = inject(UnsavedChangesService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly roleName = signal("");
   readonly role = signal<RoleWithPermissions | undefined>(undefined);
-  readonly model = signal<MatrixModel>(EMPTY_MODEL);
+  readonly model = signal<MatrixModel>(emptyModel());
   readonly editing = signal(false);
   readonly isNew = signal(false);
 
   readonly nameControl = new FormControl("", [
     Validators.required,
-    Validators.pattern(/^[a-zA-Z0-9_-]+$/),
+    // leading "_" is reserved for the virtual roles (_default / _public)
+    Validators.pattern(/^(?!_)[a-zA-Z0-9_-]+$/),
     (control) =>
       this.existingRoleNames?.has(control.value) ? { duplicate: true } : null,
   ]);
   readonly descriptionControl = new FormControl("");
 
-  private originalModel: MatrixModel = EMPTY_MODEL;
+  private originalModel: MatrixModel = emptyModel();
   private existingRoleNames = new Set<string>();
 
   constructor() {
@@ -89,7 +94,7 @@ export class AdminRoleDetailsComponent implements OnInit {
       }
     });
 
-    inject(DestroyRef).onDestroy(() =>
+    this.destroyRef.onDestroy(() =>
       this.unsavedChanges.setUnsavedChanges(this, false),
     );
   }
@@ -99,18 +104,20 @@ export class AdminRoleDetailsComponent implements OnInit {
       void this.initNewRole();
     } else {
       this.nameControl.disable();
-      this.route.paramMap.subscribe((params) => {
-        this.roleName.set(params.get("role") ?? "");
-        this.nameControl.setValue(this.roleName());
-        void this.loadRole();
-      });
+      this.route.paramMap
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((params) => {
+          this.roleName.set(params.get("role") ?? "");
+          this.nameControl.setValue(this.roleName());
+          void this.loadRole();
+        });
     }
   }
 
   private async initNewRole() {
     this.isNew.set(true);
     this.editing.set(true);
-    this.model.set(EMPTY_MODEL);
+    this.model.set(emptyModel());
     const roles = await this.rolePermissionsService.loadRoles();
     this.existingRoleNames = new Set(roles.map((r) => r.name));
   }
@@ -124,8 +131,8 @@ export class AdminRoleDetailsComponent implements OnInit {
     this.descriptionControl.markAsPristine();
   }
 
-  /** whether the user may create/delete/update roles in the authentication server */
-  readonly canManageRoles = this.rolePermissionsService.canManageRoles();
+  /** whether the user may create/delete/update roles in the authentication server (reactive) */
+  readonly canManageRoles = this.rolePermissionsService.canManageRoles;
 
   readonly deleteDisabledTooltip = $localize`Your account does not have permission to delete roles in the user account server.`;
 
@@ -139,7 +146,7 @@ export class AdminRoleDetailsComponent implements OnInit {
    */
   readonly descriptionEditable = computed(
     () =>
-      this.canManageRoles &&
+      this.canManageRoles() &&
       !this.isProtected() &&
       (this.isNew() || (this.editing() && !!this.role()?.keycloakRole)),
   );
@@ -206,10 +213,13 @@ export class AdminRoleDetailsComponent implements OnInit {
         matrixToRules(this.model()),
       );
     } catch (err) {
-      this.showError(
-        $localize`Could not create the role. Your account may not have permission to create roles in the user account server.`,
-        err,
-      );
+      // surface the specific server message (e.g. the localized 409 "role
+      // already exists") instead of a generic permissions guess
+      const message =
+        err instanceof UserAdminApiError
+          ? err.message
+          : $localize`Could not create the role. Your account may not have permission to create roles in the user account server.`;
+      this.showError(message, err);
       return;
     }
 

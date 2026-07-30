@@ -27,11 +27,11 @@
       @if (role() && !isProtected()) {
         <span
           [matTooltip]="deleteDisabledTooltip"
-          [matTooltipDisabled]="canManageRoles"
+          [matTooltipDisabled]="canManageRoles()"
         >
           <button
             mat-stroked-button
-            [disabled]="!canManageRoles"
+            [disabled]="!canManageRoles()"
             (click)="deleteRole()"
           >
             <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
@@ -56,8 +56,8 @@
       <fa-icon icon="lock" matSuffix></fa-icon>
     }
     <mat-hint i18n>
-      The role is created in Keycloak (user account server) and its name cannot
-      be changed afterwards.
+      The role is created in the user account server and its name cannot be
+      changed afterwards.
     </mat-hint>
     @if (nameControl.hasError("required")) {
       <mat-error i18n>This field is required</mat-error>

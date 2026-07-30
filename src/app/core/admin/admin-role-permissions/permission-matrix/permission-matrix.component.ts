@@ -26,6 +26,10 @@ import {
 } from "../condition-dialog/permission-condition-dialog.component";
 import { EntityActionPermission } from "../../../permissions/permission-types";
 import { MatrixModel, MatrixRow } from "../permission-matrix";
+import { DEFAULT_ROLE } from "../role-permissions.service";
+
+/** the four individual CRUD actions shown as their own matrix columns ("manage" is separate) */
+type CrudAction = "read" | "create" | "update" | "delete";
 
 /** display state of one action cell */
 interface CellState {
@@ -70,12 +74,14 @@ export class PermissionMatrixComponent {
   readonly roleName = input("");
   readonly modelChange = output<MatrixModel>();
 
-  readonly crudActions: EntityActionPermission[] = [
-    "read",
-    "create",
-    "update",
-    "delete",
+  /** CRUD columns with their headers baked in, so the template needs no per-cell method call */
+  readonly crudColumns: { key: CrudAction; label: string }[] = [
+    { key: "read", label: $localize`Read` },
+    { key: "create", label: $localize`Create` },
+    { key: "update", label: $localize`Update` },
+    { key: "delete", label: $localize`Delete` },
   ];
+  readonly crudActions: CrudAction[] = this.crudColumns.map((c) => c.key);
 
   // rowActions column is always present (empty in view mode)
   // so that column positions do not shift when toggling edit mode
@@ -112,24 +118,17 @@ export class PermissionMatrixComponent {
           };
           return [action, state];
         }),
-      ) as Record<EntityActionPermission, CellState>,
+      ) as Record<CrudAction, CellState>,
     })),
   );
 
-  actionLabel(action: EntityActionPermission): string {
-    switch (action) {
-      case "read":
-        return $localize`Read`;
-      case "create":
-        return $localize`Create`;
-      case "update":
-        return $localize`Update`;
-      case "delete":
-        return $localize`Delete`;
-      case "manage":
-        return $localize`Manage`;
-    }
-  }
+  /** whether the "all" wildcard row is already present (drives the add options) */
+  readonly hasAllSubject = computed(() =>
+    this.model().rows.some((r) => r.subject === "all"),
+  );
+
+  /** the base "_default" role has no fallback to itself, so its empty state differs */
+  readonly isDefaultRole = computed(() => this.roleName() === DEFAULT_ROLE);
 
   /** human-readable summary of a CASL conditions object, e.g. "Center: Alipore and Gender: male" */
   private describeConditions(conditions: any, subject: string): string {
@@ -274,14 +273,15 @@ export class PermissionMatrixComponent {
       });
   }
 
-  hasSubject(subject: string): boolean {
-    return this.model().rows.some((r) => r.subject === subject);
-  }
-
   /** whether the record-type picker is shown instead of the "Add Permission" button */
   readonly addPickerOpen = signal(false);
 
-  /** re-created after each selection so the add-dropdown resets to empty */
+  /**
+   * Toggled off-then-on after each selection to force Angular to destroy and
+   * re-create the record-type dropdown. `app-entity-type-select` keeps its
+   * chosen value in internal state that rebinding `[value]` does not clear,
+   * so a remount is the reliable way to reset it to empty for the next add.
+   */
   readonly addSelectVisible = signal(true);
 
   addSubject(selected: string | string[]) {

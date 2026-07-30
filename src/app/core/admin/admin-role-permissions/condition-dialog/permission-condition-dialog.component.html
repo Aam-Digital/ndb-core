@@ -1,12 +1,14 @@
 <h2 mat-dialog-title>
-  <span i18n>Add Condition</span>
+  @if (hadConditions) {
+    <span i18n>Edit Condition</span>
+  } @else {
+    <span i18n>Add Condition</span>
+  }
   <app-dialog-close mat-dialog-close></app-dialog-close>
 </h2>
 
 <mat-dialog-content>
-  <p i18n>
-    {{ data.roleName }} {{ actionLabel }} {{ entityLabel }} only where&hellip;
-  </p>
+  <p>{{ conditionSentence }}</p>
 
   <app-conditions-editor
     [conditions]="editorConditions"

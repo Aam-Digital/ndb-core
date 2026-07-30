@@ -75,6 +75,24 @@ describe("permission-matrix", () => {
     expect(rules).toContainEqual(fieldRestricted);
   });
 
+  it("keeps an inverted rule ahead of the matrix rules when it came first", () => {
+    // an inverted (restricting) rule placed before an allow rule must not move
+    // after it on round-trip, or CASL precedence would flip
+    const inverted: DatabaseRule = {
+      subject: "Child",
+      action: "read",
+      inverted: true,
+    };
+    const rules: DatabaseRule[] = [
+      inverted,
+      { subject: "Child", action: "read" },
+    ];
+
+    const result = matrixToRules(rulesToMatrix(rules));
+
+    expect(result[0]).toEqual(inverted);
+  });
+
   it("round-trips typical grouped config rules without changing them", () => {
     const rules: DatabaseRule[] = [
       { subject: ["Child", "School"], action: "read" },

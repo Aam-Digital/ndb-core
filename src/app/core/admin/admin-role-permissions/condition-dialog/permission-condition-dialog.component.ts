@@ -81,7 +81,28 @@ export class PermissionConditionDialogComponent {
       : $localize`Records match only if all conditions apply ("and" conditions).`,
   );
 
-  readonly actionLabel: string = getActionLabel(this.data.action);
+  /**
+   * Full "<role> can <action> <entity> only where…" sentence as a single
+   * localized message per action, so translators can reorder role/entity.
+   */
+  readonly conditionSentence: string = this.buildConditionSentence();
+
+  private buildConditionSentence(): string {
+    const role = this.data.roleName;
+    const entity = this.entityLabel;
+    switch (this.data.action) {
+      case "read":
+        return $localize`:permission condition sentence:${role} can read ${entity} only where…`;
+      case "create":
+        return $localize`:permission condition sentence:${role} can create ${entity} only where…`;
+      case "update":
+        return $localize`:permission condition sentence:${role} can update ${entity} only where…`;
+      case "delete":
+        return $localize`:permission condition sentence:${role} can delete ${entity} only where…`;
+      case "manage":
+        return $localize`:permission condition sentence:${role} can manage ${entity} only where…`;
+    }
+  }
 
   onConditionsChange(conditions: any) {
     this.editorConditions = conditions;
@@ -114,38 +135,27 @@ export class PermissionConditionDialogComponent {
   }
 }
 
-function getActionLabel(action: EntityActionPermission): string {
-  switch (action) {
-    case "read":
-      return $localize`can read`;
-    case "create":
-      return $localize`can create`;
-    case "update":
-      return $localize`can update`;
-    case "delete":
-      return $localize`can delete`;
-    case "manage":
-      return $localize`can manage`;
-  }
-}
-
 /**
  * Convert any stored conditions shape into the { $or: [...] } row format
  * that the conditions editor works with.
+ *
+ * Deep-copies the input so the editor (which mutates rows in place) cannot
+ * touch the matrix model: cancelling the dialog must leave the model untouched.
  */
 function toEditorFormat(conditions: any): any {
   if (!conditions || typeof conditions !== "object") {
     return {};
   }
-  if (Array.isArray(conditions.$or)) {
-    return { $or: conditions.$or };
+  const copy = structuredClone(conditions);
+  if (Array.isArray(copy.$or)) {
+    return { $or: copy.$or };
   }
-  if (Array.isArray(conditions.$and)) {
-    return { $or: conditions.$and };
+  if (Array.isArray(copy.$and)) {
+    return { $or: copy.$and };
   }
   // merged plain object: one row per key
   return {
-    $or: Object.entries(conditions).map(([key, value]) => ({ [key]: value })),
+    $or: Object.entries(copy).map(([key, value]) => ({ [key]: value })),
   };
 }
 

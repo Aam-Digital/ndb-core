@@ -6,6 +6,7 @@ import {
   OnInit,
   inject,
   computed,
+  input,
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -50,10 +51,10 @@ export class ConditionsEditorComponent implements OnInit {
   @Input() label = $localize`Edit JSON`;
 
   /** optional text replacing the default "any one criteria matches" explanation */
-  @Input() hint?: string;
+  readonly hint = input<string>();
 
   /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
-  @Input() showInternalIdField = false;
+  readonly showInternalIdField = input(false);
 
   @Output() conditionsChange = new EventEmitter<any>();
 

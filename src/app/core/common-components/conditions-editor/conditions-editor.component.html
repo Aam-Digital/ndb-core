@@ -11,7 +11,7 @@
           <app-entity-field-select
             [entityType]="entityConstructor"
             [value]="getConditionField(condition)"
-            [showInternalIdField]="showInternalIdField"
+            [showInternalIdField]="showInternalIdField()"
             (valueChange)="onConditionFieldChange(conditionId, $event)"
           ></app-entity-field-select>
         </mat-form-field>
@@ -46,8 +46,8 @@
     }
 
     <div class="hint margin-top-regular">
-      @if (hint) {
-        {{ hint }}
+      @if (hint()) {
+        {{ hint() }}
       } @else {
         <ng-container i18n>
           Condition applies if any one of the selected criteria matches ("or"

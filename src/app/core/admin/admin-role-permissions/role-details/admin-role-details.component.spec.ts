@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router, provideRouter } from "@angular/router";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +10,7 @@ import { RolePermissionsService } from "../role-permissions.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { UserAdminApiError } from "../../../user/user-admin-service/user-admin.service";
 
 describe("AdminRoleDetailsComponent", () => {
   let component: AdminRoleDetailsComponent;
@@ -178,6 +180,37 @@ describe("AdminRoleDetailsComponent", () => {
 
     expect(mockRolePermissions.createRole).toHaveBeenCalled();
     expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
+  it("rejects a role name with the reserved leading underscore", () => {
+    component.isNew.set(true);
+    component.nameControl.enable();
+
+    component.nameControl.setValue("_myrole");
+    expect(component.nameControl.hasError("pattern")).toBe(true);
+
+    component.nameControl.setValue("myrole");
+    expect(component.nameControl.hasError("pattern")).toBe(false);
+  });
+
+  it("surfaces the specific server error message when creation is rejected", async () => {
+    const openSpy = vi.spyOn(TestBed.inject(MatSnackBar), "open");
+    component.isNew.set(true);
+    component.editing.set(true);
+    component.nameControl.enable();
+    component.model.set({ rows: [], unsupportedRules: [] });
+    mockRolePermissions.createRole.mockRejectedValue(
+      new UserAdminApiError(409, "A role with this name already exists."),
+    );
+
+    component.nameControl.setValue("duplicate_role");
+    await component.save();
+
+    expect(openSpy).toHaveBeenCalledWith(
+      "A role with this name already exists.",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("deletes the role after confirmation and navigates back to the list", async () => {

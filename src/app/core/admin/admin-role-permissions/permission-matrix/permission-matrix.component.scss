@@ -1,16 +1,8 @@
 @use "variables/colors";
-@use "@angular/material/core/style/elevation" as mat-elevation;
+@use "mixins/list-table";
 
-// same table styling as the user accounts list (user-list component)
-.table-container {
-  position: relative;
-  @include mat-elevation.elevation(2);
-  background-color: white;
-}
-
-.table {
-  box-shadow: none;
-}
+// same container/table styling as the user accounts and roles lists
+@include list-table.container-and-table;
 
 // on small screens the table keeps its minimum width and scrolls horizontally
 .table-scroll {
