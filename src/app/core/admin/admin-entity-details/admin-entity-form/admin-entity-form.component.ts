@@ -15,6 +15,7 @@ import {
   input,
   linkedSignal,
   output,
+  signal,
   untracked,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -104,8 +105,13 @@ export class AdminEntityFormComponent {
    */
   readonly fieldsOnlyMode = input<boolean>();
 
-  dummyEntity: Entity;
-  dummyForm: EntityForm<any>;
+  /**
+   * Dummy entity and form backing the form preview.
+   * These are signals so that rebuilding them updates the rendered field components,
+   * which extend their config (e.g. the label) from the entity type's schema.
+   */
+  readonly dummyEntity = signal<Entity | undefined>(undefined);
+  readonly dummyForm = signal<EntityForm<any> | undefined>(undefined);
 
   availableFields = linkedSignal<ColumnConfig[]>(() =>
     this.computeAvailableFieldsList(),
@@ -195,13 +201,16 @@ export class AdminEntityFormComponent {
   }
 
   private async initForm() {
-    this.dummyEntity = new (this.entityType() as any)();
-    this.dummyForm = await this.entityFormService.createEntityForm(
+    const dummyEntity = new (this.entityType() as any)();
+    this.dummyEntity.set(dummyEntity);
+
+    const dummyForm = await this.entityFormService.createEntityForm(
       [...this.getUsedFields(this.fieldGroups()), ...this.availableFields()],
-      this.dummyEntity,
+      dummyEntity,
       this.destroyRef,
     );
-    this.dummyForm.formGroup.disable();
+    dummyForm.formGroup.disable();
+    this.dummyForm.set(dummyForm);
   }
 
   private getUsedFields(fieldGroups: FieldGroup[]): ColumnConfig[] {
@@ -452,8 +461,8 @@ export class AdminEntityFormComponent {
       }
     }
 
-    this.dummyForm.formGroup.addControl(newFieldId, new FormControl());
-    this.dummyForm.formGroup.disable();
+    this.dummyForm().formGroup.addControl(newFieldId, new FormControl());
+    this.dummyForm().formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newFieldId);
     this.fieldGroups.update((g) => [...g]); // notify signal of in-place mutation
   }
@@ -476,8 +485,8 @@ export class AdminEntityFormComponent {
       return;
     }
 
-    this.dummyForm.formGroup.addControl(newTextField.id, new FormControl());
-    this.dummyForm.formGroup.disable();
+    this.dummyForm().formGroup.addControl(newTextField.id, new FormControl());
+    this.dummyForm().formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newTextField);
     this.fieldGroups.update((g) => [...g]);
 

@@ -99,8 +99,8 @@ describe("AdminEntityFormComponent", () => {
   it("should create and init a form", () => {
     expect(component).toBeTruthy();
 
-    expect(component.dummyEntity).toBeTruthy();
-    expect(component.dummyForm).toBeTruthy();
+    expect(component.dummyEntity()).toBeTruthy();
+    expect(component.dummyForm()).toBeTruthy();
   });
 
   it("should load all fields from schema that are not already in form as available fields", async () => {
