@@ -75,6 +75,6 @@ describe("LocalAuthService", () => {
 
     // assert on the injected storage, not the shared jsdom `localStorage`,
     // which other spec files in the same worker may have written to
-    expect(storage.getItem("USER-" + testUser.name)).toBeNull();
+    expect(storage.length).toBe(0);
   });
 });

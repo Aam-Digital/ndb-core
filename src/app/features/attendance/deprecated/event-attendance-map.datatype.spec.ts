@@ -5,6 +5,7 @@ import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+// qlty-ignore: radarlint-js:typescript:S1874 - this is the spec of the deprecated datatype itself
 import { EventAttendanceMapDatatype } from "./event-attendance-map.datatype";
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
@@ -32,6 +33,7 @@ describe("Schema data type: event-attendance-map", () => {
         // only the datatypes used by AttendanceItem's schema, rather than a whole module
         {
           provide: DefaultDatatype,
+          // qlty-ignore: radarlint-js:typescript:S1874 - this is the spec of the deprecated datatype itself
           useClass: EventAttendanceMapDatatype,
           multi: true,
         },

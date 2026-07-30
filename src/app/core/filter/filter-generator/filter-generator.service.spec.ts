@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
@@ -49,7 +49,7 @@ describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let filterService: FilterService;
 
-  beforeEach(waitForAsync(async () => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       providers: [
         FilterGeneratorService,
@@ -81,7 +81,7 @@ describe("FilterGeneratorService", () => {
     service = TestBed.inject(FilterGeneratorService);
     filterService = TestBed.inject(FilterService);
     await TestBed.inject(ConfigurableEnumService).preLoadEnums();
-  }));
+  });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
