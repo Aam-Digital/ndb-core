@@ -217,8 +217,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="168"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:168</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="176"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:176</a></div>
                         </td>
                     </tr>
 
@@ -294,8 +294,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="142"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:142</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:150</a></div>
                         </td>
                     </tr>
 
@@ -364,8 +364,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:166</a></div>
                         </td>
                     </tr>
 
@@ -409,8 +409,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -474,7 +474,12 @@ Returns true if save should proceed, false if cancelled or error.</p>
 import { ConfirmationDialogService } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Config } from &quot;../../core/config/config&quot;;
-import { DatabaseRules } from &quot;../../core/permissions/permission-types&quot;;
+import {
+  DatabaseRules,
+  DEFAULT_SECTION_KEY,
+  LEGACY_PUBLIC_KEY,
+  PUBLIC_SECTION_KEY,
+} from &quot;../../core/permissions/permission-types&quot;;
 import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
 
@@ -523,7 +528,10 @@ export class PublicFormPermissionService {
       if (!permissionsConfig?.data) {
         return false; // No permissions config means &quot;public&quot; users have no access
       }
-      const publicRules &#x3D; permissionsConfig.data.public || [];
+      const publicRules &#x3D;
+        permissionsConfig.data[PUBLIC_SECTION_KEY] ??
+        permissionsConfig.data[LEGACY_PUBLIC_KEY] ??
+        [];
       return publicRules.some(
         (rule) &#x3D;&gt;
           this.subjectMatches(rule.subject, entityType) &amp;&amp;
@@ -649,23 +657,39 @@ export class PublicFormPermissionService {
       permissionsConfig.data &#x3D; {};
     }
 
-    if (!permissionsConfig.data.public) {
-      permissionsConfig.data.public &#x3D; [];
+    // migrate any legacy section key to the underscore-prefixed name so we
+    // never write both spellings (the read path prefers the new key)
+    const migratedLegacyPublic &#x3D; LEGACY_PUBLIC_KEY in permissionsConfig.data;
+    if (
+      permissionsConfig.data[LEGACY_PUBLIC_KEY] &amp;&amp;
+      !permissionsConfig.data[PUBLIC_SECTION_KEY]
+    ) {
+      permissionsConfig.data[PUBLIC_SECTION_KEY] &#x3D;
+        permissionsConfig.data[LEGACY_PUBLIC_KEY];
+    }
+    delete permissionsConfig.data[LEGACY_PUBLIC_KEY];
+
+    if (!permissionsConfig.data[PUBLIC_SECTION_KEY]) {
+      permissionsConfig.data[PUBLIC_SECTION_KEY] &#x3D; [];
     }
 
     // Only add default rule if creating a new config
     if (isNewConfig) {
       // all logged-in users should continue to have full access (which is default without a permission doc):
-      permissionsConfig.data.default &#x3D; [{ subject: &quot;all&quot;, action: &quot;manage&quot; }];
+      permissionsConfig.data[DEFAULT_SECTION_KEY] &#x3D; [
+        { subject: &quot;all&quot;, action: &quot;manage&quot; },
+      ];
     }
 
+    const publicRules &#x3D; permissionsConfig.data[PUBLIC_SECTION_KEY];
+
     // basic read permissions on config elements is required for public forms to work:
-    const hasPublicFormConfigRead &#x3D; permissionsConfig.data.public.some(
+    const hasPublicFormConfigRead &#x3D; publicRules.some(
       (rule) &#x3D;&gt;
         this.subjectMatches(rule.subject, &quot;PublicFormConfig&quot;) &amp;&amp;
         (rule.action &#x3D;&#x3D;&#x3D; &quot;read&quot; || rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;),
     );
-    const hasConfigRead &#x3D; permissionsConfig.data.public.some(
+    const hasConfigRead &#x3D; publicRules.some(
       (rule) &#x3D;&gt;
         this.subjectMatches(rule.subject, &quot;Config&quot;) &amp;&amp;
         (rule.action &#x3D;&#x3D;&#x3D; &quot;read&quot; || rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;),
@@ -673,7 +697,7 @@ export class PublicFormPermissionService {
     const formReadExists &#x3D; hasPublicFormConfigRead &amp;&amp; hasConfigRead;
 
     if (!formReadExists) {
-      permissionsConfig.data.public.push({
+      publicRules.push({
         subject: [
           &quot;Config&quot;,
           &quot;SiteSettings&quot;,
@@ -685,19 +709,20 @@ export class PublicFormPermissionService {
     }
 
     // Check if public create permission already exists to avoid duplicates
-    const createExists &#x3D; permissionsConfig.data.public.some(
+    const createExists &#x3D; publicRules.some(
       (rule) &#x3D;&gt;
         this.subjectMatches(rule.subject, entityType) &amp;&amp;
         (rule.action &#x3D;&#x3D;&#x3D; &quot;create&quot; || rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;),
     );
     if (!createExists) {
-      permissionsConfig.data.public.push({
+      publicRules.push({
         subject: entityType,
         action: &quot;create&quot;,
       });
     }
 
-    if (!createExists || !formReadExists) {
+    // also persist when we only migrated a legacy section (no new rule added)
+    if (migratedLegacyPublic || !createExists || !formReadExists) {
       await this.entityMapper.save(permissionsConfig, true);
     }
   }

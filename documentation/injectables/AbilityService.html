@@ -226,7 +226,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:30</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:39</a></div>
                             </td>
                         </tr>
 
@@ -261,8 +261,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="40"
-                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:40</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="49"
+                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:49</a></div>
                         </td>
                     </tr>
 
@@ -456,7 +456,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -514,7 +514,16 @@ through the <code>entityUpdated</code> property</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
-import { DatabaseRule, DatabaseRules } from &quot;../permission-types&quot;;
+import {
+  DatabaseRule,
+  DatabaseRules,
+  DEFAULT_SECTION_KEY,
+  LEGACY_DEFAULT_KEY,
+  LEGACY_PUBLIC_KEY,
+  PUBLIC_SECTION_KEY,
+  RESERVED_ROLE_PREFIX,
+  RESERVED_RULE_CONFIG_KEYS,
+} from &quot;../permission-types&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { PermissionEnforcerService } from &quot;../permission-enforcer/permission-enforcer.service&quot;;
 import { EntityAbility } from &quot;./entity-ability&quot;;
@@ -596,14 +605,23 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const sessionInfo &#x3D; this.sessionInfo.value;
     if (!sessionInfo) {
-      return rules.public ?? [];
+      return rules[PUBLIC_SECTION_KEY] ?? rules[LEGACY_PUBLIC_KEY] ?? [];
     }
 
     const rawUserRules: DatabaseRule[] &#x3D; [];
-    if (rules.default) {
-      rawUserRules.push(...rules.default);
+    const defaultRules &#x3D;
+      rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY];
+    if (defaultRules) {
+      rawUserRules.push(...defaultRules);
     }
     sessionInfo.roles.forEach((role) &#x3D;&gt; {
+      // reserved section keys and underscore-prefixed names never resolve as roles
+      if (
+        role.startsWith(RESERVED_ROLE_PREFIX) ||
+        RESERVED_RULE_CONFIG_KEYS.includes(role)
+      ) {
+        return;
+      }
       const rulesForRole &#x3D; rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });

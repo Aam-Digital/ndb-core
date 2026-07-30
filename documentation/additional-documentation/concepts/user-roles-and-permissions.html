@@ -172,7 +172,7 @@
 <li><code>getRulesForUser(user)</code> merges rules: for authenticated users, <code>[...admin-default, ...role-rules]</code> (rule order same as frontend).</li>
 <li>Rules are interpolated and passed to <code>PermissionService.getAbilityFor(user)</code>.</li>
 <li>Every access point (changes feed, bulk-doc, REST write, design-doc) calls <code>.can()</code> on this ability or goes through <code>isAllowedTo()</code>.</li>
-<li>CASL&#39;s deny-by-default means unauthenticated (anonymous) users only get access via <code>permission.public</code> rules.</li>
+<li>CASL&#39;s deny-by-default means unauthenticated (anonymous) users only get access via the <code>_public</code> rules (legacy <code>public</code> read as a fallback).</li>
 </ol>
 <p><em>Choke points:</em></p>
 <ul>
@@ -205,7 +205,7 @@ Admins edit this document to control what each role can do.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
   &quot;_id&quot;: &quot;Config:Permissions&quot;,
   &quot;data&quot;: {
-    &quot;default&quot;: [
+    &quot;_default&quot;: [
       {
         &quot;subject&quot;: &quot;Config&quot;,
         &quot;action&quot;: &quot;read&quot;
@@ -239,8 +239,10 @@ Admins edit this document to control what each role can do.</p>
 <ul>
 <li><strong><code>subject</code></strong>: The entity type(s) — e.g., <code>Child</code>, <code>School</code>, <code>Note</code>, or <code>all</code> for any type</li>
 <li><strong><code>action</code></strong>: What users can do — <code>read</code>, <code>create</code>, <code>update</code>, <code>delete</code>, or <code>manage</code> (all operations)</li>
-<li><strong><code>default</code></strong>: Rules applied to all authenticated users (regardless of role)</li>
-<li><strong>Combining roles</strong>: If a user has multiple roles, their rules are appended in order (the <code>default</code> rules first, then each role&#39;s rules). CASL evaluates them so that the <strong>last matching rule wins</strong> — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later <code>&quot;inverted&quot;: true</code> rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.</li>
+<li><strong><code>_default</code></strong>: Rules applied to all authenticated users (regardless of role)</li>
+<li><strong><code>_public</code></strong>: Rules applied to anonymous (not logged-in) visitors</li>
+<li><strong>Reserved section keys</strong>: <code>_default</code> and <code>_public</code> are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with <code>_</code> is ignored when resolving rules. Older documents may still use the non-prefixed <code>default</code> / <code>public</code> names; these are read as a fallback and migrated to the underscore form by the <code>oneoff-20260724-permissions-key-rename</code> migration (see <code>cli/migration/</code>). <code>_default</code> and <code>_public</code> are the only allowed underscore-prefixed keys; do not create realm roles, or any other rule section, whose name starts with <code>_</code>.</li>
+<li><strong>Combining roles</strong>: If a user has multiple roles, their rules are appended in order (the <code>_default</code> rules first, then each role&#39;s rules). CASL evaluates them so that the <strong>last matching rule wins</strong> — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later <code>&quot;inverted&quot;: true</code> rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.</li>
 </ul>
 <h3>Restricting access (inverted rules)</h3>
 <p>Use <code>&quot;inverted&quot;: true</code> to deny access instead of grant it:</p>

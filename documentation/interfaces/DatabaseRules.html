@@ -150,7 +150,8 @@
             <p class="comment">
                 <p>The format of the JSON object which defines the rules for each role.
 The format is <code>&lt;user-role&gt;: &lt;array of DatabaseRule&gt;</code>, meaning for each role an array of rules can be defined.
-The rules defined in &#39;default&#39; will be prepended to any other rules defined for a user</p>
+The rules defined in &#39;_default&#39; (legacy &#39;default&#39;) are prepended to any other rules defined for a user.
+The rules defined in &#39;_public&#39; (legacy &#39;public&#39;) are used if a user is not logged in.</p>
 
             </p>
 
@@ -167,6 +168,20 @@ The rules defined in &#39;default&#39; will be prepended to any other rules defi
                     <tr>
                         <td class="col-md-4">
                             <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#_default" 
+>
+                                            _default
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#_public" 
+>
+                                            _public
+                                        </a>
+                                </li>
                                 <li>
                                             <span class="modifier">Optional</span>
                                         <a href="#default" 
@@ -201,7 +216,7 @@ The rules defined in &#39;default&#39; will be prepended to any other rules defi
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/permissions/permission-types.ts:42</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/permissions/permission-types.ts:70</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -210,6 +225,82 @@ The rules defined in &#39;default&#39; will be prepended to any other rules defi
 
             <section data-compodoc="block-properties">
                 <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="_default"></a>
+                                        <span class="name "><b>_default</b>
+                                            <a href="#_default">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>_default:         <code><a href="../classes/Database.html" target="_self" >DatabaseRule[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../classes/Database.html" target="_self" >DatabaseRule[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="_public"></a>
+                                        <span class="name "><b>_public</b>
+                                            <a href="#_public">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>_public:         <code><a href="../classes/Database.html" target="_self" >DatabaseRule[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../classes/Database.html" target="_self" >DatabaseRule[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
                     <table class="table table-sm table-bordered">
                         <tbody>
                                 <tr>
@@ -326,11 +417,39 @@ export type EntitySubject &#x3D; EntityConstructor | Entity | string;
 export type DatabaseRule &#x3D; RawRuleOf&lt;Ability&lt;[EntityActionPermission, string]&gt;&gt;;
 
 /**
+ * Section keys in {@link DatabaseRules} that carry special semantics instead of
+ * mapping a user role. The underscore prefix marks them as internal so they
+ * cannot collide with a realm role name. Legacy (non-prefixed) spellings are
+ * still read for backward compatibility until all documents are migrated.
+ */
+export const DEFAULT_SECTION_KEY &#x3D; &quot;_default&quot;;
+export const PUBLIC_SECTION_KEY &#x3D; &quot;_public&quot;;
+export const LEGACY_DEFAULT_KEY &#x3D; &quot;default&quot;;
+export const LEGACY_PUBLIC_KEY &#x3D; &quot;public&quot;;
+
+/** A user role starting with this prefix is reserved and never resolved. */
+export const RESERVED_ROLE_PREFIX &#x3D; &quot;_&quot;;
+
+/**
+ * All section keys (current and legacy) that must never be resolved as if they
+ * were user role names, even if a realm role with the same name exists.
+ */
+export const RESERVED_RULE_CONFIG_KEYS: string[] &#x3D; [
+  DEFAULT_SECTION_KEY,
+  PUBLIC_SECTION_KEY,
+  LEGACY_DEFAULT_KEY,
+  LEGACY_PUBLIC_KEY,
+];
+
+/**
  * The format of the JSON object which defines the rules for each role.
  * The format is &#x60;&lt;user-role&gt;: &lt;array of DatabaseRule&gt;&#x60;, meaning for each role an array of rules can be defined.
- * The rules defined in &#x27;default&#x27; will be prepended to any other rules defined for a user
+ * The rules defined in &#x27;_default&#x27; (legacy &#x27;default&#x27;) are prepended to any other rules defined for a user.
+ * The rules defined in &#x27;_public&#x27; (legacy &#x27;public&#x27;) are used if a user is not logged in.
  */
 export interface DatabaseRules {
+  _public?: DatabaseRule[];
+  _default?: DatabaseRule[];
   public?: DatabaseRule[];
   default?: DatabaseRule[];
 
