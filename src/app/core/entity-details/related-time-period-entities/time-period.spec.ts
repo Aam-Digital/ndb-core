@@ -18,14 +18,22 @@
 import moment from "moment";
 import { testEntitySubclass } from "../../entity/model/entity.test-utils";
 import { TimePeriod } from "./time-period";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
 
 describe("TimePeriod Entity", () => {
-  testEntitySubclass("TimePeriod", TimePeriod, {
-    _id: "TimePeriod:some-id",
+  testEntitySubclass(
+    "TimePeriod",
+    TimePeriod,
+    {
+      _id: "TimePeriod:some-id",
 
-    start: "2019-01-01",
-    end: "2019-12-31",
-  });
+      start: "2019-01-01",
+      end: "2019-12-31",
+    },
+    false,
+    [{ provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true }],
+  );
 
   it("should mark relations without end date as active", () => {
     const relation = new TimePeriod();
