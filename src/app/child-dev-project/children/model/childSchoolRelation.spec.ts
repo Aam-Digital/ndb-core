@@ -18,7 +18,6 @@
 import { ChildSchoolRelation } from "./childSchoolRelation";
 import { testEntitySubclass } from "../../../core/entity/model/entity.test-utils";
 import { DefaultDatatype } from "../../../core/entity/default-datatype/default.datatype";
-import { StringDatatype } from "../../../core/basic-datatypes/string/string.datatype";
 import { DateOnlyDatatype } from "../../../core/basic-datatypes/date-only/date-only.datatype";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -27,24 +26,8 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../../core/entity/database-entity.decorator";
-import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 
 describe("ChildSchoolRelation Entity", () => {
-  // "schoolClass" is not declared on the model, it is added to the schema by the app config.
-  // Declare it here so the spec covers it without depending on the config initializer having run.
-  let originalSchoolClass: EntitySchemaField | undefined;
-  beforeAll(() => {
-    originalSchoolClass = ChildSchoolRelation.schema.get("schoolClass");
-    ChildSchoolRelation.schema.set("schoolClass", { dataType: "string" });
-  });
-  afterAll(() => {
-    if (originalSchoolClass) {
-      ChildSchoolRelation.schema.set("schoolClass", originalSchoolClass);
-    } else {
-      ChildSchoolRelation.schema.delete("schoolClass");
-    }
-  });
-
   testEntitySubclass(
     "ChildSchoolRelation",
     ChildSchoolRelation,
@@ -53,13 +36,11 @@ describe("ChildSchoolRelation Entity", () => {
 
       childId: "1",
       schoolId: "2",
-      schoolClass: "10",
       start: "2019-01-01",
       end: "2019-12-31",
     },
     false,
     [
-      { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
       { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
       { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
       // EntityDatatype only uses these to resolve referenced records, which the
