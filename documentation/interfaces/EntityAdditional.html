@@ -419,6 +419,52 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
+   * Resolve a single import value to the id of the referenced entity,
+   * looking that entity up by the property given in &#x60;additional.refField&#x60;.
+   *
+   * This is relevant when an entity reference is matched through another entity
+   * reference (e.g. import a Note&#x27;s related Child, identified by the name of the
+   * user linked in the Child&#x27;s &quot;responsible user&quot; field). The nested value has to
+   * be resolved to an id before it can be compared with the stored reference.
+   *
+   * @returns the id of the single matching entity or undefined if there is no unique match
+   */
+  override async importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional?: any,
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise&lt;string&gt; {
+    const config &#x3D; normalizeEntityAdditional(additional);
+    if (!config?.refField || !importProcessingContext) {
+      return super.importMapFunction(
+        val,
+        schemaField,
+        additional,
+        importProcessingContext,
+      );
+    }
+
+    const match &#x3D; await this.importMatchField(
+      // the caller compares against a single stored value, so never return an array here
+      { ...schemaField, isArray: false },
+      [
+        {
+          mapping: {
+            column: &quot;&quot;,
+            propertyName: schemaField.id,
+            // the value has already been split by the calling column
+            additional: { ...config, enableSplitting: false },
+          },
+          rawCell: val,
+        },
+      ],
+      importProcessingContext,
+    );
+    return match as string;
+  }
+
+  /**
    * Build one match criterion per mapped column: the referenced field to
    * compare and the acceptable (normalized) values parsed from the column cell.
    */
@@ -445,16 +491,20 @@ export class EntityDatatype extends StringDatatype {
         mapping,
         separator,
       )) {
-        values.push(
-          await this.resolveColumnValue(
-            rawValue,
-            config.refField,
-            config.valueMapping,
-            context,
-            importProcessingContext,
-          ),
+        const value &#x3D; await this.resolveColumnValue(
+          rawValue,
+          config.refField,
+          config.valueMapping,
+          context,
+          importProcessingContext,
         );
+        if (value !&#x3D;&#x3D; undefined) {
+          values.push(value);
+        }
       }
+      // the criterion is added even if no value could be resolved:
+      // an empty list matches nothing, whereas dropping the criterion would
+      // silently relax the condition and match unrelated records
       criteria.push({ refField: config.refField, values });
     }
     return criteria;
@@ -479,6 +529,9 @@ export class EntityDatatype extends StringDatatype {
   /**
    * Resolves the effective comparison value for a column,
    * applying any configured value mapping through the referenced field&#x27;s datatype.
+   *
+   * @returns the normalized value to compare against, or undefined if the value
+   *   mapping could not resolve the import value (which must match nothing)
    */
   private async resolveColumnValue(
     rawValue: any,
@@ -486,7 +539,7 @@ export class EntityDatatype extends StringDatatype {
     valueMapping: any | undefined,
     context: EntityFieldImportContext,
     importProcessingContext: ImportProcessingContext,
-  ): Promise&lt;string&gt; {
+  ): Promise&lt;string | undefined&gt; {
     if (valueMapping &#x3D;&#x3D;&#x3D; undefined) {
       return normalizeValue(rawValue);
     }
@@ -506,6 +559,11 @@ export class EntityDatatype extends StringDatatype {
       valueMapping,
       importProcessingContext,
     );
+    if (mappedValue &#x3D;&#x3D;&#x3D; undefined || mappedValue &#x3D;&#x3D;&#x3D; null) {
+      // the import value could not be interpreted, so it cannot identify a record
+      return undefined;
+    }
+
     const dbFormat &#x3D; refDatatype.transformToDatabaseFormat(
       mappedValue,
       refFieldSchema,

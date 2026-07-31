@@ -218,6 +218,11 @@ Stored as a simple ID string.</p>
                             <li>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
+                                <a href="#importMapFunction" >importMapFunction</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
                                 <a href="#importMatchField" >importMatchField</a>
                             </li>
                             <li>
@@ -235,10 +240,6 @@ Stored as a simple ID string.</p>
                             <li>
                                     <span class="modifier">Static</span>
                                 <a href="#detectFieldInEntity" >detectFieldInEntity</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Async</span>
-                                <a href="#importMapFunction" >importMapFunction</a>
                             </li>
                             <li>
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
@@ -293,7 +294,7 @@ Stored as a simple ID string.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:281</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:339</a></code>
 </div>
                         </td>
                     </tr>
@@ -436,6 +437,126 @@ Stored as a simple ID string.</p>
                         </div>
                             <div class="io-description">
                                 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="importMapFunction"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>importMapFunction</b></span>
+                        <a href="#importMapFunction"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>importMapFunction(val: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, additional?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, importProcessingContext?: <a href="../classes/ImportProcessingContext.html" target="_self">ImportProcessingContext</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:169</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Resolve a single import value to the id of the referenced entity,
+looking that entity up by the property given in <code>additional.refField</code>.</p>
+<p>This is relevant when an entity reference is matched through another entity
+reference (e.g. import a Note&#39;s related Child, identified by the name of the
+user linked in the Child&#39;s &quot;responsible user&quot; field). The nested value has to
+be resolved to an id before it can be compared with the stored reference.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>val</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>additional</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>importProcessingContext</td>
+                                            <td>
+                                                            <code><a href="../classes/ImportProcessingContext.html" target="_self" >ImportProcessingContext</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the id of the single matching entity or undefined if there is no unique match</p>
+
                             </div>
                 </td>
             </tr>
@@ -924,138 +1045,6 @@ forwarding their own relevant datatype identifiers.</p>
                             <div class="io-description">
                                 <p>The field name of the first matching field, or <code>undefined</code> if none is found.</p>
 
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="importMapFunction"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>importMapFunction</b></span>
-                        <a href="#importMapFunction"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>importMapFunction(val: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, additional?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, importProcessingContext?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:199</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>The function used to map values from the import data to values in the entities to be created.
-                               to share information across processing of multiple columns and rows.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>val</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <p>The value from an imported cell to be mapped</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>schemaField</td>
-                                            <td>
-                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <p>The schema field definition for the target property into which the value is mapped</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>additional</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                            <td>
-                                                    <p>config as returned by the configComponent</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>importProcessingContext</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                            <td>
-                                                    <p>an object that the datatype can use to store any relevant context across multiple calls
-to share information across processing of multiple columns and rows.</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;EntityType&gt;</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
                             </div>
                 </td>
             </tr>
@@ -1613,6 +1602,52 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
+   * Resolve a single import value to the id of the referenced entity,
+   * looking that entity up by the property given in &#x60;additional.refField&#x60;.
+   *
+   * This is relevant when an entity reference is matched through another entity
+   * reference (e.g. import a Note&#x27;s related Child, identified by the name of the
+   * user linked in the Child&#x27;s &quot;responsible user&quot; field). The nested value has to
+   * be resolved to an id before it can be compared with the stored reference.
+   *
+   * @returns the id of the single matching entity or undefined if there is no unique match
+   */
+  override async importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional?: any,
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise&lt;string&gt; {
+    const config &#x3D; normalizeEntityAdditional(additional);
+    if (!config?.refField || !importProcessingContext) {
+      return super.importMapFunction(
+        val,
+        schemaField,
+        additional,
+        importProcessingContext,
+      );
+    }
+
+    const match &#x3D; await this.importMatchField(
+      // the caller compares against a single stored value, so never return an array here
+      { ...schemaField, isArray: false },
+      [
+        {
+          mapping: {
+            column: &quot;&quot;,
+            propertyName: schemaField.id,
+            // the value has already been split by the calling column
+            additional: { ...config, enableSplitting: false },
+          },
+          rawCell: val,
+        },
+      ],
+      importProcessingContext,
+    );
+    return match as string;
+  }
+
+  /**
    * Build one match criterion per mapped column: the referenced field to
    * compare and the acceptable (normalized) values parsed from the column cell.
    */
@@ -1639,16 +1674,20 @@ export class EntityDatatype extends StringDatatype {
         mapping,
         separator,
       )) {
-        values.push(
-          await this.resolveColumnValue(
-            rawValue,
-            config.refField,
-            config.valueMapping,
-            context,
-            importProcessingContext,
-          ),
+        const value &#x3D; await this.resolveColumnValue(
+          rawValue,
+          config.refField,
+          config.valueMapping,
+          context,
+          importProcessingContext,
         );
+        if (value !&#x3D;&#x3D; undefined) {
+          values.push(value);
+        }
       }
+      // the criterion is added even if no value could be resolved:
+      // an empty list matches nothing, whereas dropping the criterion would
+      // silently relax the condition and match unrelated records
       criteria.push({ refField: config.refField, values });
     }
     return criteria;
@@ -1673,6 +1712,9 @@ export class EntityDatatype extends StringDatatype {
   /**
    * Resolves the effective comparison value for a column,
    * applying any configured value mapping through the referenced field&#x27;s datatype.
+   *
+   * @returns the normalized value to compare against, or undefined if the value
+   *   mapping could not resolve the import value (which must match nothing)
    */
   private async resolveColumnValue(
     rawValue: any,
@@ -1680,7 +1722,7 @@ export class EntityDatatype extends StringDatatype {
     valueMapping: any | undefined,
     context: EntityFieldImportContext,
     importProcessingContext: ImportProcessingContext,
-  ): Promise&lt;string&gt; {
+  ): Promise&lt;string | undefined&gt; {
     if (valueMapping &#x3D;&#x3D;&#x3D; undefined) {
       return normalizeValue(rawValue);
     }
@@ -1700,6 +1742,11 @@ export class EntityDatatype extends StringDatatype {
       valueMapping,
       importProcessingContext,
     );
+    if (mappedValue &#x3D;&#x3D;&#x3D; undefined || mappedValue &#x3D;&#x3D;&#x3D; null) {
+      // the import value could not be interpreted, so it cannot identify a record
+      return undefined;
+    }
+
     const dbFormat &#x3D; refDatatype.transformToDatabaseFormat(
       mappedValue,
       refFieldSchema,
