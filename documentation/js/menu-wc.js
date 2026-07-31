@@ -134,6 +134,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/concepts/documentation-structure.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Documentation Structure</a>
                                             </li>
+                                            <li class="link for-chapter2">
+                                                <a href="additional-documentation/concepts/reports.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Reports</a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="chapter inner">
@@ -165,9 +168,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/create-a-new-datatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Create a New Datatype</a>
-                                            </li>
-                                            <li class="link for-chapter2">
-                                                <a href="additional-documentation/how-to-guides/create-a-report.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Create a Report</a>
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/end-to-end-tests.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">End-to-end tests</a>

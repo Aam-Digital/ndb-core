@@ -136,14 +136,88 @@ SQS enables the possibility to create SQL-based queries in reports.
 The SQS image is not available as open source and needs a licence. It is pulled from a private container registry.</p>
 <p>Follow the instructions on the <em>aam-services</em> repository to set up and enable the API.</p>
 <h3>Using AI agents to generate SQL Queries</h3>
-<p>LLMs like ChatGPT or Claude can generate report queries for you.
-We have a <a href="https://docs.google.com/document/d/13yxJkqqoA9tBTbld65Y1FYA51l0W057m4D1wvoCILeQ/edit?usp=sharing">guide / context document for this</a>.</p>
+<p>LLMs like ChatGPT or Claude can generate report queries for you.</p>
 <h2>Configuration</h2>
 <p>The reports can be defined as <code>ReportConfig:*</code> entities.</p>
 <p>There are different modes for <code>ReportConfig</code>:</p>
 <h3>sql</h3>
 <p>Requirements: SQS</p>
-<p>Some useful SQL query snippets for Aam Digital contexts are collected here: <a href="https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?usp=sharing">Aam Digital SQL Snippets</a></p>
+<p>Queries are based on SQLite and do not support multiple queries in one string
+or some SQL commands.
+Do <em>not</em> use special characters, like accents, in IDs or report column names as they cause unstable outputs.</p>
+<h4>Available tables and columns</h4>
+<p>Every entity type defined in the <code>Config:CONFIG_ENTITY</code> document becomes a SQL table (e.g. <code>Child</code>, <code>School</code>),
+with one column per configured field. Fields of dataType <code>file</code> are skipped and have no column.</p>
+<p>In addition, the backend hard-wires some columns into every such entity table.
+These are derived from internal metadata that every entity has, so they are available
+without being listed in the config document:</p>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr>
+<th>Column</th>
+<th>Source field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_id</code></td>
+<td><code>_id</code></td>
+<td>full document id, e.g. <code>Child:123</code></td>
+</tr>
+<tr>
+<td><code>_rev</code></td>
+<td><code>_rev</code></td>
+<td>CouchDB revision</td>
+</tr>
+<tr>
+<td><code>_created_at</code></td>
+<td><code>created.at</code></td>
+<td>timestamp when the record was created (ISO format)</td>
+</tr>
+<tr>
+<td><code>_created_by</code></td>
+<td><code>created.by</code></td>
+<td>user who created the record</td>
+</tr>
+<tr>
+<td><code>_updated_at</code></td>
+<td><code>updated.at</code></td>
+<td>timestamp of the last edit (ISO format)</td>
+</tr>
+<tr>
+<td><code>_updated_by</code></td>
+<td><code>updated.by</code></td>
+<td>user who made the last edit</td>
+</tr>
+<tr>
+<td><code>inactive</code></td>
+<td><code>inactive</code></td>
+<td>1 if the record is archived</td>
+</tr>
+<tr>
+<td><code>anonymized</code></td>
+<td><code>anonymized</code></td>
+<td>1 if the record is anonymized</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>_</code> prefix marks columns that are generated from internal metadata rather than configured entity fields
+and avoids clashes with custom fields of the same name.
+For example, to count records created within the reporting period:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT count(*) AS &quot;newly registered&quot;
+FROM Child
+WHERE _created_at BETWEEN $startDate AND $endDate</code></pre></div><h4>Human-readable labels for dropdown (configurable-enum) fields</h4>
+<p>Dropdown fields store the option id (e.g. <code>gender = &quot;M&quot;</code>), not its label.
+The hard-wired <code>ConfigurableEnumOption</code> view provides one row per dropdown option
+(<code>enum_id</code>, <code>option_id</code>, <code>label</code>), so labels can be joined in directly:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT c.name, COALESCE(g.label, c.gender) AS gender
+FROM Child c
+LEFT JOIN ConfigurableEnumOption g
+  ON g.enum_id = &#39;genders&#39; AND g.option_id = c.gender</code></pre></div><p><code>enum_id</code> is the id of the enum definition without its <code>ConfigurableEnum:</code> prefix.
+The <code>COALESCE</code> keeps the raw id visible for values that have no matching option.
+The underlying raw <code>ConfigurableEnum</code> table (one row per enum, options as JSON array in <code>values</code>)
+is also available for special cases. It only has these two columns, none of the default columns listed above.</p>
 <h4>Simple SQL Report</h4>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">// app/ReportConfig:test-report
 {
@@ -168,7 +242,7 @@ We have a <a href="https://docs.google.com/document/d/13yxJkqqoA9tBTbld65Y1FYA51
   },
   &quot;reportDefinition&quot;: [
     {
-      &quot;query&quot;: &quot;SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE created_at BETWEEN $startDate AND $endDate&quot;
+      &quot;query&quot;: &quot;SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE _created_at BETWEEN $startDate AND $endDate&quot;
     }
   ]
 }</code></pre></div><h4>Nested SQL Report (Grouped)</h4>
@@ -203,6 +277,53 @@ If a query returns multiple columns, only one value is shown as the row value an
     }
   ]
 }</code></pre></div><p>In the UI, grouped SQL reports are rendered as a hierarchical report view, while single-query SQL reports are shown as a flat table.</p>
+<h4>SQL recipes</h4>
+<p>Useful patterns for common Aam Digital reporting questions.</p>
+<h5>Calculate age from date of birth</h5>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT name,
+  (strftime(&#39;%Y&#39;, &#39;now&#39;) - strftime(&#39;%Y&#39;, dateOfBirth))
+    - (strftime(&#39;%m-%d&#39;, &#39;now&#39;) &lt; strftime(&#39;%m-%d&#39;, dateOfBirth)) AS age
+FROM Child</code></pre></div><h5>Conditional counting (&quot;COUNT IF&quot;)</h5>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT COUNT(CASE WHEN c.gender = &#39;F&#39; THEN c._id END) AS total_female FROM Child c</code></pre></div><h5>Attendance status of individual participants from EventNote</h5>
+<p><code>childrenAttendance</code> stores one <code>[childId, {status, remarks}]</code> pair per participant as a JSON array,
+which can be unpacked with <a href="https://www.sqlite.org/json1.html#jeach">SQLite&#39;s <code>json_each()</code></a>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT json_extract(value, &#39;$[0]&#39;) AS participant_id,
+  json_extract(value, &#39;$[1].status&#39;) AS status,
+  json_extract(e.schools, &#39;$[0]&#39;) AS team_id
+FROM EventNote e, json_each(e.childrenAttendance)
+JOIN Child AS c ON c._id = participant_id
+JOIN School AS s ON s._id = team_id</code></pre></div><p>The same pattern calculates an attendance percentage per participant, filtered by event category:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT json_extract(value, &#39;$[0]&#39;) AS participant_id, e.category,
+  ROUND((SUM(CASE WHEN json_extract(value, &#39;$[1].status&#39;) = &#39;PRESENT&#39; THEN 1 ELSE 0 END) * 100.0
+    / COUNT(e._id)), 2) AS attendance_percentage
+FROM EventNote e, json_each(e.childrenAttendance)
+JOIN Child c ON c._id = json_extract(value, &#39;$[0]&#39;)
+WHERE e.category IN (&#39;LEARNING_GROUP&#39;, &#39;PIC&#39;) AND e.date BETWEEN $startDate AND $endDate
+GROUP BY c._id, e.category</code></pre></div><h5>Group by each option of a multi-select dropdown</h5>
+<p>A multi-select (<code>isArray</code>) field is stored as a JSON array of option ids (e.g. <code>[&quot;pizza&quot;, &quot;burger&quot;]</code>).
+To count each selected option individually (a row counts towards every option it includes):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT COALESCE(opt.label, sel.value) AS option, COUNT(*) AS count
+FROM Child c, json_each(c.favoriteFoods) sel
+LEFT JOIN ConfigurableEnumOption opt
+  ON opt.enum_id = &#39;favoriteFoods&#39; AND opt.option_id = sel.value
+WHERE json_valid(c.favoriteFoods)
+GROUP BY option
+ORDER BY count DESC, option</code></pre></div><h5>Combine EventNote and Note rows for a joint query</h5>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT n.subject, n.date FROM (SELECT * FROM EventNote UNION SELECT * FROM Note) n</code></pre></div><p>WARNING: double-check that <code>Config:CONFIG_ENTITY</code> lists the same attributes in the exact same order
+for <code>entity:Note</code> and <code>entity:EventNote</code>.
+Otherwise the two queries will not be merged correctly and some columns may be missing data!</p>
+<h5>Compare multiple records linked to one person (e.g. pre vs. post test results)</h5>
+<p>Count children who have two linked observation records where the &quot;post&quot; value is higher than the &quot;pre&quot; value:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT COUNT(DISTINCT c._id) AS &quot;children who improved&quot;
+FROM Child c
+INNER JOIN HistoricalEntityData hd_pre
+  ON c._id = hd_pre.relatedEntity AND hd_pre.type = &#39;PRE&#39;
+INNER JOIN HistoricalEntityData hd_post
+  ON c._id = hd_post.relatedEntity AND hd_post.type = &#39;POST&#39;
+WHERE hd_post.value &gt; hd_pre.value</code></pre></div><h5>Known limitations</h5>
+<ul>
+<li><code>CONCAT</code> is not supported; use the SQLite <code>||</code> operator instead (e.g. <code>firstname || &#39; &#39; || lastname</code>).</li>
+</ul>
 <h3>JSON-Query Reports (legacy)</h3>
 <h4>Aggregation structure</h4>
 <p>Inside the <code>reportDefinition</code> an array of aggregations can be added.
@@ -292,7 +413,7 @@ E.g., to create an array holding notes and event notes write <code>Note:toArray:
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 2;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
-            var COMPODOC_CURRENT_PAGE_URL = 'create-a-report.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'reports.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 
