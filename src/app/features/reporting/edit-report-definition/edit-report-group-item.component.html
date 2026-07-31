@@ -1,0 +1,103 @@
+<div class="report-node" cdkDrag [cdkDragData]="node()">
+  @if (!isGroup()) {
+    <div class="flex-row align-start gap-small">
+      @if (enabled()) {
+        <fa-icon
+          icon="grip-vertical"
+          class="drag-handle"
+          cdkDragHandle
+        ></fa-icon>
+      }
+      <app-edit-sql-query
+        class="query-editor"
+        [value]="node().query ?? ''"
+        [disabled]="!enabled()"
+        (valueChange)="setQuery($event)"
+      ></app-edit-sql-query>
+      @if (enabled()) {
+        <button
+          mat-icon-button
+          type="button"
+          (click)="deleteItem.emit()"
+          matTooltip="Remove query"
+          i18n-matTooltip
+        >
+          <fa-icon icon="trash"></fa-icon>
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="group-card mat-elevation-z1">
+      <div class="flex-row align-center gap-small">
+        @if (enabled()) {
+          <fa-icon
+            icon="grip-vertical"
+            class="drag-handle"
+            cdkDragHandle
+          ></fa-icon>
+        }
+        <fa-icon icon="layer-group" class="row-icon"></fa-icon>
+        <input
+          class="group-title-input"
+          type="text"
+          [value]="node().groupTitle ?? ''"
+          [disabled]="!enabled()"
+          placeholder="Group title"
+          i18n-placeholder
+          aria-label="Group title"
+          i18n-aria-label
+          (change)="setGroupTitle($event)"
+        />
+        @if (enabled()) {
+          <button
+            mat-icon-button
+            type="button"
+            (click)="addQuery()"
+            matTooltip="Add query to this group"
+            i18n-matTooltip
+          >
+            <fa-icon icon="plus"></fa-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            (click)="addSubGroup()"
+            matTooltip="Add sub-group to this group"
+            i18n-matTooltip
+          >
+            <fa-icon icon="layer-group"></fa-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            (click)="deleteItem.emit()"
+            matTooltip="Remove group"
+            i18n-matTooltip
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        }
+      </div>
+
+      <div
+        class="group-items flex-column gap-small"
+        cdkDropList
+        [id]="node().uniqueId"
+        [cdkDropListData]="node().items"
+        [cdkDropListConnectedTo]="connectedTo()"
+        (cdkDropListDropped)="itemDrop.emit($event)"
+      >
+        @for (child of node().items; track child.uniqueId) {
+          <app-edit-report-group-item
+            [node]="child"
+            [connectedTo]="connectedTo()"
+            [enabled]="enabled()"
+            (itemDrop)="itemDrop.emit($event)"
+            (deleteItem)="removeChild(child)"
+            (nodeChange)="onChildChange($event)"
+          ></app-edit-report-group-item>
+        }
+      </div>
+    </div>
+  }
+</div>

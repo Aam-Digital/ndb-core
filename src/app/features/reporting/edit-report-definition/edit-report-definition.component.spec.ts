@@ -28,6 +28,8 @@ describe("EditReportDefinitionComponent", () => {
   let fixture: ComponentFixture<EditReportDefinitionComponent>;
   let formGroup: UntypedFormGroup;
 
+  const definition = () => formGroup.get("reportDefinition").value;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -54,68 +56,93 @@ describe("EditReportDefinitionComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("uses the structured SQL editor for sql mode", () => {
+  it("uses the structured SQL editor for sql mode and the JSON editor otherwise", () => {
     expect(createWithMode("sql").isSql()).toBe(true);
-  });
-
-  it("falls back to the JSON editor for reporting/exporting mode", () => {
     expect(createWithMode("reporting").isSql()).toBe(false);
     expect(createWithMode("exporting").isSql()).toBe(false);
   });
 
-  it("flattens a nested definition into ordered query and group entries", () => {
+  it("loads an external definition into the working tree", () => {
     formGroup
       .get("reportDefinition")
       .setValue([
         { query: "SELECT a FROM t" },
-        { groupTitle: "G", items: [{ query: "SELECT count(*) FROM t" }] },
+        { groupTitle: "G", items: [{ query: "SELECT b FROM t" }] },
       ]);
     fixture.detectChanges();
 
-    const entries = component.entries();
-    expect(entries.map((e) => e.kind)).toEqual(["query", "group", "query"]);
-    expect(entries[2].depth).toBe(1);
-    expect(entries[2].query).toBe("SELECT count(*) FROM t");
+    const tree = component.uiTree();
+    expect(tree.length).toBe(2);
+    expect(tree[1].items.length).toBe(1);
+    expect(tree[1].items[0].query).toBe("SELECT b FROM t");
   });
 
-  it("adds a query and writes it into the bound form control", () => {
+  it("adds a query and a group at the root and persists to the bound control", () => {
     component.addQuery();
-    expect(component.entries().length).toBe(1);
+    component.addGroup();
 
-    component.setQuery([0], "SELECT 1");
-    expect(component.entries()[0].query).toBe("SELECT 1");
-    // the edited value must reach the bound control so it is persisted on save
-    expect(formGroup.get("reportDefinition").value).toEqual([
-      { query: "SELECT 1" },
+    expect(definition()).toEqual([
+      { query: "" },
+      { groupTitle: "New group", items: [] },
     ]);
     expect(formGroup.get("reportDefinition").dirty).toBe(true);
   });
 
-  it("adds a query and a sub-group into an existing group", () => {
-    component.addGroup();
-    component.addQueryToGroup([0]);
-    component.addSubGroup([0]);
-
-    expect(formGroup.get("reportDefinition").value).toEqual([
-      {
-        groupTitle: "New group",
-        items: [{ query: "" }, { groupTitle: "New group", items: [] }],
-      },
-    ]);
-  });
-
-  it("removes a nested item by path", () => {
+  it("removes a root node", () => {
     formGroup
       .get("reportDefinition")
-      .setValue([
-        { groupTitle: "G", items: [{ query: "q1" }, { query: "q2" }] },
-      ]);
+      .setValue([{ query: "a" }, { query: "b" }]);
     fixture.detectChanges();
 
-    component.remove([0, 1]);
+    component.removeRoot(component.uiTree()[0]);
 
-    expect(component.value).toEqual([
-      { groupTitle: "G", items: [{ query: "q1" }] },
-    ]);
+    expect(definition()).toEqual([{ query: "b" }]);
+  });
+
+  it("persists an edited node coming from a child component", () => {
+    formGroup.get("reportDefinition").setValue([{ query: "a" }]);
+    fixture.detectChanges();
+
+    component.onRootChange({ ...component.uiTree()[0], query: "SELECT 1" });
+
+    expect(definition()).toEqual([{ query: "SELECT 1" }]);
+  });
+
+  it("does not re-mark the control dirty when a change resolves to the current value", () => {
+    formGroup.get("reportDefinition").setValue([{ query: "a" }]);
+    fixture.detectChanges();
+
+    // e.g. a query editor re-emitting its unchanged value as the form value reflows
+    // back into the tree after a save/reset must not re-dirty the saved form
+    component.onRootChange({ ...component.uiTree()[0] });
+
+    expect(formGroup.get("reportDefinition").dirty).toBe(false);
+  });
+
+  it("marks the control dirty before emitting the new value to subscribers", () => {
+    const control = formGroup.get("reportDefinition");
+    let dirtyWhenEmitted: boolean;
+    control.valueChanges.subscribe(() => (dirtyWhenEmitted = control.dirty));
+
+    component.addQuery();
+
+    expect(dirtyWhenEmitted).toBe(true);
+  });
+
+  it("reorders items on drop and persists the new order", () => {
+    formGroup
+      .get("reportDefinition")
+      .setValue([{ query: "a" }, { query: "b" }]);
+    fixture.detectChanges();
+
+    const list = component.uiTree();
+    component.onDrop({
+      previousContainer: { data: list },
+      container: { data: list },
+      previousIndex: 0,
+      currentIndex: 1,
+    } as never);
+
+    expect(definition()).toEqual([{ query: "b" }, { query: "a" }]);
   });
 });

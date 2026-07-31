@@ -11,38 +11,38 @@ import {
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+  transferArrayItem,
+} from "@angular/cdk/drag-drop";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { v4 as uuid } from "uuid";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { ReportDefinitionDto } from "../report-config";
-import { SqlCodeEditorComponent } from "../edit-sql-query/sql-code-editor.component";
 import { JsonEditorComponent } from "#src/app/core/admin/json-editor/json-editor.component";
-
-/** a flattened view of one node in the {@link ReportDefinitionDto} tree, for rendering */
-interface FlatEntry {
-  /** index path from the root array down to this node */
-  path: number[];
-  /** stable key for `@for` tracking (path-based, stable while structure is unchanged) */
-  key: string;
-  depth: number;
-  kind: "group" | "query";
-  query?: string;
-  groupTitle?: string;
-}
+import { EditReportGroupItemComponent } from "./edit-report-group-item.component";
+import {
+  groupNodeIds,
+  ReportDefinitionUiNode,
+  toReportDefinition,
+  toUiNodes,
+} from "./report-definition-ui-node";
 
 /**
  * Structured editor for a SQL report's `reportDefinition` tree
  * (`{ query?, groupTitle?, items? }[]`, see {@link ReportDefinitionDto}).
  *
- * Each query is edited in its own {@link SqlCodeEditorComponent} (syntax-highlighted),
- * groups show an editable title, and items can be added/removed. The recursive tree is
- * flattened for rendering and updated immutably by path, so no component self-recursion
- * is required and arbitrary nesting depth is supported.
+ * The tree is rendered recursively via {@link EditReportGroupItemComponent}: each query is a
+ * syntax-highlighted editor and each group is a drop target, so queries and groups can be
+ * added, removed, and dragged & dropped between any nesting level. For non-"sql" modes the
+ * definition is edited as raw JSON instead.
  */
 @DynamicComponent("EditReportDefinition")
 @Component({
@@ -51,12 +51,12 @@ interface FlatEntry {
   styleUrl: "./edit-report-definition.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SqlCodeEditorComponent,
-    JsonEditorComponent,
     ReactiveFormsModule,
+    DragDropModule,
     MatButtonModule,
-    MatTooltipModule,
     FontAwesomeModule,
+    JsonEditorComponent,
+    EditReportGroupItemComponent,
   ],
   providers: [
     {
@@ -77,13 +77,17 @@ export class EditReportDefinitionComponent
   private readonly mode = signal<string | undefined>(undefined);
   readonly isSql = computed<boolean>(() => this.mode() === "sql");
 
-  /** working copy of the definition tree */
-  private readonly tree = signal<ReportDefinitionDto[]>([]);
-  /** JSON of the last value synced in either direction, to break the value<->tree loop */
+  /** id of the top-level drop list */
+  readonly rootDropListId = "report-definition-root";
+
+  /** working copy of the definition tree as UI nodes (carrying transient drag-drop ids) */
+  readonly uiTree = signal<ReportDefinitionUiNode[]>([]);
+  /** JSON of the last definition synced in either direction, to break the value<->tree loop */
   private lastSync = "";
 
-  readonly entries = computed<FlatEntry[]>(() =>
-    this.flatten(this.tree(), 0, []),
+  /** every drop target (root + all groups), so items can be dragged between any of them */
+  readonly connectedDropLists = computed<string[]>(() =>
+    [this.rootDropListId, ...groupNodeIds(this.uiTree())].reverse(),
   );
 
   constructor() {
@@ -92,11 +96,11 @@ export class EditReportDefinitionComponent
     // mirror external value changes (form load/reset) into the working tree
     effect(() => {
       const value = this.valueSignal();
-      const arr = Array.isArray(value) ? value : [];
+      const arr = Array.isArray(value) ? (value as ReportDefinitionDto[]) : [];
       const json = JSON.stringify(arr);
       if (json !== this.lastSync) {
         this.lastSync = json;
-        this.tree.set(arr);
+        this.uiTree.set(toUiNodes(arr));
       }
     });
   }
@@ -113,123 +117,70 @@ export class EditReportDefinitionComponent
     }
   }
 
-  // -- mutations -----------------------------------------------------------
-
-  setQuery(path: number[], query: string): void {
-    this.commit(
-      this.mapAtPath(this.tree(), path, (item) => ({ ...item, query })),
-    );
-  }
-
-  setGroupTitle(path: number[], event: Event): void {
-    const groupTitle = (event.target as HTMLInputElement).value;
-    this.commit(
-      this.mapAtPath(this.tree(), path, (item) => ({ ...item, groupTitle })),
-    );
-  }
-
-  remove(path: number[]): void {
-    this.commit(this.removeAtPath(this.tree(), path));
-  }
-
   addQuery(): void {
-    this.commit([...this.tree(), { query: "" }]);
+    this.uiTree.update((tree) => [...tree, { uniqueId: uuid(), query: "" }]);
+    this.persist();
   }
 
   addGroup(): void {
-    this.commit([
-      ...this.tree(),
-      { groupTitle: $localize`:ReportConfig:New group`, items: [] },
+    this.uiTree.update((tree) => [
+      ...tree,
+      { uniqueId: uuid(), groupTitle: $localize`:ReportConfig:New group`, items: [] },
     ]);
+    this.persist();
   }
 
-  /** append a new empty query to the group at the given path */
-  addQueryToGroup(path: number[]): void {
-    this.addToGroup(path, { query: "" });
-  }
-
-  /** append a new empty sub-group to the group at the given path */
-  addSubGroup(path: number[]): void {
-    this.addToGroup(path, {
-      groupTitle: $localize`:ReportConfig:New group`,
-      items: [],
-    });
-  }
-
-  private addToGroup(path: number[], node: ReportDefinitionDto): void {
-    this.commit(
-      this.mapAtPath(this.tree(), path, (group) => ({
-        ...group,
-        items: [...(group.items ?? []), node],
-      })),
+  removeRoot(node: ReportDefinitionUiNode): void {
+    this.uiTree.update((tree) =>
+      tree.filter((n) => n.uniqueId !== node.uniqueId),
     );
+    this.persist();
   }
 
-  // -- tree helpers --------------------------------------------------------
-
-  private commit(next: ReportDefinitionDto[]): void {
-    this.lastSync = JSON.stringify(next);
-    this.tree.set(next);
-    // Write through the bound FormControl directly: as a dynamically-created edit component
-    // its `onChange` is never registered, so `this.value = …` would not reach the form and
-    // the edit would be lost on save.
-    this.formControl?.setValue(next);
-    this.formControl?.markAsDirty();
+  onRootChange(updated: ReportDefinitionUiNode): void {
+    this.uiTree.update((tree) =>
+      tree.map((n) => (n.uniqueId === updated.uniqueId ? updated : n)),
+    );
+    this.persist();
   }
 
-  private flatten(
-    items: ReportDefinitionDto[],
-    depth: number,
-    parent: number[],
-  ): FlatEntry[] {
-    const out: FlatEntry[] = [];
-    items.forEach((item, i) => {
-      const path = [...parent, i];
-      const key = path.join(".");
-      if (Array.isArray(item.items)) {
-        out.push({
-          path,
-          key,
-          depth,
-          kind: "group",
-          groupTitle: item.groupTitle,
-        });
-        out.push(...this.flatten(item.items, depth + 1, path));
-      } else {
-        out.push({ path, key, depth, kind: "query", query: item.query });
-      }
-    });
-    return out;
-  }
-
-  private mapAtPath(
-    items: ReportDefinitionDto[],
-    path: number[],
-    update: (item: ReportDefinitionDto) => ReportDefinitionDto,
-  ): ReportDefinitionDto[] {
-    const [head, ...rest] = path;
-    return items.map((item, i) => {
-      if (i !== head) {
-        return item;
-      }
-      return rest.length === 0
-        ? update(item)
-        : { ...item, items: this.mapAtPath(item.items ?? [], rest, update) };
-    });
-  }
-
-  private removeAtPath(
-    items: ReportDefinitionDto[],
-    path: number[],
-  ): ReportDefinitionDto[] {
-    const [head, ...rest] = path;
-    if (rest.length === 0) {
-      return items.filter((_, i) => i !== head);
+  onDrop(event: CdkDragDrop<ReportDefinitionUiNode[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
     }
-    return items.map((item, i) =>
-      i === head
-        ? { ...item, items: this.removeAtPath(item.items ?? [], rest) }
-        : item,
-    );
+    // CdkDrag mutates the (nested) arrays in place; deep-clone to publish new references so
+    // the recursive `node` inputs pick up the change, then persist the new structure.
+    this.uiTree.set(structuredClone(this.uiTree()));
+    this.persist();
+  }
+
+  private persist(): void {
+    const definition = toReportDefinition(this.uiTree());
+    const json = JSON.stringify(definition);
+    // Ignore no-op writes: as the bound value reflows back into the tree (e.g. after a
+    // save/reset), the recursive nodes re-emit their unchanged value, which would otherwise
+    // re-mark a pristine form dirty. `lastSync` is the value last synced in either direction,
+    // so an identical result means nothing actually changed.
+    if (json === this.lastSync) {
+      return;
+    }
+    this.lastSync = json;
+    // Mark dirty before writing the value: the form's `valueChanges` subscriber reads the
+    // dirty state synchronously when `setValue` emits, so it must already be up to date.
+    // Write through the bound FormControl directly: as a dynamically-created edit component
+    // its `onChange` is never registered, so `this.value = …` would not reach the form.
+    this.formControl?.markAsDirty();
+    this.formControl?.setValue(definition);
   }
 }
