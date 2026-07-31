@@ -13996,7 +13996,7 @@ Supports JSON arrays and separator-delimited strings.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>testEntitySubclass(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entityClass: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, expectedDatabaseFormat: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, skipTestbedConfiguration: unknown)</code>
+<code>testEntitySubclass(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entityClass: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, expectedDatabaseFormat: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, skipTestbedConfiguration: unknown, additionalProviders)</code>
                 </td>
             </tr>
 
@@ -14018,6 +14018,7 @@ Supports JSON arrays and separator-delimited strings.</p>
                                                 <td>Type</td>
                                             <td>Optional</td>
                                                 <td>Default value</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -14034,6 +14035,8 @@ Supports JSON arrays and separator-delimited strings.</p>
                                             <td>
                                             </td>
 
+                                            <td>
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>entityClass</td>
@@ -14048,6 +14051,8 @@ Supports JSON arrays and separator-delimited strings.</p>
                                             <td>
                                             </td>
 
+                                            <td>
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>expectedDatabaseFormat</td>
@@ -14062,6 +14067,8 @@ Supports JSON arrays and separator-delimited strings.</p>
                                             <td>
                                             </td>
 
+                                            <td>
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>skipTestbedConfiguration</td>
@@ -14077,6 +14084,28 @@ Supports JSON arrays and separator-delimited strings.</p>
                                                     <code>false</code>
                                             </td>
 
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>additionalProviders</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>[]</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>the datatypes (and their dependencies) used by the entity&#39;s schema.
+Provide the individual <code>DefaultDatatype</code> implementations rather than a module, so the spec
+does not boot the whole AppModule - see #4192.</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
