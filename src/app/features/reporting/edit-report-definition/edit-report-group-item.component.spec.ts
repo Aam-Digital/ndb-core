@@ -26,7 +26,9 @@ describe("EditReportGroupItemComponent", () => {
   });
 
   it("distinguishes query nodes from group nodes", () => {
-    expect(create({ uniqueId: "q", query: "" }).component.isGroup()).toBe(false);
+    expect(create({ uniqueId: "q", query: "" }).component.isGroup()).toBe(
+      false,
+    );
     expect(
       create({ uniqueId: "g", groupTitle: "G", items: [] }).component.isGroup(),
     ).toBe(true);

@@ -125,7 +125,11 @@ export class EditReportDefinitionComponent
   addGroup(): void {
     this.uiTree.update((tree) => [
       ...tree,
-      { uniqueId: uuid(), groupTitle: $localize`:ReportConfig:New group`, items: [] },
+      {
+        uniqueId: uuid(),
+        groupTitle: $localize`:ReportConfig:New group`,
+        items: [],
+      },
     ]);
     this.persist();
   }
