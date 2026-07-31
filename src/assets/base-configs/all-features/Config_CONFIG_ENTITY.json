@@ -1343,12 +1343,6 @@
           "label": "Linked School",
           "anonymize": "retain"
         },
-        "responsibleUser": {
-          "dataType": "entity",
-          "additional": "User",
-          "label": "Responsible User",
-          "anonymize": "retain"
-        },
         "center": {
           "dataType": "configurable-enum",
           "additional": "center",
