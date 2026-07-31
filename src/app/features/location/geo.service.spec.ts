@@ -225,4 +225,46 @@ describe("GeoService", () => {
 
     expect(caughtError).toBe(err);
   });
+
+  it("should compose an address string from structured parts", () => {
+    expect(
+      service.composeAddressFromParts({
+        road: "Main St",
+        house_number: "42",
+        postcode: "12345",
+        city: "Berlin",
+        country: "Germany",
+      }),
+    ).toBe("Main St 42, 12345 Berlin");
+  });
+
+  it("should compose the same format as a lookup's display_name, so the two can match", () => {
+    const lookup = service.reformatDisplayName(
+      createSearchResult({
+        road: "Main St",
+        house_number: "42",
+        postcode: "12345",
+        city: "Berlin",
+        country: "Germany",
+      }),
+    );
+
+    expect(service.composeAddressFromParts(lookup.address)).toBe(
+      lookup.display_name,
+    );
+  });
+
+  it("should compose an address string when some parts are missing", () => {
+    expect(
+      service.composeAddressFromParts({
+        road: "Main St",
+        city: "Berlin",
+      }),
+    ).toBe("Main St, Berlin");
+  });
+
+  it("should return an empty string when composing from no parts", () => {
+    expect(service.composeAddressFromParts({})).toBe("");
+    expect(service.composeAddressFromParts(undefined)).toBe("");
+  });
 });

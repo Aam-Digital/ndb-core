@@ -110,7 +110,7 @@
   @if (!!eventEntityType()) {
     <app-entities-table
       [entityType]="eventEntityType()"
-      [records]="eventEntities()"
+      [recordsDataSource]="dataSource"
       [customColumns]="eventsColumns"
       clickMode="none"
       (entityClick)="showEventDetails($event)"

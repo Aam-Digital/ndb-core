@@ -23,6 +23,14 @@ jobs:
     with:
       is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
+  # e2e runs on every PR push without screenshots (no ARGOS_TOKEN passed).
+  # Argos visual regression is opt-in via the 'Final Review' label
+  # (see label-triggered-review.yml).
+  qa-e2e:
+    uses: ./.github/workflows/_qa-e2e.yaml
+    with:
+      is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+
   build:
     uses: ./.github/workflows/_build.yaml
     secrets: inherit

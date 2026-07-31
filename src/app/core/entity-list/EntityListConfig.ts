@@ -1,6 +1,5 @@
 import { FilterSelectionOption } from "../filter/filters/filters";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
-import { ExportColumnConfig } from "../export/data-transformation-service/export-column-config";
 import { Sort } from "@angular/material/sort";
 import { unitOfTime } from "moment";
 
@@ -41,11 +40,6 @@ export interface EntityListConfig {
    * Default is to sort by the first column.
    */
   defaultSort?: Sort;
-
-  /**
-   * Optional config defining what fields are included in exports.
-   */
-  exportConfig?: ExportColumnConfig[];
 }
 
 export interface ColumnGroupsConfig {

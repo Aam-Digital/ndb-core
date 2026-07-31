@@ -102,6 +102,19 @@ describe("KeycloakAdminService", () => {
     emailReq.flush({});
   });
 
+  it("should resend invitation email with VERIFY_EMAIL action", async () => {
+    service.resendInvitation("test-id").subscribe();
+
+    const emailReq = httpTestingController.expectOne(
+      (req) =>
+        req.url === `${BASE_URL}/users/test-id/execute-actions-email` &&
+        req.method === "PUT",
+    );
+    expect(emailReq.request.body).toEqual(["VERIFY_EMAIL"]);
+    expect(emailReq.request.params.get("client_id")).toBe("app");
+    emailReq.flush({});
+  });
+
   it("should log debug if user does not exist in Keycloak during deletion", async () => {
     const warnSpy = vi.spyOn(Logging, "debug");
 

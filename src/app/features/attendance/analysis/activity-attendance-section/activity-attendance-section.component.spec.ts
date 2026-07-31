@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceService } from "../../attendance.service";
 import { DatePipe, PercentPipe } from "@angular/common";
@@ -32,9 +31,17 @@ describe("ActivityAttendanceSectionComponent", () => {
       wrapEventEntity: vi
         .fn()
         .mockName("mockAttendanceService.wrapEventEntity"),
+      getLatestEventDate: vi
+        .fn()
+        .mockName("mockAttendanceService.getLatestEventDate"),
+      getEarliestEventDate: vi
+        .fn()
+        .mockName("mockAttendanceService.getEarliestEventDate"),
       eventTypes: vi.fn().mockReturnValue([]),
     };
     mockAttendanceService.getActivityAttendances.mockResolvedValue(testRecords);
+    mockAttendanceService.getLatestEventDate.mockResolvedValue(undefined);
+    mockAttendanceService.getEarliestEventDate.mockResolvedValue(undefined);
     TestBed.configureTestingModule({
       imports: [
         ActivityAttendanceSectionComponent,
@@ -61,25 +68,88 @@ describe("ActivityAttendanceSectionComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should init recent records by default", async () => {
-    await fixture.whenStable();
+  it("should init recent records by default", () => {
+    TestBed.tick();
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
       expect.any(Date),
     );
-    expect(component.records()).toEqual(testRecords);
+    expect(component.dataSource.allRecords()).toEqual(testRecords);
   });
 
   it("should init all records", async () => {
     component.loadAll.set(true);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
     );
-    expect(component.records()).toEqual(testRecords);
+    expect(component.dataSource.allRecords()).toEqual(testRecords);
+  });
+
+  it("should fall back to loading the most recent month if no records in default range", async () => {
+    const latestEventDate = moment()
+      .subtract(2, "years")
+      .startOf("month")
+      .add(10, "days")
+      .toDate();
+    const oldRecords = [ActivityAttendance.create(latestEventDate, [])];
+    mockAttendanceService.getActivityAttendances.mockImplementation(
+      async (_entity, from?: Date) =>
+        from && moment(from).isAfter(latestEventDate) ? [] : oldRecords,
+    );
+    mockAttendanceService.getLatestEventDate.mockResolvedValue(latestEventDate);
+
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.dataSource.allRecords()).toEqual(oldRecords);
+    expect(component.isFallbackToOlder()).toBe(true);
+    expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
+      testActivity,
+      moment(latestEventDate).startOf("month").toDate(),
+    );
+  });
+
+  it("should not fall back if activity has no events at all", async () => {
+    mockAttendanceService.getActivityAttendances.mockResolvedValue([]);
+    mockAttendanceService.getLatestEventDate.mockResolvedValue(undefined);
+
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.dataSource.allRecords()).toEqual([]);
+    expect(component.isFallbackToOlder()).toBe(false);
+  });
+
+  it("should only offer to load more records if older events exist", async () => {
+    mockAttendanceService.getEarliestEventDate.mockResolvedValue(
+      moment().subtract(3, "years").toDate(),
+    );
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.hasMoreRecords()).toBe(true);
+
+    mockAttendanceService.getEarliestEventDate.mockResolvedValue(
+      moment().subtract(1, "month").toDate(),
+    );
+    component.attendanceData.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.hasMoreRecords()).toBe(false);
+
+    component.loadAll.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.hasMoreRecords()).toBe(false);
   });
 
   it("should also display records without participation if toggled", async () => {
@@ -100,12 +170,14 @@ describe("ActivityAttendanceSectionComponent", () => {
     mockAttendanceService.getActivityAttendances.mockResolvedValue(allRecords);
     component.attendanceData.reload();
     fixture.detectChanges();
-    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
 
-    expect(component.records()).toEqual([allRecords[2]]);
+    expect(component.dataSource.allRecords()).toEqual([allRecords[2]]);
 
     component.includeWithoutParticipation.set(true);
-    expect(component.records()).toHaveLength(3);
+    TestBed.tick();
+    expect(component.dataSource.allRecords()).toHaveLength(3);
   });
 
   it("should combine all activity attendances to have an all-time overview", async () => {

@@ -1,18 +1,14 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
-import { Subject } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { Entity } from "../../entity/model/entity";
-import { UpdatedEntity } from "../../entity/model/entity-update";
 import { RelatedEntitiesComponent } from "./related-entities.component";
 
 describe("RelatedEntitiesComponent", () => {
@@ -84,38 +80,6 @@ describe("RelatedEntitiesComponent", () => {
 
     expect(newEntity instanceof TestEntity).toBe(true);
     expect(newEntity["ref"]).toBe(related.getId());
-  });
-
-  it("should add a new entity that was created after the initial loading to the table", async () => {
-    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
-    fixture.componentRef.setInput("entity", new TestEntity());
-    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
-    fixture.componentRef.setInput("property", "ref");
-    await initComponent();
-
-    const entity = new TestEntity();
-    entityUpdates.next({ entity: entity, type: "new" });
-
-    expect(component.data()).toEqual([entity]);
-  });
-
-  it("should remove an entity from the table when it has been deleted", async () => {
-    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
-
-    const entity = new TestEntity();
-    fixture.componentRef.setInput("entity", new TestEntity());
-    fixture.componentRef.setInput("entityType", entity.getType());
-    fixture.componentRef.setInput("property", "ref");
-    await initComponent();
-    component.data.set([entity]);
-
-    entityUpdates.next({ entity: entity, type: "remove" });
-
-    expect(component.data()).toEqual([]);
   });
 
   it("should support multiple related properties", async () => {
@@ -349,6 +313,7 @@ describe("RelatedEntitiesComponent", () => {
     expect(mockLoaderService.loadDataFor).toHaveBeenCalledWith(
       LoaderMethod.ChildrenServiceQueryRelations,
       child,
+      "childId",
     );
   });
 });

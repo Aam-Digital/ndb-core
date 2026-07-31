@@ -270,6 +270,7 @@
             <app-configure-entity-field-validator
               [entitySchemaField]="data.entitySchemaField"
               (entityValidatorChanges)="entityFieldValidatorChanges($event)"
+              (entitySchemaFieldChanges)="onEntitySchemaFieldChanges($event)"
             ></app-configure-entity-field-validator>
           </div>
         </div>

@@ -47,5 +47,18 @@
         i18n-text="import - multi-value separator - help text"
       ></app-help-button>
     </div>
+    <div class="settings-row flex-row align-center gap-small">
+      <mat-checkbox
+        [ngModel]="trimValues()"
+        (ngModelChange)="onTrimValuesChange($event)"
+        i18n
+      >
+        Trim leading/trailing spaces from values
+      </mat-checkbox>
+      <app-help-button
+        text="Automatically remove leading and trailing spaces from all text values during import."
+        i18n-text="import - trim values - help text"
+      ></app-help-button>
+    </div>
   </mat-expansion-panel>
 }

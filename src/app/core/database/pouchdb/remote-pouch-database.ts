@@ -11,6 +11,7 @@ import { timer } from "rxjs";
 import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -112,10 +113,11 @@ export class RemotePouchDatabase extends PouchDatabase {
 
   /**
    * Per-request timeout in ms for READ requests only. If the server sends no
-   * response within this window, the read fetch is aborted (and retried). This
-   * prevents long-idle connections from being killed unpredictably by Chrome
-   * (ERR_NETWORK_CHANGED) or proxies. Writes are never aborted or retried — see
-   * fetchWithTransientRetry.
+   * response within this window, the read fetch is aborted (and retried at the
+   * operation level by {@link withReadRetry}). This prevents long-idle
+   * connections from being killed unpredictably by Chrome (ERR_NETWORK_CHANGED)
+   * or proxies. Writes are never aborted or retried — see
+   * {@link fetchWithTimeout}.
    */
   private readonly FETCH_TIMEOUT_MS = 15000;
 
@@ -138,7 +140,7 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     let result: Response;
     try {
-      result = await this.fetchWithTransientRetry(remoteUrl, opts);
+      result = await this.fetchWithTimeout(remoteUrl, opts);
     } catch (err) {
       Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
@@ -200,20 +202,57 @@ export class RemotePouchDatabase extends PouchDatabase {
   };
 
   /**
-   * Fetch with automatic retry for transient network errors (e.g. ERR_NETWORK_CHANGED)
-   * and a per-request timeout to abort long-idle connections cleanly.
-   * Network errors manifest as TypeErrors from the Fetch API.
+   * Retry idempotent reads that fail with a transient network error
+   * (e.g. an abort/timeout on a connection gone stale after the tab was
+   * suspended, or ERR_NETWORK_CHANGED).
    *
-   * Only safe/idempotent read methods (GET, HEAD) get the abort timeout and the
-   * transient-error retry. Non-idempotent writes (PUT, POST, DELETE) are run
-   * exactly once with no client-side timeout: a write may have already committed
-   * on the server even when the client never sees the response, so aborting or
-   * retrying it can turn a "create" into a forbidden "update" (the public role is
-   * create-only) or create a duplicate — surfacing as spurious "unauthorized"
-   * errors. Letting the write run to completion ensures the client reliably
-   * learns the new `_rev`.
+   * Retrying lives here, at the operation level, rather than in the fetch
+   * wrapper: {@link fetchWithTimeout} can only abort while acquiring the
+   * response headers, but an abort during response-body streaming surfaces
+   * after the fetch has returned — outside the wrapper's reach. Re-issuing the
+   * whole read (fresh fetch and body) recovers both cases transparently.
+   * Only reads route through this hook; writes must run exactly once
+   * (see {@link fetchWithTimeout}).
    */
-  private async fetchWithTransientRetry(
+  protected override async withReadRetry<T>(
+    operation: () => Promise<T>,
+  ): Promise<T> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await operation();
+      } catch (err) {
+        if (
+          !isConnectivityError(err) ||
+          attempt >= this.TRANSIENT_ERROR_RETRIES
+        ) {
+          throw err;
+        }
+        Logging.debug(
+          `Transient DB read error (attempt ${attempt + 1}/${this.TRANSIENT_ERROR_RETRIES}), retrying...`,
+          err,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.TRANSIENT_ERROR_DELAY_MS),
+        );
+      }
+    }
+  }
+
+  /**
+   * Fetch a request with a per-request timeout so a hung/stale connection is
+   * aborted cleanly instead of hanging indefinitely (e.g. after the tab was
+   * suspended, or ERR_NETWORK_CHANGED). The abort surfaces as a transient
+   * error that {@link withReadRetry} retries at the operation level.
+   *
+   * Only safe/idempotent read methods (GET, HEAD) get the abort timeout.
+   * Non-idempotent writes (PUT, POST, DELETE) are run exactly once with no
+   * client-side timeout: a write may have already committed on the server even
+   * when the client never sees the response, so aborting it can turn a "create"
+   * into a forbidden "update" (the public role is create-only) or create a
+   * duplicate — surfacing as spurious "unauthorized" errors. Letting the write
+   * run to completion ensures the client reliably learns the new `_rev`.
+   */
+  private async fetchWithTimeout(
     url: string,
     opts: RequestInit,
   ): Promise<Response> {
@@ -221,35 +260,19 @@ export class RemotePouchDatabase extends PouchDatabase {
     const isSafeMethod = method === "GET" || method === "HEAD";
 
     if (!isSafeMethod) {
-      // Write: run once, to completion, without abort timeout or retry.
+      // Write: run once, to completion, without abort timeout.
       return PouchDB.fetch(url, opts);
     }
 
-    for (let attempt = 0; ; attempt++) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(
-        () => controller.abort(),
-        this.FETCH_TIMEOUT_MS,
-      );
-      try {
-        const fetchOpts = { ...opts, signal: controller.signal };
-        return await PouchDB.fetch(url, fetchOpts);
-      } catch (err) {
-        const isTransient =
-          err instanceof TypeError || err?.name === "AbortError";
-        if (!isTransient || attempt >= this.TRANSIENT_ERROR_RETRIES) {
-          throw err;
-        }
-        Logging.debug(
-          `Transient network error (attempt ${attempt + 1}/${this.TRANSIENT_ERROR_RETRIES}), retrying...`,
-          err,
-        );
-        await new Promise((resolve) =>
-          setTimeout(resolve, this.TRANSIENT_ERROR_DELAY_MS),
-        );
-      } finally {
-        clearTimeout(timeoutId);
-      }
+    const controller = new AbortController();
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      this.FETCH_TIMEOUT_MS,
+    );
+    try {
+      return await PouchDB.fetch(url, { ...opts, signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 

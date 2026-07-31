@@ -490,6 +490,19 @@ const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
+const removeExportConfig: ConfigMigration = (key, configPart) => {
+  if (
+    configPart &&
+    typeof configPart === "object" &&
+    !Array.isArray(configPart) &&
+    "exportConfig" in configPart
+  ) {
+    delete configPart.exportConfig;
+  }
+
+  return configPart;
+};
+
 /**
  * All temporary config migrations that fix legacy data formats.
  * Applied by both ConfigService (Angular app) and the admin CLI.
@@ -517,6 +530,7 @@ export const configMigrations: ConfigMigration[] = [
   migrateNotesManagerComponent,
   removeConfigRoutesMigratedToFixedFeatures,
   migrateAttendanceRecurringActivityRoute,
+  removeExportConfig,
 ];
 
 /**

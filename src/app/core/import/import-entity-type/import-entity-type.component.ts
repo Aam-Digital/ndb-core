@@ -1,6 +1,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  inject,
   model,
   signal,
 } from "@angular/core";
@@ -10,6 +11,8 @@ import { HelpButtonComponent } from "../../common-components/help-button/help-bu
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { EntityTypeSelectComponent } from "../../entity/entity-type-select/entity-type-select.component";
+import { EntityConstructor } from "../../entity/model/entity";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 /**
  * Import sub-step: Let user select which entity type data should be imported as.
@@ -29,6 +32,8 @@ import { EntityTypeSelectComponent } from "../../entity/entity-type-select/entit
   ],
 })
 export class ImportEntityTypeComponent {
+  private readonly ability = inject(EntityAbility);
+
   /** user selected entity type */
   entityType = model<string>();
 
@@ -36,6 +41,9 @@ export class ImportEntityTypeComponent {
    * Whether to show all, including administrative, entity types for selection.
    */
   expertMode = signal(false);
+
+  hideTypeOption = (type: EntityConstructor) =>
+    this.ability.initialized && this.ability.cannot("create", type);
 
   onSelectedTypeChange(newType) {
     this.entityType.set(newType);

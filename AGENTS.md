@@ -138,7 +138,7 @@ export class ExampleComponent {
 - Implement proper permissions checking via CASL integration.
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
 - Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
-- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests
+- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. The unit-test runner is non-isolated, so mutating a shared entity's schema without restoring it leaks into other specs and causes order-dependent flaky failures
 - See `doc/compodoc_sources/how-to-guides/` for detailed guides on entities, datatypes, and more
 
 ### Configuration System
@@ -208,6 +208,26 @@ When developing new functionality:
 - Run the full CI-style unit test suite with coverage: `npm run test-ci`
 - See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
 
+#### Shared state between spec files
+
+The unit-test runner is **not** isolated: the Angular builder leaves Vitest's `isolate`
+at `false`, so every spec file in a worker shares one module registry, one `environment`
+singleton, one TestBed — and one jsdom `localStorage`. Anything a spec mutates and does
+not restore leaks into whichever file runs next, so the damage surfaces in an innocent
+spec and moves between runs.
+
+Practical rules:
+
+- **Never stub a shared prototype.** `vi.spyOn(Storage.prototype, ...)` and friends patch
+  an object owned by the worker process, so even `isolate: true` would not undo it. Inject
+  a fake instead — for storage, provide [`LOCAL_STORAGE_TOKEN`](src/app/utils/di-tokens.ts)
+  with [`createFakeStorage()`](src/app/utils/test-utils/fake-storage.ts).
+- **Restore from a hook, not the end of a test body**, so the restore still runs when an
+  assertion fails partway through.
+- **Register every entity type a spec relies on** by importing the model (the
+  `@DatabaseEntity` decorator registers it). Do not depend on another spec file having
+  imported it.
+
 ### End-to-End Testing (Playwright)
 
 - Run tests: `npm run e2e`
@@ -228,6 +248,17 @@ For CI-style runs with coverage, results are written to `coverage/` (lcov format
 - Provide demo data generators for new entities
 - Use `@faker-js/faker` for realistic test data
 - Follow existing demo data patterns in `core/demo-data/`
+
+---
+
+## Public GitHub Content (PRs, Issues, Comments, Commit Messages)
+
+This repository is public. Never include customer/project-identifying information or other
+production-system-specific data in anything posted to GitHub — no deployment/instance names,
+server hostnames, external partner URLs, user identifiers, or real record data. Share only
+generalized insights instead (e.g. "a large production instance", "an external webhook
+consumer"). Scrub quoted log or monitoring output before posting. Links to access-restricted
+internal tools (e.g. Sentry issues) are acceptable.
 
 ---
 

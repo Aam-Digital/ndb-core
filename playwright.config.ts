@@ -25,8 +25,10 @@ export default defineConfig({
     [
       "@argos-ci/playwright/reporter",
       {
-        // Let Argos reporter handle uploads (it handles retries automatically)
-        uploadToArgos: !!process.env.CI,
+        // Let Argos reporter handle uploads (it handles retries automatically).
+        // Only upload when an Argos token is present, so e2e can run on every PR
+        // without screenshots and upload only in the label-triggered review flow.
+        uploadToArgos: !!process.env.CI && !!process.env.ARGOS_TOKEN,
         // Don't fail the e2e run if Argos upload fails (e.g. plan quota reached).
         // Undocumented option, see https://github.com/argos-ci/argos-javascript/pull/268
         ignoreUploadFailures: true,

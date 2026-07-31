@@ -1,7 +1,8 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { SessionInfo } from "../session-info";
 import { environment } from "../../../../../environments/environment";
 import { SessionType } from "../../session-type";
+import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
 
 /**
  * Manages the offline login.
@@ -10,6 +11,7 @@ import { SessionType } from "../../session-type";
   providedIn: "root",
 })
 export class LocalAuthService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly STORED_USER_PREFIX = "USER-";
 
   /**
@@ -17,12 +19,18 @@ export class LocalAuthService {
    * Users without a local IndexedDB are filtered out (e.g. stale entries from online-only logins).
    */
   async getStoredUsers(): Promise<SessionInfo[]> {
-    const users: SessionInfo[] = Object.entries(localStorage)
+    const users: SessionInfo[] = Object.entries(this.localStorage)
       .filter(([key]) => key.startsWith(this.STORED_USER_PREFIX))
       .map(([_, user]) => JSON.parse(user));
 
     if (users.length === 0) {
       return [];
+    }
+
+    // Mock (demo) mode uses the in-memory PouchDB adapter, so no IndexedDB
+    // database exists to check against. Return all stored users directly.
+    if (environment.session_type === SessionType.mock) {
+      return users;
     }
 
     const existingDbNames = await this.listIndexedDbNames();
@@ -55,7 +63,7 @@ export class LocalAuthService {
     }
     // If API is not available, allow all stored users (safe fallback)
     return new Set(
-      Object.entries(localStorage)
+      Object.entries(this.localStorage)
         .filter(([key]) => key.startsWith(this.STORED_USER_PREFIX))
         .map(([_, user]) => {
           const u: SessionInfo = JSON.parse(user);
@@ -72,7 +80,7 @@ export class LocalAuthService {
     if (environment.session_type === SessionType.online) {
       return;
     }
-    localStorage.setItem(
+    this.localStorage.setItem(
       this.STORED_USER_PREFIX + user.name,
       JSON.stringify(user),
     );

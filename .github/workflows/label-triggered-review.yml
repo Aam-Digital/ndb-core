@@ -1,6 +1,6 @@
 name: Label Triggered Review
 # Runs E2E + Argos visual review when 'Final Review' label is applied.
-# CodeRabbit is triggered separately via .coderabbit.yaml (same label).
+# CodeRabbit is on-demand only: comment "@coderabbitai review" to trigger it.
 
 on:
   pull_request:

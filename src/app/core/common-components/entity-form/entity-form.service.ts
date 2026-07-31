@@ -6,6 +6,7 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
+import { PermissionConditionValidatorsService } from "./dynamic-form-validators/permission-condition-validators";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
@@ -18,6 +19,7 @@ import {
   EntityFormSavedEvent,
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
+import { asArray } from "app/utils/asArray";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -29,6 +31,9 @@ export class EntityFormService {
   private entityMapper = inject(EntityMapperService);
   private entitySchemaService = inject(EntitySchemaService);
   private dynamicValidator = inject(DynamicValidatorsService);
+  private readonly permissionConditionValidators = inject(
+    PermissionConditionValidatorsService,
+  );
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
@@ -142,9 +147,17 @@ export class EntityFormService {
       .subscribe(() =>
         this.unsavedChanges.setUnsavedChanges(entityForm, typedFormGroup.dirty),
       );
-    destroyRef.onDestroy(() =>
-      this.unsavedChanges.setUnsavedChanges(entityForm, false),
-    );
+    // The caller's view may already be destroyed by the time this async form
+    // finishes being created (e.g. navigated away while the form was still loading).
+    // `onDestroy` throws NG0911 in that case, so check `destroyed` first, the same
+    // way `takeUntilDestroyed` (used above) guards against it internally.
+    if (destroyRef.destroyed) {
+      this.unsavedChanges.setUnsavedChanges(entityForm, false);
+    } else {
+      destroyRef.onDestroy(() =>
+        this.unsavedChanges.setUnsavedChanges(entityForm, false),
+      );
+    }
 
     if (withDefaultValues) {
       await this.defaultValueService.handleEntityForm(entityForm, entity);
@@ -174,7 +187,7 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy);
+      this.addFormControlConfig(formConfig, f, copy, withPermissionCheck);
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
@@ -202,6 +215,7 @@ export class EntityFormService {
     formConfig: { [key: string]: FormControl },
     field: FormFieldConfig,
     entity: Entity,
+    withPermissionCheck: boolean,
   ) {
     let value = entity[field.id];
 
@@ -213,6 +227,19 @@ export class EntityFormService {
         field.id,
       );
       Object.assign(controlOptions, validators);
+    }
+
+    if (withPermissionCheck) {
+      const conditionValidator = this.permissionConditionValidators.forField(
+        entity,
+        field.id,
+      );
+      if (conditionValidator) {
+        controlOptions.validators = [
+          ...asArray(controlOptions.validators ?? []),
+          conditionValidator,
+        ];
+      }
     }
 
     formConfig[field.id] = new FormControl(value, controlOptions);
@@ -285,7 +312,18 @@ export class EntityFormService {
     const updatedEntity = entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !== null) {
-        updatedEntity[key] = value;
+        const schema = entity.getSchema().get(key);
+        const trimmedValue =
+          typeof value === "string" && schema?.trim !== false
+            ? value.trim()
+            : value;
+        updatedEntity[key] = trimmedValue;
+        if (trimmedValue !== value) {
+          // keep the form control in sync with the persisted (trimmed) value,
+          // otherwise the entity's own save echo looks like an external
+          // conflicting change and triggers a spurious "Load changes?" prompt
+          form.get(key)?.setValue(trimmedValue, { emitEvent: false });
+        }
       } else {
         // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
         delete updatedEntity[key];
@@ -305,14 +343,16 @@ export class EntityFormService {
     }
 
     if (!this.ability.can(action, entity, undefined, true)) {
-      const conditions = this.ability
-        .rulesFor(action, entity.getType())
-        .map((r) => r.conditions);
+      const requiredValues =
+        this.permissionConditionValidators.describeRequiredValues(
+          action,
+          entity,
+        );
 
       throw new Error(
-        $localize`Current user is not permitted to save these changes: ${JSON.stringify(
-          conditions,
-        )}`,
+        requiredValues
+          ? $localize`Current user is not permitted to save these changes. Values required by your permissions - ${requiredValues}`
+          : $localize`Current user is not permitted to save these changes.`,
       );
     }
   }

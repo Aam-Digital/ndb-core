@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   OnDestroy,
   ViewChild,
@@ -49,6 +50,18 @@ export class JsonEditorComponent
   private textModeDisabledForSession = false;
 
   /**
+   * Keep the editor's read-only state in sync with the control's enabled state
+   * so it is not editable when the surrounding form is in view mode.
+   */
+  private readonly _readOnlySync = effect(() => {
+    // Read the signal first so the effect always tracks it — an optional-chained
+    // `this.editor?.updateProps({ readOnly: !this.enabled() })` would short-circuit
+    // (and skip the signal read) while the editor is not yet created.
+    const readOnly = !this.enabled();
+    this.editor?.updateProps({ readOnly });
+  });
+
+  /**
    * Initialize the JSON editor.
    * This method is called after the component view is initialized.
    */
@@ -86,6 +99,7 @@ export class JsonEditorComponent
       props: {
         content,
         mode,
+        readOnly: !this.enabled(),
         onChange: (updatedContent: Content) =>
           this.handleEditorChange(updatedContent),
         onChangeMode: (mode: Mode) => this.handleEditorModeChange(mode),

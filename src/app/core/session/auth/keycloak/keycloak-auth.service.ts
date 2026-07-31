@@ -20,6 +20,7 @@ import {
   TimeoutError,
 } from "rxjs";
 import { retry, timeout } from "rxjs/operators";
+import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
 
 /**
  * Hard upper bound on individual Keycloak network operations
@@ -64,6 +65,7 @@ function isRetryableNetworkError(err: any): boolean {
  */
 @Injectable()
 export class KeycloakAuthService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
   accessToken?: string;
 
@@ -345,7 +347,7 @@ export class KeycloakAuthService {
    * Log timestamp of last successful authentication
    */
   logSuccessfulAuth() {
-    localStorage.setItem(
+    this.localStorage.setItem(
       KeycloakAuthService.LAST_AUTH_KEY,
       new Date().toISOString(),
     );

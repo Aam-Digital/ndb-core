@@ -162,6 +162,13 @@ export class KeycloakAdminService extends UserAdminService {
       .pipe(concatWith(...actions));
   }
 
+  override resendInvitation(userAccountId: string): Observable<void> {
+    return this.sendEmail(userAccountId, "VERIFY_EMAIL").pipe(
+      map(() => undefined),
+      catchError((err) => throwError(() => this.transformStandardError(err))),
+    );
+  }
+
   override getUser(userEntityId: string): Observable<UserAccount> {
     return this.findUserBy({
       q: `exact_username:${userEntityId}`,

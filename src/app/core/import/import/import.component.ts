@@ -28,6 +28,8 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { RouteTarget } from "../../../route-target";
 import { ImportMatchExistingComponent } from "../update-existing/import-match-existing/import-match-existing.component";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -53,6 +55,7 @@ import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common
     ImportColumnMappingComponent,
     ImportReviewDataComponent,
     WarningNotOptimizedForSmallScreenComponent,
+    HintBoxComponent,
   ],
 })
 export class ImportComponent {
@@ -61,10 +64,48 @@ export class ImportComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private location = inject<Location>(LOCATION_TOKEN);
+  private readonly ability = inject(EntityAbility);
 
   rawData: any[];
 
   importSettings = signal<Partial<ImportSettings>>({});
+
+  /**
+   * Whether the current user lacks permission to create ImportMetadata records.
+   * Every import writes an ImportMetadata history entry at the end, so without this
+   * permission no import can succeed - block the whole flow up front rather than
+   * letting the user prepare an import that would fail.
+   */
+  cannotImport =
+    this.ability.initialized && this.ability.cannot("create", ImportMetadata);
+
+  /**
+   * Whether the user may update existing records of the selected type.
+   * The "check/update existing" option modifies existing records, so it requires
+   * update (not just create) permission on the target type.
+   */
+  canUpdateSelectedType = computed(() => {
+    const entityType = this.importSettings().entityType;
+    return (
+      !!entityType &&
+      (!this.ability.initialized || this.ability.can("update", entityType))
+    );
+  });
+
+  /**
+   * Whether the selected type cannot be created by the user.
+   * The dropdown already hides non-creatable types, but a type can also arrive
+   * via the entityType query parameter (e.g. a bookmarked link), so guard the
+   * selection here too instead of only failing at the final save.
+   */
+  cannotCreateSelectedType = computed(() => {
+    const entityType = this.importSettings().entityType;
+    return (
+      !!entityType &&
+      this.ability.initialized &&
+      this.ability.cannot("create", entityType)
+    );
+  });
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
@@ -125,7 +166,12 @@ export class ImportComponent {
   }
 
   onEntityTypeChange(newType: string) {
-    this.updateImportSettings({ entityType: newType });
+    // reset settings that reference the previous type's fields / link actions
+    this.updateImportSettings({
+      entityType: newType,
+      importExisting: undefined,
+      additionalActions: undefined,
+    });
     if (this.importSettings().columnMapping?.length) {
       this.onColumnMappingUpdate(
         this.importSettings().columnMapping.map(({ column }) => ({

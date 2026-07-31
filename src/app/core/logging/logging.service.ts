@@ -40,7 +40,7 @@ export class LoggingService {
       release: "ndb-core@" + environment.appVersion,
       transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
-      beforeSend: enrichSentryEvent,
+      beforeSend: processSentryEvent,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -285,7 +285,95 @@ interface SentryBreadcrumbHint {
 export const Logging = new LoggingService();
 
 /**
- * Sentry `beforeSend` hook that enriches events with structured extra data
+ * Maximum number of times an identical event is sent to remote logging
+ * within one app session (page load).
+ * Guards against error loops (e.g. an error thrown on every change detection
+ * cycle) flooding remote monitoring with thousands of duplicate events.
+ */
+export const MAX_REPEATED_SENTRY_EVENTS = 5;
+
+const sentryEventCounts = new Map<string, number>();
+
+/**
+ * Error message fragments produced by browsers (and our fetch wrapper)
+ * when a request fails at the network layer.
+ */
+const NETWORK_ERROR_PATTERNS = [
+  "Failed to fetch", // Chrome (also matches DatabaseException "Failed to fetch from DB")
+  "NetworkError when attempting to fetch resource", // Firefox
+  "Load failed", // Safari
+];
+
+/**
+ * Sentry `beforeSend` hook: drops network failures of offline devices
+ * and excessive repeats of an identical event,
+ * and enriches the remaining events with structured extra data.
+ */
+export function processSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent | null {
+  if (isOfflineNetworkError(event) || isExcessiveRepeat(event)) {
+    return null;
+  }
+  return enrichSentryEvent(event, hint);
+}
+
+/**
+ * Whether the event is a network-layer fetch failure that occurred while the
+ * device was offline. In an offline-first app this is a normal state without
+ * diagnostic value (server outages still surface through online users).
+ */
+function isOfflineNetworkError(event: Sentry.ErrorEvent): boolean {
+  if (navigator.onLine) {
+    return false;
+  }
+
+  const messages = [
+    event.message,
+    ...(event.exception?.values?.map((v) => v.value) ?? []),
+  ];
+  return messages.some(
+    (msg) => msg && NETWORK_ERROR_PATTERNS.some((p) => msg.includes(p)),
+  );
+}
+
+/**
+ * Count occurrences of an event and check whether it exceeded the session cap.
+ *
+ * The key is deliberately coarse: error class + message of the root cause
+ * (`values[0]` is the deepest `cause` in the chain; the originally thrown,
+ * outermost error is last), without any stack information.
+ * Consequences:
+ * - Same-message errors from different code paths share one budget,
+ *   and all wrappers of a cascading failure are capped via their common
+ *   root cause. This is a flood guard, not a grouping mechanism -
+ *   Sentry's server-side, stack-based grouping remains authoritative
+ *   for separating issues, and the first occurrences always get through.
+ * - Errors that interpolate data (e.g. entity IDs) into their message
+ *   get a separate budget per variant, so the cap is weaker for those.
+ */
+function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
+  const exception = event.exception?.values?.[0];
+  const key = exception
+    ? `${exception.type}: ${exception.value}`
+    : String(event.message ?? "unknown");
+
+  const count = (sentryEventCounts.get(key) ?? 0) + 1;
+  sentryEventCounts.set(key, count);
+
+  if (count > MAX_REPEATED_SENTRY_EVENTS) {
+    Logging.debug("Skipping repeated event for remote logging", {
+      event: key,
+      occurrence: count,
+    });
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
  */
 function enrichSentryEvent(

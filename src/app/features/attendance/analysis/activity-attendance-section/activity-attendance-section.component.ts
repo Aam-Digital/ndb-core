@@ -1,13 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
-  LOCALE_ID,
   linkedSignal,
+  LOCALE_ID,
   resource,
   signal,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
@@ -28,6 +29,8 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**
  * Displays attendance analysis for a given "recurring activity"
@@ -46,6 +49,7 @@ import { EntitiesTableComponent } from "#src/app/core/common-components/entities
     MatButtonModule,
     AttendanceCalendarComponent,
     AttendanceSummaryComponent,
+    FaIconComponent,
   ],
 })
 @UntilDestroy()
@@ -68,37 +72,76 @@ export class ActivityAttendanceSectionComponent {
   attendanceData = resource({
     params: () => ({ entity: this.entity(), loadAll: this.loadAll() }),
     loader: async ({ params: { entity, loadAll } }) => {
-      if (!entity) return [];
-      return loadAll
-        ? await this.attendanceService.getActivityAttendances(entity)
-        : await this.attendanceService.getActivityAttendances(
+      const emptyResult = {
+        records: [] as ActivityAttendance[],
+        isFallbackToOlder: false,
+        hasMoreRecords: false,
+      };
+      if (!entity) {
+        return emptyResult;
+      }
+      if (loadAll) {
+        return {
+          ...emptyResult,
+          records: await this.attendanceService.getActivityAttendances(entity),
+        };
+      }
+
+      let from = moment().startOf("month").subtract(6, "months").toDate();
+      let records = await this.attendanceService.getActivityAttendances(
+        entity,
+        from,
+      );
+      let isFallbackToOlder = false;
+
+      if (records.length === 0) {
+        // fall back to the most recent month with data (if any)
+        const latestEventDate =
+          await this.attendanceService.getLatestEventDate(entity);
+        if (latestEventDate) {
+          from = moment(latestEventDate).startOf("month").toDate();
+          records = await this.attendanceService.getActivityAttendances(
             entity,
-            moment().startOf("month").subtract(6, "months").toDate(),
+            from,
           );
+          isFallbackToOlder = records.length > 0;
+        }
+      }
+
+      return {
+        records,
+        isFallbackToOlder,
+        hasMoreRecords: await this.hasRecordsBefore(entity, from),
+      };
     },
   });
+
+  /** Whether any events exist before the given date (i.e. more records can be loaded). */
+  private async hasRecordsBefore(entity: Entity, date: Date) {
+    const earliestEventDate =
+      await this.attendanceService.getEarliestEventDate(entity);
+    return (
+      !!earliestEventDate && moment(earliestEventDate).isBefore(date, "day")
+    );
+  }
+
   private readonly allRecords = computed(
-    () => this.attendanceData.value() ?? [],
+    () => this.attendanceData.value()?.records ?? [],
+  );
+
+  /** Whether older records are displayed because the default time range had none. */
+  isFallbackToOlder = computed(
+    () => this.attendanceData.value()?.isFallbackToOlder ?? false,
+  );
+
+  /** Whether events older than the currently displayed records exist and can be loaded. */
+  hasMoreRecords = computed(
+    () => this.attendanceData.value()?.hasMoreRecords ?? false,
   );
 
   entityCtr = ActivityAttendance;
 
-  records = computed(() => {
-    const forChild = this.forChild();
-    let records: ActivityAttendance[];
-    if (this.includeWithoutParticipation() || !forChild) {
-      records = [...this.allRecords()];
-    } else {
-      records = this.allRecords().filter(
-        (r) =>
-          r.countEventsAbsent(forChild) + r.countEventsPresent(forChild) > 0,
-      );
-    }
-    if (records?.length > 0) {
-      records.sort((a, b) => b.periodFrom.getTime() - a.periodFrom.getTime());
-    }
-    return records;
-  });
+  readonly dataSource = new InMemoryDataSource<ActivityAttendance>();
 
   combinedAttendance = computed(() => {
     const combined = new ActivityAttendance();
@@ -159,6 +202,23 @@ export class ActivityAttendanceSectionComponent {
 
   constructor() {
     this.subscribeToEventUpdates();
+
+    effect(() => {
+      const forChild = this.forChild();
+      let records: ActivityAttendance[];
+      if (this.includeWithoutParticipation() || !forChild) {
+        records = [...this.allRecords()];
+      } else {
+        records = this.allRecords().filter(
+          (r) =>
+            r.countEventsAbsent(forChild) + r.countEventsPresent(forChild) > 0,
+        );
+      }
+      if (records?.length > 0) {
+        records.sort((a, b) => b.periodFrom.getTime() - a.periodFrom.getTime());
+      }
+      this.dataSource.allRecords.set(records);
+    });
   }
 
   private subscribeToEventUpdates() {

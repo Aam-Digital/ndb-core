@@ -41,6 +41,7 @@ import { environment } from "../../../../environments/environment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
 import { Logging } from "../../logging/logging.service";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -64,13 +65,14 @@ import { Logging } from "../../logging/logging.service";
   ],
 })
 export class LoginComponent implements OnInit {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   sessionManager = inject(SessionManagerService);
   loginState = inject(LoginStateSubject);
   siteSettingsService = inject(SiteSettingsService);
 
-  offlineUsers: SessionInfo[] = [];
+  offlineUsers = signal<SessionInfo[]>([]);
   /**
    * Whether offline-login buttons are clickable.
    * Becomes true once the remote login has failed or after a hard timeout,
@@ -122,7 +124,7 @@ export class LoginComponent implements OnInit {
 
     // restore previous online-only preference from localStorage
     const initialOnlineOnly =
-      localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) === "true" ||
+      this.localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) === "true" ||
       environment.session_type === SessionType.online;
     this.onlineOnly.set(initialOnlineOnly);
     this.applyOnlineOnlyMode(initialOnlineOnly);
@@ -167,16 +169,16 @@ export class LoginComponent implements OnInit {
     });
 
     this.sessionManager.getOfflineUsers().then((users) => {
-      this.offlineUsers = users;
+      this.offlineUsers.set(users);
     });
   }
 
   onOnlineOnlyChanged(checked: boolean) {
     this.onlineOnly.set(checked);
     if (checked) {
-      localStorage.setItem(LoginComponent.ONLINE_ONLY_KEY, "true");
+      this.localStorage.setItem(LoginComponent.ONLINE_ONLY_KEY, "true");
     } else {
-      localStorage.removeItem(LoginComponent.ONLINE_ONLY_KEY);
+      this.localStorage.removeItem(LoginComponent.ONLINE_ONLY_KEY);
     }
     this.applyOnlineOnlyMode(checked);
   }

@@ -9,7 +9,7 @@ import { MockEntityMapperService } from "../entity-mapper/mock-entity-mapper-ser
 
 /*
      Deleting/Anonymizing referenced & related entities
-     also see doc/compodoc_sources/concepts/entity-anonymization.md
+     also see README.md in this folder (src/app/core/entity/entity-actions)
 
      we distinguish different roles / relations between entities:
       ♢ "aggregate" (has-a): both entities have meaning independently

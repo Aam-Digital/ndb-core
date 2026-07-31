@@ -1,13 +1,13 @@
-@if (isLoading()) {
+@if (recordsDataSource().isLoading()) {
   <div class="process-spinner">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 }
 
-<div [hidden]="isLoading()" class="table-container">
+<div [hidden]="recordsDataSource().isLoading()" class="table-container">
   <table
     mat-table
-    [dataSource]="recordsDataSource"
+    [dataSource]="recordsDataSource()"
     matSort
     [matSortActive]="sortStore.effectiveSort()?.active"
     [matSortDirection]="sortStore.effectiveSort()?.direction"
@@ -104,7 +104,7 @@
   -->
   <app-list-paginator
     class="table-footer"
-    [dataSource]="recordsDataSource"
+    [dataSource]="recordsDataSource()"
     [idForSavingPagination]="idForSavingPagination()"
   ></app-list-paginator>
 

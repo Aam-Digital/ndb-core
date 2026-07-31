@@ -2,6 +2,7 @@
 
 # Claude Code worktrees (local only, must never be committed as submodules)
 .claude/worktrees/
+.pi-subagents/
 
 /src/assets/config.json
 /src/assets/firebase-config.json
@@ -215,8 +216,7 @@ fabric.properties
 # CLI local config — never commit
 cli/.env
 
-# CLI credentials (operator-local only) — never commit, encrypted or not
-credentials.json
-credentials.json.age
-cli/credentials.json
-cli/credentials.json.age
+# CLI credentials (operator-local only) — never commit, encrypted or not.
+# The wildcard also covers the .bak/.tmp files that `credentials merge` creates.
+credentials.json*
+cli/credentials.json*

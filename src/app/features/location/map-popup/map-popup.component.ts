@@ -68,8 +68,6 @@ export class MapPopupComponent {
   helpText: string = $localize`Search an address or click on the map directly to select a different location`;
 
   selectedLocation: GeoLocation;
-  private lastSavedLocation: GeoLocation | undefined;
-  private manualAddressJustEdited = false;
 
   constructor() {
     const data = this.data;
@@ -78,9 +76,6 @@ export class MapPopupComponent {
       (data.marked as OpenStreetMapsSearchResult[]) ?? [],
     );
     this.selectedLocation = data.selectedLocation;
-    this.lastSavedLocation = data.selectedLocation
-      ? { ...data.selectedLocation }
-      : undefined;
     this.ensureGeoLookupInMarkedLocations();
     this.setDialogCloseBehavior(data);
     this.setHelpText(data);
@@ -121,92 +116,50 @@ export class MapPopupComponent {
       this.geoService.reverseLookup(newCoordinates),
     );
 
-    // Only update geoLookup. Do not carry over stale top-level address fields
-    // from the previously selected location — that causes conflicts where
-    // `geoLookup` points to a new place but `road/postcode/city` remain old.
-    this.updateLocation({
-      locationString: this.selectedLocation?.locationString,
-      geoLookup: geoResult,
-    });
-  }
+    // A map click always moves the pin. If there is already an address text or
+    // structured details, ask whether to overwrite them with the new location;
+    // otherwise just adopt the new location.
+    const hasExistingAddress =
+      !!this.selectedLocation?.locationString ||
+      !!this.geoService.composeAddressFromParts(this.selectedLocation);
 
-  async onSave() {
-    if (this.isUnchanged()) {
-      this.closeDialog();
-      return;
+    if (hasExistingAddress) {
+      const result = await this.confirmationDialog.getConfirmation(
+        $localize`Update address to this location?`,
+        $localize`You selected a new location on the map. Do you want to update the address text and details to this new spot?`,
+        [
+          {
+            text: $localize`Keep current text & details`,
+            dialogResult: "keep",
+            click: () => {},
+          },
+          {
+            text: $localize`Update to new location`,
+            dialogResult: "update",
+            click: () => {},
+          },
+        ],
+      );
+
+      if (result !== "update") {
+        // Move the pin only; keep the existing text and structured parts exactly
+        // as they are (do NOT enrich, which would fill empty parts from the new
+        // lookup — the user declined to adopt the new location's details).
+        this.selectedLocation = {
+          ...this.selectedLocation,
+          geoLookup: geoResult,
+        };
+        this.markedLocations.next([geoResult]);
+        return;
+      }
     }
 
-    const manualAddress = this.selectedLocation?.locationString ?? "";
-    const lookupAddress = this.selectedLocation?.geoLookup?.display_name ?? "";
-
-    if (this.shouldShowConfirmation(manualAddress, lookupAddress)) {
-      const result = await this.showAddressMismatchDialog();
-      await this.handleConfirmationResult(result, lookupAddress);
-      return;
-    }
-
-    this.saveAndClose();
+    // Adopt the new location fully: text and parts are re-derived from the
+    // fresh lookup (old parts are intentionally dropped).
+    this.updateLocation({ geoLookup: geoResult });
   }
 
-  private isUnchanged(): boolean {
-    return (
-      JSON.stringify(this.selectedLocation) ===
-      JSON.stringify(this.lastSavedLocation)
-    );
-  }
-
-  private shouldShowConfirmation(
-    manualAddress: string,
-    lookupAddress: string,
-  ): boolean {
-    return (
-      manualAddress &&
-      manualAddress !== lookupAddress &&
-      !this.manualAddressJustEdited
-    );
-  }
-
-  private async showAddressMismatchDialog(): Promise<
-    "continue" | "update" | undefined
-  > {
-    const result = await this.confirmationDialog.getConfirmation(
-      $localize`Address Mismatch`,
-      $localize`Address details captured does not match with the location on the map. What would you like to do?`,
-      [
-        {
-          text: $localize`Continue (with old address)`,
-          dialogResult: "continue",
-          click: () => {},
-        },
-        {
-          text: $localize`Update to new address`,
-          dialogResult: "update",
-          click: () => {},
-        },
-      ],
-    );
-    return result as "continue" | "update" | undefined;
-  }
-
-  private async handleConfirmationResult(
-    result: string | boolean | undefined,
-    lookupAddress: string,
-  ) {
-    if (result === "continue") {
-      this.saveAndClose();
-    } else if (result === "update") {
-      this.selectedLocation = {
-        ...this.selectedLocation,
-        locationString: lookupAddress,
-      };
-      this.saveAndClose();
-    }
-    // If dialog closed without a result, do nothing (let user edit)
-  }
-
-  private saveAndClose() {
-    this.lastSavedLocation = { ...this.selectedLocation };
-    this.manualAddressJustEdited = false;
+  onSave() {
     this.closeDialog();
   }
 
@@ -228,16 +181,6 @@ export class MapPopupComponent {
         ...(updatedLocation ?? {}),
         locationString: displayName,
       };
-    }
-
-    // Detect if manual address was just edited
-    if (
-      this.selectedLocation?.locationString !==
-        updatedLocation?.locationString &&
-      updatedLocation?.locationString !==
-        updatedLocation?.geoLookup?.display_name
-    ) {
-      this.manualAddressJustEdited = true;
     }
 
     this.selectedLocation = updatedLocation;

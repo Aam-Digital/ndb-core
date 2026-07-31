@@ -17,15 +17,37 @@
 
 import { ChildSchoolRelation } from "./childSchoolRelation";
 import { testEntitySubclass } from "../../../core/entity/model/entity.test-utils";
+import { DefaultDatatype } from "../../../core/entity/default-datatype/default.datatype";
+import { DateOnlyDatatype } from "../../../core/basic-datatypes/date-only/date-only.datatype";
+import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityActionsService } from "../../../core/entity/entity-actions/entity-actions.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../../core/entity/database-entity.decorator";
 
 describe("ChildSchoolRelation Entity", () => {
-  testEntitySubclass("ChildSchoolRelation", ChildSchoolRelation, {
-    _id: "ChildSchoolRelation:some-id",
+  testEntitySubclass(
+    "ChildSchoolRelation",
+    ChildSchoolRelation,
+    {
+      _id: "ChildSchoolRelation:some-id",
 
-    childId: "1",
-    schoolId: "2",
-    schoolClass: "10",
-    start: "2019-01-01",
-    end: "2019-12-31",
-  });
+      childId: "1",
+      schoolId: "2",
+      start: "2019-01-01",
+      end: "2019-12-31",
+    },
+    false,
+    [
+      { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+      { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+      // EntityDatatype only uses these to resolve referenced records, which the
+      // pure schema transformation under test never does
+      { provide: EntityMapperService, useValue: {} },
+      { provide: EntityActionsService, useValue: {} },
+      { provide: EntityRegistry, useValue: entityRegistry },
+    ],
+  );
 });

@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { PouchDatabase } from "./pouch-database";
+import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
 
@@ -375,5 +375,40 @@ describe("PouchDatabase tests", () => {
         "1-conflict",
       ]);
     });
+  });
+});
+
+describe("DatabaseException", () => {
+  it("keeps name as 'DatabaseException' for stable Sentry grouping", () => {
+    const ex = new DatabaseException(
+      { status: 404, name: "not_found", message: "missing" },
+      "Entity:1",
+    );
+
+    expect(ex.name).toBe("DatabaseException");
+    expect(ex.entityId).toBe("Entity:1");
+    expect(ex.message).toBe("missing");
+  });
+
+  it("preserves the wrapped error's name in originalName", () => {
+    const abortError = new DOMException(
+      "The operation was aborted.",
+      "AbortError",
+    );
+
+    const ex = new DatabaseException(abortError, "Config:CONFIG_ENTITY");
+
+    // name stays stable for grouping, but the underlying name is retained
+    expect(ex.name).toBe("DatabaseException");
+    expect(ex.originalName).toBe("AbortError");
+    expect(ex.message).toBe("The operation was aborted.");
+  });
+
+  it("does not set originalName when wrapping another DatabaseException", () => {
+    const inner = new DatabaseException({ message: "Failed to fetch from DB" });
+
+    const outer = new DatabaseException(inner, "Entity:1");
+
+    expect(outer.originalName).toBeUndefined();
   });
 });

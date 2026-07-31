@@ -11,27 +11,27 @@
     </div>
   }
 
-  <mat-form-field floatLabel="always" class="full-width">
-    <mat-label i18n>Selected Location</mat-label>
-    <textarea
-      #manualAddressInput
-      matInput
-      placeholder="no location selected"
-      i18n-placeholder
-      [value]="
-        selectedLocation()?.locationString ??
-        selectedLocation()?.geoLookup?.display_name
-      "
-      (change)="updateLocationString(manualAddressInput.value)"
-      [disabled]="disabled() || !manualAddressEnabled()"
-      rows="2"
-    ></textarea>
-
-    <mat-hint>
+  <div class="selected-location-display">
+    <span class="location-label hint-text" i18n>Selected Location</span>
+    <div class="location-value">
       @if (
-        selectedLocation()?.geoLookup?.display_name !==
-        selectedLocation()?.locationString
+        selectedLocation()?.locationString ||
+        selectedLocation()?.geoLookup?.display_name
       ) {
+        {{
+          selectedLocation()?.locationString ??
+            selectedLocation()?.geoLookup?.display_name
+        }}
+      } @else {
+        <span class="placeholder" i18n>no location selected</span>
+      }
+    </div>
+
+    @if (
+      selectedLocation()?.geoLookup?.display_name !==
+      selectedLocation()?.locationString
+    ) {
+      <div class="location-hint hint-text">
         @if (selectedLocation()?.geoLookup) {
           <span
             matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."
@@ -48,32 +48,112 @@
             No location marked on map
           </span>
         }
-        <br />
+      </div>
+    }
+  </div>
+
+  @if (selectedLocation()) {
+    <mat-expansion-panel
+      class="address-details-panel"
+      (opened)="focusManualAddressInput()"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n>Address details</mat-panel-title>
+        <mat-panel-description i18n
+          >Road · House no. · Postcode · City · Country</mat-panel-description
+        >
+      </mat-expansion-panel-header>
+
+      <mat-form-field floatLabel="always" class="full-width">
+        <mat-label i18n>Full address text</mat-label>
+        <textarea
+          #manualAddressInput
+          matInput
+          matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."
+          i18n-matTooltip
+          [value]="
+            selectedLocation()?.locationString ??
+            selectedLocation()?.geoLookup?.display_name ??
+            ''
+          "
+          (change)="updateLocationString(manualAddressInput.value)"
+          [disabled]="disabled()"
+          rows="2"
+        ></textarea>
+      </mat-form-field>
+
+      @if (hasDivergingText()) {
+        <p class="parts-mismatch-hint hint-text" i18n>
+          This address text has been customized — it no longer matches the
+          address details below or the mapped location.
+        </p>
       }
 
-      @if (!disabled() && selectedLocation()) {
-        <span>
+      <div class="address-parts-grid">
+        <mat-form-field class="road-field">
+          <mat-label i18n>Road</mat-label>
+          <input
+            matInput
+            #roadInput
+            [value]="selectedLocation()?.road ?? ''"
+            (change)="updateAddressPart('road', roadInput.value)"
+            [disabled]="disabled()"
+          />
+        </mat-form-field>
+        <mat-form-field class="house-number-field">
+          <mat-label i18n>House no.</mat-label>
+          <input
+            matInput
+            #houseNumberInput
+            [value]="selectedLocation()?.house_number ?? ''"
+            (change)="updateAddressPart('house_number', houseNumberInput.value)"
+            [disabled]="disabled()"
+          />
+        </mat-form-field>
+        <mat-form-field class="postcode-field">
+          <mat-label i18n>Postcode</mat-label>
+          <input
+            matInput
+            #postcodeInput
+            [value]="selectedLocation()?.postcode ?? ''"
+            (change)="updateAddressPart('postcode', postcodeInput.value)"
+            [disabled]="disabled()"
+          />
+        </mat-form-field>
+        <mat-form-field class="city-field">
+          <mat-label i18n>City</mat-label>
+          <input
+            matInput
+            #cityInput
+            [value]="selectedLocation()?.city ?? ''"
+            (change)="updateAddressPart('city', cityInput.value)"
+            [disabled]="disabled()"
+          />
+        </mat-form-field>
+        <mat-form-field class="full-row">
+          <mat-label i18n>Country</mat-label>
+          <input
+            matInput
+            #countryInput
+            [value]="selectedLocation()?.country ?? ''"
+            (change)="updateAddressPart('country', countryInput.value)"
+            [disabled]="disabled()"
+          />
+        </mat-form-field>
+      </div>
+
+      @if (!disabled()) {
+        <div class="text-align-end">
           <a
-            href=""
-            (click)="enableManualAddressEditing(); $event.preventDefault()"
-            matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."
-            i18n-matTooltip
-            i18n
-            >Edit address text</a
-          >
-        </span>
-        &nbsp;|&nbsp;
-        <span
-          ><a
             href=""
             (click)="clearLocation(); $event.preventDefault()"
             matTooltip="Delete the selected location."
             i18n-matTooltip
             i18n
-            >Clear</a
-          ></span
-        >
+            >Clear location</a
+          >
+        </div>
       }
-    </mat-hint>
-  </mat-form-field>
+    </mat-expansion-panel>
+  }
 </div>

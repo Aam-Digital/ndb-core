@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -30,6 +30,7 @@ import { Logging } from "../../logging/logging.service";
  */
 @Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private sessionInfo = inject(SessionSubject);
   private ability = inject(EntityAbility);
   private entityMapper = inject(EntityMapperService);
@@ -80,7 +81,8 @@ export class PermissionEnforcerService {
       // Legacy idb adapter: purge() not available — fall back to destroy + reload when needed.
       const subjects = this.getSubjectsWithReadRestrictions(userRules);
       if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
-        Logging.debug(
+        // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
+        Logging.warn(
           "Detected changed permissions for user. Destroying local db due to lost permissions ...",
         );
         this.analyticsService.eventTrack(
@@ -98,11 +100,11 @@ export class PermissionEnforcerService {
     }
 
     // update stored rules to check for future changes
-    window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+    this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }
 
   private userRulesChanged(newRules: string): boolean {
-    const storedRules = window.localStorage.getItem(this.getUserStorageKey());
+    const storedRules = this.localStorage.getItem(this.getUserStorageKey());
     return storedRules !== newRules;
   }
 
@@ -163,12 +165,14 @@ export class PermissionEnforcerService {
   ): Promise<void> {
     // wait for config service to be ready before using the entity mapper
     await firstValueFrom(this.configService.configUpdates);
+    let purgedCount = 0;
     for (const subject of subjects) {
       const entities = await this.entityMapper.loadType(subject);
       for (const entity of entities) {
         if (this.ability.cannot("read", entity)) {
           try {
             await this.dbResolver.getDatabase().purge(entity.getId());
+            purgedCount++;
             Logging.debug(
               `Purged locally inaccessible entity: ${entity.getId()}`,
             );
@@ -177,6 +181,14 @@ export class PermissionEnforcerService {
           }
         }
       }
+    }
+
+    if (purgedCount > 0) {
+      // deleting local data based on changed permission rules - log for traceability of possible data loss
+      Logging.warn(
+        "Purged local entities that current permission rules deny reading",
+        { count: purgedCount },
+      );
     }
   }
 

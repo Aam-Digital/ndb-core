@@ -15,6 +15,7 @@ import {
 } from "../../common-components/parsed-file-input/parsed-file-input.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatExpansionModule } from "@angular/material/expansion";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
@@ -32,6 +33,7 @@ import { ImportAdditionalSettings } from "../import-additional-settings";
     ParsedFileInputComponent,
     MatFormFieldModule,
     MatExpansionModule,
+    MatCheckboxModule,
     FormsModule,
     HelpButtonComponent,
     BasicAutocompleteComponent,
@@ -76,6 +78,17 @@ export class ImportFileComponent {
     this.additionalSettings.update((settings) => ({
       ...settings,
       multiValueSeparator: value,
+    }));
+  }
+
+  readonly trimValues = computed(
+    () => this.additionalSettings()?.trimValues !== false,
+  );
+
+  onTrimValuesChange(value: boolean) {
+    this.additionalSettings.update((settings) => ({
+      ...settings,
+      trimValues: value,
     }));
   }
 

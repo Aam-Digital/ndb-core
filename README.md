@@ -59,6 +59,18 @@ please refer to the instructions at [Aam-Digital/aam-services/docs/developer](ht
 Our detailed [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 provides tutorials, guides, concepts and an API reference.
 
+### Module-level documentation
+
+Core modules have technical `README.md` files in their directories
+for developers and agents to avoid expensive code exploration.
+These provide architecture overviews, file organization, key concepts, and patterns specific to that module.
+
+For example:
+
+- [Entity system](src/app/core/entity/README.md) — entity base class, schema, load/save, lifecycle actions
+- [Configuration system](src/app/core/config/README.md) — how the JSON config drives views, menus and entities
+- [Permissions module](src/app/core/permissions/README.md) — CASL-based role/permission enforcement
+
 ## Translations (internationalization; i18n)
 
 Aam Digital is available in multiple languages.
@@ -95,11 +107,11 @@ To learn more about the build process, see [/build](./build/README.md).
 
 This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.
 
-| Tool                         | Usage                                                                                                                                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                                                                    |
-| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                                                               |
-| **CodeRabbit** (GitHub)      | Automated PR reviews — configured via `.coderabbit.yaml`. Add the label **"Ready for Review"** to trigger a review (works in draft mode too; removing the label stops further auto-reviews). |
+| Tool                         | Usage                                                                                                                                               |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                           |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                      |
+| **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled). |
 
 ## Agents
 
@@ -111,7 +123,7 @@ Custom agents are defined in `.claude/agents/` and can be invoked from Copilot c
 | `troubleshooter`          | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
 | `implementation-planner`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
 | `implementation-executor` | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
-| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (automatic) + manual prompt |
+| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (on-demand) + manual prompt |
 | `e2e-test-writer`         | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
 
 ## MCP Servers

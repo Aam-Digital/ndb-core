@@ -100,7 +100,7 @@ describe("LoginComponent", () => {
     // so enableOfflineLogin is already true.
     expect(component.enableOfflineLogin()).toBe(true);
     expect(component.showOfflineSection()).toBe(true);
-    expect(component.offlineUsers).toEqual(mockUsers);
+    expect(component.offlineUsers()).toEqual(mockUsers);
   });
 
   it("should show offline login after 10 seconds", async () => {
@@ -124,7 +124,7 @@ describe("LoginComponent", () => {
       await vi.advanceTimersByTimeAsync(10000);
       expect(component.enableOfflineLogin()).toBe(true);
       expect(component.showOfflineSection()).toBe(true);
-      expect(component.offlineUsers).toEqual(mockUsers);
+      expect(component.offlineUsers()).toEqual(mockUsers);
     } finally {
       vi.useRealTimers();
     }

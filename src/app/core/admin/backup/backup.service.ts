@@ -3,7 +3,8 @@ import { Database } from "../../database/database";
 import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Create and load backups of the database.
@@ -12,6 +13,7 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
   providedIn: "root",
 })
 export class BackupService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private dbResolver = inject(DatabaseResolverService);
 
   private db: Database;
@@ -78,11 +80,16 @@ export class BackupService {
       return;
     }
 
+    // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
+    Logging.warn(
+      "Resetting application: user confirmed deletion of all local data",
+    );
+
     // Reload the page first to kill all PouchDB connections, in-flight sync,
     // view indexing, and other async operations. IDB databases are deleted on
     // the fresh page (before Angular bootstraps) where no connections exist,
     // avoiding race conditions with PouchDB's internal IDB transactions.
-    localStorage.clear();
+    this.localStorage.clear();
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
     this.location.pathname = "";
   }
@@ -97,18 +104,23 @@ export class BackupService {
       return;
     }
     sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+    DatabaseResolverService.clearLastSyncMarkers();
 
     // Delete all IndexedDB databases
+    // (keep Sentry's offline queue so pending diagnostic logs about the reset
+    // itself still reach remote logging after the reload)
     const dbs = await indexedDB.databases();
     await Promise.all(
-      dbs.map(
-        ({ name }) =>
-          new Promise<void>((resolve, reject) => {
-            const del = indexedDB.deleteDatabase(name);
-            del.onsuccess = () => resolve();
-            del.onerror = () => reject(del.error);
-          }),
-      ),
+      dbs
+        .filter(({ name }) => name !== "sentry-offline")
+        .map(
+          ({ name }) =>
+            new Promise<void>((resolve, reject) => {
+              const del = indexedDB.deleteDatabase(name);
+              del.onsuccess = () => resolve();
+              del.onerror = () => reject(del.error);
+            }),
+        ),
     );
 
     // Unregister all service workers

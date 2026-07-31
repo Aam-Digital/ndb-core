@@ -3,22 +3,34 @@ import { SessionInfo } from "../session-info";
 import { TEST_USER } from "../../../user/demo-user-generator.service";
 import { environment } from "../../../../../environments/environment";
 import { SessionType } from "../../session-type";
+import { TestBed } from "@angular/core/testing";
+import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
+import { createFakeStorage } from "../../../../utils/test-utils/fake-storage";
 
 describe("LocalAuthService", () => {
   let service: LocalAuthService;
   let testUser: SessionInfo;
   let mockDatabases: ReturnType<typeof vi.fn>;
+  let storage: Storage;
+  const originalSessionType = environment.session_type;
 
   beforeEach(() => {
-    service = new LocalAuthService();
-    localStorage.clear();
+    storage = createFakeStorage();
+    TestBed.configureTestingModule({
+      providers: [
+        LocalAuthService,
+        { provide: LOCAL_STORAGE_TOKEN, useValue: storage },
+      ],
+    });
+    service = TestBed.inject(LocalAuthService);
     mockDatabases = vi.fn().mockResolvedValue([]);
     vi.stubGlobal("indexedDB", { databases: mockDatabases });
+    environment.session_type = SessionType.local;
   });
 
   afterEach(() => {
-    localStorage.clear();
     vi.unstubAllGlobals();
+    environment.session_type = originalSessionType;
   });
 
   it("should be created", () => {
@@ -61,6 +73,8 @@ describe("LocalAuthService", () => {
 
     service.saveUser(testUser);
 
-    expect(localStorage.getItem("USER-" + testUser.name)).toBeNull();
+    // assert on the injected storage, not the shared jsdom `localStorage`,
+    // which other spec files in the same worker may have written to
+    expect(storage.length).toBe(0);
   });
 });

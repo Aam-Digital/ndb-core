@@ -34,8 +34,7 @@ You can use Angular's dependency injection to access any other services, if need
    - `viewComponent`: The string ID for the DisplayComponent (see below) used for read-only presentation of the value in tables
    - `editComponent`: The string ID for the EditComponent (see below) used for form field UI of the value in detail views
 5. Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)
-6. **Register the datatype** using Angular DI system as a "multi" provider in your feature module to make it available to the system overall:
-   `{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true }`
+6. **Register the datatype** as a "multi" provider so the platform picks it up (see [Registering the new Datatype](#registering-the-new-datatype) below).
 
 This could result in a Datatype class like this:
 
@@ -105,14 +104,9 @@ and use it for any entity properties that use the `dataType` identifier of your 
 
 ## Implementing a custom EditComponent
 
-To provide a custom UI, you can implement an Angular component that extends the `CustomFormControlDirective` and implements `EditComponent` interface.
-Then configure this to be used for the datatype as shown above.
+To provide a custom UI, implement an Angular component that extends `CustomFormControlDirective` and implements the `EditComponent` interface, then configure it for the datatype as shown above.
 
-Such a component is a standard Angular component.
-It has to extend the `CustomFormControlDirective` base class however
-to function as an Angular FormControl within mat-form-field.
-You can then design a custom UX and logic for the value
-while parent components use this like a simple `matInput` field.
+See [Entity Form components](../entity-details/form/README.md#creating-a-custom-form-control) for the `CustomFormControlDirective` base class and its reactive API — it handles the `MatFormFieldControl` plumbing so parent components can use your component like a simple `matInput` field.
 
 Your custom EditComponent should _not_ include a form field label.
 This and other mat-form-field details are automatically added by the parent component.

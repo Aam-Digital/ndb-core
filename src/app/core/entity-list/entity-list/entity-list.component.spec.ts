@@ -5,7 +5,7 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subject, of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -13,6 +13,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -206,7 +207,7 @@ describe("EntityListComponent", () => {
       entityUpdates.next({ entity: entity, type: "new" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.allEntities()).toEqual([entity]);
+      expect(component.dataSource.allRecords()).toEqual([entity]);
     } finally {
       vi.useRealTimers();
     }
@@ -223,11 +224,11 @@ describe("EntityListComponent", () => {
       initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.allEntities.set([entity]);
+      component.dataSource.allRecords.set([entity]);
       entityUpdates.next({ entity: entity, type: "remove" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.allEntities()).toEqual([]);
+      expect(component.dataSource.allRecords()).toEqual([]);
     } finally {
       vi.useRealTimers();
     }
@@ -283,6 +284,19 @@ describe("EntityListComponent", () => {
     } as any;
   }
 
+  it("should not allow import when user cannot create ImportMetadata", () => {
+    const ability = TestBed.inject(EntityAbility);
+    ability.update([
+      { subject: "all", action: "manage" },
+      { subject: "ImportMetadata", action: "create", inverted: true },
+    ]);
+    ability.initialized = true;
+
+    createComponent();
+
+    expect(component.canImport()).toBe(false);
+  });
+
   it("should offer all schema export columns and preselect the visible ones", async () => {
     vi.useFakeTimers();
     try {
@@ -317,34 +331,6 @@ describe("EntityListComponent", () => {
       );
       // columns of non-visible fields are not preselected
       expect(queries(preselected)).not.toContain(".other");
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should apply admin-configured export labels to matching columns", async () => {
-    vi.useFakeTimers();
-    try {
-      createComponent();
-      fixture.componentRef.setInput("exportConfig", [
-        { query: ".name", label: "Custom Name Label" },
-      ]);
-      fixture.detectChanges();
-      await vi.advanceTimersByTimeAsync(0);
-
-      component.columnsToDisplay = ["name"];
-
-      const matDialog = TestBed.inject(MatDialog);
-      const openSpy = vi
-        .spyOn(matDialog, "open")
-        .mockImplementation(() => makeMatDialogRef());
-
-      component.openExportDialog();
-
-      const callArgs = openSpy.mock.calls[0][1] as any;
-      const available = callArgs.data.exportConfig as any[];
-      const nameColumn = available.find((c) => c.query === ".name");
-      expect(nameColumn.label).toBe("Custom Name Label");
     } finally {
       vi.useRealTimers();
     }

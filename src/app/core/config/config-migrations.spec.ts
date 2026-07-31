@@ -7,6 +7,25 @@ describe("applyConfigMigrations", () => {
     expect(applyConfigMigrations(doc)).toEqual(doc);
   });
 
+  it("removes the deprecated exportConfig from view configs", () => {
+    const old = {
+      "view:note": {
+        component: "EntityList",
+        config: {
+          entityType: "Note",
+          columns: ["subject"],
+          exportConfig: [{ query: "subject", label: "Subject" }],
+        },
+      },
+    };
+    expect(applyConfigMigrations(old)).toEqual({
+      "view:note": {
+        component: "EntityList",
+        config: { entityType: "Note", columns: ["subject"] },
+      },
+    });
+  });
+
   describe("migrateChildrenListConfig", () => {
     it("migrates ChildrenList component to EntityList", () => {
       const old = { "view:X": { component: "ChildrenList", config: {} } };

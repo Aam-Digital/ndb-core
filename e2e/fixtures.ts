@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
-import { Page, test as base } from "@playwright/test";
+import { Download, Page, test as base } from "@playwright/test";
 // eslint-disable-next-line no-restricted-imports
 import {
   argosScreenshot as argosScreenshotBase,
@@ -37,6 +37,7 @@ import { EventAttendanceMapDatatype } from "#src/app/features/attendance/depreca
 
 // eslint-disable-next-line no-restricted-imports
 export { expect } from "@playwright/test";
+export type { Page };
 
 /** The mocked "now" date to which e2e tests are fixed. */
 export const E2E_REF_DATE = "2025-01-23";
@@ -73,12 +74,90 @@ export async function argosScreenshot(
 ): Promise<void> {
   if (process.env.CI || process.env.SCREENSHOT) {
     const { argosCSS, ...restOptions } = options || {};
+    await resetMainContentScroll(page);
     await argosScreenshotBase(page, name, {
       fullPage: true,
       argosCSS: argosCSS ? `${ARGOS_BASE_CSS}\n${argosCSS}` : ARGOS_BASE_CSS,
       ...restOptions,
     });
   }
+}
+
+/**
+ * Pin the main content area to the top before capturing a screenshot.
+ *
+ * The app scrolls inside `mat-sidenav-content` rather than the window, so the
+ * document itself never overflows and a `fullPage` screenshot effectively
+ * captures just the viewport. Neither Playwright's `fullPage` nor Argos reset
+ * the scroll offset of such an inner container. Actions like `fill()` call
+ * `scrollIntoViewIfNeeded()`, which can leave the container scrolled by a few
+ * pixels whenever the content is just slightly taller than the viewport. That
+ * stray, timing-dependent offset shifts the whole content pane and produces
+ * flaky screenshot diffs (notably the `site-settings-edited` screenshot).
+ *
+ * Skip resetting while an interactive overlay is open: dialogs, selects and
+ * menus create a `.cdk-overlay-backdrop`, and some screenshots intentionally
+ * scroll within a dialog (e.g. `i18n-de_init`) or show an open panel. Tooltips
+ * do not create a backdrop, so lingering tooltips don't block the reset.
+ */
+async function resetMainContentScroll(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    if (document.querySelector(".cdk-overlay-backdrop")) return;
+    document
+      .querySelectorAll(".mat-drawer-content")
+      .forEach((el) => ((el as HTMLElement).scrollTop = 0));
+    window.scrollTo(0, 0);
+  });
+}
+
+/**
+ * Select one option of a filter dropdown above an entity list.
+ *
+ * The filters are multi-select autocompletes, so their panel stays open after
+ * picking an option — it has to be dismissed by clicking a neutral element
+ * before the next filter can be used.
+ */
+export async function selectFilterOption(
+  page: Page,
+  filterLabel: string,
+  optionLabel: string,
+): Promise<void> {
+  const field = page.locator("mat-form-field").filter({ hasText: filterLabel });
+
+  // The field holds a display input and a search input, swapping which of the
+  // two is hidden depending on whether the dropdown is open.
+  await field.locator("input:visible").first().click();
+  await page.getByRole("option", { name: optionLabel }).click();
+
+  // The option click already commits the value to the form control, so closing
+  // the panel does not revert the selection. Blurring afterwards returns the
+  // field to display mode, so it can be used again for the next selection.
+  await page.keyboard.press("Escape");
+  await field.locator("input:visible").first().blur();
+}
+
+/**
+ * Read a downloaded CSV and return its data rows, without the header line.
+ *
+ * Kept deliberately simple: it splits on newlines, so it does not support
+ * values that contain line breaks.
+ */
+export async function readCsvRows(download: Download): Promise<string[]> {
+  const stream = await download.createReadStream();
+  // decoding in the stream keeps multi-byte characters intact across chunks
+  stream.setEncoding("utf-8");
+
+  const chunks: string[] = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk as string);
+  }
+
+  return chunks
+    .join("")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .slice(1);
 }
 
 /**
