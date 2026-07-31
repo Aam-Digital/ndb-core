@@ -196,6 +196,36 @@ describe("PermissionMatrixComponent", () => {
     expect(emitted.length).toBe(2);
   });
 
+  it("keeps a cell's extra properties when its condition is edited via the dialog", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [
+        {
+          subject: "Child",
+          cells: {
+            read: {
+              allowed: true,
+              conditions: { center: "x" },
+              extra: { reason: "keep me" },
+            },
+          },
+        },
+      ],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    mockDialog.open.mockReturnValue({ afterClosed: () => of({ center: "y" }) });
+    component.openConditionDialog(0, "read");
+
+    expect(emitted[0].rows[0].cells.read).toEqual({
+      allowed: true,
+      conditions: { center: "y" },
+      extra: { reason: "keep me" },
+    });
+  });
+
   it("greys out internal system types and shows their key as a readable label", () => {
     class ConfigurableEnum extends Entity {
       static override readonly isInternalEntity = true;

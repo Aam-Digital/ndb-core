@@ -82,6 +82,7 @@ export class PermissionMatrixComponent {
     { key: "delete", label: $localize`Delete` },
   ];
   readonly crudActions: CrudAction[] = this.crudColumns.map((c) => c.key);
+  readonly manageColLabel = $localize`Manage (all)`;
 
   // rowActions column is always present (empty in view mode)
   // so that column positions do not shift when toggling edit mode
@@ -265,9 +266,12 @@ export class PermissionMatrixComponent {
         // shared close button's empty string) must leave the cell untouched
         if (result !== null && typeof result !== "object") return;
         this.emitUpdated((m) => {
+          // keep any unmodelled properties (e.g. reason) that the cell carried
+          const extra = m.rows[rowIndex].cells[action]?.extra;
           m.rows[rowIndex].cells[action] = {
             allowed: true,
             ...(result ? { conditions: result } : {}),
+            ...(extra ? { extra } : {}),
           };
         });
       });

@@ -179,10 +179,19 @@ export class AdminRoleDetailsComponent implements OnInit {
       return this.saveNewRole();
     }
 
-    await this.rolePermissionsService.saveRules(
-      this.roleName(),
-      matrixToRules(this.model()),
-    );
+    try {
+      await this.rolePermissionsService.saveRules(
+        this.roleName(),
+        matrixToRules(this.model()),
+      );
+    } catch (err) {
+      // keep the user in edit mode with their unsaved changes so they can retry
+      this.showError(
+        $localize`Could not save the permissions. Please try again.`,
+        err,
+      );
+      return;
+    }
     if (this.descriptionControl.dirty && this.role()?.keycloakRole) {
       try {
         await this.rolePermissionsService.updateRoleDescription(

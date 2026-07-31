@@ -127,43 +127,42 @@ export function rulesToMatrix(rules: DatabaseRule[]): MatrixModel {
  * become one rule, and subjects with completely identical permissions are
  * grouped into one rule. Unsupported rules are appended unchanged.
  */
-export function matrixToRules(model: MatrixModel): DatabaseRule[] {
-  interface RuleFragment {
-    subjects: string[];
-    actions: EntityActionPermission[];
-    key: string;
-    conditions?: any;
-    extra?: Record<string, any>;
-  }
+interface ActionGroup {
+  actions: EntityActionPermission[];
+  conditions?: any;
+  extra?: Record<string, any>;
+}
 
+interface RuleFragment extends ActionGroup {
+  subjects: string[];
+  key: string;
+}
+
+/** group a row's allowed actions by identical conditions + extra properties */
+function groupAllowedActions(row: MatrixRow): Map<string, ActionGroup> {
+  const byKey = new Map<string, ActionGroup>();
+  for (const action of MATRIX_ACTIONS) {
+    const cell = row.cells[action];
+    if (!cell?.allowed) continue;
+
+    const key = JSON.stringify([cell.conditions ?? null, cell.extra ?? null]);
+    if (!byKey.has(key)) {
+      byKey.set(key, {
+        actions: [],
+        conditions: cell.conditions,
+        extra: cell.extra,
+      });
+    }
+    byKey.get(key).actions.push(action);
+  }
+  return byKey;
+}
+
+export function matrixToRules(model: MatrixModel): DatabaseRule[] {
   const fragments: RuleFragment[] = [];
 
   for (const row of model.rows) {
-    // group this row's allowed actions by identical conditions + extra properties
-    const byKey = new Map<
-      string,
-      {
-        actions: EntityActionPermission[];
-        conditions?: any;
-        extra?: Record<string, any>;
-      }
-    >();
-    for (const action of MATRIX_ACTIONS) {
-      const cell = row.cells[action];
-      if (!cell?.allowed) continue;
-
-      const key = JSON.stringify([cell.conditions ?? null, cell.extra ?? null]);
-      if (!byKey.has(key)) {
-        byKey.set(key, {
-          actions: [],
-          conditions: cell.conditions,
-          extra: cell.extra,
-        });
-      }
-      byKey.get(key).actions.push(action);
-    }
-
-    for (const [key, group] of byKey) {
+    for (const [key, group] of groupAllowedActions(row)) {
       // merge with a previous subject's fragment that has identical actions + key
       const signatureMatch = fragments.find(
         (f) => f.key === key && f.actions.join(",") === group.actions.join(","),
@@ -171,13 +170,7 @@ export function matrixToRules(model: MatrixModel): DatabaseRule[] {
       if (signatureMatch) {
         signatureMatch.subjects.push(row.subject);
       } else {
-        fragments.push({
-          subjects: [row.subject],
-          actions: group.actions,
-          key,
-          conditions: group.conditions,
-          extra: group.extra,
-        });
+        fragments.push({ subjects: [row.subject], key, ...group });
       }
     }
   }
@@ -192,6 +185,18 @@ export function matrixToRules(model: MatrixModel): DatabaseRule[] {
       }) as DatabaseRule,
   );
 
+  return withUnsupportedRules(rules, model);
+}
+
+/**
+ * Re-insert the model's unsupported rules near their original positions so
+ * their CASL precedence relative to the matrix rules is preserved (an inverted
+ * rule that came before an allow rule must not suddenly win after a round-trip).
+ */
+function withUnsupportedRules(
+  rules: DatabaseRule[],
+  model: MatrixModel,
+): DatabaseRule[] {
   const unsupported = model.unsupportedRules ?? [];
   const indices = model.unsupportedRuleIndices;
   if (!indices || indices.length !== unsupported.length) {
@@ -199,9 +204,6 @@ export function matrixToRules(model: MatrixModel): DatabaseRule[] {
     return [...rules, ...unsupported];
   }
 
-  // re-insert each unsupported rule near its original position so its CASL
-  // precedence relative to the matrix rules is preserved (an inverted rule that
-  // came before an allow rule must not suddenly win after a round-trip)
   const result = [...rules];
   unsupported
     .map((rule, i) => ({ rule, index: indices[i] }))

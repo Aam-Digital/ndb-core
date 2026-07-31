@@ -60,24 +60,38 @@
               <mat-checkbox
                 [checked]="v.manageAllowed || v.actionStates[col.key].allowed"
                 [disabled]="!editable() || v.manageAllowed"
+                [attr.aria-label]="col.label + ' – ' + v.label"
                 (change)="setCellAllowed(i, col.key, $event.checked)"
               ></mat-checkbox>
 
               @if (v.actionStates[col.key].hasCondition && !v.manageAllowed) {
-                <!-- condition chip: editable in edit mode, read-only otherwise -->
+                <!-- condition chip: editable only for subjects whose conditions
+                     can be edited visually, read-only otherwise -->
                 <span
                   class="cell-condition-chip"
-                  [class.readonly]="!editable()"
-                  [attr.role]="editable() ? 'button' : null"
-                  [attr.tabindex]="editable() ? 0 : null"
+                  [class.readonly]="!(editable() && v.conditionsEditable)"
+                  [attr.role]="
+                    editable() && v.conditionsEditable ? 'button' : null
+                  "
+                  [attr.tabindex]="
+                    editable() && v.conditionsEditable ? 0 : null
+                  "
                   [matTooltip]="v.actionStates[col.key].summary"
-                  (click)="editable() && openConditionDialog(i, col.key)"
+                  (click)="
+                    editable() &&
+                      v.conditionsEditable &&
+                      openConditionDialog(i, col.key)
+                  "
                   (keydown.enter)="
-                    editable() && openConditionDialog(i, col.key)
+                    editable() &&
+                      v.conditionsEditable &&
+                      openConditionDialog(i, col.key)
                   "
                   (keydown.space)="
                     $event.preventDefault();
-                    editable() && openConditionDialog(i, col.key)
+                    editable() &&
+                      v.conditionsEditable &&
+                      openConditionDialog(i, col.key)
                   "
                 >
                   <fa-icon icon="filter"></fa-icon>
@@ -97,6 +111,11 @@
                       "
                       (keydown.enter)="
                         $event.stopPropagation(); removeCondition(i, col.key)
+                      "
+                      (keydown.space)="
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        removeCondition(i, col.key)
                       "
                     ></fa-icon>
                   }
@@ -121,13 +140,8 @@
       }
 
       <ng-container matColumnDef="manage">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="action-col manage-col"
-          i18n
-        >
-          Manage (all)
+        <th mat-header-cell *matHeaderCellDef class="action-col manage-col">
+          {{ manageColLabel }}
         </th>
         <td
           mat-cell
@@ -137,6 +151,7 @@
           <mat-checkbox
             [checked]="v.manageAllowed"
             [disabled]="!editable() || v.row.subject === 'all'"
+            [attr.aria-label]="manageColLabel + ' – ' + v.label"
             (change)="setManage(i, $event.checked)"
           ></mat-checkbox>
         </td>

@@ -8,7 +8,9 @@
 @mixin container-and-table {
   .table-container {
     position: relative;
+
     @include mat-elevation.elevation(2);
+
     background-color: white;
   }
 
@@ -20,6 +22,7 @@
 @mixin footer {
   .table-footer {
     @include mat-elevation.elevation(1);
+
     border-top: colors.$grey-darker solid 2px;
     background-color: white;
   }

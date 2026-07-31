@@ -126,6 +126,18 @@ describe("AdminRoleDetailsComponent", () => {
     expect(unsavedChanges.pending()).toBe(false);
   });
 
+  it("keeps edit mode and reports an error when saving permissions fails", async () => {
+    await fixture.whenStable();
+    const openSpy = vi.spyOn(TestBed.inject(MatSnackBar), "open");
+    mockRolePermissions.saveRules.mockRejectedValue(new Error("boom"));
+
+    component.startEditing();
+    await component.save();
+
+    expect(component.editing()).toBe(true);
+    expect(openSpy).toHaveBeenCalled();
+  });
+
   it("cancel discards working changes and clears unsaved state", async () => {
     await fixture.whenStable();
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
