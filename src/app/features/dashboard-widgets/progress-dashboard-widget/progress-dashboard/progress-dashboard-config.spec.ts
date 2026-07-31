@@ -17,11 +17,19 @@
 
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { testEntitySubclass } from "../../../../core/entity/model/entity.test-utils";
+import { DefaultDatatype } from "../../../../core/entity/default-datatype/default.datatype";
+import { StringDatatype } from "../../../../core/basic-datatypes/string/string.datatype";
 
 describe("ProgressDashboardConfig Entity", () => {
-  testEntitySubclass("ProgressDashboardConfig", ProgressDashboardConfig, {
-    _id: "ProgressDashboardConfig:some-id",
-    title: "test",
-    parts: [{ label: "Part Label", currentValue: 3, targetValue: 10 }],
-  });
+  testEntitySubclass(
+    "ProgressDashboardConfig",
+    ProgressDashboardConfig,
+    {
+      _id: "ProgressDashboardConfig:some-id",
+      title: "test",
+      parts: [{ label: "Part Label", currentValue: 3, targetValue: 10 }],
+    },
+    false,
+    [{ provide: DefaultDatatype, useClass: StringDatatype, multi: true }],
+  );
 });
