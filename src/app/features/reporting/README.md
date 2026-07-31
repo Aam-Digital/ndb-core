@@ -45,16 +45,16 @@ In addition, the backend hard-wires some columns into every such entity table.
 These are derived from internal metadata that every entity has, so they are available
 without being listed in the config document:
 
-| Column         | Source field   | Description                                        |
-| -------------- | -------------- | -------------------------------------------------- |
-| `_id`          | `_id`          | full document id, e.g. `Child:123`                 |
-| `_rev`         | `_rev`         | CouchDB revision                                   |
-| `_created_at`  | `created.at`   | timestamp when the record was created (ISO format) |
-| `_created_by`  | `created.by`   | user who created the record                        |
-| `_updated_at`  | `updated.at`   | timestamp of the last edit (ISO format)            |
-| `_updated_by`  | `updated.by`   | user who made the last edit                        |
-| `inactive`     | `inactive`     | 1 if the record is archived                        |
-| `anonymized`   | `anonymized`   | 1 if the record is anonymized                      |
+| Column        | Source field | Description                                        |
+| ------------- | ------------ | -------------------------------------------------- |
+| `_id`         | `_id`        | full document id, e.g. `Child:123`                 |
+| `_rev`        | `_rev`       | CouchDB revision                                   |
+| `_created_at` | `created.at` | timestamp when the record was created (ISO format) |
+| `_created_by` | `created.by` | user who created the record                        |
+| `_updated_at` | `updated.at` | timestamp of the last edit (ISO format)            |
+| `_updated_by` | `updated.by` | user who made the last edit                        |
+| `inactive`    | `inactive`   | 1 if the record is archived                        |
+| `anonymized`  | `anonymized` | 1 if the record is anonymized                      |
 
 The `_` prefix marks columns that are generated from internal metadata rather than configured entity fields
 and avoids clashes with custom fields of the same name.
@@ -132,8 +132,14 @@ Use named placeholders in the SQL query (for example `$startDate` and `$endDate`
 Groups can contain queries and other groups recursively.
 
 The hierarchical SQL view is rendered as a `Name` + `Count` table.
-That means each row should represent one metric value (typically a single numeric column such as `COUNT(*) as count`).
+That means each row should represent one metric value, so a query here should select a single numeric column.
 If a query returns multiple columns, only one value is shown as the row value and the other fields are used as row label details.
+
+**The row label comes from the column alias.** A single-column query result reaches the view as
+`{ "<alias>": <value> }`, and that alias is printed in the `Name` column. So alias each metric with the
+label that should appear in the report (`COUNT(*) as "Male students"`), not with a generic name:
+aliasing every query `as count` renders a list of rows all called "count".
+A `groupTitle` labels its group row, whose value is the sum of the rows nested below it.
 
 ```json
 // app/ReportConfig:test-report-grouped
@@ -143,16 +149,16 @@ If a query returns multiple columns, only one value is shown as the row value an
   "mode": "sql",
   "reportDefinition": [
     {
-      "query": "SELECT COUNT(*) as count FROM Child c"
+      "query": "SELECT COUNT(*) as 'All children' FROM Child c"
     },
     {
       "groupTitle": "By School Type",
       "items": [
         {
-          "query": "SELECT COUNT(*) as count FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 0"
+          "query": "SELECT COUNT(*) as 'Public school' FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 0"
         },
         {
-          "query": "SELECT COUNT(*) as count FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 1"
+          "query": "SELECT COUNT(*) as 'Private school' FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 1"
         }
       ]
     }
@@ -161,6 +167,85 @@ If a query returns multiple columns, only one value is shown as the row value an
 ```
 
 In the UI, grouped SQL reports are rendered as a hierarchical report view, while single-query SQL reports are shown as a flat table.
+
+#### Complete sample configs
+
+Two full report documents, one per rendering mode, ready to copy into a system for testing
+(these are also the samples used while testing the report admin UI):
+
+```json
+// a flat table: one query, many rows
+{
+  "_id": "ReportConfig:sql-child-export",
+  "title": "Child Details (SQL export)",
+  "mode": "sql",
+  "reportDefinition": [
+    {
+      "query": "SELECT name, gender, dateOfBirth, phone FROM Child ORDER BY name"
+    }
+  ]
+}
+```
+
+```json
+// a hierarchical report: nested groups of single-value queries
+{
+  "_id": "ReportConfig:sql-child-counts",
+  "title": "Child Counts (SQL, grouped)",
+  "mode": "sql",
+  "reportDefinition": [
+    {
+      "groupTitle": "Children",
+      "items": [
+        {
+          "query": "SELECT count(*) as 'Total' FROM Child"
+        },
+        {
+          "query": "SELECT count(*) as 'With date of birth' FROM Child WHERE dateOfBirth IS NOT NULL"
+        },
+        {
+          "groupTitle": "by gender",
+          "items": [
+            {
+              "query": "SELECT count(*) as 'Male' FROM Child WHERE gender = 'M'"
+            },
+            {
+              "query": "SELECT count(*) as 'Female' FROM Child WHERE gender = 'F'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### Legacy v1 SQL Reports (deprecated)
+
+Older report documents use a different shape and are still accepted, but should not be used for new reports:
+
+```json
+// app/ReportConfig:legacy-report
+{
+  "_id": "ReportConfig:legacy-report",
+  "title": "Legacy Report",
+  "mode": "sql",
+  "version": 1,
+  "neededArgs": ["from", "to"],
+  "aggregationDefinition": "SELECT count(*) as 'New children' FROM Child WHERE _created_at BETWEEN $from AND $to"
+}
+```
+
+- `aggregationDefinition` holds a single SQL string instead of the `reportDefinition` array, so a v1 report can never have groups.
+- `neededArgs` declares the argument names instead of `transformations`. `from` / `startDate` and `to` / `endDate` are recognized as the date range.
+- Placeholders may be `$from` / `$to`, or positional `?`, which are substituted in the order given by `neededArgs`.
+
+The presence of `aggregationDefinition` is what marks a document as v1. The backend normalizes such a
+document on read into the canonical form above (`reportDefinition` with one query, `transformations`
+with `SQL_FROM_DATE` / `SQL_TO_DATE`, `$from` / `$to` rewritten to `$startDate` / `$endDate`) and then
+attempts to write the migrated document back, so a v1 report usually becomes a canonical one the first
+time it is read. Report execution does not depend on that write-back succeeding.
+Because a v1 report always normalizes to a single ungrouped query, it is always rendered as a flat table.
 
 #### SQL recipes
 
