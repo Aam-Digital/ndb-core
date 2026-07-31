@@ -42,7 +42,10 @@ import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 
@@ -238,18 +241,14 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create filters with all possible options on default", async () => {
-    const fieldSchema: EntitySchemaField = {
-      dataType: "number",
-      label: "Rating",
-    };
-    TestEntity.schema.set("rating", fieldSchema);
+    const fieldSchema = TestEntity.schema.get("rating");
 
     const child1 = new TestEntity();
-    child1["rating"] = 1;
+    child1.rating = 1;
     const child2 = new TestEntity();
-    child2["rating"] = 5;
+    child2.rating = 5;
     const child3 = new TestEntity();
-    child3["rating"] = 1;
+    child3.rating = 1;
 
     const filter = (
       await service.generate([{ id: "rating" }], TestEntity, [
@@ -268,8 +267,6 @@ describe("FilterGeneratorService", () => {
       { key: "1", label: "1" },
       { key: "5", label: "5" },
     ]);
-
-    TestEntity.schema.delete("rating");
   });
 
   it("should use values from a prebuilt filter", async () => {
@@ -321,21 +318,15 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create a string filter for 'string' fields with default text edit component", async () => {
-    const fieldSchema: EntitySchemaField = {
-      dataType: "string",
-      label: "Free Text Field",
-    };
-    TestEntity.schema.set("freeText", fieldSchema);
+    const fieldSchema = TestEntity.schema.get("other");
 
     const filter = (
-      await service.generate([{ id: "freeText" }], TestEntity, [])
+      await service.generate([{ id: "other" }], TestEntity, [])
     )[0];
 
     expect(filter).toBeInstanceOf(StringFilter);
-    expect(filter.name).toBe("freeText");
+    expect(filter.name).toBe("other");
     expect(filter.label).toBe(fieldSchema.label);
-
-    TestEntity.schema.delete("freeText");
   });
 
   it("should create a string filter for 'long-text' fields", async () => {
@@ -492,18 +483,12 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should add empty option for generic selectable filters", async () => {
-    const fieldSchema: EntitySchemaField = {
-      dataType: "number",
-      label: "Rating",
-    };
-    TestEntity.schema.set("rating", fieldSchema);
-
     const e1 = new TestEntity();
-    e1["rating"] = 3;
+    e1.rating = 3;
     const e2 = new TestEntity();
-    e2["rating"] = "" as any;
+    e2.rating = "" as any;
     const e3 = new TestEntity();
-    e3["rating"] = null as any;
+    e3.rating = null as any;
     const e4 = new TestEntity();
 
     const data = [e1, e2, e3, e4];
@@ -519,8 +504,6 @@ describe("FilterGeneratorService", () => {
 
     const filtered = filterService.getFilterPredicate(emptyOption.filter);
     expect(data.filter((item) => filtered(item))).toEqual([e2, e3, e4]);
-
-    TestEntity.schema.delete("rating");
   });
 
   it("should add empty option for entity reference filters", async () => {
