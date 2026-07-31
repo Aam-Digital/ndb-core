@@ -21,7 +21,6 @@ Follow the instructions on the _aam-services_ repository to set up and enable th
 ### Using AI agents to generate SQL Queries
 
 LLMs like ChatGPT or Claude can generate report queries for you.
-We have a [guide / context document for this](https://docs.google.com/document/d/13yxJkqqoA9tBTbld65Y1FYA51l0W057m4D1wvoCILeQ/edit?usp=sharing).
 
 ## Configuration
 
@@ -32,6 +31,10 @@ There are different modes for `ReportConfig`:
 ### sql
 
 Requirements: SQS
+
+Queries are based on SQLite and do not support multiple queries in one string
+or some SQL commands.
+Do _not_ use special characters, like accents, in IDs or report column names as they cause unstable outputs.
 
 #### Available tables and columns
 
@@ -46,7 +49,6 @@ without being listed in the config document:
 | -------------- | -------------- | -------------------------------------------------- |
 | `_id`          | `_id`          | full document id, e.g. `Child:123`                 |
 | `_rev`         | `_rev`         | CouchDB revision                                   |
-| `_attachments` | `_attachments` | attachment metadata of the document                |
 | `_created_at`  | `created.at`   | timestamp when the record was created (ISO format) |
 | `_created_by`  | `created.by`   | user who created the record                        |
 | `_updated_at`  | `updated.at`   | timestamp of the last edit (ISO format)            |
