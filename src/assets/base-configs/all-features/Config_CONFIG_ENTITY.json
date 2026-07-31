@@ -805,8 +805,7 @@
                     {
                       "fields": [
                         "photo",
-                        "schoolId",
-                        "responsibleUser"
+                        "schoolId"
                       ]
                     },
                     {
