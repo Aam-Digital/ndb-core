@@ -31,6 +31,8 @@ import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { DynamicPlaceholderValueService } from "app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { todoDueStatusFilter } from "../../../features/todos/add-default-todo-views";
+import { EmailDatatype } from "../../basic-datatypes/string/email.datatype";
+import { UrlDatatype } from "../../basic-datatypes/string/url.datatype";
 
 @Injectable({
   providedIn: "root",
@@ -260,20 +262,24 @@ export class FilterGeneratorService {
    * dataType "string" or "long-text", edited with a plain text edit component.
    */
   private isFreeTextField(type: string, schema: EntitySchemaField): boolean {
-    if (
-      type !== StringDatatype.dataType &&
-      type !== LongTextDatatype.dataType
-    ) {
-      return false;
-    }
+    const stringDataTypes = [
+      StringDatatype,
+      LongTextDatatype,
+      EmailDatatype,
+      UrlDatatype,
+    ];
 
     const editComponent =
       schema.editComponent ??
       this.schemaService.getDatatypeOrDefault(type)?.editComponent;
+
     return (
-      editComponent === "EditText" ||
-      editComponent === "EditLongText" ||
-      editComponent === "EditEmail"
+      stringDataTypes.some((dt) => dt.dataType === type) &&
+      stringDataTypes.some(
+        (dt) =>
+          this.schemaService.getDatatypeOrDefault(dt.dataType).editComponent ===
+          editComponent,
+      )
     );
   }
 

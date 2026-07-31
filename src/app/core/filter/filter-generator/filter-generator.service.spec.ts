@@ -33,6 +33,10 @@ import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype"
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
+import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
+import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatype";
+import { EmailDatatype } from "../../basic-datatypes/string/email.datatype";
+import { UrlDatatype } from "../../basic-datatypes/string/url.datatype";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { DateFilter } from "../filters/dateFilter";
@@ -78,6 +82,10 @@ describe("FilterGeneratorService", () => {
         { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
         { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
         { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: EmailDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: UrlDatatype, multi: true },
         // EntityDatatype only uses this to offer entity actions, which filters don't
         { provide: EntityActionsService, useValue: {} },
       ],
