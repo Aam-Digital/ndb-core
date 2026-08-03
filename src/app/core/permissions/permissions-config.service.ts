@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import moment from "moment";
-import { map, Observable, startWith } from "rxjs";
+import { map, Observable, shareReplay, startWith } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { Config } from "../config/config";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -40,6 +40,9 @@ export class PermissionsConfigService {
   /**
    * {@link canManagePermissions} as a stream, re-evaluated whenever the rules of
    * the current user change (login, role change, updated permissions config).
+   *
+   * Shared, so that several consumers (e.g. one banner per open list view) do
+   * not each register their own listener on the ability.
    */
   readonly canManagePermissions$: Observable<boolean> = new Observable<void>(
     (subscriber) => this.ability.on("updated", () => subscriber.next()),
@@ -47,6 +50,7 @@ export class PermissionsConfigService {
     startWith(undefined),
     map(() => this.canManagePermissions()),
     distinctUntilChanged(),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   /**

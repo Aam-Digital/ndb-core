@@ -28,35 +28,45 @@ export class AdminUserRolesComponent {
   private readonly snackBar = inject(MatSnackBar);
 
   async editPermissions() {
-    let permissionsConfig: Config<DatabaseRules>;
+    let config: Config<DatabaseRules>;
     try {
-      permissionsConfig =
+      config =
         (await this.permissionsConfig.load()) ??
         new Config<DatabaseRules>(Config.PERMISSION_KEY, {});
     } catch (error) {
       // editing on top of a failed load would overwrite the stored permissions
       Logging.error("Failed to load permissions config", error);
-      this.snackBar.open(
+      this.showError(
         $localize`Could not load the permissions. Please try again.`,
-        undefined,
-        { duration: 5000 },
       );
       return;
     }
 
     this.jsonEditorService
-      .openJsonEditorDialog(permissionsConfig.data)
+      .openJsonEditorDialog(config.data)
       .subscribe(async (updatedData) => {
         if (!updatedData) return;
 
-        const backup = await this.permissionsConfig.saveWithBackup(
-          permissionsConfig,
-          updatedData,
-        );
-        this.permissionsConfig.offerUndo(
-          backup,
-          $localize`Permissions updated`,
-        );
+        try {
+          const backup = await this.permissionsConfig.saveWithBackup(
+            config,
+            updatedData,
+          );
+          this.permissionsConfig.offerUndo(
+            backup,
+            $localize`Permissions updated`,
+          );
+        } catch (error) {
+          // rxjs does not await this handler, so the rejection would be silent
+          Logging.error("Failed to save permissions config", error);
+          this.showError(
+            $localize`Could not save the permissions. Please try again.`,
+          );
+        }
       });
+  }
+
+  private showError(message: string) {
+    this.snackBar.open(message, undefined, { duration: 5000 });
   }
 }

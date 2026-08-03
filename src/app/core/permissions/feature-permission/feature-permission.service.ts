@@ -102,13 +102,16 @@ export class FeaturePermissionService {
       const effectiveRules = [...defaultRules, ...roleRules];
 
       // access decided by a rule the grid does not own (wildcard, grouped subject,
-      // condition, inverted rule, or a `_default` rule) cannot be changed via the
-      // grid -> show the effective state read-only
-      const decidedByUneditableRule = effectiveRules.some(
-        (rule) =>
-          this.affectsFeature(rule, entityType) &&
-          !this.isGridOwnedRule(rule, entityType),
-      );
+      // condition or inverted rule) cannot be changed via the grid -> show the
+      // effective state read-only. A `_default` rule is shared by every role, so
+      // it is never grid-owned no matter how simple its shape is.
+      const decidedByUneditableRule =
+        defaultRules.some((rule) => this.affectsFeature(rule, entityType)) ||
+        roleRules.some(
+          (rule) =>
+            this.affectsFeature(rule, entityType) &&
+            !this.isGridOwnedRule(rule, entityType),
+        );
 
       if (decidedByUneditableRule) {
         const manage = this.hasEffectiveAccess(
@@ -229,20 +232,24 @@ export class FeaturePermissionService {
   /**
    * Whether the given rules leave the role with the action in effect.
    *
-   * An inverted rule revokes a grant: CASL resolves a `cannot` on the same
-   * subject in favour of the denial, so a row that ignored it would claim access
-   * the user does not have. The grid cannot express such a rule, which is why any
-   * role affected by one is rendered read-only.
+   * CASL resolves overlapping rules so that the last matching one wins, so an
+   * inverted rule revokes a grant that came before it while a later granting
+   * rule re-enables access again. Ignoring that would make a row claim access
+   * the user does not have. The grid cannot express an inverted rule, which is
+   * why any role affected by one is rendered read-only.
+   *
+   * `rules` must be in the order the AbilityService applies them, i.e. the
+   * shared `_default` section first and the role's own rules after it.
    */
   private hasEffectiveAccess(
     rules: DatabaseRule[],
     entityType: string,
     action: EntityActionPermission,
   ): boolean {
-    const relevant = rules.filter((rule) =>
+    const decidingRule = rules.findLast((rule) =>
       this.coversAction(rule, entityType, action),
     );
-    return relevant.length > 0 && !relevant.some((rule) => rule.inverted);
+    return !!decidingRule && !decidingRule.inverted;
   }
 
   /**

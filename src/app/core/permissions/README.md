@@ -170,11 +170,15 @@ state) but never written:
 - managed `[system-default]` rules written by the backend
 
 A role whose _effective_ access is decided by one of those rules is shown **read-only** with
-a lock icon, because the dialog cannot change such a rule without affecting other entity
-types. The checkboxes then show what the role can actually do: a non-editable grant renders
-as checked, while a matching `"inverted": true` rule renders as unchecked, since CASL
-resolves the denial in favour of revoking the grant. Read-only rows are never written back,
-so only the JSON editor can change them.
+a lock icon, because the dialog cannot change such a rule without affecting other roles or
+entity types. Note that a `_default` rule always makes a row read-only, even when its shape
+would otherwise be simple enough for the grid to own, because the section is shared.
+
+The checkboxes then show what the role can actually do, resolved the way CASL does it: of
+all the rules matching this entity type and action, the **last matching one wins**. So a
+grant followed by an `"inverted": true` rule renders as unchecked, and a granting rule after
+that inverted one renders as checked again. Read-only rows are never written back, so only
+the JSON editor can change them.
 
 Whenever at least one row is read-only, the dialog says so and links to the advanced
 (JSON) editor.

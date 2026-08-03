@@ -183,6 +183,43 @@ describe("FeaturePermissionService", () => {
     expect(state.hasComplexRules).toBe(true);
   });
 
+  it("should let a granting rule after an inverted one re-enable access", async () => {
+    mockConfig({
+      user_app: [
+        { subject: ENTITY_TYPE, action: "manage", inverted: true },
+        { subject: "all", action: "manage" },
+      ],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    // CASL applies the last matching rule, so the later grant wins over the deny
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: true,
+      editable: false,
+    });
+  });
+
+  it("should treat an exact '_default' rule as uneditable rather than ignoring it", async () => {
+    mockConfig({
+      _default: [{ subject: ENTITY_TYPE, action: "read" }],
+      user_app: [],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    // the shape alone would look grid-owned, but `_default` is shared by all roles
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: false,
+      editable: false,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
   it("should apply shared '_default' rules to every role as read-only access", async () => {
     mockConfig({
       _default: [{ subject: [ENTITY_TYPE, "Config"], action: "read" }],
