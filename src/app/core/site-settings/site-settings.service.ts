@@ -96,9 +96,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
       ) {
         return;
       }
-      Logging.warn(
-        `SiteSettingsService: anonymous fetch returned status ${response.status}`,
-      );
+      Logging.warn("SiteSettingsService: anonymous fetch failed", {
+        status: response.status,
+      });
       return;
     }
 
@@ -199,10 +199,11 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
             ),
           );
         } catch (e) {
-          Logging.warn(
-            `SiteSettingsService: invalid color value for "${property}": ${color}`,
-            e,
-          );
+          Logging.warn("SiteSettingsService: invalid color value", {
+            property,
+            color,
+            error: e,
+          });
         }
       }
     });

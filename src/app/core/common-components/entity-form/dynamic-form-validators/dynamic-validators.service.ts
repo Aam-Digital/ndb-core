@@ -122,9 +122,9 @@ export class DynamicValidatorsService {
       case "readonlyAfterSet":
         return value ? buildReadonlyValidator(entity) : null;
       default:
-        Logging.warn(
-          `Trying to generate validator ${key} but it does not exist`,
-        );
+        Logging.warn("Trying to generate a validator that does not exist", {
+          validator: key,
+        });
         return null;
     }
   }
@@ -259,11 +259,10 @@ export class DynamicValidatorsService {
       case "readonlyAfterSet":
         return validationValue;
       default:
-        Logging.error(
-          `No description defined for validator "${validator}": ${JSON.stringify(
-            validationValue,
-          )}`,
-        );
+        Logging.error("No description defined for validator", {
+          validator,
+          validationValue,
+        });
         throw $localize`Invalid input`;
     }
   }

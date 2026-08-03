@@ -113,9 +113,9 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
     if (rawUserRules.length === 0 && sessionInfo) {
       // No rules or only default rules defined
-      Logging.warn(
-        `no rules found for user "${sessionInfo.name}" with roles "${sessionInfo.roles}"`,
-      );
+      Logging.warn("No permission rules found for user", {
+        roles: sessionInfo.roles,
+      });
     }
 
     return rawUserRules;
@@ -157,9 +157,9 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
       if (!has(dynamicPlaceholders, name)) {
         // log instead of silent failure
-        Logging.warn(
-          `Variable ${name} is not defined for user ${sessionInfo.id}`,
-        );
+        Logging.warn("Rule variable is not defined for user", {
+          variable: name,
+        });
         return AbilityService.USER_PROPERTY_UNDEFINED;
       }
 
