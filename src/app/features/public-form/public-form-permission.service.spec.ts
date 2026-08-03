@@ -1,27 +1,37 @@
 import { TestBed } from "@angular/core/testing";
 import { PublicFormPermissionService } from "./public-form-permission.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { SessionSubject } from "../../core/session/auth/session-info";
+import { PermissionsConfigService } from "../../core/permissions/permissions-config.service";
 import { Config } from "../../core/config/config";
-import { BehaviorSubject } from "rxjs";
 
 describe("PublicFormPermissionService", () => {
   let service: PublicFormPermissionService;
   let mockEntityMapper: any;
-  let mockSessionSubject: BehaviorSubject<any>;
+  let mockPermissionsConfig: {
+    load: ReturnType<typeof vi.fn>;
+    canManagePermissions: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     mockEntityMapper = {
-      load: vi.fn().mockName("EntityMapperService.load"),
       save: vi.fn().mockName("EntityMapperService.save"),
     };
-    mockSessionSubject = new BehaviorSubject(null);
+    mockPermissionsConfig = {
+      load: vi.fn().mockName("PermissionsConfigService.load"),
+      canManagePermissions: vi
+        .fn()
+        .mockName("PermissionsConfigService.canManagePermissions")
+        .mockReturnValue(false),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         PublicFormPermissionService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: SessionSubject, useValue: mockSessionSubject },
+        {
+          provide: PermissionsConfigService,
+          useValue: mockPermissionsConfig,
+        },
       ],
     });
     service = TestBed.inject(PublicFormPermissionService);
@@ -32,7 +42,7 @@ describe("PublicFormPermissionService", () => {
   });
 
   it("should allow access when permissions config cannot be loaded", async () => {
-    mockEntityMapper.load.mockRejectedValue(new Error("Config not found"));
+    mockPermissionsConfig.load.mockResolvedValue(null);
 
     const result = await service.hasPublicCreatePermission("Child");
 
@@ -41,7 +51,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should allow access when no permissions are configured", async () => {
     const emptyConfig = new Config(Config.PERMISSION_KEY, null);
-    mockEntityMapper.load.mockResolvedValue(emptyConfig);
+    mockPermissionsConfig.load.mockResolvedValue(emptyConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
@@ -52,7 +62,7 @@ describe("PublicFormPermissionService", () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "create" }],
     });
-    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
+    mockPermissionsConfig.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
@@ -63,7 +73,7 @@ describe("PublicFormPermissionService", () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "manage" }],
     });
-    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
+    mockPermissionsConfig.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
@@ -74,7 +84,7 @@ describe("PublicFormPermissionService", () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: ["Child", "School"], action: "create" }],
     });
-    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
+    mockPermissionsConfig.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
@@ -85,7 +95,7 @@ describe("PublicFormPermissionService", () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: ["Child", "School"], action: "manage" }],
     });
-    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
+    mockPermissionsConfig.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("School");
 
@@ -96,7 +106,7 @@ describe("PublicFormPermissionService", () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: ["Child", "School"], action: "create" }],
     });
-    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
+    mockPermissionsConfig.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Teacher");
 
@@ -107,7 +117,7 @@ describe("PublicFormPermissionService", () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "School", action: "create" }],
     });
-    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
+    mockPermissionsConfig.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
@@ -118,39 +128,23 @@ describe("PublicFormPermissionService", () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "read" }],
     });
-    mockEntityMapper.load.mockResolvedValue(permissionsConfig);
+    mockPermissionsConfig.load.mockResolvedValue(permissionsConfig);
 
     const result = await service.hasPublicCreatePermission("Child");
 
     expect(result).toBe(false);
   });
 
-  it("should detect admin permission when user has admin_app role", () => {
-    mockSessionSubject.next({ roles: ["admin_app", "user"] });
+  it("should detect admin permission from write access to the permissions config", () => {
+    mockPermissionsConfig.canManagePermissions.mockReturnValue(true);
+    expect(service.hasAdminPermission()).toBe(true);
 
-    const result = service.hasAdminPermission();
-
-    expect(result).toBe(true);
-  });
-
-  it("should not detect admin permission when user lacks admin_app role", () => {
-    mockSessionSubject.next({ roles: ["user", "viewer"] });
-
-    const result = service.hasAdminPermission();
-
-    expect(result).toBe(false);
-  });
-
-  it("should not detect admin permission when no session exists", () => {
-    mockSessionSubject.next(null);
-
-    const result = service.hasAdminPermission();
-
-    expect(result).toBe(false);
+    mockPermissionsConfig.canManagePermissions.mockReturnValue(false);
+    expect(service.hasAdminPermission()).toBe(false);
   });
 
   it("should create new permissions config when none exists", async () => {
-    mockEntityMapper.load.mockRejectedValue(new Error("Config not found"));
+    mockPermissionsConfig.load.mockResolvedValue(null);
     mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
@@ -195,7 +189,7 @@ describe("PublicFormPermissionService", () => {
         { subject: "School", action: "create" },
       ],
     });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockPermissionsConfig.load.mockResolvedValue(existingConfig);
     mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
@@ -237,7 +231,7 @@ describe("PublicFormPermissionService", () => {
         },
       ],
     });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockPermissionsConfig.load.mockResolvedValue(existingConfig);
 
     await service.addPublicCreatePermission("Child");
 
@@ -259,7 +253,7 @@ describe("PublicFormPermissionService", () => {
         },
       ],
     });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockPermissionsConfig.load.mockResolvedValue(existingConfig);
 
     await service.addPublicCreatePermission("Child");
 
@@ -270,7 +264,7 @@ describe("PublicFormPermissionService", () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "read" }],
     });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockPermissionsConfig.load.mockResolvedValue(existingConfig);
     mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
@@ -301,7 +295,7 @@ describe("PublicFormPermissionService", () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
       public: [{ subject: "Child", action: "read" }],
     });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockPermissionsConfig.load.mockResolvedValue(existingConfig);
     mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
@@ -326,7 +320,7 @@ describe("PublicFormPermissionService", () => {
         { subject: "Child", action: "create" },
       ],
     });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
+    mockPermissionsConfig.load.mockResolvedValue(existingConfig);
     mockEntityMapper.save.mockResolvedValue(undefined);
 
     await service.addPublicCreatePermission("Child");
