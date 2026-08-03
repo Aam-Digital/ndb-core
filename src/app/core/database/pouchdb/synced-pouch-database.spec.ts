@@ -419,8 +419,18 @@ describe("SyncedPouchDatabase", () => {
 
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
+    let errorSpy: Mock;
+
+    afterEach(() => {
+      // Logging is a shared singleton: restore it so a mocked no-op does not
+      // leak into later tests and silently suppress remote log reporting.
+      errorSpy.mockRestore();
+    });
 
     beforeEach(() => {
+      errorSpy = vi
+        .spyOn(Logging, "error")
+        .mockImplementation(() => {}) as Mock;
       const mockLocalDb = {
         name: "unit-test-db",
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
@@ -447,7 +457,6 @@ describe("SyncedPouchDatabase", () => {
     });
 
     it("should log the purge at error level with doc count and last sync time", async () => {
-      const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
       localStorage.setItem(service.LAST_SYNC_KEY, "2026-08-02T05:18:25.264Z");
       vi.spyOn(
         service["remoteDatabase"],
@@ -468,8 +477,6 @@ describe("SyncedPouchDatabase", () => {
     });
 
     it("should not log a purge if no permissions were lost", async () => {
-      const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
-      errorSpy.mockClear(); // spies persist across tests in this suite
       vi.spyOn(
         service["remoteDatabase"],
         "collectAndClearLostPermissions",
