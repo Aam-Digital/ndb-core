@@ -179,9 +179,13 @@ Two full report documents, one per rendering mode, ready to copy into a system f
   "_id": "ReportConfig:sql-child-export",
   "title": "Child Details (SQL export)",
   "mode": "sql",
+  "transformations": {
+    "startDate": ["SQL_FROM_DATE"],
+    "endDate": ["SQL_TO_DATE"]
+  },
   "reportDefinition": [
     {
-      "query": "SELECT name, gender, dateOfBirth, phone FROM Child ORDER BY name"
+      "query": "SELECT name, gender, dateOfBirth, phone FROM Child ORDER BY name WHERE admissionDate BETWEEN $startDate AND $endDate"
     }
   ]
 }
@@ -219,33 +223,6 @@ Two full report documents, one per rendering mode, ready to copy into a system f
   ]
 }
 ```
-
-#### Legacy v1 SQL Reports (deprecated)
-
-Older report documents use a different shape and are still accepted, but should not be used for new reports:
-
-```json
-// app/ReportConfig:legacy-report
-{
-  "_id": "ReportConfig:legacy-report",
-  "title": "Legacy Report",
-  "mode": "sql",
-  "version": 1,
-  "neededArgs": ["from", "to"],
-  "aggregationDefinition": "SELECT count(*) as 'New children' FROM Child WHERE _created_at BETWEEN $from AND $to"
-}
-```
-
-- `aggregationDefinition` holds a single SQL string instead of the `reportDefinition` array, so a v1 report can never have groups.
-- `neededArgs` declares the argument names instead of `transformations`. `from` / `startDate` and `to` / `endDate` are recognized as the date range.
-- Placeholders may be `$from` / `$to`, or positional `?`, which are substituted in the order given by `neededArgs`.
-
-The presence of `aggregationDefinition` is what marks a document as v1. The backend normalizes such a
-document on read into the canonical form above (`reportDefinition` with one query, `transformations`
-with `SQL_FROM_DATE` / `SQL_TO_DATE`, `$from` / `$to` rewritten to `$startDate` / `$endDate`) and then
-attempts to write the migrated document back, so a v1 report usually becomes a canonical one the first
-time it is read. Report execution does not depend on that write-back succeeding.
-Because a v1 report always normalizes to a single ungrouped query, it is always rendered as a flat table.
 
 #### SQL recipes
 
