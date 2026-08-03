@@ -23,6 +23,8 @@ import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { environment } from "../../../../environments/environment";
 import { NEVER, of } from "rxjs";
 import type { Mock } from "vitest";
+import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
+import { createFakeStorage } from "../../../utils/test-utils/fake-storage";
 
 type LatestChangesServiceMock = Pick<
   LatestChangesService,
@@ -44,8 +46,10 @@ describe("LatestChangesDialogService", () => {
   let service: LatestChangesDialogService;
   let mockLatestChangesService: LatestChangesServiceMock;
   let mockDialog: MatDialogMock;
+  let storage: Storage;
 
   beforeEach(() => {
+    storage = createFakeStorage();
     mockLatestChangesService = {
       getChangelogsBeforeVersion: vi.fn(),
       getChangelogsBetweenVersions: vi.fn(),
@@ -63,6 +67,7 @@ describe("LatestChangesDialogService", () => {
         LatestChangesDialogService,
         { provide: LatestChangesService, useValue: mockLatestChangesService },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: LOCAL_STORAGE_TOKEN, useValue: storage },
       ],
     });
 
@@ -76,27 +81,22 @@ describe("LatestChangesDialogService", () => {
   });
 
   it("should not display changes on first visit (no version)", () => {
-    const getSpy = vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
-
     service.showLatestChangesIfUpdated();
 
     expect(mockDialog.open).not.toHaveBeenCalled();
-    expect(getSpy).toHaveBeenCalled();
   });
 
   it("should display changes if stored version differs", () => {
-    const getSpy = vi
-      .spyOn(Storage.prototype, "getItem")
-      .mockReturnValue("1.0-test");
+    storage.setItem(LatestChangesDialogService.VERSION_KEY, "1.0-test");
 
     service.showLatestChangesIfUpdated();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(getSpy).toHaveBeenCalled();
   });
 
   it("should not display changes if stored version matches", () => {
-    vi.spyOn(Storage.prototype, "getItem").mockReturnValue(
+    storage.setItem(
+      LatestChangesDialogService.VERSION_KEY,
       environment.appVersion,
     );
 
@@ -108,8 +108,6 @@ describe("LatestChangesDialogService", () => {
   it("should update stored version after user closes dialog", async () => {
     vi.useFakeTimers();
     try {
-      vi.spyOn(Storage.prototype, "setItem");
-
       mockDialog.open.mockReturnValue({
         afterClosed: () => of(true),
       } as LatestChangesDialogRefMock<boolean>);
@@ -117,8 +115,7 @@ describe("LatestChangesDialogService", () => {
       service.showLatestChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(Storage.prototype.setItem).toHaveBeenCalledWith(
-        LatestChangesDialogService.VERSION_KEY,
+      expect(storage.getItem(LatestChangesDialogService.VERSION_KEY)).toBe(
         environment.appVersion,
       );
     } finally {

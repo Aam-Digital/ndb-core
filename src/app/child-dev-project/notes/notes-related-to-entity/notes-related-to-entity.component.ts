@@ -2,10 +2,10 @@ import {
   Component,
   computed,
   inject,
+  input,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Note } from "../model/note";
-import { ChildrenService } from "../../children/children.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
@@ -15,6 +15,7 @@ import { asArray } from "app/utils/asArray";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
+import { LoaderMethod } from "../../../core/entity/entity-special-loader/entity-special-loader.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 
@@ -29,10 +30,14 @@ import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-def
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
 export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note> {
-  private childrenService = inject(ChildrenService);
   private formDialog = inject(FormDialogService);
 
   override entityCtr = computed(() => Note);
+
+  /** Load related notes via the ChildrenService (see EntitySpecialLoaderService). */
+  override loaderMethod = input<LoaderMethod>(
+    LoaderMethod.NotesRelatedToEntity,
+  );
 
   protected override getDefaultColumns(): FormFieldConfig[] {
     return structuredClone(
@@ -47,14 +52,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
     return (note: Note) => note?.getColor();
   });
   newRecordFactory = this.createNewRecordFactory();
-
-  override getData() {
-    const entityId = this.entity()?.getId();
-    if (!entityId) {
-      return Promise.resolve([]);
-    }
-    return this.childrenService.getNotesRelatedTo(entityId);
-  }
 
   override createNewRecordFactory() {
     return () => {

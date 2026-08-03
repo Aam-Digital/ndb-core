@@ -2,19 +2,25 @@ import { TestBed } from "@angular/core/testing";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update-config.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { MockEntityMapperService } from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
+import {
+  MockEntityMapperService,
+  mockEntityMapperProvider,
+} from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import {
   DatabaseEntity,
   entityRegistry,
+  EntityRegistry,
 } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { of } from "rxjs";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { DefaultValueMode } from "../../../core/default-values/default-value-config";
-import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
-import { ConfigurableEnum } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
 
 const mockAutomationConfig = {
   mode: "inherited-field" as DefaultValueMode,
@@ -127,24 +133,30 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("Mentee", Mentee);
     entityRegistry.set("Mentorship", Mentorship);
 
-    // Create enum entities for testing
-    const mentorshipStatusEnum = new ConfigurableEnum(
-      "mentorship-status-enum",
-      TEST_MENTORSHIP_ENUM,
-    );
-    const schoolCategoryEnum = new ConfigurableEnum(
-      "school-category-enum",
-      TEST_SCHOOL_ENUM,
-    );
-
     TestBed.configureTestingModule({
-      imports: [
-        MockedTestingModule.withState(undefined, [
-          mentorshipStatusEnum,
-          schoolCategoryEnum,
-        ]),
+      providers: [
+        AutomatedFieldUpdateConfigService,
+        EntitySchemaService,
+        ...mockEntityMapperProvider(),
+        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: MatDialog, useValue: mockDialog },
+        // only the datatypes of the test entities' schemas, rather than a whole module
+        {
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        {
+          provide: ConfigurableEnumService,
+          useValue: {
+            getEnumValues: (id: string) =>
+              id === "mentorship-status-enum"
+                ? TEST_MENTORSHIP_ENUM
+                : TEST_SCHOOL_ENUM,
+          },
+        },
       ],
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
     });
 
     service = TestBed.inject(AutomatedFieldUpdateConfigService);

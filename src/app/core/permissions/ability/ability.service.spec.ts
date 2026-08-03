@@ -425,6 +425,34 @@ describe("AbilityService", () => {
     }
   });
 
+  it("should read renamed _default/_public keys and skip reserved-named roles", async () => {
+    vi.useFakeTimers();
+    try {
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+      const defaultRules: DatabaseRule[] = [
+        { subject: "Config", action: "read" },
+      ];
+      const config = new Config<DatabaseRules>(
+        Config.PERMISSION_KEY,
+        Object.assign({ _default: defaultRules } as DatabaseRules, rules),
+      );
+
+      TestBed.inject(SessionSubject).next({
+        name: "user",
+        id: "1",
+        // a Keycloak role literally named "default" or starting with "_" must not resolve
+        roles: ["user_app", "default", "_admin"],
+      });
+      entityUpdates.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should allow everything if permission doc has been deleted", async () => {
     vi.useFakeTimers();
     try {

@@ -4,7 +4,10 @@ import { EntityActionsMenuComponent } from "./entity-actions-menu.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
 import { EntityAction } from "./entity-action.interface";
-import { Entity } from "../../entity/model/entity";
+// a concrete, registered type: the abstract base Entity has no @DatabaseEntity
+// registration, so the menu's import-action lookup throws
+// "Requested item is not registered in EntityRegistry. Key: Entity"
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("EntityActionsMenuComponent", () => {
   let component: EntityActionsMenuComponent;
@@ -38,7 +41,7 @@ describe("EntityActionsMenuComponent", () => {
 
       const actionsService = TestBed.inject(EntityActionsMenuService);
       actionsService.registerActions([testAction]);
-      fixture.componentRef.setInput("entity", new Entity());
+      fixture.componentRef.setInput("entity", new TestEntity());
 
       let actionEvent;
       component.actionTriggered.subscribe((x) => (actionEvent = x));

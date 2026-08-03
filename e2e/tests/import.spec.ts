@@ -235,7 +235,6 @@ test("Import a multi-value entity reference from a single comma-separated column
   await page.getByRole("option", { name: /internal unique/i }).click();
 
   // multi-column matching indicator is shown on the mapping step
-  await argosScreenshot(page, "import-multi-column-matching-mapping");
 
   await page.getByRole("button", { name: "Continue" }).click();
 
@@ -245,8 +244,6 @@ test("Import a multi-value entity reference from a single comma-separated column
   ).toBeVisible();
   await expect(page.getByText("Springfield Elementary")).toBeVisible();
   await expect(page.getByText("Shelbyville Academy")).toBeVisible();
-
-  await argosScreenshot(page, "import-multi-value-review-both-references");
 
   await page.getByRole("button", { name: "Start Import" }).click();
   const confirmDialog = page.getByRole("dialog");

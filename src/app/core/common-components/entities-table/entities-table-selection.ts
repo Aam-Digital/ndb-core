@@ -22,7 +22,8 @@ export interface MouseSelectionUpdate<T extends Entity> {
  */
 export interface MouseSelectionInput<T extends Entity> {
   selectedRecords: T[];
-  selectedRows: TableRow<T>[];
+  /** rows of the page the interaction happened on, in displayed order */
+  currentPageRows: TableRow<T>[];
   row: TableRow<T>;
   shiftKey: boolean;
   lastSelectedRow: TableRow<T> | null;
@@ -80,13 +81,13 @@ export function toggleRecordSelection<T extends Entity>(
  */
 export function applyRangeSelection<T extends Entity>(
   selectedRecords: T[],
-  selectedRows: TableRow<T>[],
+  rows: TableRow<T>[],
   range: { start: number; end: number },
   shouldCheck: boolean,
 ): T[] {
   const updatedSelection = [...selectedRecords];
   for (let index = range.start; index <= range.end; index++) {
-    const row = selectedRows[index];
+    const row = rows[index];
     const isSelected = updatedSelection.includes(row.record);
 
     if (shouldCheck && !isSelected) {
@@ -106,15 +107,20 @@ export function updateSelectionFromMouseDown<T extends Entity>(
 ): MouseSelectionUpdate<T> {
   const {
     selectedRecords,
-    selectedRows,
+    currentPageRows,
     row,
     shiftKey,
     lastSelectedRow,
     lastSelection,
   } = input;
-  const currentIndex = selectedRows.indexOf(row);
+  // match by record, as the row wrappers are re-created whenever filter or sorting change
+  const currentIndex = currentPageRows.findIndex(
+    (pageRow) => pageRow.record === row.record,
+  );
   const anchorIndex = lastSelectedRow
-    ? selectedRows.indexOf(lastSelectedRow)
+    ? currentPageRows.findIndex(
+        (pageRow) => pageRow.record === lastSelectedRow.record,
+      )
     : -1;
   const canRangeSelect =
     shiftKey && !!lastSelectedRow && anchorIndex !== -1 && currentIndex !== -1;
@@ -130,7 +136,7 @@ export function updateSelectionFromMouseDown<T extends Entity>(
     return {
       selectedRecords: applyRangeSelection(
         selectedRecords,
-        selectedRows,
+        currentPageRows,
         { start, end },
         shouldCheck,
       ),
@@ -163,8 +169,10 @@ type ModelSignal<T> = ReadSignal<T> & { set(value: T): void };
  */
 export interface EntitiesTableSelectionContext<T extends Entity> {
   selectedRecords: ModelSignal<T[]>;
-  sortedRows: ReadSignal<TableRow<T>[]>;
-  getCurrentPageRows: () => TableRow<T>[];
+  /** rows that "select all" applies to, i.e. all rows loaded into the table */
+  selectableRows: ReadSignal<TableRow<T>[]>;
+  /** rows of the currently displayed page, in displayed order */
+  currentPageRows: ReadSignal<TableRow<T>[]>;
 }
 
 /**
@@ -182,13 +190,13 @@ export class EntitiesTableSelectionStore<T extends Entity> {
 
   readonly allRowsSelected = computed(() => {
     const selected = this.context?.selectedRecords() ?? [];
-    const total = this.context?.sortedRows().length ?? 0;
+    const total = this.context?.selectableRows().length ?? 0;
     return selected.length > 0 && selected.length === total;
   });
 
   readonly selectionIndeterminate = computed(() => {
     const selected = this.context?.selectedRecords() ?? [];
-    const total = this.context?.sortedRows().length ?? 0;
+    const total = this.context?.selectableRows().length ?? 0;
     return selected.length > 0 && selected.length < total;
   });
 
@@ -208,10 +216,10 @@ export class EntitiesTableSelectionStore<T extends Entity> {
     );
   }
 
-  /** Selects or unselects all currently sorted rows. */
+  /** Selects or unselects all rows loaded into the table. */
   selectAllRows(checked: boolean) {
     this.context.selectedRecords.set(
-      checked ? this.context.sortedRows().map((r) => r.record) : [],
+      checked ? this.context.selectableRows().map((r) => r.record) : [],
     );
   }
 
@@ -220,10 +228,9 @@ export class EntitiesTableSelectionStore<T extends Entity> {
    * Returns whether the event came from a checkbox target.
    */
   handleSelectableRowMouseDown(event: MouseEvent, row: TableRow<T>): boolean {
-    const selectedRows = this.context.getCurrentPageRows();
     const nextState = updateSelectionFromMouseDown({
       selectedRecords: this.context.selectedRecords(),
-      selectedRows,
+      currentPageRows: this.context.currentPageRows(),
       row,
       shiftKey: event.shiftKey,
       lastSelectedRow: this.lastSelectedRow(),

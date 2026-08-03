@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
@@ -9,7 +9,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import moment from "moment";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { FilterService } from "../filter.service";
 import {
   EMPTY_FILTER_OPTION_KEY,
@@ -17,7 +17,24 @@ import {
   SelectableFilter,
 } from "../filters/filters";
 import { Entity } from "../../entity/model/entity";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  entityRegistry,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { getDefaultEnumEntities } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { entityAbilityFactory } from "../../permissions/ability/testing-entity-ability-factory";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { DynamicPlaceholderValueService } from "../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
@@ -32,13 +49,39 @@ describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let filterService: FilterService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
+      providers: [
+        FilterGeneratorService,
+        FilterService,
+        EntitySchemaService,
+        DynamicPlaceholderValueService,
+        ConfigurableEnumService,
+        ...mockEntityMapperProvider(getDefaultEnumEntities()),
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: EntityAbility,
+          useFactory: entityAbilityFactory,
+          deps: [EntitySchemaService],
+        },
+        // only the datatypes of the entity schemas under test, rather than a whole module
+        {
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
+        { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+        // EntityDatatype only uses this to offer entity actions, which filters don't
+        { provide: EntityActionsService, useValue: {} },
+      ],
     });
     service = TestBed.inject(FilterGeneratorService);
     filterService = TestBed.inject(FilterService);
-  }));
+    await TestBed.inject(ConfigurableEnumService).preLoadEnums();
+  });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -93,53 +136,60 @@ describe("FilterGeneratorService", () => {
     expect(comparableOptions).toHaveLength(interactionTypes.length);
     expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
-    // enum name in additional field
-    const schemaAdditional = {
-      id: "otherEnum",
-      dataType: schema.dataType,
-      additional: schema.additional,
-    };
-    Note.schema.set("otherEnum", schemaAdditional);
+    try {
+      // enum name in additional field
+      const schemaAdditional = {
+        id: "otherEnum",
+        dataType: schema.dataType,
+        additional: schema.additional,
+      };
+      Note.schema.set("otherEnum", schemaAdditional);
 
-    filterOptions = (
-      await service.generate([{ id: "otherEnum" }], Note, [])
-    )[0] as ConfigurableEnumFilter<Note>;
+      filterOptions = (
+        await service.generate([{ id: "otherEnum" }], Note, [])
+      )[0] as ConfigurableEnumFilter<Note>;
 
-    comparableOptions = filterOptions.options.map((option) => {
-      return { key: option.key, label: option.label };
-    });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
-    expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
+      comparableOptions = filterOptions.options.map((option) => {
+        return { key: option.key, label: option.label };
+      });
+      expect(comparableOptions).toHaveLength(interactionTypes.length);
+      expect(comparableOptions).toEqual(
+        expect.arrayContaining(interactionTypes),
+      );
 
-    // enum as array
-    const schemaArray: FormFieldConfig = {
-      id: "otherEnum",
-      dataType: schema.dataType,
-      isArray: true,
-      additional: schema.additional,
-    };
-    Note.schema.set("otherEnum", schemaArray);
+      // enum as array
+      const schemaArray: FormFieldConfig = {
+        id: "otherEnum",
+        dataType: schema.dataType,
+        isArray: true,
+        additional: schema.additional,
+      };
+      Note.schema.set("otherEnum", schemaArray);
 
-    filterOptions = (
-      await service.generate([{ id: "otherEnum" }], Note, [])
-    )[0] as ConfigurableEnumFilter<Note>;
-    comparableOptions = filterOptions.options.map((option) => {
-      return { key: option.key, label: option.label };
-    });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
-    expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
+      filterOptions = (
+        await service.generate([{ id: "otherEnum" }], Note, [])
+      )[0] as ConfigurableEnumFilter<Note>;
+      comparableOptions = filterOptions.options.map((option) => {
+        return { key: option.key, label: option.label };
+      });
+      expect(comparableOptions).toHaveLength(interactionTypes.length);
+      expect(comparableOptions).toEqual(
+        expect.arrayContaining(interactionTypes),
+      );
 
-    const note = new Note();
-    note["otherEnum"] = [
-      defaultInteractionTypes[1],
-      defaultInteractionTypes[2],
-    ];
+      const note = new Note();
+      note["otherEnum"] = [
+        defaultInteractionTypes[1],
+        defaultInteractionTypes[2],
+      ];
 
-    expect(filter([note], filterOptions.options[1])).toEqual([note]);
-    expect(filter([note], filterOptions.options[2])).toEqual([note]);
-    expect(filter([note], filterOptions.options[3])).toEqual([]);
-
-    Note.schema.delete("otherEnum");
+      expect(filter([note], filterOptions.options[1])).toEqual([note]);
+      expect(filter([note], filterOptions.options[2])).toEqual([note]);
+      expect(filter([note], filterOptions.options[3])).toEqual([]);
+    } finally {
+      // restore even on a failed assertion, the schema is shared across spec files
+      Note.schema.delete("otherEnum");
+    }
   });
 
   it("should create an entity filter", async () => {
@@ -158,25 +208,32 @@ describe("FilterGeneratorService", () => {
     csr4.schoolId = school1.getId();
     const schema = ChildSchoolRelation.schema.get("schoolId");
     const originalSchemaAdditional = schema.additional;
+    const originalSchemaLabel = schema.label;
     schema.additional = TestEntity.ENTITY_TYPE;
+    // the model itself defines no label for this field, it usually comes from the app config
+    schema.label = "School";
 
-    const filterOptions = (
-      await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
-    )[0] as EntityFilter<TestEntity>;
+    try {
+      const filterOptions = (
+        await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
+      )[0] as EntityFilter<TestEntity>;
 
-    expect(filterOptions.label).toEqual(schema.label);
-    expect(filterOptions.name).toEqual("schoolId");
-    const allRelations = [csr1, csr2, csr3, csr4];
-    const school1Filter: FilterSelectionOption<Entity> =
-      filterOptions.options.find((opt) => opt.key === school1.getId());
-    expect(school1Filter.label).toEqual(school1.name);
-    expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
-    const school2Filter: FilterSelectionOption<Entity> =
-      filterOptions.options.find((opt) => opt.key === school2.getId());
-    expect(school2Filter.label).toEqual(school2.name);
-    expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
-
-    schema.additional = originalSchemaAdditional;
+      expect(filterOptions.label).toEqual(schema.label);
+      expect(filterOptions.name).toEqual("schoolId");
+      const allRelations = [csr1, csr2, csr3, csr4];
+      const school1Filter: FilterSelectionOption<Entity> =
+        filterOptions.options.find((opt) => opt.key === school1.getId());
+      expect(school1Filter.label).toEqual(school1.name);
+      expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
+      const school2Filter: FilterSelectionOption<Entity> =
+        filterOptions.options.find((opt) => opt.key === school2.getId());
+      expect(school2Filter.label).toEqual(school2.name);
+      expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
+    } finally {
+      // restore even on a failed assertion, the schema is shared across spec files
+      schema.additional = originalSchemaAdditional;
+      schema.label = originalSchemaLabel;
+    }
   });
 
   it("should create filters with all possible options on default", async () => {
@@ -366,22 +423,25 @@ describe("FilterGeneratorService", () => {
     const originalSchemaAdditional = schema.additional;
     schema.additional = TestEntity.ENTITY_TYPE;
 
-    const filter = (
-      await service.generate([{ id: "schoolId" }], ChildSchoolRelation, data)
-    )[0] as EntityFilter<ChildSchoolRelation>;
+    try {
+      const filter = (
+        await service.generate([{ id: "schoolId" }], ChildSchoolRelation, data)
+      )[0] as EntityFilter<ChildSchoolRelation>;
 
-    const emptyOption = filter.options.find(
-      (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
-    );
-    expect(emptyOption).toBeTruthy();
+      const emptyOption = filter.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+      expect(emptyOption).toBeTruthy();
 
-    const filtered = filterService.getFilterPredicate(emptyOption.filter);
-    expect(data.filter((item) => filtered(item))).toEqual([
-      relationWithNull,
-      relationWithUndefined,
-    ]);
-
-    schema.additional = originalSchemaAdditional;
+      const filtered = filterService.getFilterPredicate(emptyOption.filter);
+      expect(data.filter((item) => filtered(item))).toEqual([
+        relationWithNull,
+        relationWithUndefined,
+      ]);
+    } finally {
+      // restore even on a failed assertion, the schema is shared across spec files
+      schema.additional = originalSchemaAdditional;
+    }
   });
 
   it("should handle array values (multi-select fields) and show invalid options correctly", async () => {

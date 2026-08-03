@@ -149,6 +149,50 @@ describe("Schema data type: entity (advanced functionality)", () => {
     ).resolves.toEqual(entity.getId());
   });
 
+  // Orthogonal: the matching field is itself an entity reference, so the raw
+  // import value has to be resolved to the referenced record's id before it can
+  // be compared with the candidates' stored ids.
+  // (e.g. match a Note's related Child by the Child's "responsible user", given the user's name)
+  it("should match an entity ref through a nested entity ref", async () => {
+    const supervisor = TestEntity.create({ name: "test user" });
+    const child = TestEntity.create({
+      name: "Child A",
+      ref: supervisor.getId(),
+    });
+    await entityMapper.saveAll([supervisor, child]);
+
+    await expect(
+      matchField([
+        {
+          additional: { refField: "ref", valueMapping: { refField: "name" } },
+          rawCell: "test user",
+        },
+      ]),
+    ).resolves.toEqual(child.getId());
+  });
+
+  // A nested entity ref that cannot be resolved must match nothing.
+  // Guard against resolving to an empty value instead, which would silently
+  // match every candidate that has no value in the matching field.
+  it("should not match anything if the nested entity ref cannot be resolved", async () => {
+    const supervisor = TestEntity.create({ name: "test user" });
+    // the only record without a "ref" value: must not be matched by a failed lookup
+    const child = TestEntity.create({
+      name: "Child A",
+      ref: supervisor.getId(),
+    });
+    await entityMapper.saveAll([supervisor, child]);
+
+    await expect(
+      matchField([
+        {
+          additional: { refField: "ref", valueMapping: { refField: "name" } },
+          rawCell: "not an existing user",
+        },
+      ]),
+    ).resolves.toBeUndefined();
+  });
+
   /**
    * Call importMatchField directly with the given columns mapped to `schema`
    * (a single-value entity-reference field on TestEntity).
