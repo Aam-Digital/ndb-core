@@ -253,8 +253,13 @@ is also available for special cases. It only has these two columns, none of the 
 </ul>
 <p>Groups can contain queries and other groups recursively.</p>
 <p>The hierarchical SQL view is rendered as a <code>Name</code> + <code>Count</code> table.
-That means each row should represent one metric value (typically a single numeric column such as <code>COUNT(*) as count</code>).
+That means each row should represent one metric value, so a query here should select a single numeric column.
 If a query returns multiple columns, only one value is shown as the row value and the other fields are used as row label details.</p>
+<p><strong>The row label comes from the column alias.</strong> A single-column query result reaches the view as
+<code>{ &quot;&lt;alias&gt;&quot;: &lt;value&gt; }</code>, and that alias is printed in the <code>Name</code> column. So alias each metric with the
+label that should appear in the report (<code>COUNT(*) as &quot;Male students&quot;</code>), not with a generic name:
+aliasing every query <code>as count</code> renders a list of rows all called &quot;count&quot;.
+A <code>groupTitle</code> labels its group row, whose value is the sum of the rows nested below it.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">// app/ReportConfig:test-report-grouped
 {
   &quot;_id&quot;: &quot;ReportConfig:test-report-grouped&quot;,
@@ -262,22 +267,68 @@ If a query returns multiple columns, only one value is shown as the row value an
   &quot;mode&quot;: &quot;sql&quot;,
   &quot;reportDefinition&quot;: [
     {
-      &quot;query&quot;: &quot;SELECT COUNT(*) as count FROM Child c&quot;
+      &quot;query&quot;: &quot;SELECT COUNT(*) as &#39;All children&#39; FROM Child c&quot;
     },
     {
       &quot;groupTitle&quot;: &quot;By School Type&quot;,
       &quot;items&quot;: [
         {
-          &quot;query&quot;: &quot;SELECT COUNT(*) as count FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 0&quot;
+          &quot;query&quot;: &quot;SELECT COUNT(*) as &#39;Public school&#39; FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 0&quot;
         },
         {
-          &quot;query&quot;: &quot;SELECT COUNT(*) as count FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 1&quot;
+          &quot;query&quot;: &quot;SELECT COUNT(*) as &#39;Private school&#39; FROM Child c JOIN School s ON s._id = c.schoolId WHERE s.privateSchool = 1&quot;
         }
       ]
     }
   ]
 }</code></pre></div><p>In the UI, grouped SQL reports are rendered as a hierarchical report view, while single-query SQL reports are shown as a flat table.</p>
-<h4>SQL recipes</h4>
+<h4>Complete sample configs</h4>
+<p>Two full report documents, one per rendering mode, ready to copy into a system for testing
+(these are also the samples used while testing the report admin UI):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">// a flat table: one query, many rows
+{
+  &quot;_id&quot;: &quot;ReportConfig:sql-child-export&quot;,
+  &quot;title&quot;: &quot;Child Details (SQL export)&quot;,
+  &quot;mode&quot;: &quot;sql&quot;,
+  &quot;transformations&quot;: {
+    &quot;startDate&quot;: [&quot;SQL_FROM_DATE&quot;],
+    &quot;endDate&quot;: [&quot;SQL_TO_DATE&quot;]
+  },
+  &quot;reportDefinition&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT name, gender, dateOfBirth, phone FROM Child ORDER BY name WHERE admissionDate BETWEEN $startDate AND $endDate&quot;
+    }
+  ]
+}</code></pre></div><b>Example :</b><div><pre class="line-numbers"><code class="language-json">// a hierarchical report: nested groups of single-value queries
+{
+  &quot;_id&quot;: &quot;ReportConfig:sql-child-counts&quot;,
+  &quot;title&quot;: &quot;Child Counts (SQL, grouped)&quot;,
+  &quot;mode&quot;: &quot;sql&quot;,
+  &quot;reportDefinition&quot;: [
+    {
+      &quot;groupTitle&quot;: &quot;Children&quot;,
+      &quot;items&quot;: [
+        {
+          &quot;query&quot;: &quot;SELECT count(*) as &#39;Total&#39; FROM Child&quot;
+        },
+        {
+          &quot;query&quot;: &quot;SELECT count(*) as &#39;With date of birth&#39; FROM Child WHERE dateOfBirth IS NOT NULL&quot;
+        },
+        {
+          &quot;groupTitle&quot;: &quot;by gender&quot;,
+          &quot;items&quot;: [
+            {
+              &quot;query&quot;: &quot;SELECT count(*) as &#39;Male&#39; FROM Child WHERE gender = &#39;M&#39;&quot;
+            },
+            {
+              &quot;query&quot;: &quot;SELECT count(*) as &#39;Female&#39; FROM Child WHERE gender = &#39;F&#39;&quot;
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}</code></pre></div><h4>SQL recipes</h4>
 <p>Useful patterns for common Aam Digital reporting questions.</p>
 <h5>Calculate age from date of birth</h5>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT name,
