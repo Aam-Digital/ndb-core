@@ -286,8 +286,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="334"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:334</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="337"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:337</a></div>
                         </td>
                     </tr>
 
@@ -473,8 +473,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="347"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:347</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="350"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:350</a></div>
                         </td>
                     </tr>
 
@@ -724,8 +724,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="321"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:321</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="324"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:324</a></div>
                         </td>
                     </tr>
 
@@ -1427,7 +1427,10 @@ export class KeycloakAdminService extends UserAdminService {
             })),
             catchError((error) &#x3D;&gt; {
               // Log the error but don&#x27;t fail the entire operation
-              Logging.warn(&#x60;Failed to fetch roles for user ${user.id}&#x60;, error);
+              Logging.warn(&quot;Failed to fetch roles for user&quot;, {
+                userId: user.id,
+                error,
+              });
               // Return user without roles
               return of({
                 id: user.id,

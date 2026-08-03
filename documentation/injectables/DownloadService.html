@@ -831,7 +831,7 @@ export class DownloadService {
       case &quot;zip&quot;:
         return new Blob([data], { type: &quot;application/zip&quot; });
       default:
-        Logging.warn(&#x60;Not supported format: ${format}&#x60;);
+        Logging.warn(&quot;Export format not supported&quot;, { format });
         return new Blob([&quot;&quot;]);
     }
   }

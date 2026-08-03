@@ -713,8 +713,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="215"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:215</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:218</a></div>
                         </td>
                     </tr>
 
@@ -752,8 +752,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="223"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:223</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="226"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:226</a></div>
                         </td>
                     </tr>
 
@@ -789,8 +789,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="194"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:194</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="197"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:197</a></div>
                         </td>
                     </tr>
 
@@ -897,8 +897,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="241"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:241</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="244"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:244</a></div>
                         </td>
                     </tr>
 
@@ -1044,8 +1044,8 @@ It allows to show, upload and remove files.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="204"
-                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:204</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/features/file/edit-file/edit-file.component.ts:207</a></div>
                         </td>
                     </tr>
 
@@ -2491,7 +2491,10 @@ export class EditFileComponent
     } else if (err instanceof NotAvailableOfflineError) {
       errorMessage &#x3D; $localize&#x60;:File Upload Error Message:Changes to file attachments are not available offline.&#x60;;
     } else {
-      Logging.error(&quot;Failed to update file: &quot; + JSON.stringify(err));
+      Logging.error(&quot;Failed to update file&quot;, {
+        status: err?.status,
+        message: err?.message,
+      });
       errorMessage &#x3D; $localize&#x60;:File Upload Error Message:Failed to update file attachment. Please try again.&#x60;;
     }
     this.alertService.addDanger(errorMessage);

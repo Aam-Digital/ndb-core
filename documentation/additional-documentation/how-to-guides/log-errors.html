@@ -134,12 +134,59 @@ This way, all logging is done in a consistent manner and can be transferred to t
 }</code></pre></div><p>The <code>LoggingService</code> has multiple log levels (<code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code>)
 that control whether log messages are sent to the remote monitoring and how they are treated there.</p>
 <h2>Remote Logging</h2>
-<p>Higher log levels (<code>warn</code> and <code>error</code>) are forwarded to our remote monitoring service, <a href="https://sentry.io/">Sentry</a>.
-How messages are grouped there depends on the (static) message text, so keep <code>Logging.warn()</code> / <code>Logging.error()</code>
-message strings constant and pass variable data as additional context arguments.</p>
+<p>Higher log levels (<code>warn</code> and <code>error</code>) are forwarded to our remote monitoring service, <a href="https://sentry.io/">Sentry</a>.</p>
+<h3>Keep message strings static</h3>
+<p>How messages are grouped there depends on the (static) message text, so keep <code>Logging.warn()</code> / <code>Logging.error()</code>
+message strings constant and pass variable data as additional context arguments:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">// don&#39;t - one separate issue per entity type, and the details are lost from the title
+Logging.warn(`Config references unknown entity type &quot;${config.entity}&quot;`);
+
+// do - one issue for the problem, details available in the event&#39;s &quot;context&quot;
+Logging.warn(&quot;Config references an unknown entity type&quot;, {
+  entityType: config.entity,
+});</code></pre></div><p>For thrown <code>Error</code>s, which reach the monitoring through Angular&#39;s <code>ErrorHandler</code>, whether the message
+affects grouping depends on whether the error type is fingerprinted — see below. Either way it is the
+issue title, so the readability rule always applies. Never interpolate <code>this.constructor.name</code> into
+one: it is minified in production, and because the message is built when the error is created, source
+maps cannot repair it the way they repair a stack trace. Such a report permanently reads
+<code>not registered in u</code>.</p>
+<h3>Grouping by error chain</h3>
+<p>Sentry groups errors <strong>by their stack trace</strong> whenever one is available — the exception message is not
+part of the grouping key then. (You can confirm this on any issue that holds events with several
+different <code>error.value</code>s.) So for a thrown error, rewording the message changes the issue title but
+never splits or merges issues; only a fingerprint does.</p>
+<p>Stack-based grouping is counterproductive for our own wrapper error classes (<code>DatabaseException</code>,
+<code>ConfigLoadError</code>, ...): they are thrown from one central place but reached from many components and
+routes, so a single problem scatters across a dozen issues - and archiving one of them does not
+silence the others.</p>
+<p><code>processSentryEvent</code> (the <code>beforeSend</code> hook) therefore sets an explicit <code>fingerprint</code> for the error types
+listed in <code>CAUSE_GROUPED_ERROR_TYPES</code>, built from the thrown error plus its root cause instead of the stack.
+Ids, URLs and numbers are masked so that occurrences of the same problem match. The route stays available
+as the <code>transaction</code> tag, so failures can still be filtered by where they happened.</p>
+<p>When adding a new error type, add its name to <code>CAUSE_GROUPED_ERROR_TYPES</code>. What Sentry reports as the
+exception type is <code>error.name || error.constructor.name</code>, so the name has to be set explicitly and to
+a literal — an <code>Error</code> subclass otherwise inherits <code>&quot;Error&quot;</code> from <code>Error.prototype</code> and would silently
+fall out of this list, and the constructor name is minified. Both the dedicated classes
+(<code>RegistryLookupError</code>) and the plain errors that just set <code>error.name</code> (<code>ConfigLoadError</code>) do this.</p>
+<p>Fingerprinting inverts the message rule stated above: once an error is fingerprinted its message <em>is</em>
+part of the grouping key, so whatever stays in it becomes a deliberate grouping dimension. Interpolate
+a value there only when both hold:</p>
+<ul>
+<li>its cardinality is <strong>bounded</strong> — a component name or entity type, not a user id, URL or document revision;</li>
+<li>each distinct value is a <strong>separately actionable bug</strong>, so a separate issue is what you want.</li>
+</ul>
+<p><code>RegistryLookupError</code> and <code>RegistryDuplicateError</code> keep the registry name and the requested key in
+their message on exactly that basis: a missing <code>Event</code> component and a missing <code>Child</code> entity are
+separate problems to fix, while everything they had in common — which component, pipe or route
+happened to trigger the lookup — is what the fingerprint now collapses. Note that values are still
+normalized, so keys differing only in digits would collide.</p>
+<p>Generic errors (<code>Error</code>, <code>TypeError</code>, ...) must keep the default grouping - for those the stack trace
+is the only thing telling two unrelated bugs apart.</p>
+<p>Note that changing a fingerprint does not re-group events already in Sentry: existing issues stay as they
+are and the new grouping applies to events reported from then on.</p>
 <h2>Key files</h2>
 <ul>
-<li><code>logging.service.ts</code> — <code>LoggingService</code> and the <code>Logging</code> singleton (<code>export const Logging = new LoggingService()</code>); implements the log levels and Sentry forwarding</li>
+<li><code>logging.service.ts</code> — <code>LoggingService</code> and the <code>Logging</code> singleton (<code>export const Logging = new LoggingService()</code>); implements the log levels, Sentry forwarding and the <code>beforeSend</code> filtering/grouping</li>
 <li><code>log-level.ts</code> — the <code>LogLevel</code> definitions</li>
 </ul>
 

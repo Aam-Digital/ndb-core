@@ -777,9 +777,11 @@ export class MatchingEntitiesComponent implements OnInit {
       const records &#x3D; await this.entityMapper
         .loadType(newSide.entityType)
         .catch((err) &#x3D;&gt; {
-          Logging.error(
-            &#x60;Failed to initialize entities (${newSide.entityType}) for matching side ${sideIndex}. Reasons: ${err}&#x60;,
-          );
+          Logging.error(&quot;Failed to initialize entities for matching side&quot;, {
+            entityType: newSide.entityType,
+            sideIndex,
+            error: err,
+          });
           return [];
         });
       newSide.dataSource.allRecords.set(records);

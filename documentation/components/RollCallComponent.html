@@ -1590,7 +1590,7 @@ export class RollCallComponent {
       const entity &#x3D; await this.entityMapper.load(entityType, id);
       event &#x3D; this.attendanceService.wrapEventEntity(entity);
     } catch (e) {
-      Logging.warn(&quot;Could not load event &quot; + id, e);
+      Logging.warn(&quot;Could not load event&quot;, { eventId: id, error: e });
       void this.router.navigate([&quot;/404&quot;]);
       return undefined;
     }

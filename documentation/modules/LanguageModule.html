@@ -275,9 +275,9 @@ export class LanguageModule {
         },
       });
     } catch (e) {
-      Logging.warn(
-        &#x60;Could not determine first day of week for locale &quot;${locale}&quot;.&#x60;,
-      );
+      Logging.warn(&quot;Could not determine first day of week for locale&quot;, {
+        locale,
+      });
     }
   }
 }

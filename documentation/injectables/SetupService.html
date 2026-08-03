@@ -482,7 +482,7 @@ export class SetupService {
         ),
     );
     if (!entries) {
-      Logging.warn(&quot;Failed to load config descriptor: &quot; + url);
+      Logging.warn(&quot;Failed to load config descriptor&quot;, { url });
       return [];
     }
     return asArray(entries).map((entry) &#x3D;&gt; ({ ...entry, baseUrl }));

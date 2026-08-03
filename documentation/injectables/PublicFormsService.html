@@ -555,8 +555,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="218"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:218</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="219"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:219</a></div>
                         </td>
                     </tr>
 
@@ -815,7 +815,8 @@ export class PublicFormsService {
 
     if (!this.entities.has(formConfig.entity)) {
       Logging.warn(
-        &#x60;PublicForm config references unknown entity type &quot;${formConfig.entity}&quot; — skipping. Check this PublicFormConfig.&#x60;,
+        &quot;PublicForm config references an unknown entity type — skipping. Check this PublicFormConfig.&quot;,
+        { entityType: formConfig.entity },
       );
       return [];
     }

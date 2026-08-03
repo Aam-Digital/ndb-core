@@ -508,8 +508,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="437"
-                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:437</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="439"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:439</a></div>
                         </td>
                     </tr>
 
@@ -589,8 +589,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="364"
-                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:364</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="366"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:366</a></div>
                         </td>
                     </tr>
 
@@ -626,8 +626,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="441"
-                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:441</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="443"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:443</a></div>
                         </td>
                     </tr>
 
@@ -693,8 +693,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="432"
-                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:432</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="434"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:434</a></div>
                         </td>
                     </tr>
 
@@ -760,8 +760,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="542"
-                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:542</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="544"
+                                    class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:544</a></div>
                         </td>
                     </tr>
 
@@ -988,7 +988,7 @@ without changing the given config.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="352" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:352</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="354" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:354</a></div>
                         </td>
                     </tr>
 
@@ -1133,7 +1133,7 @@ without changing the given config.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="590" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:590</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="592" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:592</a></div>
                         </td>
                     </tr>
 
@@ -1169,7 +1169,7 @@ without changing the given config.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="575" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:575</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="577" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:577</a></div>
                         </td>
                     </tr>
 
@@ -1468,9 +1468,11 @@ export class MatchingEntitiesComponent implements OnInit {
       const records &#x3D; await this.entityMapper
         .loadType(newSide.entityType)
         .catch((err) &#x3D;&gt; {
-          Logging.error(
-            &#x60;Failed to initialize entities (${newSide.entityType}) for matching side ${sideIndex}. Reasons: ${err}&#x60;,
-          );
+          Logging.error(&quot;Failed to initialize entities for matching side&quot;, {
+            entityType: newSide.entityType,
+            sideIndex,
+            error: err,
+          });
           return [];
         });
       newSide.dataSource.allRecords.set(records);

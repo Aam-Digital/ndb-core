@@ -334,6 +334,9 @@
                             <a href="#fieldsIncludingId" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" ><b>fieldsIncludingId</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</a>
                         </li>
                         <li>
+                            <a href="#fingerprintSentryEvent" title="src/app/core/logging/logging.service.ts" ><b>fingerprintSentryEvent</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#formatDateAsDayMonthYear" title="src/app/core/common-components/entity-form/dynamic-form-validators/date-validators.ts" ><b>formatDateAsDayMonthYear</b>&nbsp;&nbsp;&nbsp;(src/.../date-validators.ts)</a>
                         </li>
                         <li>
@@ -584,6 +587,9 @@
                         </li>
                         <li>
                             <a href="#normalizeEntityAdditional" title="src/app/core/basic-datatypes/entity/entity.datatype.ts" ><b>normalizeEntityAdditional</b>&nbsp;&nbsp;&nbsp;(src/.../entity.datatype.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#normalizeErrorValue" title="src/app/core/logging/logging.service.ts" ><b>normalizeErrorValue</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
                         </li>
                         <li>
                             <a href="#normalizeQueryKey" title="src/app/core/export/data-transformation-service/export-column-config.ts" ><b>normalizeQueryKey</b>&nbsp;&nbsp;&nbsp;(src/.../export-column-config.ts)</a>
@@ -8013,7 +8019,75 @@ from custom Error properties (e.g. DatabaseException&#39;s entityId, status, rea
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Sentry.ErrorEvent | null</code>
+                            <b>Returns : </b>    <code>Sentry.ErrorEvent</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fingerprintSentryEvent"></a>
+                    <span class="name">
+                        <span ><b>fingerprintSentryEvent</b></span>
+                        <a href="#fingerprintSentryEvent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fingerprintSentryEvent(event)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Group events of our own wrapper error classes (see
+<a href="../miscellaneous/variables.html#CAUSE_GROUPED_ERROR_TYPES">CAUSE_GROUPED_ERROR_TYPES</a>) by their error chain instead of by stack
+trace, so that one problem shows up as one issue.</p>
+<p><code>exception.values</code> is ordered innermost-first: <code>values[0]</code> is the deepest
+<code>cause</code>, the originally thrown error is last. Both ends matter - the thrown
+error says which operation failed, the root cause says why (e.g. a config
+load failing because the device is offline is a different problem from the
+same load failing because the user is unauthorized).</p>
+<p>The route remains available as the <code>transaction</code> tag, so a failure can still
+be filtered by where it happened without splitting it into separate issues.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Sentry.ErrorEvent</code>
 
                         </div>
                             <div class="io-description">
@@ -8046,18 +8120,18 @@ from custom Error properties (e.g. DatabaseException&#39;s entityId, status, rea
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Count occurrences of an event and check whether it exceeded the session cap.</p>
-<p>The key is deliberately coarse: error class + message of the root cause
-(<code>values[0]</code> is the deepest <code>cause</code> in the chain; the originally thrown,
+<p>The key is deliberately coarse: error class + normalized message of the root
+cause (<code>values[0]</code> is the deepest <code>cause</code> in the chain; the originally thrown,
 outermost error is last), without any stack information.
 Consequences:</p>
 <ul>
 <li>Same-message errors from different code paths share one budget,
 and all wrappers of a cascading failure are capped via their common
 root cause. This is a flood guard, not a grouping mechanism -
-Sentry&#39;s server-side, stack-based grouping remains authoritative
-for separating issues, and the first occurrences always get through.</li>
-<li>Errors that interpolate data (e.g. entity IDs) into their message
-get a separate budget per variant, so the cap is weaker for those.</li>
+see <a href="../miscellaneous/functions.html#fingerprintSentryEvent">fingerprintSentryEvent</a> for how issues are separated.</li>
+<li>Errors that interpolate data (e.g. entity IDs) into their message still
+share one budget, because the key is normalized the same way as the
+grouping fingerprint.</li>
 </ul>
 </div>
 
@@ -8160,6 +8234,66 @@ diagnostic value (server outages still surface through online users).</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="normalizeErrorValue"></a>
+                    <span class="name">
+                        <span ><b>normalizeErrorValue</b></span>
+                        <a href="#normalizeErrorValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>normalizeErrorValue(value)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mask volatile details (ids, urls, numbers) so that different occurrences of
+the same problem produce the same string.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="processSentryEvent"></a>
                     <span class="name">
                         <span ><b>processSentryEvent</b></span>
@@ -8180,7 +8314,8 @@ diagnostic value (server outages still surface through online users).</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Sentry <code>beforeSend</code> hook: drops network failures of offline devices
 and excessive repeats of an identical event,
-and enriches the remaining events with structured extra data.</p>
+and enriches the remaining events with structured extra data
+and a stable grouping fingerprint.</p>
 </div>
 
                             <div class="io-description">

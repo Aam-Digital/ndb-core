@@ -1210,8 +1210,8 @@ Returns true if there are no documents in the database</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="519"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:519</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="520"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:520</a></div>
                         </td>
                     </tr>
 
@@ -2638,10 +2638,11 @@ export class PouchDatabase extends Database {
       newObject._rev &#x3D; existingObject._rev;
       return this.put(newObject);
     } else {
-      // only include the document&#x27;s ID here: the full document would leak
-      // record contents into logs and fragment Sentry grouping per document
-      existingError.message &#x3D; &#x60;${existingError.message} (unable to resolve) ID: ${newObject._id}&#x60;;
-      throw new DatabaseException(existingError);
+      // the document&#x27;s ID is passed as entityId rather than appended to the
+      // message: remote monitoring groups by message, so an ID in there would
+      // fragment one recurring problem into a separate issue per document
+      existingError.message &#x3D; &#x60;${existingError.message} (unable to resolve)&#x60;;
+      throw new DatabaseException(existingError, newObject._id);
     }
   }
 

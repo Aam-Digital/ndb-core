@@ -277,8 +277,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="221"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:221</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:222</a></div>
                         </td>
                     </tr>
 
@@ -891,9 +891,9 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
       ) {
         return;
       }
-      Logging.warn(
-        &#x60;SiteSettingsService: anonymous fetch returned status ${response.status}&#x60;,
-      );
+      Logging.warn(&quot;SiteSettingsService: anonymous fetch failed&quot;, {
+        status: response.status,
+      });
       return;
     }
 
@@ -994,10 +994,11 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
             ),
           );
         } catch (e) {
-          Logging.warn(
-            &#x60;SiteSettingsService: invalid color value for &quot;${property}&quot;: ${color}&#x60;,
-            e,
-          );
+          Logging.warn(&quot;SiteSettingsService: invalid color value&quot;, {
+            property,
+            color,
+            error: e,
+          });
         }
       }
     });

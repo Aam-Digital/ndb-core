@@ -273,8 +273,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="544"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:544</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="545"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:545</a></div>
                         </td>
                     </tr>
 
@@ -354,8 +354,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="374"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:374</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="375"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:375</a></div>
                         </td>
                     </tr>
 
@@ -433,8 +433,8 @@ also includes activities linked via school group membership (legacy).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="286"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:286</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="287"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:287</a></div>
                         </td>
                     </tr>
 
@@ -525,8 +525,8 @@ also includes activities linked via school group membership (legacy).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="412"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:412</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="413"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:413</a></div>
                         </td>
                     </tr>
 
@@ -604,8 +604,8 @@ merging existing events with new (unsaved) events generated from recurring activ
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="333"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:333</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="334"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:334</a></div>
                         </td>
                     </tr>
 
@@ -681,8 +681,8 @@ merging existing events with new (unsaved) events generated from recurring activ
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="228"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:228</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="229"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:229</a></div>
                         </td>
                     </tr>
 
@@ -779,8 +779,8 @@ merging existing events with new (unsaved) events generated from recurring activ
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="323"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:323</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="324"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:324</a></div>
                         </td>
                     </tr>
 
@@ -854,8 +854,8 @@ merging existing events with new (unsaved) events generated from recurring activ
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="456"
-                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:456</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="457"
+                                    class="link-to-prism">src/app/features/attendance/attendance.service.ts:457</a></div>
                         </td>
                     </tr>
 
@@ -1175,8 +1175,9 @@ export class AttendanceService {
           typeConfig.dateField ?? DateDatatype.detectFieldInEntity(eventType);
         if (!resolvedDateField) {
           Logging.warn(
-            &#x60;[AttendanceService] No date field found for event type &quot;${eventTypeName}&quot;. &#x60; +
+            &#x60;[AttendanceService] No date field found for an event type. &#x60; +
               &#x60;Set &quot;dateField&quot; in the attendance config or add a @DatabaseField with dataType &quot;date&quot; to the entity.&#x60;,
+            { eventType: eventTypeName },
           );
         }
 

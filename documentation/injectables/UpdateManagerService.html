@@ -371,7 +371,7 @@ export class UpdateManagerService {
 
   constructor() {
     this.updates.unrecoverable.subscribe((err) &#x3D;&gt; {
-      Logging.error(&quot;App is in unrecoverable state: &quot; + err.reason);
+      Logging.error(&quot;App is in unrecoverable state&quot;, { reason: err.reason });
       this.location.reload();
     });
     const currentVersion &#x3D; this.localStorage.getItem(
@@ -462,7 +462,7 @@ export class UpdateManagerService {
     }
 
     this.updates.unrecoverable.subscribe(({ reason }) &#x3D;&gt; {
-      Logging.warn(&#x60;SW in unrecoverable state: ${reason}&#x60;);
+      Logging.warn(&quot;SW in unrecoverable state&quot;, { reason });
       this.snackBar
         .open(
           $localize&#x60;The app is in a unrecoverable state, please reload.&#x60;,

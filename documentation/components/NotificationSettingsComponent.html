@@ -1176,7 +1176,9 @@ export class NotificationSettingsComponent {
    */
   testNotification() {
     this.notificationService.testNotification().catch((reason) &#x3D;&gt; {
-      Logging.error(&quot;Could not send test notification: &quot; + reason.message);
+      Logging.error(&quot;Could not send test notification&quot;, {
+        reason: reason.message,
+      });
     });
   }
 }

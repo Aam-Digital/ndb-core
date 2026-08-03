@@ -184,6 +184,9 @@
                             <a href="#BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS" title="src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts" ><b>BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS</b>&nbsp;&nbsp;&nbsp;(src/.../basic-autocomplete.component.ts)</a>
                         </li>
                         <li>
+                            <a href="#CAUSE_GROUPED_ERROR_TYPES" title="src/app/core/logging/logging.service.ts" ><b>CAUSE_GROUPED_ERROR_TYPES</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#centersUnique" title="src/app/child-dev-project/children/demo-data-generators/fixtures/centers.ts" ><b>centersUnique</b>&nbsp;&nbsp;&nbsp;(src/.../centers.ts)</a>
                         </li>
                         <li>
@@ -659,6 +662,9 @@
                         </li>
                         <li>
                             <a href="#viewConfigs" title="src/app/features/template-export/template-export.module.ts" ><b>viewConfigs</b>&nbsp;&nbsp;&nbsp;(src/.../template-export.module.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#VOLATILE_VALUE_PATTERNS" title="src/app/core/logging/logging.service.ts" ><b>VOLATILE_VALUE_PATTERNS</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</a>
                         </li>
                         <li>
                             <a href="#warningLevels" title="src/app/child-dev-project/warning-level.ts" ><b>warningLevels</b>&nbsp;&nbsp;&nbsp;(src/.../warning-level.ts)</a>
@@ -2238,6 +2244,225 @@ its diff and as the badge tooltip (single source of truth).</p>
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/logging/logging.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CAUSE_GROUPED_ERROR_TYPES"></a>
+                    <span class="name">
+                        <span ><b>CAUSE_GROUPED_ERROR_TYPES</b></span>
+                        <a href="#CAUSE_GROUPED_ERROR_TYPES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  &quot;DatabaseException&quot;,
+  &quot;ConfigLoadError&quot;,
+  &quot;PermissionRulesLoadError&quot;,
+  &quot;SiteSettingsLoadError&quot;,
+  &quot;RegistryLookupError&quot;,
+  &quot;RegistryDuplicateError&quot;,
+]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Our own error classes that describe <em>what</em> failed precisely enough that all
+their occurrences belong into a single issue in remote monitoring,
+no matter which component, route or async call site ran into them.</p>
+<p>For these, Sentry&#39;s default grouping by stack trace actively hurts: they are
+thrown from one central place, while the stack differs per caller and even
+per build (releases without source maps report minified frames). One problem
+then scatters across a dozen issues that each have to be triaged separately,
+and archiving one of them does not silence the others.</p>
+<p>Only add error types whose name and message already identify the problem on
+their own, so that the stack adds nothing but noise. Generic errors (<code>Error</code>,
+<code>TypeError</code>, ...) must keep the default grouping - for those the stack trace
+is the only thing telling two unrelated bugs apart.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Logging"></a>
+                    <span class="name">
+                        <span ><b>Logging</b></span>
+                        <a href="#Logging"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new LoggingService()</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MAX_REPEATED_SENTRY_EVENTS"></a>
+                    <span class="name">
+                        <span ><b>MAX_REPEATED_SENTRY_EVENTS</b></span>
+                        <a href="#MAX_REPEATED_SENTRY_EVENTS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>5</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Maximum number of times an identical event is sent to remote logging
+within one app session (page load).
+Guards against error loops (e.g. an error thrown on every change detection
+cycle) flooding remote monitoring with thousands of duplicate events.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="NETWORK_ERROR_PATTERNS"></a>
+                    <span class="name">
+                        <span ><b>NETWORK_ERROR_PATTERNS</b></span>
+                        <a href="#NETWORK_ERROR_PATTERNS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  &quot;Failed to fetch&quot;, // Chrome (also matches DatabaseException &quot;Failed to fetch from DB&quot;)
+  &quot;NetworkError when attempting to fetch resource&quot;, // Firefox
+  &quot;Load failed&quot;, // Safari
+]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Error message fragments produced by browsers (and our fetch wrapper)
+when a request fails at the network layer.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sentryEventCounts"></a>
+                    <span class="name">
+                        <span ><b>sentryEventCounts</b></span>
+                        <a href="#sentryEventCounts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Map&lt;string, number&gt;()</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="VOLATILE_VALUE_PATTERNS"></a>
+                    <span class="name">
+                        <span ><b>VOLATILE_VALUE_PATTERNS</b></span>
+                        <a href="#VOLATILE_VALUE_PATTERNS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  [/https?:\/\/\S+/gi, &quot;&lt;url&gt;&quot;],
+  [
+    /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi,
+    &quot;&lt;uuid&gt;&quot;,
+  ],
+  [/\b\d+-[0-9a-f]{32}\b/gi, &quot;&lt;rev&gt;&quot;],
+  [/\d+/g, &quot;&lt;n&gt;&quot;],
+]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Data that varies between occurrences of the same problem and therefore has to
+be masked before an error message can be used as a grouping key.
+Order matters: the more specific patterns have to run before the plain number.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -6800,133 +7025,6 @@ tests read a fake localStorage. Injecting a fake avoids that entirely.</p>
       ),
   ],
 ]</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/logging/logging.service.ts</h3>
-    <section data-compodoc="block-properties">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="Logging"></a>
-                    <span class="name">
-                        <span ><b>Logging</b></span>
-                        <a href="#Logging"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>miscellaneous</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>new LoggingService()</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="MAX_REPEATED_SENTRY_EVENTS"></a>
-                    <span class="name">
-                        <span ><b>MAX_REPEATED_SENTRY_EVENTS</b></span>
-                        <a href="#MAX_REPEATED_SENTRY_EVENTS"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>5</code>
-                    </td>
-                </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Maximum number of times an identical event is sent to remote logging
-within one app session (page load).
-Guards against error loops (e.g. an error thrown on every change detection
-cycle) flooding remote monitoring with thousands of duplicate events.</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="NETWORK_ERROR_PATTERNS"></a>
-                    <span class="name">
-                        <span ><b>NETWORK_ERROR_PATTERNS</b></span>
-                        <a href="#NETWORK_ERROR_PATTERNS"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>[]</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[
-  &quot;Failed to fetch&quot;, // Chrome (also matches DatabaseException &quot;Failed to fetch from DB&quot;)
-  &quot;NetworkError when attempting to fetch resource&quot;, // Firefox
-  &quot;Load failed&quot;, // Safari
-]</code>
-                    </td>
-                </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Error message fragments produced by browsers (and our fetch wrapper)
-when a request fails at the network layer.</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="sentryEventCounts"></a>
-                    <span class="name">
-                        <span ><b>sentryEventCounts</b></span>
-                        <a href="#sentryEventCounts"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>new Map&lt;string, number&gt;()</code>
                     </td>
                 </tr>
 

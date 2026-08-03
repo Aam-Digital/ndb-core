@@ -1772,6 +1772,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/Registry.html" data-type="entity-link" >Registry</a>
                             </li>
                             <li class="link">
+                                <a href="classes/RegistryDuplicateError.html" data-type="entity-link" >RegistryDuplicateError</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/RegistryLookupError.html" data-type="entity-link" >RegistryLookupError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/RemoteLoginNotAvailableError.html" data-type="entity-link" >RemoteLoginNotAvailableError</a>
                             </li>
                             <li class="link">
