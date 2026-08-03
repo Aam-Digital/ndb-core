@@ -169,7 +169,7 @@ state) but never written:
 - the shared `_default` and `_public` sections (and their legacy `default` / `public` spellings)
 - managed `[system-default]` rules written by the backend
 
-A role whose *effective* access is decided by one of those rules is shown **read-only** with
+A role whose _effective_ access is decided by one of those rules is shown **read-only** with
 a lock icon, because the dialog cannot change such a rule without affecting other entity
 types. The checkboxes then show what the role can actually do: a non-editable grant renders
 as checked, while a matching `"inverted": true` rule renders as unchecked, since CASL
