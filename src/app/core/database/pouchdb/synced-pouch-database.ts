@@ -354,12 +354,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .filter((id) => !id.startsWith("_design/"));
 
     if (lostPermissionIds.length > 0) {
-      // deleting local data based on server response - log for traceability of possible data loss
-      Logging.warn(
+      // deleting local data based on server response - log for traceability of possible data loss.
+      // logged at "error" level (not "warn") because any local edits made since the last completed
+      // sync are destroyed here and cannot be recovered, so this must surface in monitoring.
+      Logging.error(
         "sync: purging local docs after server reported lost permissions",
         {
           db: this.dbName,
           count: lostPermissionIds.length,
+          // how far behind the server this client was: local edits made since then are lost
+          lastSyncCompleted: localStorage.getItem(this.LAST_SYNC_KEY),
         },
       );
     }
