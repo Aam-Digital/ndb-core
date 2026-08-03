@@ -73,8 +73,9 @@ export class AttendanceService {
           typeConfig.dateField ?? DateDatatype.detectFieldInEntity(eventType);
         if (!resolvedDateField) {
           Logging.warn(
-            `[AttendanceService] No date field found for event type "${eventTypeName}". ` +
+            `[AttendanceService] No date field found for an event type. ` +
               `Set "dateField" in the attendance config or add a @DatabaseField with dataType "date" to the entity.`,
+            { eventType: eventTypeName },
           );
         }
 

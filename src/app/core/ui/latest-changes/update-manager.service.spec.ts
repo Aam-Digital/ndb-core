@@ -228,7 +228,8 @@ describe("UpdateManagerService", () => {
     });
 
     expect(Logging.error).toHaveBeenCalledWith(
-      expect.stringContaining("ERROR REASON"),
+      "App is in unrecoverable state",
+      { reason: "ERROR REASON" },
     );
     expect(mockLocation.reload).toHaveBeenCalled();
   });

@@ -500,10 +500,11 @@ export class PouchDatabase extends Database {
       newObject._rev = existingObject._rev;
       return this.put(newObject);
     } else {
-      // only include the document's ID here: the full document would leak
-      // record contents into logs and fragment Sentry grouping per document
-      existingError.message = `${existingError.message} (unable to resolve) ID: ${newObject._id}`;
-      throw new DatabaseException(existingError);
+      // the document's ID is passed as entityId rather than appended to the
+      // message: remote monitoring groups by message, so an ID in there would
+      // fragment one recurring problem into a separate issue per document
+      existingError.message = `${existingError.message} (unable to resolve)`;
+      throw new DatabaseException(existingError, newObject._id);
     }
   }
 

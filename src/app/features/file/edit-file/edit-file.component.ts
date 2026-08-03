@@ -161,7 +161,10 @@ export class EditFileComponent
     } else if (err instanceof NotAvailableOfflineError) {
       errorMessage = $localize`:File Upload Error Message:Changes to file attachments are not available offline.`;
     } else {
-      Logging.error("Failed to update file: " + JSON.stringify(err));
+      Logging.error("Failed to update file", {
+        status: err?.status,
+        message: err?.message,
+      });
       errorMessage = $localize`:File Upload Error Message:Failed to update file attachment. Please try again.`;
     }
     this.alertService.addDanger(errorMessage);
