@@ -190,9 +190,9 @@ describe("FeaturePermissionService", () => {
       expect(state.hasComplexRules).toBe(true);
     });
 
-    it("should apply shared 'default' rules to every role as read-only access", async () => {
+    it("should apply shared '_default' rules to every role as read-only access", async () => {
       mockConfig({
-        default: [{ subject: [ENTITY_TYPE, "Config"], action: "read" }],
+        _default: [{ subject: [ENTITY_TYPE, "Config"], action: "read" }],
         user_app: [],
       });
 
@@ -207,10 +207,26 @@ describe("FeaturePermissionService", () => {
       expect(state.hasComplexRules).toBe(true);
     });
 
+    it("should still apply the legacy 'default' section of a not yet migrated config", async () => {
+      mockConfig({
+        default: [{ subject: [ENTITY_TYPE, "Config"], action: "read" }],
+        user_app: [],
+      });
+
+      const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+      expect(state.roles[0]).toEqual({
+        role: "user_app",
+        use: true,
+        manage: false,
+        editable: false,
+      });
+    });
+
     it("should reflect effective access for the shipped default config shape", async () => {
       // mirrors src/assets/base-configs/basic/Config_Permissions.json
       mockConfig({
-        default: [
+        _default: [
           { subject: ["Config", "SiteSettings"], action: "read" },
           { subject: ["NotificationConfig"], action: "manage" },
         ],
@@ -311,7 +327,7 @@ describe("FeaturePermissionService", () => {
       ]);
 
       expect(savedPermissions()).toEqual({
-        default: [{ subject: "all", action: "manage" }],
+        _default: [{ subject: "all", action: "manage" }],
         user_app: [{ subject: ENTITY_TYPE, action: "read" }],
       });
     });
@@ -333,8 +349,10 @@ describe("FeaturePermissionService", () => {
   });
 
   describe("getConfiguredRoleNames", () => {
-    it("should list role keys from the config, excluding 'default' and 'public'", async () => {
+    it("should list role keys from the config, excluding reserved sections and their legacy spellings", async () => {
       mockConfig({
+        _default: [{ subject: "all", action: "manage" }],
+        _public: [{ subject: ENTITY_TYPE, action: "read" }],
         default: [{ subject: "all", action: "manage" }],
         public: [{ subject: ENTITY_TYPE, action: "read" }],
         user_app: [],
@@ -368,19 +386,25 @@ describe("FeaturePermissionService", () => {
       });
     });
 
-    it("should never modify the 'default' or 'public' sections", async () => {
+    it("should never modify the reserved baseline sections or their legacy spellings", async () => {
       mockConfig({
-        default: [{ subject: "all", action: "manage" }],
+        _default: [{ subject: "all", action: "manage" }],
+        _public: [{ subject: ENTITY_TYPE, action: "read" }],
+        default: [{ subject: "Child", action: "read" }],
         public: [{ subject: ENTITY_TYPE, action: "read" }],
       });
 
       await service.setPermissions(ENTITY_TYPE, [
+        { role: "_default", use: false, manage: true },
+        { role: "_public", use: false, manage: false },
         { role: "default", use: false, manage: true },
         { role: "public", use: false, manage: false },
       ]);
 
       expect(savedPermissions()).toEqual({
-        default: [{ subject: "all", action: "manage" }],
+        _default: [{ subject: "all", action: "manage" }],
+        _public: [{ subject: ENTITY_TYPE, action: "read" }],
+        default: [{ subject: "Child", action: "read" }],
         public: [{ subject: ENTITY_TYPE, action: "read" }],
       });
     });

@@ -166,7 +166,7 @@ state) but never written:
 
 - grouped subjects (`subject: ["A", "B"]`) and the `all` wildcard
 - rules with `conditions` or `inverted: true`
-- the shared `default` and `public` sections
+- the shared `_default` and `_public` sections (and their legacy `default` / `public` spellings)
 - managed `[system-default]` rules written by the backend
 
 A role whose access comes from any of those is shown **checked but read-only** with a lock

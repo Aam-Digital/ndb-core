@@ -6,7 +6,11 @@ import { SessionSubject } from "../../session/auth/session-info";
 import {
   DatabaseRule,
   DatabaseRules,
+  DEFAULT_SECTION_KEY,
   EntityActionPermission,
+  LEGACY_DEFAULT_KEY,
+  RESERVED_ROLE_PREFIX,
+  RESERVED_RULE_CONFIG_KEYS,
 } from "../permission-types";
 
 /**
@@ -38,7 +42,7 @@ export interface RoleFeaturePermission {
    *
    * `false` when the role's access is (partly) granted by a rule the grid does not
    * own - a wildcard `all` subject, a grouped/array subject, a conditioned rule or
-   * a rule in the shared `default` block. In that case the checkboxes reflect the
+   * a rule in the shared `_default` block. In that case the checkboxes reflect the
    * role's *effective* access but are shown read-only, because the grid cannot
    * remove such a grant without affecting other entity types; the admin must use
    * the advanced (raw JSON) editor instead.
@@ -55,7 +59,7 @@ export interface FeaturePermissionState {
 
   /**
    * true if at least one role's access is granted by rules the grid cannot edit
-   * (wildcards, grouped subjects, conditions or shared `default` rules) - i.e. some
+   * (wildcards, grouped subjects, conditions or shared `_default` rules) - i.e. some
    * rows are read-only.
    *
    * When true the UI should point admins to the advanced (raw JSON) permissions
@@ -101,8 +105,9 @@ export class FeaturePermissionService {
     roleNames: string[],
   ): Promise<FeaturePermissionState> {
     const rules = (await this.loadPermissionsConfig())?.data ?? {};
-    // rules in `default` apply to every logged-in user, on top of their role rules
-    const defaultRules = rules.default ?? [];
+    // rules in `_default` apply to every logged-in user, on top of their role rules
+    const defaultRules =
+      rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY] ?? [];
 
     const roles: RoleFeaturePermission[] = roleNames.map((role) => {
       const roleRules = rules[role] ?? [];
@@ -149,7 +154,7 @@ export class FeaturePermissionService {
    * Persist the updated "Use"/"Manage" state for the given roles.
    *
    * Only rules this service owns for the exact entity type are replaced; every
-   * other rule (including `default`/`public` and complex rules) is preserved.
+   * other rule (including `_default`/`_public` and complex rules) is preserved.
    * A timestamped backup of the previous config is stored before saving.
    *
    * @returns the backup Config that was created, so callers can offer an "undo".
@@ -166,7 +171,7 @@ export class FeaturePermissionService {
 
     for (const { role, use, manage } of updates) {
       // never edit the shared baseline sections through the per-role grid
-      if (role === "default" || role === "public") {
+      if (this.isReservedSection(role)) {
         continue;
       }
 
@@ -197,15 +202,26 @@ export class FeaturePermissionService {
 
   /**
    * The user roles that already appear in the permissions config, excluding the
-   * special `default` (shared baseline) and `public` (unauthenticated) keys.
+   * special `_default` (shared baseline) and `_public` (unauthenticated) keys.
    *
    * Used as a robust source of roles that does not depend on the Keycloak admin
    * API being reachable.
    */
   async getConfiguredRoleNames(): Promise<string[]> {
     const rules = (await this.loadPermissionsConfig())?.data ?? {};
-    return Object.keys(rules).filter(
-      (role) => role !== "default" && role !== "public",
+    return Object.keys(rules).filter((role) => !this.isReservedSection(role));
+  }
+
+  /**
+   * Whether the config key carries special semantics instead of naming a user
+   * role, so the per-role grid must neither list nor rewrite it. Covers the
+   * reserved underscore prefix as well as the legacy (non-prefixed) spellings
+   * of not yet migrated configs.
+   */
+  private isReservedSection(key: string): boolean {
+    return (
+      key.startsWith(RESERVED_ROLE_PREFIX) ||
+      RESERVED_RULE_CONFIG_KEYS.includes(key)
     );
   }
 
@@ -283,10 +299,12 @@ export class FeaturePermissionService {
     }
 
     // No permissions config yet means "everyone may do everything". Seed the
-    // `default` all-access rule so that starting to restrict a single feature
+    // `_default` all-access rule so that starting to restrict a single feature
     // does not accidentally lock every logged-in user out of everything else.
     const config = existing ?? new Config<DatabaseRules>(Config.PERMISSION_KEY);
-    config.data = { default: [{ subject: "all", action: "manage" }] };
+    config.data = {
+      [DEFAULT_SECTION_KEY]: [{ subject: "all", action: "manage" }],
+    };
     return config;
   }
 }
