@@ -88,7 +88,7 @@
     "zone.js": "^0.16.0"
   },
   "devDependencies": {
-    "@angular-eslint/schematics": "^21.4.0",
+    "@angular-eslint/schematics": "^22.1.0",
     "@angular/build": "^21.2.19",
     "@angular/cli": "^21.2.19",
     "@angular/compiler-cli": "^21.2.18",
@@ -114,7 +114,7 @@
     "@typescript-eslint/parser": "^8.65.0",
     "@vitest/coverage-v8": "^4.1.10",
     "age-encryption": "^0.3.0",
-    "angular-eslint": "^21.4.0",
+    "angular-eslint": "^22.1.0",
     "babel-loader": "^10.1.1",
     "commander": "^15.0.0",
     "cross-env": "^10.1.0",
