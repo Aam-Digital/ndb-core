@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -124,6 +131,20 @@
 
 <div>
     <img src="./images/coverage-badge-documentation.svg">
+</div>
+
+<div class="coverage-summary" data-coverage-summary></div>
+
+<div class="coverage-filter">
+    <input type="text"
+        class="coverage-filter-input"
+        placeholder="Filter entities..."
+        aria-label="Filter coverage results"
+        data-coverage-filter>
+    <button type="button"
+        class="coverage-filter-clear"
+        aria-label="Clear filter"
+        data-coverage-filter-clear>&times;</button>
 </div>
 
 <table class="table table-bordered coverage" id="coverage-table">
@@ -472,16 +493,16 @@
                 <span class="coverage-count">(0/10)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/ChildSchoolRelation.html">src/app/child-dev-project/children/model/childSchoolRelation.ts</a>
             </td>
             <td>class</td>
             <td>ChildSchoolRelation</td>
-            <td align="right" data-sort="12">
-                <span class="coverage-percent">12 %</span>
-                <span class="coverage-count">(1/8)</span>
+            <td align="right" data-sort="66">
+                <span class="coverage-percent">66 %</span>
+                <span class="coverage-count">(24/36)</span>
             </td>
         </tr>
         <tr class="low">
@@ -755,9 +776,9 @@
             </td>
             <td>interface</td>
             <td>InteractionType</td>
-            <td align="right" data-sort="100">
-                <span class="coverage-percent">100 %</span>
-                <span class="coverage-count">(2/2)</span>
+            <td align="right" data-sort="87">
+                <span class="coverage-percent">87 %</span>
+                <span class="coverage-count">(7/8)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -772,16 +793,16 @@
                 <span class="coverage-count">(1/1)</span>
             </td>
         </tr>
-        <tr class="medium">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/Note.html">src/app/child-dev-project/notes/model/note.ts</a>
             </td>
             <td>class</td>
             <td>Note</td>
-            <td align="right" data-sort="39">
-                <span class="coverage-percent">39 %</span>
-                <span class="coverage-count">(9/23)</span>
+            <td align="right" data-sort="63">
+                <span class="coverage-percent">63 %</span>
+                <span class="coverage-count">(29/46)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -1216,16 +1237,16 @@
                 <span class="coverage-count">(0/8)</span>
             </td>
         </tr>
-        <tr class="medium">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./interfaces/MenuItemForAdminUi.html">src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts</a>
             </td>
             <td>interface</td>
             <td>MenuItemForAdminUi</td>
-            <td align="right" data-sort="33">
-                <span class="coverage-percent">33 %</span>
-                <span class="coverage-count">(1/3)</span>
+            <td align="right" data-sort="71">
+                <span class="coverage-percent">71 %</span>
+                <span class="coverage-count">(5/7)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -1672,16 +1693,16 @@
                 <span class="coverage-count">(3/4)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./interfaces/ExtendedAlertConfig.html">src/app/core/alerts/alert-config.ts</a>
             </td>
             <td>interface</td>
             <td>ExtendedAlertConfig</td>
-            <td align="right" data-sort="0">
-                <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/2)</span>
+            <td align="right" data-sort="60">
+                <span class="coverage-percent">60 %</span>
+                <span class="coverage-count">(3/5)</span>
             </td>
         </tr>
         <tr class="low">
@@ -1876,16 +1897,16 @@
                 <span class="coverage-count">(0/6)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/ConfigurableEnum.html">src/app/core/basic-datatypes/configurable-enum/configurable-enum.ts</a>
             </td>
             <td>class</td>
             <td>ConfigurableEnum</td>
-            <td align="right" data-sort="20">
-                <span class="coverage-percent">20 %</span>
-                <span class="coverage-count">(1/5)</span>
+            <td align="right" data-sort="78">
+                <span class="coverage-percent">78 %</span>
+                <span class="coverage-count">(26/33)</span>
             </td>
         </tr>
         <tr class="medium">
@@ -1919,9 +1940,9 @@
             </td>
             <td>interface</td>
             <td>ConfigurableEnumValue</td>
-            <td align="right" data-sort="100">
-                <span class="coverage-percent">100 %</span>
-                <span class="coverage-count">(6/6)</span>
+            <td align="right" data-sort="85">
+                <span class="coverage-percent">85 %</span>
+                <span class="coverage-count">(6/7)</span>
             </td>
         </tr>
         <tr class="medium">
@@ -2003,9 +2024,9 @@
             </td>
             <td>injectable</td>
             <td>DateOnlyDatatype</td>
-            <td align="right" data-sort="41">
-                <span class="coverage-percent">41 %</span>
-                <span class="coverage-count">(7/17)</span>
+            <td align="right" data-sort="47">
+                <span class="coverage-percent">47 %</span>
+                <span class="coverage-count">(8/17)</span>
             </td>
         </tr>
         <tr class="low">
@@ -2027,9 +2048,9 @@
             </td>
             <td>injectable</td>
             <td>DateWithAgeDatatype</td>
-            <td align="right" data-sort="41">
-                <span class="coverage-percent">41 %</span>
-                <span class="coverage-count">(7/17)</span>
+            <td align="right" data-sort="47">
+                <span class="coverage-percent">47 %</span>
+                <span class="coverage-count">(8/17)</span>
             </td>
         </tr>
         <tr class="medium">
@@ -2152,16 +2173,16 @@
                 <span class="coverage-count">(0/11)</span>
             </td>
         </tr>
-        <tr class="medium">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./injectables/DateDatatype.html">src/app/core/basic-datatypes/date/date.datatype.ts</a>
             </td>
             <td>injectable</td>
             <td>DateDatatype</td>
-            <td align="right" data-sort="47">
-                <span class="coverage-percent">47 %</span>
-                <span class="coverage-count">(8/17)</span>
+            <td align="right" data-sort="52">
+                <span class="coverage-percent">52 %</span>
+                <span class="coverage-count">(9/17)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -2543,9 +2564,9 @@
             </td>
             <td>injectable</td>
             <td>MonthDatatype</td>
-            <td align="right" data-sort="41">
-                <span class="coverage-percent">41 %</span>
-                <span class="coverage-count">(7/17)</span>
+            <td align="right" data-sort="47">
+                <span class="coverage-percent">47 %</span>
+                <span class="coverage-count">(8/17)</span>
             </td>
         </tr>
         <tr class="low">
@@ -3527,9 +3548,9 @@
             </td>
             <td>interface</td>
             <td>FormFieldConfig</td>
-            <td align="right" data-sort="100">
-                <span class="coverage-percent">100 %</span>
-                <span class="coverage-count">(7/7)</span>
+            <td align="right" data-sort="96">
+                <span class="coverage-percent">96 %</span>
+                <span class="coverage-count">(25/26)</span>
             </td>
         </tr>
         <tr class="low">
@@ -4756,16 +4777,16 @@
                 <span class="coverage-count">(1/1)</span>
             </td>
         </tr>
-        <tr class="good">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/Config.html">src/app/core/config/config.ts</a>
             </td>
             <td>class</td>
             <td>Config</td>
-            <td align="right" data-sort="66">
-                <span class="coverage-percent">66 %</span>
-                <span class="coverage-count">(4/6)</span>
+            <td align="right" data-sort="85">
+                <span class="coverage-percent">85 %</span>
+                <span class="coverage-count">(29/34)</span>
             </td>
         </tr>
         <tr class="low">
@@ -4969,7 +4990,7 @@
             <td>ViewConfig</td>
             <td align="right" data-sort="100">
                 <span class="coverage-percent">100 %</span>
-                <span class="coverage-count">(3/3)</span>
+                <span class="coverage-count">(6/6)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -6088,16 +6109,16 @@
                 <span class="coverage-count">(0/1)</span>
             </td>
         </tr>
-        <tr class="medium">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/TimePeriod.html">src/app/core/entity-details/related-time-period-entities/time-period.ts</a>
             </td>
             <td>class</td>
             <td>TimePeriod</td>
-            <td align="right" data-sort="33">
-                <span class="coverage-percent">33 %</span>
-                <span class="coverage-count">(2/6)</span>
+            <td align="right" data-sort="78">
+                <span class="coverage-percent">78 %</span>
+                <span class="coverage-count">(26/33)</span>
             </td>
         </tr>
         <tr class="low">
@@ -6121,7 +6142,7 @@
             <td>BooleanFilterConfig</td>
             <td align="right" data-sort="0">
                 <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/3)</span>
+                <span class="coverage-count">(0/8)</span>
             </td>
         </tr>
         <tr class="medium">
@@ -6145,7 +6166,7 @@
             <td>ConfigurableEnumFilterConfig</td>
             <td align="right" data-sort="0">
                 <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/2)</span>
+                <span class="coverage-count">(0/7)</span>
             </td>
         </tr>
         <tr class="low">
@@ -6157,7 +6178,7 @@
             <td>DateRangeFilterConfig</td>
             <td align="right" data-sort="0">
                 <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/2)</span>
+                <span class="coverage-count">(0/7)</span>
             </td>
         </tr>
         <tr class="low">
@@ -6205,7 +6226,7 @@
             <td>PrebuiltFilterConfig</td>
             <td align="right" data-sort="0">
                 <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/2)</span>
+                <span class="coverage-count">(0/7)</span>
             </td>
         </tr>
         <tr class="low">
@@ -7451,9 +7472,9 @@
             </td>
             <td>interface</td>
             <td>AdditionalIndirectLinkAction</td>
-            <td align="right" data-sort="85">
-                <span class="coverage-percent">85 %</span>
-                <span class="coverage-count">(6/7)</span>
+            <td align="right" data-sort="88">
+                <span class="coverage-percent">88 %</span>
+                <span class="coverage-count">(8/9)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -7463,9 +7484,9 @@
             </td>
             <td>interface</td>
             <td>AdditonalDirectLinkAction</td>
-            <td align="right" data-sort="80">
-                <span class="coverage-percent">80 %</span>
-                <span class="coverage-count">(4/5)</span>
+            <td align="right" data-sort="85">
+                <span class="coverage-percent">85 %</span>
+                <span class="coverage-count">(6/7)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -7696,16 +7717,16 @@
                 <span class="coverage-count">(0/1)</span>
             </td>
         </tr>
-        <tr class="medium">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/ImportMetadata.html">src/app/core/import/import-metadata.ts</a>
             </td>
             <td>class</td>
             <td>ImportMetadata</td>
-            <td align="right" data-sort="33">
-                <span class="coverage-percent">33 %</span>
-                <span class="coverage-count">(2/6)</span>
+            <td align="right" data-sort="79">
+                <span class="coverage-percent">79 %</span>
+                <span class="coverage-count">(27/34)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -8503,9 +8524,9 @@
         <tr class="low">
             <td>
                 <!-- miscellaneous -->
-                        <a href="./miscellaneous/variables.html#AuthGuard">src/app/core/session/auth.guard.ts</a>
+                        <a href="./guards/AuthGuard.html">src/app/core/session/auth.guard.ts</a>
             </td>
-            <td>variable</td>
+            <td>guard</td>
             <td>AuthGuard</td>
             <td align="right" data-sort="0">
                 <span class="coverage-percent">0 %</span>
@@ -8860,16 +8881,16 @@
                 <span class="coverage-count">(5/15)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/SiteSettings.html">src/app/core/site-settings/site-settings.ts</a>
             </td>
             <td>class</td>
             <td>SiteSettings</td>
-            <td align="right" data-sort="6">
-                <span class="coverage-percent">6 %</span>
-                <span class="coverage-count">(1/15)</span>
+            <td align="right" data-sort="60">
+                <span class="coverage-percent">60 %</span>
+                <span class="coverage-count">(26/43)</span>
             </td>
         </tr>
         <tr class="low">
@@ -9028,16 +9049,16 @@
                 <span class="coverage-count">(7/15)</span>
             </td>
         </tr>
-        <tr class="good">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./interfaces/EntityMenuItem.html">src/app/core/ui/navigation/menu-item.ts</a>
             </td>
             <td>interface</td>
             <td>EntityMenuItem</td>
-            <td align="right" data-sort="66">
-                <span class="coverage-percent">66 %</span>
-                <span class="coverage-count">(2/3)</span>
+            <td align="right" data-sort="85">
+                <span class="coverage-percent">85 %</span>
+                <span class="coverage-count">(6/7)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -9796,16 +9817,16 @@
                 <span class="coverage-count">(5/7)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./interfaces/ActivityEntity.html">src/app/features/attendance/demo-data/demo-activity-generator.service.ts</a>
             </td>
             <td>interface</td>
             <td>ActivityEntity</td>
-            <td align="right" data-sort="0">
-                <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/5)</span>
+            <td align="right" data-sort="76">
+                <span class="coverage-percent">76 %</span>
+                <span class="coverage-count">(26/34)</span>
             </td>
         </tr>
         <tr class="low">
@@ -9995,9 +10016,9 @@
             </td>
             <td>interface</td>
             <td>AttendanceStatusType</td>
-            <td align="right" data-sort="100">
-                <span class="coverage-percent">100 %</span>
-                <span class="coverage-count">(6/6)</span>
+            <td align="right" data-sort="88">
+                <span class="coverage-percent">88 %</span>
+                <span class="coverage-count">(8/9)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -10031,9 +10052,9 @@
             </td>
             <td>injectable</td>
             <td>AttendanceDatatype</td>
-            <td align="right" data-sort="42">
-                <span class="coverage-percent">42 %</span>
-                <span class="coverage-count">(8/19)</span>
+            <td align="right" data-sort="47">
+                <span class="coverage-percent">47 %</span>
+                <span class="coverage-count">(9/19)</span>
             </td>
         </tr>
         <tr class="low">
@@ -10708,16 +10729,16 @@
                 <span class="coverage-count">(0/1)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/ProgressDashboardConfig.html">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard-config.ts</a>
             </td>
             <td>class</td>
             <td>ProgressDashboardConfig</td>
-            <td align="right" data-sort="0">
-                <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/5)</span>
+            <td align="right" data-sort="75">
+                <span class="coverage-percent">75 %</span>
+                <span class="coverage-count">(25/33)</span>
             </td>
         </tr>
         <tr class="low">
@@ -10948,16 +10969,16 @@
                 <span class="coverage-count">(1/5)</span>
             </td>
         </tr>
-        <tr class="medium">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/EmailTemplate.html">src/app/features/email-client/email-template.entity.ts</a>
             </td>
             <td>class</td>
             <td>EmailTemplate</td>
-            <td align="right" data-sort="36">
-                <span class="coverage-percent">36 %</span>
-                <span class="coverage-count">(4/11)</span>
+            <td align="right" data-sort="72">
+                <span class="coverage-percent">72 %</span>
+                <span class="coverage-count">(26/36)</span>
             </td>
         </tr>
         <tr class="low">
@@ -11411,9 +11432,9 @@
             </td>
             <td>interface</td>
             <td>GeoResult</td>
-            <td align="right" data-sort="0">
-                <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/2)</span>
+            <td align="right" data-sort="20">
+                <span class="coverage-percent">20 %</span>
+                <span class="coverage-count">(1/5)</span>
             </td>
         </tr>
         <tr class="low">
@@ -11735,9 +11756,9 @@
             </td>
             <td>class</td>
             <td>MarkdownContent</td>
-            <td align="right" data-sort="100">
-                <span class="coverage-percent">100 %</span>
-                <span class="coverage-count">(2/2)</span>
+            <td align="right" data-sort="90">
+                <span class="coverage-percent">90 %</span>
+                <span class="coverage-count">(28/31)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -11855,9 +11876,9 @@
             </td>
             <td>interface</td>
             <td>MatchingSide</td>
-            <td align="right" data-sort="33">
-                <span class="coverage-percent">33 %</span>
-                <span class="coverage-count">(3/9)</span>
+            <td align="right" data-sort="50">
+                <span class="coverage-percent">50 %</span>
+                <span class="coverage-count">(6/12)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -11903,9 +11924,9 @@
             </td>
             <td>class</td>
             <td>NotificationConfig</td>
-            <td align="right" data-sort="83">
-                <span class="coverage-percent">83 %</span>
-                <span class="coverage-count">(5/6)</span>
+            <td align="right" data-sort="88">
+                <span class="coverage-percent">88 %</span>
+                <span class="coverage-count">(30/34)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -11944,16 +11965,16 @@
                 <span class="coverage-count">(1/1)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/NotificationEvent.html">src/app/features/notification/model/notification-event.ts</a>
             </td>
             <td>class</td>
             <td>NotificationEvent</td>
-            <td align="right" data-sort="11">
-                <span class="coverage-percent">11 %</span>
-                <span class="coverage-count">(1/9)</span>
+            <td align="right" data-sort="69">
+                <span class="coverage-percent">69 %</span>
+                <span class="coverage-count">(25/36)</span>
             </td>
         </tr>
         <tr class="low">
@@ -12184,16 +12205,16 @@
                 <span class="coverage-count">(0/1)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/PublicFormConfig.html">src/app/features/public-form/public-form-config.ts</a>
             </td>
             <td>class</td>
             <td>PublicFormConfig</td>
-            <td align="right" data-sort="6">
-                <span class="coverage-percent">6 %</span>
-                <span class="coverage-count">(1/16)</span>
+            <td align="right" data-sort="57">
+                <span class="coverage-percent">57 %</span>
+                <span class="coverage-count">(24/42)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -12448,28 +12469,28 @@
                 <span class="coverage-count">(1/1)</span>
             </td>
         </tr>
-        <tr class="good">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/ReportConfig.html">src/app/features/reporting/report-config.ts</a>
             </td>
             <td>class</td>
             <td>ReportConfig</td>
-            <td align="right" data-sort="62">
-                <span class="coverage-percent">62 %</span>
-                <span class="coverage-count">(10/16)</span>
+            <td align="right" data-sort="78">
+                <span class="coverage-percent">78 %</span>
+                <span class="coverage-count">(32/41)</span>
             </td>
         </tr>
-        <tr class="medium">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./interfaces/AggregationReport.html">src/app/features/reporting/report-config.ts</a>
             </td>
             <td>interface</td>
             <td>AggregationReport</td>
-            <td align="right" data-sort="33">
-                <span class="coverage-percent">33 %</span>
-                <span class="coverage-count">(1/3)</span>
+            <td align="right" data-sort="73">
+                <span class="coverage-percent">73 %</span>
+                <span class="coverage-count">(30/41)</span>
             </td>
         </tr>
         <tr class="good">
@@ -12479,9 +12500,9 @@
             </td>
             <td>interface</td>
             <td>ExportingReport</td>
-            <td align="right" data-sort="66">
-                <span class="coverage-percent">66 %</span>
-                <span class="coverage-count">(2/3)</span>
+            <td align="right" data-sort="75">
+                <span class="coverage-percent">75 %</span>
+                <span class="coverage-count">(31/41)</span>
             </td>
         </tr>
         <tr class="good">
@@ -12496,16 +12517,16 @@
                 <span class="coverage-count">(3/4)</span>
             </td>
         </tr>
-        <tr class="very-good">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./interfaces/SqlReport.html">src/app/features/reporting/report-config.ts</a>
             </td>
             <td>interface</td>
             <td>SqlReport</td>
-            <td align="right" data-sort="85">
-                <span class="coverage-percent">85 %</span>
-                <span class="coverage-count">(6/7)</span>
+            <td align="right" data-sort="75">
+                <span class="coverage-percent">75 %</span>
+                <span class="coverage-count">(31/41)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -12673,7 +12694,7 @@
             <td>FlattenedReportRow</td>
             <td align="right" data-sort="0">
                 <span class="coverage-percent">0 %</span>
-                <span class="coverage-count">(0/3)</span>
+                <span class="coverage-count">(0/5)</span>
             </td>
         </tr>
         <tr class="medium">
@@ -12808,16 +12829,16 @@
                 <span class="coverage-count">(1/4)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/SqsSchema.html">src/app/features/reporting/sql-report/sqs-schema.ts</a>
             </td>
             <td>class</td>
             <td>SqsSchema</td>
-            <td align="right" data-sort="16">
-                <span class="coverage-percent">16 %</span>
-                <span class="coverage-count">(1/6)</span>
+            <td align="right" data-sort="77">
+                <span class="coverage-percent">77 %</span>
+                <span class="coverage-count">(27/35)</span>
             </td>
         </tr>
         <tr class="low">
@@ -13084,16 +13105,16 @@
                 <span class="coverage-count">(0/1)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/Skill.html">src/app/features/skill/skill.ts</a>
             </td>
             <td>class</td>
             <td>Skill</td>
-            <td align="right" data-sort="10">
-                <span class="coverage-percent">10 %</span>
-                <span class="coverage-count">(1/10)</span>
+            <td align="right" data-sort="65">
+                <span class="coverage-percent">65 %</span>
+                <span class="coverage-count">(23/35)</span>
             </td>
         </tr>
         <tr class="medium">
@@ -13216,16 +13237,16 @@
                 <span class="coverage-count">(2/3)</span>
             </td>
         </tr>
-        <tr class="good">
+        <tr class="very-good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/TemplateExport.html">src/app/features/template-export/template-export.entity.ts</a>
             </td>
             <td>class</td>
             <td>TemplateExport</td>
-            <td align="right" data-sort="53">
-                <span class="coverage-percent">53 %</span>
-                <span class="coverage-count">(7/13)</span>
+            <td align="right" data-sort="76">
+                <span class="coverage-percent">76 %</span>
+                <span class="coverage-count">(29/38)</span>
             </td>
         </tr>
         <tr class="low">
@@ -13408,16 +13429,16 @@
                 <span class="coverage-count">(4/4)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/Todo.html">src/app/features/todos/model/todo.ts</a>
             </td>
             <td>class</td>
             <td>Todo</td>
-            <td align="right" data-sort="12">
-                <span class="coverage-percent">12 %</span>
-                <span class="coverage-count">(2/16)</span>
+            <td align="right" data-sort="57">
+                <span class="coverage-percent">57 %</span>
+                <span class="coverage-count">(23/40)</span>
             </td>
         </tr>
         <tr class="low">
@@ -13984,28 +14005,28 @@
                 <span class="coverage-count">(2/2)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/TestEntity.html">src/app/utils/test-utils/TestEntity.ts</a>
             </td>
             <td>class</td>
             <td>TestEntity</td>
-            <td align="right" data-sort="6">
-                <span class="coverage-percent">6 %</span>
-                <span class="coverage-count">(1/16)</span>
+            <td align="right" data-sort="53">
+                <span class="coverage-percent">53 %</span>
+                <span class="coverage-count">(21/39)</span>
             </td>
         </tr>
-        <tr class="low">
+        <tr class="good">
             <td>
                 <!-- miscellaneous -->
                         <a href="./classes/TestEventEntity.html">src/app/utils/test-utils/TestEventEntity.ts</a>
             </td>
             <td>class</td>
             <td>TestEventEntity</td>
-            <td align="right" data-sort="18">
-                <span class="coverage-percent">18 %</span>
-                <span class="coverage-count">(2/11)</span>
+            <td align="right" data-sort="67">
+                <span class="coverage-percent">67 %</span>
+                <span class="coverage-count">(25/37)</span>
             </td>
         </tr>
         <tr class="very-good">
@@ -14447,7 +14468,188 @@
 <script src="js/libs/tablesort.number.min.js"></script>
 <script>
     new Tablesort(document.getElementById('coverage-table'));
+
+    (function () {
+        var table = document.getElementById('coverage-table');
+        if (!table) {
+            return;
+        }
+
+        var tableBody = table.querySelector('tbody');
+        if (!tableBody) {
+            return;
+        }
+
+        var rows = Array.prototype.slice.call(tableBody.querySelectorAll('tr'));
+        var summaryContainer = document.querySelector('[data-coverage-summary]');
+        var filterInput = document.querySelector('[data-coverage-filter]');
+        var filterClearButton = document.querySelector('[data-coverage-filter-clear]');
+
+        function toPercent(value, total) {
+            if (!total) {
+                return 0;
+            }
+            return Math.round((value / total) * 100);
+        }
+
+        function getRowCoverageBucket(row) {
+            var className = (row.className || '').toLowerCase();
+            if (className.indexOf('low') !== -1) {
+                return 'undocumented';
+            }
+            if (className.indexOf('medium') !== -1) {
+                return 'partial';
+            }
+            if (className.indexOf('very-good') !== -1 || className.indexOf('good') !== -1) {
+                return 'documented';
+            }
+            return 'partial';
+        }
+
+        function getCoverageStats() {
+            var documented = 0;
+            var partial = 0;
+            var undocumented = 0;
+
+            rows.forEach(function (row) {
+                var bucket = getRowCoverageBucket(row);
+                if (bucket === 'documented') {
+                    documented += 1;
+                } else if (bucket === 'partial') {
+                    partial += 1;
+                } else {
+                    undocumented += 1;
+                }
+            });
+
+            var total = rows.length;
+            var totalCoveragePercent = rows.reduce(function (sum, row) {
+                var scoreCell = row.querySelector('td[data-sort]');
+                var rowScore = scoreCell ? parseFloat(scoreCell.getAttribute('data-sort') || '0') : 0;
+                return sum + (isNaN(rowScore) ? 0 : rowScore);
+            }, 0);
+            var score = total ? Math.floor(totalCoveragePercent / total) : 0;
+
+            return {
+                total: total,
+                documented: documented,
+                partial: partial,
+                undocumented: undocumented,
+                score: score
+            };
+        }
+
+        function buildDonutSegment(title, color, count, total, offset, circumference) {
+            var percent = toPercent(count, total);
+            if (!count) {
+                return '';
+            }
+
+            var arcLength = (count / total) * circumference;
+            var remaining = circumference - arcLength;
+
+            return '<circle cx="60" cy="60" r="50" fill="none" stroke="' + color + '" stroke-width="10" ' +
+                'style="stroke-dasharray: ' + arcLength + ', ' + remaining + '; stroke-dashoffset: ' + (-offset) + ';" ' +
+                'transform="rotate(-90 60 60)" class="coverage-donut-segment">' +
+                '<title>' + title + ': ' + count + ' (' + percent + '%)</title>' +
+                '</circle>';
+        }
+
+        function renderSummary(stats) {
+            if (!summaryContainer) {
+                return;
+            }
+
+            var total = stats.total;
+            var documentedPercent = toPercent(stats.documented, total);
+            var partialPercent = toPercent(stats.partial, total);
+            var undocumentedPercent = toPercent(stats.undocumented, total);
+            var circumference = 2 * Math.PI * 50;
+            var offset = 0;
+
+            var documentedSegment = buildDonutSegment('Documented', '#4dc71f', stats.documented, total, offset, circumference);
+            offset += total ? (stats.documented / total) * circumference : 0;
+
+            var partialSegment = buildDonutSegment('Partial', '#dab226', stats.partial, total, offset, circumference);
+            offset += total ? (stats.partial / total) * circumference : 0;
+
+            var undocumentedSegment = buildDonutSegment('Undocumented', '#d8624c', stats.undocumented, total, offset, circumference);
+
+            summaryContainer.innerHTML =
+                '<svg viewBox="0 0 120 120" class="coverage-donut" role="img" aria-label="Documentation coverage: ' + stats.score + '%">' +
+                    '<title>Documentation coverage: ' + stats.score + '%</title>' +
+                    '<desc>' + stats.documented + ' documented, ' + stats.partial + ' partial, ' + stats.undocumented + ' undocumented of ' + stats.total + ' entities</desc>' +
+                    '<circle cx="60" cy="60" r="50" fill="none" stroke="var(--bs-border-color, #dee2e6)" stroke-width="10" class="coverage-donut-ring"></circle>' +
+                    documentedSegment +
+                    partialSegment +
+                    undocumentedSegment +
+                    '<text x="60" y="60" text-anchor="middle" dominant-baseline="central" class="coverage-donut-pct">' + stats.score + '%</text>' +
+                '</svg>' +
+                '<div class="coverage-stats">' +
+                    '<div>' +
+                        '<div class="coverage-stat-value">' + stats.total + '</div>' +
+                        '<div class="coverage-stat-label">Total</div>' +
+                        '<div class="coverage-stat-sub">' + stats.total + ' entities</div>' +
+                    '</div>' +
+                    '<div>' +
+                        '<div class="coverage-stat-value coverage-stat-value--documented">' + stats.documented + '</div>' +
+                        '<div class="coverage-stat-label">Documented</div>' +
+                        '<div class="coverage-stat-sub">' + documentedPercent + '%</div>' +
+                    '</div>' +
+                    '<div>' +
+                        '<div class="coverage-stat-value coverage-stat-value--partial">' + stats.partial + '</div>' +
+                        '<div class="coverage-stat-label">Partial</div>' +
+                        '<div class="coverage-stat-sub">' + partialPercent + '%</div>' +
+                    '</div>' +
+                    '<div>' +
+                        '<div class="coverage-stat-value coverage-stat-value--undocumented">' + stats.undocumented + '</div>' +
+                        '<div class="coverage-stat-label">Undocumented</div>' +
+                        '<div class="coverage-stat-sub">' + undocumentedPercent + '%</div>' +
+                    '</div>' +
+                '</div>';
+        }
+
+        function applyFilter() {
+            if (!filterInput) {
+                return;
+            }
+
+            var query = filterInput.value.toLowerCase().trim();
+            rows.forEach(function (row) {
+                var text = (row.textContent || '').toLowerCase();
+                row.style.display = query.length === 0 || text.indexOf(query) !== -1 ? '' : 'none';
+            });
+
+            if (filterClearButton) {
+                filterClearButton.classList.toggle('is-visible', query.length > 0);
+            }
+        }
+
+        if (filterInput) {
+            filterInput.addEventListener('input', applyFilter);
+            filterInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    filterInput.value = '';
+                    applyFilter();
+                }
+            });
+        }
+
+        if (filterClearButton) {
+            filterClearButton.addEventListener('click', function () {
+                if (filterInput) {
+                    filterInput.value = '';
+                    applyFilter();
+                    filterInput.focus();
+                }
+            });
+        }
+
+        renderSummary(getCoverageStats());
+        applyFilter();
+    })();
 </script>
+
 
                    </div><div class="search-results">
     <div class="has-results">
@@ -14481,6 +14683,24 @@
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -14496,7 +14716,6 @@
        <script src="./js/libs/lit-html.js"></script>
 
        <script src="./js/menu-wc.js" defer></script>
-       <script nomodule src="./js/menu-wc_es5.js" defer></script>
 
        <script src="./js/libs/bootstrap-native.js"></script>
 

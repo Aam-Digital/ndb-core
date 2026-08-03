@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -106,6 +113,11 @@
     <li class="breadcrumb-item">Modules</li>
     <li class="breadcrumb-item" >LatestChangesModule</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/ui/latest-changes/latest-changes.module.ts</code>
+</div>
 
 <div class="text-center module-graph-container">
     <div id="module-graph-svg">
@@ -146,11 +158,11 @@
 <text text-anchor="middle" x="248" y="-99.8" font-family="Times,serif" font-size="14.00">CustomDatePipe</text>
 </g>
 <!-- LatestChangesModule -->
-<g id="node2" class="node">
+<g id="node2" class="node"><a xlink:href="../modules/LatestChangesModule.html" href="../modules/LatestChangesModule.html" target="_top">
 <title>LatestChangesModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="318.97,-187 315.97,-191 294.97,-191 291.97,-187 177.03,-187 177.03,-151 318.97,-151 318.97,-187"/>
 <text text-anchor="middle" x="248" y="-164.8" font-family="Times,serif" font-size="14.00">LatestChangesModule</text>
-</g>
+</a></g>
 <!-- CustomDatePipe&#45;&gt;LatestChangesModule -->
 <g id="edge1" class="edge">
 <title>CustomDatePipe&#45;&gt;LatestChangesModule</title>
@@ -189,13 +201,6 @@
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
 
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/ui/latest-changes/latest-changes.module.ts</code>
-        </p>
-
 
 
         <p class="comment">
@@ -226,6 +231,30 @@ text (after markdown characters) with a &quot;.&quot;.</p>
                 </div>
             </div>
         </div>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/AppModule.html" target="_self" >AppModule</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>CustomDatePipe</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
 
 
     </div>
@@ -305,6 +334,7 @@ export class LatestChangesModule {
 
 
 
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
@@ -337,6 +367,24 @@ export class LatestChangesModule {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -352,7 +400,6 @@ export class LatestChangesModule {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

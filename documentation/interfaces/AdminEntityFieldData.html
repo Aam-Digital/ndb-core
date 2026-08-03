@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -119,12 +126,23 @@
   AdminEntityFieldData</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" 
                 class="nav-link"
                 class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" 
@@ -136,13 +154,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts</code>
-        </p>
-
 
             <p class="comment">
                 <h3>Description</h3>
@@ -153,112 +164,115 @@
             </p>
 
 
-        <section data-compodoc="block-index">
-            <h3 id="index">Index</h3>
-            <table class="table table-sm table-bordered index-table">
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#entitySchemaField" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entitySchemaField</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#entityType" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityType</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#overwriteLocally" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">overwriteLocally</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
                 <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entitySchemaField"></a>
+                                <span class="name "><b>entitySchemaField</b>
+                                    <a href="#entitySchemaField">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entitySchemaField:         <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:67</a></div>
+                                </td>
+                            </tr>
+
                     <tr>
                         <td class="col-md-4">
-                            <h6><b>Properties</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                        <a href="#entitySchemaField" 
->
-                                            entitySchemaField
-                                        </a>
-                                </li>
-                                <li>
-                                        <a href="#entityType" 
->
-                                            entityType
-                                        </a>
-                                </li>
-                                <li>
-                                        <a href="#overwriteLocally" 
->
-                                            overwriteLocally
-                                        </a>
-                                </li>
-                            </ul>
+                            <div class="io-description"><p>current state of the field being edited</p>
+</div>
                         </td>
                     </tr>
                 </tbody>
             </table>
-        </section>
-
-
-
-            <section data-compodoc="block-properties">
-                <h3 id="inputs">Properties</h3>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="entitySchemaField"></a>
-                                        <span class="name "><b>entitySchemaField</b>
-                                            <a href="#entitySchemaField">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>entitySchemaField:         <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entityType"></a>
+                                <span class="name "><b>entityType</b>
+                                    <a href="#entityType">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entityType:         <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
 </code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-
-                                        </td>
-                                    </tr>
-
-
-
+                            </td>
+                        </tr>
 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-description"><p>current state of the field being edited</p>
-</div>
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="entityType"></a>
-                                        <span class="name "><b>entityType</b>
-                                            <a href="#entityType">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>entityType:         <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
-
-                                        </td>
-                                    </tr>
 
 
 
@@ -266,40 +280,46 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-description"><p>Entity type this field is part of,
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:74</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Entity type this field is part of,
 to use as context information.
 The entityType is not changed by this component.</p>
 </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="overwriteLocally"></a>
+                                <span class="name "><b>overwriteLocally</b>
+                                    <a href="#overwriteLocally">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>overwriteLocally:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="overwriteLocally"></a>
-                                        <span class="name "><b>overwriteLocally</b>
-                                            <a href="#overwriteLocally">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>overwriteLocally:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                                        </td>
-                                    </tr>
 
 
 
@@ -307,15 +327,21 @@ The entityType is not changed by this component.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-description"><p>Whether the field is changed only for a single view instead of globally for the entity type.
-Use to prevent changes to config that are required to be consistent across all uses of the field.</p>
-</div>
+                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:80</a></div>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-            </section>
-    </div>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether the field is changed only for a single view instead of globally for the entity type.
+Use to prevent changes to config that are required to be consistent across all uses of the field.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
@@ -902,6 +928,24 @@ export class AdminEntityFieldComponent implements OnInit {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -917,7 +961,6 @@ export class AdminEntityFieldComponent implements OnInit {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

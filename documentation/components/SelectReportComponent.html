@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   SelectReportComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/reporting/reporting/select-report/select-report.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,14 +150,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/features/reporting/reporting/select-report/select-report.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
 
 
 
@@ -171,21 +180,36 @@
                 <td class="col-md-9"><code>app-select-report</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>MatButtonModule</code>
-                            <code>MatFormFieldModule</code>
-                            <code>MatSelectModule</code>
-                                <code><a href="https://angular.io/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
-                            <code>MatDatepickerModule</code>
-                            <code>Angulartics2Module</code>
-                            <code>FontAwesomeModule</code>
-                            <code>MatProgressBarModule</code>
-                            <code>MatTooltipModule</code>
-                                <code><a href="../components/DateRangeFilterComponent.html" target="_self" >DateRangeFilterComponent</a></code>
-                                <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>MatFormFieldModule</code>
+</div>
+                        <div>    <code>MatSelectModule</code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+</div>
+                        <div>    <code>MatDatepickerModule</code>
+</div>
+                        <div>    <code>Angulartics2Module</code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>    <code>MatProgressBarModule</code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
+</div>
+                        <div>        <code><a href="../components/DateRangeFilterComponent.html" target="_self" >DateRangeFilterComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+</div>
                 </td>
             </tr>
 
@@ -193,6 +217,7 @@
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./select-report.component.scss</code></td>
             </tr>
+
 
 
 
@@ -212,124 +237,195 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/ReportingComponent.html" target="_self" >ReportingComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>MatFormFieldModule</code>
+                                </li>
+                                <li>
+                                        <code>MatSelectModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+                                </li>
+                                <li>
+                                        <code>MatDatepickerModule</code>
+                                </li>
+                                <li>
+                                        <code>Angulartics2Module</code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                        <code>MatProgressBarModule</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/DateRangeFilterComponent.html" target="_self" >DateRangeFilterComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#dateRangeFilterConfig" >dateRangeFilterConfig</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#fromDate" >fromDate</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#isDateRangeReport" >isDateRangeReport</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#selectedReport" >selectedReport</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#toDate" >toDate</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#calculate" >calculate</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onDateRangeChange" >onDateRangeChange</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#openExportDialog" >openExportDialog</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#reportChange" >reportChange</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#dateRangeOptions" >dateRangeOptions</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#dateRangeOptions" >dateRangeOptions</a>
                             </li>
                             <li>
-                                <a href="#exportableData" >exportableData</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#exportableData" >exportableData</a>
                             </li>
                             <li>
-                                <a href="#loading" >loading</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#loading" >loading</a>
                             </li>
                             <li>
-                                <a href="#reports" >reports</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#reports" >reports</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#calculateClick" >calculateClick</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#calculateClick" >calculateClick</a>
                             </li>
                             <li>
-                                <a href="#reportFiltersChange" >reportFiltersChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#reportFiltersChange" >reportFiltersChange</a>
                             </li>
                             <li>
-                                <a href="#selectedReportChange" >selectedReportChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#selectedReportChange" >selectedReportChange</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Accessors</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#baseExportFileName" >baseExportFileName</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-        </tbody>
-    </table>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Accessors</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#baseExportFileName" >baseExportFileName</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 </section>
 
 
@@ -431,6 +527,7 @@
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -499,6 +596,7 @@
 </section>
 
 
+
     <section data-compodoc="block-methods">
     
     <h3 id="methods">
@@ -554,7 +652,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onDateRangeChange(event: literal type)</code>
+<code>onDateRangeChange(event: { from: Date; to: Date })</code>
                 </td>
             </tr>
 
@@ -585,7 +683,7 @@
                                         <tr>
                                                 <td>event</td>
                                             <td>
-                                                        <code>literal type</code>
+                                                        <code>{ from: Date; to: Date }</code>
                                             </td>
 
                                             <td>
@@ -683,6 +781,7 @@
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1280,6 +1379,24 @@ interface CalculateReportOptions {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1295,7 +1412,6 @@ interface CalculateReportOptions {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

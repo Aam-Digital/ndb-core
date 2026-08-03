@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   RollCallComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,14 +150,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/features/attendance/add-day-attendance/roll-call/roll-call.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -153,6 +162,11 @@ Can be used as a standalone routed view (via route param :id) or embedded with e
 
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -185,18 +199,30 @@ Can be used as a standalone routed view (via route param :id) or embedded with e
                 <td class="col-md-9"><code>app-roll-call</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>MatProgressBarModule</code>
-                            <code>MatButtonModule</code>
-                            <code>FontAwesomeModule</code>
-                                <code><a href="../components/EntityBlockComponent.html" target="_self" >EntityBlockComponent</a></code>
-                                <code><a href="../components/RollCallTabComponent.html" target="_self" >RollCallTabComponent</a></code>
-                                <code><a href="https://angular.io/api/platform-browser/HammerModule" target="_blank" >HammerModule</a></code>
-                            <code>MatTooltipModule</code>
-                                <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+                        <div>    <code>MatProgressBarModule</code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>        <code><a href="../components/EntityBlockComponent.html" target="_self" >EntityBlockComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/RollCallTabComponent.html" target="_self" >RollCallTabComponent</a></code>
+</div>
+                        <div>    <code>HammerModule</code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
+</div>
+                        <div>        <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+</div>
                 </td>
             </tr>
 
@@ -204,6 +230,7 @@ Can be used as a standalone routed view (via route param :id) or embedded with e
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./roll-call.component.scss</code></td>
             </tr>
+
 
 
 
@@ -223,139 +250,207 @@ Can be used as a standalone routed view (via route param :id) or embedded with e
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatProgressBarModule</code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityBlockComponent.html" target="_self" >EntityBlockComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/RollCallTabComponent.html" target="_self" >RollCallTabComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>HammerModule</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/HorizontalHammerConfig.html" target="_self" >HorizontalHammerConfig</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#attendanceByParticipant" >attendanceByParticipant</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#availableStatus" >availableStatus</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#currentAttendance" >currentAttendance</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#currentIndex" >currentIndex</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#currentParticipant" >currentParticipant</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#event" >event</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#eventResource" >eventResource</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#inactiveParticipants" >inactiveParticipants</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#isDirty" >isDirty</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#isFinished" >isFinished</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#isFirst" >isFirst</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#isInitializing" >isInitializing</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#isLast" >isLast</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#participants" >participants</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#exit" >exit</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#finish" >finish</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#goToParticipantWithIndex" >goToParticipantWithIndex</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#includeInactive" >includeInactive</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#markAttendance" >markAttendance</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#saveEvent" >saveEvent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#showDetails" >showDetails</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#eventEntity" >eventEntity</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#eventEntity" >eventEntity</a>
                             </li>
                             <li>
-                                <a href="#id" >id</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#id" >id</a>
                             </li>
                             <li>
-                                <a href="#sortParticipantsBy" >sortParticipantsBy</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#sortParticipantsBy" >sortParticipantsBy</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
     <section data-compodoc="block-constructor">
@@ -463,6 +558,7 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
             </tbody>
         </table>
 </section>
+
 
 
 
@@ -797,6 +893,7 @@ Supports real entity IDs, or &quot;new&quot; for creating a new event.</p>
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -2153,6 +2250,24 @@ export class RollCallComponent {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -2168,7 +2283,6 @@ export class RollCallComponent {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

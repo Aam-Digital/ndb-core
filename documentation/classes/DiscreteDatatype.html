@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -113,8 +120,13 @@
 
 <ol class="breadcrumb">
   <li class="breadcrumb-item">Classes</li>
-  <li class="breadcrumb-item" >DiscreteDatatype</li>
+  <li class="breadcrumb-item" >DiscreteDatatype&lt;EntityType, DBType&gt;</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/basic-datatypes/discrete/discrete.datatype.ts</code>
+</div>
 
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
@@ -122,6 +134,12 @@
                 class="nav-link"
                 class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" 
@@ -133,13 +151,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/basic-datatypes/discrete/discrete.datatype.ts</code>
-        </p>
-
 
             <p class="comment">
                 <h3>Description</h3>
@@ -154,107 +165,145 @@
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                            <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+                        <code>DefaultDatatype&lt;EntityType, DBType&gt;</code>
             </p>
 
 
 
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>DefaultDatatype&lt;EntityType, DBType&gt;</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#importConfigComponent" >importConfigComponent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#dataType" >dataType</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#editComponent" >editComponent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#importAllowsMultiMapping" >importAllowsMultiMapping</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#label" >label</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#viewComponent" >viewComponent</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#importMapFunction" >importMapFunction</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Abstract</span>
                                     <span class="modifier"></span>
                                 <a href="#transformToDatabaseFormat" >transformToDatabaseFormat</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Abstract</span>
                                     <span class="modifier"></span>
                                 <a href="#transformToObjectFormat" >transformToObjectFormat</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#anonymize" >anonymize</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#detectAllFieldsInEntity" >detectAllFieldsInEntity</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#detectFieldInEntity" >detectFieldInEntity</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getExportColumns" >getExportColumns</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#importMatchField" >importMatchField</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#normalizeSchemaField" >normalizeSchemaField</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#sortValue" >sortValue</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -294,7 +343,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:14</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -333,7 +382,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:80</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:80</a></code>
 </div>
                         </td>
                     </tr>
@@ -381,7 +430,7 @@ that EntitySchemaDatatype without the need to explicitly state the dataType conf
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:155</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:155</a></code>
 </div>
                         </td>
                     </tr>
@@ -420,7 +469,7 @@ that EntitySchemaDatatype without the need to explicitly state the dataType conf
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:134</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:134</a></code>
 </div>
                         </td>
                     </tr>
@@ -466,7 +515,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:143</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:143</a></code>
 </div>
                         </td>
                     </tr>
@@ -510,7 +559,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:154</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:154</a></code>
 </div>
                         </td>
                     </tr>
@@ -562,7 +611,7 @@ decorator</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:28</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:28</a></code>
 </div>
                         </td>
                     </tr>
@@ -662,7 +711,7 @@ decorator</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:16</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:16</a></code>
 </div>
                         </td>
                     </tr>
@@ -762,7 +811,7 @@ decorator</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:22</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:22</a></code>
 </div>
                         </td>
                     </tr>
@@ -861,7 +910,7 @@ decorator</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:360</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:360</a></code>
 </div>
                         </td>
                     </tr>
@@ -971,7 +1020,7 @@ decorator</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:110</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:110</a></code>
 </div>
                         </td>
                     </tr>
@@ -1070,7 +1119,7 @@ decorator</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:95</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:95</a></code>
 </div>
                         </td>
                     </tr>
@@ -1171,7 +1220,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:331</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:331</a></code>
 </div>
                         </td>
                     </tr>
@@ -1254,7 +1303,7 @@ can add a human-readable name column alongside the ID column).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:223</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:223</a></code>
 </div>
                         </td>
                     </tr>
@@ -1374,7 +1423,7 @@ than one property) override this.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:316</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:316</a></code>
 </div>
                         </td>
                     </tr>
@@ -1459,7 +1508,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
 </div>
                         </td>
                     </tr>
@@ -1512,6 +1561,7 @@ raw value cannot be sorted meaningfully.</p>
         </tbody>
     </table>
 </section>
+
 
 
 
@@ -1625,6 +1675,24 @@ export interface DiscreteColumnMappingAdditional {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1640,7 +1708,6 @@ export interface DiscreteColumnMappingAdditional {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

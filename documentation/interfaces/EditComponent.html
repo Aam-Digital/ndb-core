@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -119,12 +126,23 @@
   EditComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" 
                 class="nav-link"
                 class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" 
@@ -136,13 +154,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface.ts</code>
-        </p>
-
 
             <p class="comment">
                 <h3>Description</h3>
@@ -154,121 +165,237 @@ The inputs are passed on by the DynamicEditComponent.</p>
             </p>
 
 
-        <section data-compodoc="block-index">
-            <h3 id="index">Index</h3>
-            <table class="table table-sm table-bordered index-table">
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/ColorInputComponent.html" target="_self" >ColorInputComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/DynamicEditComponent.html" target="_self" >DynamicEditComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditAgeComponent.html" target="_self" >EditAgeComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditAttendanceComponent.html" target="_self" >EditAttendanceComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditBooleanComponent.html" target="_self" >EditBooleanComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditConfigurableEnumComponent.html" target="_self" >EditConfigurableEnumComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditDateComponent.html" target="_self" >EditDateComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditDateFormatComponent.html" target="_self" >EditDateFormatComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditEmailComponent.html" target="_self" >EditEmailComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditEntityComponent.html" target="_self" >EditEntityComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditExternalProfileLinkComponent.html" target="_self" >EditExternalProfileLinkComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditFileComponent.html" target="_self" >EditFileComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditJsonComponent.html" target="_self" >EditJsonComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditLegacyAttendanceComponent.html" target="_self" >EditLegacyAttendanceComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditLocationComponent.html" target="_self" >EditLocationComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditLongTextComponent.html" target="_self" >EditLongTextComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditMonthComponent.html" target="_self" >EditMonthComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditNumberComponent.html" target="_self" >EditNumberComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditPrefilledValuesComponent.html" target="_self" >EditPrefilledValuesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditPublicFormColumnsComponent.html" target="_self" >EditPublicFormColumnsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditPublicFormRelatedEntitiesComponent.html" target="_self" >EditPublicFormRelatedEntitiesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditPublicformRouteComponent.html" target="_self" >EditPublicformRouteComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditRecurringIntervalComponent.html" target="_self" >EditRecurringIntervalComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditReportModeComponent.html" target="_self" >EditReportModeComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditReportPeriodToggleComponent.html" target="_self" >EditReportPeriodToggleComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditTemplateExportFileComponent.html" target="_self" >EditTemplateExportFileComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditTextComponent.html" target="_self" >EditTextComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditTextWithAutocompleteComponent.html" target="_self" >EditTextWithAutocompleteComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditTodoCompletionComponent.html" target="_self" >EditTodoCompletionComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditUrlComponent.html" target="_self" >EditUrlComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#entity" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entity</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#formFieldConfig" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">formFieldConfig</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
                 <tbody>
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Properties</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                            <span class="modifier">Optional</span>
-                                        <a href="#entity" 
->
-                                            entity
-                                        </a>
-                                </li>
-                                <li>
-                                            <span class="modifier">Optional</span>
-                                        <a href="#formFieldConfig" 
->
-                                            formFieldConfig
-                                        </a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entity"></a>
+                                <span class="name "><b>entity</b>
+                                    <a href="#entity">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entity:         <code><a href="../classes/Entity.html" target="_self" >InputSignal&lt;Entity | undefined&gt;</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >InputSignal&lt;Entity | undefined&gt;</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface.ts:11</a></div>
+                                </td>
+                            </tr>
+
                 </tbody>
             </table>
-        </section>
-
-
-
-            <section data-compodoc="block-properties">
-                <h3 id="inputs">Properties</h3>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="entity"></a>
-                                        <span class="name "><b>entity</b>
-                                            <a href="#entity">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>entity:         <code><a href="../classes/Entity.html" target="_self" >InputSignal&lt;Entity | undefined&gt;</a></code>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="formFieldConfig"></a>
+                                <span class="name "><b>formFieldConfig</b>
+                                    <a href="#formFieldConfig">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>formFieldConfig:         <code><a href="../interfaces/FormFieldConfig.html" target="_self" >InputSignal&lt;FormFieldConfig | undefined&gt;</a></code>
 </code>
-                                    </td>
-                                </tr>
+                            </td>
+                        </tr>
 
 
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >InputSignal&lt;Entity | undefined&gt;</a></code>
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >InputSignal&lt;FormFieldConfig | undefined&gt;</a></code>
 
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Optional</i>
-                                        </td>
-                                    </tr>
+                                </td>
+                            </tr>
 
 
-
-
-                        </tbody>
-                    </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="formFieldConfig"></a>
-                                        <span class="name "><b>formFieldConfig</b>
-                                            <a href="#formFieldConfig">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>formFieldConfig:         <code><a href="../interfaces/FormFieldConfig.html" target="_self" >InputSignal&lt;FormFieldConfig | undefined&gt;</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >InputSignal&lt;FormFieldConfig | undefined&gt;</a></code>
-
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Optional</i>
-                                        </td>
-                                    </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface.ts:10</a></div>
+                                </td>
+                            </tr>
 
-                        </tbody>
-                    </table>
-            </section>
-    </div>
+                </tbody>
+            </table>
+    </section>
+</div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
@@ -327,6 +454,24 @@ export interface EditComponent {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -342,7 +487,6 @@ export interface EditComponent {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

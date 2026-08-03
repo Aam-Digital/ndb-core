@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -111,9 +118,7 @@
 <h1>Aam Digital</h1>
 <p><em>Enabling social organizations digitally to transform lives.</em></p>
 <p>Aam Digital is an easy-to-use case management software for the social sector that improves the effectiveness and transparency of work with beneficiaries in the field.</p>
-<div align="center"><img src="https://github.com/Aam-Digital/ndb-core/assets/1682541/2b125750-5c03-4dc7-873f-22d8278accde"  width="30%"></div>
-
-<blockquote>
+<div align="center"><img src="https://github.com/Aam-Digital/ndb-core/assets/1682541/2b125750-5c03-4dc7-873f-22d8278accde"  width="30%"></div><blockquote>
 <p>For more information about the software and an open demo system visit <strong><a href="https://www.aam-digital.com">www.aam-digital.com</a></strong>.</p>
 </blockquote>
 <blockquote>
@@ -176,67 +181,27 @@ For more information about Docker, please refer to <a href="https://docs.docker.
 <p>This project supports AI-assisted development through GitHub Copilot, Claude Code, and CodeRabbit.</p>
 <table class="table table-bordered compodoc-table">
 <thead>
-<tr>
-<th>Tool</th>
-<th>Usage</th>
-</tr>
+<tr><th>Tool</th><th>Usage</th></tr>
 </thead>
 <tbody>
-<tr>
-<td><strong>GitHub Copilot</strong> (VS Code)</td>
-<td>Code generation, chat, agent mode — reads <code>AGENTS.md</code>. Use <strong>Plan mode</strong> for architecture planning before implementation.</td>
-</tr>
-<tr>
-<td><strong>Claude Code</strong> (CLI)</td>
-<td>Interactive coding assistant — reads <code>CLAUDE.md</code> → <code>AGENTS.md</code></td>
-</tr>
-<tr>
-<td><strong>CodeRabbit</strong> (GitHub)</td>
-<td>On-demand PR reviews — configured via <code>.coderabbit.yaml</code>. Comment <strong>&quot;@coderabbitai review&quot;</strong> on a PR to trigger a review (auto-review is disabled).</td>
-</tr>
+<tr><td><strong>GitHub Copilot</strong> (VS Code)</td><td>Code generation, chat, agent mode — reads <code>AGENTS.md</code>. Use <strong>Plan mode</strong> for architecture planning before implementation.</td></tr>
+<tr><td><strong>Claude Code</strong> (CLI)</td><td>Interactive coding assistant — reads <code>CLAUDE.md</code> → <code>AGENTS.md</code></td></tr>
+<tr><td><strong>CodeRabbit</strong> (GitHub)</td><td>On-demand PR reviews — configured via <code>.coderabbit.yaml</code>. Comment <strong>&quot;@coderabbitai review&quot;</strong> on a PR to trigger a review (auto-review is disabled).</td></tr>
 </tbody>
 </table>
 <h2>Agents</h2>
 <p>Custom agents are defined in <code>.claude/agents/</code> and can be invoked from Copilot chat or Claude Code:</p>
 <table class="table table-bordered compodoc-table">
 <thead>
-<tr>
-<th>Agent</th>
-<th>Purpose</th>
-<th>Recommended Tool</th>
-</tr>
+<tr><th>Agent</th><th>Purpose</th><th>Recommended Tool</th></tr>
 </thead>
 <tbody>
-<tr>
-<td><code>business-analyst</code></td>
-<td>Refine requirements into structured, testable docs</td>
-<td>Copilot chat or Claude Code</td>
-</tr>
-<tr>
-<td><code>troubleshooter</code></td>
-<td>Debug issues using Sentry, devtools, and stack traces</td>
-<td>Copilot/Claude Code with Sentry MCP</td>
-</tr>
-<tr>
-<td><code>implementation-planner</code></td>
-<td>Design technical approach and architecture</td>
-<td>Copilot <strong>Plan mode</strong> or Claude Code</td>
-</tr>
-<tr>
-<td><code>implementation-executor</code></td>
-<td>Full implementation workflow with tests</td>
-<td>Copilot agent mode or Claude Code</td>
-</tr>
-<tr>
-<td><code>refactorer</code></td>
-<td>Code analysis and refactoring suggestions</td>
-<td>CodeRabbit (on-demand) + manual prompt</td>
-</tr>
-<tr>
-<td><code>e2e-test-writer</code></td>
-<td>Generate Playwright e2e tests</td>
-<td>Copilot agent mode or Claude Code</td>
-</tr>
+<tr><td><code>business-analyst</code></td><td>Refine requirements into structured, testable docs</td><td>Copilot chat or Claude Code</td></tr>
+<tr><td><code>troubleshooter</code></td><td>Debug issues using Sentry, devtools, and stack traces</td><td>Copilot/Claude Code with Sentry MCP</td></tr>
+<tr><td><code>implementation-planner</code></td><td>Design technical approach and architecture</td><td>Copilot <strong>Plan mode</strong> or Claude Code</td></tr>
+<tr><td><code>implementation-executor</code></td><td>Full implementation workflow with tests</td><td>Copilot agent mode or Claude Code</td></tr>
+<tr><td><code>refactorer</code></td><td>Code analysis and refactoring suggestions</td><td>CodeRabbit (on-demand) + manual prompt</td></tr>
+<tr><td><code>e2e-test-writer</code></td><td>Generate Playwright e2e tests</td><td>Copilot agent mode or Claude Code</td></tr>
 </tbody>
 </table>
 <h2>MCP Servers</h2>
@@ -315,6 +280,24 @@ As a starting point, please refer to our <strong><a href="./CONTRIBUTING.md">CON
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -330,7 +313,6 @@ As a starting point, please refer to our <strong><a href="./CONTRIBUTING.md">CON
        <script src="./js/libs/lit-html.js"></script>
 
        <script src="./js/menu-wc.js" defer></script>
-       <script nomodule src="./js/menu-wc_es5.js" defer></script>
 
        <script src="./js/libs/bootstrap-native.js"></script>
 

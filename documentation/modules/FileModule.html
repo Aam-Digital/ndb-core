@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -106,6 +113,11 @@
     <li class="breadcrumb-item">Modules</li>
     <li class="breadcrumb-item" >FileModule</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/file/file.module.ts</code>
+</div>
 
 <div class="text-center module-graph-container">
     <div id="module-graph-svg">
@@ -140,17 +152,17 @@
 <polygon fill="none" stroke="black" points="16,-78 16,-130 679,-130 679,-78 16,-78"/>
 </g>
 <!-- CouchdbFileService -->
-<g id="node1" class="node">
+<g id="node1" class="node"><a xlink:href="../injectables/CouchdbFileService.html" href="../injectables/CouchdbFileService.html" target="_top">
 <title>CouchdbFileService</title>
 <ellipse fill="#fdb462" stroke="black" cx="581" cy="-104" rx="89.77" ry="18"/>
 <text text-anchor="middle" x="581" y="-99.8" font-family="Times,serif" font-size="14.00">CouchdbFileService</text>
-</g>
+</a></g>
 <!-- FileModule -->
-<g id="node5" class="node">
+<g id="node5" class="node"><a xlink:href="../modules/FileModule.html" href="../modules/FileModule.html" target="_top">
 <title>FileModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="374.83,-187 371.83,-191 350.83,-191 347.83,-187 293.17,-187 293.17,-151 374.83,-151 374.83,-187"/>
 <text text-anchor="middle" x="334" y="-164.8" font-family="Times,serif" font-size="14.00">FileModule</text>
-</g>
+</a></g>
 <!-- CouchdbFileService&#45;&gt;FileModule -->
 <g id="edge1" class="edge">
 <title>CouchdbFileService&#45;&gt;FileModule</title>
@@ -158,11 +170,11 @@
 <polygon fill="black" stroke="black" points="384.79,-165.5 374.79,-169 384.79,-172.5 384.79,-165.5"/>
 </g>
 <!-- FileDatatype -->
-<g id="node2" class="node">
+<g id="node2" class="node"><a xlink:href="../injectables/FileDatatype.html" href="../injectables/FileDatatype.html" target="_top">
 <title>FileDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="412" cy="-104" rx="60.83" ry="18"/>
 <text text-anchor="middle" x="412" y="-99.8" font-family="Times,serif" font-size="14.00">FileDatatype</text>
-</g>
+</a></g>
 <!-- FileDatatype&#45;&gt;FileModule -->
 <g id="edge2" class="edge">
 <title>FileDatatype&#45;&gt;FileModule</title>
@@ -170,11 +182,11 @@
 <polygon fill="black" stroke="black" points="359.37,-140.87 362.87,-150.87 366.37,-140.87 359.37,-140.87"/>
 </g>
 <!-- MockFileService -->
-<g id="node3" class="node">
+<g id="node3" class="node"><a xlink:href="../injectables/MockFileService.html" href="../injectables/MockFileService.html" target="_top">
 <title>MockFileService</title>
 <ellipse fill="#fdb462" stroke="black" cx="256" cy="-104" rx="77.58" ry="18"/>
 <text text-anchor="middle" x="256" y="-99.8" font-family="Times,serif" font-size="14.00">MockFileService</text>
-</g>
+</a></g>
 <!-- MockFileService&#45;&gt;FileModule -->
 <g id="edge3" class="edge">
 <title>MockFileService&#45;&gt;FileModule</title>
@@ -182,11 +194,11 @@
 <polygon fill="black" stroke="black" points="309.94,-140.68 313.44,-150.68 316.94,-140.68 309.94,-140.68"/>
 </g>
 <!-- PhotoDatatype -->
-<g id="node4" class="node">
+<g id="node4" class="node"><a xlink:href="../injectables/PhotoDatatype.html" href="../injectables/PhotoDatatype.html" target="_top">
 <title>PhotoDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="92" cy="-104" rx="68.36" ry="18"/>
 <text text-anchor="middle" x="92" y="-99.8" font-family="Times,serif" font-size="14.00">PhotoDatatype</text>
-</g>
+</a></g>
 <!-- PhotoDatatype&#45;&gt;FileModule -->
 <g id="edge4" class="edge">
 <title>PhotoDatatype&#45;&gt;FileModule</title>
@@ -225,13 +237,6 @@
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
 
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/features/file/file.module.ts</code>
-        </p>
-
 
 
 
@@ -258,6 +263,39 @@
                 </div>
             </div>
         </div>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/AppModule.html" target="_self" >AppModule</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../injectables/CouchdbFileService.html" target="_self" >CouchdbFileService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/FileDatatype.html" target="_self" >FileDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/MockFileService.html" target="_self" >MockFileService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/PhotoDatatype.html" target="_self" >PhotoDatatype</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
 
 
     </div>
@@ -317,6 +355,7 @@ export class FileModule {
 
 
 
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
@@ -349,6 +388,24 @@ export class FileModule {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -364,7 +421,6 @@ export class FileModule {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

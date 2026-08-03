@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -106,6 +113,11 @@
     <li class="breadcrumb-item">Modules</li>
     <li class="breadcrumb-item" >CoreModule</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/core.module.ts</code>
+</div>
 
 <div class="text-center module-graph-container">
     <div id="module-graph-svg">
@@ -140,17 +152,17 @@
 <polygon fill="none" stroke="black" points="16,-78 16,-130 2869,-130 2869,-78 16,-78"/>
 </g>
 <!-- BooleanDatatype -->
-<g id="node1" class="node">
+<g id="node1" class="node"><a xlink:href="../injectables/BooleanDatatype.html" href="../injectables/BooleanDatatype.html" target="_top">
 <title>BooleanDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="2783" cy="-104" rx="78.15" ry="18"/>
 <text text-anchor="middle" x="2783" y="-99.8" font-family="Times,serif" font-size="14.00">BooleanDatatype</text>
-</g>
+</a></g>
 <!-- CoreModule -->
-<g id="node17" class="node">
+<g id="node17" class="node"><a xlink:href="../modules/CoreModule.html" href="../modules/CoreModule.html" target="_top">
 <title>CoreModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1505.26,-187 1502.26,-191 1481.26,-191 1478.26,-187 1418.74,-187 1418.74,-151 1505.26,-151 1505.26,-187"/>
 <text text-anchor="middle" x="1462" y="-164.8" font-family="Times,serif" font-size="14.00">CoreModule</text>
-</g>
+</a></g>
 <!-- BooleanDatatype&#45;&gt;CoreModule -->
 <g id="edge1" class="edge">
 <title>BooleanDatatype&#45;&gt;CoreModule</title>
@@ -158,11 +170,11 @@
 <polygon fill="black" stroke="black" points="1515.58,-179.5 1505.58,-183 1515.58,-186.5 1515.58,-179.5"/>
 </g>
 <!-- CurrentUserSubject -->
-<g id="node2" class="node">
+<g id="node2" class="node"><a xlink:href="../injectables/CurrentUserSubject.html" href="../injectables/CurrentUserSubject.html" target="_top">
 <title>CurrentUserSubject</title>
 <ellipse fill="#fdb462" stroke="black" cx="2599" cy="-104" rx="87.96" ry="18"/>
 <text text-anchor="middle" x="2599" y="-99.8" font-family="Times,serif" font-size="14.00">CurrentUserSubject</text>
-</g>
+</a></g>
 <!-- CurrentUserSubject&#45;&gt;CoreModule -->
 <g id="edge2" class="edge">
 <title>CurrentUserSubject&#45;&gt;CoreModule</title>
@@ -170,11 +182,11 @@
 <polygon fill="black" stroke="black" points="1515.53,-174.5 1505.53,-178 1515.53,-181.5 1515.53,-174.5"/>
 </g>
 <!-- DateDatatype -->
-<g id="node3" class="node">
+<g id="node3" class="node"><a xlink:href="../injectables/DateDatatype.html" href="../injectables/DateDatatype.html" target="_top">
 <title>DateDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="2429" cy="-104" rx="64.24" ry="18"/>
 <text text-anchor="middle" x="2429" y="-99.8" font-family="Times,serif" font-size="14.00">DateDatatype</text>
-</g>
+</a></g>
 <!-- DateDatatype&#45;&gt;CoreModule -->
 <g id="edge3" class="edge">
 <title>DateDatatype&#45;&gt;CoreModule</title>
@@ -182,11 +194,11 @@
 <polygon fill="black" stroke="black" points="1515.43,-170.5 1505.43,-174 1515.43,-177.5 1515.43,-170.5"/>
 </g>
 <!-- DateOnlyDatatype -->
-<g id="node4" class="node">
+<g id="node4" class="node"><a xlink:href="../injectables/DateOnlyDatatype.html" href="../injectables/DateOnlyDatatype.html" target="_top">
 <title>DateOnlyDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="2263" cy="-104" rx="83.37" ry="18"/>
 <text text-anchor="middle" x="2263" y="-99.8" font-family="Times,serif" font-size="14.00">DateOnlyDatatype</text>
-</g>
+</a></g>
 <!-- DateOnlyDatatype&#45;&gt;CoreModule -->
 <g id="edge4" class="edge">
 <title>DateOnlyDatatype&#45;&gt;CoreModule</title>
@@ -194,11 +206,11 @@
 <polygon fill="black" stroke="black" points="1515.35,-165.5 1505.35,-169 1515.35,-172.5 1515.35,-165.5"/>
 </g>
 <!-- DateWithAgeDatatype -->
-<g id="node5" class="node">
+<g id="node5" class="node"><a xlink:href="../injectables/DateWithAgeDatatype.html" href="../injectables/DateWithAgeDatatype.html" target="_top">
 <title>DateWithAgeDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="2062" cy="-104" rx="99.54" ry="18"/>
 <text text-anchor="middle" x="2062" y="-99.8" font-family="Times,serif" font-size="14.00">DateWithAgeDatatype</text>
-</g>
+</a></g>
 <!-- DateWithAgeDatatype&#45;&gt;CoreModule -->
 <g id="edge5" class="edge">
 <title>DateWithAgeDatatype&#45;&gt;CoreModule</title>
@@ -206,11 +218,11 @@
 <polygon fill="black" stroke="black" points="1515.63,-161.5 1505.63,-165 1515.63,-168.5 1515.63,-161.5"/>
 </g>
 <!-- EmailDatatype -->
-<g id="node6" class="node">
+<g id="node6" class="node"><a xlink:href="../injectables/EmailDatatype.html" href="../injectables/EmailDatatype.html" target="_top">
 <title>EmailDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="1876" cy="-104" rx="68.92" ry="18"/>
 <text text-anchor="middle" x="1876" y="-99.8" font-family="Times,serif" font-size="14.00">EmailDatatype</text>
-</g>
+</a></g>
 <!-- EmailDatatype&#45;&gt;CoreModule -->
 <g id="edge6" class="edge">
 <title>EmailDatatype&#45;&gt;CoreModule</title>
@@ -218,11 +230,11 @@
 <polygon fill="black" stroke="black" points="1515.52,-156.5 1505.52,-160 1515.52,-163.5 1515.52,-156.5"/>
 </g>
 <!-- EntityDatatype -->
-<g id="node7" class="node">
+<g id="node7" class="node"><a xlink:href="../injectables/EntityDatatype.html" href="../injectables/EntityDatatype.html" target="_top">
 <title>EntityDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="1720" cy="-104" rx="69.5" ry="18"/>
 <text text-anchor="middle" x="1720" y="-99.8" font-family="Times,serif" font-size="14.00">EntityDatatype</text>
-</g>
+</a></g>
 <!-- EntityDatatype&#45;&gt;CoreModule -->
 <g id="edge7" class="edge">
 <title>EntityDatatype&#45;&gt;CoreModule</title>
@@ -230,11 +242,11 @@
 <polygon fill="black" stroke="black" points="1515.47,-152.5 1505.47,-156 1515.47,-159.5 1515.47,-152.5"/>
 </g>
 <!-- LongTextDatatype -->
-<g id="node8" class="node">
+<g id="node8" class="node"><a xlink:href="../injectables/LongTextDatatype.html" href="../injectables/LongTextDatatype.html" target="_top">
 <title>LongTextDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="1549" cy="-104" rx="83.95" ry="18"/>
 <text text-anchor="middle" x="1549" y="-99.8" font-family="Times,serif" font-size="14.00">LongTextDatatype</text>
-</g>
+</a></g>
 <!-- LongTextDatatype&#45;&gt;CoreModule -->
 <g id="edge8" class="edge">
 <title>LongTextDatatype&#45;&gt;CoreModule</title>
@@ -242,11 +254,11 @@
 <polygon fill="black" stroke="black" points="1481.7,-140.77 1485.2,-150.77 1488.7,-140.77 1481.7,-140.77"/>
 </g>
 <!-- MonthDatatype -->
-<g id="node9" class="node">
+<g id="node9" class="node"><a xlink:href="../injectables/MonthDatatype.html" href="../injectables/MonthDatatype.html" target="_top">
 <title>MonthDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="1375" cy="-104" rx="71.79" ry="18"/>
 <text text-anchor="middle" x="1375" y="-99.8" font-family="Times,serif" font-size="14.00">MonthDatatype</text>
-</g>
+</a></g>
 <!-- MonthDatatype&#45;&gt;CoreModule -->
 <g id="edge9" class="edge">
 <title>MonthDatatype&#45;&gt;CoreModule</title>
@@ -254,11 +266,11 @@
 <polygon fill="black" stroke="black" points="1429.13,-140.87 1432.63,-150.87 1436.13,-140.87 1429.13,-140.87"/>
 </g>
 <!-- NumberDatatype -->
-<g id="node10" class="node">
+<g id="node10" class="node"><a xlink:href="../injectables/NumberDatatype.html" href="../injectables/NumberDatatype.html" target="_top">
 <title>NumberDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="1208" cy="-104" rx="77.57" ry="18"/>
 <text text-anchor="middle" x="1208" y="-99.8" font-family="Times,serif" font-size="14.00">NumberDatatype</text>
-</g>
+</a></g>
 <!-- NumberDatatype&#45;&gt;CoreModule -->
 <g id="edge10" class="edge">
 <title>NumberDatatype&#45;&gt;CoreModule</title>
@@ -266,11 +278,11 @@
 <polygon fill="black" stroke="black" points="1408.62,-159.5 1418.62,-156 1408.62,-152.5 1408.62,-159.5"/>
 </g>
 <!-- PercentageDatatype -->
-<g id="node11" class="node">
+<g id="node11" class="node"><a xlink:href="../injectables/PercentageDatatype.html" href="../injectables/PercentageDatatype.html" target="_top">
 <title>PercentageDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="1024" cy="-104" rx="88.5" ry="18"/>
 <text text-anchor="middle" x="1024" y="-99.8" font-family="Times,serif" font-size="14.00">PercentageDatatype</text>
-</g>
+</a></g>
 <!-- PercentageDatatype&#45;&gt;CoreModule -->
 <g id="edge11" class="edge">
 <title>PercentageDatatype&#45;&gt;CoreModule</title>
@@ -278,11 +290,11 @@
 <polygon fill="black" stroke="black" points="1408.4,-163.5 1418.4,-160 1408.4,-156.5 1408.4,-163.5"/>
 </g>
 <!-- SchemaEmbedDatatype -->
-<g id="node12" class="node">
+<g id="node12" class="node"><a xlink:href="../injectables/SchemaEmbedDatatype.html" href="../injectables/SchemaEmbedDatatype.html" target="_top">
 <title>SchemaEmbedDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="814" cy="-104" rx="103.63" ry="18"/>
 <text text-anchor="middle" x="814" y="-99.8" font-family="Times,serif" font-size="14.00">SchemaEmbedDatatype</text>
-</g>
+</a></g>
 <!-- SchemaEmbedDatatype&#45;&gt;CoreModule -->
 <g id="edge12" class="edge">
 <title>SchemaEmbedDatatype&#45;&gt;CoreModule</title>
@@ -290,11 +302,11 @@
 <polygon fill="black" stroke="black" points="1408.73,-168.5 1418.73,-165 1408.73,-161.5 1408.73,-168.5"/>
 </g>
 <!-- SessionSubject -->
-<g id="node13" class="node">
+<g id="node13" class="node"><a xlink:href="../injectables/SessionSubject.html" href="../injectables/SessionSubject.html" target="_top">
 <title>SessionSubject</title>
 <ellipse fill="#fdb462" stroke="black" cx="623" cy="-104" rx="69.52" ry="18"/>
 <text text-anchor="middle" x="623" y="-99.8" font-family="Times,serif" font-size="14.00">SessionSubject</text>
-</g>
+</a></g>
 <!-- SessionSubject&#45;&gt;CoreModule -->
 <g id="edge13" class="edge">
 <title>SessionSubject&#45;&gt;CoreModule</title>
@@ -302,11 +314,11 @@
 <polygon fill="black" stroke="black" points="1408.66,-172.5 1418.66,-169 1408.66,-165.5 1408.66,-172.5"/>
 </g>
 <!-- StringDatatype -->
-<g id="node14" class="node">
+<g id="node14" class="node"><a xlink:href="../injectables/StringDatatype.html" href="../injectables/StringDatatype.html" target="_top">
 <title>StringDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="466" cy="-104" rx="69.5" ry="18"/>
 <text text-anchor="middle" x="466" y="-99.8" font-family="Times,serif" font-size="14.00">StringDatatype</text>
-</g>
+</a></g>
 <!-- StringDatatype&#45;&gt;CoreModule -->
 <g id="edge14" class="edge">
 <title>StringDatatype&#45;&gt;CoreModule</title>
@@ -314,11 +326,11 @@
 <polygon fill="black" stroke="black" points="1408.56,-177.5 1418.56,-174 1408.56,-170.5 1408.56,-177.5"/>
 </g>
 <!-- UpdateMetadataDatatype -->
-<g id="node15" class="node">
+<g id="node15" class="node"><a xlink:href="../injectables/UpdateMetadataDatatype.html" href="../injectables/UpdateMetadataDatatype.html" target="_top">
 <title>UpdateMetadataDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="269" cy="-104" rx="109.91" ry="18"/>
 <text text-anchor="middle" x="269" y="-99.8" font-family="Times,serif" font-size="14.00">UpdateMetadataDatatype</text>
-</g>
+</a></g>
 <!-- UpdateMetadataDatatype&#45;&gt;CoreModule -->
 <g id="edge15" class="edge">
 <title>UpdateMetadataDatatype&#45;&gt;CoreModule</title>
@@ -326,11 +338,11 @@
 <polygon fill="black" stroke="black" points="1408.48,-181.5 1418.48,-178 1408.48,-174.5 1408.48,-181.5"/>
 </g>
 <!-- UrlDatatype -->
-<g id="node16" class="node">
+<g id="node16" class="node"><a xlink:href="../injectables/UrlDatatype.html" href="../injectables/UrlDatatype.html" target="_top">
 <title>UrlDatatype</title>
 <ellipse fill="#fdb462" stroke="black" cx="83" cy="-104" rx="58.53" ry="18"/>
 <text text-anchor="middle" x="83" y="-99.8" font-family="Times,serif" font-size="14.00">UrlDatatype</text>
-</g>
+</a></g>
 <!-- UrlDatatype&#45;&gt;CoreModule -->
 <g id="edge16" class="edge">
 <title>UrlDatatype&#45;&gt;CoreModule</title>
@@ -368,13 +380,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/core.module.ts</code>
-        </p>
 
 
 
@@ -445,6 +450,81 @@
                 </div>
             </div>
         </div>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/AppModule.html" target="_self" >AppModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/CoreTestingModule.html" target="_self" >CoreTestingModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/StorybookBaseModule.html" target="_self" >StorybookBaseModule</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../injectables/BooleanDatatype.html" target="_self" >BooleanDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/CurrentUserSubject.html" target="_self" >CurrentUserSubject</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/DateDatatype.html" target="_self" >DateDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/DateOnlyDatatype.html" target="_self" >DateOnlyDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/DateWithAgeDatatype.html" target="_self" >DateWithAgeDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/EmailDatatype.html" target="_self" >EmailDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/EntityDatatype.html" target="_self" >EntityDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/LongTextDatatype.html" target="_self" >LongTextDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/MonthDatatype.html" target="_self" >MonthDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/NumberDatatype.html" target="_self" >NumberDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/PercentageDatatype.html" target="_self" >PercentageDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/SessionSubject.html" target="_self" >SessionSubject</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/StringDatatype.html" target="_self" >StringDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/UpdateMetadataDatatype.html" target="_self" >UpdateMetadataDatatype</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/UrlDatatype.html" target="_self" >UrlDatatype</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
 
 
     </div>
@@ -530,6 +610,7 @@ export class CoreModule {
 
 
 
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
@@ -562,6 +643,24 @@ export class CoreModule {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -577,7 +676,6 @@ export class CoreModule {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

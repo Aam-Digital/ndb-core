@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   AdminListManagerComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/admin/admin-list-manager/admin-list-manager.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -124,20 +140,17 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/admin/admin-list-manager/admin-list-manager.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -148,6 +161,11 @@
 
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -174,18 +192,34 @@
                 <td class="col-md-9"><code>app-admin-list-manager</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>CdkDropList</code>
-                            <code>CdkDrag</code>
-                                <code><a href="../components/EntityFieldsMenuComponent.html" target="_self" >EntityFieldsMenuComponent</a></code>
-                                <code><a href="../components/EntityFieldLabelComponent.html" target="_self" >EntityFieldLabelComponent</a></code>
-                            <code>FontAwesomeModule</code>
-                            <code>MatFormFieldModule</code>
-                            <code>MatSelectModule</code>
+                        <div>        <code><a href="https://angular.dev/api/cdk/drag-drop/CdkDropList" target="_blank" >CdkDropList</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/cdk/drag-drop/CdkDrag" target="_blank" >CdkDrag</a></code>
+</div>
+                        <div>        <code><a href="../components/EntityFieldsMenuComponent.html" target="_self" >EntityFieldsMenuComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/EntityFieldLabelComponent.html" target="_self" >EntityFieldLabelComponent</a></code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>    <code>MatFormFieldModule</code>
+</div>
+                        <div>    <code>MatSelectModule</code>
+</div>
                 </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./admin-list-manager.component.scss</code></td>
             </tr>
 
 
@@ -211,115 +245,176 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/AdminEntityListComponent.html" target="_self" >AdminEntityListComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityPanelComponentComponent.html" target="_self" >AdminEntityPanelComponentComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditMatchingEntitySideComponent.html" target="_self" >EditMatchingEntitySideComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="https://angular.dev/api/cdk/drag-drop/CdkDropList" target="_blank" >CdkDropList</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/cdk/drag-drop/CdkDrag" target="_blank" >CdkDrag</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityFieldsMenuComponent.html" target="_self" >EntityFieldsMenuComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityFieldLabelComponent.html" target="_self" >EntityFieldLabelComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                        <code>MatFormFieldModule</code>
+                                </li>
+                                <li>
+                                        <code>MatSelectModule</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#availableItems" >availableItems</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#drop" >drop</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getFieldId" >getFieldId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#remove" >remove</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#updateItems" >updateItems</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#activeFields" >activeFields</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#activeFields" >activeFields</a>
                             </li>
                             <li>
-                                <a href="#additionalFields" >additionalFields</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#additionalFields" >additionalFields</a>
                             </li>
                             <li>
-                                <a href="#entityType" >entityType</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entityType" >entityType</a>
                             </li>
                             <li>
-                                <a href="#fieldLabel" >fieldLabel</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#fieldLabel" >fieldLabel</a>
                             </li>
                             <li>
-                                <a href="#items" >items</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#items" >items</a>
                             </li>
                             <li>
-                                <a href="#templateType" >templateType</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#templateType" >templateType</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#idsChange" >idsChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#idsChange" >idsChange</a>
                             </li>
                             <li>
-                                <a href="#itemsChange" >itemsChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#itemsChange" >itemsChange</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Accessors</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#itemsAsStrings" >itemsAsStrings</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-        </tbody>
-    </table>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Accessors</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#itemsAsStrings" >itemsAsStrings</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 </section>
 
 
@@ -483,6 +578,7 @@
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -540,6 +636,7 @@
             </tbody>
         </table>
 </section>
+
 
 
     <section data-compodoc="block-methods">
@@ -816,6 +913,7 @@
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1086,6 +1184,87 @@ export class AdminListManagerComponent {
 </code></pre>
     </div>
 
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./admin-list-manager.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+
+.column-header {
+  padding: 8px 16px;
+  border-bottom: 1px solid #0000001f;
+}
+
+.table-content-preview {
+  font-style: italic;
+  padding: 16px;
+  color: #5f5f5f;
+}
+
+.filter-field {
+  padding: 0 16px;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    height: 0;
+  }
+}
+
+.drag-handle {
+  cursor: move;
+  margin: auto;
+  color: colors.$accent;
+}
+
+app-entity-fields-menu {
+  color: colors.$accent;
+}
+
+.default-item {
+  margin: auto;
+  padding: 8px 16px;
+}
+
+.remove-icon {
+  cursor: pointer;
+  margin: auto;
+}
+
+.drop-item:has(.remove-icon:hover) {
+  color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drop-list.cdk-drop-list-dragging .drop-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.full-width-field {
+  width: 100%;
+  display: inline-block;
+
+  ::ng-deep mat-form-field {
+    width: 100% !important;
+  }
+}
+</code></pre>
+    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
@@ -1167,6 +1346,24 @@ export class AdminListManagerComponent {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1182,7 +1379,6 @@ export class AdminListManagerComponent {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -106,6 +113,11 @@
     <li class="breadcrumb-item">Modules</li>
     <li class="breadcrumb-item" >AppModule</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/app.module.ts</code>
+</div>
 
 <div class="text-center module-graph-container">
     <div id="module-graph-svg">
@@ -152,17 +164,17 @@
 <polygon fill="none" stroke="black" points="2659,-208 2659,-260 2783,-260 2783,-208 2659,-208"/>
 </g>
 <!-- AppComponent -->
-<g id="node1" class="node">
+<g id="node1" class="node"><a xlink:href="../components/AppComponent.html" href="../components/AppComponent.html" target="_top">
 <title>AppComponent</title>
 <polygon fill="#ffffb3" stroke="black" points="5851.94,-122 5746.06,-122 5746.06,-86 5851.94,-86 5851.94,-122"/>
 <text text-anchor="middle" x="5799" y="-99.8" font-family="Times,serif" font-size="14.00">AppComponent</text>
-</g>
+</a></g>
 <!-- AppModule -->
-<g id="node2" class="node">
+<g id="node2" class="node"><a xlink:href="../modules/AppModule.html" href="../modules/AppModule.html" target="_top">
 <title>AppModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="2762.66,-187 2759.66,-191 2738.66,-191 2735.66,-187 2679.34,-187 2679.34,-151 2762.66,-151 2762.66,-187"/>
 <text text-anchor="middle" x="2721" y="-164.8" font-family="Times,serif" font-size="14.00">AppModule</text>
-</g>
+</a></g>
 <!-- AppComponent&#45;&gt;AppModule -->
 <g id="edge1" class="edge">
 <title>AppComponent&#45;&gt;AppModule</title>
@@ -170,11 +182,11 @@
 <polygon fill="black" stroke="black" points="2772.76,-182.5 2762.76,-186 2772.76,-189.5 2772.76,-182.5"/>
 </g>
 <!-- AppComponent  -->
-<g id="node35" class="node">
+<g id="node35" class="node"><a xlink:href="../components/AppComponent.html" href="../components/AppComponent.html" target="_top">
 <title>AppComponent </title>
 <polygon fill="#80b1d3" stroke="black" points="2775.44,-252 2666.56,-252 2666.56,-216 2775.44,-216 2775.44,-252"/>
 <text text-anchor="middle" x="2721" y="-229.8" font-family="Times,serif" font-size="14.00">AppComponent </text>
-</g>
+</a></g>
 <!-- AppModule&#45;&gt;AppComponent  -->
 <g id="edge34" class="edge">
 <title>AppModule&#45;&gt;AppComponent </title>
@@ -182,11 +194,11 @@
 <polygon fill="black" stroke="black" points="2717.5,-205.99 2721,-215.99 2724.5,-205.99 2717.5,-205.99"/>
 </g>
 <!-- AdminModule -->
-<g id="node3" class="node">
+<g id="node3" class="node"><a xlink:href="../modules/AdminModule.html" href="../modules/AdminModule.html" target="_top">
 <title>AdminModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="4864.44,-122 4861.44,-126 4840.44,-126 4837.44,-122 4765.56,-122 4765.56,-86 4864.44,-86 4864.44,-122"/>
 <text text-anchor="middle" x="4815" y="-99.8" font-family="Times,serif" font-size="14.00">AdminModule</text>
-</g>
+</a></g>
 <!-- AdminModule&#45;&gt;AppModule -->
 <g id="edge2" class="edge">
 <title>AdminModule&#45;&gt;AppModule</title>
@@ -194,11 +206,11 @@
 <polygon fill="black" stroke="black" points="2772.83,-172.5 2762.83,-176 2772.83,-179.5 2772.83,-172.5"/>
 </g>
 <!-- ApplicationLoadingComponent -->
-<g id="node4" class="node">
+<g id="node4" class="node"><a xlink:href="../components/ApplicationLoadingComponent.html" href="../components/ApplicationLoadingComponent.html" target="_top">
 <title>ApplicationLoadingComponent</title>
 <polygon fill="#8dd3c7" stroke="black" points="4748.09,-122 4745.09,-126 4724.09,-126 4721.09,-122 4553.91,-122 4553.91,-86 4748.09,-86 4748.09,-122"/>
 <text text-anchor="middle" x="4651" y="-99.8" font-family="Times,serif" font-size="14.00">ApplicationLoadingComponent</text>
-</g>
+</a></g>
 <!-- ApplicationLoadingComponent&#45;&gt;AppModule -->
 <g id="edge3" class="edge">
 <title>ApplicationLoadingComponent&#45;&gt;AppModule</title>
@@ -206,11 +218,11 @@
 <polygon fill="black" stroke="black" points="2773.11,-170.5 2763.11,-174 2773.11,-177.5 2773.11,-170.5"/>
 </g>
 <!-- AttendanceModule -->
-<g id="node5" class="node">
+<g id="node5" class="node"><a xlink:href="../modules/AttendanceModule.html" href="../modules/AttendanceModule.html" target="_top">
 <title>AttendanceModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="4535.8,-122 4532.8,-126 4511.8,-126 4508.8,-122 4412.2,-122 4412.2,-86 4535.8,-86 4535.8,-122"/>
 <text text-anchor="middle" x="4474" y="-99.8" font-family="Times,serif" font-size="14.00">AttendanceModule</text>
-</g>
+</a></g>
 <!-- AttendanceModule&#45;&gt;AppModule -->
 <g id="edge4" class="edge">
 <title>AttendanceModule&#45;&gt;AppModule</title>
@@ -218,11 +230,11 @@
 <polygon fill="black" stroke="black" points="2773.03,-168.5 2763.03,-172 2773.03,-175.5 2773.03,-168.5"/>
 </g>
 <!-- BirthdayDashboardWidgetModule -->
-<g id="node6" class="node">
+<g id="node6" class="node"><a xlink:href="../modules/BirthdayDashboardWidgetModule.html" href="../modules/BirthdayDashboardWidgetModule.html" target="_top">
 <title>BirthdayDashboardWidgetModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="4394.39,-122 4391.39,-126 4370.39,-126 4367.39,-122 4183.61,-122 4183.61,-86 4394.39,-86 4394.39,-122"/>
 <text text-anchor="middle" x="4289" y="-99.8" font-family="Times,serif" font-size="14.00">BirthdayDashboardWidgetModule</text>
-</g>
+</a></g>
 <!-- BirthdayDashboardWidgetModule&#45;&gt;AppModule -->
 <g id="edge5" class="edge">
 <title>BirthdayDashboardWidgetModule&#45;&gt;AppModule</title>
@@ -230,11 +242,11 @@
 <polygon fill="black" stroke="black" points="2772.94,-166.5 2762.94,-170 2772.94,-173.5 2772.94,-166.5"/>
 </g>
 <!-- BulkEditModule -->
-<g id="node7" class="node">
+<g id="node7" class="node"><a xlink:href="../modules/BulkEditModule.html" href="../modules/BulkEditModule.html" target="_top">
 <title>BulkEditModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="4166.11,-122 4163.11,-126 4142.11,-126 4139.11,-122 4055.89,-122 4055.89,-86 4166.11,-86 4166.11,-122"/>
 <text text-anchor="middle" x="4111" y="-99.8" font-family="Times,serif" font-size="14.00">BulkEditModule</text>
-</g>
+</a></g>
 <!-- BulkEditModule&#45;&gt;AppModule -->
 <g id="edge6" class="edge">
 <title>BulkEditModule&#45;&gt;AppModule</title>
@@ -242,11 +254,11 @@
 <polygon fill="black" stroke="black" points="2772.98,-165.5 2762.98,-169 2772.98,-172.5 2772.98,-165.5"/>
 </g>
 <!-- ChangeHistoryModule -->
-<g id="node8" class="node">
+<g id="node8" class="node"><a xlink:href="../modules/ChangeHistoryModule.html" href="../modules/ChangeHistoryModule.html" target="_top">
 <title>ChangeHistoryModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="4038.31,-122 4035.31,-126 4014.31,-126 4011.31,-122 3893.69,-122 3893.69,-86 4038.31,-86 4038.31,-122"/>
 <text text-anchor="middle" x="3966" y="-99.8" font-family="Times,serif" font-size="14.00">ChangeHistoryModule</text>
-</g>
+</a></g>
 <!-- ChangeHistoryModule&#45;&gt;AppModule -->
 <g id="edge7" class="edge">
 <title>ChangeHistoryModule&#45;&gt;AppModule</title>
@@ -254,11 +266,11 @@
 <polygon fill="black" stroke="black" points="2772.78,-163.5 2762.78,-167 2772.78,-170.5 2772.78,-163.5"/>
 </g>
 <!-- ChildrenModule -->
-<g id="node9" class="node">
+<g id="node9" class="node"><a xlink:href="../modules/ChildrenModule.html" href="../modules/ChildrenModule.html" target="_top">
 <title>ChildrenModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="3876.04,-122 3873.04,-126 3852.04,-126 3849.04,-122 3767.96,-122 3767.96,-86 3876.04,-86 3876.04,-122"/>
 <text text-anchor="middle" x="3822" y="-99.8" font-family="Times,serif" font-size="14.00">ChildrenModule</text>
-</g>
+</a></g>
 <!-- ChildrenModule&#45;&gt;AppModule -->
 <g id="edge8" class="edge">
 <title>ChildrenModule&#45;&gt;AppModule</title>
@@ -266,11 +278,11 @@
 <polygon fill="black" stroke="black" points="2772.82,-161.5 2762.82,-165 2772.82,-168.5 2772.82,-161.5"/>
 </g>
 <!-- ConfigurableEnumModule -->
-<g id="node10" class="node">
+<g id="node10" class="node"><a xlink:href="../modules/ConfigurableEnumModule.html" href="../modules/ConfigurableEnumModule.html" target="_top">
 <title>ConfigurableEnumModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="3749.36,-122 3746.36,-126 3725.36,-126 3722.36,-122 3582.64,-122 3582.64,-86 3749.36,-86 3749.36,-122"/>
 <text text-anchor="middle" x="3666" y="-99.8" font-family="Times,serif" font-size="14.00">ConfigurableEnumModule</text>
-</g>
+</a></g>
 <!-- ConfigurableEnumModule&#45;&gt;AppModule -->
 <g id="edge9" class="edge">
 <title>ConfigurableEnumModule&#45;&gt;AppModule</title>
@@ -278,11 +290,11 @@
 <polygon fill="black" stroke="black" points="2772.82,-159.5 2762.82,-163 2772.82,-166.5 2772.82,-159.5"/>
 </g>
 <!-- CoreModule -->
-<g id="node11" class="node">
+<g id="node11" class="node"><a xlink:href="../modules/CoreModule.html" href="../modules/CoreModule.html" target="_top">
 <title>CoreModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="3564.26,-122 3561.26,-126 3540.26,-126 3537.26,-122 3477.74,-122 3477.74,-86 3564.26,-86 3564.26,-122"/>
 <text text-anchor="middle" x="3521" y="-99.8" font-family="Times,serif" font-size="14.00">CoreModule</text>
-</g>
+</a></g>
 <!-- CoreModule&#45;&gt;AppModule -->
 <g id="edge10" class="edge">
 <title>CoreModule&#45;&gt;AppModule</title>
@@ -290,11 +302,11 @@
 <polygon fill="black" stroke="black" points="2772.89,-157.5 2762.89,-161 2772.89,-164.5 2772.89,-157.5"/>
 </g>
 <!-- DashboardModule -->
-<g id="node12" class="node">
+<g id="node12" class="node"><a xlink:href="../modules/DashboardModule.html" href="../modules/DashboardModule.html" target="_top">
 <title>DashboardModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="3460.19,-122 3457.19,-126 3436.19,-126 3433.19,-122 3339.81,-122 3339.81,-86 3460.19,-86 3460.19,-122"/>
 <text text-anchor="middle" x="3400" y="-99.8" font-family="Times,serif" font-size="14.00">DashboardModule</text>
-</g>
+</a></g>
 <!-- DashboardModule&#45;&gt;AppModule -->
 <g id="edge11" class="edge">
 <title>DashboardModule&#45;&gt;AppModule</title>
@@ -302,11 +314,11 @@
 <polygon fill="black" stroke="black" points="2772.71,-155.5 2762.71,-159 2772.71,-162.5 2772.71,-155.5"/>
 </g>
 <!-- DeDuplicationModule -->
-<g id="node13" class="node">
+<g id="node13" class="node"><a xlink:href="../modules/DeDuplicationModule.html" href="../modules/DeDuplicationModule.html" target="_top">
 <title>DeDuplicationModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="3321.97,-122 3318.97,-126 3297.97,-126 3294.97,-122 3180.03,-122 3180.03,-86 3321.97,-86 3321.97,-122"/>
 <text text-anchor="middle" x="3251" y="-99.8" font-family="Times,serif" font-size="14.00">DeDuplicationModule</text>
-</g>
+</a></g>
 <!-- DeDuplicationModule&#45;&gt;AppModule -->
 <g id="edge12" class="edge">
 <title>DeDuplicationModule&#45;&gt;AppModule</title>
@@ -314,11 +326,11 @@
 <polygon fill="black" stroke="black" points="2773.03,-153.5 2763.03,-157 2773.03,-160.5 2773.03,-153.5"/>
 </g>
 <!-- DemoDataModule -->
-<g id="node14" class="node">
+<g id="node14" class="node"><a xlink:href="../modules/DemoDataModule.html" href="../modules/DemoDataModule.html" target="_top">
 <title>DemoDataModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="3162.19,-122 3159.19,-126 3138.19,-126 3135.19,-122 3041.81,-122 3041.81,-86 3162.19,-86 3162.19,-122"/>
 <text text-anchor="middle" x="3102" y="-99.8" font-family="Times,serif" font-size="14.00">DemoDataModule</text>
-</g>
+</a></g>
 <!-- DemoDataModule&#45;&gt;AppModule -->
 <g id="edge13" class="edge">
 <title>DemoDataModule&#45;&gt;AppModule</title>
@@ -326,11 +338,11 @@
 <polygon fill="black" stroke="black" points="2772.86,-151.5 2762.86,-155 2772.86,-158.5 2772.86,-151.5"/>
 </g>
 <!-- EmailClientServiceModule -->
-<g id="node15" class="node">
+<g id="node15" class="node"><a xlink:href="../modules/EmailClientServiceModule.html" href="../modules/EmailClientServiceModule.html" target="_top">
 <title>EmailClientServiceModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="3023.69,-122 3020.69,-126 2999.69,-126 2996.69,-122 2854.31,-122 2854.31,-86 3023.69,-86 3023.69,-122"/>
 <text text-anchor="middle" x="2939" y="-99.8" font-family="Times,serif" font-size="14.00">EmailClientServiceModule</text>
-</g>
+</a></g>
 <!-- EmailClientServiceModule&#45;&gt;AppModule -->
 <g id="edge14" class="edge">
 <title>EmailClientServiceModule&#45;&gt;AppModule</title>
@@ -338,11 +350,11 @@
 <polygon fill="black" stroke="black" points="2772.77,-149.5 2762.77,-153 2772.77,-156.5 2772.77,-149.5"/>
 </g>
 <!-- EntityCountDashboardWidgetModule -->
-<g id="node16" class="node">
+<g id="node16" class="node"><a xlink:href="../modules/EntityCountDashboardWidgetModule.html" href="../modules/EntityCountDashboardWidgetModule.html" target="_top">
 <title>EntityCountDashboardWidgetModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="2835.85,-122 2832.85,-126 2811.85,-126 2808.85,-122 2606.15,-122 2606.15,-86 2835.85,-86 2835.85,-122"/>
 <text text-anchor="middle" x="2721" y="-99.8" font-family="Times,serif" font-size="14.00">EntityCountDashboardWidgetModule</text>
-</g>
+</a></g>
 <!-- EntityCountDashboardWidgetModule&#45;&gt;AppModule -->
 <g id="edge15" class="edge">
 <title>EntityCountDashboardWidgetModule&#45;&gt;AppModule</title>
@@ -350,11 +362,11 @@
 <polygon fill="black" stroke="black" points="2717.5,-140.99 2721,-150.99 2724.5,-140.99 2717.5,-140.99"/>
 </g>
 <!-- FileModule -->
-<g id="node17" class="node">
+<g id="node17" class="node"><a xlink:href="../modules/FileModule.html" href="../modules/FileModule.html" target="_top">
 <title>FileModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="2587.83,-122 2584.83,-126 2563.83,-126 2560.83,-122 2506.17,-122 2506.17,-86 2587.83,-86 2587.83,-122"/>
 <text text-anchor="middle" x="2547" y="-99.8" font-family="Times,serif" font-size="14.00">FileModule</text>
-</g>
+</a></g>
 <!-- FileModule&#45;&gt;AppModule -->
 <g id="edge16" class="edge">
 <title>FileModule&#45;&gt;AppModule</title>
@@ -362,11 +374,11 @@
 <polygon fill="black" stroke="black" points="2669.32,-156.5 2679.32,-153 2669.32,-149.5 2669.32,-156.5"/>
 </g>
 <!-- ImportModule -->
-<g id="node18" class="node">
+<g id="node18" class="node"><a xlink:href="../modules/ImportModule.html" href="../modules/ImportModule.html" target="_top">
 <title>ImportModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="2488.65,-122 2485.65,-126 2464.65,-126 2461.65,-122 2391.35,-122 2391.35,-86 2488.65,-86 2488.65,-122"/>
 <text text-anchor="middle" x="2440" y="-99.8" font-family="Times,serif" font-size="14.00">ImportModule</text>
-</g>
+</a></g>
 <!-- ImportModule&#45;&gt;AppModule -->
 <g id="edge17" class="edge">
 <title>ImportModule&#45;&gt;AppModule</title>
@@ -374,11 +386,11 @@
 <polygon fill="black" stroke="black" points="2669.23,-158.5 2679.23,-155 2669.23,-151.5 2669.23,-158.5"/>
 </g>
 <!-- LanguageModule -->
-<g id="node19" class="node">
+<g id="node19" class="node"><a xlink:href="../modules/LanguageModule.html" href="../modules/LanguageModule.html" target="_top">
 <title>LanguageModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="2373.25,-122 2370.25,-126 2349.25,-126 2346.25,-122 2258.75,-122 2258.75,-86 2373.25,-86 2373.25,-122"/>
 <text text-anchor="middle" x="2316" y="-99.8" font-family="Times,serif" font-size="14.00">LanguageModule</text>
-</g>
+</a></g>
 <!-- LanguageModule&#45;&gt;AppModule -->
 <g id="edge18" class="edge">
 <title>LanguageModule&#45;&gt;AppModule</title>
@@ -386,11 +398,11 @@
 <polygon fill="black" stroke="black" points="2669.18,-160.5 2679.18,-157 2669.18,-153.5 2669.18,-160.5"/>
 </g>
 <!-- LatestChangesModule -->
-<g id="node20" class="node">
+<g id="node20" class="node"><a xlink:href="../modules/LatestChangesModule.html" href="../modules/LatestChangesModule.html" target="_top">
 <title>LatestChangesModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="2240.97,-122 2237.97,-126 2216.97,-126 2213.97,-122 2099.03,-122 2099.03,-86 2240.97,-86 2240.97,-122"/>
 <text text-anchor="middle" x="2170" y="-99.8" font-family="Times,serif" font-size="14.00">LatestChangesModule</text>
-</g>
+</a></g>
 <!-- LatestChangesModule&#45;&gt;AppModule -->
 <g id="edge19" class="edge">
 <title>LatestChangesModule&#45;&gt;AppModule</title>
@@ -398,11 +410,11 @@
 <polygon fill="black" stroke="black" points="2669.13,-162.5 2679.13,-159 2669.13,-155.5 2669.13,-162.5"/>
 </g>
 <!-- LocationModule -->
-<g id="node21" class="node">
+<g id="node21" class="node"><a xlink:href="../modules/LocationModule.html" href="../modules/LocationModule.html" target="_top">
 <title>LocationModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="2080.81,-122 2077.81,-126 2056.81,-126 2053.81,-122 1971.19,-122 1971.19,-86 2080.81,-86 2080.81,-122"/>
 <text text-anchor="middle" x="2026" y="-99.8" font-family="Times,serif" font-size="14.00">LocationModule</text>
-</g>
+</a></g>
 <!-- LocationModule&#45;&gt;AppModule -->
 <g id="edge20" class="edge">
 <title>LocationModule&#45;&gt;AppModule</title>
@@ -410,11 +422,11 @@
 <polygon fill="black" stroke="black" points="2669.09,-164.5 2679.09,-161 2669.09,-157.5 2669.09,-164.5"/>
 </g>
 <!-- MarkdownPageModule -->
-<g id="node22" class="node">
+<g id="node22" class="node"><a xlink:href="../modules/MarkdownPageModule.html" href="../modules/MarkdownPageModule.html" target="_top">
 <title>MarkdownPageModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1953.19,-122 1950.19,-126 1929.19,-126 1926.19,-122 1804.81,-122 1804.81,-86 1953.19,-86 1953.19,-122"/>
 <text text-anchor="middle" x="1879" y="-99.8" font-family="Times,serif" font-size="14.00">MarkdownPageModule</text>
-</g>
+</a></g>
 <!-- MarkdownPageModule&#45;&gt;AppModule -->
 <g id="edge21" class="edge">
 <title>MarkdownPageModule&#45;&gt;AppModule</title>
@@ -422,11 +434,11 @@
 <polygon fill="black" stroke="black" points="2669.25,-166.5 2679.25,-163 2669.25,-159.5 2669.25,-166.5"/>
 </g>
 <!-- MatchingEntitiesModule -->
-<g id="node23" class="node">
+<g id="node23" class="node"><a xlink:href="../modules/MatchingEntitiesModule.html" href="../modules/MatchingEntitiesModule.html" target="_top">
 <title>MatchingEntitiesModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1786.98,-122 1783.98,-126 1762.98,-126 1759.98,-122 1631.02,-122 1631.02,-86 1786.98,-86 1786.98,-122"/>
 <text text-anchor="middle" x="1709" y="-99.8" font-family="Times,serif" font-size="14.00">MatchingEntitiesModule</text>
-</g>
+</a></g>
 <!-- MatchingEntitiesModule&#45;&gt;AppModule -->
 <g id="edge22" class="edge">
 <title>MatchingEntitiesModule&#45;&gt;AppModule</title>
@@ -434,11 +446,11 @@
 <polygon fill="black" stroke="black" points="2669.12,-168.5 2679.12,-165 2669.12,-161.5 2669.12,-168.5"/>
 </g>
 <!-- NotesModule -->
-<g id="node24" class="node">
+<g id="node24" class="node"><a xlink:href="../modules/NotesModule.html" href="../modules/NotesModule.html" target="_top">
 <title>NotesModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1613.21,-122 1610.21,-126 1589.21,-126 1586.21,-122 1520.79,-122 1520.79,-86 1613.21,-86 1613.21,-122"/>
 <text text-anchor="middle" x="1567" y="-99.8" font-family="Times,serif" font-size="14.00">NotesModule</text>
-</g>
+</a></g>
 <!-- NotesModule&#45;&gt;AppModule -->
 <g id="edge23" class="edge">
 <title>NotesModule&#45;&gt;AppModule</title>
@@ -446,11 +458,11 @@
 <polygon fill="black" stroke="black" points="2669.25,-170.5 2679.25,-167 2669.25,-163.5 2669.25,-170.5"/>
 </g>
 <!-- PermissionsModule -->
-<g id="node25" class="node">
+<g id="node25" class="node"><a xlink:href="../modules/PermissionsModule.html" href="../modules/PermissionsModule.html" target="_top">
 <title>PermissionsModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1502.71,-122 1499.71,-126 1478.71,-126 1475.71,-122 1375.29,-122 1375.29,-86 1502.71,-86 1502.71,-122"/>
 <text text-anchor="middle" x="1439" y="-99.8" font-family="Times,serif" font-size="14.00">PermissionsModule</text>
-</g>
+</a></g>
 <!-- PermissionsModule&#45;&gt;AppModule -->
 <g id="edge24" class="edge">
 <title>PermissionsModule&#45;&gt;AppModule</title>
@@ -458,11 +470,11 @@
 <polygon fill="black" stroke="black" points="2669.07,-172.5 2679.07,-169 2669.07,-165.5 2669.07,-172.5"/>
 </g>
 <!-- ProgressDashboardWidgetModule -->
-<g id="node26" class="node">
+<g id="node26" class="node"><a xlink:href="../modules/ProgressDashboardWidgetModule.html" href="../modules/ProgressDashboardWidgetModule.html" target="_top">
 <title>ProgressDashboardWidgetModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1357.61,-122 1354.61,-126 1333.61,-126 1330.61,-122 1148.39,-122 1148.39,-86 1357.61,-86 1357.61,-122"/>
 <text text-anchor="middle" x="1253" y="-99.8" font-family="Times,serif" font-size="14.00">ProgressDashboardWidgetModule</text>
-</g>
+</a></g>
 <!-- ProgressDashboardWidgetModule&#45;&gt;AppModule -->
 <g id="edge25" class="edge">
 <title>ProgressDashboardWidgetModule&#45;&gt;AppModule</title>
@@ -470,11 +482,11 @@
 <polygon fill="black" stroke="black" points="2669.04,-173.5 2679.04,-170 2669.04,-166.5 2669.04,-173.5"/>
 </g>
 <!-- PublicFormModule -->
-<g id="node27" class="node">
+<g id="node27" class="node"><a xlink:href="../modules/PublicFormModule.html" href="../modules/PublicFormModule.html" target="_top">
 <title>PublicFormModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1129.66,-122 1126.66,-126 1105.66,-126 1102.66,-122 1004.34,-122 1004.34,-86 1129.66,-86 1129.66,-122"/>
 <text text-anchor="middle" x="1067" y="-99.8" font-family="Times,serif" font-size="14.00">PublicFormModule</text>
-</g>
+</a></g>
 <!-- PublicFormModule&#45;&gt;AppModule -->
 <g id="edge26" class="edge">
 <title>PublicFormModule&#45;&gt;AppModule</title>
@@ -482,11 +494,11 @@
 <polygon fill="black" stroke="black" points="2669.29,-175.5 2679.29,-172 2669.29,-168.5 2669.29,-175.5"/>
 </g>
 <!-- ReportingModule -->
-<g id="node28" class="node">
+<g id="node28" class="node"><a xlink:href="../modules/ReportingModule.html" href="../modules/ReportingModule.html" target="_top">
 <title>ReportingModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="985.54,-122 982.54,-126 961.54,-126 958.54,-122 870.46,-122 870.46,-86 985.54,-86 985.54,-122"/>
 <text text-anchor="middle" x="928" y="-99.8" font-family="Times,serif" font-size="14.00">ReportingModule</text>
-</g>
+</a></g>
 <!-- ReportingModule&#45;&gt;AppModule -->
 <g id="edge27" class="edge">
 <title>ReportingModule&#45;&gt;AppModule</title>
@@ -494,11 +506,11 @@
 <polygon fill="black" stroke="black" points="2669.32,-177.5 2679.32,-174 2669.32,-170.5 2669.32,-177.5"/>
 </g>
 <!-- SessionModule -->
-<g id="node29" class="node">
+<g id="node29" class="node"><a xlink:href="../modules/SessionModule.html" href="../modules/SessionModule.html" target="_top">
 <title>SessionModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="852.33,-122 849.33,-126 828.33,-126 825.33,-122 749.67,-122 749.67,-86 852.33,-86 852.33,-122"/>
 <text text-anchor="middle" x="801" y="-99.8" font-family="Times,serif" font-size="14.00">SessionModule</text>
-</g>
+</a></g>
 <!-- SessionModule&#45;&gt;AppModule -->
 <g id="edge28" class="edge">
 <title>SessionModule&#45;&gt;AppModule</title>
@@ -506,11 +518,11 @@
 <polygon fill="black" stroke="black" points="2669.11,-179.5 2679.11,-176 2669.11,-172.5 2669.11,-179.5"/>
 </g>
 <!-- ShortcutDashboardWidgetModule -->
-<g id="node30" class="node">
+<g id="node30" class="node"><a xlink:href="../modules/ShortcutDashboardWidgetModule.html" href="../modules/ShortcutDashboardWidgetModule.html" target="_top">
 <title>ShortcutDashboardWidgetModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="731.34,-122 728.34,-126 707.34,-126 704.34,-122 522.66,-122 522.66,-86 731.34,-86 731.34,-122"/>
 <text text-anchor="middle" x="627" y="-99.8" font-family="Times,serif" font-size="14.00">ShortcutDashboardWidgetModule</text>
-</g>
+</a></g>
 <!-- ShortcutDashboardWidgetModule&#45;&gt;AppModule -->
 <g id="edge29" class="edge">
 <title>ShortcutDashboardWidgetModule&#45;&gt;AppModule</title>
@@ -518,11 +530,11 @@
 <polygon fill="black" stroke="black" points="2669.17,-181.5 2679.17,-178 2669.17,-174.5 2669.17,-181.5"/>
 </g>
 <!-- SkillModule -->
-<g id="node31" class="node">
+<g id="node31" class="node"><a xlink:href="../modules/SkillModule.html" href="../modules/SkillModule.html" target="_top">
 <title>SkillModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="505,-122 502,-126 481,-126 478,-122 419,-122 419,-86 505,-86 505,-122"/>
 <text text-anchor="middle" x="462" y="-99.8" font-family="Times,serif" font-size="14.00">SkillModule</text>
-</g>
+</a></g>
 <!-- SkillModule&#45;&gt;AppModule -->
 <g id="edge30" class="edge">
 <title>SkillModule&#45;&gt;AppModule</title>
@@ -530,11 +542,11 @@
 <polygon fill="black" stroke="black" points="2668.88,-183.5 2678.88,-180 2668.88,-176.5 2668.88,-183.5"/>
 </g>
 <!-- TemplateExportModule -->
-<g id="node32" class="node">
+<g id="node32" class="node"><a xlink:href="../modules/TemplateExportModule.html" href="../modules/TemplateExportModule.html" target="_top">
 <title>TemplateExportModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="401.02,-122 398.02,-126 377.02,-126 374.02,-122 250.98,-122 250.98,-86 401.02,-86 401.02,-122"/>
 <text text-anchor="middle" x="326" y="-99.8" font-family="Times,serif" font-size="14.00">TemplateExportModule</text>
-</g>
+</a></g>
 <!-- TemplateExportModule&#45;&gt;AppModule -->
 <g id="edge31" class="edge">
 <title>TemplateExportModule&#45;&gt;AppModule</title>
@@ -542,11 +554,11 @@
 <polygon fill="black" stroke="black" points="2669.18,-185.5 2679.18,-182 2669.18,-178.5 2669.18,-185.5"/>
 </g>
 <!-- TodosModule -->
-<g id="node33" class="node">
+<g id="node33" class="node"><a xlink:href="../modules/TodosModule.html" href="../modules/TodosModule.html" target="_top">
 <title>TodosModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="232.05,-122 229.05,-126 208.05,-126 205.05,-122 137.95,-122 137.95,-86 232.05,-86 232.05,-122"/>
 <text text-anchor="middle" x="185" y="-99.8" font-family="Times,serif" font-size="14.00">TodosModule</text>
-</g>
+</a></g>
 <!-- TodosModule&#45;&gt;AppModule -->
 <g id="edge32" class="edge">
 <title>TodosModule&#45;&gt;AppModule</title>
@@ -554,11 +566,11 @@
 <polygon fill="black" stroke="black" points="2669.1,-187.5 2679.1,-184 2669.1,-180.5 2669.1,-187.5"/>
 </g>
 <!-- UiComponent -->
-<g id="node34" class="node">
+<g id="node34" class="node"><a xlink:href="../components/UiComponent.html" href="../components/UiComponent.html" target="_top">
 <title>UiComponent</title>
 <polygon fill="#8dd3c7" stroke="black" points="119.83,-122 116.83,-126 95.83,-126 92.83,-122 24.17,-122 24.17,-86 119.83,-86 119.83,-122"/>
 <text text-anchor="middle" x="72" y="-99.8" font-family="Times,serif" font-size="14.00">UiComponent</text>
-</g>
+</a></g>
 <!-- UiComponent&#45;&gt;AppModule -->
 <g id="edge33" class="edge">
 <title>UiComponent&#45;&gt;AppModule</title>
@@ -566,11 +578,11 @@
 <polygon fill="black" stroke="black" points="2669.12,-189.5 2679.12,-186 2669.12,-182.5 2669.12,-189.5"/>
 </g>
 <!-- AnalyticsService -->
-<g id="node36" class="node">
+<g id="node36" class="node"><a xlink:href="../injectables/AnalyticsService.html" href="../injectables/AnalyticsService.html" target="_top">
 <title>AnalyticsService</title>
 <ellipse fill="#fdb462" stroke="black" cx="5645" cy="-104" rx="77" ry="18"/>
 <text text-anchor="middle" x="5645" y="-99.8" font-family="Times,serif" font-size="14.00">AnalyticsService</text>
-</g>
+</a></g>
 <!-- AnalyticsService&#45;&gt;AppModule -->
 <g id="edge35" class="edge">
 <title>AnalyticsService&#45;&gt;AppModule</title>
@@ -578,11 +590,11 @@
 <polygon fill="black" stroke="black" points="2772.9,-180.5 2762.9,-184 2772.9,-187.5 2772.9,-180.5"/>
 </g>
 <!-- DateAdapterWithFormatting -->
-<g id="node37" class="node">
+<g id="node37" class="node"><a xlink:href="../injectables/DateAdapterWithFormatting.html" href="../injectables/DateAdapterWithFormatting.html" target="_top">
 <title>DateAdapterWithFormatting</title>
 <ellipse fill="#fdb462" stroke="black" cx="5427" cy="-104" rx="122.69" ry="18"/>
 <text text-anchor="middle" x="5427" y="-99.8" font-family="Times,serif" font-size="14.00">DateAdapterWithFormatting</text>
-</g>
+</a></g>
 <!-- DateAdapterWithFormatting&#45;&gt;AppModule -->
 <g id="edge36" class="edge">
 <title>DateAdapterWithFormatting&#45;&gt;AppModule</title>
@@ -590,11 +602,11 @@
 <polygon fill="black" stroke="black" points="2772.69,-178.5 2762.69,-182 2772.69,-185.5 2772.69,-178.5"/>
 </g>
 <!-- KeycloakAdminService -->
-<g id="node38" class="node">
+<g id="node38" class="node"><a xlink:href="../injectables/KeycloakAdminService.html" href="../injectables/KeycloakAdminService.html" target="_top">
 <title>KeycloakAdminService</title>
 <ellipse fill="#fdb462" stroke="black" cx="5183" cy="-104" rx="103.63" ry="18"/>
 <text text-anchor="middle" x="5183" y="-99.8" font-family="Times,serif" font-size="14.00">KeycloakAdminService</text>
-</g>
+</a></g>
 <!-- KeycloakAdminService&#45;&gt;AppModule -->
 <g id="edge37" class="edge">
 <title>KeycloakAdminService&#45;&gt;AppModule</title>
@@ -602,11 +614,11 @@
 <polygon fill="black" stroke="black" points="2772.7,-176.5 2762.7,-180 2772.7,-183.5 2772.7,-176.5"/>
 </g>
 <!-- NotificationService -->
-<g id="node39" class="node">
+<g id="node39" class="node"><a xlink:href="../injectables/NotificationService.html" href="../injectables/NotificationService.html" target="_top">
 <title>NotificationService</title>
 <ellipse fill="#fdb462" stroke="black" cx="4975" cy="-104" rx="86.81" ry="18"/>
 <text text-anchor="middle" x="4975" y="-99.8" font-family="Times,serif" font-size="14.00">NotificationService</text>
-</g>
+</a></g>
 <!-- NotificationService&#45;&gt;AppModule -->
 <g id="edge38" class="edge">
 <title>NotificationService&#45;&gt;AppModule</title>
@@ -644,13 +656,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/app.module.ts</code>
-        </p>
 
 
 
@@ -808,6 +813,141 @@ Real functionality should be implemented in separate modules and imported here r
                 </div>
             </div>
         </div>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/DatabaseTestingModule.html" target="_self" >DatabaseTestingModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/MockedTestingModule.html" target="_self" >MockedTestingModule</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/AdminModule.html" target="_self" >AdminModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ApplicationLoadingComponent.html" target="_self" >ApplicationLoadingComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/AttendanceModule.html" target="_self" >AttendanceModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/BirthdayDashboardWidgetModule.html" target="_self" >BirthdayDashboardWidgetModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/BulkEditModule.html" target="_self" >BulkEditModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/ChangeHistoryModule.html" target="_self" >ChangeHistoryModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/ChildrenModule.html" target="_self" >ChildrenModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/ConfigurableEnumModule.html" target="_self" >ConfigurableEnumModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/CoreModule.html" target="_self" >CoreModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/DashboardModule.html" target="_self" >DashboardModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/DeDuplicationModule.html" target="_self" >DeDuplicationModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/DemoDataModule.html" target="_self" >DemoDataModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/EmailClientServiceModule.html" target="_self" >EmailClientServiceModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/EntityCountDashboardWidgetModule.html" target="_self" >EntityCountDashboardWidgetModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/FileModule.html" target="_self" >FileModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/ImportModule.html" target="_self" >ImportModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/LanguageModule.html" target="_self" >LanguageModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/LatestChangesModule.html" target="_self" >LatestChangesModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/LocationModule.html" target="_self" >LocationModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/MarkdownPageModule.html" target="_self" >MarkdownPageModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/MatchingEntitiesModule.html" target="_self" >MatchingEntitiesModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/NotesModule.html" target="_self" >NotesModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/PermissionsModule.html" target="_self" >PermissionsModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/ProgressDashboardWidgetModule.html" target="_self" >ProgressDashboardWidgetModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/PublicFormModule.html" target="_self" >PublicFormModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/ReportingModule.html" target="_self" >ReportingModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/SessionModule.html" target="_self" >SessionModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/ShortcutDashboardWidgetModule.html" target="_self" >ShortcutDashboardWidgetModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/SkillModule.html" target="_self" >SkillModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/TemplateExportModule.html" target="_self" >TemplateExportModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/TodosModule.html" target="_self" >TodosModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/UiComponent.html" target="_self" >UiComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AppComponent.html" target="_self" >AppComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/AnalyticsService.html" target="_self" >AnalyticsService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/DateAdapterWithFormatting.html" target="_self" >DateAdapterWithFormatting</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/KeycloakAdminService.html" target="_self" >KeycloakAdminService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
 
 
     </div>
@@ -1052,6 +1192,7 @@ export class AppModule {
 
 
 
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
@@ -1084,6 +1225,24 @@ export class AppModule {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1099,7 +1258,6 @@ export class AppModule {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

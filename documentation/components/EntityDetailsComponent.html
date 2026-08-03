@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   EntityDetailsComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/entity-details/entity-details/entity-details.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,14 +150,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/entity-details/entity-details/entity-details.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -161,6 +170,11 @@ The subcomponents will be provided with the Entity object and the creating new s
     </p>
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -187,28 +201,50 @@ The subcomponents will be provided with the Entity object and the creating new s
                 <td class="col-md-9"><code>app-entity-details</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>AblePurePipe</code>
-                            <code>MatButtonModule</code>
-                            <code>MatMenuModule</code>
-                            <code>FontAwesomeModule</code>
-                            <code>Angulartics2OnModule</code>
-                            <code>MatTabsModule</code>
-                                <code><a href="../modules/TabStateModule.html" target="_self" >TabStateModule</a></code>
-                            <code>MatTooltipModule</code>
-                            <code>MatProgressBarModule</code>
-                                <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
-                                <code><a href="../directives/DynamicComponentDirective.html" target="_self" >DynamicComponentDirective</a></code>
-                                <code><a href="../components/EntityActionsMenuComponent.html" target="_self" >EntityActionsMenuComponent</a></code>
-                                <code><a href="../components/EntityArchivedInfoComponent.html" target="_self" >EntityArchivedInfoComponent</a></code>
-                                <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
-                                <code><a href="https://angular.io/api/router/RouterLink" target="_blank" >RouterLink</a></code>
-                                <code><a href="https://angular.io/api/common/CommonModule" target="_blank" >CommonModule</a></code>
-                                <code><a href="../components/ViewActionsComponent.html" target="_self" >ViewActionsComponent</a></code>
-                                <code><a href="../classes/Entity.html" target="_self" >EntityLoadPipe</a></code>
+                        <div>    <code>AblePurePipe</code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>MatMenuModule</code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>    <code>Angulartics2OnModule</code>
+</div>
+                        <div>    <code>MatTabsModule</code>
+</div>
+                        <div>        <code><a href="../modules/TabStateModule.html" target="_self" >TabStateModule</a></code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
+</div>
+                        <div>    <code>MatProgressBarModule</code>
+</div>
+                        <div>        <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+</div>
+                        <div>        <code><a href="../directives/DynamicComponentDirective.html" target="_self" >DynamicComponentDirective</a></code>
+</div>
+                        <div>        <code><a href="../components/EntityActionsMenuComponent.html" target="_self" >EntityActionsMenuComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/EntityArchivedInfoComponent.html" target="_self" >EntityArchivedInfoComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/router/RouterLink" target="_blank" >RouterLink</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/common/CommonModule" target="_blank" >CommonModule</a></code>
+</div>
+                        <div>        <code><a href="../components/ViewActionsComponent.html" target="_self" >ViewActionsComponent</a></code>
+</div>
+                        <div>        <code><a href="../classes/Entity.html" target="_self" >EntityLoadPipe</a></code>
+</div>
                 </td>
             </tr>
 
@@ -216,6 +252,7 @@ The subcomponents will be provided with the Entity object and the creating new s
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./entity-details.component.scss</code></td>
             </tr>
+
 
 
 
@@ -235,51 +272,132 @@ The subcomponents will be provided with the Entity object and the creating new s
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>AblePurePipe</code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>MatMenuModule</code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                        <code>Angulartics2OnModule</code>
+                                </li>
+                                <li>
+                                        <code>MatTabsModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../modules/TabStateModule.html" target="_self" >TabStateModule</a></code>
+                                </li>
+                                <li>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                                <li>
+                                        <code>MatProgressBarModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../directives/DynamicComponentDirective.html" target="_self" >DynamicComponentDirective</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityActionsMenuComponent.html" target="_self" >EntityActionsMenuComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityArchivedInfoComponent.html" target="_self" >EntityArchivedInfoComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/router/RouterLink" target="_blank" >RouterLink</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/common/CommonModule" target="_blank" >CommonModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ViewActionsComponent.html" target="_self" >ViewActionsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/Entity.html" target="_self" >EntityLoadPipe</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../directives/AbstractEntityDetailsComponent.html" target="_self" >AbstractEntityDetailsComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#panelsState" >panelsState</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#ability" >ability</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#entities" >entities</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#entityConstructor" >entityConstructor</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#entityMapperService" >entityMapperService</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#isLoading" >isLoading</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#router" >router</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#unsavedChanges" >unsavedChanges</a>
@@ -287,75 +405,84 @@ The subcomponents will be provided with the Entity object and the creating new s
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Async</span>
                                 <a href="#loadEntity" >loadEntity</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#onEntityUpdated" >onEntityUpdated</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#subscribeToEntityChanges" >subscribeToEntityChanges</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#panels" >panels</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#panels" >panels</a>
                             </li>
                             <li>
-                                <a href="#entity" >entity</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entity" >entity</a>
                             </li>
                             <li>
-                                <a href="#entityType" >entityType</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entityType" >entityType</a>
                             </li>
                             <li>
-                                <a href="#id" >id</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#id" >id</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#entity" >entity</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#entity" >entity</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -420,7 +547,7 @@ The subcomponents will be provided with the Entity object and the creating new s
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:45</a></code>
+                                    <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:45</a></code>
 </div>
                             </td>
                         </tr>
@@ -448,7 +575,7 @@ The subcomponents will be provided with the Entity object and the creating new s
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:39</a></code>
+                                    <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:39</a></code>
 </div>
                             </td>
                         </tr>
@@ -476,13 +603,14 @@ The subcomponents will be provided with the Entity object and the creating new s
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:44</a></code>
+                                    <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:44</a></code>
 </div>
                             </td>
                         </tr>
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -507,13 +635,14 @@ The subcomponents will be provided with the Entity object and the creating new s
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:45</a></code>
+                                    <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:45</a></code>
 </div>
                             </td>
                         </tr>
             </tbody>
         </table>
 </section>
+
 
 
     <section data-compodoc="block-methods">
@@ -550,7 +679,7 @@ The subcomponents will be provided with the Entity object and the creating new s
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:96</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:96</a></code>
 </div>
                         </td>
                     </tr>
@@ -643,7 +772,7 @@ The subcomponents will be provided with the Entity object and the creating new s
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:72</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:72</a></code>
 </div>
                         </td>
                     </tr>
@@ -691,7 +820,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:74</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:74</a></code>
 </div>
                         </td>
                     </tr>
@@ -709,6 +838,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -813,7 +943,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:31</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:31</a></code>
 </div>
                         </td>
                     </tr>
@@ -853,7 +983,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:30</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:30</a></code>
 </div>
                         </td>
                     </tr>
@@ -894,7 +1024,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:40</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:40</a></code>
 </div>
                         </td>
                     </tr>
@@ -934,7 +1064,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:29</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:29</a></code>
 </div>
                         </td>
                     </tr>
@@ -973,7 +1103,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:35</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:35</a></code>
 </div>
                         </td>
                     </tr>
@@ -1013,7 +1143,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:32</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:32</a></code>
 </div>
                         </td>
                     </tr>
@@ -1053,7 +1183,7 @@ Subclasses can override this to react to entity changes beyond what markForCheck
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:33</a></code>
+                                <div class="io-line">        <code><a href="../directives/AbstractEntityDetailsComponent.html#source" target="_self" >AbstractEntityDetailsComponent:33</a></code>
 </div>
                         </td>
                     </tr>
@@ -1400,6 +1530,24 @@ export class EntityDetailsComponent extends AbstractEntityDetailsComponent {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1415,7 +1563,6 @@ export class EntityDetailsComponent extends AbstractEntityDetailsComponent {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

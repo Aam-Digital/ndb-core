@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -112,12 +119,23 @@
   <li class="breadcrumb-item" >EntityEditService</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/bulk-edit/entity-edit.service.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" 
                 class="nav-link"
                 class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" 
@@ -129,13 +147,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/features/bulk-edit/entity-edit.service.ts</code>
-        </p>
-
 
             <p class="comment">
                 <h3>Description</h3>
@@ -152,52 +163,92 @@
                             <code><a href="../injectables/CascadingEntityAction.html" target="_self" >CascadingEntityAction</a></code>
             </p>
 
+        <section data-compodoc="block-metadata">
+            <h3>Metadata</h3>
+            <table class="table table-sm table-hover metadata">
+                <tbody>
+                    <tr>
+                        <td class="col-md-3">providedIn</td>
+                        <td class="col-md-9"><code>root</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../injectables/CascadingEntityAction.html" target="_self" >CascadingEntityAction</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#entityMapper" >entityMapper</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#entityRelationsService" >entityRelationsService</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#schemaService" >schemaService</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#edit" >edit</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#editEntity" >editEntity</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Async</span>
                                 <a href="#cascadeActionToRelatedEntities" >cascadeActionToRelatedEntities</a>
@@ -205,13 +256,13 @@
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -235,7 +286,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>edit(entitiesToEdit: E | E[], entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
+                    <code>edit&lt;E&gt;(entitiesToEdit: E | E[], entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
                 </td>
             </tr>
 
@@ -335,7 +386,7 @@ and edit the entity if the user confirms.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>editEntity(action: <a href="../interfaces/BulkEditAction.html" target="_self">BulkEditAction</a>, entitiesToEdit: E | E[])</code>
+                    <code>editEntity&lt;E&gt;(action: <a href="../interfaces/BulkEditAction.html" target="_self">BulkEditAction</a>, entitiesToEdit: E | E[])</code>
                 </td>
             </tr>
 
@@ -399,7 +450,7 @@ and edit the entity if the user confirms.</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+                            <b>Returns : </b>    <code>Promise&lt;{ success: boolean; originalEntities: E[]; newEntities: E[] }&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -438,7 +489,7 @@ and edit the entity if the user confirms.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:69</a></code>
+                                <div class="io-line">        <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:69</a></code>
 </div>
                         </td>
                     </tr>
@@ -525,6 +576,7 @@ to support an undo action.</p>
         </tbody>
     </table>
 </section>
+
             <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -561,7 +613,7 @@ to support an undo action.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:54</a></code>
+                                <div class="io-line">        <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:54</a></code>
 </div>
                         </td>
                     </tr>
@@ -600,7 +652,7 @@ to support an undo action.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:56</a></code>
+                                <div class="io-line">        <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:56</a></code>
 </div>
                         </td>
                     </tr>
@@ -639,7 +691,7 @@ to support an undo action.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:55</a></code>
+                                <div class="io-line">        <code><a href="../injectables/CascadingEntityAction.html#source" target="_self" >CascadingEntityAction:55</a></code>
 </div>
                         </td>
                     </tr>
@@ -798,6 +850,24 @@ export class EntityEditService extends CascadingEntityAction {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -813,7 +883,6 @@ export class EntityEditService extends CascadingEntityAction {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

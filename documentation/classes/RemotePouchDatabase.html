@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -116,12 +123,23 @@
   <li class="breadcrumb-item" >RemotePouchDatabase</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/database/pouchdb/remote-pouch-database.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" 
                 class="nav-link"
                 class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" 
@@ -133,13 +151,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/database/pouchdb/remote-pouch-database.ts</code>
-        </p>
-
 
             <p class="comment">
                 <h3>Description</h3>
@@ -158,154 +169,205 @@
 
 
 
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../classes/PouchDatabase.html" target="_self" >PouchDatabase</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#trackLostPermissions" >trackLostPermissions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#adapter" >adapter</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#changesFeed" >changesFeed</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#databaseInitialized" >databaseInitialized</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#destroy$" >destroy$</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#indexPromises" >indexPromises</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#pouchDB" >pouchDB</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#collectAndClearLostPermissions" >collectAndClearLostPermissions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#init" >init</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier"></span>
                                 <a href="#shouldSkipIndexUpdate" >shouldSkipIndexUpdate</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#subscribeChanges" >subscribeChanges</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#withReadRetry" >withReadRetry</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#allDocs" >allDocs</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#changes" >changes</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#destroy" >destroy</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#get" >get</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getPouchDB" >getPouchDB</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#getPouchDBOnceReady" >getPouchDBOnceReady</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#isEmpty" >isEmpty</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#isInitialized" >isInitialized</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#isNotificationsDatabase" >isNotificationsDatabase</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#purge" >purge</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#put" >put</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#putAll" >putAll</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#query" >query</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#remove" >remove</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#reset" >reset</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#saveDatabaseIndex" >saveDatabaseIndex</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getAll" >getAll</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
             <section data-compodoc="block-constructor">
@@ -314,7 +376,7 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState?: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, ngZone?: <a href="https://angular.io/api/core/NgZone" target="_blank">NgZone</a>, alertService?: <a href="../injectables/AlertService.html" target="_self">AlertService</a>)</code>
+<code>constructor(dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, authService: <a href="../injectables/KeycloakAuthService.html" target="_self">KeycloakAuthService</a>, globalSyncState?: <a href="../injectables/SyncStateSubject.html" target="_self">SyncStateSubject</a>, ngZone?: <a href="https://angular.dev/api/core/NgZone" target="_blank">NgZone</a>, alertService?: <a href="../injectables/AlertService.html" target="_self">AlertService</a>)</code>
                     </td>
                 </tr>
                         <tr>
@@ -376,7 +438,7 @@
                                                         <td>ngZone</td>
                                                   
                                                         <td>
-                                                                        <code><a href="https://angular.io/api/core/NgZone" target="_blank" >NgZone</a></code>
+                                                                        <code><a href="https://angular.dev/api/core/NgZone" target="_blank" >NgZone</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -474,7 +536,7 @@ Toggled by <a href="../classes/SyncedPouchDatabase.html">SyncedPouchDatabase</a>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:55</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:55</a></code>
 </div>
                         </td>
                     </tr>
@@ -516,7 +578,7 @@ Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the 
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:43</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:43</a></code>
 </div>
                         </td>
                     </tr>
@@ -562,7 +624,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:45</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:45</a></code>
 </div>
                         </td>
                     </tr>
@@ -602,7 +664,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:48</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:48</a></code>
 </div>
                         </td>
                     </tr>
@@ -647,7 +709,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:36</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:36</a></code>
 </div>
                         </td>
                     </tr>
@@ -687,7 +749,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:30</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:30</a></code>
 </div>
                         </td>
                     </tr>
@@ -764,7 +826,7 @@ and resets the internal list.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>init(dbName?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, config?: literal type)</code>
+                    <code>init(dbName?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, config?: { unauthenticatedSession?: boolean; trackLostPermissions?: boolean })</code>
                 </td>
             </tr>
 
@@ -777,7 +839,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:76</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:76</a></code>
 </div>
                         </td>
                     </tr>
@@ -821,7 +883,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                                         <tr>
                                                 <td>config</td>
                                             <td>
-                                                        <code>literal type</code>
+                                                        <code>{ unauthenticatedSession?: boolean; trackLostPermissions?: boolean }</code>
                                             </td>
 
                                             <td>
@@ -877,7 +939,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:325</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:325</a></code>
 </div>
                         </td>
                     </tr>
@@ -954,7 +1016,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:348</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:348</a></code>
 </div>
                         </td>
                     </tr>
@@ -997,7 +1059,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>withReadRetry(operation: () => void)</code>
+                    <code>withReadRetry&lt;T&gt;(operation: () => void)</code>
                 </td>
             </tr>
 
@@ -1010,7 +1072,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:217</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:217</a></code>
 </div>
                         </td>
                     </tr>
@@ -1104,7 +1166,7 @@ Only reads route through this hook; writes must run exactly once
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:158</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:158</a></code>
 </div>
                         </td>
                     </tr>
@@ -1188,7 +1250,7 @@ because that will make your code tightly coupled with PouchDB rather than any ot
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:316</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:316</a></code>
 </div>
                         </td>
                     </tr>
@@ -1240,7 +1302,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:368</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:368</a></code>
 </div>
                         </td>
                     </tr>
@@ -1287,7 +1349,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:127</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:127</a></code>
 </div>
                         </td>
                     </tr>
@@ -1408,7 +1470,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:102</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:102</a></code>
 </div>
                         </td>
                     </tr>
@@ -1455,7 +1517,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:92</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:92</a></code>
 </div>
                         </td>
                     </tr>
@@ -1498,7 +1560,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:305</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:305</a></code>
 </div>
                         </td>
                     </tr>
@@ -1546,7 +1608,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:88</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:88</a></code>
 </div>
                         </td>
                     </tr>
@@ -1591,7 +1653,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:520</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:520</a></code>
 </div>
                         </td>
                     </tr>
@@ -1640,7 +1702,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:265</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:265</a></code>
 </div>
                         </td>
                     </tr>
@@ -1656,7 +1718,8 @@ in-memory caches (entity stores) drop the purged entity.</p>
 <p><strong>Adapter limitation:</strong> The underlying PouchDB <code>purge()</code> API is only available
 on the <code>indexeddb</code> adapter (PouchDB 8+). On unsupported adapters PouchDB will
 throw its own error, which callers should handle (e.g. via try/catch + logging).</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-none">     false if the document did not exist locally (benign — desired state already achieved)</code></pre></div></div>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">     false if the document did not exist locally (benign — desired state already achieved)
+</code></pre></div></div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1731,7 +1794,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:179</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:179</a></code>
 </div>
                         </td>
                     </tr>
@@ -1836,7 +1899,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:202</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:202</a></code>
 </div>
                         </td>
                     </tr>
@@ -1941,7 +2004,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:398</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:398</a></code>
 </div>
                         </td>
                     </tr>
@@ -2040,7 +2103,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:241</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:241</a></code>
 </div>
                         </td>
                     </tr>
@@ -2123,7 +2186,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:380</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:380</a></code>
 </div>
                         </td>
                     </tr>
@@ -2168,7 +2231,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:420</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:420</a></code>
 </div>
                         </td>
                     </tr>
@@ -2250,7 +2313,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Database.html#source" target="_self" >Database:118</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:118</a></code>
 </div>
                         </td>
                     </tr>
@@ -2309,6 +2372,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
         </tbody>
     </table>
 </section>
+
 
 
 
@@ -2763,6 +2827,24 @@ export class RemotePouchDatabase extends PouchDatabase {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -2778,7 +2860,6 @@ export class RemotePouchDatabase extends PouchDatabase {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

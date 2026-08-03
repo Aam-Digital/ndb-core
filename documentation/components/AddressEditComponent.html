@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   AddressEditComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/location/address-edit/address-edit.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -124,20 +140,17 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/features/location/address-edit/address-edit.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -148,6 +161,11 @@
 
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -174,18 +192,34 @@
                 <td class="col-md-9"><code>app-address-edit</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                                <code><a href="../components/AddressSearchComponent.html" target="_self" >AddressSearchComponent</a></code>
-                            <code>MatFormField</code>
-                            <code>MatLabel</code>
-                            <code>MatInput</code>
-                            <code>MatTooltip</code>
-                            <code>MatExpansionModule</code>
-                                <code><a href="../components/AddressGpsLocationComponent.html" target="_self" >AddressGpsLocationComponent</a></code>
+                        <div>        <code><a href="../components/AddressSearchComponent.html" target="_self" >AddressSearchComponent</a></code>
+</div>
+                        <div>    <code>MatFormField</code>
+</div>
+                        <div>    <code>MatLabel</code>
+</div>
+                        <div>    <code>MatInput</code>
+</div>
+                        <div>    <code>MatTooltip</code>
+</div>
+                        <div>    <code>MatExpansionModule</code>
+</div>
+                        <div>        <code><a href="../components/AddressGpsLocationComponent.html" target="_self" >AddressGpsLocationComponent</a></code>
+</div>
                 </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./address-edit.component.scss</code></td>
             </tr>
 
 
@@ -211,98 +245,153 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/MapPopupComponent.html" target="_self" >MapPopupComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/AddressSearchComponent.html" target="_self" >AddressSearchComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>MatFormField</code>
+                                </li>
+                                <li>
+                                        <code>MatLabel</code>
+                                </li>
+                                <li>
+                                        <code>MatInput</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltip</code>
+                                </li>
+                                <li>
+                                        <code>MatExpansionModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AddressGpsLocationComponent.html" target="_self" >AddressGpsLocationComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#hasDivergingText" >hasDivergingText</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#clearLocation" >clearLocation</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#focusManualAddressInput" >focusManualAddressInput</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onGpsLocationSelected" >onGpsLocationSelected</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#updateAddressPart" >updateAddressPart</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#updateFromAddressSearch" >updateFromAddressSearch</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#updateLocation" >updateLocation</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#updateLocationString" >updateLocationString</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#disabled" >disabled</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#disabled" >disabled</a>
                             </li>
                             <li>
-                                <a href="#selectedLocation" >selectedLocation</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#selectedLocation" >selectedLocation</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#selectedLocation" >selectedLocation</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#selectedLocation" >selectedLocation</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -368,6 +457,7 @@
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -398,6 +488,7 @@
             </tbody>
         </table>
 </section>
+
 
 
     <section data-compodoc="block-methods">
@@ -642,7 +733,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>updateFromAddressSearch(event: literal type)</code>
+                    <code>updateFromAddressSearch(event: <a href="../interfaces/GeoLocation.html" target="_self">{ location: GeoLocation; userInput: string }</a>)</code>
                 </td>
             </tr>
 
@@ -673,7 +764,7 @@
                                         <tr>
                                                 <td>event</td>
                                             <td>
-                                                        <code>literal type</code>
+                                                            <code><a href="../interfaces/GeoLocation.html" target="_self" >{ location: GeoLocation; userInput: string }</a></code>
                                             </td>
 
                                             <td>
@@ -831,6 +922,7 @@
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1292,6 +1384,94 @@ export class AddressEditComponent {
 </code></pre>
     </div>
 
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./address-edit.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/breakpoints&quot;;
+@use &quot;variables/colors&quot;;
+
+.address-edit-container {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  flex-wrap: wrap;
+
+  @media (max-width: breakpoints.$md) {
+    gap: 8px;
+  }
+}
+
+.search-row {
+  flex: 1 1 250px;
+  min-width: 0; // Allow flex items to shrink below content size
+
+  @media (max-width: breakpoints.$md) {
+    flex: 1 1 100%;
+  }
+}
+
+.address-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.selected-location-display {
+  flex: 1 1 100%;
+
+  .location-label {
+    display: block;
+  }
+
+  .location-value {
+    white-space: pre-line;
+
+    .placeholder {
+      color: colors.$muted;
+    }
+  }
+}
+
+.address-details-panel {
+  flex: 1 1 100%;
+}
+
+.address-parts-grid {
+  display: grid;
+  // 3-column base: Road gets 2/3, House no. 1/3; Postcode 1/3, City 2/3
+  grid-template-columns: 2fr 1fr 2fr;
+  gap: 0 16px;
+
+  @media (max-width: breakpoints.$md) {
+    grid-template-columns: 1fr;
+  }
+
+  .road-field {
+    grid-column: 1 / 3;
+  }
+
+  .house-number-field {
+    grid-column: 3 / 4;
+  }
+
+  .postcode-field {
+    grid-column: 1 / 2;
+  }
+
+  .city-field {
+    grid-column: 2 / 4;
+  }
+
+  .full-row {
+    grid-column: 1 / -1;
+  }
+}
+
+.parts-mismatch-hint {
+  color: colors.$warn;
+}
+</code></pre>
+    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
@@ -1373,6 +1553,24 @@ export class AddressEditComponent {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1388,7 +1586,6 @@ export class AddressEditComponent {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

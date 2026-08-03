@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   BasicAutocompleteComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,14 +150,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -154,17 +163,22 @@
         <h3>Extends</h3>
     </p>
     <p class="comment">
-                    <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective</a></code>
+                    <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective&lt;V | V[]&gt;</a></code>
     </p>
 
     <p class="comment">
         <h3>Implements</h3>
     </p>
     <p class="comment">
-                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
-                    <code><a href="https://angular.io/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
+                    <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.dev/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
     </p>
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -198,11 +212,44 @@
                 <td class="col-md-9"><code>app-basic-autocomplete</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                                <code><a href="../miscellaneous/variables.html#BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS" target="_self" >BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS</a></code>
+                        <div>        <code><a href="https://angular.dev/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+</div>
+                        <div>    <code>MatInputModule</code>
+</div>
+                        <div>    <code>MatAutocompleteModule</code>
+</div>
+                        <div>    <code>MatCheckboxModule</code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/common/NgTemplateOutlet" target="_blank" >NgTemplateOutlet</a></code>
+</div>
+                        <div>    <code>MatChipInput</code>
+</div>
+                        <div>    <code>MatChipGrid</code>
+</div>
+                        <div>    <code>MatChipRow</code>
+</div>
+                        <div>        <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+</div>
+                        <div>    <code>MatTooltip</code>
+</div>
+                        <div>    <code>MatChipRemove</code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/cdk/drag-drop/DragDropModule" target="_blank" >DragDropModule</a></code>
+</div>
+                        <div>    <code>CdkVirtualScrollViewport</code>
+</div>
+                        <div>    <code>CdkVirtualForOf</code>
+</div>
+                        <div>    <code>CdkFixedSizeVirtualScroll</code>
+</div>
                 </td>
             </tr>
 
@@ -210,6 +257,7 @@
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./basic-autocomplete.component.scss</code></td>
             </tr>
+
 
 
 
@@ -229,299 +277,466 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/AdminEntityFieldComponent.html" target="_self" >AdminEntityFieldComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityGeneralSettingsComponent.html" target="_self" >AdminEntityGeneralSettingsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditConfigurableEnumComponent.html" target="_self" >EditConfigurableEnumComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditDateFormatComponent.html" target="_self" >EditDateFormatComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditEntityComponent.html" target="_self" >EditEntityComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityBulkActionsComponent.html" target="_self" >EntityBulkActionsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ExportDialogComponent.html" target="_self" >ExportDialogComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ImportAdditionalActionsComponent.html" target="_self" >ImportAdditionalActionsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ImportFileComponent.html" target="_self" >ImportFileComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ListFilterComponent.html" target="_self" >ListFilterComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ParsedFileInputComponent.html" target="_self" >ParsedFileInputComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="https://angular.dev/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+                                </li>
+                                <li>
+                                        <code>MatInputModule</code>
+                                </li>
+                                <li>
+                                        <code>MatAutocompleteModule</code>
+                                </li>
+                                <li>
+                                        <code>MatCheckboxModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/common/NgTemplateOutlet" target="_blank" >NgTemplateOutlet</a></code>
+                                </li>
+                                <li>
+                                        <code>MatChipInput</code>
+                                </li>
+                                <li>
+                                        <code>MatChipGrid</code>
+                                </li>
+                                <li>
+                                        <code>MatChipRow</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>MatTooltip</code>
+                                </li>
+                                <li>
+                                        <code>MatChipRemove</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/cdk/drag-drop/DragDropModule" target="_blank" >DragDropModule</a></code>
+                                </li>
+                                <li>
+                                        <code>CdkVirtualScrollViewport</code>
+                                </li>
+                                <li>
+                                        <code>CdkVirtualForOf</code>
+                                </li>
+                                <li>
+                                        <code>CdkFixedSizeVirtualScroll</code>
+                                </li>
+                                <li>
+                                        <code>)</code>
+                                </li>
+                                <li>
+                                            <code><a href="../directives/CustomFormControlDirective.html" target="_self" >CustomFormControlDirective&lt;V | V[]&gt;</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#_selectedOptions" >_selectedOptions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#autocomplete" >autocomplete</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#autocompleteFilterFunction" >autocompleteFilterFunction</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#autocompleteForm" >autocompleteForm</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#autocompleteOptions" >autocompleteOptions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#autocompleteSuggestedOptions" >autocompleteSuggestedOptions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#availableCreateOptions" >availableCreateOptions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#effectiveDisplay" >effectiveDisplay</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#hasMoreOptions" >hasMoreOptions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#inputElement" >inputElement</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#isInSearchMode" >isInSearchMode</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#optionsSource" >optionsSource</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#panelWidth" >panelWidth</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#retainSearchValue" >retainSearchValue</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#showAddOption" >showAddOption</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#templateRef" >templateRef</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#trackByOptionValueFn" >trackByOptionValueFn</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#viewportHeight" >viewportHeight</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#virtualScrollViewport" >virtualScrollViewport</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#controlType" >controlType</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#elementRef" >elementRef</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#enabled" >enabled</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#errorStateMatcher" >errorStateMatcher</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#id" >id</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#nextId" >nextId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#onChange" >onChange</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#onTouched" >onTouched</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#parentForm" >parentForm</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#parentFormGroup" >parentFormGroup</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#stateChanges" >stateChanges</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#valueSignal" >valueSignal</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#compareEnumValues" >compareEnumValues</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#createFromConfig" >createFromConfig</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#createOptionAriaLabel" >createOptionAriaLabel</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#createOptionDisplay" >createOptionDisplay</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#createOptionLabel" >createOptionLabel</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#dropChips" >dropChips</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#onContainerClick" >onContainerClick</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onFocusOut" >onFocusOut</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#select" >select</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#showAutocomplete" >showAutocomplete</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#toCreateOptionValue" >toCreateOptionValue</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#unselect" >unselect</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#updatePanelWidth" >updatePanelWidth</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#writeValue" >writeValue</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#blur" >blur</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#focus" >focus</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#registerOnChange" >registerOnChange</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#registerOnTouched" >registerOnTouched</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#setDescribedByIds" >setDescribedByIds</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#setDisabledState" >setDisabledState</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#createOption" class="deprecated-name">createOption</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#createOption" class="deprecated-name">createOption</a>
                             </li>
                             <li>
-                                <a href="#createOptions" >createOptions</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#createOptions" >createOptions</a>
                             </li>
                             <li>
-                                <a href="#display" >display</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#display" >display</a>
                             </li>
                             <li>
-                                <a href="#displayFullLengthOptionLabel" >displayFullLengthOptionLabel</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#displayFullLengthOptionLabel" >displayFullLengthOptionLabel</a>
                             </li>
                             <li>
-                                <a href="#hideOption" >hideOption</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#hideOption" >hideOption</a>
                             </li>
                             <li>
-                                <a href="#maxOptionsToDisplay" >maxOptionsToDisplay</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#maxOptionsToDisplay" >maxOptionsToDisplay</a>
                             </li>
                             <li>
-                                <a href="#multi" >multi</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#multi" >multi</a>
                             </li>
                             <li>
-                                <a href="#options" >options</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#options" >options</a>
                             </li>
                             <li>
-                                <a href="#optionToString" >optionToString</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#optionToString" >optionToString</a>
                             </li>
                             <li>
-                                <a href="#reorder" >reorder</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#reorder" >reorder</a>
                             </li>
                             <li>
-                                <a href="#valueMapper" >valueMapper</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#valueMapper" >valueMapper</a>
                             </li>
                             <li>
-                                <a href="#aria-describedby" >aria-describedby</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#aria-describedby" >aria-describedby</a>
                             </li>
                             <li>
-                                <a href="#disabled" >disabled</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#disabled" >disabled</a>
                             </li>
                             <li>
-                                <a href="#ngControl" >ngControl</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#ngControl" >ngControl</a>
                             </li>
                             <li>
-                                <a href="#placeholder" >placeholder</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#placeholder" >placeholder</a>
                             </li>
                             <li>
-                                <a href="#required" >required</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#required" >required</a>
                             </li>
                             <li>
-                                <a href="#value" >value</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#value" >value</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#autocompleteFilterChange" >autocompleteFilterChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#autocompleteFilterChange" >autocompleteFilterChange</a>
                             </li>
                             <li>
-                                <a href="#valueChange" >valueChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#valueChange" >valueChange</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Accessors</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#displayText" >displayText</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-        </tbody>
-    </table>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Accessors</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#displayText" >displayText</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 </section>
 
     <section data-compodoc="block-constructor">
@@ -630,6 +845,12 @@
                     <td class="col-md-4">
                         <a name="displayFullLengthOptionLabel"></a>
                         <b>displayFullLengthOptionLabel</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
                     </td>
                 </tr>
                 <tr>
@@ -789,7 +1010,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>    (option: O) &#x3D;&gt; option?.[&quot;_label&quot;] ?? option?.toString(),  </code>
+                        <i>Default value : </i><code>(option: O) &#x3D;&gt; option?.[&quot;_label&quot;] ?? option?.toString()</code>
                     </td>
                 </tr>
                         <tr>
@@ -842,7 +1063,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>    (option: O) &#x3D;&gt; option?.[&quot;_id&quot;] ?? (option as unknown as V),  </code>
+                        <i>Default value : </i><code>(option: O) &#x3D;&gt; option?.[&quot;_id&quot;] ?? (option as unknown as V)</code>
                     </td>
                 </tr>
                         <tr>
@@ -874,7 +1095,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:98</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:98</a></code>
 </div>
                             </td>
                         </tr>
@@ -902,7 +1123,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:155</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:155</a></code>
 </div>
                             </td>
                         </tr>
@@ -935,7 +1156,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:91</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:91</a></code>
 </div>
                             </td>
                         </tr>
@@ -963,7 +1184,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:99</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:99</a></code>
 </div>
                             </td>
                         </tr>
@@ -991,7 +1212,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:102</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:102</a></code>
 </div>
                             </td>
                         </tr>
@@ -1019,13 +1240,14 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:164</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:164</a></code>
 </div>
                             </td>
                         </tr>
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -1059,7 +1281,7 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
+                        <i>Type : </i>        <code><a href="https://angular.dev/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
 
                     </td>
                 </tr>
@@ -1071,13 +1293,14 @@ By default, the &quot;_id&quot; property is used as the value and the &quot;_lab
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:172</a></code>
+                                    <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:172</a></code>
 </div>
                             </td>
                         </tr>
             </tbody>
         </table>
 </section>
+
 
 
     <section data-compodoc="block-methods">
@@ -1567,7 +1790,7 @@ Falls back to the raw input when optionToString throws or returns null/undefined
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:696</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:696</a></code>
 </div>
                         </td>
                     </tr>
@@ -2035,7 +2258,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:707</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:707</a></code>
 </div>
                         </td>
                     </tr>
@@ -2126,7 +2349,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:201</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:201</a></code>
 </div>
                         </td>
                     </tr>
@@ -2169,7 +2392,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:196</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:196</a></code>
 </div>
                         </td>
                     </tr>
@@ -2212,7 +2435,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:237</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:237</a></code>
 </div>
                         </td>
                     </tr>
@@ -2285,7 +2508,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:241</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:241</a></code>
 </div>
                         </td>
                     </tr>
@@ -2358,7 +2581,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:211</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:211</a></code>
 </div>
                         </td>
                     </tr>
@@ -2431,7 +2654,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:245</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:245</a></code>
 </div>
                         </td>
                     </tr>
@@ -2479,6 +2702,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -3163,7 +3387,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:114</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:114</a></code>
 </div>
                         </td>
                     </tr>
@@ -3201,7 +3425,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:87</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:87</a></code>
 </div>
                         </td>
                     </tr>
@@ -3240,7 +3464,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:80</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:80</a></code>
 </div>
                         </td>
                     </tr>
@@ -3284,7 +3508,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:88</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:88</a></code>
 </div>
                         </td>
                     </tr>
@@ -3322,7 +3546,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:96</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:96</a></code>
 </div>
                         </td>
                     </tr>
@@ -3361,7 +3585,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:95</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:95</a></code>
 </div>
                         </td>
                     </tr>
@@ -3399,7 +3623,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:115</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:115</a></code>
 </div>
                         </td>
                     </tr>
@@ -3437,7 +3661,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:116</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:116</a></code>
 </div>
                         </td>
                     </tr>
@@ -3475,7 +3699,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:92</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:92</a></code>
 </div>
                         </td>
                     </tr>
@@ -3513,7 +3737,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:93</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:93</a></code>
 </div>
                         </td>
                     </tr>
@@ -3551,7 +3775,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:113</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:113</a></code>
 </div>
                         </td>
                     </tr>
@@ -3590,7 +3814,7 @@ Set to match the full width of the Material form field container (including icon
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:77</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:77</a></code>
 </div>
                         </td>
                     </tr>
@@ -4811,6 +5035,24 @@ em {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -4826,7 +5068,6 @@ em {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

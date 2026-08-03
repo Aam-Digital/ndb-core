@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -153,53 +160,17 @@ These are derived from internal metadata that every entity has, so they are avai
 without being listed in the config document:</p>
 <table class="table table-bordered compodoc-table">
 <thead>
-<tr>
-<th>Column</th>
-<th>Source field</th>
-<th>Description</th>
-</tr>
+<tr><th>Column</th><th>Source field</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr>
-<td><code>_id</code></td>
-<td><code>_id</code></td>
-<td>full document id, e.g. <code>Child:123</code></td>
-</tr>
-<tr>
-<td><code>_rev</code></td>
-<td><code>_rev</code></td>
-<td>CouchDB revision</td>
-</tr>
-<tr>
-<td><code>_created_at</code></td>
-<td><code>created.at</code></td>
-<td>timestamp when the record was created (ISO format)</td>
-</tr>
-<tr>
-<td><code>_created_by</code></td>
-<td><code>created.by</code></td>
-<td>user who created the record</td>
-</tr>
-<tr>
-<td><code>_updated_at</code></td>
-<td><code>updated.at</code></td>
-<td>timestamp of the last edit (ISO format)</td>
-</tr>
-<tr>
-<td><code>_updated_by</code></td>
-<td><code>updated.by</code></td>
-<td>user who made the last edit</td>
-</tr>
-<tr>
-<td><code>inactive</code></td>
-<td><code>inactive</code></td>
-<td>1 if the record is archived</td>
-</tr>
-<tr>
-<td><code>anonymized</code></td>
-<td><code>anonymized</code></td>
-<td>1 if the record is anonymized</td>
-</tr>
+<tr><td><code>_id</code></td><td><code>_id</code></td><td>full document id, e.g. <code>Child:123</code></td></tr>
+<tr><td><code>_rev</code></td><td><code>_rev</code></td><td>CouchDB revision</td></tr>
+<tr><td><code>_created_at</code></td><td><code>created.at</code></td><td>timestamp when the record was created (ISO format)</td></tr>
+<tr><td><code>_created_by</code></td><td><code>created.by</code></td><td>user who created the record</td></tr>
+<tr><td><code>_updated_at</code></td><td><code>updated.at</code></td><td>timestamp of the last edit (ISO format)</td></tr>
+<tr><td><code>_updated_by</code></td><td><code>updated.by</code></td><td>user who made the last edit</td></tr>
+<tr><td><code>inactive</code></td><td><code>inactive</code></td><td>1 if the record is archived</td></tr>
+<tr><td><code>anonymized</code></td><td><code>anonymized</code></td><td>1 if the record is anonymized</td></tr>
 </tbody>
 </table>
 <p>The <code>_</code> prefix marks columns that are generated from internal metadata rather than configured entity fields
@@ -470,6 +441,24 @@ E.g., to create an array holding notes and event notes write <code>Note:toArray:
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -485,7 +474,6 @@ E.g., to create an array holding notes and event notes write <code>Note:toArray:
        <script src="../../js/libs/lit-html.js"></script>
 
        <script src="../../js/menu-wc.js" defer></script>
-       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
 
        <script src="../../js/libs/bootstrap-native.js"></script>
 

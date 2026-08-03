@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -117,120 +124,242 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item">Dependencies</li>
     </ol>
-    <ul class="dependencies-list">
-        <li>
-            <b>@angular/animations</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/cdk</b> : ^21.2.14</li>
-        <li>
-            <b>@angular/common</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/compiler</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/core</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/fire</b> : ^21.0.0-rc.0-canary.f54c0fe</li>
-        <li>
-            <b>@angular/forms</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/localize</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/material</b> : ^21.2.14</li>
-        <li>
-            <b>@angular/material-moment-adapter</b> : ^21.2.14</li>
-        <li>
-            <b>@angular/platform-browser</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/platform-browser-dynamic</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/router</b> : ^21.2.19</li>
-        <li>
-            <b>@angular/service-worker</b> : ^21.2.19</li>
-        <li>
-            <b>@aytek/material-color-picker</b> : ^1.0.4</li>
-        <li>
-            <b>@casl/ability</b> : ^6.8.1</li>
-        <li>
-            <b>@casl/angular</b> : ^9.0.6</li>
-        <li>
-            <b>@faker-js/faker</b> : ^10.5.0</li>
-        <li>
-            <b>@fortawesome/angular-fontawesome</b> : ^4.0.0</li>
-        <li>
-            <b>@fortawesome/fontawesome-svg-core</b> : ^7.3.1</li>
-        <li>
-            <b>@fortawesome/free-regular-svg-icons</b> : ^7.3.1</li>
-        <li>
-            <b>@fortawesome/free-solid-svg-icons</b> : ^7.3.1</li>
-        <li>
-            <b>@ngneat/until-destroy</b> : ^10.0.0</li>
-        <li>
-            <b>@sentry/angular</b> : ^10.69.0</li>
-        <li>
-            <b>angulartics2</b> : ^14.1.0</li>
-        <li>
-            <b>assert</b> : ^2.1.0</li>
-        <li>
-            <b>buffer</b> : ^6.0.3</li>
-        <li>
-            <b>deep-object-diff</b> : ^1.1.9</li>
-        <li>
-            <b>exceljs</b> : ^4.4.0</li>
-        <li>
-            <b>firebase</b> : ^12.17.0</li>
-        <li>
-            <b>hammerjs</b> : ^2.0.8</li>
-        <li>
-            <b>json-query</b> : ^2.2.2</li>
-        <li>
-            <b>jsondiffpatch</b> : ^0.7.6</li>
-        <li>
-            <b>keycloak-angular</b> : ^21.0.0</li>
-        <li>
-            <b>keycloak-js</b> : ^26.2.4</li>
-        <li>
-            <b>leaflet</b> : ^1.9.4</li>
-        <li>
-            <b>leaflet.markercluster</b> : ^1.5.3</li>
-        <li>
-            <b>lodash-es</b> : ^4.18.1</li>
-        <li>
-            <b>md5</b> : ^2.3.0</li>
-        <li>
-            <b>moment</b> : 2.29.4</li>
-        <li>
-            <b>ngx-markdown</b> : ^21.3.0</li>
-        <li>
-            <b>ngx-papaparse</b> : ^8.0.0</li>
-        <li>
-            <b>pouchdb-adapter-indexeddb</b> : ^9.0.0</li>
-        <li>
-            <b>pouchdb-adapter-memory</b> : ^9.0.0</li>
-        <li>
-            <b>pouchdb-browser</b> : ^9.0.0</li>
-        <li>
-            <b>process</b> : ^0.11.10</li>
-        <li>
-            <b>reflect-metadata</b> : ^0.2.2</li>
-        <li>
-            <b>rxjs</b> : ^7.8.2</li>
-        <li>
-            <b>serve</b> : ^14.2.6</li>
-        <li>
-            <b>stream-browserify</b> : ^3.0.0</li>
-        <li>
-            <b>tslib</b> : ^2.8.1</li>
-        <li>
-            <b>util</b> : ^0.12.5</li>
-        <li>
-            <b>uuid</b> : ^14.0.1</li>
-        <li>
-            <b>vanilla-jsoneditor</b> : ^3.13.0</li>
-        <li>
-            <b>webpack</b> : ^5.109.2</li>
-        <li>
-            <b>zone.js</b> : ^0.16.0</li>
-    </ul>
+    <div class="dependencies-table-wrapper">
+        <table class="table table-sm table-bordered dependencies-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Version</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>@angular/animations</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/cdk</b></td>
+                    <td>^21.2.14</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/common</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/compiler</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/core</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/fire</b></td>
+                    <td>^21.0.0-rc.0-canary.f54c0fe</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/forms</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/localize</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/material</b></td>
+                    <td>^21.2.14</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/material-moment-adapter</b></td>
+                    <td>^21.2.14</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/platform-browser</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/platform-browser-dynamic</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/router</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@angular/service-worker</b></td>
+                    <td>^21.2.19</td>
+                </tr>
+                <tr>
+                    <td><b>@aytek/material-color-picker</b></td>
+                    <td>^1.0.4</td>
+                </tr>
+                <tr>
+                    <td><b>@casl/ability</b></td>
+                    <td>^6.8.1</td>
+                </tr>
+                <tr>
+                    <td><b>@casl/angular</b></td>
+                    <td>^9.0.6</td>
+                </tr>
+                <tr>
+                    <td><b>@faker-js/faker</b></td>
+                    <td>^10.5.0</td>
+                </tr>
+                <tr>
+                    <td><b>@fortawesome/angular-fontawesome</b></td>
+                    <td>^4.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>@fortawesome/fontawesome-svg-core</b></td>
+                    <td>^7.3.1</td>
+                </tr>
+                <tr>
+                    <td><b>@fortawesome/free-regular-svg-icons</b></td>
+                    <td>^7.3.1</td>
+                </tr>
+                <tr>
+                    <td><b>@fortawesome/free-solid-svg-icons</b></td>
+                    <td>^7.3.1</td>
+                </tr>
+                <tr>
+                    <td><b>@ngneat/until-destroy</b></td>
+                    <td>^10.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>@sentry/angular</b></td>
+                    <td>^10.69.0</td>
+                </tr>
+                <tr>
+                    <td><b>angulartics2</b></td>
+                    <td>^14.1.0</td>
+                </tr>
+                <tr>
+                    <td><b>assert</b></td>
+                    <td>^2.1.0</td>
+                </tr>
+                <tr>
+                    <td><b>buffer</b></td>
+                    <td>^6.0.3</td>
+                </tr>
+                <tr>
+                    <td><b>deep-object-diff</b></td>
+                    <td>^1.1.9</td>
+                </tr>
+                <tr>
+                    <td><b>exceljs</b></td>
+                    <td>^4.4.0</td>
+                </tr>
+                <tr>
+                    <td><b>firebase</b></td>
+                    <td>^12.17.0</td>
+                </tr>
+                <tr>
+                    <td><b>hammerjs</b></td>
+                    <td>^2.0.8</td>
+                </tr>
+                <tr>
+                    <td><b>json-query</b></td>
+                    <td>^2.2.2</td>
+                </tr>
+                <tr>
+                    <td><b>jsondiffpatch</b></td>
+                    <td>^0.7.6</td>
+                </tr>
+                <tr>
+                    <td><b>keycloak-angular</b></td>
+                    <td>^21.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>keycloak-js</b></td>
+                    <td>^26.2.4</td>
+                </tr>
+                <tr>
+                    <td><b>leaflet</b></td>
+                    <td>^1.9.4</td>
+                </tr>
+                <tr>
+                    <td><b>leaflet.markercluster</b></td>
+                    <td>^1.5.3</td>
+                </tr>
+                <tr>
+                    <td><b>lodash-es</b></td>
+                    <td>^4.18.1</td>
+                </tr>
+                <tr>
+                    <td><b>md5</b></td>
+                    <td>^2.3.0</td>
+                </tr>
+                <tr>
+                    <td><b>moment</b></td>
+                    <td>2.29.4</td>
+                </tr>
+                <tr>
+                    <td><b>ngx-markdown</b></td>
+                    <td>^21.3.0</td>
+                </tr>
+                <tr>
+                    <td><b>ngx-papaparse</b></td>
+                    <td>^8.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>pouchdb-adapter-indexeddb</b></td>
+                    <td>^9.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>pouchdb-adapter-memory</b></td>
+                    <td>^9.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>pouchdb-browser</b></td>
+                    <td>^9.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>process</b></td>
+                    <td>^0.11.10</td>
+                </tr>
+                <tr>
+                    <td><b>reflect-metadata</b></td>
+                    <td>^0.2.2</td>
+                </tr>
+                <tr>
+                    <td><b>rxjs</b></td>
+                    <td>^7.8.2</td>
+                </tr>
+                <tr>
+                    <td><b>serve</b></td>
+                    <td>^14.2.6</td>
+                </tr>
+                <tr>
+                    <td><b>stream-browserify</b></td>
+                    <td>^3.0.0</td>
+                </tr>
+                <tr>
+                    <td><b>tslib</b></td>
+                    <td>^2.8.1</td>
+                </tr>
+                <tr>
+                    <td><b>util</b></td>
+                    <td>^0.12.5</td>
+                </tr>
+                <tr>
+                    <td><b>uuid</b></td>
+                    <td>^14.0.1</td>
+                </tr>
+                <tr>
+                    <td><b>vanilla-jsoneditor</b></td>
+                    <td>^3.13.0</td>
+                </tr>
+                <tr>
+                    <td><b>webpack</b></td>
+                    <td>^5.109.2</td>
+                </tr>
+                <tr>
+                    <td><b>zone.js</b></td>
+                    <td>^0.16.0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 
 
@@ -270,6 +399,24 @@
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -285,7 +432,6 @@
        <script src="./js/libs/lit-html.js"></script>
 
        <script src="./js/menu-wc.js" defer></script>
-       <script nomodule src="./js/menu-wc_es5.js" defer></script>
 
        <script src="./js/libs/bootstrap-native.js"></script>
 

@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -106,6 +113,11 @@
     <li class="breadcrumb-item">Modules</li>
     <li class="breadcrumb-item" >SessionModule</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/session/session.module.ts</code>
+</div>
 
 <div class="text-center module-graph-container">
     <div id="module-graph-svg">
@@ -140,17 +152,17 @@
 <polygon fill="none" stroke="black" points="16,-78 16,-130 808,-130 808,-78 16,-78"/>
 </g>
 <!-- KeycloakAuthService -->
-<g id="node1" class="node">
+<g id="node1" class="node"><a xlink:href="../injectables/KeycloakAuthService.html" href="../injectables/KeycloakAuthService.html" target="_top">
 <title>KeycloakAuthService</title>
 <ellipse fill="#fdb462" stroke="black" cx="704" cy="-104" rx="96.11" ry="18"/>
 <text text-anchor="middle" x="704" y="-99.8" font-family="Times,serif" font-size="14.00">KeycloakAuthService</text>
-</g>
+</a></g>
 <!-- SessionModule -->
-<g id="node5" class="node">
+<g id="node5" class="node"><a xlink:href="../modules/SessionModule.html" href="../modules/SessionModule.html" target="_top">
 <title>SessionModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="456.33,-187 453.33,-191 432.33,-191 429.33,-187 353.67,-187 353.67,-151 456.33,-151 456.33,-187"/>
 <text text-anchor="middle" x="405" y="-164.8" font-family="Times,serif" font-size="14.00">SessionModule</text>
-</g>
+</a></g>
 <!-- KeycloakAuthService&#45;&gt;SessionModule -->
 <g id="edge1" class="edge">
 <title>KeycloakAuthService&#45;&gt;SessionModule</title>
@@ -158,11 +170,11 @@
 <polygon fill="black" stroke="black" points="466.4,-165.5 456.4,-169 466.4,-172.5 466.4,-165.5"/>
 </g>
 <!-- LoginStateSubject -->
-<g id="node2" class="node">
+<g id="node2" class="node"><a xlink:href="../injectables/LoginStateSubject.html" href="../injectables/LoginStateSubject.html" target="_top">
 <title>LoginStateSubject</title>
 <ellipse fill="#fdb462" stroke="black" cx="507" cy="-104" rx="82.26" ry="18"/>
 <text text-anchor="middle" x="507" y="-99.8" font-family="Times,serif" font-size="14.00">LoginStateSubject</text>
-</g>
+</a></g>
 <!-- LoginStateSubject&#45;&gt;SessionModule -->
 <g id="edge2" class="edge">
 <title>LoginStateSubject&#45;&gt;SessionModule</title>
@@ -170,11 +182,11 @@
 <polygon fill="black" stroke="black" points="436.89,-140.87 440.39,-150.87 443.89,-140.87 436.89,-140.87"/>
 </g>
 <!-- SessionManagerService -->
-<g id="node3" class="node">
+<g id="node3" class="node"><a xlink:href="../injectables/SessionManagerService.html" href="../injectables/SessionManagerService.html" target="_top">
 <title>SessionManagerService</title>
 <ellipse fill="#fdb462" stroke="black" cx="303" cy="-104" rx="103.63" ry="18"/>
 <text text-anchor="middle" x="303" y="-99.8" font-family="Times,serif" font-size="14.00">SessionManagerService</text>
-</g>
+</a></g>
 <!-- SessionManagerService&#45;&gt;SessionModule -->
 <g id="edge3" class="edge">
 <title>SessionManagerService&#45;&gt;SessionModule</title>
@@ -182,11 +194,11 @@
 <polygon fill="black" stroke="black" points="376.83,-140.68 380.33,-150.68 383.83,-140.68 376.83,-140.68"/>
 </g>
 <!-- SyncStateSubject -->
-<g id="node4" class="node">
+<g id="node4" class="node"><a xlink:href="../injectables/SyncStateSubject.html" href="../injectables/SyncStateSubject.html" target="_top">
 <title>SyncStateSubject</title>
 <ellipse fill="#fdb462" stroke="black" cx="103" cy="-104" rx="78.75" ry="18"/>
 <text text-anchor="middle" x="103" y="-99.8" font-family="Times,serif" font-size="14.00">SyncStateSubject</text>
-</g>
+</a></g>
 <!-- SyncStateSubject&#45;&gt;SessionModule -->
 <g id="edge4" class="edge">
 <title>SyncStateSubject&#45;&gt;SessionModule</title>
@@ -225,13 +237,6 @@
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
 
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/session/session.module.ts</code>
-        </p>
-
 
 
         <p class="comment">
@@ -269,6 +274,39 @@ What session you get varies depending on the <code>session_type</code> setting i
                 </div>
             </div>
         </div>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/AppModule.html" target="_self" >AppModule</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../injectables/KeycloakAuthService.html" target="_self" >KeycloakAuthService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/LoginStateSubject.html" target="_self" >LoginStateSubject</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/SessionManagerService.html" target="_self" >SessionManagerService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/SyncStateSubject.html" target="_self" >SyncStateSubject</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
 
 
     </div>
@@ -336,6 +374,7 @@ export class SessionModule {}
 
 
 
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
@@ -368,6 +407,24 @@ export class SessionModule {}
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -383,7 +440,6 @@ export class SessionModule {}
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

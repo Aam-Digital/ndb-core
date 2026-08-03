@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   AssistantDialogComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/setup/assistant-dialog/assistant-dialog.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -124,20 +140,17 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/setup/assistant-dialog/assistant-dialog.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -153,9 +166,14 @@ depending on the current system state.</p>
         <h3>Implements</h3>
     </p>
     <p class="comment">
-                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
     </p>
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -182,25 +200,48 @@ depending on the current system state.</p>
                 <td class="col-md-9"><code>app-assistant-dialog</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                                <code><a href="../components/ContextAwareAssistantComponent.html" target="_self" >ContextAwareAssistantComponent</a></code>
-                            <code>MatTabGroup</code>
-                            <code>MatTab</code>
-                                <code><a href="../components/SystemInitAssistantComponent.html" target="_self" >SystemInitAssistantComponent</a></code>
-                                <code><a href="../components/SetupWizardComponent.html" target="_self" >SetupWizardComponent</a></code>
-                                <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
-                            <code>MatIconButton</code>
-                            <code>MatMenuTrigger</code>
-                            <code>Angulartics2OnModule</code>
-                            <code>MatMenu</code>
-                                <code><a href="../interfaces/MenuItem.html" target="_self" >MatMenuItem</a></code>
-                                <code><a href="https://angular.io/api/router/RouterLink" target="_blank" >RouterLink</a></code>
-                            <code>MatTooltip</code>
-                            <code>MatDialogClose</code>
+                        <div>        <code><a href="../components/ContextAwareAssistantComponent.html" target="_self" >ContextAwareAssistantComponent</a></code>
+</div>
+                        <div>    <code>MatTabGroup</code>
+</div>
+                        <div>    <code>MatTab</code>
+</div>
+                        <div>        <code><a href="../components/SystemInitAssistantComponent.html" target="_self" >SystemInitAssistantComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/SetupWizardComponent.html" target="_self" >SetupWizardComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+</div>
+                        <div>    <code>MatIconButton</code>
+</div>
+                        <div>    <code>MatMenuTrigger</code>
+</div>
+                        <div>    <code>Angulartics2OnModule</code>
+</div>
+                        <div>    <code>MatMenu</code>
+</div>
+                        <div>        <code><a href="../interfaces/MenuItem.html" target="_self" >MatMenuItem</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/router/RouterLink" target="_blank" >RouterLink</a></code>
+</div>
+                        <div>    <code>MatTooltip</code>
+</div>
+                        <div>    <code>MatDialogClose</code>
+</div>
                 </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./assistant-dialog.component.scss</code></td>
             </tr>
 
 
@@ -226,49 +267,115 @@ depending on the current system state.</p>
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/ContextAwareAssistantComponent.html" target="_self" >ContextAwareAssistantComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>MatTabGroup</code>
+                                </li>
+                                <li>
+                                        <code>MatTab</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/SystemInitAssistantComponent.html" target="_self" >SystemInitAssistantComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/SetupWizardComponent.html" target="_self" >SetupWizardComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>MatIconButton</code>
+                                </li>
+                                <li>
+                                        <code>MatMenuTrigger</code>
+                                </li>
+                                <li>
+                                        <code>Angulartics2OnModule</code>
+                                </li>
+                                <li>
+                                        <code>MatMenu</code>
+                                </li>
+                                <li>
+                                            <code><a href="../interfaces/MenuItem.html" target="_self" >MatMenuItem</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/router/RouterLink" target="_blank" >RouterLink</a></code>
+                                </li>
+                                <li>
+                                        <code>MatTooltip</code>
+                                </li>
+                                <li>
+                                        <code>MatDialogClose</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#assistants" >assistants</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onTabChange" >onTabChange</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#updateSetupWizardVisible" >updateSetupWizardVisible</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -416,6 +523,7 @@ depending on the current system state.</p>
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -657,6 +765,57 @@ export class AssistantDialogComponent implements OnInit {
 </code></pre>
     </div>
 
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./assistant-dialog.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+@use &quot;variables/sizes&quot;;
+
+:host {
+  --dialog-header-border: 18px;
+}
+
+.assistant-panel-container {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.dialog-header-bar {
+  border-top: var(--dialog-header-border) solid colors.$accent;
+}
+
+::ng-deep mat-tab-header {
+  // gap to add context menu button in right corner
+  margin-right: 48px;
+}
+
+.context-menu-button {
+  position: absolute;
+  right: 0;
+  top: var(--dialog-header-border);
+
+  ::ng-deep {
+    --mat-icon-button-container-shape: 0;
+  }
+}
+
+::ng-deep .mat-mdc-tab-body-wrapper {
+  height: 100%;
+  padding: sizes.$regular;
+}
+
+// disable shadow of Assistant Button in toolbar while opened dialog
+::ng-deep .mdc-dialog--open .mat-mdc-dialog-surface,
+.mdc-dialog--closing .mat-mdc-dialog-surface {
+  border-radius: 0px !important;
+  box-shadow:
+    0px 0px 0px 0px rgba(0, 0, 0, 0),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+    0px 9px 0px 0px rgba(0, 0, 0, 0.12);
+}
+</code></pre>
+    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
@@ -738,6 +897,24 @@ export class AssistantDialogComponent implements OnInit {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -753,7 +930,6 @@ export class AssistantDialogComponent implements OnInit {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

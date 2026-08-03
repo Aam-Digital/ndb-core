@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   AdminMenuItemComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,14 +150,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -153,6 +162,11 @@ including recursively editing and drag&amp;drop of subMenu items.</p>
 
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -187,14 +201,22 @@ including recursively editing and drag&amp;drop of subMenu items.</p>
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>MatNavList</code>
-                                <code><a href="../components/MenuItemComponent.html" target="_self" >MenuItemComponent</a></code>
-                                <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
-                            <code>DragDropModule</code>
-                            <code>MatFormFieldModule</code>
-                                <code><a href="https://angular.io/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
-                            <code>MatIconButton</code>
-                            <code>MatTooltipModule</code>
+                        <div>    <code>MatNavList</code>
+</div>
+                        <div>        <code><a href="../components/MenuItemComponent.html" target="_self" >MenuItemComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/cdk/drag-drop/DragDropModule" target="_blank" >DragDropModule</a></code>
+</div>
+                        <div>    <code>MatFormFieldModule</code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+</div>
+                        <div>    <code>MatIconButton</code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
+</div>
                 </td>
             </tr>
 
@@ -202,6 +224,7 @@ including recursively editing and drag&amp;drop of subMenu items.</p>
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./admin-menu-item.component.scss,<br>../../../ui/navigation/menu-item/menu-item.component.scss</code></td>
             </tr>
+
 
 
 
@@ -221,105 +244,162 @@ including recursively editing and drag&amp;drop of subMenu items.</p>
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/MenuItemListEditorComponent.html" target="_self" >MenuItemListEditorComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatNavList</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/MenuItemComponent.html" target="_self" >MenuItemComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/cdk/drag-drop/DragDropModule" target="_blank" >DragDropModule</a></code>
+                                </li>
+                                <li>
+                                        <code>MatFormFieldModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+                                </li>
+                                <li>
+                                        <code>MatIconButton</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#hasNoLinkWarning" >hasNoLinkWarning</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#itemToDisplay" >itemToDisplay</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#editMenuItem" >editMenuItem</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onDelete" >onDelete</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onDragDrop" >onDragDrop</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onSubItemChange" >onSubItemChange</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#removeSubItem" >removeSubItem</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#allowEntityLinks" >allowEntityLinks</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#allowEntityLinks" >allowEntityLinks</a>
                             </li>
                             <li>
-                                <a href="#allowSubMenu" >allowSubMenu</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#allowSubMenu" >allowSubMenu</a>
                             </li>
                             <li>
-                                <a href="#connectedTo" >connectedTo</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#connectedTo" >connectedTo</a>
                             </li>
                             <li>
-                                <a href="#item" >item</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#item" >item</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#deleteItem" >deleteItem</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#deleteItem" >deleteItem</a>
                             </li>
                             <li>
-                                <a href="#item" >item</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#item" >item</a>
                             </li>
                             <li>
-                                <a href="#itemDrop" >itemDrop</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#itemDrop" >itemDrop</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -442,6 +522,7 @@ including recursively editing and drag&amp;drop of subMenu items.</p>
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -508,6 +589,7 @@ including recursively editing and drag&amp;drop of subMenu items.</p>
             </tbody>
         </table>
 </section>
+
 
 
     <section data-compodoc="block-methods">
@@ -853,6 +935,7 @@ including recursively editing and drag&amp;drop of subMenu items.</p>
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1371,6 +1454,24 @@ app-menu-item {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1386,7 +1487,6 @@ app-menu-item {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

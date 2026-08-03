@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   AttendanceCalendarComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,14 +150,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/features/attendance/analysis/attendance-calendar/attendance-calendar.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -155,6 +164,11 @@ and relies on inputs to receive data and updates.</p>
 
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -185,21 +199,36 @@ and relies on inputs to receive data and updates.</p>
                 <td class="col-md-9"><code>app-attendance-calendar</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>MatDatepickerModule</code>
-                            <code>CustomDatePipe</code>
-                                <code><a href="../components/EditConfigurableEnumComponent.html" target="_self" >EditConfigurableEnumComponent</a></code>
-                                <code><a href="https://angular.io/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
-                            <code>MatFormFieldModule</code>
-                            <code>MatInputModule</code>
-                                <code><a href="https://angular.io/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
-                                <code><a href="https://angular.io/api/common/PercentPipe" target="_blank" >PercentPipe</a></code>
-                            <code>MatButtonModule</code>
-                            <code>Angulartics2Module</code>
-                            <code>FontAwesomeModule</code>
+                        <div>    <code>MatDatepickerModule</code>
+</div>
+                        <div>    <code>CustomDatePipe</code>
+</div>
+                        <div>        <code><a href="../components/EditConfigurableEnumComponent.html" target="_self" >EditConfigurableEnumComponent</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+</div>
+                        <div>    <code>MatFormFieldModule</code>
+</div>
+                        <div>    <code>MatInputModule</code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/common/PercentPipe" target="_blank" >PercentPipe</a></code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>Angulartics2Module</code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
                 </td>
             </tr>
 
@@ -207,6 +236,7 @@ and relies on inputs to receive data and updates.</p>
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./attendance-calendar.component.scss,<br>../../../../core/common-components/dialog-close/dialog-close.component.scss</code></td>
             </tr>
+
 
 
 
@@ -226,113 +256,193 @@ and relies on inputs to receive data and updates.</p>
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/ActivityAttendanceSectionComponent.html" target="_self" >ActivityAttendanceSectionComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AttendanceBlockComponent.html" target="_self" >AttendanceBlockComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AttendanceDetailsComponent.html" target="_self" >AttendanceDetailsComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatDatepickerModule</code>
+                                </li>
+                                <li>
+                                        <code>CustomDatePipe</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditConfigurableEnumComponent.html" target="_self" >EditConfigurableEnumComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/forms/ReactiveFormsModule" target="_blank" >ReactiveFormsModule</a></code>
+                                </li>
+                                <li>
+                                        <code>MatFormFieldModule</code>
+                                </li>
+                                <li>
+                                        <code>MatInputModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/common/PercentPipe" target="_blank" >PercentPipe</a></code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>Angulartics2Module</code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#calendar" >calendar</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#hasAverage" >hasAverage</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#highlightDate" >highlightDate</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#maxDate" >maxDate</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#minDate" >minDate</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#selectedDate" >selectedDate</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#selectedEvent" >selectedEvent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#selectedEventAttendance" >selectedEventAttendance</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#selectedEventParticipantCount" >selectedEventParticipantCount</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#selectedEventStats" >selectedEventStats</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#statusControl" >statusControl</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#statusFieldConfig" >statusFieldConfig</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#createNewEvent" >createNewEvent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onRemarksChange" >onRemarksChange</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#save" >save</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#selectDay" >selectDay</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#showEventDetails" >showEventDetails</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#activity" >activity</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#activity" >activity</a>
                             </li>
                             <li>
-                                <a href="#highlightForChild" >highlightForChild</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#highlightForChild" >highlightForChild</a>
                             </li>
                             <li>
-                                <a href="#records" >records</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#records" >records</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
     <section data-compodoc="block-constructor">
@@ -425,6 +535,7 @@ and relies on inputs to receive data and updates.</p>
             </tbody>
         </table>
 </section>
+
 
 
 
@@ -711,6 +822,7 @@ and relies on inputs to receive data and updates.</p>
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1729,6 +1841,24 @@ mat-calendar {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1744,7 +1874,6 @@ mat-calendar {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

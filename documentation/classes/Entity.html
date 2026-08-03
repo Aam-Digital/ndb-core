@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -116,12 +123,23 @@
   <li class="breadcrumb-item" >Entity</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/entity/model/entity.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" 
                 class="nav-link"
                 class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" 
@@ -133,13 +151,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/core/entity/model/entity.ts</code>
-        </p>
-
 
             <p class="comment">
                 <h3>Description</h3>
@@ -160,180 +171,297 @@ A How-To Guide on how to implement your own types is available:</p>
 
 
 
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../interfaces/ActivityEntity.html" target="_self" >ActivityEntity</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/ActivityAttendance.html" target="_self" >ActivityAttendance</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/Config.html" target="_self" >Config</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/ConfigurableEnum.html" target="_self" >ConfigurableEnum</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/EmailTemplate.html" target="_self" >EmailTemplate</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/ImportMetadata.html" target="_self" >ImportMetadata</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/MarkdownContent.html" target="_self" >MarkdownContent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/Note.html" target="_self" >Note</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/NotificationConfig.html" target="_self" >NotificationConfig</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/NotificationEvent.html" target="_self" >NotificationEvent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/ProgressDashboardConfig.html" target="_self" >ProgressDashboardConfig</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/PublicFormConfig.html" target="_self" >PublicFormConfig</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/ReportConfig.html" target="_self" >ReportConfig</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/SiteSettings.html" target="_self" >SiteSettings</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/Skill.html" target="_self" >Skill</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/SqsSchema.html" target="_self" >SqsSchema</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/TemplateExport.html" target="_self" >TemplateExport</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/TestEntity.html" target="_self" >TestEntity</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/TestEventEntity.html" target="_self" >TestEventEntity</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/TimePeriod.html" target="_self" >TimePeriod</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../classes/Todo.html" target="_self" >Todo</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#_isCustomizedType" class="deprecated-name">_isCustomizedType</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#_rev" >_rev</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#anonymized" >anonymized</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#color" >color</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#created" >created</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#DATABASE" >DATABASE</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#enableUserAccounts" >enableUserAccounts</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#ENTITY_TYPE" >ENTITY_TYPE</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#hasPII" >hasPII</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#icon" >icon</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#inactive" >inactive</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#isInternalEntity" >isInternalEntity</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#label" >label</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#schema" >schema</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#toBlockDetailsAttributes" >toBlockDetailsAttributes</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#toStringAttributes" >toStringAttributes</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#updated" >updated</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#assertValid" >assertValid</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#copy" >copy</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#createPrefixedId" >createPrefixedId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#extractEntityIdFromId" >extractEntityIdFromId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#extractTypeFromId" >extractTypeFromId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#getColor" >getColor</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#getColorWithConditions" >getColorWithConditions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getConstructor" >getConstructor</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#getId" >getId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getSchema" >getSchema</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#getType" >getType</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#getWarningLevel" >getWarningLevel</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Accessors</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#labelPlural" >labelPlural</a>
-                                </li>
-                                <li>
-                                    <a href="#route" >route</a>
-                                </li>
-                                <li>
-                                    <a href="#isNew" >isNew</a>
-                                </li>
-                                <li>
-                                    <a href="#isActive" >isActive</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-        </tbody>
-    </table>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Accessors</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#labelPlural" >labelPlural</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#route" >route</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#isNew" >isNew</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#isActive" >isActive</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 </section>
 
             <section data-compodoc="block-constructor">
@@ -1768,6 +1896,7 @@ and highlighted in generic components of the UI.</p>
 
 
 
+
             <section data-compodoc="block-accessors">
     <h3 id="accessors">
         Accessors
@@ -2586,6 +2715,24 @@ export class Entity {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -2601,7 +2748,6 @@ export class Entity {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

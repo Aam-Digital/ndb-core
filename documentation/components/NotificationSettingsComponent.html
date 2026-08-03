@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   NotificationSettingsComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/notification/notification-settings/notification-settings.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -124,20 +140,17 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/features/notification/notification-settings/notification-settings.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -148,6 +161,11 @@
 
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -182,17 +200,32 @@
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>MatSlideToggle</code>
-                            <code>FontAwesomeModule</code>
-                            <code>MatFormFieldModule</code>
-                            <code>MatButtonModule</code>
-                                <code><a href="../components/HelpButtonComponent.html" target="_self" >HelpButtonComponent</a></code>
-                                <code><a href="../components/NotificationRuleComponent.html" target="_self" >NotificationRuleComponent</a></code>
-                            <code>MatTooltip</code>
-                            <code>CdkAccordionModule</code>
-                            <code>MatAccordion</code>
-                                <code><a href="../components/FeatureDisabledInfoComponent.html" target="_self" >FeatureDisabledInfoComponent</a></code>
+                        <div>    <code>MatSlideToggle</code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>    <code>MatFormFieldModule</code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>        <code><a href="../components/HelpButtonComponent.html" target="_self" >HelpButtonComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/NotificationRuleComponent.html" target="_self" >NotificationRuleComponent</a></code>
+</div>
+                        <div>    <code>MatTooltip</code>
+</div>
+                        <div>    <code>CdkAccordionModule</code>
+</div>
+                        <div>    <code>MatAccordion</code>
+</div>
+                        <div>        <code><a href="../components/FeatureDisabledInfoComponent.html" target="_self" >FeatureDisabledInfoComponent</a></code>
+</div>
                 </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./notification-settings.component.scss</code></td>
             </tr>
 
 
@@ -218,34 +251,89 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/ProfileComponent.html" target="_self" >ProfileComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatSlideToggle</code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                        <code>MatFormFieldModule</code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/HelpButtonComponent.html" target="_self" >HelpButtonComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/NotificationRuleComponent.html" target="_self" >NotificationRuleComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>MatTooltip</code>
+                                </li>
+                                <li>
+                                        <code>CdkAccordionModule</code>
+                                </li>
+                                <li>
+                                        <code>MatAccordion</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FeatureDisabledInfoComponent.html" target="_self" >FeatureDisabledInfoComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#accountEmail" >accountEmail</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#isPushNotificationEnabled" >isPushNotificationEnabled</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#notificationConfig" >notificationConfig</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#notificationService" >notificationService</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#unsavedChanges" >unsavedChanges</a>
@@ -253,49 +341,58 @@
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#addNewNotificationRule" >addNewNotificationRule</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#confirmRemoveNotificationRule" >confirmRemoveNotificationRule</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#saveSettings" >saveSettings</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#testNotification" >testNotification</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#toggleEmailChannel" >toggleEmailChannel</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#togglePushNotifications" >togglePushNotifications</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#updateNotificationRule" >updateNotificationRule</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
     <section data-compodoc="block-constructor">
@@ -726,6 +823,7 @@
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1405,6 +1503,57 @@ function generateDefaultNotificationConfig(userId: string, userEntity: string) {
 </code></pre>
     </div>
 
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./notification-settings.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+@use &quot;variables/sizes&quot;;
+@use &quot;@angular/material/core/style/elevation&quot; as mat-elevation;
+
+.panel-wrapper {
+  @include mat-elevation.elevation(2);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.receive-notifications-container {
+  @extend .panel-wrapper;
+  background-color: colors.$background;
+  margin-top: sizes.$regular;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.add-new-rule-button {
+  width: 50%;
+  border-radius: 20px;
+  padding: 22px;
+  background-color: aliceblue;
+}
+
+.coming-soon-label {
+  color: colors.$inactive;
+  margin-left: 10px;
+  font-style: italic;
+}
+
+.text-badge {
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 10px;
+  border-radius: 25px;
+  padding-inline: 15px;
+  border: 1px solid;
+}
+
+.indented-item {
+  margin-left: sizes.$large;
+}
+</code></pre>
+    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
@@ -1486,6 +1635,24 @@ function generateDefaultNotificationConfig(userId: string, userEntity: string) {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1501,7 +1668,6 @@ function generateDefaultNotificationConfig(userId: string, userEntity: string) {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

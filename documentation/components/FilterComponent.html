@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   FilterComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/filter/filter/filter.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -130,14 +146,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/filter/filter/filter.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -148,6 +157,11 @@
 
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -174,17 +188,27 @@
                 <td class="col-md-9"><code>app-filter</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                                <code><a href="https://angular.io/api/common/NgComponentOutlet" target="_blank" >NgComponentOutlet</a></code>
-                            <code>FontAwesomeModule</code>
-                            <code>MatButtonModule</code>
-                            <code>MatTooltip</code>
-                                <code><a href="../components/IconButtonComponent.html" target="_self" >IconButtonComponent</a></code>
+                        <div>        <code><a href="https://angular.dev/api/common/NgComponentOutlet" target="_blank" >NgComponentOutlet</a></code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>MatTooltip</code>
+</div>
+                        <div>        <code><a href="../components/IconButtonComponent.html" target="_self" >IconButtonComponent</a></code>
+</div>
                 </td>
             </tr>
+
 
 
 
@@ -205,105 +229,160 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/EntityListComponent.html" target="_self" >EntityListComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FilterOverlayComponent.html" target="_self" >FilterOverlayComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/MatchingEntitiesComponent.html" target="_self" >MatchingEntitiesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/RollCallSetupComponent.html" target="_self" >RollCallSetupComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="https://angular.dev/api/common/NgComponentOutlet" target="_blank" >NgComponentOutlet</a></code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltip</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/IconButtonComponent.html" target="_self" >IconButtonComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#filterSelections" >filterSelections</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#hasActiveFilters" >hasActiveFilters</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#showClearButton" >showClearButton</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#clearAllFilters" >clearAllFilters</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#filterOptionSelected" >filterOptionSelected</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#entities" >entities</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entities" >entities</a>
                             </li>
                             <li>
-                                <a href="#entityType" >entityType</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entityType" >entityType</a>
                             </li>
                             <li>
-                                <a href="#filterConfig" >filterConfig</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#filterConfig" >filterConfig</a>
                             </li>
                             <li>
-                                <a href="#filterObj" >filterObj</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#filterObj" >filterObj</a>
                             </li>
                             <li>
-                                <a href="#filterString" >filterString</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#filterString" >filterString</a>
                             </li>
                             <li>
-                                <a href="#onlyShowRelevantFilterOptions" >onlyShowRelevantFilterOptions</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#onlyShowRelevantFilterOptions" >onlyShowRelevantFilterOptions</a>
                             </li>
                             <li>
-                                <a href="#useUrlQueryParams" >useUrlQueryParams</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#useUrlQueryParams" >useUrlQueryParams</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#filterObjChange" >filterObjChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#filterObjChange" >filterObjChange</a>
                             </li>
                             <li>
-                                <a href="#filterStringChange" >filterStringChange</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#filterStringChange" >filterStringChange</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-        </tbody>
-    </table>
 </section>
 
     <section data-compodoc="block-constructor">
@@ -432,11 +511,6 @@
 
                     </td>
                 </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>{}</code>
-                    </td>
-                </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
                                     <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/filter/filter/filter.component.ts:75</a></div>
@@ -457,6 +531,12 @@ This can be used as two-way-binding or through the <code>filterObjChange</code> 
                     <td class="col-md-4">
                         <a name="filterString"></a>
                         <b>filterString</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
                     </td>
                 </tr>
                 <tr>
@@ -488,6 +568,12 @@ This can be used to display the active filters as a single string.</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
                         <i>Default value : </i><code>false</code>
                     </td>
                 </tr>
@@ -515,6 +601,12 @@ default <code>false</code></p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
                         <i>Default value : </i><code>false</code>
                     </td>
                 </tr>
@@ -533,6 +625,7 @@ default <code>false</code>.</p>
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -590,6 +683,7 @@ default <code>false</code>.</p>
             </tbody>
         </table>
 </section>
+
 
 
     <section data-compodoc="block-methods">
@@ -714,6 +808,7 @@ default <code>false</code>.</p>
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1275,6 +1370,24 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1290,7 +1403,6 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

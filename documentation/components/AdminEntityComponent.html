@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   AdminEntityComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/admin/admin-entity/admin-entity.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -124,20 +140,17 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/admin/admin-entity/admin-entity.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
 
 
 
@@ -167,22 +180,42 @@
                 <td class="col-md-9"><code>app-admin-entity</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                                <code><a href="../classes/Entity.html" target="_self" >EntityTypeLabelPipe</a></code>
-                            <code>MatButton</code>
-                                <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
-                                <code><a href="../components/AdminEntityListComponent.html" target="_self" >AdminEntityListComponent</a></code>
-                            <code>MatNavList</code>
-                            <code>MatListItem</code>
-                                <code><a href="../components/AdminEntityDetailsComponent.html" target="_self" >AdminEntityDetailsComponent</a></code>
-                                <code><a href="../components/AdminEntityGeneralSettingsComponent.html" target="_self" >AdminEntityGeneralSettingsComponent</a></code>
-                                <code><a href="../components/BetaFeatureComponent.html" target="_self" >BetaFeatureComponent</a></code>
-                                <code><a href="../components/AdminEntityPublicFormsComponent.html" target="_self" >AdminEntityPublicFormsComponent</a></code>
-                                <code><a href="../components/AdminNoteDetailsComponent.html" target="_self" >AdminNoteDetailsComponent</a></code>
+                        <div>        <code><a href="../classes/Entity.html" target="_self" >EntityTypeLabelPipe</a></code>
+</div>
+                        <div>    <code>MatButton</code>
+</div>
+                        <div>        <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/AdminEntityListComponent.html" target="_self" >AdminEntityListComponent</a></code>
+</div>
+                        <div>    <code>MatNavList</code>
+</div>
+                        <div>    <code>MatListItem</code>
+</div>
+                        <div>        <code><a href="../components/AdminEntityDetailsComponent.html" target="_self" >AdminEntityDetailsComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/AdminEntityGeneralSettingsComponent.html" target="_self" >AdminEntityGeneralSettingsComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/BetaFeatureComponent.html" target="_self" >BetaFeatureComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/AdminEntityPublicFormsComponent.html" target="_self" >AdminEntityPublicFormsComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/AdminNoteDetailsComponent.html" target="_self" >AdminNoteDetailsComponent</a></code>
+</div>
                 </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./admin-entity.component.scss</code></td>
             </tr>
 
 
@@ -208,89 +241,152 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../classes/Entity.html" target="_self" >EntityTypeLabelPipe</a></code>
+                                </li>
+                                <li>
+                                        <code>MatButton</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityListComponent.html" target="_self" >AdminEntityListComponent</a></code>
+                                </li>
+                                <li>
+                                        <code>MatNavList</code>
+                                </li>
+                                <li>
+                                        <code>MatListItem</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityDetailsComponent.html" target="_self" >AdminEntityDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityGeneralSettingsComponent.html" target="_self" >AdminEntityGeneralSettingsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/BetaFeatureComponent.html" target="_self" >BetaFeatureComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityPublicFormsComponent.html" target="_self" >AdminEntityPublicFormsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminNoteDetailsComponent.html" target="_self" >AdminNoteDetailsComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#configDetailsView" >configDetailsView</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#configEntitySettings" >configEntitySettings</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#configListView" >configListView</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#entityConstructor" >entityConstructor</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Optional</span>
                                 <a href="#generalSettingsComponent" >generalSettingsComponent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#mode" >mode</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#templateRef" >templateRef</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#cancel" >cancel</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#registerRelatedEntityForSave" >registerRelatedEntityForSave</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#save" >save</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#entityType" >entityType</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entityType" >entityType</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
     <section data-compodoc="block-constructor">
@@ -341,6 +437,7 @@
             </tbody>
         </table>
 </section>
+
 
 
 
@@ -496,6 +593,7 @@ This is called from child components (e.g., panel components) when they modify r
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1059,6 +1157,54 @@ export class AdminEntityComponent {
 </code></pre>
     </div>
 
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./admin-entity.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+@use &quot;variables/sizes&quot;;
+
+.host-container {
+  height: calc(100vh - 64px);
+
+  // undo margins of routed view
+  margin-top: - sizes.$margin-main-view-top;
+  margin-right: - sizes.$margin-main-view-right;
+  margin-bottom: - sizes.$margin-main-view-bottom;
+  margin-left: - sizes.$margin-main-view-left;
+}
+
+.header {
+  padding: 20px;
+  background-color: colors.$background-secondary;
+}
+
+.config-nav {
+  background-color: colors.$background-secondary;
+}
+
+.main-container {
+  width: 100%;
+  min-height: 0;
+  flex-grow: 1;
+}
+
+.config-component {
+  min-width: 0;
+  padding: 8px;
+  overflow-y: auto;
+
+  ::ng-deep app-view-title {
+    color: colors.$muted;
+  }
+}
+
+.admin-ui-not-supported-info {
+  padding: 20px;
+  text-align: center;
+}
+</code></pre>
+    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
@@ -1140,6 +1286,24 @@ export class AdminEntityComponent {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1155,7 +1319,6 @@ export class AdminEntityComponent {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

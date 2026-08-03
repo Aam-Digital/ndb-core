@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   DialogCloseComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/common-components/dialog-close/dialog-close.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,21 +150,14 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/common-components/dialog-close/dialog-close.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
 
 
     <p class="comment">
         <h3>Implements</h3>
     </p>
     <p class="comment">
-                    <code><a href="https://angular.io/api/core/AfterViewChecked" target="_blank" >AfterViewChecked</a></code>
+                    <code><a href="https://angular.dev/api/core/AfterViewChecked" target="_blank" >AfterViewChecked</a></code>
     </p>
 
 
@@ -177,13 +186,20 @@
                 <td class="col-md-9"><code>app-dialog-close</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>FontAwesomeModule</code>
-                            <code>MatButtonModule</code>
-                            <code>MatDialogClose</code>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>MatDialogClose</code>
+</div>
                 </td>
             </tr>
 
@@ -191,6 +207,7 @@
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./dialog-close.component.scss</code></td>
             </tr>
+
 
 
 
@@ -210,33 +227,123 @@
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/AdminEditDescriptionOnlyFieldComponent.html" target="_self" >AdminEditDescriptionOnlyFieldComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityFieldComponent.html" target="_self" >AdminEntityFieldComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminRelatedEntityDetailsComponent.html" target="_self" >AdminRelatedEntityDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AttendanceDetailsComponent.html" target="_self" >AttendanceDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AutomatedFieldMappingComponent.html" target="_self" >AutomatedFieldMappingComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AutomatedFieldUpdateComponent.html" target="_self" >AutomatedFieldUpdateComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ChangeHistoryDialogComponent.html" target="_self" >ChangeHistoryDialogComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ComingSoonComponent.html" target="_self" >ComingSoonComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ConfigureEnumPopupComponent.html" target="_self" >ConfigureEnumPopupComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ConfirmationDialogComponent.html" target="_self" >ConfirmationDialogComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/DialogViewComponent.html" target="_self" >DialogViewComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EditProgressDashboardComponent.html" target="_self" >EditProgressDashboardComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityBulkEditComponent.html" target="_self" >EntityBulkEditComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ExportDialogComponent.html" target="_self" >ExportDialogComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ImagePopupComponent.html" target="_self" >ImagePopupComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/JsonEditorDialogComponent.html" target="_self" >JsonEditorDialogComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/MapPropertiesPopupComponent.html" target="_self" >MapPropertiesPopupComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/RowDetailsComponent.html" target="_self" >RowDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/UserDetailsComponent.html" target="_self" >UserDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/WidgetComponentSelectComponent.html" target="_self" >WidgetComponentSelectComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>MatDialogClose</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/core/AfterViewChecked" target="_blank" >AfterViewChecked</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#button" >button</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -427,6 +534,24 @@ export class DialogCloseComponent implements AfterViewChecked {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -442,7 +567,6 @@ export class DialogCloseComponent implements AfterViewChecked {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

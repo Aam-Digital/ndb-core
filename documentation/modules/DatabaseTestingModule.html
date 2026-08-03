@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -106,6 +113,11 @@
     <li class="breadcrumb-item">Modules</li>
     <li class="breadcrumb-item" >DatabaseTestingModule</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/utils/database-testing.module.ts</code>
+</div>
 
 <div class="text-center module-graph-container">
     <div id="module-graph-svg">
@@ -144,17 +156,17 @@
 <polygon fill="none" stroke="black" points="16,-78 16,-130 412,-130 412,-78 16,-78"/>
 </g>
 <!-- AppModule -->
-<g id="node1" class="node">
+<g id="node1" class="node"><a xlink:href="../modules/AppModule.html" href="../modules/AppModule.html" target="_top">
 <title>AppModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="511.66,-122 508.66,-126 487.66,-126 484.66,-122 428.34,-122 428.34,-86 511.66,-86 511.66,-122"/>
 <text text-anchor="middle" x="470" y="-99.8" font-family="Times,serif" font-size="14.00">AppModule</text>
-</g>
+</a></g>
 <!-- DatabaseTestingModule -->
-<g id="node2" class="node">
+<g id="node2" class="node"><a xlink:href="../modules/DatabaseTestingModule.html" href="../modules/DatabaseTestingModule.html" target="_top">
 <title>DatabaseTestingModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="413.34,-187 410.34,-191 389.34,-191 386.34,-187 260.66,-187 260.66,-151 413.34,-151 413.34,-187"/>
 <text text-anchor="middle" x="337" y="-164.8" font-family="Times,serif" font-size="14.00">DatabaseTestingModule</text>
-</g>
+</a></g>
 <!-- AppModule&#45;&gt;DatabaseTestingModule -->
 <g id="edge1" class="edge">
 <title>AppModule&#45;&gt;DatabaseTestingModule</title>
@@ -162,11 +174,11 @@
 <polygon fill="black" stroke="black" points="405.12,-140.89 408.62,-150.89 412.12,-140.89 405.12,-140.89"/>
 </g>
 <!-- ConfigService -->
-<g id="node3" class="node">
+<g id="node3" class="node"><a xlink:href="../injectables/ConfigService.html" href="../injectables/ConfigService.html" target="_top">
 <title>ConfigService</title>
 <ellipse fill="#fdb462" stroke="black" cx="337" cy="-104" rx="66.63" ry="18"/>
 <text text-anchor="middle" x="337" y="-99.8" font-family="Times,serif" font-size="14.00">ConfigService</text>
-</g>
+</a></g>
 <!-- ConfigService&#45;&gt;DatabaseTestingModule -->
 <g id="edge2" class="edge">
 <title>ConfigService&#45;&gt;DatabaseTestingModule</title>
@@ -174,11 +186,11 @@
 <polygon fill="black" stroke="black" points="333.5,-140.99 337,-150.99 340.5,-140.99 333.5,-140.99"/>
 </g>
 <!-- ConfigurableEnumService -->
-<g id="node4" class="node">
+<g id="node4" class="node"><a xlink:href="../injectables/ConfigurableEnumService.html" href="../injectables/ConfigurableEnumService.html" target="_top">
 <title>ConfigurableEnumService</title>
 <ellipse fill="#fdb462" stroke="black" cx="138" cy="-104" rx="114.03" ry="18"/>
 <text text-anchor="middle" x="138" y="-99.8" font-family="Times,serif" font-size="14.00">ConfigurableEnumService</text>
-</g>
+</a></g>
 <!-- ConfigurableEnumService&#45;&gt;DatabaseTestingModule -->
 <g id="edge3" class="edge">
 <title>ConfigurableEnumService&#45;&gt;DatabaseTestingModule</title>
@@ -216,13 +228,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/utils/database-testing.module.ts</code>
-        </p>
 
 
 
@@ -264,6 +269,32 @@ If you only use some functions of the EntityMapper then you should rather use th
                 </div>
             </div>
         </div>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/AppModule.html" target="_self" >AppModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/ConfigService.html" target="_self" >ConfigService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/ConfigurableEnumService.html" target="_self" >ConfigurableEnumService</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
 
 
     </div>
@@ -383,6 +414,7 @@ export class DatabaseTestingModule {}
 
 
 
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
@@ -415,6 +447,24 @@ export class DatabaseTestingModule {}
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -430,7 +480,6 @@ export class DatabaseTestingModule {}
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

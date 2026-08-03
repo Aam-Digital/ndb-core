@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   ViewTitleComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/common-components/view-title/view-title.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -134,14 +150,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/common-components/view-title/view-title.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -156,9 +165,14 @@ for both dialog and routed views.</p>
         <h3>Implements</h3>
     </p>
     <p class="comment">
-                    <code><a href="https://angular.io/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
+                    <code><a href="https://angular.dev/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
     </p>
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -185,14 +199,22 @@ for both dialog and routed views.</p>
                 <td class="col-md-9"><code>app-view-title</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                            <code>MatButtonModule</code>
-                            <code>MatTooltipModule</code>
-                            <code>FontAwesomeModule</code>
-                                <code><a href="https://angular.io/api/common/NgTemplateOutlet" target="_blank" >NgTemplateOutlet</a></code>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
+</div>
+                        <div>    <code>FontAwesomeModule</code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/common/NgTemplateOutlet" target="_blank" >NgTemplateOutlet</a></code>
+</div>
                 </td>
             </tr>
 
@@ -200,6 +222,7 @@ for both dialog and routed views.</p>
                 <td class="col-md-3">styleUrls</td>
                 <td class="col-md-9"><code>./view-title.component.scss</code></td>
             </tr>
+
 
 
 
@@ -219,102 +242,227 @@ for both dialog and routed views.</p>
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/AdminAiAgentComponent.html" target="_self" >AdminAiAgentComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminConfigCleanupComponent.html" target="_self" >AdminConfigCleanupComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminDashboardComponent.html" target="_self" >AdminDashboardComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityComponent.html" target="_self" >AdminEntityComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityDetailsComponent.html" target="_self" >AdminEntityDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityListComponent.html" target="_self" >AdminEntityListComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityPublicFormsComponent.html" target="_self" >AdminEntityPublicFormsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminEntityTypesComponent.html" target="_self" >AdminEntityTypesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminMatchingEntitiesComponent.html" target="_self" >AdminMatchingEntitiesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminMenuComponent.html" target="_self" >AdminMenuComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminPrimaryActionComponent.html" target="_self" >AdminPrimaryActionComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdminUserRolesComponent.html" target="_self" >AdminUserRolesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AdvancedFeaturesComponent.html" target="_self" >AdvancedFeaturesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/AttendanceManagerComponent.html" target="_self" >AttendanceManagerComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/BulkLinkExternalProfilesComponent.html" target="_self" >BulkLinkExternalProfilesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ConflictResolutionListComponent.html" target="_self" >ConflictResolutionListComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/DataPrivacyComponent.html" target="_self" >DataPrivacyComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityDetailsComponent.html" target="_self" >EntityDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityListComponent.html" target="_self" >EntityListComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/NoteDetailsComponent.html" target="_self" >NoteDetailsComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ReportingComponent.html" target="_self" >ReportingComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ReviewDuplicatesComponent.html" target="_self" >ReviewDuplicatesComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/RollCallComponent.html" target="_self" >RollCallComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/RollCallSetupComponent.html" target="_self" >RollCallSetupComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/SetupWizardComponent.html" target="_self" >SetupWizardComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/SubscriptionInfoComponent.html" target="_self" >SubscriptionInfoComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/UserListComponent.html" target="_self" >UserListComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                                <li>
+                                        <code>FontAwesomeModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/common/NgTemplateOutlet" target="_blank" >NgTemplateOutlet</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#extraClasses" >extraClasses</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#isBackButtonDisabled" >isBackButtonDisabled</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#parentUrl" >parentUrl</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#template" >template</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#viewContext" >viewContext</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#navigateBack" >navigateBack</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#disableBackButton" >disableBackButton</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#disableBackButton" >disableBackButton</a>
                             </li>
                             <li>
-                                <a href="#displayInPlace" >displayInPlace</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#displayInPlace" >displayInPlace</a>
                             </li>
                             <li>
-                                <a href="#navigateToParentBehaviour" >navigateToParentBehaviour</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#navigateToParentBehaviour" >navigateToParentBehaviour</a>
                             </li>
                             <li>
-                                <a href="#title" >title</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#title" >title</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>HostBindings</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#class" >class</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">HB</span><a href="#class" >class</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -439,6 +587,7 @@ for both dialog and routed views.</p>
         </table>
 </section>
 
+
     <section data-compodoc="block-properties">
     <h3>HostBindings</h3>    <table class="table table-sm table-bordered">
         <tbody>
@@ -519,6 +668,7 @@ for both dialog and routed views.</p>
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -922,6 +1072,24 @@ export class ViewTitleComponent implements AfterViewInit {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -937,7 +1105,6 @@ export class ViewTitleComponent implements AfterViewInit {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -116,12 +123,23 @@
   <li class="breadcrumb-item" >ActivityAttendance</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/attendance/model/activity-attendance.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" 
                 class="nav-link"
                 class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" 
@@ -133,13 +151,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/features/attendance/model/activity-attendance.ts</code>
-        </p>
-
 
             <p class="comment">
                 <h3>Description</h3>
@@ -160,232 +171,304 @@ to avoid problems keeping all information in sync in the database.</p>
 
 
 
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#activity" >activity</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#individualLogicalStatusCounts" >individualLogicalStatusCounts</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#individualStatusTypeCounts" >individualStatusTypeCounts</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#periodFrom" >periodFrom</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#periodTo" >periodTo</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#THRESHOLD_URGENT" >THRESHOLD_URGENT</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#THRESHOLD_WARNING" >THRESHOLD_WARNING</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#_isCustomizedType" class="deprecated-name">_isCustomizedType</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#_rev" >_rev</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#anonymized" >anonymized</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#color" >color</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#created" >created</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#DATABASE" >DATABASE</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#enableUserAccounts" >enableUserAccounts</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#ENTITY_TYPE" >ENTITY_TYPE</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#hasPII" >hasPII</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#icon" >icon</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#inactive" >inactive</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#isInternalEntity" >isInternalEntity</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#label" >label</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#schema" >schema</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier">Optional</span>
                                 <a href="#toBlockDetailsAttributes" >toBlockDetailsAttributes</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#toStringAttributes" >toStringAttributes</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#updated" >updated</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#countEventsAbsent" >countEventsAbsent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#countEventsPresent" >countEventsPresent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#countEventsTotal" >countEventsTotal</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#countEventsWithUnknownStatus" >countEventsWithUnknownStatus</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#countTotalAbsent" >countTotalAbsent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#countTotalPresent" >countTotalPresent</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#create" >create</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getAttendancePercentage" >getAttendancePercentage</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getAttendancePercentageAverage" >getAttendancePercentageAverage</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                     <span class="modifier"></span>
                                 <a href="#getColor" >getColor</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                     <span class="modifier"></span>
                                 <a href="#getWarningLevel" >getWarningLevel</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#recalculateStats" >recalculateStats</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#assertValid" >assertValid</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#copy" >copy</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#createPrefixedId" >createPrefixedId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#extractEntityIdFromId" >extractEntityIdFromId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#extractTypeFromId" >extractTypeFromId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#getColorWithConditions" >getColorWithConditions</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getConstructor" >getConstructor</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#getId" >getId</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getSchema" >getSchema</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#getType" >getType</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
 
 
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Accessors</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#events" >events</a>
-                                </li>
-                                <li>
-                                    <a href="#participants" >participants</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-        </tbody>
-    </table>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Accessors</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#events" >events</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#participants" >participants</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 </section>
 
 
@@ -665,7 +748,7 @@ to avoid problems keeping all information in sync in the database.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:93</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:93</a></code>
 </div>
                         </td>
                     </tr>
@@ -714,7 +797,7 @@ to avoid problems keeping all information in sync in the database.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:248</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:248</a></code>
 </div>
                         </td>
                     </tr>
@@ -763,7 +846,7 @@ to avoid problems keeping all information in sync in the database.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:269</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:269</a></code>
 </div>
                         </td>
                     </tr>
@@ -803,7 +886,7 @@ to avoid problems keeping all information in sync in the database.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:160</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:160</a></code>
 </div>
                         </td>
                     </tr>
@@ -857,7 +940,7 @@ to avoid problems keeping all information in sync in the database.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:254</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:254</a></code>
 </div>
                         </td>
                     </tr>
@@ -896,7 +979,7 @@ to avoid problems keeping all information in sync in the database.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:79</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:79</a></code>
 </div>
                         </td>
                     </tr>
@@ -937,7 +1020,7 @@ to avoid problems keeping all information in sync in the database.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:124</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:124</a></code>
 </div>
                         </td>
                     </tr>
@@ -983,7 +1066,7 @@ When true, the UI will allow management of user accounts associated with this en
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:74</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:74</a></code>
 </div>
                         </td>
                     </tr>
@@ -1030,7 +1113,7 @@ The type needs to be used as routing path in lower case. The routing path can be
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:233</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:233</a></code>
 </div>
                         </td>
                     </tr>
@@ -1072,7 +1155,7 @@ and offer a function to anonymize records.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:151</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:151</a></code>
 </div>
                         </td>
                     </tr>
@@ -1121,7 +1204,7 @@ and offer a function to anonymize records.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:263</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:263</a></code>
 </div>
                         </td>
                     </tr>
@@ -1156,7 +1239,7 @@ and offer a function to anonymize records.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:118</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:118</a></code>
 </div>
                         </td>
                     </tr>
@@ -1198,7 +1281,7 @@ and not visible to the user for customization.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:111</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:111</a></code>
 </div>
                         </td>
                     </tr>
@@ -1238,7 +1321,7 @@ and not visible to the user for customization.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:87</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:87</a></code>
 </div>
                         </td>
                     </tr>
@@ -1281,7 +1364,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:106</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:106</a></code>
 </div>
                         </td>
                     </tr>
@@ -1326,7 +1409,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:101</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:101</a></code>
 </div>
                         </td>
                     </tr>
@@ -1377,7 +1460,7 @@ This can be overwritten in subclasses or through the config.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:260</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:260</a></code>
 </div>
                         </td>
                     </tr>
@@ -1944,7 +2027,7 @@ The count of unknown status can indicate if manual checking and corrections are 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:261</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:261</a></code>
 </div>
                         </td>
                     </tr>
@@ -2020,7 +2103,7 @@ The count of unknown status can indicate if manual checking and corrections are 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:242</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:242</a></code>
 </div>
                         </td>
                     </tr>
@@ -2132,7 +2215,7 @@ The count of unknown status can indicate if manual checking and corrections are 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:506</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:506</a></code>
 </div>
                         </td>
                     </tr>
@@ -2179,7 +2262,7 @@ The count of unknown status can indicate if manual checking and corrections are 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:476</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:476</a></code>
 </div>
                         </td>
                     </tr>
@@ -2269,7 +2352,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:218</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:218</a></code>
 </div>
                         </td>
                     </tr>
@@ -2367,7 +2450,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:197</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:197</a></code>
 </div>
                         </td>
                     </tr>
@@ -2449,7 +2532,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:183</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:183</a></code>
 </div>
                         </td>
                     </tr>
@@ -2531,7 +2614,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:407</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:407</a></code>
 </div>
                         </td>
                     </tr>
@@ -2606,7 +2689,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:330</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:330</a></code>
 </div>
                         </td>
                     </tr>
@@ -2653,7 +2736,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:349</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:349</a></code>
 </div>
                         </td>
                     </tr>
@@ -2735,7 +2818,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:337</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:337</a></code>
 </div>
                         </td>
                     </tr>
@@ -2782,7 +2865,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/Entity.html#source" target="_self" >Entity:360</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:360</a></code>
 </div>
                         </td>
                     </tr>
@@ -2807,6 +2890,7 @@ to avoid shared mutable state between original and copy.</p>
         </tbody>
     </table>
 </section>
+
 
 
 
@@ -3229,6 +3313,24 @@ export class ActivityAttendance extends Entity {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -3244,7 +3346,6 @@ export class ActivityAttendance extends Entity {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -110,10 +117,19 @@
   RelatedEntitiesWithSummaryComponent</li>
 </ol>
 
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/entity-details/related-entities-with-summary/related-entities-with-summary.component.ts</code>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a href="#info" class="nav-link active"
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
         </li>
         <li class="nav-item">
             <a href="#source" class="nav-link"
@@ -130,14 +146,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane fade active in" id="info"><p class="comment">
-    <h3>File</h3>
-</p>
-<p class="comment">
-    <code>src/app/core/entity-details/related-entities-with-summary/related-entities-with-summary.component.ts</code>
-</p>
-
-
+    <div class="tab-pane fade active in" id="info">
     <p class="comment">
         <h3>Description</h3>
     </p>
@@ -151,10 +160,15 @@ including a summary below the table.</p>
         <h3>Extends</h3>
     </p>
     <p class="comment">
-                    <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent</a></code>
+                    <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent&lt;E&gt;</a></code>
     </p>
 
 
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
 
 <section data-compodoc="block-metadata">
     <h3>Metadata</h3>
@@ -181,14 +195,21 @@ including a summary below the table.</p>
                 <td class="col-md-9"><code>app-related-entities-with-summary</code></td>
             </tr>
 
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
 
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                                <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
-                                <code><a href="../components/CustomFormLinkButtonComponent.html" target="_self" >CustomFormLinkButtonComponent</a></code>
+                        <div>        <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/CustomFormLinkButtonComponent.html" target="_self" >CustomFormLinkButtonComponent</a></code>
+</div>
                 </td>
             </tr>
+
 
 
 
@@ -209,49 +230,82 @@ including a summary below the table.</p>
     </table>
 </section>
 
-    <section data-compodoc="block-index">
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/CustomFormLinkButtonComponent.html" target="_self" >CustomFormLinkButtonComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/RelatedEntitiesComponent.html" target="_self" >RelatedEntitiesComponent&lt;E&gt;</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
-    <table class="table table-sm table-bordered index-table">
-        <tbody>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Properties</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#summary" >summary</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#_columns" >_columns</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#columnsToDisplay" >columnsToDisplay</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#dataSource" >dataSource</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#entityCtr" >entityCtr</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#filterObj" >filterObj</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#filterService" >filterService</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Readonly</span>
                                 <a href="#relationProperty" >relationProperty</a>
@@ -259,99 +313,110 @@ including a summary below the table.</p>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Methods</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#createNewRecordFactory" >createNewRecordFactory</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#getColumns" >getColumns</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#getDefaultColumns" >getDefaultColumns</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#getProperty" >getProperty</a>
                             </li>
                             <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#initFilter" >initFilter</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Inputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#summaries" >summaries</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#summaries" >summaries</a>
                             </li>
                             <li>
-                                <a href="#clickMode" >clickMode</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#clickMode" >clickMode</a>
                             </li>
                             <li>
-                                <a href="#columns" >columns</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#columns" >columns</a>
                             </li>
                             <li>
-                                <a href="#editable" >editable</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#editable" >editable</a>
                             </li>
                             <li>
-                                <a href="#entity" >entity</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entity" >entity</a>
                             </li>
                             <li>
-                                <a href="#entityType" >entityType</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#entityType" >entityType</a>
                             </li>
                             <li>
-                                <a href="#filter" >filter</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#filter" >filter</a>
                             </li>
                             <li>
-                                <a href="#loaderMethod" >loaderMethod</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#loaderMethod" >loaderMethod</a>
                             </li>
                             <li>
-                                <a href="#property" >property</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#property" >property</a>
                             </li>
                             <li>
-                                <a href="#showInactive" >showInactive</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#showInactive" >showInactive</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
                 <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-3">
                         <h6><b>Outputs</b></h6>
                     </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
+                    <td class="col-md-9">
                         <ul class="index-list">
                             <li>
-                                <a href="#showInactive" >showInactive</a>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#showInactive" >showInactive</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+        </table>
 
 
 
-        </tbody>
-    </table>
 </section>
 
 
@@ -411,7 +476,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:119</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:119</a></code>
 </div>
                             </td>
                         </tr>
@@ -444,7 +509,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:81</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:81</a></code>
 </div>
                             </td>
                         </tr>
@@ -483,7 +548,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:120</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:120</a></code>
 </div>
                             </td>
                         </tr>
@@ -511,7 +576,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:55</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:55</a></code>
 </div>
                             </td>
                         </tr>
@@ -545,7 +610,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:58</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:58</a></code>
 </div>
                             </td>
                         </tr>
@@ -579,7 +644,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:112</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:112</a></code>
 </div>
                             </td>
                         </tr>
@@ -613,7 +678,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:75</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:75</a></code>
 </div>
                             </td>
                         </tr>
@@ -647,7 +712,7 @@ including a summary below the table.</p>
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:70</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:70</a></code>
 </div>
                             </td>
                         </tr>
@@ -692,7 +757,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:117</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:117</a></code>
 </div>
                             </td>
                         </tr>
@@ -705,6 +770,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
             </tbody>
         </table>
 </section>
+
     <section data-compodoc="block-outputs">
     <h3 id="outputs">Outputs</h3>
         <table class="table table-sm table-bordered">
@@ -729,7 +795,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                             </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:117</a></code>
+                                    <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:117</a></code>
 </div>
                             </td>
                         </tr>
@@ -742,6 +808,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
             </tbody>
         </table>
 </section>
+
 
 
     <section data-compodoc="block-methods">
@@ -775,7 +842,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:312</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:312</a></code>
 </div>
                         </td>
                     </tr>
@@ -820,7 +887,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:329</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:329</a></code>
 </div>
                         </td>
                     </tr>
@@ -895,7 +962,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:325</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:325</a></code>
 </div>
                         </td>
                     </tr>
@@ -940,7 +1007,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:186</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:186</a></code>
 </div>
                         </td>
                     </tr>
@@ -988,7 +1055,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:233</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:233</a></code>
 </div>
                         </td>
                     </tr>
@@ -1006,6 +1073,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
         </tbody>
     </table>
 </section>
+
     <section data-compodoc="block-properties">
     
     <h3 id="inputs">
@@ -1088,7 +1156,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:83</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:83</a></code>
 </div>
                         </td>
                     </tr>
@@ -1136,7 +1204,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:98</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:98</a></code>
 </div>
                         </td>
                     </tr>
@@ -1175,7 +1243,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:52</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:52</a></code>
 </div>
                         </td>
                     </tr>
@@ -1223,7 +1291,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:122</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:122</a></code>
 </div>
                         </td>
                     </tr>
@@ -1262,7 +1330,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:143</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:143</a></code>
 </div>
                         </td>
                     </tr>
@@ -1301,7 +1369,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:50</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -1352,7 +1420,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:131</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:131</a></code>
 </div>
                         </td>
                     </tr>
@@ -1569,6 +1637,24 @@ export class RelatedEntitiesWithSummaryComponent&lt;
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -1584,7 +1670,6 @@ export class RelatedEntitiesWithSummaryComponent&lt;
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 

@@ -84,7 +84,14 @@
         </div>
 
         <div class="xs-menu menu" id="mobile-menu">
-                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
         </div>
 
         <div class="container-fluid main">
@@ -106,6 +113,11 @@
     <li class="breadcrumb-item">Modules</li>
     <li class="breadcrumb-item" >StorybookBaseModule</li>
 </ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/utils/storybook-base.module.ts</code>
+</div>
 
 <div class="text-center module-graph-container">
     <div id="module-graph-svg">
@@ -144,17 +156,17 @@
 <polygon fill="none" stroke="black" points="16,-78 16,-130 1419,-130 1419,-78 16,-78"/>
 </g>
 <!-- CoreModule -->
-<g id="node1" class="node">
+<g id="node1" class="node"><a xlink:href="../modules/CoreModule.html" href="../modules/CoreModule.html" target="_top">
 <title>CoreModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="1521.26,-122 1518.26,-126 1497.26,-126 1494.26,-122 1434.74,-122 1434.74,-86 1521.26,-86 1521.26,-122"/>
 <text text-anchor="middle" x="1478" y="-99.8" font-family="Times,serif" font-size="14.00">CoreModule</text>
-</g>
+</a></g>
 <!-- StorybookBaseModule -->
-<g id="node2" class="node">
+<g id="node2" class="node"><a xlink:href="../modules/StorybookBaseModule.html" href="../modules/StorybookBaseModule.html" target="_top">
 <title>StorybookBaseModule</title>
 <polygon fill="#8dd3c7" stroke="black" points="876.59,-187 873.59,-191 852.59,-191 849.59,-187 731.41,-187 731.41,-151 876.59,-151 876.59,-187"/>
 <text text-anchor="middle" x="804" y="-164.8" font-family="Times,serif" font-size="14.00">StorybookBaseModule</text>
-</g>
+</a></g>
 <!-- CoreModule&#45;&gt;StorybookBaseModule -->
 <g id="edge1" class="edge">
 <title>CoreModule&#45;&gt;StorybookBaseModule</title>
@@ -162,11 +174,11 @@
 <polygon fill="black" stroke="black" points="886.77,-174.5 876.77,-178 886.77,-181.5 886.77,-174.5"/>
 </g>
 <!-- AnalyticsService -->
-<g id="node3" class="node">
+<g id="node3" class="node"><a xlink:href="../injectables/AnalyticsService.html" href="../injectables/AnalyticsService.html" target="_top">
 <title>AnalyticsService</title>
 <ellipse fill="#fdb462" stroke="black" cx="1334" cy="-104" rx="77" ry="18"/>
 <text text-anchor="middle" x="1334" y="-99.8" font-family="Times,serif" font-size="14.00">AnalyticsService</text>
-</g>
+</a></g>
 <!-- AnalyticsService&#45;&gt;StorybookBaseModule -->
 <g id="edge2" class="edge">
 <title>AnalyticsService&#45;&gt;StorybookBaseModule</title>
@@ -174,11 +186,11 @@
 <polygon fill="black" stroke="black" points="886.58,-165.5 876.58,-169 886.58,-172.5 886.58,-165.5"/>
 </g>
 <!-- DatabaseResolverService -->
-<g id="node4" class="node">
+<g id="node4" class="node"><a xlink:href="../injectables/DatabaseResolverService.html" href="../injectables/DatabaseResolverService.html" target="_top">
 <title>DatabaseResolverService</title>
 <ellipse fill="#fdb462" stroke="black" cx="1129" cy="-104" rx="109.91" ry="18"/>
 <text text-anchor="middle" x="1129" y="-99.8" font-family="Times,serif" font-size="14.00">DatabaseResolverService</text>
-</g>
+</a></g>
 <!-- DatabaseResolverService&#45;&gt;StorybookBaseModule -->
 <g id="edge3" class="edge">
 <title>DatabaseResolverService&#45;&gt;StorybookBaseModule</title>
@@ -186,11 +198,11 @@
 <polygon fill="black" stroke="black" points="886.94,-156.5 876.94,-160 886.94,-163.5 886.94,-156.5"/>
 </g>
 <!-- EntityActionsService -->
-<g id="node5" class="node">
+<g id="node5" class="node"><a xlink:href="../injectables/EntityActionsService.html" href="../injectables/EntityActionsService.html" target="_top">
 <title>EntityActionsService</title>
 <ellipse fill="#fdb462" stroke="black" cx="908" cy="-104" rx="93.77" ry="18"/>
 <text text-anchor="middle" x="908" y="-99.8" font-family="Times,serif" font-size="14.00">EntityActionsService</text>
-</g>
+</a></g>
 <!-- EntityActionsService&#45;&gt;StorybookBaseModule -->
 <g id="edge4" class="edge">
 <title>EntityActionsService&#45;&gt;StorybookBaseModule</title>
@@ -198,11 +210,11 @@
 <polygon fill="black" stroke="black" points="841.96,-140.86 845.45,-150.86 848.96,-140.86 841.96,-140.86"/>
 </g>
 <!-- KeycloakAuthService -->
-<g id="node6" class="node">
+<g id="node6" class="node"><a xlink:href="../injectables/KeycloakAuthService.html" href="../injectables/KeycloakAuthService.html" target="_top">
 <title>KeycloakAuthService</title>
 <ellipse fill="#fdb462" stroke="black" cx="700" cy="-104" rx="96.11" ry="18"/>
 <text text-anchor="middle" x="700" y="-99.8" font-family="Times,serif" font-size="14.00">KeycloakAuthService</text>
-</g>
+</a></g>
 <!-- KeycloakAuthService&#45;&gt;StorybookBaseModule -->
 <g id="edge5" class="edge">
 <title>KeycloakAuthService&#45;&gt;StorybookBaseModule</title>
@@ -210,11 +222,11 @@
 <polygon fill="black" stroke="black" points="760.38,-140.55 763.88,-150.55 767.38,-140.55 760.38,-140.55"/>
 </g>
 <!-- SessionSubject -->
-<g id="node7" class="node">
+<g id="node7" class="node"><a xlink:href="../injectables/SessionSubject.html" href="../injectables/SessionSubject.html" target="_top">
 <title>SessionSubject</title>
 <ellipse fill="#fdb462" stroke="black" cx="516" cy="-104" rx="69.52" ry="18"/>
 <text text-anchor="middle" x="516" y="-99.8" font-family="Times,serif" font-size="14.00">SessionSubject</text>
-</g>
+</a></g>
 <!-- SessionSubject&#45;&gt;StorybookBaseModule -->
 <g id="edge6" class="edge">
 <title>SessionSubject&#45;&gt;StorybookBaseModule</title>
@@ -222,11 +234,11 @@
 <polygon fill="black" stroke="black" points="721.33,-163.5 731.33,-160 721.33,-156.5 721.33,-163.5"/>
 </g>
 <!-- StaticDefaultValueService -->
-<g id="node8" class="node">
+<g id="node8" class="node"><a xlink:href="../injectables/StaticDefaultValueService.html" href="../injectables/StaticDefaultValueService.html" target="_top">
 <title>StaticDefaultValueService</title>
 <ellipse fill="#fdb462" stroke="black" cx="314" cy="-104" rx="113.99" ry="18"/>
 <text text-anchor="middle" x="314" y="-99.8" font-family="Times,serif" font-size="14.00">StaticDefaultValueService</text>
-</g>
+</a></g>
 <!-- StaticDefaultValueService&#45;&gt;StorybookBaseModule -->
 <g id="edge7" class="edge">
 <title>StaticDefaultValueService&#45;&gt;StorybookBaseModule</title>
@@ -234,11 +246,11 @@
 <polygon fill="black" stroke="black" points="721.44,-172.5 731.44,-169 721.44,-165.5 721.44,-172.5"/>
 </g>
 <!-- SyncStateSubject -->
-<g id="node9" class="node">
+<g id="node9" class="node"><a xlink:href="../injectables/SyncStateSubject.html" href="../injectables/SyncStateSubject.html" target="_top">
 <title>SyncStateSubject</title>
 <ellipse fill="#fdb462" stroke="black" cx="103" cy="-104" rx="78.75" ry="18"/>
 <text text-anchor="middle" x="103" y="-99.8" font-family="Times,serif" font-size="14.00">SyncStateSubject</text>
-</g>
+</a></g>
 <!-- SyncStateSubject&#45;&gt;StorybookBaseModule -->
 <g id="edge8" class="edge">
 <title>SyncStateSubject&#45;&gt;StorybookBaseModule</title>
@@ -276,13 +288,6 @@
 
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
-
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/app/utils/storybook-base.module.ts</code>
-        </p>
 
 
 
@@ -336,6 +341,47 @@
                 </div>
             </div>
         </div>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../modules/CoreModule.html" target="_self" >CoreModule</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/AnalyticsService.html" target="_self" >AnalyticsService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/DatabaseResolverService.html" target="_self" >DatabaseResolverService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/EntityActionsService.html" target="_self" >EntityActionsService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/KeycloakAuthService.html" target="_self" >KeycloakAuthService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/SessionSubject.html" target="_self" >SessionSubject</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/StaticDefaultValueService.html" target="_self" >StaticDefaultValueService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/SyncStateSubject.html" target="_self" >SyncStateSubject</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
 
         <section data-compodoc="block-methods">
     
@@ -416,6 +462,7 @@
         </tbody>
     </table>
 </section>
+
     </div>
 
 
@@ -705,6 +752,7 @@ export class StorybookBaseModule {
 
 
 
+
                    </div><div class="search-results">
     <div class="has-results">
         <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
@@ -737,6 +785,24 @@ export class StorybookBaseModule {
 
        <script>
                $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
                checkToggle(darkModeState);
                if ($darkModeToggleSwitchers.length > 0) {
                     for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
@@ -752,7 +818,6 @@ export class StorybookBaseModule {
        <script src="../js/libs/lit-html.js"></script>
 
        <script src="../js/menu-wc.js" defer></script>
-       <script nomodule src="../js/menu-wc_es5.js" defer></script>
 
        <script src="../js/libs/bootstrap-native.js"></script>
 
