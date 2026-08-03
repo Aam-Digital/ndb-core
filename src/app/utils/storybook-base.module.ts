@@ -10,7 +10,7 @@ import { ConfigService } from "../core/config/config.service";
 import { AbilityService } from "../core/permissions/ability/ability.service";
 import { BehaviorSubject, EMPTY, of, Subject } from "rxjs";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
-import { defineAbility, PureAbility } from "@casl/ability";
+import { Ability, defineAbility } from "@casl/ability";
 import { ComponentRegistry, componentRegistry } from "../dynamic-components";
 import { Entity } from "../core/entity/model/entity";
 import {
@@ -237,7 +237,7 @@ export const entityFormStorybookDefaultParameters = {
     AnalyticsService,
     EntityActionsService,
     SessionSubject,
-    PureAbility,
+    Ability,
     KeycloakAuthService,
     KeycloakService,
     DatabaseResolverService,

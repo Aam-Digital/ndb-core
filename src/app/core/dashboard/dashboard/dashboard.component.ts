@@ -33,8 +33,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { AblePurePipe } from "@casl/angular";
-import { AsyncPipe } from "@angular/common";
+import { AblePipe } from "@casl/angular";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 @RouteTarget("Dashboard")
@@ -49,8 +48,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatIconButton,
     FaIconComponent,
     RouterLink,
-    AblePurePipe,
-    AsyncPipe,
+    AblePipe,
     MatTooltipModule,
   ],
 })

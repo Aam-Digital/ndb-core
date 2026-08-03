@@ -1,6 +1,6 @@
 import { NgModule, inject } from "@angular/core";
 import { UserRoleGuard } from "./permission-guard/user-role.guard";
-import { PureAbility } from "@casl/ability";
+import { Ability } from "@casl/ability";
 import { EntityAbility } from "./ability/entity-ability";
 import { AbilityService } from "./ability/ability.service";
 import { EntityPermissionGuard } from "./permission-guard/entity-permission.guard";
@@ -12,7 +12,7 @@ import { EntityPermissionGuard } from "./permission-guard/entity-permission.guar
     AbilityService,
     EntityAbility,
     {
-      provide: PureAbility,
+      provide: Ability,
       useExisting: EntityAbility,
     },
   ],

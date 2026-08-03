@@ -1,5 +1,4 @@
 import { EntityTypePipe } from "#src/app/core/common-components/entity-type/entity-type.pipe";
-import { AsyncPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,7 +18,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { AblePurePipe } from "@casl/angular";
+import { AblePipe } from "@casl/angular";
 import {
   FaIconComponent,
   FontAwesomeModule,
@@ -104,8 +103,7 @@ export interface MatchingSide extends MatchingSideConfig {
     MatIconButton,
     FaIconComponent,
     RouterLink,
-    AblePurePipe,
-    AsyncPipe,
+    AblePipe,
     EntityTypePipe,
   ],
 })

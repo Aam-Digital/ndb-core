@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { ValidatorFn } from "@angular/forms";
-import { Ability, subject } from "@casl/ability";
+import { createMongoAbility, MongoAbility, subject } from "@casl/ability";
 import { Entity } from "../../../entity/model/entity";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
@@ -107,7 +107,7 @@ export class PermissionConditionValidatorsService {
 interface FieldDecision {
   fragment: any;
   inverted: boolean;
-  matcher: Ability;
+  matcher: MongoAbility;
 }
 
 /**
@@ -132,7 +132,7 @@ interface FieldDecision {
  *   (database-format) condition value, e.g. resolving enum ids to labels
  */
 export function buildPermissionConditionValidator(
-  rules: RuleWithConditions[],
+  rules: readonly RuleWithConditions[],
   fieldId: string,
   toDbFormat: (value: any) => any = (value) => value,
   formatValue?: (value: any) => string,
@@ -231,7 +231,7 @@ function createFieldDecision(
   return {
     fragment,
     inverted: !!rule.inverted,
-    matcher: new Ability([
+    matcher: createMongoAbility([
       {
         action: MATCH_ACTION,
         subject: MATCH_SUBJECT,

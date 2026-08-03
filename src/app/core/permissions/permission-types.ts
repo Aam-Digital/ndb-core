@@ -1,4 +1,4 @@
-import { Ability, RawRuleOf } from "@casl/ability";
+import { MongoAbility, RawRuleOf } from "@casl/ability";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 
 /**
@@ -30,7 +30,9 @@ export type EntitySubject = EntityConstructor | Entity | string;
  * The format that the JSON defined rules need to have.
  * In the JSON object the Entities can be specified by using their ENTITY_TYPE string representation.
  */
-export type DatabaseRule = RawRuleOf<Ability<[EntityActionPermission, string]>>;
+export type DatabaseRule = RawRuleOf<
+  MongoAbility<[EntityActionPermission, string]>
+>;
 
 /**
  * Section keys in {@link DatabaseRules} that carry special semantics instead of

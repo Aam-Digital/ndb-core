@@ -48,7 +48,7 @@ import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
-import { AblePurePipe } from "@casl/angular";
+import { AblePipe } from "@casl/angular";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
@@ -94,7 +94,7 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
     MatTooltipModule,
     EntityCreateButtonComponent,
     AsyncPipe,
-    AblePurePipe,
+    AblePipe,
     ViewActionsComponent,
     EntityLoadPipe,
     EntityBulkActionsComponent,

@@ -12,7 +12,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
-import { AblePurePipe } from "@casl/angular";
+import { AblePipe } from "@casl/angular";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { Angulartics2OnModule } from "angulartics2";
@@ -43,7 +43,7 @@ import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
   templateUrl: "./entity-details.component.html",
   styleUrls: ["./entity-details.component.scss"],
   imports: [
-    AblePurePipe,
+    AblePipe,
     MatButtonModule,
     MatMenuModule,
     FontAwesomeModule,
