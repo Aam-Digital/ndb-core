@@ -169,9 +169,15 @@ state) but never written:
 - the shared `_default` and `_public` sections (and their legacy `default` / `public` spellings)
 - managed `[system-default]` rules written by the backend
 
-A role whose access comes from any of those is shown **checked but read-only** with a lock
-icon, because removing that grant would affect other entity types. Such rules can only be
-changed in the JSON editor.
+A role whose *effective* access is decided by one of those rules is shown **read-only** with
+a lock icon, because the dialog cannot change such a rule without affecting other entity
+types. The checkboxes then show what the role can actually do: a non-editable grant renders
+as checked, while a matching `"inverted": true` rule renders as unchecked, since CASL
+resolves the denial in favour of revoking the grant. Read-only rows are never written back,
+so only the JSON editor can change them.
+
+Whenever at least one row is read-only, the dialog says so and links to the advanced
+(JSON) editor.
 
 > **Note:** in the default config, `user_app` and `admin_app` hold `{ subject: "all", action: "manage" }`,
 > so both appear locked. Editable rows appear for roles without such a blanket rule.
@@ -179,8 +185,18 @@ changed in the JSON editor.
 Every save first stores a timestamped backup document (`Config:Permissions:<timestamp>`)
 and offers an "Undo" action.
 
+The one case in which the dialog writes a `_default` section is the very first save on an
+instance that has no permissions config at all: an absent config means "everyone may do
+everything", so `_default: [{ subject: "all", action: "manage" }]` is seeded alongside the
+new rule to avoid locking every logged-in user out of everything else.
+
+Who may open the dialog is derived from CASL (`update` on `Config`), not from a hardcoded
+role name, so an instance that grants permission editing to a role other than `admin_app`
+gets the same UI.
+
 _Key files:_ `feature-permission/feature-permission.service.ts` (rule reading/writing),
-`feature-permission/feature-permission-dialog/`, `feature-permission/feature-permission-banner/`.
+`feature-permission/feature-permission-dialog/`, `feature-permission/feature-permission-banner/`,
+`permissions-config.service.ts` (shared loading, backup/undo and admin check).
 
 ### Restricting access (inverted rules)
 

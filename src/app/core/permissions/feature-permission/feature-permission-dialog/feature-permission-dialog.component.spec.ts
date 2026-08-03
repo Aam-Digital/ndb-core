@@ -3,11 +3,12 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { provideRouter } from "@angular/router";
 import { of, throwError } from "rxjs";
 import { FeaturePermissionDialogComponent } from "./feature-permission-dialog.component";
 import { FeaturePermissionService } from "../feature-permission.service";
+import { PermissionsConfigService } from "../../permissions-config.service";
 import { UserAdminService } from "../../../user/user-admin-service/user-admin.service";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../../config/config";
 
 describe("FeaturePermissionDialogComponent", () => {
@@ -19,16 +20,13 @@ describe("FeaturePermissionDialogComponent", () => {
     setPermissions: ReturnType<typeof vi.fn>;
     getConfiguredRoleNames: ReturnType<typeof vi.fn>;
   };
+  let mockPermissionsConfig: { offerUndo: ReturnType<typeof vi.fn> };
   let mockUserAdmin: { getAllRoles: ReturnType<typeof vi.fn> };
-  let mockEntityMapper: {
-    load: ReturnType<typeof vi.fn>;
-    save: ReturnType<typeof vi.fn>;
-    remove: ReturnType<typeof vi.fn>;
-  };
   let mockDialogRef: { close: ReturnType<typeof vi.fn> };
   let mockSnackBar: { open: ReturnType<typeof vi.fn> };
 
   const ENTITY_TYPE = "TemplateExport";
+  const backupConfig = new Config(Config.PERMISSION_KEY + ":backup", {});
 
   /** default state: one read-only wildcard role and one editable role */
   function defaultState() {
@@ -51,24 +49,18 @@ describe("FeaturePermissionDialogComponent", () => {
   beforeEach(async () => {
     mockPermissionService = {
       getPermissions: vi.fn().mockResolvedValue(defaultState()),
-      setPermissions: vi
-        .fn()
-        .mockResolvedValue(new Config(Config.PERMISSION_KEY + ":backup", {})),
+      setPermissions: vi.fn().mockResolvedValue(backupConfig),
       getConfiguredRoleNames: vi
         .fn()
         .mockResolvedValue(["user_app", "assistant_app"]),
     };
+    mockPermissionsConfig = { offerUndo: vi.fn() };
     mockUserAdmin = {
       getAllRoles: vi
         .fn()
         .mockReturnValue(
           of([{ id: "1", name: "user_app", description: "App user" }]),
         ),
-    };
-    mockEntityMapper = {
-      load: vi.fn(),
-      save: vi.fn().mockResolvedValue(undefined),
-      remove: vi.fn().mockResolvedValue(undefined),
     };
     mockDialogRef = { close: vi.fn() };
     mockSnackBar = {
@@ -82,9 +74,13 @@ describe("FeaturePermissionDialogComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
+        provideRouter([]),
         { provide: FeaturePermissionService, useValue: mockPermissionService },
+        {
+          provide: PermissionsConfigService,
+          useValue: mockPermissionsConfig,
+        },
         { provide: UserAdminService, useValue: mockUserAdmin },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: MatSnackBar, useValue: mockSnackBar },
         {
@@ -121,6 +117,8 @@ describe("FeaturePermissionDialogComponent", () => {
         use: true,
         manage: true,
         editable: false,
+        useAriaLabel: expect.stringContaining("user_app"),
+        manageAriaLabel: expect.stringContaining("user_app"),
       },
       {
         role: "assistant_app",
@@ -128,8 +126,11 @@ describe("FeaturePermissionDialogComponent", () => {
         use: false,
         manage: false,
         editable: true,
+        useAriaLabel: expect.stringContaining("assistant_app"),
+        manageAriaLabel: expect.stringContaining("assistant_app"),
       },
     ]);
+    expect(component.hasComplexRules()).toBe(true);
   });
 
   it("should fall back to config roles when the auth server is unavailable", async () => {
@@ -155,20 +156,23 @@ describe("FeaturePermissionDialogComponent", () => {
     expect(mockPermissionService.getPermissions).not.toHaveBeenCalled();
   });
 
-  it("should update a role immutably via setManage", async () => {
+  it("should update a role immutably via setUse and setManage", async () => {
     await createAndInit();
     const before = component.roles();
 
     component.setManage("assistant_app", true);
+    component.setUse("assistant_app", true);
 
     const after = component.roles();
     expect(after).not.toBe(before); // new array reference -> OnPush re-renders
-    expect(after?.find((r) => r.role === "assistant_app")?.manage).toBe(true);
+    expect(after?.find((r) => r.role === "assistant_app")).toEqual(
+      expect.objectContaining({ use: true, manage: true }),
+    );
     // other rows untouched
     expect(after?.find((r) => r.role === "user_app")?.manage).toBe(true);
   });
 
-  it("should persist only editable rows on confirm", async () => {
+  it("should persist only editable rows on confirm and offer an undo", async () => {
     await createAndInit();
 
     await component.confirm();
@@ -177,6 +181,24 @@ describe("FeaturePermissionDialogComponent", () => {
       ENTITY_TYPE,
       [{ role: "assistant_app", use: false, manage: false }],
     );
+    expect(mockPermissionsConfig.offerUndo).toHaveBeenCalledWith(
+      backupConfig,
+      expect.any(String),
+    );
     expect(mockDialogRef.close).toHaveBeenCalledWith(true);
+  });
+
+  it("should keep the dialog open and warn when saving fails", async () => {
+    mockPermissionService.setPermissions.mockRejectedValue(
+      new Error("database unreachable"),
+    );
+
+    await createAndInit();
+    await component.confirm();
+
+    expect(mockSnackBar.open).toHaveBeenCalled();
+    expect(mockPermissionsConfig.offerUndo).not.toHaveBeenCalled();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
+    expect(component.saving()).toBe(false);
   });
 });

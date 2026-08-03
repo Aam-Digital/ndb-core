@@ -1,15 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   input,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
-import { FeaturePermissionService } from "../feature-permission.service";
+import { PermissionsConfigService } from "../../permissions-config.service";
 import {
   FeaturePermissionDialogComponent,
   FeaturePermissionDialogData,
@@ -26,20 +26,19 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-feature-permission-banner",
   templateUrl: "./feature-permission-banner.component.html",
-  styleUrl: "./feature-permission-banner.component.scss",
   imports: [HintBoxComponent, MatButtonModule],
 })
 export class FeaturePermissionBannerComponent {
-  private readonly permissionService = inject(FeaturePermissionService);
+  private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly dialog = inject(MatDialog);
 
   /** the feature entity type whose permissions are managed here */
   readonly entityType = input.required<EntityConstructor>();
 
   /** whether the current user may edit the permissions config */
-  readonly canManage = computed(() =>
-    this.permissionService.hasAdminPermission(),
-  );
+  readonly canManage = toSignal(this.permissionsConfig.canManagePermissions$, {
+    initialValue: false,
+  });
 
   openDialog(): void {
     const entityConstructor = this.entityType();

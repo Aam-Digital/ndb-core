@@ -27,11 +27,7 @@
       }
     </app-view-actions>
 
-    @if (managePermissions() && entityConstructor()) {
-      <app-feature-permission-banner
-        [entityType]="entityConstructor()!"
-      ></app-feature-permission-banner>
-    }
+    <ng-container *ngTemplateOutlet="permissionBanner"></ng-container>
 
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
@@ -92,11 +88,7 @@
       </div>
     </app-view-actions>
 
-    @if (managePermissions() && entityConstructor()) {
-      <app-feature-permission-banner
-        [entityType]="entityConstructor()!"
-      ></app-feature-permission-banner>
-    }
+    <ng-container *ngTemplateOutlet="permissionBanner"></ng-container>
 
     @if (selectedRows()) {
       <div class="bulk-action-spacing">
@@ -109,6 +101,14 @@
 }
 
 <!-- Templates and menus for both mobile and desktop -->
+
+<ng-template #permissionBanner>
+  @if (managePermissions() && entityConstructor(); as featureEntity) {
+    <app-feature-permission-banner
+      [entityType]="featureEntity"
+    ></app-feature-permission-banner>
+  }
+</ng-template>
 
 <ng-template #filterDialog>
   <mat-form-field class="full-width filter-field">

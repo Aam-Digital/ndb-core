@@ -1,3 +1,5 @@
+@use "variables/colors";
+
 .permission-table {
   border-collapse: collapse;
   margin-top: 8px;
@@ -9,12 +11,11 @@
   }
 
   thead th {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    font-weight: 500;
+    border-bottom: 1px solid colors.$border-color;
   }
 
   tbody tr:not(:last-child) td {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid colors.$border-color;
   }
 
   .checkbox-col {
@@ -34,10 +35,6 @@
     margin-left: 6px;
     font-size: 0.85em;
     opacity: 0.7;
-  }
-
-  .role-name {
-    font-weight: 500;
   }
 
   .role-description {

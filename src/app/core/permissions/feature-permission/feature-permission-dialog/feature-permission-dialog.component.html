@@ -18,6 +18,23 @@
       Select which user roles can use or manage this feature.
     </p>
 
+    @if (hasComplexRules()) {
+      <app-hint-box type="info">
+        <span i18n="Feature permission dialog complex rules hint">
+          Some roles are shown read-only because their access comes from a
+          global or advanced permission rule.
+        </span>
+        <a
+          mat-button
+          color="accent"
+          routerLink="/admin/user-roles"
+          mat-dialog-close
+          i18n="Open advanced permissions editor link"
+          >Open advanced editor</a
+        >
+      </app-hint-box>
+    }
+
     <table class="permission-table full-width">
       <thead>
         <tr>
@@ -44,7 +61,7 @@
         @for (row of roles(); track row.role) {
           <tr [class.readonly-row]="!row.editable">
             <td>
-              <span class="role-name">{{ row.role }}</span>
+              <strong>{{ row.role }}</strong>
               @if (!row.editable) {
                 <fa-icon
                   icon="lock"
@@ -68,7 +85,7 @@
                   [checked]="row.use || row.manage"
                   [disabled]="!row.editable || row.manage"
                   (change)="setUse(row.role, $event.checked)"
-                  [attr.aria-label]="'Use ' + entityLabel + ' as ' + row.role"
+                  [attr.aria-label]="row.useAriaLabel"
                 ></mat-checkbox>
               </span>
             </td>
@@ -77,7 +94,7 @@
                 [checked]="row.manage"
                 [disabled]="!row.editable"
                 (change)="setManage(row.role, $event.checked)"
-                [attr.aria-label]="'Manage ' + entityLabel + ' as ' + row.role"
+                [attr.aria-label]="row.manageAriaLabel"
               ></mat-checkbox>
             </td>
           </tr>

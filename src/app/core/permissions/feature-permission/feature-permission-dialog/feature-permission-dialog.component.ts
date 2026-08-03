@@ -15,14 +15,14 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { RouterLink } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
 import { UserAdminService } from "../../../user/user-admin-service/user-admin.service";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { Config } from "../../../config/config";
 import { Logging } from "../../../logging/logging.service";
+import { PermissionsConfigService } from "../../permissions-config.service";
 import { FeaturePermissionService } from "../feature-permission.service";
 
 /**
@@ -45,6 +45,10 @@ interface RolePermissionRow {
   manage: boolean;
   /** false when the row is read-only (access comes from an uneditable rule) */
   editable: boolean;
+  /** translated accessible label of the row's "Use" checkbox */
+  useAriaLabel: string;
+  /** translated accessible label of the row's "Manage" checkbox */
+  manageAriaLabel: string;
 }
 
 /**
@@ -63,6 +67,7 @@ interface RolePermissionRow {
     MatCheckboxModule,
     MatTooltipModule,
     MatProgressBarModule,
+    RouterLink,
     FaIconComponent,
     DialogCloseComponent,
     HintBoxComponent,
@@ -74,8 +79,8 @@ export class FeaturePermissionDialogComponent implements OnInit {
   );
   private readonly data = inject<FeaturePermissionDialogData>(MAT_DIALOG_DATA);
   private readonly permissionService = inject(FeaturePermissionService);
+  private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly userAdminService = inject(UserAdminService);
-  private readonly entityMapper = inject(EntityMapperService);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly entityType = this.data.entityType;
@@ -85,6 +90,9 @@ export class FeaturePermissionDialogComponent implements OnInit {
   readonly roles = signal<RolePermissionRow[] | undefined>(undefined);
   readonly loadError = signal(false);
   readonly saving = signal(false);
+
+  /** whether some rows are read-only because rules the grid cannot edit apply */
+  readonly hasComplexRules = signal(false);
 
   async ngOnInit(): Promise<void> {
     try {
@@ -102,6 +110,7 @@ export class FeaturePermissionDialogComponent implements OnInit {
         roleNames,
       );
 
+      this.hasComplexRules.set(state.hasComplexRules);
       this.roles.set(
         state.roles.map((role) => ({
           role: role.role,
@@ -109,6 +118,8 @@ export class FeaturePermissionDialogComponent implements OnInit {
           use: role.use,
           manage: role.manage,
           editable: role.editable,
+          useAriaLabel: $localize`:Use checkbox aria label:Use ${this.entityLabel} as ${role.role}`,
+          manageAriaLabel: $localize`:Manage checkbox aria label:Manage ${this.entityLabel} as ${role.role}`,
         })),
       );
     } catch (error) {
@@ -183,7 +194,10 @@ export class FeaturePermissionDialogComponent implements OnInit {
           .filter((row) => row.editable)
           .map(({ role, use, manage }) => ({ role, use, manage })),
       );
-      this.offerUndo(backup);
+      this.permissionsConfig.offerUndo(
+        backup,
+        $localize`Permissions for "${this.entityLabel}" updated`,
+      );
       this.dialogRef.close(true);
     } catch (error) {
       Logging.error("Failed to save feature permissions", error);
@@ -195,31 +209,5 @@ export class FeaturePermissionDialogComponent implements OnInit {
     } finally {
       this.saving.set(false);
     }
-  }
-
-  private offerUndo(backup: Config): void {
-    const snackBarRef = this.snackBar.open(
-      $localize`Permissions for "${this.entityLabel}" updated`,
-      $localize`Undo`,
-      { duration: 8000 },
-    );
-    snackBarRef.onAction().subscribe(async () => {
-      try {
-        const config = await this.entityMapper.load(
-          Config,
-          Config.PERMISSION_KEY,
-        );
-        config.data = backup.data;
-        await this.entityMapper.save(config, true);
-        await this.entityMapper.remove(backup);
-      } catch (error) {
-        Logging.error("Failed to undo permission change", error);
-        this.snackBar.open(
-          $localize`Could not undo the change. Please try again.`,
-          undefined,
-          { duration: 5000 },
-        );
-      }
-    });
   }
 }

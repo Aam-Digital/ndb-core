@@ -1,15 +1,16 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialog } from "@angular/material/dialog";
+import { BehaviorSubject } from "rxjs";
 import { FeaturePermissionBannerComponent } from "./feature-permission-banner.component";
-import { FeaturePermissionService } from "../feature-permission.service";
+import { PermissionsConfigService } from "../../permissions-config.service";
 import { FeaturePermissionDialogComponent } from "../feature-permission-dialog/feature-permission-dialog.component";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("FeaturePermissionBannerComponent", () => {
   let fixture: ComponentFixture<FeaturePermissionBannerComponent>;
   let component: FeaturePermissionBannerComponent;
-  let mockPermissionService: { hasAdminPermission: ReturnType<typeof vi.fn> };
+  let canManagePermissions$: BehaviorSubject<boolean>;
   let mockDialog: { open: ReturnType<typeof vi.fn> };
 
   function createComponent() {
@@ -20,15 +21,16 @@ describe("FeaturePermissionBannerComponent", () => {
   }
 
   beforeEach(async () => {
-    mockPermissionService = {
-      hasAdminPermission: vi.fn().mockReturnValue(true),
-    };
+    canManagePermissions$ = new BehaviorSubject(true);
     mockDialog = { open: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [FeaturePermissionBannerComponent, NoopAnimationsModule],
       providers: [
-        { provide: FeaturePermissionService, useValue: mockPermissionService },
+        {
+          provide: PermissionsConfigService,
+          useValue: { canManagePermissions$ },
+        },
         { provide: MatDialog, useValue: mockDialog },
       ],
     }).compileComponents();
@@ -39,17 +41,14 @@ describe("FeaturePermissionBannerComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should show the configure button for an admin", () => {
-    mockPermissionService.hasAdminPermission.mockReturnValue(true);
+  it("should show the configure button only while the user may edit permissions", () => {
     createComponent();
-
     expect(component.canManage()).toBe(true);
     expect(fixture.nativeElement.querySelector("button")).toBeTruthy();
-  });
 
-  it("should not show the banner for a non-admin", () => {
-    mockPermissionService.hasAdminPermission.mockReturnValue(false);
-    createComponent();
+    // rules can change while the view is open, e.g. after a role change
+    canManagePermissions$.next(false);
+    fixture.detectChanges();
 
     expect(component.canManage()).toBe(false);
     expect(fixture.nativeElement.querySelector("button")).toBeNull();
