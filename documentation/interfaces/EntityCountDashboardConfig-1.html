@@ -128,7 +128,7 @@
 
 <div class="io-file io-file-path" data-compodoc="entity-file-path">
     <span class="icon ion-ios-document" aria-hidden="true"></span>
-    <code>src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</code>
+    <code>src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-settings.component/entity-count-dashboard-settings.component.ts</code>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -155,13 +155,6 @@
 <div class="tab-content">
     <div class="tab-pane fade active in" id="info">
 
-            <p class="comment">
-                <h3>Description</h3>
-            </p>
-            <p class="comment">
-                <p>Configuration (stored in Config document in the DB) for the dashboard widget.</p>
-
-            </p>
 
 
             </div>
@@ -237,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:37</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-settings.component/entity-count-dashboard-settings.component.ts:21</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +274,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:38</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-settings.component/entity-count-dashboard-settings.component.ts:22</a></div>
                                 </td>
                             </tr>
 
@@ -293,354 +286,63 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  ChangeDetectionStrategy,
   Component,
-  computed,
+  ChangeDetectionStrategy,
   effect,
-  inject,
   input,
-  signal,
-  untracked,
+  linkedSignal,
 } from &quot;@angular/core&quot;;
-import { Router } from &quot;@angular/router&quot;;
-import { MatIconButton } from &quot;@angular/material/button&quot;;
-import { MatTableModule } from &quot;@angular/material/table&quot;;
-import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
-import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
-import { Angulartics2Module } from &quot;angulartics2&quot;;
-import { ConfigurableEnumService } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
-import { ConfigurableEnumValue } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.types&quot;;
+import { FormsModule, FormControl } from &quot;@angular/forms&quot;;
 import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
-import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
-import { EntityRegistry } from &quot;../../../../core/entity/database-entity.decorator&quot;;
-import { getEntityRuntimeRoute } from &quot;../../../../core/entity/entity-config.service&quot;;
-import { EntityFieldLabelComponent } from &quot;../../../../core/entity/entity-field-label/entity-field-label.component&quot;;
-import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
-import {
-  Entity,
-  EntityConstructor,
-} from &quot;../../../../core/entity/model/entity&quot;;
-import { applyUpdate } from &quot;../../../../core/entity/model/entity-update&quot;;
-import { groupBy } from &quot;../../../../utils/utils&quot;;
-import { EntityFieldViewComponent } from &quot;#src/app/core/entity/entity-field-view/entity-field-view.component&quot;;
+import { EntityTypeSelectComponent } from &quot;../../../../core/entity/entity-type-select/entity-type-select.component&quot;;
+import { EntityFieldSelectComponent } from &quot;../../../../core/entity/entity-field-select/entity-field-select.component&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatIconModule } from &quot;@angular/material/icon&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { MatSelectModule } from &quot;@angular/material/select&quot;;
+import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
 
-/**
- * Configuration (stored in Config document in the DB) for the dashboard widget.
- */
 export interface EntityCountDashboardConfig {
   entityType?: string;
   groupBy?: string[];
 }
 
-/**
- * Details of one row of disaggregated counts (e.g. for a specific category value) to be displayed.
- */
-interface GroupCountRow {
-  label: string | undefined;
-  id: string;
-
-  /**
-   * The count of entities part of this group
-   */
-  value: number;
-
-  isInvalidOption?: boolean;
-  color?: string;
-
-  /**
-   * entity with the field value set for display component rendering
-   */
-  entity?: Entity;
-
-  /**
-   * Field name for the display component
-   */
-  fieldName?: string;
-}
-
-@DynamicComponent(&quot;ChildrenCountDashboard&quot;)
-@DynamicComponent(&quot;EntityCountDashboard&quot;)
+@DynamicComponent(&quot;EntityCountDashboardSettings&quot;)
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: &quot;app-entity-count-dashboard-widget&quot;,
-  templateUrl: &quot;./entity-count-dashboard.component.html&quot;,
-  styleUrls: [&quot;./entity-count-dashboard.component.scss&quot;],
+  selector: &quot;app-entity-count-dashboard-settings&quot;,
+  standalone: true,
   imports: [
-    MatTableModule,
-    FontAwesomeModule,
-    Angulartics2Module,
-    DashboardListWidgetComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
     MatTooltipModule,
-    MatIconButton,
-    EntityFieldLabelComponent,
-    EntityFieldViewComponent,
+    MatSelectModule,
+    FormsModule,
+    EntityTypeSelectComponent,
+    EntityFieldSelectComponent,
+    FaIconComponent,
   ],
+  templateUrl: &quot;./entity-count-dashboard-settings.component.html&quot;,
+  styleUrls: [&quot;./entity-count-dashboard-settings.component.scss&quot;],
 })
-export class EntityCountDashboardComponent {
-  private readonly entityMapper &#x3D; inject(EntityMapperService);
-  private readonly router &#x3D; inject(Router);
-  private readonly entities &#x3D; inject(EntityRegistry);
-  private readonly configurableEnum &#x3D; inject(ConfigurableEnumService);
+export class EntityCountDashboardSettingsComponent {
+  formControl &#x3D; input.required&lt;FormControl&lt;EntityCountDashboardConfig&gt;&gt;();
 
-  private rawEntities &#x3D; signal&lt;Entity[]&gt;([]);
-  currentGroupIndex &#x3D; signal(0);
-
-  entityType &#x3D; input(&quot;Child&quot;);
-  groupBy &#x3D; input&lt;string[]&gt;([&quot;center&quot;, &quot;gender&quot;]);
-  subtitle &#x3D; input&lt;string&gt;();
-  explanation &#x3D; input&lt;string&gt;(
-    $localize&#x60;:dashboard widget explanation:Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.&#x60;,
-  );
-
-  entityDefinition &#x3D; computed(() &#x3D;&gt; this.entities.get(this.entityType()));
-  totalEntities &#x3D; computed(
-    () &#x3D;&gt; this.rawEntities().filter((entity) &#x3D;&gt; entity.isActive).length,
-  );
-
-  entityGroupCounts &#x3D; computed&lt;Record&lt;string, GroupCountRow[]&gt;&gt;(() &#x3D;&gt; {
-    const result: Record&lt;string, GroupCountRow[]&gt; &#x3D; {};
-    const entityDefinition &#x3D; this.entityDefinition();
-    const activeEntities &#x3D; this.rawEntities().filter(
-      (entity) &#x3D;&gt; entity.isActive,
-    );
-
-    for (const groupByField of this.groupBy()) {
-      result[groupByField] &#x3D; this.calculateGroupCounts(
-        activeEntities,
-        groupByField,
-        entityDefinition,
-      );
-    }
-
-    return result;
-  });
-
-  currentGroupField &#x3D; computed(() &#x3D;&gt; {
-    const groupBy &#x3D; this.groupBy();
-    if (groupBy.length &#x3D;&#x3D;&#x3D; 0) {
-      return undefined;
-    }
-
-    return groupBy[this.currentGroupIndex() % groupBy.length];
-  });
+  entityType &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.entityType);
+  groupBy &#x3D; linkedSignal(() &#x3D;&gt; [...(this.formControl().value?.groupBy ?? [])]);
 
   constructor() {
-    effect((onCleanup) &#x3D;&gt; {
-      const entityType &#x3D; this.entityType();
-      const entityDefinition &#x3D; this.entityDefinition();
-      let isCurrent &#x3D; true;
-
-      this.rawEntities.set([]);
-      this.currentGroupIndex.set(0);
-
-      untracked(async () &#x3D;&gt; {
-        const entities &#x3D; await this.entityMapper.loadType(entityDefinition);
-        if (isCurrent) {
-          this.rawEntities.set(entities);
-        }
-      });
-
-      const subscription &#x3D; this.entityMapper
-        .receiveUpdates(entityType)
-        .subscribe((update) &#x3D;&gt; {
-          this.rawEntities.update(
-            (current) &#x3D;&gt; applyUpdate(current, update) as Entity[],
-          );
-        });
-
-      onCleanup(() &#x3D;&gt; {
-        isCurrent &#x3D; false;
-        subscription.unsubscribe();
+    effect(() &#x3D;&gt; {
+      this.formControl().setValue({
+        entityType: this.entityType(),
+        groupBy: this.groupBy(),
       });
     });
   }
-
-  getPrev() {
-    const groupBy &#x3D; this.groupBy();
-    if (groupBy.length &#x3D;&#x3D;&#x3D; 0) {
-      return;
-    }
-
-    this.currentGroupIndex.update(
-      (index) &#x3D;&gt; (index - 1 + groupBy.length) % groupBy.length,
-    );
-  }
-
-  getNext() {
-    const groupBy &#x3D; this.groupBy();
-    if (groupBy.length &#x3D;&#x3D;&#x3D; 0) {
-      return;
-    }
-
-    this.currentGroupIndex.update((index) &#x3D;&gt; (index + 1) % groupBy.length);
-  }
-
-  static getRequiredEntities(config: EntityCountDashboardConfig) {
-    return config?.entityType || &quot;Child&quot;;
-  }
-
-  private calculateGroupCounts(
-    entities: Entity[],
-    fieldName: string,
-    entityDefinition: EntityConstructor,
-  ): GroupCountRow[] {
-    const field &#x3D; entityDefinition.schema.get(fieldName);
-
-    let groupCounts &#x3D; this.getGroupCounts(
-      entities,
-      fieldName,
-      entityDefinition,
-    );
-    groupCounts &#x3D; this.mergeNotDefinedGroups(groupCounts);
-
-    if (field?.dataType &#x3D;&#x3D;&#x3D; &quot;configurable-enum&quot;) {
-      return this.getEnumGroupCounts(groupCounts, field);
-    }
-
-    return groupCounts;
-  }
-
-  /** Groups entities by field and returns initial groupCounts array */
-  private getGroupCounts(
-    entities: Entity[],
-    fieldName: string,
-    entityDefinition: EntityConstructor,
-  ): GroupCountRow[] {
-    const groups &#x3D; groupBy(entities, fieldName as keyof Entity);
-    return groups.map(([group, groupedEntities]) &#x3D;&gt; {
-      const row: GroupCountRow &#x3D; {
-        label: extractHumanReadableLabel(group),
-        value: groupedEntities.length,
-        id: extractGroupId(group),
-        fieldName,
-      };
-
-      if (group !&#x3D;&#x3D; undefined &amp;&amp; group !&#x3D;&#x3D; null &amp;&amp; group !&#x3D;&#x3D; &quot;&quot;) {
-        const entity &#x3D; new entityDefinition();
-        entity[fieldName] &#x3D; group;
-        row.entity &#x3D; entity;
-      }
-
-      return row;
-    });
-  }
-
-  /** Merges &quot;&quot; and undefined groups into a single group with label: undefined */
-  private mergeNotDefinedGroups(groupCounts: GroupCountRow[]): GroupCountRow[] {
-    const notDefinedGroups &#x3D; groupCounts.filter(
-      (group) &#x3D;&gt; group.id &#x3D;&#x3D;&#x3D; &quot;&quot; || group.id &#x3D;&#x3D;&#x3D; undefined,
-    );
-    if (notDefinedGroups.length &gt; 1) {
-      const merged &#x3D; {
-        label: undefined,
-        value: notDefinedGroups.reduce((sum, group) &#x3D;&gt; sum + group.value, 0),
-        id: &quot;&quot;,
-      };
-      return [
-        merged,
-        ...groupCounts.filter(
-          (group) &#x3D;&gt; group.id !&#x3D;&#x3D; &quot;&quot; &amp;&amp; group.id !&#x3D;&#x3D; undefined,
-        ),
-      ];
-    }
-
-    return groupCounts;
-  }
-
-  /** Handles groupCounts for configurable-enum fields, including color and invalid option merging */
-  private getEnumGroupCounts(
-    groupCounts: GroupCountRow[],
-    field: any,
-  ): GroupCountRow[] {
-    const enumValues &#x3D; this.configurableEnum.getEnumValues(field.additional);
-    const validIds &#x3D; new Set(enumValues.map((enumValue) &#x3D;&gt; enumValue.id));
-    const groupCountsMap &#x3D; new Map(
-      groupCounts.map((aggregate) &#x3D;&gt; [aggregate.id, aggregate]),
-    );
-
-    const invalidGroups &#x3D; groupCounts.filter(
-      (group) &#x3D;&gt; group.id &amp;&amp; !validIds.has(group.id),
-    );
-    let invalidOptionRow: GroupCountRow | undefined;
-    if (invalidGroups.length &gt; 0) {
-      invalidOptionRow &#x3D; {
-        label: undefined,
-        value: invalidGroups.reduce((sum, group) &#x3D;&gt; sum + group.value, 0),
-        id: &quot;__invalid__&quot;,
-        isInvalidOption: true,
-      };
-    }
-
-    let groupCountSorted &#x3D; enumValues
-      .map((enumValue) &#x3D;&gt; {
-        const group &#x3D; groupCountsMap.get(enumValue.id);
-        if (group) {
-          return enumValue.color !&#x3D;&#x3D; undefined
-            ? { ...group, color: enumValue.color }
-            : { ...group };
-        }
-        return undefined;
-      })
-      .filter(Boolean);
-
-    if (groupCountsMap.has(&quot;&quot;)) {
-      const mergedGroup &#x3D; groupCountsMap.get(&quot;&quot;);
-      groupCountSorted.unshift(mergedGroup);
-    }
-
-    if (invalidOptionRow) {
-      groupCountSorted &#x3D; [invalidOptionRow, ...groupCountSorted];
-    }
-
-    return groupCountSorted;
-  }
-
-  goToEntityList(filterId: string) {
-    const field &#x3D; this.currentGroupField();
-    if (!field) {
-      return;
-    }
-
-    const params &#x3D; {};
-    params[field] &#x3D; filterId;
-
-    this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
-      queryParams: params,
-    });
-  }
-}
-
-/**
- * Get a human-readable string from the given value as a label.
- * @param value
- */
-function extractHumanReadableLabel(
-  value: string | ConfigurableEnumValue | any,
-): string | undefined {
-  if (value &#x3D;&#x3D;&#x3D; undefined || value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; &quot;&quot;) {
-    return undefined;
-  }
-  if (typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
-    return value;
-  }
-  if (value?.label) {
-    return value.label;
-  }
-
-  return String(value);
-}
-
-/**
- * Extract a group ID from a group value (string, object, etc.)
- */
-function extractGroupId(group: any): string {
-  if (group &#x3D;&#x3D;&#x3D; undefined || group &#x3D;&#x3D;&#x3D; null || group &#x3D;&#x3D;&#x3D; &quot;&quot;) {
-    return &quot;&quot;;
-  }
-  if (typeof group &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; &quot;id&quot; in group) {
-    return group.id;
-  }
-  return group;
 }
 </code></pre>
     </div>

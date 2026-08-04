@@ -735,7 +735,7 @@
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>computed&lt;ColumnConfig[]&gt;(() &#x3D;&gt; [
-    { id: &quot;distance&quot;, label: &quot;Distance&quot; },
+    { id: &quot;distance&quot;, label: $localize&#x60;:column for matching view:Distance&#x60; },
     {
       id: &quot;_id&quot;,
       label: $localize&#x60;:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)&#x60;,
@@ -973,7 +973,7 @@ export class EditMatchingEntitySideComponent {
     .map((ctor) &#x3D;&gt; ctor.value.ENTITY_TYPE);
 
   readonly additionalFields &#x3D; computed&lt;ColumnConfig[]&gt;(() &#x3D;&gt; [
-    { id: &quot;distance&quot;, label: &quot;Distance&quot; },
+    { id: &quot;distance&quot;, label: $localize&#x60;:column for matching view:Distance&#x60; },
     {
       id: &quot;_id&quot;,
       label: $localize&#x60;:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)&#x60;,
