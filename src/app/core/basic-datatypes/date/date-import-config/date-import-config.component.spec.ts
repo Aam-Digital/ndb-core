@@ -33,6 +33,25 @@ describe("DateImportConfigComponent", () => {
     expect(component).toBeTruthy();
   });
 
+  it("should mark the column as not configured until a date format is set", () => {
+    fixture.componentRef.setInput("col", {
+      column: "date",
+      propertyName: "dateOfBirth",
+    });
+
+    expect(component.badge()).toBe("?");
+    expect(component.tooltip()).toContain("No date format");
+
+    fixture.componentRef.setInput("col", {
+      column: "date",
+      propertyName: "dateOfBirth",
+      additional: "DD.MM.YYYY",
+    });
+
+    expect(component.badge()).toBeUndefined();
+    expect(component.tooltip()).toContain("DD.MM.YYYY");
+  });
+
   it("should open dialog and notify with the configured mapping", async () => {
     const onChangeFn = vi.fn();
     const rawData = [{ date: "2024-01-01" }, { date: "2024-02-01" }];

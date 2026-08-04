@@ -54,8 +54,6 @@ export class ImportColumnMappingComponent {
     this.entityType() ? this.entities.get(this.entityType()) : undefined,
   );
 
-  /** for each column, the field whose config dialog was already shown to the user */
-  private readonly reviewedFields = new Map<string, string>();
   private reviewingConfigs = false;
 
   constructor() {
@@ -76,11 +74,12 @@ export class ImportColumnMappingComponent {
   }
 
   /**
-   * Show the config dialog of every mapped column that requires one, one dialog after the other.
+   * Show the config dialog of every column the user newly mapped, one dialog after the other,
+   * so that the suggested value mappings are reviewed instead of silently skipped.
    *
-   * Without this the suggested value mappings are never applied for columns the user did not
-   * touch (e.g. mapped automatically because the column header matches a field),
-   * and the raw values from the file are imported as they are.
+   * Columns that were mapped automatically because their header matches a field are left alone,
+   * opening their dialogs would bury the user in dialogs on entering the step. Those are marked
+   * as unconfigured in the UI instead.
    */
   private async reviewConfigsOfMappedColumns() {
     if (this.reviewingConfigs) {
@@ -93,13 +92,15 @@ export class ImportColumnMappingComponent {
         const col = this.columnMapping().find((c) => c.column === column);
         if (
           !col?.propertyName ||
-          this.reviewedFields.get(column) === col.propertyName ||
+          // only columns the user mapped themselves, and only until their dialog was shown once
+          // (selecting a field resets `configReview`, so a changed field is offered again)
+          !col.manuallyUpdated ||
+          col.configReview ||
           !this.configDialogs.hasConfigDialog(col, this.entityCtor())
         ) {
           continue;
         }
 
-        this.reviewedFields.set(column, col.propertyName);
         const configuredCol = await this.configDialogs.openConfigDialog(
           col,
           this.rawData(),

@@ -99,7 +99,7 @@ export class DateImportDialogComponent {
 
     if (confirmed) {
       this.data.col.additional = this.format.value;
-      this.dialog.close();
+      this.dialog.close(true);
     }
   }
 }

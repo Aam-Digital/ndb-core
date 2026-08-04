@@ -33,16 +33,17 @@ describe("DiscreteImportConfigComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should show badge with ? when no value mappings exist", () => {
+  it("should mark the column as not configured while no value mappings exist", () => {
     fixture.componentRef.setInput("col", {
       column: "gender",
       propertyName: "category",
     });
 
     expect(component.badge()).toBe("?");
+    expect(component.tooltip()).toContain("not mapped yet");
   });
 
-  it("should show badge count for unmapped values", () => {
+  it("should show badge count and tooltip for unmapped values", () => {
     fixture.componentRef.setInput("col", {
       column: "gender",
       propertyName: "category",
@@ -50,6 +51,16 @@ describe("DiscreteImportConfigComponent", () => {
     });
 
     expect(component.badge()).toBe("1");
+    expect(component.tooltip()).toContain("1");
+
+    fixture.componentRef.setInput("col", {
+      column: "gender",
+      propertyName: "category",
+      additional: { values: { male: "M" } },
+    });
+
+    expect(component.badge()).toBeUndefined();
+    expect(component.tooltip()).toContain("All values");
   });
 
   it("should open dialog and notify with the configured mapping", async () => {

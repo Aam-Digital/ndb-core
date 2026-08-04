@@ -68,6 +68,25 @@ export class EditImportColumnMappingComponent {
       : null;
   });
 
+  /**
+   * Message below the field about the state of its value mapping config,
+   * for fields that are configured through a dialog. `null` if nothing needs to be said.
+   */
+  configHint = computed<string | null>(() => {
+    if (!this.currentlyMappedDatatype()?.importConfigDialog) {
+      return null;
+    }
+
+    switch (this.columnMapping()?.configReview) {
+      case "confirmed":
+        return null;
+      case "cancelled":
+        return $localize`:import column mapping - config not confirmed:Value mapping was not saved. Open it and confirm to continue.`;
+      default:
+        return $localize`:import column mapping - config not reviewed:Value mapping not configured, the values from the file are imported as they are.`;
+    }
+  });
+
   inlineComponentConfig = computed<DynamicComponentConfig | null>(() => {
     const componentName = this.currentlyMappedDatatype()?.importConfigComponent;
     if (!componentName) return null;
@@ -103,7 +122,9 @@ export class EditImportColumnMappingComponent {
     this.columnMappingChange.emit({
       ...col,
       propertyName,
+      // the new field brings its own transformation config, which has not been reviewed yet
       additional: undefined,
+      configReview: undefined,
       manuallyUpdated: true,
     });
   }

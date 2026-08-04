@@ -28,9 +28,10 @@ export class ImportConfigDialogService {
 
   /**
    * Let the user configure how the column's values are imported
-   * and return the resulting column mapping.
+   * and return the resulting column mapping, with `configReview` set to how the dialog was left.
    *
-   * The given mapping is left unchanged, if the user cancels or the datatype has no dialog.
+   * A cancelled dialog does not discard a configuration that was confirmed before,
+   * the user is backing out of an edit rather than dropping their earlier decision.
    */
   async openConfigDialog(
     col: ColumnMapping,
@@ -54,13 +55,16 @@ export class ImportConfigDialogService {
       additionalSettings: additionalSettings,
     };
 
-    await firstValueFrom(
+    const saved = await firstValueFrom(
       this.dialog
         .open(dialogComponent, { data, width: "80vw", disableClose: true })
         .afterClosed(),
     );
 
-    return data.col;
+    return {
+      ...data.col,
+      configReview: saved ? "confirmed" : (col.configReview ?? "cancelled"),
+    };
   }
 
   private getConfigDialogName(

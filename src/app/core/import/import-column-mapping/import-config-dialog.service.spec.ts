@@ -44,7 +44,7 @@ describe("ImportConfigDialogService", () => {
   it("should open the dialog with the column's unique values and return the configured mapping", async () => {
     mockDialog.open.mockImplementation((_component, config) => {
       config.data.col.additional = { values: { male: "M" } };
-      return { afterClosed: () => of(undefined) };
+      return { afterClosed: () => of(true) };
     });
     const col: ColumnMapping = { column: "gender", propertyName: "category" };
 
@@ -58,8 +58,23 @@ describe("ImportConfigDialogService", () => {
     expect(dialogData.values).toEqual(["male", "female"]);
     expect(dialogData.totalRowCount).toBe(3);
     expect(result.additional).toEqual({ values: { male: "M" } });
+    expect(result.configReview).toBe("confirmed");
     // the given mapping is not modified, the dialog result is returned as a new object
     expect(col.additional).toBeUndefined();
+  });
+
+  it("should mark a cancelled config as unconfirmed, unless it was confirmed before", async () => {
+    const col: ColumnMapping = { column: "gender", propertyName: "category" };
+
+    const cancelled = await service.openConfigDialog(col, [], TestEntity);
+    expect(cancelled.configReview).toBe("cancelled");
+
+    const cancelledAfterConfirming = await service.openConfigDialog(
+      { ...col, configReview: "confirmed" },
+      [],
+      TestEntity,
+    );
+    expect(cancelledAfterConfirming.configReview).toBe("confirmed");
   });
 
   it("should not open a dialog for a field whose datatype does not define one", async () => {

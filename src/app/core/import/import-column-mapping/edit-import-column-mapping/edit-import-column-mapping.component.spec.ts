@@ -65,11 +65,12 @@ describe("EditImportColumnMappingComponent", () => {
     expect(emitted.additional).toBeUndefined();
   });
 
-  it("should emit the newly selected field without any previous transformation config", () => {
+  it("should emit the newly selected field without the previous transformation config and its review", () => {
     fixture.componentRef.setInput("columnMapping", {
       column: "test",
       propertyName: "category",
       additional: { values: { male: "M" } },
+      configReview: "confirmed",
     });
     fixture.detectChanges();
 
@@ -80,9 +81,39 @@ describe("EditImportColumnMappingComponent", () => {
         column: "test",
         propertyName: "name",
         additional: undefined,
+        configReview: undefined,
         manuallyUpdated: true,
       }),
     );
+  });
+
+  it("should hint about the value mapping config until the user confirmed it", () => {
+    // mapped to an enum field, which is configured through a dialog
+    expect(component.configHint()).toContain("not configured");
+
+    fixture.componentRef.setInput("columnMapping", {
+      ...columnMapping,
+      configReview: "cancelled",
+    });
+    fixture.detectChanges();
+    expect(component.configHint()).toContain("was not saved");
+
+    fixture.componentRef.setInput("columnMapping", {
+      ...columnMapping,
+      configReview: "confirmed",
+    });
+    fixture.detectChanges();
+    expect(component.configHint()).toBeNull();
+  });
+
+  it("should not hint for fields that have no config dialog", () => {
+    fixture.componentRef.setInput("columnMapping", {
+      column: "test",
+      propertyName: "name",
+    });
+    fixture.detectChanges();
+
+    expect(component.configHint()).toBeNull();
   });
 
   it("should preserve additional when updateMapping is called with settingAdditional=true", () => {

@@ -117,6 +117,17 @@ export class ImportComponent {
         .length ?? 0,
   );
 
+  /**
+   * Whether a column's config dialog was opened but closed without confirming the mapping.
+   * The user has to finish what they started before the import can continue.
+   */
+  hasUnconfirmedColumnConfig = computed(
+    () =>
+      this.importSettings().columnMapping?.some(
+        (m) => m.configReview === "cancelled",
+      ) ?? false,
+  );
+
   constructor() {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {

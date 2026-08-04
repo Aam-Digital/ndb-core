@@ -122,6 +122,24 @@ describe("ImportComponent", () => {
     expect(component.mappedColumnsCount()).toBe(0);
   });
 
+  it("should flag a column whose config dialog was closed without confirming", () => {
+    component.importSettings.set({
+      columnMapping: [
+        { column: "x", propertyName: "name" },
+        { column: "y", propertyName: "gender", configReview: "confirmed" },
+      ],
+    });
+    expect(component.hasUnconfirmedColumnConfig()).toBe(false);
+
+    component.importSettings.set({
+      columnMapping: [
+        { column: "x", propertyName: "name" },
+        { column: "y", propertyName: "gender", configReview: "cancelled" },
+      ],
+    });
+    expect(component.hasUnconfirmedColumnConfig()).toBe(true);
+  });
+
   async function testApplyColumnMapping(
     appliedMapping: ColumnMapping[],
     expectedMapping: ColumnMapping[],

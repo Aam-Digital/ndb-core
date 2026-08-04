@@ -13,3 +13,7 @@
     <ng-container [appDynamicComponent]="inlineComponentConfig()" />
   }
 </div>
+
+@if (configHint(); as hint) {
+  <mat-error class="config-hint">{{ hint }}</mat-error>
+}

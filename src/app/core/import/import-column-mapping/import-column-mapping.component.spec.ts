@@ -20,11 +20,13 @@ describe("ImportColumnMappingComponent", () => {
         .mockImplementation(
           (col: ColumnMapping) => col.propertyName === "category",
         ),
-      openConfigDialog: vi
-        .fn()
-        .mockImplementation((col: ColumnMapping) =>
-          Promise.resolve({ ...col, additional: { values: { male: "M" } } }),
-        ),
+      openConfigDialog: vi.fn().mockImplementation((col: ColumnMapping) =>
+        Promise.resolve({
+          ...col,
+          additional: { values: { male: "M" } },
+          configReview: "confirmed",
+        }),
+      ),
     };
 
     await TestBed.configureTestingModule({
@@ -85,13 +87,13 @@ describe("ImportColumnMappingComponent", () => {
     ]);
   });
 
-  it("should open the config dialog of each mapped column that needs one and apply the result", async () => {
+  it("should open the config dialog of each newly mapped column that needs one and apply the result", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.componentRef.setInput("rawData", [{ gender: "male", name: "x" }]);
     fixture.componentRef.setInput("columnMapping", [
-      { column: "name", propertyName: "name" },
-      { column: "gender", propertyName: "category" },
-      { column: "other", propertyName: "category" },
+      { column: "name", propertyName: "name", manuallyUpdated: true },
+      { column: "gender", propertyName: "category", manuallyUpdated: true },
+      { column: "other", propertyName: "category", manuallyUpdated: true },
     ]);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -110,18 +112,30 @@ describe("ImportColumnMappingComponent", () => {
     ]);
   });
 
-  it("should not open the dialog again for a column that was already offered for review", async () => {
+  it("should not open dialogs for columns that were mapped automatically", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    // no manuallyUpdated flag: the column header matched the field, the user did not select it
     fixture.componentRef.setInput("columnMapping", [
       { column: "gender", propertyName: "category" },
     ]);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    component.updateColumnMapping(
-      { column: "gender", propertyName: "category" },
-      { column: "gender", propertyName: "category", additional: undefined },
-    );
+    expect(mockConfigDialogs.openConfigDialog).not.toHaveBeenCalled();
+  });
+
+  it("should not open the dialog again once its result was applied to the column", async () => {
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("columnMapping", [
+      { column: "gender", propertyName: "category", manuallyUpdated: true },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    component.updateColumnMapping(component.columnMapping()[0], {
+      ...component.columnMapping()[0],
+      additional: undefined,
+    });
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -131,16 +145,17 @@ describe("ImportColumnMappingComponent", () => {
   it("should open the dialog again when the column is mapped to a different field", async () => {
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.componentRef.setInput("columnMapping", [
-      { column: "gender", propertyName: "category" },
+      { column: "gender", propertyName: "category", manuallyUpdated: true },
     ]);
     fixture.detectChanges();
     await fixture.whenStable();
 
     mockConfigDialogs.hasConfigDialog.mockReturnValue(true);
-    component.updateColumnMapping(
-      { column: "gender" },
-      { column: "gender", propertyName: "dateOfBirth" },
-    );
+    component.updateColumnMapping(component.columnMapping()[0], {
+      column: "gender",
+      propertyName: "dateOfBirth",
+      manuallyUpdated: true,
+    });
     fixture.detectChanges();
     await fixture.whenStable();
 

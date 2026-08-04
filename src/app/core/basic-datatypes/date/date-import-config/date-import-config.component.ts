@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
 } from "@angular/core";
@@ -9,6 +10,8 @@ import { EntityConstructor } from "../../../entity/model/entity";
 import { ImportAdditionalSettings } from "../../../import/import-additional-settings";
 import { ImportConfigDialogService } from "../../../import/import-column-mapping/import-config-dialog.service";
 import { MatButtonModule } from "@angular/material/button";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 /**
@@ -20,7 +23,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-import-config",
   templateUrl: "./date-import-config.component.html",
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, MatBadgeModule, MatTooltipModule],
 })
 export class DateImportConfigComponent {
   private readonly configDialogs = inject(ImportConfigDialogService);
@@ -31,6 +34,15 @@ export class DateImportConfigComponent {
   otherColumnMappings = input<ColumnMapping[]>([]);
   additionalSettings = input<ImportAdditionalSettings>();
   onColumnMappingChange = input<(col: ColumnMapping) => void>();
+
+  /** marks the column as not configured, same indicator as for value mappings */
+  readonly badge = computed(() => (this.col()?.additional ? undefined : "?"));
+
+  readonly tooltip = computed(() =>
+    this.badge()
+      ? $localize`:import date format tooltip - not configured:No date format is defined for this column. Dates that the system cannot read on its own are skipped during import.`
+      : $localize`:import date format tooltip - configured:Dates of this column are read with the format "${this.col()?.additional}:format:". Open to review or change it.`,
+  );
 
   async openConfig() {
     const updated = await this.configDialogs.openConfigDialog(
