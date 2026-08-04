@@ -19,6 +19,6 @@ export const migrations: MigrationDefinition[] = [
   consolidateReportDefinition,
   reportConfigSafeIds,
   permissionsKeyRename,
-  permissionsKeyLegacyCleanup,
+  // permissionsKeyLegacyCleanup,
   shortcutDashboardLinkPrefix,
 ];
