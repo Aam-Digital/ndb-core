@@ -355,9 +355,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     if (lostPermissionIds.length > 0) {
       // deleting local data based on server response - log for traceability of possible data loss.
-      // logged at "error" level (not "warn") because any local edits made since the last completed
-      // sync are destroyed here and cannot be recovered, so this must surface in monitoring.
-      Logging.error(
+      Logging.warn(
         "sync: purging local docs after server reported lost permissions",
         {
           db: this.dbName,

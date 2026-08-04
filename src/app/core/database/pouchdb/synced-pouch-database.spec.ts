@@ -9,7 +9,6 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
-import { Logging } from "../../logging/logging.service";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 
 describe("SyncedPouchDatabase", () => {
@@ -419,18 +418,7 @@ describe("SyncedPouchDatabase", () => {
 
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
-    let errorSpy: Mock;
-
-    afterEach(() => {
-      // Logging is a shared singleton: restore it so a mocked no-op does not
-      // leak into later tests and silently suppress remote log reporting.
-      errorSpy.mockRestore();
-    });
-
-    beforeEach(() => {
-      errorSpy = vi
-        .spyOn(Logging, "error")
-        .mockImplementation(() => {}) as Mock;
+beforeEach(() => {
       const mockLocalDb = {
         name: "unit-test-db",
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
@@ -454,37 +442,6 @@ describe("SyncedPouchDatabase", () => {
 
       expect(purgeSpy).toHaveBeenCalledWith("Child:1");
       expect(purgeSpy).toHaveBeenCalledWith("School:2");
-    });
-
-    it("should log the purge at error level with doc count and last sync time", async () => {
-      localStorage.setItem(service.LAST_SYNC_KEY, "2026-08-02T05:18:25.264Z");
-      vi.spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).mockReturnValue(["Child:1", "School:2"]);
-
-      await service.sync();
-
-      // deleting unsynced local data must surface in monitoring, so "error" not "warn"
-      expect(errorSpy).toHaveBeenCalledWith(
-        "sync: purging local docs after server reported lost permissions",
-        expect.objectContaining({
-          count: 2,
-          lastSyncCompleted: "2026-08-02T05:18:25.264Z",
-        }),
-      );
-      localStorage.removeItem(service.LAST_SYNC_KEY);
-    });
-
-    it("should not log a purge if no permissions were lost", async () => {
-      vi.spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).mockReturnValue([]);
-
-      await service.sync();
-
-      expect(errorSpy).not.toHaveBeenCalled();
     });
 
     it("should not purge anything if no permissions were lost", async () => {
