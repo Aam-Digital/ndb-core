@@ -23,6 +23,7 @@ import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { SyncedPouchDatabase } from "../../database/pouchdb/synced-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -51,7 +52,7 @@ describe("SupportComponent", () => {
     const testDbName = TEST_USER + "-" + Entity.DATABASE;
     mockDB = Object.create(SyncedPouchDatabase.prototype);
     Object.defineProperty(mockDB, "LAST_SYNC_KEY", {
-      value: SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + testDbName,
+      value: LAST_SYNC_KEY_PREFIX + testDbName,
     });
     mockDB.getPouchDBOnceReady = vi.fn().mockReturnValue(
       Promise.resolve({

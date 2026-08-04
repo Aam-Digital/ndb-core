@@ -5,6 +5,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { Logging } from "../../logging/logging.service";
+import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
 
 /**
  * Create and load backups of the database.
@@ -65,12 +66,6 @@ export class BackupService {
     }
   }
 
-  /**
-   * sessionStorage key used to signal that a reset is pending.
-   * Set before page reload; checked on next bootstrap in {@link runPendingReset}.
-   */
-  static readonly RESET_PENDING_KEY = "__RESET_PENDING";
-
   async resetApplication() {
     const choice = await this.confirmationDialog.getConfirmation(
       $localize`:Reset Application Confirmation:Reset Application`,
@@ -87,46 +82,10 @@ export class BackupService {
 
     // Reload the page first to kill all PouchDB connections, in-flight sync,
     // view indexing, and other async operations. IDB databases are deleted on
-    // the fresh page (before Angular bootstraps) where no connections exist,
-    // avoiding race conditions with PouchDB's internal IDB transactions.
+    // the fresh page by `runPendingReset()` (before Angular bootstraps) where no
+    // connections exist, avoiding race conditions with PouchDB's IDB transactions.
     this.localStorage.clear();
-    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
+    sessionStorage.setItem(RESET_PENDING_KEY, "1");
     this.location.pathname = "";
-  }
-
-  /**
-   * Run pending reset cleanup before Angular bootstraps.
-   * Called from main.ts so that IndexedDB databases are deleted while
-   * no PouchDB connections are open (eliminating race conditions).
-   */
-  static async runPendingReset(): Promise<void> {
-    if (!sessionStorage.getItem(BackupService.RESET_PENDING_KEY)) {
-      return;
-    }
-    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
-    DatabaseResolverService.clearLastSyncMarkers();
-
-    // Delete all IndexedDB databases
-    // (keep Sentry's offline queue so pending diagnostic logs about the reset
-    // itself still reach remote logging after the reload)
-    const dbs = await indexedDB.databases();
-    await Promise.all(
-      dbs
-        .filter(({ name }) => name !== "sentry-offline")
-        .map(
-          ({ name }) =>
-            new Promise<void>((resolve, reject) => {
-              const del = indexedDB.deleteDatabase(name);
-              del.onsuccess = () => resolve();
-              del.onerror = () => reject(del.error);
-            }),
-        ),
-    );
-
-    // Unregister all service workers
-    if (navigator.serviceWorker) {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((reg) => reg.unregister()));
-    }
   }
 }

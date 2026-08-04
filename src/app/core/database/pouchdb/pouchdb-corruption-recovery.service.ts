@@ -5,7 +5,7 @@ import {
   OkButton,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
-import { BackupService } from "../../admin/backup/backup.service";
+import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
 import { Logging } from "../../logging/logging.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
@@ -79,7 +79,7 @@ We are working on improvements to allow this in the future.`,
     Logging.warn(
       "Resetting application data after suspected local database corruption (user confirmed)",
     );
-    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
+    sessionStorage.setItem(RESET_PENDING_KEY, "1");
     this.location.pathname = "";
   }
 

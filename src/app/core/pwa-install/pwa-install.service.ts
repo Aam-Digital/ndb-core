@@ -1,5 +1,9 @@
 import { Injectable, inject } from "@angular/core";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
+import {
+  getDeferredInstallPrompt,
+  whenCanInstallDirectly,
+} from "#src/bootstrap-pwa-install";
 
 export enum PWAInstallType {
   ShowiOSInstallInstructions,
@@ -31,30 +35,22 @@ export class PwaInstallService {
   private window = inject<Window>(WINDOW_TOKEN);
 
   /**
-   * Resolves once/if it is possible to directly install the app
+   * Resolves once/if it is possible to directly install the app.
+   * `undefined` if the listener has not been registered during bootstrap.
    */
-  static canInstallDirectly: Promise<void>;
-
-  private static deferredInstallPrompt: any;
-
-  static registerPWAInstallListener() {
-    this.canInstallDirectly = new Promise((resolve) => {
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        this.deferredInstallPrompt = e;
-        resolve();
-      });
-    });
+  get canInstallDirectly(): Promise<void> | undefined {
+    return whenCanInstallDirectly();
   }
 
   installPWA(): Promise<any> {
-    if (!PwaInstallService.deferredInstallPrompt) {
+    const installPrompt = getDeferredInstallPrompt();
+    if (!installPrompt) {
       throw new Error(
         "InstallPWA called, but PWA install prompt has not fired.",
       );
     }
-    PwaInstallService.deferredInstallPrompt.prompt();
-    return PwaInstallService.deferredInstallPrompt.userChoice;
+    installPrompt.prompt();
+    return installPrompt.userChoice;
   }
 
   getPWAInstallType(): PWAInstallType {

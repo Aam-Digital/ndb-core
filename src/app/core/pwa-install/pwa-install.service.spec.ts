@@ -2,6 +2,10 @@ import { TestBed } from "@angular/core/testing";
 
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
+import {
+  registerPWAInstallListener,
+  resetPWAInstallListener,
+} from "#src/bootstrap-pwa-install";
 
 describe("PwaInstallService", () => {
   let service: PwaInstallService;
@@ -19,6 +23,11 @@ describe("PwaInstallService", () => {
       providers: [{ provide: WINDOW_TOKEN, useValue: mockWindow }],
     });
     service = TestBed.inject(PwaInstallService);
+  });
+
+  afterEach(() => {
+    // module-level state is shared with every other spec in this worker
+    resetPWAInstallListener();
   });
 
   it("should be created", () => {
@@ -55,19 +64,16 @@ describe("PwaInstallService", () => {
       } as any);
     });
 
-    PwaInstallService.registerPWAInstallListener();
+    registerPWAInstallListener();
     expect(window.addEventListener).toHaveBeenCalledWith(
       "beforeinstallprompt",
       expect.anything(),
     );
-    await expect(PwaInstallService.canInstallDirectly).resolves.not.toThrow();
+    await expect(service.canInstallDirectly).resolves.not.toThrow();
 
     const installPromise = service.installPWA();
     expect(installSpy).toHaveBeenCalled();
     await expect(installPromise).resolves.toEqual({ outcome: "accepted" });
-
-    // reset static property
-    PwaInstallService["deferredInstallPrompt"] = undefined;
   });
 
   it("should throw an error when trying to install without install prompt", () => {
