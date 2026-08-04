@@ -491,7 +491,7 @@
                             <a href="#migrateLegacyIdFilters" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateLegacyIdFilters</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#migrateNavigationMenuEntityLinks" title="src/app/core/config/config.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateNavigationMenuEntityLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config.service.ts)</span></a>
+                            <a href="#migrateNavigationMenuEntityLinks" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateNavigationMenuEntityLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
                             <a href="#migrateNotesManagerComponent" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateNotesManagerComponent</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
@@ -503,7 +503,7 @@
                             <a href="#migratePhotoDatatype" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migratePhotoDatatype</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#migrateShortcutDashboardLinks" title="src/app/core/config/config.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateShortcutDashboardLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config.service.ts)</span></a>
+                            <a href="#migrateShortcutDashboardLinks" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateShortcutDashboardLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
                             <a href="#migrateUserEntityAndPanels" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateUserEntityAndPanels</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
@@ -2765,6 +2765,8 @@ reload-loop and flood error monitoring.</p>
   removeConfigRoutesMigratedToFixedFeatures,
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,
+  migrateShortcutDashboardLinks,
+  migrateNavigationMenuEntityLinks, // must run last to see all default-added view configs
 ]</code>
                     </td>
                 </tr>
@@ -3462,6 +3464,57 @@ Order matters: earlier migrations may produce output consumed by later ones.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="migrateNavigationMenuEntityLinks"></a>
+                    <span class="name">
+                        <span ><b>migrateNavigationMenuEntityLinks</b></span>
+                        <a href="#migrateNavigationMenuEntityLinks"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ConfigMigration" target="_self" >ConfigMigration</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  key,
+  configPart,
+) &#x3D;&gt; {
+  if (
+    key !&#x3D;&#x3D; &quot;&quot; ||
+    !configPart?.data ||
+    typeof configPart.data !&#x3D;&#x3D; &quot;object&quot; ||
+    Array.isArray(configPart.data) ||
+    !Array.isArray(configPart.data?.navigationMenu?.items)
+  ) {
+    return configPart;
+  }
+
+  configPart.data.navigationMenu.items &#x3D; migrateNavMenuItems(
+    configPart.data.navigationMenu.items,
+    configPart.data,
+  );
+  return configPart;
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Migrate navigationMenu items that use a hardcoded entity route <code>link</code> to the <code>entityType</code> format.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="migrateNotesManagerComponent"></a>
                     <span class="name">
                         <span ><b>migrateNotesManagerComponent</b></span>
@@ -3568,6 +3621,76 @@ Order matters: earlier migrations may produce output consumed by later ones.</p>
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="migrateShortcutDashboardLinks"></a>
+                    <span class="name">
+                        <span ><b>migrateShortcutDashboardLinks</b></span>
+                        <a href="#migrateShortcutDashboardLinks"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ConfigMigration" target="_self" >ConfigMigration</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  key,
+  configPart,
+) &#x3D;&gt; {
+  if (
+    key !&#x3D;&#x3D; &quot;&quot; ||
+    !configPart?.data ||
+    typeof configPart.data !&#x3D;&#x3D; &quot;object&quot; ||
+    Array.isArray(configPart.data)
+  ) {
+    return configPart;
+  }
+
+  const data &#x3D; configPart.data;
+  const entityBasePaths &#x3D; buildEntityBasePaths(data);
+  if (entityBasePaths.size &#x3D;&#x3D;&#x3D; 0) return configPart;
+
+  for (const dataKey of Object.keys(data)) {
+    if (!dataKey.startsWith(PREFIX_VIEW_CONFIG)) continue;
+    const viewConfig &#x3D; data[dataKey];
+    if (!Array.isArray(viewConfig?.config?.widgets)) continue;
+    for (const widget of viewConfig.config.widgets) {
+      if (
+        widget.component &#x3D;&#x3D;&#x3D; &quot;ShortcutDashboard&quot; &amp;&amp;
+        Array.isArray(widget.config?.shortcuts)
+      ) {
+        widget.config.shortcuts &#x3D; widget.config.shortcuts.map((shortcut: any) &#x3D;&gt;
+          migrateShortcutItem(shortcut, entityBasePaths),
+        );
+      }
+    }
+  }
+
+  return configPart;
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Migrate ShortcutDashboard widget <code>link</code> values that point to entity routes
+to use the runtime <code>/c/</code> prefix.</p>
+<p>Extracted here (rather than kept only in ConfigService) so the CLI&#39;s
+<code>latest-config-formats</code> migration can also persist this fix to production
+config documents, not just apply it transiently in the running app.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -7353,121 +7476,6 @@ tests read a fake localStorage. Injecting a fake avoids that entirely.</p>
                 <td class="col-md-4">
                     <div class="io-description"><p>Transform DefaultValueConfigInherited and DefaultValueConfigUpdatedFromReferencingEntity configs
 to DefaultValueConfigInheritedField.</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/config/config.service.ts</h3>
-    <section data-compodoc="block-properties">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="migrateNavigationMenuEntityLinks"></a>
-                    <span class="name">
-                        <span ><b>migrateNavigationMenuEntityLinks</b></span>
-                        <a href="#migrateNavigationMenuEntityLinks"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ConfigMigration" target="_self" >ConfigMigration</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>(key, configPart) &#x3D;&gt; {
-  if (
-    key !&#x3D;&#x3D; &quot;&quot; ||
-    !configPart?.data ||
-    typeof configPart.data !&#x3D;&#x3D; &quot;object&quot; ||
-    Array.isArray(configPart.data) ||
-    !Array.isArray(configPart.data?.navigationMenu?.items)
-  ) {
-    return configPart;
-  }
-
-  configPart.data.navigationMenu.items &#x3D; migrateNavMenuItems(
-    configPart.data.navigationMenu.items,
-    configPart.data,
-  );
-  return configPart;
-}</code>
-                    </td>
-                </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Migrate navigationMenu items that use a hardcoded entity route <code>link</code> to the <code>entityType</code> format.</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="migrateShortcutDashboardLinks"></a>
-                    <span class="name">
-                        <span ><b>migrateShortcutDashboardLinks</b></span>
-                        <a href="#migrateShortcutDashboardLinks"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ConfigMigration" target="_self" >ConfigMigration</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>(key, configPart) &#x3D;&gt; {
-  if (
-    key !&#x3D;&#x3D; &quot;&quot; ||
-    !configPart?.data ||
-    typeof configPart.data !&#x3D;&#x3D; &quot;object&quot; ||
-    Array.isArray(configPart.data)
-  ) {
-    return configPart;
-  }
-
-  const data &#x3D; configPart.data;
-  const entityBasePaths &#x3D; buildEntityBasePaths(data);
-  if (entityBasePaths.size &#x3D;&#x3D;&#x3D; 0) return configPart;
-
-  for (const dataKey of Object.keys(data)) {
-    if (!dataKey.startsWith(PREFIX_VIEW_CONFIG)) continue;
-    const viewConfig &#x3D; data[dataKey];
-    if (!Array.isArray(viewConfig?.config?.widgets)) continue;
-    for (const widget of viewConfig.config.widgets) {
-      if (
-        widget.component &#x3D;&#x3D;&#x3D; &quot;ShortcutDashboard&quot; &amp;&amp;
-        Array.isArray(widget.config?.shortcuts)
-      ) {
-        widget.config.shortcuts &#x3D; widget.config.shortcuts.map((shortcut: any) &#x3D;&gt;
-          migrateShortcutItem(shortcut, entityBasePaths),
-        );
-      }
-    }
-  }
-
-  return configPart;
-}</code>
-                    </td>
-                </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Migrate ShortcutDashboard widget <code>link</code> values that point to entity routes
-to use the runtime <code>/c/</code> prefix.</p>
 </div>
                 </td>
             </tr>
