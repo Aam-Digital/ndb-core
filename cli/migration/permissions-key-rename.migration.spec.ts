@@ -60,9 +60,7 @@ describe("permissionsKeyRename migration", () => {
     expect(result.changed).toBe(true);
     expect(result.status).toBe("ok");
     const data = (store["app/Config:Permissions"] as any).data;
-    expect(data.default).toEqual([
-      { subject: "SiteSettings", action: "read" },
-    ]);
+    expect(data.default).toEqual([{ subject: "SiteSettings", action: "read" }]);
     expect(data.public).toEqual([{ subject: "Config", action: "read" }]);
   });
 
