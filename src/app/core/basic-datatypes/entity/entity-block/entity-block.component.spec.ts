@@ -119,9 +119,12 @@ describe("EntityBlockComponent", () => {
 
   it("renders the not-found fallback instead of throwing when entityId is not a string", async () => {
     // an Entity accidentally bound to [entityId] instead of [entity]: truthy, so it
-    // reaches the loader, but not a string, so extractTypeFromId() rejects it
+    // reaches the loader, but not a string, so extractTypeFromId() rejects it.
+    // typed as unknown rather than cast, so the boundary is explicit and the rest
+    // of the test keeps full type checking.
+    const runtimeInvalidEntityId: unknown = testEntity;
     mockEntityMapper.load.mockRejectedValue(new Error("not found"));
-    fixture.componentRef.setInput("entityId", testEntity as any);
+    fixture.componentRef.setInput("entityId", runtimeInvalidEntityId);
     fixture.detectChanges();
 
     await vi.waitFor(() => expect(component.notFound()).toBe(true));
