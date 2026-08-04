@@ -80,7 +80,15 @@ export function registerCredentialsCommand(program: Command): void {
       const prompt = createPromptSession();
       setPassphrasePromptSession(prompt);
       try {
-        const { incoming, target } = await resolveSourceAndTarget(file, opts);
+        const { incoming, target, encryptOnly } = await resolveSourceAndTarget(
+          file,
+          opts,
+        );
+
+        if (encryptOnly) {
+          await runEncryptOnly(incoming, target, file, opts, prompt);
+          return;
+        }
 
         const result = mergeCredentials(target.existing, incoming.orgs, {
           prune: !!opts.prune,
@@ -140,7 +148,11 @@ export function registerCredentialsCommand(program: Command): void {
 /**
  * Load the source file and figure out which local file it merges into,
  * rejecting the cases that would make the rest of the command nonsensical
- * (an empty source, or the source and target being the same file).
+ * (an empty source, or the source and target being the same file) — except
+ * for the one same-file case that has an obvious, useful meaning: no
+ * encrypted file exists yet, `--credentials` was not given, and the file
+ * named on the command line *is* the plaintext default target. That is a
+ * request to encrypt it in place, not a merge.
  */
 async function resolveSourceAndTarget(
   file: string,
@@ -148,6 +160,7 @@ async function resolveSourceAndTarget(
 ): Promise<{
   incoming: RawCredentialsFile;
   target: Awaited<ReturnType<typeof resolveMergeTarget>>;
+  encryptOnly: boolean;
 }> {
   try {
     const incoming = await readCredentialsFile(file);
@@ -155,21 +168,96 @@ async function resolveSourceAndTarget(
       console.error(`\n${file} contains no orgs — nothing to merge.\n`);
       throw new CliExit(2);
     }
-    const target = await resolveMergeTarget(opts.credentials);
+
+    const decision = decideMergeTarget(
+      file,
+      opts.credentials,
+      resolveDefaultMergeTargetPath(),
+    );
     // Merging a file into itself would write the target and then shred it.
-    if (isSameFile(file, target.path)) {
+    if (decision.mode === "merge" && isSameFile(file, decision.path)) {
       console.error(
         `\n${file} is the credentials file itself — there is nothing to merge into.` +
           `\nCopy the server file somewhere else, or name a different target with --credentials.\n`,
       );
       throw new CliExit(2);
     }
-    return { incoming, target };
+
+    const target = await resolveMergeTarget(decision.path);
+    return { incoming, target, encryptOnly: decision.mode === "encrypt" };
   } catch (e: unknown) {
     if (e instanceof CliExit) throw e;
     console.error(`\n${e instanceof Error ? e.message : String(e)}\n`);
     throw new CliExit(2);
   }
+}
+
+/**
+ * Decide what `merge <file>` should write to, and whether that's a normal
+ * merge or an in-place "encrypt the plaintext file I was given" bootstrap.
+ *
+ * The encrypt case only fires when the target was not pinned explicitly:
+ * an explicit `--credentials <file>` pointing at the same file is still a
+ * plain (nonsensical) self-merge, and a same-file `.age` source has no
+ * plaintext to encrypt. Exported for testing without touching `process.cwd()`
+ * or the real credentials-path resolution.
+ */
+export function decideMergeTarget(
+  file: string,
+  explicitCredentials: string | undefined,
+  defaultPath: string,
+): { mode: "merge" | "encrypt"; path: string } {
+  const targetPath = explicitCredentials ?? defaultPath;
+  if (
+    !explicitCredentials &&
+    !targetPath.endsWith(".age") &&
+    isSameFile(file, targetPath)
+  ) {
+    return { mode: "encrypt", path: `${targetPath}.age` };
+  }
+  return { mode: "merge", path: targetPath };
+}
+
+/** The target path `merge` falls back to when `--credentials` is not given. */
+function resolveDefaultMergeTargetPath(): string {
+  try {
+    return resolveCredentialsPath();
+  } catch {
+    return join(process.cwd(), "cli", "credentials.json.age");
+  }
+}
+
+/**
+ * Encrypt `file` to `target.path` as-is — no merge, since there is nothing to
+ * merge it into. Mirrors the confirm/write/shred shape of the merge path
+ * (see {@link commitMerge}) without the org-by-org prompting, which only
+ * makes sense for orgs a merge is actually adding.
+ */
+async function runEncryptOnly(
+  incoming: RawCredentialsFile,
+  target: { path: string; existed: boolean },
+  file: string,
+  opts: { dryRun?: boolean; yes?: boolean; keepSource?: boolean },
+  prompt: PromptSession,
+): Promise<void> {
+  console.log(
+    `\nNo encrypted credentials file yet — encrypting ${file}` +
+      `\n                                    to ${target.path} (${incoming.orgs.length} org(s)).\n`,
+  );
+  if (opts.dryRun) {
+    console.log("(--dry-run) Nothing written.\n");
+    return;
+  }
+
+  const question = opts.keepSource
+    ? `Write ${target.path}? [y/N]`
+    : `Write ${target.path} and shred ${file}? [y/N]`;
+  if (!opts.yes && !(await askYesNo(prompt, question))) {
+    console.log("\nAborted — nothing written.\n");
+    return;
+  }
+
+  await commitMerge(target, incoming, file, opts);
 }
 
 /**
@@ -269,24 +357,15 @@ async function commitMerge(
 }
 
 /**
- * Find the credentials file to merge into. When none exists yet this is the
- * operator's first run, so fall back to the default encrypted location and
- * start from an empty set — the merge then simply encrypts the source file.
+ * Load the target file to merge into, given its already-decided path. When
+ * nothing exists there yet — the operator's first run, or the fresh `.age`
+ * path an in-place encrypt writes to — start from an empty set.
  */
-async function resolveMergeTarget(explicitPath?: string): Promise<{
+async function resolveMergeTarget(path: string): Promise<{
   path: string;
   existed: boolean;
   existing: RawCredentialsFile;
 }> {
-  let path = explicitPath;
-  if (!path) {
-    try {
-      path = resolveCredentialsPath();
-    } catch {
-      path = join(process.cwd(), "cli", "credentials.json.age");
-    }
-  }
-
   if (!existsSync(path)) {
     console.log(`\nNo credentials file at ${path} yet — creating it.`);
     return { path, existed: false, existing: { orgs: [] } };

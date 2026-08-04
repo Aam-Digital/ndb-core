@@ -17,21 +17,32 @@ const RENAMES: { legacy: string; renamed: string }[] = [
 ];
 
 /**
- * Rename the reserved sections of the Config:Permissions document from their
- * legacy names (`default`, `public`) to the underscore-prefixed names
- * (`_default`, `_public`). The underscore marks them as internal so they can
- * never collide with a Keycloak realm role of the same name.
+ * Ensure both the legacy reserved section names (`default`, `public`) and
+ * their underscore-prefixed counterparts (`_default`, `_public`) exist on
+ * the Config:Permissions document, copying whichever side is present into
+ * whichever is missing. The underscore-prefixed form marks the section as
+ * internal so it can never collide with a Keycloak realm role of the same
+ * name.
  *
- * The renamed key wins if both spellings are present (matching the read-path
- * precedence in the app and backend), so the legacy key is always dropped.
+ * Copying is one-way per key, never a merge: an existing key (on either
+ * side) is never overwritten, only a missing one is filled in from the
+ * other. This keeps both forms in sync for backwards compatibility — app
+ * versions predating the underscore-prefixed form keep working, and if
+ * `permissionsKeyLegacyCleanup` (see permissions-key-legacy-cleanup.migration.ts)
+ * already removed the legacy key on this instance, re-running this
+ * migration recreates it from `_default`/`_public` rather than leaving it
+ * missing. The underscore-prefixed key always wins on read when both are
+ * present (matching the read-path precedence in the app and backend), so
+ * this never changes which rules actually apply.
+ *
  * Only an existing document is touched; role sections and all other keys are
- * left untouched. Idempotent: once renamed there are no legacy keys left, so
- * a re-run is a no-op.
+ * left untouched. Idempotent: once both forms of a key exist, a re-run
+ * leaves them untouched, so a re-run is a no-op.
  */
 export const permissionsKeyRename: MigrationDefinition = {
   id: "oneoff-20260724-permissions-key-rename",
   description:
-    "Rename reserved Config:Permissions sections default/public to _default/_public so they cannot collide with Keycloak role names. Safe to re-run.",
+    "Sync reserved Config:Permissions sections default/public with _default/_public, copying whichever side is missing from the other. Safe to re-run.",
 
   async run(ctx): Promise<MigrationResult> {
     let doc: PermissionsDoc;
@@ -56,24 +67,21 @@ export const permissionsKeyRename: MigrationDefinition = {
     const newData: Record<string, unknown> = { ...data };
     let changed = false;
     for (const { legacy, renamed } of RENAMES) {
-      if (!(legacy in newData)) {
-        continue;
-      }
-      // the renamed key wins if present; the legacy key is always removed
-      if (!(renamed in newData)) {
+      if (legacy in newData && !(renamed in newData)) {
         newData[renamed] = newData[legacy];
-        ctx.log.info(`Renaming "${legacy}" section to "${renamed}"`);
-      } else {
-        ctx.log.info(
-          `Dropping legacy "${legacy}" section ("${renamed}" already present)`,
-        );
+        ctx.log.info(`Adding "${renamed}" section (copied from "${legacy}")`);
+        changed = true;
+      } else if (renamed in newData && !(legacy in newData)) {
+        newData[legacy] = newData[renamed];
+        ctx.log.info(`Adding "${legacy}" section (copied from "${renamed}")`);
+        changed = true;
       }
-      delete newData[legacy];
-      changed = true;
     }
 
     if (!changed) {
-      ctx.log.info("No legacy permission section keys found");
+      ctx.log.info(
+        "Legacy and underscore-prefixed permission section keys already in sync",
+      );
       return { changed: false, status: "no-change" };
     }
 
