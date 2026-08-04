@@ -418,7 +418,8 @@ describe("SyncedPouchDatabase", () => {
 
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
-beforeEach(() => {
+
+    beforeEach(() => {
       const mockLocalDb = {
         name: "unit-test-db",
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
