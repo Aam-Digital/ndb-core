@@ -302,6 +302,16 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   importConfigComponent?: string;
 
   /**
+   * A dialog component in which the import transformation is configured
+   * (see {@link MappingDialogData} for the data it receives).
+   *
+   * Datatypes that require such a dialog get it opened automatically
+   * as soon as the user maps a column to one of their fields,
+   * so that the suggested settings are reviewed and confirmed rather than silently skipped.
+   */
+  importConfigDialog?: string;
+
+  /**
    * Return the (potentially adjusted) schema field for this datatype.
    *
    * Called when schema fields are set up (e.g. from config),

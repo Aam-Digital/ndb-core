@@ -73,10 +73,24 @@ const importComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "DateImportDialog",
+    () =>
+      import("../basic-datatypes/date/date-import-config/date-import-dialog.component").then(
+        (c) => c.DateImportDialogComponent,
+      ),
+  ],
+  [
     "DiscreteImportConfig",
     () =>
       import("../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component").then(
         (c) => c.DiscreteImportConfigComponent,
+      ),
+  ],
+  [
+    "DiscreteImportDialog",
+    () =>
+      import("../basic-datatypes/discrete/discrete-import-config/discrete-import-dialog.component").then(
+        (c) => c.DiscreteImportDialogComponent,
       ),
   ],
   [

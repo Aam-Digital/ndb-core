@@ -2,14 +2,36 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ImportColumnMappingComponent } from "./import-column-mapping.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ColumnMapping } from "../column-mapping";
+import { ImportConfigDialogService } from "./import-config-dialog.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("ImportColumnMappingComponent", () => {
   let component: ImportColumnMappingComponent;
   let fixture: ComponentFixture<ImportColumnMappingComponent>;
+  let mockConfigDialogs: {
+    hasConfigDialog: ReturnType<typeof vi.fn>;
+    openConfigDialog: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
+    mockConfigDialogs = {
+      hasConfigDialog: vi
+        .fn()
+        .mockImplementation(
+          (col: ColumnMapping) => col.propertyName === "category",
+        ),
+      openConfigDialog: vi
+        .fn()
+        .mockImplementation((col: ColumnMapping) =>
+          Promise.resolve({ ...col, additional: { values: { male: "M" } } }),
+        ),
+    };
+
     await TestBed.configureTestingModule({
       imports: [MockedTestingModule, ImportColumnMappingComponent],
+      providers: [
+        { provide: ImportConfigDialogService, useValue: mockConfigDialogs },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImportColumnMappingComponent);
@@ -38,5 +60,90 @@ describe("ImportColumnMappingComponent", () => {
         propertyName: "Test2",
       }),
     ]);
+  });
+
+  it("should update the column mapping also if the row emitted an outdated object", () => {
+    // e.g. a config dialog that was opened for the previous object of that column emits after it was replaced
+    const outdatedColumnMapping: ColumnMapping = {
+      column: "Name",
+      propertyName: "test",
+    };
+
+    fixture.componentRef.setInput("columnMapping", [
+      { ...outdatedColumnMapping },
+    ]);
+    fixture.detectChanges();
+
+    component.updateColumnMapping(outdatedColumnMapping, {
+      column: "Name",
+      propertyName: "test",
+      additional: "YYYY-MM-DD",
+    });
+
+    expect(component.columnMapping()).toEqual([
+      expect.objectContaining({ column: "Name", additional: "YYYY-MM-DD" }),
+    ]);
+  });
+
+  it("should open the config dialog of each mapped column that needs one and apply the result", async () => {
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("rawData", [{ gender: "male", name: "x" }]);
+    fixture.componentRef.setInput("columnMapping", [
+      { column: "name", propertyName: "name" },
+      { column: "gender", propertyName: "category" },
+      { column: "other", propertyName: "category" },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(mockConfigDialogs.openConfigDialog).toHaveBeenCalledTimes(2);
+    expect(component.columnMapping()).toEqual([
+      expect.objectContaining({ column: "name" }),
+      expect.objectContaining({
+        column: "gender",
+        additional: { values: { male: "M" } },
+      }),
+      expect.objectContaining({
+        column: "other",
+        additional: { values: { male: "M" } },
+      }),
+    ]);
+  });
+
+  it("should not open the dialog again for a column that was already offered for review", async () => {
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("columnMapping", [
+      { column: "gender", propertyName: "category" },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    component.updateColumnMapping(
+      { column: "gender", propertyName: "category" },
+      { column: "gender", propertyName: "category", additional: undefined },
+    );
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(mockConfigDialogs.openConfigDialog).toHaveBeenCalledTimes(1);
+  });
+
+  it("should open the dialog again when the column is mapped to a different field", async () => {
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    fixture.componentRef.setInput("columnMapping", [
+      { column: "gender", propertyName: "category" },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    mockConfigDialogs.hasConfigDialog.mockReturnValue(true);
+    component.updateColumnMapping(
+      { column: "gender" },
+      { column: "gender", propertyName: "dateOfBirth" },
+    );
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(mockConfigDialogs.openConfigDialog).toHaveBeenCalledTimes(2);
   });
 });

@@ -65,6 +65,26 @@ describe("EditImportColumnMappingComponent", () => {
     expect(emitted.additional).toBeUndefined();
   });
 
+  it("should emit the newly selected field without any previous transformation config", () => {
+    fixture.componentRef.setInput("columnMapping", {
+      column: "test",
+      propertyName: "category",
+      additional: { values: { male: "M" } },
+    });
+    fixture.detectChanges();
+
+    component.onFieldSelected("name");
+
+    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        column: "test",
+        propertyName: "name",
+        additional: undefined,
+        manuallyUpdated: true,
+      }),
+    );
+  });
+
   it("should preserve additional when updateMapping is called with settingAdditional=true", () => {
     fixture.componentRef.setInput("columnMapping", {
       column: "test",

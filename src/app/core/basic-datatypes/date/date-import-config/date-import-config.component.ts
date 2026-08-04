@@ -7,9 +7,7 @@ import {
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { ImportAdditionalSettings } from "../../../import/import-additional-settings";
-import { MatDialog } from "@angular/material/dialog";
-import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
-import { DateImportDialogComponent } from "./date-import-dialog.component";
+import { ImportConfigDialogService } from "../../../import/import-column-mapping/import-config-dialog.service";
 import { MatButtonModule } from "@angular/material/button";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
@@ -25,7 +23,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   imports: [MatButtonModule],
 })
 export class DateImportConfigComponent {
-  private readonly dialog = inject(MatDialog);
+  private readonly configDialogs = inject(ImportConfigDialogService);
 
   col = input<ColumnMapping>();
   rawData = input<any[]>([]);
@@ -34,28 +32,13 @@ export class DateImportConfigComponent {
   additionalSettings = input<ImportAdditionalSettings>();
   onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
-  openConfig() {
-    const col = this.col();
-    const uniqueValues = new Set<any>(
-      this.rawData().map((row) => row[col.column]),
+  async openConfig() {
+    const updated = await this.configDialogs.openConfigDialog(
+      this.col(),
+      this.rawData(),
+      this.entityType(),
+      this.additionalSettings(),
     );
-
-    this.dialog
-      .open<DateImportDialogComponent, MappingDialogData>(
-        DateImportDialogComponent,
-        {
-          data: {
-            col: col,
-            values: [...uniqueValues],
-            totalRowCount: this.rawData().length,
-            entityType: this.entityType(),
-            additionalSettings: this.additionalSettings(),
-          },
-          width: "80vw",
-          disableClose: true,
-        },
-      )
-      .afterClosed()
-      .subscribe(() => this.onColumnMappingChange()?.(col));
+    this.onColumnMappingChange()?.(updated);
   }
 }

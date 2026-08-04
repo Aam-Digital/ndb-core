@@ -7,9 +7,7 @@ import {
 import { ColumnMapping } from "../../../import/column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { ImportAdditionalSettings } from "../../../import/import-additional-settings";
-import { MatDialog } from "@angular/material/dialog";
-import { MappingDialogData } from "../../../import/import-column-mapping/mapping-dialog-data";
-import { DiscreteImportDialogComponent } from "./discrete-import-dialog.component";
+import { ImportConfigDialogService } from "../../../import/import-column-mapping/import-config-dialog.service";
 import { DiscreteColumnMappingAdditional } from "../discrete.datatype";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
@@ -27,7 +25,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   imports: [MatButtonModule, MatBadgeModule],
 })
 export class DiscreteImportConfigComponent {
-  private readonly dialog = inject(MatDialog);
+  private readonly configDialogs = inject(ImportConfigDialogService);
 
   col = input<ColumnMapping>();
   rawData = input<any[]>([]);
@@ -49,28 +47,13 @@ export class DiscreteImportConfigComponent {
     return unmappedCount > 0 ? unmappedCount.toString() : undefined;
   }
 
-  openConfig() {
-    const col = this.col();
-    const uniqueValues = new Set<any>(
-      this.rawData().map((row) => row[col.column]),
+  async openConfig() {
+    const updated = await this.configDialogs.openConfigDialog(
+      this.col(),
+      this.rawData(),
+      this.entityType(),
+      this.additionalSettings(),
     );
-
-    this.dialog
-      .open<DiscreteImportDialogComponent, MappingDialogData>(
-        DiscreteImportDialogComponent,
-        {
-          data: {
-            col: col,
-            values: [...uniqueValues],
-            totalRowCount: this.rawData().length,
-            entityType: this.entityType(),
-            additionalSettings: this.additionalSettings(),
-          },
-          width: "80vw",
-          disableClose: true,
-        },
-      )
-      .afterClosed()
-      .subscribe(() => this.onColumnMappingChange()?.(col));
+    this.onColumnMappingChange()?.(updated);
   }
 }

@@ -35,7 +35,7 @@ import { ImportAdditionalSettings } from "../../import-additional-settings";
   ],
 })
 export class EditImportColumnMappingComponent {
-  private schemaService = inject(EntitySchemaService);
+  private readonly schemaService = inject(EntitySchemaService);
 
   columnMapping = input.required<ColumnMapping>();
 
