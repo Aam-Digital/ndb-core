@@ -61,14 +61,11 @@ test("Import children with entity reference, date and enum column mappings", asy
 
   // --- "Name" column is auto-mapped to "Name" field ---
   // --- "Date of Birth" column is auto-mapped to "Date of birth" field ---
-  // Configure date format for the Date of Birth column
-  const dobRow = page
-    .locator("app-edit-import-column-mapping")
-    .filter({ hasText: "Date of Birth" });
-  await dobRow.getByRole("button", { name: "Configure value mapping" }).click();
-
+  // Every mapped column that requires configuration gets its dialog opened
+  // automatically in column order, so the date format for "Date of Birth" comes up
+  // first, followed by the value mapping for "Gender".
   const dateDialog = page.getByRole("dialog");
-  await expect(dateDialog).toBeVisible();
+  await expect(dateDialog.getByLabel("Date format")).toBeVisible();
 
   // Enter the date format matching our CSV data
   await dateDialog.getByLabel("Date format").fill("DD.MM.YYYY");
@@ -79,19 +76,10 @@ test("Import children with entity reference, date and enum column mappings", asy
   await argosScreenshot(page, "import-date-format-dialog");
 
   await dateDialog.getByRole("button", { name: "Save & Close" }).click();
-  await expect(dateDialog).not.toBeVisible();
 
   // --- "Gender" column is auto-mapped to "Gender" field (configurable-enum) ---
-  // Configure enum value mapping
-  const genderRow = page
-    .locator("app-edit-import-column-mapping")
-    .filter({ hasText: "Gender" });
-  await genderRow
-    .getByRole("button", { name: "Configure value mapping" })
-    .click();
-
+  // its value mapping dialog follows right after the date format dialog was closed
   const enumDialog = page.getByRole("dialog");
-  await expect(enumDialog).toBeVisible();
   await expect(enumDialog.getByText("Imported values")).toBeVisible();
 
   // Map each imported gender value to the system's enum values
