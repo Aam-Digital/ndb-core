@@ -615,7 +615,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="414" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:414</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="416" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:416</a></div>
                         </td>
                     </tr>
 
@@ -1026,8 +1026,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="395"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:395</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="397"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:397</a></div>
                         </td>
                     </tr>
 
@@ -1205,8 +1205,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="416"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:416</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="418"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:418</a></div>
                         </td>
                     </tr>
 
@@ -1425,8 +1425,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="385"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:385</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="387"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:387</a></div>
                         </td>
                     </tr>
 
@@ -3194,12 +3194,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .filter((id) &#x3D;&gt; !id.startsWith(&quot;_design/&quot;));
 
     if (lostPermissionIds.length &gt; 0) {
-      // deleting local data based on server response - log for traceability of possible data loss
+      // deleting local data based on server response - log for traceability of possible data loss.
       Logging.warn(
         &quot;sync: purging local docs after server reported lost permissions&quot;,
         {
           db: this.dbName,
           count: lostPermissionIds.length,
+          // how far behind the server this client was: local edits made since then are lost
+          lastSyncCompleted: localStorage.getItem(this.LAST_SYNC_KEY),
         },
       );
     }

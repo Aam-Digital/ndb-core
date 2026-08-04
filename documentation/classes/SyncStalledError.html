@@ -543,12 +543,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .filter((id) &#x3D;&gt; !id.startsWith(&quot;_design/&quot;));
 
     if (lostPermissionIds.length &gt; 0) {
-      // deleting local data based on server response - log for traceability of possible data loss
+      // deleting local data based on server response - log for traceability of possible data loss.
       Logging.warn(
         &quot;sync: purging local docs after server reported lost permissions&quot;,
         {
           db: this.dbName,
           count: lostPermissionIds.length,
+          // how far behind the server this client was: local edits made since then are lost
+          lastSyncCompleted: localStorage.getItem(this.LAST_SYNC_KEY),
         },
       );
     }
