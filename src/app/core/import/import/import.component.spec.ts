@@ -173,6 +173,33 @@ describe("ImportComponent", () => {
     await testApplyColumnMapping(loadedMapping, loadedMapping, 2);
   });
 
+  it("should apply historic column mapping - requiring a new review of its value mapping config", async () => {
+    component.importSettings.set({ columnMapping: [{ column: "x" }] });
+
+    // the file of this import can hold values the previous import did not have,
+    // so its config has to be reviewed for the new file rather than taken as confirmed
+    await testApplyColumnMapping(
+      [
+        {
+          column: "x",
+          propertyName: "gender",
+          additional: { values: { male: "M" } },
+          configReview: "confirmed",
+          manuallyUpdated: true,
+        },
+      ],
+      [
+        {
+          column: "x",
+          propertyName: "gender",
+          additional: { values: { male: "M" } },
+        },
+      ],
+      1,
+    );
+    expect(component.hasUnconfirmedColumnConfig()).toBe(false);
+  });
+
   it("should apply historic column mapping - overwriting existing mappings", async () => {
     component.importSettings.set({
       columnMapping: [

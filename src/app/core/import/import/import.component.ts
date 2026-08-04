@@ -208,12 +208,21 @@ export class ImportComponent {
       return;
     }
 
-    const adjustedMappings = currentColumnMapping.map(
-      ({ column }) =>
-        importMetadata.config.columnMapping.find(
-          (c) => column === c.column,
-        ) ?? { column },
-    );
+    const adjustedMappings = currentColumnMapping.map(({ column }) => {
+      const previous = importMetadata.config.columnMapping.find(
+        (c) => column === c.column,
+      );
+      if (!previous) {
+        return { column };
+      }
+
+      // The file of this import can hold values the previous import did not have, so the
+      // transformation config of the loaded mapping counts as unreviewed for this file.
+      // It is not marked as manually updated either, otherwise its dialog would open
+      // right away for every loaded column.
+      const { configReview, manuallyUpdated, ...reviewedAnew } = previous;
+      return reviewedAnew;
+    });
 
     // TODO: load additionalActions also
 
