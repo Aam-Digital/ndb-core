@@ -18,7 +18,6 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
 import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/edit-import-column-mapping.component";
 import { ImportAdditionalSettings } from "../import-additional-settings";
-import { ImportConfigDialogService } from "./import-config-dialog.service";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -43,7 +42,6 @@ export class ImportColumnMappingComponent {
   private readonly importColumnMappingService = inject(
     ImportColumnMappingService,
   );
-  private readonly configDialogs = inject(ImportConfigDialogService);
 
   rawData = input<any[]>([]);
   columnMapping = model<ColumnMapping[]>([]);
@@ -53,8 +51,6 @@ export class ImportColumnMappingComponent {
   entityCtor = computed(() =>
     this.entityType() ? this.entities.get(this.entityType()) : undefined,
   );
-
-  private reviewingConfigs = false;
 
   constructor() {
     effect(() => {
@@ -69,49 +65,7 @@ export class ImportColumnMappingComponent {
       if (JSON.stringify(autoMappings) !== JSON.stringify(cm)) {
         untracked(() => this.columnMapping.set(autoMappings));
       }
-      untracked(() => this.reviewConfigsOfMappedColumns());
     });
-  }
-
-  /**
-   * Show the config dialog of every column the user newly mapped, one dialog after the other,
-   * so that the suggested value mappings are reviewed instead of silently skipped.
-   *
-   * Columns that were mapped automatically because their header matches a field are left alone,
-   * opening their dialogs would bury the user in dialogs on entering the step. Those are marked
-   * as unconfigured in the UI instead.
-   */
-  private async reviewConfigsOfMappedColumns() {
-    if (this.reviewingConfigs) {
-      return;
-    }
-    this.reviewingConfigs = true;
-
-    try {
-      for (const column of this.columnMapping().map((c) => c.column)) {
-        const col = this.columnMapping().find((c) => c.column === column);
-        if (
-          !col?.propertyName ||
-          // only columns the user mapped themselves, and only until their dialog was shown once
-          // (selecting a field resets `configReview`, so a changed field is offered again)
-          !col.manuallyUpdated ||
-          col.configReview ||
-          !this.configDialogs.hasConfigDialog(col, this.entityCtor())
-        ) {
-          continue;
-        }
-
-        const configuredCol = await this.configDialogs.openConfigDialog(
-          col,
-          this.rawData(),
-          this.entityCtor(),
-          this.additionalSettings(),
-        );
-        this.updateColumnMapping(col, configuredCol);
-      }
-    } finally {
-      this.reviewingConfigs = false;
-    }
   }
 
   updateColumnMapping(

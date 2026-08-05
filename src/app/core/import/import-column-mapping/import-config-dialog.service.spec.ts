@@ -23,6 +23,33 @@ describe("ImportConfigDialogService", () => {
     service = TestBed.inject(ImportConfigDialogService);
   });
 
+  it("should report a missing config only for fields that need one and have no additional yet", () => {
+    const needsConfig: ColumnMapping = {
+      column: "gender",
+      propertyName: "category",
+    };
+    expect(service.isConfigMissing(needsConfig, TestEntity)).toBe(true);
+    expect(
+      service.isConfigMissing(
+        { ...needsConfig, additional: { values: {} } },
+        TestEntity,
+      ),
+    ).toBe(false);
+    // an empty date format is a valid, confirmed config
+    expect(
+      service.isConfigMissing(
+        { column: "date", propertyName: "dateOfBirth", additional: "" },
+        TestEntity,
+      ),
+    ).toBe(false);
+    expect(
+      service.isConfigMissing(
+        { column: "x", propertyName: "name" },
+        TestEntity,
+      ),
+    ).toBe(false);
+  });
+
   it("should detect which mapped fields have a config dialog", () => {
     expect(
       service.hasConfigDialog(
@@ -58,23 +85,17 @@ describe("ImportConfigDialogService", () => {
     expect(dialogData.values).toEqual(["male", "female"]);
     expect(dialogData.totalRowCount).toBe(3);
     expect(result.additional).toEqual({ values: { male: "M" } });
-    expect(result.configReview).toBe("confirmed");
     // the given mapping is not modified, the dialog result is returned as a new object
     expect(col.additional).toBeUndefined();
   });
 
-  it("should mark a cancelled config as unconfirmed, unless it was confirmed before", async () => {
+  it("should leave the mapping unconfigured when the user cancels the dialog", async () => {
     const col: ColumnMapping = { column: "gender", propertyName: "category" };
 
-    const cancelled = await service.openConfigDialog(col, [], TestEntity);
-    expect(cancelled.configReview).toBe("cancelled");
+    const result = await service.openConfigDialog(col, [], TestEntity);
 
-    const cancelledAfterConfirming = await service.openConfigDialog(
-      { ...col, configReview: "confirmed" },
-      [],
-      TestEntity,
-    );
-    expect(cancelledAfterConfirming.configReview).toBe("confirmed");
+    expect(result.additional).toBeUndefined();
+    expect(service.isConfigMissing(result, TestEntity)).toBe(true);
   });
 
   it("should not open a dialog for a field whose datatype does not define one", async () => {

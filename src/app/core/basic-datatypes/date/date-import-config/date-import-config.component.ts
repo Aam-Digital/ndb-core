@@ -35,14 +35,24 @@ export class DateImportConfigComponent {
   additionalSettings = input<ImportAdditionalSettings>();
   onColumnMappingChange = input<(col: ColumnMapping) => void>();
 
-  /** marks the column as not configured, same indicator as for value mappings */
-  readonly badge = computed(() => (this.col()?.additional ? undefined : "?"));
-
-  readonly tooltip = computed(() =>
-    this.badge()
-      ? $localize`:import date format tooltip - not configured:No date format is defined for this column. Dates that the system cannot read on its own are skipped during import.`
-      : $localize`:import date format tooltip - configured:Dates of this column are read with the format "${this.col()?.additional}:format:". Open to review or change it.`,
+  /**
+   * Marks the column as not configured, same indicator as for value mappings.
+   * An empty format is a configured state: it reads the dates the system understands on its own.
+   */
+  readonly badge = computed(() =>
+    this.col()?.additional == null ? "?" : undefined,
   );
+
+  readonly tooltip = computed(() => {
+    const format = this.col()?.additional;
+    if (format == null) {
+      return $localize`:import date format tooltip - not configured:No date format is defined for this column. Dates that the system cannot read on its own are skipped during import.`;
+    }
+    if (format === "") {
+      return $localize`:import date format tooltip - no format needed:The dates of this column are read without a format. Open to define one if they are not imported correctly.`;
+    }
+    return $localize`:import date format tooltip - configured:Dates of this column are read with the format "${format}:format:". Open to review or change it.`;
+  });
 
   async openConfig() {
     const updated = await this.configDialogs.openConfigDialog(

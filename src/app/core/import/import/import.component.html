@@ -128,10 +128,7 @@
     </mat-step>
 
     <!-- STEP 3: MAP COLUMNS -->
-    <mat-step
-      [completed]="mappedColumnsCount() > 0 && !hasUnconfirmedColumnConfig()"
-      #step3
-    >
+    <mat-step [completed]="columnMappingComplete()" #step3>
       <ng-template matStepLabel>
         <div i18n="Import Step - map columns">Map Columns</div>
 

@@ -19,13 +19,4 @@ export interface ColumnMapping {
    * This is used to track if the coloumns are manually updated or not.
    */
   manuallyUpdated?: boolean;
-
-  /**
-   * How the user left the config dialog of this column, if its field requires one.
-   *
-   * `undefined` means the dialog was never opened, so the values are imported as they are
-   * in the file. "cancelled" means the user closed it without saving, which blocks the import
-   * until the mapping is confirmed.
-   */
-  configReview?: "confirmed" | "cancelled";
 }

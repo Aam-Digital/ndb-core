@@ -27,11 +27,21 @@ export class ImportConfigDialogService {
   }
 
   /**
-   * Let the user configure how the column's values are imported
-   * and return the resulting column mapping, with `configReview` set to how the dialog was left.
+   * Whether the column still needs its transformation configured by the user.
    *
-   * A cancelled dialog does not discard a configuration that was confirmed before,
-   * the user is backing out of an edit rather than dropping their earlier decision.
+   * The dialogs only write `additional` when the user confirms them, so a column that requires
+   * a dialog and has no `additional` yet has either never been opened or been cancelled.
+   * In both cases the values of the file would be imported without any transformation.
+   */
+  isConfigMissing(col: ColumnMapping, entityType: EntityConstructor): boolean {
+    return this.hasConfigDialog(col, entityType) && col.additional == null;
+  }
+
+  /**
+   * Let the user configure how the column's values are imported
+   * and return the resulting column mapping.
+   *
+   * The returned mapping only differs from the given one if the user confirmed the dialog.
    */
   async openConfigDialog(
     col: ColumnMapping,
@@ -55,16 +65,13 @@ export class ImportConfigDialogService {
       additionalSettings: additionalSettings,
     };
 
-    const saved = await firstValueFrom(
+    await firstValueFrom(
       this.dialog
         .open(dialogComponent, { data, width: "80vw", disableClose: true })
         .afterClosed(),
     );
 
-    return {
-      ...data.col,
-      configReview: saved ? "confirmed" : (col.configReview ?? "cancelled"),
-    };
+    return data.col;
   }
 
   private getConfigDialogName(

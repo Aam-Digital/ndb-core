@@ -8,7 +8,7 @@ mat-form-field {
   max-width: 240px;
 }
 
-.config-hint {
+.config-error {
   // the form field keeps space below the input for its own errors, move the message into it
   // so that it reads as belonging to the field above rather than to the next column below
   margin-top: -18px;

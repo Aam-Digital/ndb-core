@@ -50,6 +50,16 @@ describe("DateImportConfigComponent", () => {
 
     expect(component.badge()).toBeUndefined();
     expect(component.tooltip()).toContain("DD.MM.YYYY");
+
+    // confirming without a format is a valid config for dates the system reads on its own
+    fixture.componentRef.setInput("col", {
+      column: "date",
+      propertyName: "dateOfBirth",
+      additional: "",
+    });
+
+    expect(component.badge()).toBeUndefined();
+    expect(component.tooltip()).toContain("without a format");
   });
 
   it("should open dialog and notify with the configured mapping", async () => {

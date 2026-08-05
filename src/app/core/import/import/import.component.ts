@@ -30,6 +30,8 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ImportConfigDialogService } from "../import-column-mapping/import-config-dialog.service";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -65,6 +67,8 @@ export class ImportComponent {
   private router = inject(Router);
   private location = inject<Location>(LOCATION_TOKEN);
   private readonly ability = inject(EntityAbility);
+  private readonly entities = inject(EntityRegistry);
+  private readonly configDialogs = inject(ImportConfigDialogService);
 
   rawData: any[];
 
@@ -118,14 +122,24 @@ export class ImportComponent {
   );
 
   /**
-   * Whether a column's config dialog was opened but closed without confirming the mapping.
-   * The user has to finish what they started before the import can continue.
+   * Columns that are mapped to a field whose values have to be transformed,
+   * but whose transformation the user has not configured and confirmed yet.
    */
-  hasUnconfirmedColumnConfig = computed(
+  columnsMissingConfig = computed(() => {
+    const entityType = this.importSettings().entityType;
+    const entityCtor = entityType ? this.entities.get(entityType) : undefined;
+    if (!entityCtor) {
+      return [];
+    }
+    return (this.importSettings().columnMapping ?? []).filter((m) =>
+      this.configDialogs.isConfigMissing(m, entityCtor),
+    );
+  });
+
+  /** whether the user can continue from the column mapping step to the import preview */
+  columnMappingComplete = computed(
     () =>
-      this.importSettings().columnMapping?.some(
-        (m) => m.configReview === "cancelled",
-      ) ?? false,
+      this.mappedColumnsCount() > 0 && this.columnsMissingConfig().length === 0,
   );
 
   constructor() {
@@ -208,21 +222,12 @@ export class ImportComponent {
       return;
     }
 
-    const adjustedMappings = currentColumnMapping.map(({ column }) => {
-      const previous = importMetadata.config.columnMapping.find(
-        (c) => column === c.column,
-      );
-      if (!previous) {
-        return { column };
-      }
-
-      // The file of this import can hold values the previous import did not have, so the
-      // transformation config of the loaded mapping counts as unreviewed for this file.
-      // It is not marked as manually updated either, otherwise its dialog would open
-      // right away for every loaded column.
-      const { configReview, manuallyUpdated, ...reviewedAnew } = previous;
-      return reviewedAnew;
-    });
+    const adjustedMappings = currentColumnMapping.map(
+      ({ column }) =>
+        importMetadata.config.columnMapping.find(
+          (c) => column === c.column,
+        ) ?? { column },
+    );
 
     // TODO: load additionalActions also
 

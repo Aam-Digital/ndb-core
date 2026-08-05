@@ -3,10 +3,16 @@ import { EditImportColumnMappingComponent } from "./edit-import-column-mapping.c
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ColumnMapping } from "../../column-mapping";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { ImportConfigDialogService } from "../import-config-dialog.service";
 
 describe("EditImportColumnMappingComponent", () => {
   let component: EditImportColumnMappingComponent;
   let fixture: ComponentFixture<EditImportColumnMappingComponent>;
+  let mockConfigDialogs: {
+    hasConfigDialog: ReturnType<typeof vi.fn>;
+    isConfigMissing: ReturnType<typeof vi.fn>;
+    openConfigDialog: ReturnType<typeof vi.fn>;
+  };
 
   const columnMapping: ColumnMapping = {
     column: "test",
@@ -20,8 +26,21 @@ describe("EditImportColumnMappingComponent", () => {
   ];
 
   beforeEach(async () => {
+    mockConfigDialogs = {
+      hasConfigDialog: vi.fn().mockReturnValue(true),
+      isConfigMissing: vi.fn().mockReturnValue(true),
+      openConfigDialog: vi
+        .fn()
+        .mockImplementation((col: ColumnMapping) =>
+          Promise.resolve({ ...col, additional: { values: { male: "M" } } }),
+        ),
+    };
+
     await TestBed.configureTestingModule({
       imports: [MockedTestingModule, EditImportColumnMappingComponent],
+      providers: [
+        { provide: ImportConfigDialogService, useValue: mockConfigDialogs },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditImportColumnMappingComponent);
@@ -65,55 +84,61 @@ describe("EditImportColumnMappingComponent", () => {
     expect(emitted.additional).toBeUndefined();
   });
 
-  it("should emit the newly selected field without the previous transformation config and its review", () => {
+  it("should emit the newly selected field without the previous transformation config", async () => {
+    mockConfigDialogs.hasConfigDialog.mockReturnValue(false);
     fixture.componentRef.setInput("columnMapping", {
       column: "test",
       propertyName: "category",
       additional: { values: { male: "M" } },
-      configReview: "confirmed",
     });
     fixture.detectChanges();
 
-    component.onFieldSelected("name");
+    await component.onFieldSelected("name");
 
     expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
       expect.objectContaining({
         column: "test",
         propertyName: "name",
         additional: undefined,
-        configReview: undefined,
         manuallyUpdated: true,
       }),
     );
   });
 
-  it("should hint about the value mapping config until the user confirmed it", () => {
-    // mapped to an enum field, which is configured through a dialog
-    expect(component.configHint()).toContain("not configured");
+  it("should open the config dialog of a newly selected field and emit its result", async () => {
+    await component.onFieldSelected("category");
 
-    fixture.componentRef.setInput("columnMapping", {
-      ...columnMapping,
-      configReview: "cancelled",
-    });
-    fixture.detectChanges();
-    expect(component.configHint()).toContain("was not saved");
-
-    fixture.componentRef.setInput("columnMapping", {
-      ...columnMapping,
-      configReview: "confirmed",
-    });
-    fixture.detectChanges();
-    expect(component.configHint()).toBeNull();
+    expect(mockConfigDialogs.openConfigDialog).toHaveBeenCalledWith(
+      expect.objectContaining({ propertyName: "category" }),
+      rawData,
+      TestEntity,
+      undefined,
+    );
+    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
+      expect.objectContaining({ additional: { values: { male: "M" } } }),
+    );
   });
 
-  it("should not hint for fields that have no config dialog", () => {
+  it("should open only one dialog if the field select notifies twice for one selection", async () => {
+    await Promise.all([
+      component.onFieldSelected("category"),
+      component.onFieldSelected("category"),
+    ]);
+
+    expect(mockConfigDialogs.openConfigDialog).toHaveBeenCalledTimes(1);
+  });
+
+  it("should show an error while the value mapping config of the field is missing", () => {
+    mockConfigDialogs.isConfigMissing.mockReturnValue(true);
+    expect(component.configError()).toContain("not configured");
+
+    mockConfigDialogs.isConfigMissing.mockReturnValue(false);
     fixture.componentRef.setInput("columnMapping", {
-      column: "test",
-      propertyName: "name",
+      ...columnMapping,
+      additional: { values: { male: "M" } },
     });
     fixture.detectChanges();
-
-    expect(component.configHint()).toBeNull();
+    expect(component.configError()).toBeNull();
   });
 
   it("should preserve additional when updateMapping is called with settingAdditional=true", () => {

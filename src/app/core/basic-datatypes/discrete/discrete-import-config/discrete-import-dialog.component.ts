@@ -197,8 +197,7 @@ export class DiscreteImportDialogComponent implements OnInit {
       }
       this.data.col.additional = discreteAdditional;
 
-      // the result marks the mapping as confirmed by the user, a cancelled dialog closes without it
-      this.dialog.close(true);
+      this.dialog.close();
     }
   }
 
