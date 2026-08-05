@@ -16,7 +16,9 @@
       mat-icon-button
       matTooltip="Previous Grouping"
       i18n-matTooltip
+      i18n-caption
       caption="Previous"
+      i18n-aria-label
       aria-label="Previous grouping"
       (click)="getPrev()"
       [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
@@ -42,7 +44,9 @@
       mat-icon-button
       matTooltip="Next Grouping"
       i18n-matTooltip
+      i18n-caption
       caption="Next"
+      i18n-aria-label
       aria-label="Next grouping"
       (click)="getNext()"
       [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
@@ -98,17 +102,15 @@
         </td>
       </ng-container>
 
-      <tr hidden>
-        <th
-          scope="col"
-          i18n="The center that a partiipant belongs to, e.g. a city"
-        >
-          Center
+      <!-- Table header only for assistive technologies like screen readers -->
+      <tr class="visually-hidden">
+        <th scope="col" i18n="The category the count is grouped by">
+          Category
         </th>
-        <th scope="col" i18n="The amount of children that study at one school">
-          Count of children
+        <th scope="col" i18n="The count of records in the category">Count</th>
+        <th scope="col" i18n="A link to the filtered list for that category">
+          Link
         </th>
-        <th scope="col" i18n="A link that takes a user to a center">Link</th>
       </tr>
       <tr
         mat-row

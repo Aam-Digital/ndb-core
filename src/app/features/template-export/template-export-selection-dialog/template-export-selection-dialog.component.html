@@ -1,6 +1,7 @@
 <mat-dialog-content>
   @if (isFeatureEnabled.value() !== true) {
     <app-feature-disabled-info
+      i18n-featureName
       featureName="Export API"
       [featureEnabled]="isFeatureEnabled.value()"
     ></app-feature-disabled-info>

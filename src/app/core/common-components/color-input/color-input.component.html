@@ -23,12 +23,14 @@
 
 @if (ngControl) {
   <!-- EditComponent mode: entity form provides the outer mat-form-field -->
+  <!-- eslint-disable @angular-eslint/template/i18n -- "#RRGGBB" is a colour format, not prose -->
   <input
     matInput
     [formControl]="formControl"
     placeholder="#RRGGBB"
     class="color-text-input"
   />
+  <!-- eslint-enable @angular-eslint/template/i18n -->
   <ng-container *ngTemplateOutlet="colorPickerButton"></ng-container>
 } @else if (compact()) {
   <!-- Compact standalone mode: just the color picker button -->
@@ -45,12 +47,14 @@
         i18n-matTooltip
       ></fa-icon>
     </mat-label>
+    <!-- eslint-disable @angular-eslint/template/i18n -- "#RRGGBB" is a colour format, not prose -->
     <input
       matInput
       [formControl]="colorControl"
       style="width: 100px"
       placeholder="#RRGGBB"
     />
+    <!-- eslint-enable @angular-eslint/template/i18n -->
     <span matSuffix>
       <ng-container *ngTemplateOutlet="colorPickerButton"></ng-container>
     </span>

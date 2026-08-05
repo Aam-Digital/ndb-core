@@ -6,11 +6,15 @@
   [entries]="filteredShortcuts()"
 >
   <div class="table-container">
-    <table mat-table aria-label="Quick actions">
+    <table mat-table i18n-aria-label aria-label="Quick actions">
       <!-- Table header only for assistive technologies like screen readers -->
-      <tr hidden>
-        <th scope="col">Icon</th>
-        <th scope="col">Label</th>
+      <tr class="visually-hidden">
+        <th scope="col" i18n="Column header for the icon of a quick action">
+          Icon
+        </th>
+        <th scope="col" i18n="Column header for the label of a quick action">
+          Label
+        </th>
       </tr>
       <ng-container matColumnDef="icon">
         <td *matCellDef="let row" class="pointer" [routerLink]="row.link">

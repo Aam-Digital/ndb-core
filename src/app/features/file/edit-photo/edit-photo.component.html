@@ -1,5 +1,11 @@
 <div class="photo-container">
-  <img [src]="imgPath()" alt="Image" class="image" (click)="openPopup()" />
+  <img
+    [src]="imgPath()"
+    i18n-alt
+    alt="Image"
+    class="image"
+    (click)="openPopup()"
+  />
 
   <div
     class="img-controls"

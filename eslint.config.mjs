@@ -8,7 +8,10 @@ import tseslint from "typescript-eslint";
 import jsonc from "eslint-plugin-jsonc";
 
 export default defineConfig([
-  { ignores: [".angular", "dist", "doc/compodoc", "test-results/**"] },
+  // ".claude" holds git worktrees (stale copies of the repo) and agent config - never lint them
+  {
+    ignores: [".angular", ".claude", "dist", "doc/compodoc", "test-results/**"],
+  },
   prettier,
   {
     files: ["src/**/*.ts"],
@@ -60,9 +63,73 @@ export default defineConfig([
     },
   },
   {
+    // index.html is the static app shell, not an Angular template
     files: ["src/**/*.html"],
+    ignores: ["src/index.html"],
 
     extends: [...angular.configs.templateRecommended],
+    rules: {
+      // report-only for now: flags user-facing text that is not marked for translation.
+      // See #4156 - findings are still being worked through, do not raise to "error"
+      // until the backlog is cleared.
+      "@angular-eslint/template/i18n": [
+        "warn",
+        {
+          checkId: false,
+          checkText: true,
+          checkAttributes: true,
+          // structural / behavioural attributes that never hold user-facing text
+          ignoreAttributes: [
+            "align",
+            "angulartics2On",
+            "angularticsAction",
+            "angularticsCategory",
+            "appearance",
+            "buttonType",
+            "cdkDragBoundary",
+            "cdkDragLockAxis",
+            "cdkDropListOrientation",
+            "clickMode",
+            "containerId",
+            "content",
+            "data-testid",
+            "display",
+            "entityType",
+            "floatLabel",
+            "icon",
+            "imgProperty",
+            "matBadgeColor",
+            "matColumnDef",
+            "matTooltipPosition",
+            "media",
+            "mode",
+            "panelClass",
+            "property",
+            "queryParamsHandling",
+            "rel",
+            "scope",
+            "showLabel",
+            "size",
+            "startView",
+            "tabIndexKey",
+            "templateType",
+            "theme",
+            "uniqueAreaId",
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Inline templates in tests, stories and story helpers are fixtures, not user-facing UI.
+    // angular-eslint's processor matches config against a virtual "<file>.ts/<block>.html"
+    // path, so the patterns need the trailing "/**".
+    files: [
+      "**/*.spec.ts/**",
+      "**/*.stories.ts/**",
+      "**/*stories-helper*.ts/**",
+    ],
+    rules: { "@angular-eslint/template/i18n": "off" },
   },
   ...storybook.configs["flat/recommended"],
   {

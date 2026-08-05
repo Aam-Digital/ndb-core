@@ -12,7 +12,11 @@
   </div>
 
   @if (isLoading()) {
-    <div class="flex-row align-center gap-small" aria-live="polite">
+    <div
+      class="flex-row align-center gap-small"
+      i18n-aria-live
+      aria-live="polite"
+    >
       <mat-spinner [diameter]="36" />
       <span i18n>Analyzing configuration ...</span>
     </div>
