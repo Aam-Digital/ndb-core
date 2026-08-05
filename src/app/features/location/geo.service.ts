@@ -72,7 +72,14 @@ export class GeoService {
 
     configService.configUpdates.subscribe(() => {
       const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
+      if (config?.countrycodes === this.countrycodes) {
+        return;
+      }
+
       this.countrycodes = config?.countrycodes;
+      // cached results are keyed by search term alone, so they belong to the
+      // previous filter and its address format
+      this.cache.clear();
     });
 
     // Process lookups sequentially with a 1s cooldown after every attempt

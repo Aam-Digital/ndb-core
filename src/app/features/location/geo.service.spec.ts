@@ -76,6 +76,10 @@ describe("GeoService", () => {
     service = TestBed.inject(GeoService);
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   function setCountrycodes(countrycodes?: string) {
     mockConfigService.getConfig.mockReturnValue({ countrycodes });
     configUpdates.next(undefined);
@@ -271,6 +275,22 @@ describe("GeoService", () => {
     expect(response[0].address?.postcode).toBe("12053");
     expect(response[0].address?.city).toBe("Berlin");
     expect(response[0].address?.country).toBe("Germany");
+  });
+
+  it("should not reuse cached results after the country filter changed", async () => {
+    vi.useFakeTimers();
+    const term = "Berlin";
+    mockHttp.get.mockReturnValue(of([createSearchResult({ city: "Berlin" })]));
+
+    service.lookup(term).subscribe();
+    expect(mockHttp.get).toHaveBeenCalledTimes(1);
+
+    setCountrycodes("de");
+    service.lookup(term).subscribe();
+    // the queue waits out the Nominatim cooldown before the next request
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(mockHttp.get).toHaveBeenCalledTimes(2);
   });
 
   it("should return cached result on repeated lookup without additional HTTP request", () => {
