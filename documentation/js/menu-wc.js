@@ -2064,6 +2064,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/ImportColumnMappingService.html" data-type="entity-link" >ImportColumnMappingService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/ImportConfigDialogService.html" data-type="entity-link" >ImportConfigDialogService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/ImportExistingService.html" data-type="entity-link" >ImportExistingService</a>
                                 </li>
                                 <li class="link">

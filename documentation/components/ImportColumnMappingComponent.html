@@ -376,7 +376,7 @@ and define value matching and transformations.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:51</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:53</a></div>
                             </td>
                         </tr>
 
@@ -402,7 +402,7 @@ and define value matching and transformations.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:46</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:48</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -428,7 +428,7 @@ and define value matching and transformations.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:45</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:47</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -449,7 +449,7 @@ and define value matching and transformations.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:47</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:49</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -475,7 +475,7 @@ and define value matching and transformations.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:46</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -500,7 +500,7 @@ and define value matching and transformations.</p>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:45</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:47</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -534,8 +534,8 @@ and define value matching and transformations.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="69"
-                                    class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:69</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:71</a></div>
                         </td>
                     </tr>
 
@@ -626,7 +626,7 @@ and define value matching and transformations.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/import/import-column-mapping/import-column-mapping.component.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -679,8 +679,10 @@ import { ImportAdditionalSettings } from &quot;../import-additional-settings&quo
   ],
 })
 export class ImportColumnMappingComponent {
-  private entities &#x3D; inject(EntityRegistry);
-  private importColumnMappingService &#x3D; inject(ImportColumnMappingService);
+  private readonly entities &#x3D; inject(EntityRegistry);
+  private readonly importColumnMappingService &#x3D; inject(
+    ImportColumnMappingService,
+  );
 
   rawData &#x3D; input&lt;any[]&gt;([]);
   columnMapping &#x3D; model&lt;ColumnMapping[]&gt;([]);
@@ -713,7 +715,10 @@ export class ImportColumnMappingComponent {
   ) {
     this.columnMapping.update((cm) &#x3D;&gt; {
       const next &#x3D; [...cm];
-      const index &#x3D; next.indexOf(originalColumnMapping);
+      // match by column rather than object identity, changes can be emitted after the array was replaced
+      const index &#x3D; next.findIndex(
+        (c) &#x3D;&gt; c.column &#x3D;&#x3D;&#x3D; originalColumnMapping.column,
+      );
       if (index &gt;&#x3D; 0) {
         next[index] &#x3D; { ...newColumnMapping };
       }
