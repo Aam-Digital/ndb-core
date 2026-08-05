@@ -84,6 +84,7 @@ export class DateDatatype<DBFormat = string> extends DefaultDatatype<
   }
 
   override importConfigComponent = "DateImportConfig";
+  override importConfigDialog = "DateImportDialog";
 
   override async importMapFunction(
     val: any,

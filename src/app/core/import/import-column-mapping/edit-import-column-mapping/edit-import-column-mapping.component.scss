@@ -8,6 +8,17 @@ mat-form-field {
   max-width: 240px;
 }
 
+.config-error {
+  // the form field keeps space below the input for its own errors, move the message into it
+  // so that it reads as belonging to the field above rather than to the next column below
+  margin-top: -18px;
+
+  // mat-error keeps a spacer for the layout inside a form field, which is not needed out here
+  &::before {
+    display: none;
+  }
+}
+
 .lookup-warning-icon {
   color: #f57c00;
 }

@@ -3,6 +3,10 @@
   mat-stroked-button
   (click)="openConfig()"
   i18n="import - column mapping - configure date format button"
+  [matBadge]="badge()"
+  [matBadgeHidden]="!badge()"
+  matBadgeColor="warn"
+  [matTooltip]="tooltip()"
 >
   Configure value mapping
 </button>

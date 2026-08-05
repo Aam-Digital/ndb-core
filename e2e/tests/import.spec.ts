@@ -61,14 +61,15 @@ test("Import children with entity reference, date and enum column mappings", asy
 
   // --- "Name" column is auto-mapped to "Name" field ---
   // --- "Date of Birth" column is auto-mapped to "Date of birth" field ---
-  // Configure date format for the Date of Birth column
+  // Automatically mapped columns keep their dialog closed and are only marked as
+  // unconfigured, so the date format has to be opened from the row itself.
   const dobRow = page
     .locator("app-edit-import-column-mapping")
     .filter({ hasText: "Date of Birth" });
   await dobRow.getByRole("button", { name: "Configure value mapping" }).click();
 
   const dateDialog = page.getByRole("dialog");
-  await expect(dateDialog).toBeVisible();
+  await expect(dateDialog.getByLabel("Date format")).toBeVisible();
 
   // Enter the date format matching our CSV data
   await dateDialog.getByLabel("Date format").fill("DD.MM.YYYY");
@@ -91,7 +92,6 @@ test("Import children with entity reference, date and enum column mappings", asy
     .click();
 
   const enumDialog = page.getByRole("dialog");
-  await expect(enumDialog).toBeVisible();
   await expect(enumDialog.getByText("Imported values")).toBeVisible();
 
   // Map each imported gender value to the system's enum values
