@@ -6,8 +6,10 @@ import {
   UntypedFormControl,
   UntypedFormGroup,
 } from "@angular/forms";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EditReportDefinitionComponent } from "./edit-report-definition.component";
+import { FlatReportRow } from "./report-definition-ui-node";
 
 /** wire the component to a `reportDefinition` control sitting next to a `mode` control */
 function createWithMode(mode: string): EditReportDefinitionComponent {
@@ -29,6 +31,10 @@ describe("EditReportDefinitionComponent", () => {
   let formGroup: UntypedFormGroup;
 
   const definition = () => formGroup.get("reportDefinition").value;
+  const drop = (previousIndex: number, currentIndex: number) =>
+    component.onDrop({ previousIndex, currentIndex } as CdkDragDrop<
+      FlatReportRow[]
+    >);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -62,7 +68,7 @@ describe("EditReportDefinitionComponent", () => {
     expect(createWithMode("exporting").isSql()).toBe(false);
   });
 
-  it("loads an external definition into the working tree", () => {
+  it("loads an external definition into flat rows with the right nesting levels", () => {
     formGroup
       .get("reportDefinition")
       .setValue([
@@ -71,10 +77,11 @@ describe("EditReportDefinitionComponent", () => {
       ]);
     fixture.detectChanges();
 
-    const tree = component.uiTree();
-    expect(tree.length).toBe(2);
-    expect(tree[1].items.length).toBe(1);
-    expect(tree[1].items[0].query).toBe("SELECT b FROM t");
+    expect(component.rows().map((r) => [r.isGroup, r.level])).toEqual([
+      [false, 0],
+      [true, 0],
+      [false, 1],
+    ]);
   });
 
   it("adds a query and a group at the root and persists to the bound control", () => {
@@ -88,33 +95,58 @@ describe("EditReportDefinitionComponent", () => {
     expect(formGroup.get("reportDefinition").dirty).toBe(true);
   });
 
-  it("removes a root node", () => {
+  it("removes a group together with its whole subtree", () => {
     formGroup
       .get("reportDefinition")
-      .setValue([{ query: "a" }, { query: "b" }]);
+      .setValue([
+        { groupTitle: "G", items: [{ query: "a" }, { query: "b" }] },
+        { query: "c" },
+      ]);
     fixture.detectChanges();
 
-    component.removeRoot(component.uiTree()[0]);
+    component.remove(0); // the group at index 0 (plus its two children)
 
-    expect(definition()).toEqual([{ query: "b" }]);
+    expect(definition()).toEqual([{ query: "c" }]);
   });
 
-  it("persists an edited node coming from a child component", () => {
-    formGroup.get("reportDefinition").setValue([{ query: "a" }]);
+  it("adds a query and a sub-group directly into a group via its + buttons", () => {
+    formGroup.get("reportDefinition").setValue([{ groupTitle: "G", items: [] }]);
     fixture.detectChanges();
 
-    component.onRootChange({ ...component.uiTree()[0], query: "SELECT 1" });
+    component.addChildGroup(0); // sub-group as first child of G
+    component.addChildQuery(0); // query as first child of G (before the sub-group)
 
-    expect(definition()).toEqual([{ query: "SELECT 1" }]);
+    expect(definition()).toEqual([
+      {
+        groupTitle: "G",
+        items: [{ query: "" }, { groupTitle: "New group", items: [] }],
+      },
+    ]);
+  });
+
+  it("moves a group with its subtree on drop", () => {
+    formGroup
+      .get("reportDefinition")
+      .setValue([
+        { query: "top" },
+        { groupTitle: "G", items: [{ query: "a" }, { query: "b" }] },
+      ]);
+    fixture.detectChanges();
+
+    drop(1, 0); // drag the group (row 1) above "top"
+
+    expect(definition()).toEqual([
+      { groupTitle: "G", items: [{ query: "a" }, { query: "b" }] },
+      { query: "top" },
+    ]);
   });
 
   it("does not re-mark the control dirty when a change resolves to the current value", () => {
     formGroup.get("reportDefinition").setValue([{ query: "a" }]);
     fixture.detectChanges();
 
-    // e.g. a query editor re-emitting its unchanged value as the form value reflows
-    // back into the tree after a save/reset must not re-dirty the saved form
-    component.onRootChange({ ...component.uiTree()[0] });
+    // a query editor re-emitting its unchanged value (e.g. reflow after save) must not re-dirty
+    component.setQuery(0, "a");
 
     expect(formGroup.get("reportDefinition").dirty).toBe(false);
   });
@@ -135,13 +167,7 @@ describe("EditReportDefinitionComponent", () => {
       .setValue([{ query: "a" }, { query: "b" }]);
     fixture.detectChanges();
 
-    const list = component.uiTree();
-    component.onDrop({
-      previousContainer: { data: list },
-      container: { data: list },
-      previousIndex: 0,
-      currentIndex: 1,
-    } as never);
+    drop(0, 1);
 
     expect(definition()).toEqual([{ query: "b" }, { query: "a" }]);
   });

@@ -3,23 +3,81 @@
   <app-json-editor [formControl]="formControl"></app-json-editor>
 } @else {
   <div class="flex-column gap-small report-definition">
-    <div
-      class="flex-column gap-small"
-      cdkDropList
-      [id]="rootDropListId"
-      [cdkDropListData]="uiTree()"
-      [cdkDropListConnectedTo]="connectedDropLists()"
-      (cdkDropListDropped)="onDrop($event)"
-    >
-      @for (node of uiTree(); track node.uniqueId) {
-        <app-edit-report-group-item
-          [node]="node"
-          [connectedTo]="connectedDropLists()"
-          [enabled]="enabled()"
-          (itemDrop)="onDrop($event)"
-          (deleteItem)="removeRoot(node)"
-          (nodeChange)="onRootChange($event)"
-        ></app-edit-report-group-item>
+    <div class="flex-column gap-small" cdkDropList (cdkDropListDropped)="onDrop($event)">
+      @for (row of rows(); track row.uniqueId; let i = $index) {
+        <div
+          class="report-row"
+          [class.group-row]="row.isGroup"
+          [style.margin-left.px]="row.level * indentPerLevel"
+          cdkDrag
+          [cdkDragData]="row"
+        >
+          <div class="flex-row align-center gap-small">
+            @if (enabled()) {
+              <fa-icon
+                icon="grip-vertical"
+                class="drag-handle"
+                cdkDragHandle
+              ></fa-icon>
+            }
+
+            @if (row.isGroup) {
+              <fa-icon icon="layer-group" class="row-icon"></fa-icon>
+              <input
+                class="group-title-input"
+                type="text"
+                [value]="row.groupTitle ?? ''"
+                [disabled]="!enabled()"
+                placeholder="Group title"
+                i18n-placeholder
+                aria-label="Group title"
+                i18n-aria-label
+                (change)="setGroupTitle(i, $event)"
+              />
+            } @else {
+              <app-edit-sql-query
+                class="query-editor"
+                [value]="row.query ?? ''"
+                [disabled]="!enabled()"
+                (valueChange)="setQuery(i, $event)"
+              ></app-edit-sql-query>
+            }
+
+            @if (enabled()) {
+              @if (row.isGroup) {
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="addChildQuery(i)"
+                  matTooltip="Add query to this group"
+                  i18n-matTooltip
+                >
+                  <fa-icon icon="plus"></fa-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="addChildGroup(i)"
+                  matTooltip="Add sub-group to this group"
+                  i18n-matTooltip
+                >
+                  <fa-icon icon="layer-group"></fa-icon>
+                </button>
+              }
+              <button
+                mat-icon-button
+                type="button"
+                (click)="remove(i)"
+                [matTooltip]="
+                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
+                "
+                i18n-matTooltip
+              >
+                <fa-icon icon="trash"></fa-icon>
+              </button>
+            }
+          </div>
+        </div>
       }
     </div>
 
