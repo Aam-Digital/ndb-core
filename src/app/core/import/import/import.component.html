@@ -132,7 +132,7 @@
       <ng-template matStepLabel>
         <div i18n="Import Step - map columns">Map Columns</div>
 
-        @if (mappedColumnsCount() > 0) {
+        @if (step3.completed) {
           <div
             class="step-label-extra"
             i18n="Import Step - map columns - sub-label"
