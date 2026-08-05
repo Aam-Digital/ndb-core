@@ -17,6 +17,10 @@ import { SessionType } from "../session/session-type";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 import { Logging } from "../logging/logging.service";
 import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
+import {
+  clearLastSyncMarkers,
+  LAST_SYNC_KEY_PREFIX,
+} from "#src/bootstrap-reset";
 
 /**
  * Manages access to individual databases,
@@ -72,21 +76,10 @@ export class DatabaseResolverService {
   }
 
   async destroyDatabases() {
-    DatabaseResolverService.clearLastSyncMarkers();
+    clearLastSyncMarkers();
     for (const db of this.databases.values()) {
       await db.destroy();
     }
-  }
-
-  /**
-   * Static, so it cannot use the injected LOCAL_STORAGE_TOKEN and touches the
-   * real localStorage directly. Callers that need this mockable should make it
-   * an instance method first.
-   */
-  static clearLastSyncMarkers() {
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith(SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX))
-      .forEach((key) => localStorage.removeItem(key));
   }
 
   /**
@@ -143,7 +136,7 @@ export class DatabaseResolverService {
     try {
       const dbName = dbConfig.dbNames.app;
       const lastSyncTime = this.localStorage.getItem(
-        SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + dbName,
+        LAST_SYNC_KEY_PREFIX + dbName,
       );
       // indexedDB.databases() is not available in all browsers (then: undefined)
       const existingDbs = await this.window?.indexedDB?.databases?.();

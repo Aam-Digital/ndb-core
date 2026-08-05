@@ -8,7 +8,7 @@ import type { Mock } from "vitest";
 
 type PwaInstallServiceMock = Pick<
   PwaInstallService,
-  "getPWAInstallType" | "installPWA"
+  "getPWAInstallType" | "installPWA" | "canInstallDirectly"
 > & {
   getPWAInstallType: Mock;
   installPWA: Mock;
@@ -25,10 +25,10 @@ describe("PwaInstallComponent", () => {
   let mockSnackbar: SnackBarMock;
 
   beforeEach(waitForAsync(() => {
-    PwaInstallService.canInstallDirectly = undefined;
     mockPWAInstallService = {
       getPWAInstallType: vi.fn(),
       installPWA: vi.fn(),
+      canInstallDirectly: undefined,
     };
     mockSnackbar = {
       openFromTemplate: vi.fn(),

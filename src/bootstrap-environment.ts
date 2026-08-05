@@ -1,6 +1,7 @@
 import { environment } from "./environments/environment";
 import { Logging } from "./app/core/logging/logging.service";
-import { FirebaseConfiguration } from "./app/features/notification/notification-config.interface";
+// type-only, so that this module does not enter the graph evaluated before i18n
+import type { FirebaseConfiguration } from "./app/features/notification/notification-config.interface";
 import { SessionType } from "./app/core/session/session-type";
 import { PUBLIC_FORM_ROUTE } from "./app/features/public-form/public-form-route";
 
