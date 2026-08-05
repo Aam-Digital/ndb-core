@@ -1,0 +1,134 @@
+@use "variables/colors";
+@use "mixins/list-table";
+
+// same container/table styling as the user accounts and roles lists
+@include list-table.container-and-table;
+
+// on small screens the table keeps its minimum width and scrolls horizontally
+.table-scroll {
+  overflow-x: auto;
+}
+
+.action-col {
+  text-align: center;
+}
+
+// give each row vertical breathing room so a stacked condition chip
+// does not sit flush against the row divider, and top-align every cell
+// so the checkboxes line up across columns even when one column is taller
+// (a condition chip / "only where…" affordance stacked under its checkbox)
+td.mat-mdc-cell {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  vertical-align: top;
+}
+
+// visually separate the manage wildcard column from the individual actions
+.manage-col {
+  border-left: 1px solid colors.$grey-transparent;
+}
+
+// stacked cell: checkbox on top, condition affordance below.
+// capped width so a long condition summary cannot overflow across the row.
+.cell-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 150px;
+}
+
+// subtle "only where…" link revealed under a ticked cell
+.cell-condition-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 11px;
+  color: colors.$muted;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    color: colors.$accent;
+  }
+}
+
+// chip showing the configured condition in plain words
+.cell-condition-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 140px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background-color: colors.$background-secondary;
+  color: colors.$accent;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+
+  // read-only (view mode): same look, not interactive
+  &.readonly {
+    cursor: default;
+
+    &:hover {
+      filter: none;
+    }
+  }
+}
+
+.cell-condition-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.cell-condition-remove {
+  cursor: pointer;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// internal/system entity types are greyed out via the global "text-secondary"
+// class; only the small lock icon needs a local size tweak
+.internal-type-icon {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.wildcard-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: colors.$background-secondary;
+  color: colors.$primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wildcard-subtitle {
+  font-size: 12px;
+}
+
+.wildcard-row {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.add-permission-field {
+  width: 280px;
+}
+
+.empty-state {
+  text-align: center;
+}

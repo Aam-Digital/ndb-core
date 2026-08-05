@@ -1,0 +1,112 @@
+<div class="flex-row flex-wrap">
+  <div class="flex-grow">
+    <app-view-title i18n>Roles & Permissions</app-view-title>
+  </div>
+
+  <div class="flex-row gap-small align-center">
+    <span
+      [matTooltip]="addDisabledTooltip"
+      [matTooltipDisabled]="canManageRoles()"
+    >
+      <button
+        mat-stroked-button
+        color="accent"
+        class="standard-add-button"
+        [routerLink]="canManageRoles() ? 'new' : null"
+        [disabled]="!canManageRoles()"
+      >
+        <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Add New Role</span>
+      </button>
+    </span>
+
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="moreMenu"
+      i18n-aria-label
+      aria-label="More options"
+    >
+      <fa-icon icon="ellipsis-vertical"></fa-icon>
+    </button>
+    <mat-menu #moreMenu="matMenu">
+      <button mat-menu-item (click)="editJson()">
+        <fa-icon icon="wrench" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Edit JSON</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>
+
+<p i18n class="margin-bottom-regular">
+  Roles define what users can see and do in the system. Each user can have one
+  or several roles assigned in their user account.
+</p>
+
+<div class="table-container">
+  <table mat-table [dataSource]="pagedRoles()" class="full-width table">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef i18n>Role</th>
+      <td mat-cell *matCellDef="let role">
+        <span class="flex-row align-center gap-small">
+          {{ role.name }}
+          @if (role.isProtected) {
+            <fa-icon
+              icon="lock"
+              class="protected-role-icon text-secondary"
+              i18n-matTooltip
+              matTooltip="Protected role, cannot be deleted"
+            ></fa-icon>
+          }
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef i18n>Description</th>
+      <td mat-cell *matCellDef="let role">{{ role.description || "-" }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="permissions">
+      <th mat-header-cell *matHeaderCellDef i18n>Permissions</th>
+      <td mat-cell *matCellDef="let role">
+        @if (role.rules) {
+          <span i18n>
+            {role.rules.length, plural,
+              one {1 rule}
+              other {{{ role.rules.length }} rules}
+            }
+          </span>
+        } @else if (role.name === publicRole || role.name === defaultRole) {
+          <span class="text-secondary" i18n>No permissions defined</span>
+        } @else {
+          <span class="text-secondary" i18n>
+            No permissions defined, falls back to the base role
+          </span>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      tabindex="0"
+      (click)="openRoleDetails(row)"
+      (keydown.enter)="openRoleDetails(row)"
+      (keydown.space)="$event.preventDefault(); openRoleDetails(row)"
+      class="clickable-row"
+    ></tr>
+  </table>
+
+  <mat-paginator
+    class="table-footer"
+    [length]="roles().length"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showFirstLastButtons]="true"
+    (page)="onPageChange($event)"
+    aria-label="Roles pagination"
+    i18n-aria-label
+  ></mat-paginator>
+</div>
