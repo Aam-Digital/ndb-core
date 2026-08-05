@@ -548,8 +548,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="132"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:132</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="142"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:142</a></div>
                         </td>
                     </tr>
 
@@ -600,7 +600,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:115</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:125</a></div>
                         </td>
                     </tr>
 
@@ -638,7 +638,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:124</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:134</a></div>
                         </td>
                     </tr>
 
@@ -672,7 +672,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="120" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:120</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="130" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:130</a></div>
                         </td>
                     </tr>
 
@@ -789,7 +789,17 @@ Otherwise, we want to use the previous value through the resource&#39;s retentio
     if (!this.notFound()) {
       return undefined;
     }
-    const type &#x3D; Entity.extractTypeFromId(this.entityId());
+    const id &#x3D; this.entityId();
+    if (typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+      // &#x60;entityId&#x60; is typed as string, but nothing enforces that at runtime for a
+      // block that is rendered from user config. A non-string id makes the resource
+      // loader below fail and swallow the error, which in turn makes notFound() true
+      // and brings us here — so extractTypeFromId() would throw on every change
+      // detection pass, inside a computed the template reads. Degrade to the generic
+      // not-found display instead.
+      return undefined;
+    }
+    const type &#x3D; Entity.extractTypeFromId(id);
     return type &amp;&amp; this.registry.has(type)
       ? this.registry.get(type)
       : undefined;
@@ -881,7 +891,7 @@ settled) — e.g. the referenced record was deleted.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="111" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:111</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="121" class="link-to-prism">src/app/core/basic-datatypes/entity/entity-block/entity-block.component.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -1001,7 +1011,17 @@ export class EntityBlockComponent {
     if (!this.notFound()) {
       return undefined;
     }
-    const type &#x3D; Entity.extractTypeFromId(this.entityId());
+    const id &#x3D; this.entityId();
+    if (typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+      // &#x60;entityId&#x60; is typed as string, but nothing enforces that at runtime for a
+      // block that is rendered from user config. A non-string id makes the resource
+      // loader below fail and swallow the error, which in turn makes notFound() true
+      // and brings us here — so extractTypeFromId() would throw on every change
+      // detection pass, inside a computed the template reads. Degrade to the generic
+      // not-found display instead.
+      return undefined;
+    }
+    const type &#x3D; Entity.extractTypeFromId(id);
     return type &amp;&amp; this.registry.has(type)
       ? this.registry.get(type)
       : undefined;
