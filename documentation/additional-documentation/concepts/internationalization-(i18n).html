@@ -157,6 +157,19 @@ the app version and selected locale (see <code>src/bootstrap-i18n.ts</code>) and
 offline use. There is no separate per-locale build — a single build serves all languages and
 loads the translations dynamically.</li>
 </ol>
+<h3>Bootstrap order: don&#39;t localize before translations are loaded</h3>
+<p>Because translations are loaded at runtime, <strong>anything evaluated before <code>initLanguage()</code> resolves
+can only ever be English</strong>. <code>$localize</code> does not fail in that case, it just returns the source
+text — no error, no failing test, nothing visible in review.</p>
+<p><code>main.ts</code> loads the application itself with <code>await import(&quot;./app/app.module&quot;)</code> <em>after</em>
+<code>initLanguage()</code>, so regular app code is safe. Only the small graph of modules statically imported
+by <code>main.ts</code> runs earlier. Keep that graph minimal: bootstrap logic belongs in dependency-free
+modules next to <code>main.ts</code> (<code>bootstrap-i18n.ts</code>, <code>bootstrap-environment.ts</code>, <code>bootstrap-reset.ts</code>,
+<code>bootstrap-pwa-install.ts</code>), which must not import from <code>src/app/</code>. Importing a <code>@Injectable</code>
+service into <code>main.ts</code> — even just for one <code>static</code> helper — drags that service&#39;s whole dependency
+graph into the pre-i18n phase.</p>
+<p>Within those modules, never evaluate <code>$localize</code> at module scope or in a <code>static</code> class member.
+See the do&#39;s and don&#39;ts below for how to write it instead.</p>
 <h3>Manual re-export</h3>
 <p>If translations are updated in POEditor after a release, you can manually trigger the
 &quot;i18n - Publish translations to GitHub Pages CDN&quot; workflow to update the translations for a

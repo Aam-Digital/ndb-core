@@ -388,7 +388,7 @@ import {
   OkButton,
 } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
 import { LOCATION_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
-import { BackupService } from &quot;../../admin/backup/backup.service&quot;;
+import { RESET_PENDING_KEY } from &quot;#src/bootstrap-reset&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { SessionType } from &quot;../../session/session-type&quot;;
@@ -462,7 +462,7 @@ We are working on improvements to allow this in the future.&#x60;,
     Logging.warn(
       &quot;Resetting application data after suspected local database corruption (user confirmed)&quot;,
     );
-    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, &quot;1&quot;);
+    sessionStorage.setItem(RESET_PENDING_KEY, &quot;1&quot;);
     this.location.pathname &#x3D; &quot;&quot;;
   }
 

@@ -595,7 +595,7 @@ export class PwaInstallComponent implements OnInit {
     if (this.pwaInstallType &#x3D;&#x3D;&#x3D; PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton &#x3D; true;
     }
-    PwaInstallService.canInstallDirectly?.then(() &#x3D;&gt; {
+    this.pwaInstallService.canInstallDirectly?.then(() &#x3D;&gt; {
       this.showPWAInstallButton &#x3D; true;
     });
   }

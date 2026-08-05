@@ -214,19 +214,18 @@ import {
   isKnownMultiTabDatabaseCorruption,
 } from &quot;./pouchdb-corruption-recovery.service&quot;;
 import { isConnectivityError } from &quot;#src/app/utils/connectivity-error&quot;;
+import { LAST_SYNC_KEY_PREFIX } from &quot;#src/bootstrap-reset&quot;;
 
 /**
  * An alternative implementation of PouchDatabase that additionally
  * provides functionality to sync with a remote CouchDB.
  */
 export class SyncedPouchDatabase extends PouchDatabase {
-  static LAST_SYNC_KEY_PREFIX &#x3D; &quot;LAST_SYNC_&quot;;
-
   get LAST_SYNC_KEY(): string | undefined {
     if (!this.pouchDB?.name) {
       return undefined;
     }
-    return SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
+    return LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
   POUCHDB_SYNC_BATCH_SIZE &#x3D; 100;
