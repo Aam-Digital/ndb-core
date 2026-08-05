@@ -69,7 +69,7 @@ describe("PwaInstallService", () => {
       "beforeinstallprompt",
       expect.anything(),
     );
-    await expect(service.canInstallDirectly).resolves.not.toThrow();
+    await expect(service.canInstallDirectly).resolves.toBeUndefined();
 
     const installPromise = service.installPWA();
     expect(installSpy).toHaveBeenCalled();
