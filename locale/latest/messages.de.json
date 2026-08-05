@@ -1551,5 +1551,12 @@
   "7291118354203611864": "Für den Datenimport sind zusätzliche Berechtigungen erforderlich, über die Ihr Konto nicht verfügt. Bitte wenden Sie sich an Ihren Systemadministrator, um Zugriff zu beantragen. ",
   "8670985895850567174": "Sie haben keine Berechtigung zum Erstellen von {$INTERPOLATION} Datensätzen und können diese daher nicht importieren. ",
   "5078278731520632804": "Persistenter Speicher",
-  "6318216385094974109": "keine Informationen"
+  "6318216385094974109": "keine Informationen",
+  "1420216858500184651": "No date format is defined for this column. Dates that the system cannot read on its own are skipped during import.",
+  "8256453399459830348": "The dates of this column are read without a format. Open to define one if they are not imported correctly.",
+  "8488301367363237437": "Dates of this column are read with the format \"{$format}\". Open to review or change it.",
+  "1354868790655460953": "The values of this column are not mapped yet. They are imported exactly as they are in the file, which can result in values the system does not recognise.",
+  "7959446874241838754": "{$count} of the values in this column have no mapping and are skipped during import.",
+  "397448777882798114": "All values of this column are mapped. Open to review or change the mapping.",
+  "7368835978551245129": "Value mapping is not configured yet. Open it and confirm to continue."
 }
