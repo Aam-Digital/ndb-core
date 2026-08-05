@@ -28,6 +28,12 @@ export interface GeoResult extends Coordinates {
 }
 
 /**
+ * Country whose addresses are written as "Street 12, 12345 City",
+ * the format {@link GeoService.reformatDisplayName} produces.
+ */
+const GERMAN_ADDRESS_FORMAT_COUNTRY = "de";
+
+/**
  * A service that uses nominatim to lookup locations {@link https://nominatim.org/}
  */
 @Injectable({
@@ -38,7 +44,13 @@ export class GeoService {
   private analytics = inject(AnalyticsService);
 
   private readonly remoteUrl = "/nominatim";
-  private countrycodes = "de";
+
+  /**
+   * Optional country filter for lookups, only applied if an instance configures one.
+   * Nominatim treats this as a hard filter, so anything outside these countries
+   * is dropped from the results entirely.
+   */
+  private countrycodes?: string;
   private defaultOptions = {
     format: "json",
     addressdetails: 1,
@@ -60,9 +72,7 @@ export class GeoService {
 
     configService.configUpdates.subscribe(() => {
       const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
-      if (config?.countrycodes) {
-        this.countrycodes = config.countrycodes;
-      }
+      this.countrycodes = config?.countrycodes;
     });
 
     // Process lookups sequentially with a 1s cooldown after every attempt
@@ -115,7 +125,7 @@ export class GeoService {
         params: {
           ...this.defaultOptions,
           q: searchTerm,
-          countrycodes: this.countrycodes,
+          ...(this.countrycodes ? { countrycodes: this.countrycodes } : {}),
         },
       })
       .pipe(
@@ -147,25 +157,44 @@ export class GeoService {
     return "";
   }
 
+  /**
+   * Whether our own, shortened address format applies.
+   * It omits the country and only covers street, postcode and city, which is
+   * the German address format specifically, so it only applies to instances
+   * that restrict lookups to Germany. Everywhere else the full name from
+   * OpenStreetMap is kept, which includes the country and is never empty.
+   */
+  private get useGermanAddressFormat(): boolean {
+    return (
+      this.countrycodes?.trim().toLowerCase() === GERMAN_ADDRESS_FORMAT_COUNTRY
+    );
+  }
+
   reformatDisplayName(
     result: OpenStreetMapsSearchResult,
   ): OpenStreetMapsSearchResult {
     const addr = result?.address;
-    if (addr) {
-      const displayParts = [
-        addr.amenity ?? addr.office,
-        this.formatStreet(addr),
-        this.formatPostcodeCity(addr),
-      ].filter((x) => !!x && x !== "undefined");
-
-      // Ensure a normalized `city` field for downstream consumers (use village/town as fallback)
-      const city = this.getCity(addr);
-      if (city && !addr.city) {
-        addr.city = city;
-      }
-
-      result.display_name = displayParts.join(", ");
+    if (!addr) {
+      return result;
     }
+
+    // Ensure a normalized `city` field for downstream consumers (use village/town as fallback)
+    const city = this.getCity(addr);
+    if (city && !addr.city) {
+      addr.city = city;
+    }
+
+    if (!this.useGermanAddressFormat) {
+      return result;
+    }
+
+    const displayParts = [
+      addr.amenity ?? addr.office,
+      this.formatStreet(addr),
+      this.formatPostcodeCity(addr),
+    ].filter((x) => !!x && x !== "undefined");
+
+    result.display_name = displayParts.join(", ");
     return result;
   }
 
@@ -217,7 +246,9 @@ export class GeoService {
    * Deliberately mirrors the format of {@link reformatDisplayName} (street,
    * then postcode + city) and omits `country`: callers compare the composed
    * string against a lookup's `display_name` to tell whether the address text
-   * was customized, so the two must be able to match.
+   * was customized, so the two must be able to match. Without the German
+   * address format the `display_name` is OpenStreetMap's own, which callers
+   * compare against separately.
    */
   composeAddressFromParts(location: GeoLocation | undefined): string {
     if (!location) {
@@ -230,6 +261,8 @@ export class GeoService {
 }
 
 export type OpenStreetMapsSearchResult = GeoResult & {
+  /** Unique id of the place in OpenStreetMap, used to distinguish results */
+  place_id?: number;
   address?: {
     amenity?: string;
     office?: string;

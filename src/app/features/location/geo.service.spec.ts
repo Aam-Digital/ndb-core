@@ -34,9 +34,12 @@ type SearchResult = OpenStreetMapsSearchResult & {
   };
 };
 
-function createSearchResult(address: SearchResult["address"]): SearchResult {
+function createSearchResult(
+  address: SearchResult["address"],
+  display_name = "",
+): SearchResult {
   return {
-    display_name: "",
+    display_name,
     lat: 0,
     lon: 0,
     address,
@@ -73,8 +76,20 @@ describe("GeoService", () => {
     service = TestBed.inject(GeoService);
   });
 
+  function setCountrycodes(countrycodes?: string) {
+    mockConfigService.getConfig.mockReturnValue({ countrycodes });
+    configUpdates.next(undefined);
+  }
+
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should not send a country filter when none is configured", () => {
+    service.lookup("someSearch").subscribe();
+
+    const sentParams = mockHttp.get.mock.calls[0][1].params;
+    expect("countrycodes" in sentParams).toBe(false);
   });
 
   it("should use countrycode from config and email from app config", () => {
@@ -125,6 +140,7 @@ describe("GeoService", () => {
   });
 
   it("should format with amenity, street, postcode and city", () => {
+    setCountrycodes("de");
     const testResult = createSearchResult({
       amenity: "Cafe",
       road: "Main St",
@@ -141,6 +157,7 @@ describe("GeoService", () => {
   });
 
   it("should format with office and city only", () => {
+    setCountrycodes("de");
     const testResult = createSearchResult({
       office: "Company HQ",
       city: "Munich",
@@ -161,6 +178,7 @@ describe("GeoService", () => {
   });
 
   it("should not include 'undefined' in the result", () => {
+    setCountrycodes("de");
     const testResult = createSearchResult({
       amenity: "Library",
       city: "Hamburg",
@@ -170,6 +188,7 @@ describe("GeoService", () => {
   });
 
   it("should use village as fallback for city when city missing", () => {
+    setCountrycodes("de");
     const testResult = createSearchResult({
       road: "Village Road",
       postcode: "99999",
@@ -180,7 +199,57 @@ describe("GeoService", () => {
     expect(formatted.address?.city).toBe("Smallville");
   });
 
+  it("should keep the OpenStreetMap display name when no German country filter is set", () => {
+    const testResult = createSearchResult(
+      {
+        road: "Rosemount Buildings",
+        city: "City of Edinburgh",
+        postcode: "EH3 8DD",
+      },
+      "Rosemount Buildings, Tollcross, City of Edinburgh, EH3 8DD, United Kingdom",
+    );
+
+    const formatted = service.reformatDisplayName(testResult);
+
+    expect(formatted.display_name).toBe(
+      "Rosemount Buildings, Tollcross, City of Edinburgh, EH3 8DD, United Kingdom",
+    );
+  });
+
+  it("should use the German format only if the filter is Germany alone", () => {
+    const address = {
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+    };
+
+    setCountrycodes("de");
+    expect(
+      service.reformatDisplayName(createSearchResult(address, "raw name"))
+        .display_name,
+    ).toBe("Main St 42, 12345 Berlin");
+
+    setCountrycodes("de,gb");
+    expect(
+      service.reformatDisplayName(createSearchResult(address, "raw name"))
+        .display_name,
+    ).toBe("raw name");
+  });
+
+  it("should normalize address parts even without the German format", () => {
+    const testResult = createSearchResult(
+      { village: "Smallville" },
+      "Smallville, Ireland",
+    );
+
+    const formatted = service.reformatDisplayName(testResult);
+
+    expect(formatted.address?.city).toBe("Smallville");
+  });
+
   it("should normalize address parts on lookup results for PDF templating", async () => {
+    setCountrycodes("de");
     const searchTerm = "Rollbergstraße Berlin";
     const results = [
       createSearchResult({
@@ -239,6 +308,7 @@ describe("GeoService", () => {
   });
 
   it("should compose the same format as a lookup's display_name, so the two can match", () => {
+    setCountrycodes("de");
     const lookup = service.reformatDisplayName(
       createSearchResult({
         road: "Main St",
