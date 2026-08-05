@@ -110,7 +110,9 @@ describe("EditReportDefinitionComponent", () => {
   });
 
   it("adds a query and a sub-group directly into a group via its + buttons", () => {
-    formGroup.get("reportDefinition").setValue([{ groupTitle: "G", items: [] }]);
+    formGroup
+      .get("reportDefinition")
+      .setValue([{ groupTitle: "G", items: [] }]);
     fixture.detectChanges();
 
     component.addChildGroup(0); // sub-group as first child of G

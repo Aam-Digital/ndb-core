@@ -151,7 +151,11 @@ export class EditReportDefinitionComponent
 
   /** add a query as the first child of the group at `groupIndex` */
   addChildQuery(groupIndex: number): void {
-    this.insertChild(groupIndex, { uniqueId: uuid(), query: "", isGroup: false });
+    this.insertChild(groupIndex, {
+      uniqueId: uuid(),
+      query: "",
+      isGroup: false,
+    });
   }
 
   /** add a sub-group as the first child of the group at `groupIndex` */
@@ -207,7 +211,11 @@ export class EditReportDefinitionComponent
     // nest according to the row now above the moved subtree, shifting the whole subtree with it
     const headerIndex = rows.findIndex((r) => r.uniqueId === headerId);
     const above = rows[headerIndex - 1];
-    const targetLevel = !above ? 0 : above.isGroup ? above.level + 1 : above.level;
+    const targetLevel = !above
+      ? 0
+      : above.isGroup
+        ? above.level + 1
+        : above.level;
     const delta = targetLevel - rows[headerIndex].level;
     for (let i = headerIndex; i < headerIndex + len; i++) {
       rows[i] = { ...rows[i], level: rows[i].level + delta };

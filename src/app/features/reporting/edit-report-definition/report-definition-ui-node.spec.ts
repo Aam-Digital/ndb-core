@@ -88,7 +88,10 @@ describe("report-definition-ui-node", () => {
       toUiNodes([
         {
           groupTitle: "G",
-          items: [{ query: "b" }, { groupTitle: "Sub", items: [{ query: "c" }] }],
+          items: [
+            { query: "b" },
+            { groupTitle: "Sub", items: [{ query: "c" }] },
+          ],
         },
         { query: "after" },
       ]),

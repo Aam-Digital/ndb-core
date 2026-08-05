@@ -3,7 +3,11 @@
   <app-json-editor [formControl]="formControl"></app-json-editor>
 } @else {
   <div class="flex-column gap-small report-definition">
-    <div class="flex-column gap-small" cdkDropList (cdkDropListDropped)="onDrop($event)">
+    <div
+      class="flex-column gap-small"
+      cdkDropList
+      (cdkDropListDropped)="onDrop($event)"
+    >
       @for (row of rows(); track row.uniqueId; let i = $index) {
         <div
           class="report-row"
