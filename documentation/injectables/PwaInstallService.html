@@ -240,8 +240,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="56"
-                                    class="link-to-prism">src/app/core/pwa-install/pwa-install.service.ts:56</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="57"
+                                    class="link-to-prism">src/app/core/pwa-install/pwa-install.service.ts:57</a></div>
                         </td>
                     </tr>
 
@@ -277,8 +277,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="45"
-                                    class="link-to-prism">src/app/core/pwa-install/pwa-install.service.ts:45</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">src/app/core/pwa-install/pwa-install.service.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -287,7 +287,7 @@
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+                            <b>Returns : </b>        <code><a href="../interfaces/PWAInstallChoice.html" target="_self" >Promise&lt;PWAInstallChoice&gt;</a></code>
 
                         </div>
                 </td>
@@ -317,7 +317,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/pwa-install/pwa-install.service.ts:41</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/pwa-install/pwa-install.service.ts:42</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -345,6 +345,7 @@ import { WINDOW_TOKEN } from &quot;../../utils/di-tokens&quot;;
 import {
   getDeferredInstallPrompt,
   whenCanInstallDirectly,
+  PWAInstallChoice,
 } from &quot;#src/bootstrap-pwa-install&quot;;
 
 export enum PWAInstallType {
@@ -384,7 +385,7 @@ export class PwaInstallService {
     return whenCanInstallDirectly();
   }
 
-  installPWA(): Promise&lt;any&gt; {
+  installPWA(): Promise&lt;PWAInstallChoice&gt; {
     const installPrompt &#x3D; getDeferredInstallPrompt();
     if (!installPrompt) {
       throw new Error(

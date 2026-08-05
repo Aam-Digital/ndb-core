@@ -10935,7 +10935,7 @@ This generates a camelCase string, removing special characters.</p>
 </div>
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                            <b>Returns : </b>        <code><a href="../interfaces/BeforeInstallPromptEvent.html" target="_self" >BeforeInstallPromptEvent | undefined</a></code>
 
                         </div>
                 </td>
@@ -11000,7 +11000,8 @@ browser fires the event early and does not replay it for later listeners.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Discard the deferred prompt and the listener&#39;s promise.
+                        <div class="io-description"><p>Discard the deferred prompt and the listener&#39;s promise, and remove the
+<code>beforeinstallprompt</code> listener from <code>window</code>.
 Only needed in tests, to undo the module-level state of a previous case.</p>
 </div>
 

@@ -2301,6 +2301,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/BasicFilterConfig.html" data-type="entity-link" >BasicFilterConfig</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/BeforeInstallPromptEvent.html" data-type="entity-link" >BeforeInstallPromptEvent</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/BirthdayDashboardConfig.html" data-type="entity-link" >BirthdayDashboardConfig</a>
                             </li>
                             <li class="link">
@@ -2728,6 +2731,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/PublicFormEntry.html" data-type="entity-link" >PublicFormEntry</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/PWAInstallChoice.html" data-type="entity-link" >PWAInstallChoice</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/RawAuditDoc.html" data-type="entity-link" >RawAuditDoc</a>
