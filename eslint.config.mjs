@@ -69,11 +69,9 @@ export default defineConfig([
 
     extends: [...angular.configs.templateRecommended],
     rules: {
-      // report-only for now: flags user-facing text that is not marked for translation.
-      // See #4156 - findings are still being worked through, do not raise to "error"
-      // until the backlog is cleared.
+      // flags user-facing text that is not marked for translation
       "@angular-eslint/template/i18n": [
-        "warn",
+        "error",
         {
           checkId: false,
           checkText: true,
@@ -85,6 +83,8 @@ export default defineConfig([
             "angularticsAction",
             "angularticsCategory",
             "appearance",
+            "aria-describedby",
+            "aria-live",
             "buttonType",
             "cdkDragBoundary",
             "cdkDragLockAxis",

@@ -15,5 +15,10 @@
   <tr mat-header-row *matHeaderRowDef="columns()"></tr>
   <tr mat-row *matRowDef="let row; columns: columns()"></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[10, 50, 100]" showFirstLastButtons>
+<mat-paginator
+  [pageSizeOptions]="[10, 50, 100]"
+  showFirstLastButtons
+  i18n-aria-label="Label for the pagination controls of a report result table"
+  aria-label="Report results pagination"
+>
 </mat-paginator>

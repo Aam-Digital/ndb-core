@@ -14,11 +14,11 @@
     }"
     matTooltip="Create a new {{ entityType.label }} record"
     i18n-matTooltip
+    [attr.aria-label]="iconOnly() ? addElementLabel : null"
   >
     @if (iconOnly()) {
       <app-fa-dynamic-icon
-        aria-label="add element"
-        i18n-aria-label
+        aria-hidden="true"
         icon="plus-circle"
         class="icon-only"
       ></app-fa-dynamic-icon>

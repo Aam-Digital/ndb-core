@@ -1,12 +1,13 @@
 @if (!hasCurrentlyActiveEntry() && !dataSource.isLoading()) {
-  <app-pill class="hint-badge" i18n>
-    Currently there is no active entry. To add a new entry, click on the
-    <fa-icon
+  <app-pill class="hint-badge">
+    <span i18n
+      >Currently there is no active entry. To add a new entry, click on the
+      button</span
+    >&ngsp;<fa-icon
       class="color-accent"
       aria-hidden="true"
       icon="plus-circle"
     ></fa-icon>
-    button.
   </app-pill>
 }
 
