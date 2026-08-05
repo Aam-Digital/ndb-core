@@ -25,26 +25,57 @@ describe("bootstrap-reset", () => {
     if (originalServiceWorker) {
       Object.defineProperty(navigator, "serviceWorker", originalServiceWorker);
     } else {
-      delete (navigator as any).serviceWorker;
+      Reflect.deleteProperty(navigator, "serviceWorker");
     }
   });
 
+  type FakeDeleteRequest = Pick<
+    IDBOpenDBRequest,
+    "onsuccess" | "onerror" | "onblocked" | "error"
+  >;
+
+  /** `this` inside the handlers must be the request itself, like the real IDB API */
+  function fakeDeleteRequest(
+    props: Partial<FakeDeleteRequest> = {},
+  ): IDBOpenDBRequest {
+    return {
+      onsuccess: null,
+      onerror: null,
+      onblocked: null,
+      error: null,
+      ...props,
+    } as unknown as IDBOpenDBRequest;
+  }
+
+  const fakeEvent = new Event("fake");
+
+  const succeedImmediately = (_name: string): IDBOpenDBRequest => {
+    const req = fakeDeleteRequest();
+    setTimeout(() => req.onsuccess?.(fakeEvent));
+    return req;
+  };
+
   /** Stub the globals that jsdom does not provide, returning the spies to assert on */
-  function stubBrowserApis(dbNames: string[]) {
-    const deleteDatabase = vi.fn().mockImplementation(() => {
-      const req = { onsuccess: null as any, onerror: null as any };
-      setTimeout(() => req.onsuccess?.());
-      return req as any;
-    });
+  function stubBrowserApis(
+    dbNames: string[],
+    makeDeleteRequest: (name: string) => IDBOpenDBRequest = succeedImmediately,
+  ) {
+    const deleteDatabase = vi.fn().mockImplementation(makeDeleteRequest);
     const databases = vi
       .fn()
-      .mockResolvedValue(dbNames.map((name) => ({ name })) as any);
+      .mockResolvedValue(
+        dbNames.map((name) => ({ name })) as IDBDatabaseInfo[],
+      );
     vi.stubGlobal("indexedDB", { databases, deleteDatabase });
 
     const unregister = vi.fn().mockResolvedValue(true);
     Object.defineProperty(navigator, "serviceWorker", {
       value: {
-        getRegistrations: vi.fn().mockResolvedValue([{ unregister } as any]),
+        getRegistrations: vi
+          .fn()
+          .mockResolvedValue([
+            { unregister } as unknown as ServiceWorkerRegistration,
+          ]),
       },
       configurable: true,
       writable: true,
@@ -97,5 +128,41 @@ describe("bootstrap-reset", () => {
     await runPendingReset();
 
     expect(databases).not.toHaveBeenCalled();
+  });
+
+  it("runPendingReset should keep the pending marker if a database deletion fails", async () => {
+    sessionStorage.setItem(RESET_PENDING_KEY, "1");
+    const deleteError = new DOMException("delete failed");
+    stubBrowserApis(["db1"], () => {
+      const req = fakeDeleteRequest({ error: deleteError });
+      setTimeout(() => req.onerror?.(fakeEvent));
+      return req;
+    });
+
+    await expect(runPendingReset()).rejects.toBe(deleteError);
+
+    // not cleared, so the next bootstrap retries the reset instead of
+    // silently giving up on a database that never actually got deleted
+    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBe("1");
+  });
+
+  it("runPendingReset should log and still complete once a blocked deletion unblocks", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    sessionStorage.setItem(RESET_PENDING_KEY, "1");
+    stubBrowserApis(["db1"], () => {
+      const req = fakeDeleteRequest();
+      // deleteDatabase() has already returned by the time onblocked/onsuccess
+      // are assigned, so both must fire asynchronously like the real IDB API
+      setTimeout(() => {
+        req.onblocked?.(fakeEvent as unknown as IDBVersionChangeEvent);
+        req.onsuccess?.(fakeEvent);
+      });
+      return req;
+    });
+
+    await runPendingReset();
+
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("db1"));
+    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBeNull();
   });
 });

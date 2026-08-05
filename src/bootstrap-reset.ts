@@ -43,7 +43,6 @@ export async function runPendingReset(): Promise<void> {
   if (!sessionStorage.getItem(RESET_PENDING_KEY)) {
     return;
   }
-  sessionStorage.removeItem(RESET_PENDING_KEY);
   clearLastSyncMarkers();
 
   // Delete all IndexedDB databases
@@ -59,6 +58,13 @@ export async function runPendingReset(): Promise<void> {
             const del = indexedDB.deleteDatabase(name);
             del.onsuccess = () => resolve();
             del.onerror = () => reject(del.error);
+            // Another open tab still has a connection to this database. The
+            // browser keeps the deletion pending (not stuck) until that
+            // connection closes; just surface why this is taking a while.
+            del.onblocked = () =>
+              console.warn(
+                `Reset pending: deleting IndexedDB database "${name}" is blocked by another open tab.`,
+              );
           }),
       ),
   );
@@ -68,4 +74,9 @@ export async function runPendingReset(): Promise<void> {
     const registrations = await navigator.serviceWorker.getRegistrations();
     await Promise.all(registrations.map((reg) => reg.unregister()));
   }
+
+  // Only clear the marker once cleanup actually succeeded, so a failure
+  // (rejected promise, thrown error) leaves it in place for a retry on the
+  // next bootstrap instead of silently abandoning the reset.
+  sessionStorage.removeItem(RESET_PENDING_KEY);
 }

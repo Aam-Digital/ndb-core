@@ -10,11 +10,29 @@
  * The app-facing API for this is `PwaInstallService`.
  */
 
+/** The user's response to the install prompt. */
+export interface PWAInstallChoice {
+  outcome: "accepted" | "dismissed";
+  platform: string;
+}
+
+/**
+ * The browser's non-standard `beforeinstallprompt` event.
+ * Not part of the DOM lib types, so we declare the shape we rely on ourselves.
+ */
+export interface BeforeInstallPromptEvent extends Event {
+  readonly userChoice: Promise<PWAInstallChoice>;
+  prompt(): Promise<void>;
+}
+
 /** The deferred `beforeinstallprompt` event, to be triggered on user request */
-let deferredInstallPrompt: any;
+let deferredInstallPrompt: BeforeInstallPromptEvent | undefined;
 
 /** Resolves once/if it is possible to directly install the app */
 let canInstallDirectly: Promise<void> | undefined;
+
+/** The registered listener, kept so {@link resetPWAInstallListener} can remove it again */
+let installPromptListener: ((e: Event) => void) | undefined;
 
 /**
  * Start listening for the browser's `beforeinstallprompt` event and defer it,
@@ -25,11 +43,12 @@ let canInstallDirectly: Promise<void> | undefined;
  */
 export function registerPWAInstallListener(): void {
   canInstallDirectly = new Promise((resolve) => {
-    window.addEventListener("beforeinstallprompt", (e) => {
+    installPromptListener = (e: Event) => {
       e.preventDefault();
-      deferredInstallPrompt = e;
+      deferredInstallPrompt = e as BeforeInstallPromptEvent;
       resolve();
-    });
+    };
+    window.addEventListener("beforeinstallprompt", installPromptListener);
   });
 }
 
@@ -44,15 +63,21 @@ export function whenCanInstallDirectly(): Promise<void> | undefined {
 /**
  * The deferred install prompt, if the browser has offered one already.
  */
-export function getDeferredInstallPrompt(): any {
+export function getDeferredInstallPrompt():
+  BeforeInstallPromptEvent | undefined {
   return deferredInstallPrompt;
 }
 
 /**
- * Discard the deferred prompt and the listener's promise.
+ * Discard the deferred prompt and the listener's promise, and remove the
+ * `beforeinstallprompt` listener from `window`.
  * Only needed in tests, to undo the module-level state of a previous case.
  */
 export function resetPWAInstallListener(): void {
+  if (installPromptListener) {
+    window.removeEventListener("beforeinstallprompt", installPromptListener);
+    installPromptListener = undefined;
+  }
   deferredInstallPrompt = undefined;
   canInstallDirectly = undefined;
 }
