@@ -30,12 +30,12 @@
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
-      @if (!!allEntities()) {
+      @if (!dataSource.isLoading()) {
         <app-filter
           class="flex-row gap-regular flex-wrap"
           [filterConfig]="filters()"
           [entityType]="entityConstructor()!"
-          [entities]="allEntities()"
+          [entities]="dataSource.allRecords()"
           [useUrlQueryParams]="true"
           [(filterObj)]="filterObj"
           [filterString]="filterString"
@@ -128,7 +128,7 @@
 <ng-template #subrecord>
   <app-entities-table
     [entityType]="entityConstructor()!"
-    [records]="allEntities()"
+    [recordsDataSource]="dataSource"
     [customColumns]="columns()"
     [editable]="false"
     [clickMode]="clickMode()"
@@ -139,8 +139,6 @@
     [(selectedRecords)]="selectedRows"
     [selectable]="!!selectedRows()"
     [showInactive]="showInactive()"
-    (filteredRecordsChange)="filteredData = $event"
-    [filterFreetext]="filterFreetext"
     [showEntityColor]="showEntityColor()"
   ></app-entities-table>
 </ng-template>

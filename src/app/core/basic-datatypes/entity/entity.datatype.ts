@@ -22,9 +22,14 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Logging } from "app/core/logging/logging.service";
 import { ImportProcessingContext } from "../../import/import-processing-context";
+import { splitArrayValue } from "../../import/split-array-value";
+import { ColumnMapping } from "../../import/column-mapping";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { ExportColumnMapping } from "../../entity/default-datatype/default.datatype";
+import {
+  ColumnImportInput,
+  ExportColumnMapping,
+} from "../../entity/default-datatype/default.datatype";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
@@ -72,78 +77,198 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Maps a value from an import to an actual entity in the database.
+   * Matches an import row to actual entities in the database
+   * (per-field entry point, see DefaultDatatype.importMatchField).
    *
-   * Finds all column mappings targeting this field, resolves each column's comparison value
-   * (applying any configured value mapping), and progressively filters candidate entities
-   * until a unique match is found.
+   * Splits every mapped column's cell into individual values, resolves any
+   * per-column value mapping, then searches candidate entities for each
+   * combination of one value per column:
    *
-   * @param val The value from an import that should be mapped to an entity reference.
-   * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
-   * @param additional The field of the referenced entity that should be compared with the val.
-   *   Can be a plain string (legacy) or an object `{ refField: string, valueMapping?: any }`.
-   * @param importProcessingContext context to share information across calls for multiple columns and rows.
-   * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
+   * Case target field isArray===false:
+   * simple:
+   *  IMPORT: { x: "x1", y: "y1" }
+   *  --> matches { x: "x1", y: "y1" } (if there is a single unique match)
+   * complex, multi-value import:
+   *  IMPORT: { x: "x1,x2", y: "y1,y2" }
+   *  --> matches { x1, y1 } OR { x2, y2 } OR { x1, y2 } OR { x2, y1 } (if there is a single combination that matches)
+   *
+   * Case target field isArray===true:
+   * simple:
+   *  IMPORT: { x: "x1", y: "y1" }
+   *  --> matches every record with { x: "x1", y: "y1" }
+   * complex, multi-value import:
+   *  IMPORT: { x: "x1,x2", y: "y1,y2" }
+   *  --> matches every record for any combination { x1, y1 }, { x2, y2 }, { x1, y2 }, { x2, y1 }
+   *
+   * @param schemaField the target field the value(s) are imported into
+   * @param columns every column mapped to this field, with its raw cell value
+   * @param importProcessingContext context shared across columns and rows
+   * @returns the id of the single match (isArray=false) or the deduped ids of
+   *   all matches (isArray=true), or undefined / [] if nothing matched
    */
-  override async importMapFunction(
-    val: any,
+  override async importMatchField(
     schemaField: EntitySchemaField,
-    additional: string | EntityAdditional,
+    columns: ColumnImportInput[],
     importProcessingContext: ImportProcessingContext,
-  ): Promise<string | undefined> {
-    const fieldConfig = normalizeEntityAdditional(additional);
-    if (!fieldConfig?.refField || val == null) {
-      return undefined;
-    }
-
+  ): Promise<string | string[] | undefined> {
     const context = new EntityFieldImportContext(
       importProcessingContext,
       schemaField,
     );
-
     await this.loadImportMapEntities(schemaField.additional, context);
+    const candidates = context.entities ?? [];
 
-    const columnMappings = this.getColumnMappingsForField(
-      schemaField.id,
+    const criteria = await this.buildMatchCriteria(
+      columns,
+      context,
       importProcessingContext,
     );
-
-    for (const mapping of columnMappings) {
-      const mappingConfig = normalizeEntityAdditional(mapping.additional);
-      const rawValue = importProcessingContext.row[mapping.column];
-
-      const expectedValue = await this.resolveColumnValue(
-        rawValue,
-        mappingConfig?.refField,
-        mappingConfig?.valueMapping,
-        context,
-        importProcessingContext,
-      );
-
-      context.filteredEntities = context.filteredEntities.filter(
-        (entity) =>
-          normalizeValue(entity[mappingConfig?.refField]) === expectedValue,
-      );
+    if (criteria.length === 0) {
+      return schemaField.isArray ? [] : undefined;
     }
 
-    return this.pickSingleMatch(context.filteredEntities);
+    // A candidate matches when, for every mapped column, its referenced field
+    // value is one of that column's (possibly multiple) values. A mapped column
+    // with no value yields an empty list that matches nothing, so an incomplete
+    // row cannot match.
+    const matchedIds = candidates
+      .filter((entity) =>
+        criteria.every((criterion) =>
+          criterion.values.includes(normalizeValue(entity[criterion.refField])),
+        ),
+      )
+      .map((entity) => entity._id);
+    const uniqueIds = [...new Set(matchedIds)];
+
+    if (schemaField.isArray) {
+      return uniqueIds;
+    }
+    if (uniqueIds.length === 1) {
+      return uniqueIds[0];
+    }
+    if (uniqueIds.length > 1) {
+      Logging.debug(
+        "No unique match found in EntityDatatype importMatchField",
+        uniqueIds.length,
+      );
+    }
+    return undefined;
   }
 
   /**
-   * Returns all column mappings that target the given field.
+   * Resolve a single import value to the id of the referenced entity,
+   * looking that entity up by the property given in `additional.refField`.
+   *
+   * This is relevant when an entity reference is matched through another entity
+   * reference (e.g. import a Note's related Child, identified by the name of the
+   * user linked in the Child's "responsible user" field). The nested value has to
+   * be resolved to an id before it can be compared with the stored reference.
+   *
+   * @returns the id of the single matching entity or undefined if there is no unique match
    */
-  private getColumnMappingsForField(
-    fieldId: string,
-    importProcessingContext: ImportProcessingContext,
-  ) {
-    return importProcessingContext.importSettings.columnMapping.filter(
-      (m) => m.propertyName === fieldId,
+  override async importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional?: any,
+    importProcessingContext?: ImportProcessingContext,
+  ): Promise<string> {
+    const config = normalizeEntityAdditional(additional);
+    if (!config?.refField || !importProcessingContext) {
+      return super.importMapFunction(
+        val,
+        schemaField,
+        additional,
+        importProcessingContext,
+      );
+    }
+
+    const match = await this.importMatchField(
+      // the caller compares against a single stored value, so never return an array here
+      { ...schemaField, isArray: false },
+      [
+        {
+          mapping: {
+            column: "",
+            propertyName: schemaField.id,
+            // the value has already been split by the calling column
+            additional: { ...config, enableSplitting: false },
+          },
+          rawCell: val,
+        },
+      ],
+      importProcessingContext,
     );
+    return match as string;
+  }
+
+  /**
+   * Build one match criterion per mapped column: the referenced field to
+   * compare and the acceptable (normalized) values parsed from the column cell.
+   */
+  private async buildMatchCriteria(
+    columns: ColumnImportInput[],
+    context: EntityFieldImportContext,
+    importProcessingContext: ImportProcessingContext,
+  ): Promise<EntityMatchCriterion[]> {
+    const separator =
+      importProcessingContext.importSettings.additionalSettings
+        ?.multiValueSeparator ?? ",";
+
+    const criteria: EntityMatchCriterion[] = [];
+    for (const { mapping, rawCell } of columns) {
+      const config = normalizeEntityAdditional(mapping.additional);
+      if (!config?.refField) {
+        // column not usable as an identifier for this field
+        continue;
+      }
+
+      const values: string[] = [];
+      for (const rawValue of this.splitCellValues(
+        rawCell,
+        mapping,
+        separator,
+      )) {
+        const value = await this.resolveColumnValue(
+          rawValue,
+          config.refField,
+          config.valueMapping,
+          context,
+          importProcessingContext,
+        );
+        if (value !== undefined) {
+          values.push(value);
+        }
+      }
+      // the criterion is added even if no value could be resolved:
+      // an empty list matches nothing, whereas dropping the criterion would
+      // silently relax the condition and match unrelated records
+      criteria.push({ refField: config.refField, values });
+    }
+    return criteria;
+  }
+
+  /**
+   * Split a raw cell into the individual values to match, honoring the column's
+   * enableSplitting flag.
+   */
+  private splitCellValues(
+    rawCell: unknown,
+    mapping: ColumnMapping,
+    separator: string,
+  ): unknown[] {
+    if (rawCell === undefined || rawCell === null) {
+      return [];
+    }
+    const enableSplitting = mapping.additional?.enableSplitting ?? true;
+    return enableSplitting ? splitArrayValue(rawCell, separator) : [rawCell];
   }
 
   /**
    * Resolves the effective comparison value for a column,
    * applying any configured value mapping through the referenced field's datatype.
+   *
+   * @returns the normalized value to compare against, or undefined if the value
+   *   mapping could not resolve the import value (which must match nothing)
    */
   private async resolveColumnValue(
     rawValue: any,
@@ -151,7 +276,7 @@ export class EntityDatatype extends StringDatatype {
     valueMapping: any | undefined,
     context: EntityFieldImportContext,
     importProcessingContext: ImportProcessingContext,
-  ): Promise<string> {
+  ): Promise<string | undefined> {
     if (valueMapping === undefined) {
       return normalizeValue(rawValue);
     }
@@ -171,27 +296,16 @@ export class EntityDatatype extends StringDatatype {
       valueMapping,
       importProcessingContext,
     );
+    if (mappedValue === undefined || mappedValue === null) {
+      // the import value could not be interpreted, so it cannot identify a record
+      return undefined;
+    }
+
     const dbFormat = refDatatype.transformToDatabaseFormat(
       mappedValue,
       refFieldSchema,
     );
     return normalizeValue(dbFormat);
-  }
-
-  /**
-   * Returns the entity ID if exactly one candidate remains, otherwise undefined.
-   */
-  private pickSingleMatch(candidates: any[]): string | undefined {
-    if (candidates.length === 1) {
-      return candidates[0]._id;
-    }
-    if (candidates.length > 1) {
-      Logging.debug(
-        "No unique match found in EntityDatatype importMapFunction",
-        candidates.length,
-      );
-    }
-    return undefined;
   }
 
   /**
@@ -265,6 +379,15 @@ export class EntityDatatype extends StringDatatype {
 }
 
 /**
+ * One matching condition derived from a mapped import column: candidates must
+ * have `refField` equal to one of the (normalized) `values`.
+ */
+interface EntityMatchCriterion {
+  refField: string;
+  values: string[];
+}
+
+/**
  * Structure for the `additional` field of an entity reference ColumnMapping.
  * Can be a plain string (legacy) or an object with optional valueMapping config.
  */
@@ -309,18 +432,10 @@ function normalizeValue(val: any): string {
  * Manage cache access to the current import processing context.
  */
 class EntityFieldImportContext {
-  private contextKey: string;
-
   constructor(
     private globalContext: ImportProcessingContext,
     private schemaField: EntitySchemaField,
-  ) {
-    this.contextKey = `${schemaField.id}_${globalContext.rowIndex}`;
-
-    if (!globalContext[this.contextKey]) {
-      globalContext[this.contextKey] = {};
-    }
-  }
+  ) {}
 
   /**
    * Entities (in database format for easier comparison!)
@@ -342,21 +457,5 @@ class EntityFieldImportContext {
 
   set refEntityCtor(value: EntityConstructor) {
     this.globalContext[`ctor_${this.schemaField.additional}`] = value;
-  }
-
-  /**
-   * Entities already filter by any other column conditions
-   * (in database format for easier comparison!)
-   */
-  get filteredEntities(): any[] {
-    return (
-      this.globalContext[this.contextKey].filteredEntities ??
-      this.entities ??
-      []
-    );
-  }
-
-  set filteredEntities(value: any[]) {
-    this.globalContext[this.contextKey].filteredEntities = value;
   }
 }

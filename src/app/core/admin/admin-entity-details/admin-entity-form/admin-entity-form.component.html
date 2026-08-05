@@ -9,7 +9,7 @@
     [class.fieldsOnlyMode]="fieldsOnlyMode()"
   >
     <!-- FIELD GROUPS -->
-    @for (group of fieldGroups(); track group; let i = $index) {
+    @for (group of fieldGroups(); track i; let i = $index) {
       <div class="entity-form-cell admin-form-column section-container" cdkDrag>
         @if (!fieldsOnlyMode()) {
           <div class="flex-row align-center">
@@ -73,8 +73,8 @@
               <div class="dummy-form-field">
                 <app-entity-field-edit
                   [field]="field"
-                  [entity]="dummyEntity"
-                  [form]="dummyForm"
+                  [entity]="dummyEntity()"
+                  [form]="dummyForm()"
                 ></app-entity-field-edit>
               </div>
             </div>

@@ -2,6 +2,8 @@ import { TestBed } from "@angular/core/testing";
 import { PrimaryActionService } from "./primary-action.service";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "./primary-action-config";
+// importing Note also registers it in the global entityRegistry, which the service looks up
+import { Note } from "#src/app/child-dev-project/notes/model/note";
 
 describe("PrimaryActionService", () => {
   let service: PrimaryActionService;
@@ -69,14 +71,12 @@ describe("PrimaryActionService", () => {
   it("should return constructor for specified entity type", () => {
     const result = service.getEntityConstructor("Note");
 
-    expect(result).toBeDefined();
-    expect(result.ENTITY_TYPE).toBe("Note");
+    expect(result).toBe(Note);
   });
 
   it("should return Note constructor when entityType is not provided", () => {
     const result = service.getEntityConstructor();
 
-    expect(result).toBeDefined();
-    expect(result.ENTITY_TYPE).toBe("Note");
+    expect(result).toBe(Note);
   });
 });

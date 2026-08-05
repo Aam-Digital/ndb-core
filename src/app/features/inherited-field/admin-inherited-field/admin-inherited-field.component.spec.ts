@@ -9,6 +9,10 @@ import { AdminInheritedFieldComponent } from "./admin-inherited-field.component"
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+// importing these registers them in the global entityRegistry,
+// which TestEntity's "refMixed" field references as its `additional` types
+import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { Todo } from "#src/app/features/todos/model/todo";
 
 describe("AdminInheritedFieldComponent", () => {
   let component: AdminInheritedFieldComponent;
@@ -53,6 +57,8 @@ describe("AdminInheritedFieldComponent", () => {
     const relatedEntitiesOptions = component
       .availableOptions()
       .filter((option) => option.sourceReferenceField === "refMixed");
-    expect(relatedEntitiesOptions.length).toBeGreaterThan(1);
+    expect(
+      relatedEntitiesOptions.map((option) => option.referencedEntityType),
+    ).toEqual([Note, Todo]);
   });
 });

@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { Route, Router } from "@angular/router";
+import { provideRouter, Route, Router } from "@angular/router";
 import { ConfigService } from "../config.service";
 import { Logging } from "../../logging/logging.service";
 
@@ -9,7 +9,11 @@ import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
 import { AuthGuard } from "../../session/auth.guard";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
@@ -25,8 +29,13 @@ describe("RouterService", () => {
     vi.spyOn(Logging, "warn");
 
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
-      providers: [],
+      providers: [
+        RouterService,
+        ConfigService,
+        ...mockEntityMapperProvider(),
+        { provide: EntityRegistry, useValue: entityRegistry },
+        provideRouter([]),
+      ],
     });
     service = TestBed.inject(RouterService);
   }));

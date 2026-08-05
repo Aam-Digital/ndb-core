@@ -74,6 +74,10 @@
       {
         "title": "Documentation Structure",
         "file": "concepts/documentation-structure.md"
+      },
+      {
+        "title": "Reports",
+        "file": "../../src/app/features/reporting/README.md"
       }
     ]
   },
@@ -110,10 +114,6 @@
       {
         "title": "Create a New Datatype",
         "file": "../../src/app/core/basic-datatypes/README.md"
-      },
-      {
-        "title": "Create a Report",
-        "file": "../../src/app/features/reporting/README.md"
       },
       {
         "title": "End-to-end tests",

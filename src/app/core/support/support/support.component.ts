@@ -1,10 +1,11 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
   OnInit,
-  ChangeDetectionStrategy,
+  signal,
 } from "@angular/core";
-import { WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { HttpClient } from "@angular/common/http";
@@ -40,6 +41,7 @@ import { Clipboard } from "@angular/cdk/clipboard";
   ],
 })
 export class SupportComponent implements OnInit {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private syncState = inject(SyncStateSubject);
   private sessionSubject = inject(SessionSubject);
   private currentUserSubject = inject(CurrentUserSubject);
@@ -57,7 +59,8 @@ export class SupportComponent implements OnInit {
   currentSyncState: string;
   lastSync: string;
   lastRemoteLogin: string;
-  storageInfo: string;
+  storageInfo = signal<string | undefined>(undefined);
+  storagePersistent = signal<boolean | undefined>(undefined);
   swStatus: string;
   swLog = "not available";
   userAgent: string;
@@ -99,22 +102,46 @@ export class SupportComponent implements OnInit {
     const lastSyncKey =
       db instanceof SyncedPouchDatabase ? db.LAST_SYNC_KEY : undefined;
     this.lastSync =
-      (lastSyncKey && localStorage.getItem(lastSyncKey)) || "never";
+      (lastSyncKey && this.localStorage.getItem(lastSyncKey)) || "never";
   }
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
+      this.localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
   }
 
-  private initStorageInfo() {
+  private async initStorageInfo() {
     const storage = this.window.navigator?.storage;
-    if (storage && "estimate" in storage) {
-      storage.estimate().then((estimate) => {
+    if (!storage) {
+      return;
+    }
+
+    try {
+      const [estimateResult, persistedResult] = await Promise.allSettled([
+        storage.estimate(),
+        storage.persisted(),
+      ]);
+
+      if (persistedResult.status === "fulfilled") {
+        this.storagePersistent.set(persistedResult.value);
+      }
+
+      const estimate =
+        estimateResult.status === "fulfilled"
+          ? estimateResult.value
+          : undefined;
+      if (
+        Number.isFinite(estimate?.usage) &&
+        Number.isFinite(estimate?.quota)
+      ) {
         const used = estimate.usage / 1048576;
         const available = estimate.quota / 1048576;
-        this.storageInfo = `${used.toFixed(2)}MBs / ${available.toFixed(2)}MBs`;
-      });
+        this.storageInfo.set(
+          `${used.toFixed(2)}MB / ${available.toFixed(2)}MB`,
+        );
+      }
+    } catch {
+      // Storage information is unavailable in some browser contexts.
     }
   }
 
@@ -168,7 +195,8 @@ export class SupportComponent implements OnInit {
         swStatus: this.swStatus,
         userAgent: this.userAgent,
         swLog: this.swLog,
-        storageInfo: this.storageInfo,
+        storageInfo: this.storageInfo(),
+        storagePersistent: this.storagePersistent(),
         dbInfo: this.dbInfo,
         dbName: this.dbName,
         dbAdapter: this.dbAdapter,

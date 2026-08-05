@@ -1,20 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Injectable, inject } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
@@ -28,7 +11,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { NAVIGATOR_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -45,6 +28,7 @@ import { EntityConfigReadyService } from "../../entity/entity-config-ready.servi
  */
 @Injectable()
 export class SessionManagerService {
+  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private remoteAuthService = inject(KeycloakAuthService);
   private localAuthService = inject(LocalAuthService);
   private sessionInfo = inject(SessionSubject);
@@ -210,7 +194,7 @@ export class SessionManagerService {
         // This will forward to the keycloak logout page
         await this.remoteAuthService.logout();
       } else {
-        localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
+        this.localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
       }
     }
     // resetting app state
@@ -229,8 +213,8 @@ export class SessionManagerService {
   }
 
   clearRemoteSessionIfNecessary() {
-    if (localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
-      localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
+    if (this.localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
+      this.localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
       // The remote logout below redirects through Keycloak and back to /login.
       // Skip the silent SSO check on that next page load to avoid a needless
       // multi-second spinner.

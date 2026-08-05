@@ -1,9 +1,11 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AlertService } from "../../core/alerts/alert.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Todo } from "./model/todo";
 import moment from "moment/moment";
 import { CurrentUserSubject } from "../../core/session/current-user-subject";
+import { Entity } from "#src/app/core/entity/model/entity";
 
 @Injectable({
   providedIn: "root",
@@ -12,6 +14,30 @@ export class TodoService {
   private currentUser = inject(CurrentUserSubject);
   private alertService = inject(AlertService);
   private entityMapper = inject(EntityMapperService);
+  private dbIndexing = inject(DatabaseIndexingService);
+
+  /**
+   * Load Todo entities related to the given entity through a database index on
+   * the given relation property (ordered by deadline).
+   */
+  async getTodosFor(entity: Entity, relationProperty: string): Promise<Todo[]> {
+    // TODO: move this generic index creation into schema
+    this.dbIndexing.generateIndexOnProperty(
+      "todo_index",
+      Todo,
+      relationProperty as keyof Todo,
+      "deadline",
+    );
+    return this.dbIndexing.queryIndexDocs(
+      Todo,
+      "todo_index/by_" + relationProperty,
+      {
+        startkey: [entity.getId(), "\uffff"],
+        endkey: [entity.getId()],
+        descending: true,
+      },
+    );
+  }
 
   async completeTodo(todo: Todo) {
     const nextTodo = await this.createNextRepetition(todo);

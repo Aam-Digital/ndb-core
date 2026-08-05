@@ -47,8 +47,8 @@ export class EntityActionsMenuService {
       } catch (err) {
         // a single misbehaving action must not break the whole context menu
         Logging.warn(
-          `EntityActionsMenu: visibility check for action "${action.action}" failed; hiding it.`,
-          err,
+          "EntityActionsMenu: visibility check for action failed; hiding it.",
+          { action: action.action, error: err },
         );
         isVisible = false;
       }

@@ -6,13 +6,14 @@
     ":maintainLockFilesMonthly"
   ],
   "enabledManagers": [
-    "npm"
+    "npm",
+    "dockerfile"
   ],
   "timezone": "Etc/UTC",
   "schedule": [
     "after 00:00 and before 09:00 on Monday"
   ],
-  "dependencyDashboard": true,
+  "dependencyDashboard": false,
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
   "labels": [
@@ -50,7 +51,6 @@
         "major"
       ],
       "draftPR": true,
-      "dependencyDashboardApproval": true,
       "labels": [
         "Final Review"
       ]
@@ -65,6 +65,17 @@
         "patch"
       ],
       "groupName": "weekly-non-major-updates",
+      "automerge": false
+    },
+    {
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "docker-base-image",
       "automerge": false
     }
   ]

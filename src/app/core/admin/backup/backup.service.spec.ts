@@ -149,6 +149,7 @@ describe("BackupService", () => {
 
   it("runPendingReset should delete all databases and unregister service workers", async () => {
     sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
+    localStorage.setItem("LAST_SYNC_test-db", "2024-01-01T00:00:00.000Z");
 
     // Stub global indexedDB (not available in jsdom)
     const mockDbs = [{ name: "db1" }, { name: "db2" }];
@@ -175,6 +176,7 @@ describe("BackupService", () => {
     expect(deleteDatabase).toHaveBeenCalledWith("db1");
     expect(deleteDatabase).toHaveBeenCalledWith("db2");
     expect(unregisterSpy).toHaveBeenCalled();
+    expect(localStorage.getItem("LAST_SYNC_test-db")).toBeNull();
     expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
   });
 
