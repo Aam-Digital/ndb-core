@@ -3,6 +3,7 @@ import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import {
   getDeferredInstallPrompt,
   whenCanInstallDirectly,
+  PWAInstallChoice,
 } from "#src/bootstrap-pwa-install";
 
 export enum PWAInstallType {
@@ -42,7 +43,7 @@ export class PwaInstallService {
     return whenCanInstallDirectly();
   }
 
-  installPWA(): Promise<any> {
+  installPWA(): Promise<PWAInstallChoice> {
     const installPrompt = getDeferredInstallPrompt();
     if (!installPrompt) {
       throw new Error(
