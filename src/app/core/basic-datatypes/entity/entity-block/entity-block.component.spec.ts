@@ -117,6 +117,24 @@ describe("EntityBlockComponent", () => {
     expect(fixture.nativeElement.textContent).toContain("not available");
   });
 
+  it("renders the not-found fallback instead of throwing when entityId is not a string", async () => {
+    // an Entity accidentally bound to [entityId] instead of [entity]: truthy, so it
+    // reaches the loader, but not a string, so extractTypeFromId() rejects it.
+    // typed as unknown rather than cast, so the boundary is explicit and the rest
+    // of the test keeps full type checking.
+    const runtimeInvalidEntityId: unknown = testEntity;
+    mockEntityMapper.load.mockRejectedValue(new Error("not found"));
+    fixture.componentRef.setInput("entityId", runtimeInvalidEntityId);
+    fixture.detectChanges();
+
+    await vi.waitFor(() => expect(component.notFound()).toBe(true));
+
+    expect(() => component.missingEntityType()).not.toThrow();
+    expect(component.missingEntityType()).toBeUndefined();
+    expect(component.notFoundIcon()).toBe("diamond");
+    expect(() => fixture.detectChanges()).not.toThrow();
+  });
+
   it("should display configured entity color on the icon", async () => {
     TestEntity.color = "#ff0000";
     try {

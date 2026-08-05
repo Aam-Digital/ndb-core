@@ -97,7 +97,17 @@ export class EntityBlockComponent {
     if (!this.notFound()) {
       return undefined;
     }
-    const type = Entity.extractTypeFromId(this.entityId());
+    const id = this.entityId();
+    if (typeof id !== "string") {
+      // `entityId` is typed as string, but nothing enforces that at runtime for a
+      // block that is rendered from user config. A non-string id makes the resource
+      // loader below fail and swallow the error, which in turn makes notFound() true
+      // and brings us here — so extractTypeFromId() would throw on every change
+      // detection pass, inside a computed the template reads. Degrade to the generic
+      // not-found display instead.
+      return undefined;
+    }
+    const type = Entity.extractTypeFromId(id);
     return type && this.registry.has(type)
       ? this.registry.get(type)
       : undefined;
