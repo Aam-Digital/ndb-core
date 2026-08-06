@@ -8,10 +8,10 @@
       cdkDropList
       (cdkDropListDropped)="onDrop($event)"
     >
-      @for (row of rows(); track row.uniqueId; let i = $index) {
+      @for (row of rows(); track row.id; let i = $index) {
         <div
           class="report-row"
-          [class.group-row]="row.isGroup"
+          [class.group-row]="isGroup(row.data)"
           [style.margin-left.px]="row.level * indentPerLevel"
           cdkDrag
           [cdkDragData]="row"
@@ -25,12 +25,12 @@
               ></fa-icon>
             }
 
-            @if (row.isGroup) {
+            @if (isGroup(row.data)) {
               <fa-icon icon="layer-group" class="row-icon"></fa-icon>
               <input
                 class="group-title-input"
                 type="text"
-                [value]="row.groupTitle ?? ''"
+                [value]="row.data.groupTitle ?? ''"
                 [disabled]="!enabled()"
                 placeholder="Group title"
                 i18n-placeholder
@@ -41,14 +41,14 @@
             } @else {
               <app-edit-sql-query
                 class="query-editor"
-                [value]="row.query ?? ''"
+                [value]="row.data.query ?? ''"
                 [disabled]="!enabled()"
                 (valueChange)="setQuery(i, $event)"
               ></app-edit-sql-query>
             }
 
             @if (enabled()) {
-              @if (row.isGroup) {
+              @if (isGroup(row.data)) {
                 <button
                   mat-icon-button
                   type="button"
@@ -77,11 +77,15 @@
                 type="button"
                 (click)="remove(i)"
                 [matTooltip]="
-                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
+                  isGroup(row.data)
+                    ? 'Remove group and its contents'
+                    : 'Remove query'
                 "
                 i18n-matTooltip
                 [attr.aria-label]="
-                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
+                  isGroup(row.data)
+                    ? 'Remove group and its contents'
+                    : 'Remove query'
                 "
               >
                 <fa-icon icon="trash"></fa-icon>

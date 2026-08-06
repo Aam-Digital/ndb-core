@@ -1,22 +1,27 @@
 import {
   Component,
-  Input,
+  computed,
   inject,
+  input,
   model,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import {
-  CdkDragDrop,
-  DragDropModule,
-  moveItemInArray,
-  transferArrayItem,
-} from "@angular/cdk/drag-drop";
+import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { v4 as uuid } from "uuid";
 import { MatDialog } from "@angular/material/dialog";
-import { Logging } from "../../logging/logging.service";
+import {
+  FlatTreeOptions,
+  FlatTreeRow,
+  flattenTree,
+  moveSubtree,
+  rebuildTree,
+  removeSubtree,
+  updateRow,
+} from "#src/app/utils/flat-tree/flat-tree";
 import { MenuItem } from "../navigation/menu-item";
 import { AdminMenuItemComponent } from "../../admin/admin-menu/admin-menu-item/admin-menu-item.component";
 import {
+  menuItemTree,
   MenuItemForAdminUi,
   MenuItemForAdminUiNew,
 } from "../../admin/admin-menu/menu-item-for-admin-ui";
@@ -27,11 +32,14 @@ import { IconButtonComponent } from "../../common-components/icon-button/icon-bu
  * A reusable component for editing lists of menu items with drag & drop,
  * add/remove functionality. Used by both AdminMenuComponent and
  * ShortcutDashboardSettingsComponent.
+ *
+ * The (possibly nested) menu is edited as a single flat, indented list (see `flat-tree`):
+ * dragging an item sideways nests it into the item above or lifts it back out, and dragging
+ * an item with sub-items carries its whole subtree.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-menu-item-list-editor",
-  standalone: true,
   imports: [AdminMenuItemComponent, DragDropModule, IconButtonComponent],
   templateUrl: "./menu-item-list-editor.component.html",
   styleUrl: "./menu-item-list-editor.component.scss",
@@ -40,71 +48,61 @@ export class MenuItemListEditorComponent {
   private readonly dialog = inject(MatDialog);
 
   items = model<MenuItemForAdminUi[]>([]);
-  @Input() showAddButton: boolean = true;
 
-  /** Unique identifier for the drag-drop container */
-  @Input() containerId: string = "menu-item-list-container";
+  showAddButton = input<boolean>(true);
 
   /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
-  @Input() allowEntityLinks: boolean = true;
+  allowEntityLinks = input<boolean>(true);
 
-  @Input() allowSubMenu: boolean = true;
+  /** Whether items may be nested into sub-menus (false for shortcuts) */
+  allowSubMenu = input<boolean>(true);
 
-  public get connectedDropLists(): string[] {
-    if (!this.allowSubMenu) {
-      // For shortcuts, only allow drops in the main container
-      return [this.containerId];
-    }
-    return [this.containerId, ...this.getIdsRecursive(this.items())].reverse();
+  /** pixels of indentation per nesting level */
+  readonly indentPerLevel = 32;
+
+  /** the menu as a flat, indented list of rows */
+  readonly rows = computed<FlatTreeRow<MenuItemForAdminUi>[]>(() =>
+    flattenTree(this.items(), menuItemTree),
+  );
+
+  private readonly nesting = computed<FlatTreeOptions>(() => ({
+    maxLevel: this.allowSubMenu() ? undefined : 0,
+  }));
+
+  /** whether the item at `index` has nested sub-items, i.e. the row below it is deeper */
+  hasSubItems(index: number): boolean {
+    const rows = this.rows();
+    return rows[index + 1]?.level > rows[index].level;
   }
 
-  private getIdsRecursive(items: MenuItemForAdminUi[]): string[] {
-    let ids: string[] = [];
-    items?.forEach((item) => {
-      ids.push(item.uniqueId);
-      if (this.allowSubMenu && item.subMenu) {
-        ids = ids.concat(this.getIdsRecursive(item.subMenu));
-      }
-    });
-    return ids;
+  onDrop(event: CdkDragDrop<unknown>): void {
+    // how far the item was dragged sideways determines how deep it is nested;
+    // truncated, so that only a full indentation step re-nests (and not slight drift)
+    const levelDelta = Math.trunc(event.distance.x / this.indentPerLevel);
+    this.setRows(
+      moveSubtree(
+        this.rows(),
+        event.previousIndex,
+        event.currentIndex,
+        menuItemTree,
+        { ...this.nesting(), levelDelta },
+      ),
+    );
   }
 
-  onDragDrop(event: CdkDragDrop<MenuItem[]>) {
-    try {
-      if (event.previousContainer === event.container) {
-        // Same container - always allow reordering
-        moveItemInArray(
-          event.container.data,
-          event.previousIndex,
-          event.currentIndex,
-        );
-      } else {
-        // Cross-container transfer - only allow if submenus are enabled
-        if (!this.allowSubMenu) {
-          // For shortcuts, prevent cross-container drops (no submenus allowed)
-          return;
-        }
+  /** remove the item at `index` and, with it, its sub-items */
+  removeItem(index: number): void {
+    this.setRows(
+      removeSubtree(this.rows(), index, menuItemTree, this.nesting()),
+    );
+  }
 
-        transferArrayItem(
-          event.previousContainer.data,
-          event.container.data,
-          event.previousIndex,
-          event.currentIndex,
-        );
+  onItemChange(newItem: MenuItemForAdminUi, index: number): void {
+    this.setRows(updateRow(this.rows(), index, newItem));
+  }
 
-        // Ensure the moved item has a subMenu array to allow nesting
-        const targetData = event.container.data as MenuItemForAdminUi[];
-        const movedItem = targetData[event.currentIndex];
-        if (movedItem && !movedItem.subMenu) {
-          movedItem.subMenu = [];
-        }
-      }
-      // Deep clone to ensure new references for all items (including nested subMenus),
-      // so child model() signals detect the mutation done by transferArrayItem/moveItemInArray.
-      this.items.set(structuredClone(this.items()));
-    } catch (error) {
-      Logging.debug("Drag drop error:", error);
-    }
+  private setRows(rows: FlatTreeRow<MenuItemForAdminUi>[]): void {
+    this.items.set(rebuildTree(rows, menuItemTree));
   }
 
   async addNewMenuItem() {
@@ -114,7 +112,7 @@ export class MenuItemListEditorComponent {
       data: {
         item: { ...newItem },
         isNew: true,
-        allowEntityLinks: this.allowEntityLinks,
+        allowEntityLinks: this.allowEntityLinks(),
       },
     });
 
@@ -124,25 +122,13 @@ export class MenuItemListEditorComponent {
           ...result,
           uniqueId: uuid(),
           subMenu:
-            this.allowSubMenu && result.subMenu
+            this.allowSubMenu() && result.subMenu
               ? MenuItemListEditorComponent.addUniqueIds(result.subMenu)
               : [],
         };
         this.items.update((curr) => [normalizedItem, ...curr]);
       }
     });
-  }
-
-  removeItem(item: MenuItemForAdminUi): void {
-    this.items.update((curr) => curr.filter((i) => i !== item));
-  }
-
-  onItemChange(newItem: MenuItemForAdminUi, index: number) {
-    this.items.update((curr) => [
-      ...curr.slice(0, index),
-      newItem,
-      ...curr.slice(index + 1),
-    ]);
   }
 
   /**

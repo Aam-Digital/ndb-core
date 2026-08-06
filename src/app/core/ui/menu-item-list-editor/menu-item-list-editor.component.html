@@ -1,4 +1,4 @@
-@if (showAddButton) {
+@if (showAddButton()) {
   <div class="margin-bottom-regular">
     <app-icon-button
       icon="plus-circle"
@@ -12,21 +12,24 @@
 }
 
 <div
+  class="drop-list flex-column gap-regular"
   cdkDropList
-  [id]="containerId"
-  [cdkDropListData]="items()"
-  [cdkDropListConnectedTo]="connectedDropLists"
-  (cdkDropListDropped)="onDragDrop($event)"
+  (cdkDropListDropped)="onDrop($event)"
 >
-  @for (item of items(); track item.uniqueId; let i = $index) {
-    <app-admin-menu-item
-      [item]="item"
-      [connectedTo]="connectedDropLists"
-      [allowEntityLinks]="allowEntityLinks"
-      [allowSubMenu]="allowSubMenu"
-      (itemDrop)="onDragDrop($event)"
-      (deleteItem)="removeItem(item)"
-      (itemChange)="onItemChange($event, i)"
-    ></app-admin-menu-item>
+  @for (row of rows(); track row.id; let i = $index) {
+    <div
+      class="drop-item"
+      [style.margin-left.px]="row.level * indentPerLevel"
+      cdkDrag
+      [cdkDragData]="row"
+    >
+      <app-admin-menu-item
+        [item]="row.data"
+        [hasSubItems]="hasSubItems(i)"
+        [allowEntityLinks]="allowEntityLinks()"
+        (deleteItem)="removeItem(i)"
+        (itemChange)="onItemChange($event, i)"
+      ></app-admin-menu-item>
+    </div>
   }
 </div>

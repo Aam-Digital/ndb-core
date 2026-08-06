@@ -61,19 +61,14 @@ describe("AdminMenuItemComponent", () => {
     } as MenuItemForAdminUi);
     expect(component.hasNoLinkWarning()).toBe(false);
 
-    const child = {
-      uniqueId: "2",
-      label: "Child",
-      icon: "user",
-      link: "/child",
-      subMenu: [],
-    } as MenuItemForAdminUi;
+    // sub-items are rendered as rows of their own, the editor reports them via `hasSubItems`
     fixture.componentRef.setInput("item", {
       uniqueId: "1",
       label: "Section",
       icon: "folder",
-      subMenu: [child],
+      subMenu: [],
     } as MenuItemForAdminUi);
+    fixture.componentRef.setInput("hasSubItems", true);
     expect(component.hasNoLinkWarning()).toBe(false);
   });
 });

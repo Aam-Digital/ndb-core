@@ -11,61 +11,46 @@ import {
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-  CdkDragDrop,
-  DragDropModule,
-  moveItemInArray,
-} from "@angular/cdk/drag-drop";
+import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { v4 as uuid } from "uuid";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import {
+  FlatTreeRow,
+  flattenTree,
+  insertChild,
+  moveSubtree,
+  rebuildTree,
+  removeSubtree,
+  updateRow,
+} from "#src/app/utils/flat-tree/flat-tree";
 import { ReportDefinitionDto } from "../report-config";
 import { JsonEditorComponent } from "#src/app/core/admin/json-editor/json-editor.component";
 import { SqlCodeEditorComponent } from "../edit-sql-query/sql-code-editor.component";
 import {
-  FlatReportRow,
-  flattenTree,
-  normalizeLevels,
-  rebuildTree,
-  subtreeLength,
+  isGroupNode,
+  newGroupNode,
+  newQueryNode,
+  ReportDefinitionUiNode,
+  reportDefinitionTree,
   toReportDefinition,
   toUiNodes,
 } from "./report-definition-ui-node";
-
-/** a fresh (empty) query row, without a nesting level */
-function newQueryRow(): Omit<FlatReportRow, "level"> {
-  return { uniqueId: uuid(), query: "", isGroup: false };
-}
-
-/** a fresh (empty) group row, without a nesting level */
-function newGroupRow(): Omit<FlatReportRow, "level"> {
-  return {
-    uniqueId: uuid(),
-    groupTitle: $localize`:ReportConfig:New group`,
-    isGroup: true,
-  };
-}
-
-/** the nesting level a row dropped directly below `above` should take (child of a group, else sibling) */
-function nestingLevelBelow(above: FlatReportRow | undefined): number {
-  if (!above) {
-    return 0;
-  }
-  return above.isGroup ? above.level + 1 : above.level;
-}
 
 /**
  * Structured editor for a SQL report's `reportDefinition` tree
  * (`{ query?, groupTitle?, items? }[]`, see {@link ReportDefinitionDto}).
  *
- * The editor offers SQL syntax highlighting.
- * Non-SQL reports can be edited in a JSON editor.
+ * The tree is edited as a single flat, indented list (see `flat-tree`): each query is a
+ * syntax-highlighted editor and each group a heading. Queries/groups are added directly into a
+ * group via its "+" buttons, and any row can be dragged to a new position — dragging it sideways
+ * nests it into the group above or lifts it back out, and dragging a group carries its whole
+ * subtree. For non-"sql" modes the definition is edited as raw JSON.
  */
 @DynamicComponent("EditReportDefinition")
 @Component({
@@ -105,9 +90,11 @@ export class EditReportDefinitionComponent
   readonly indentPerLevel = 24;
 
   /** the definition as a flat, indented list of rows (working copy) */
-  readonly rows = signal<FlatReportRow[]>([]);
+  readonly rows = signal<FlatTreeRow<ReportDefinitionUiNode>[]>([]);
   /** JSON of the last definition synced in either direction, to break the value<->rows loop */
   private lastSync = "";
+
+  protected readonly isGroup = isGroupNode;
 
   constructor() {
     super();
@@ -115,11 +102,11 @@ export class EditReportDefinitionComponent
     // mirror external value changes (form load/reset) into the working rows
     effect(() => {
       const value = this.valueSignal();
-      const arr = Array.isArray(value) ? (value as ReportDefinitionDto[]) : [];
+      const arr = Array.isArray(value) ? value : [];
       const json = JSON.stringify(arr);
       if (json !== this.lastSync) {
         this.lastSync = json;
-        this.rows.set(flattenTree(toUiNodes(arr)));
+        this.rows.set(flattenTree(toUiNodes(arr), reportDefinitionTree));
       }
     });
   }
@@ -137,99 +124,85 @@ export class EditReportDefinitionComponent
   }
 
   setQuery(index: number, query: string): void {
-    this.updateRow(index, { query });
+    this.updateNode(index, { query });
   }
 
   setGroupTitle(index: number, event: Event): void {
     const groupTitle = (event.target as HTMLInputElement).value;
-    this.updateRow(index, { groupTitle });
+    this.updateNode(index, { groupTitle });
   }
 
   addQuery(): void {
-    this.appendRoot(newQueryRow());
+    this.append(newQueryNode());
   }
 
   addGroup(): void {
-    this.appendRoot(newGroupRow());
+    this.append(newGroupNode());
   }
 
   /** add a query as the first child of the group at `groupIndex` */
   addChildQuery(groupIndex: number): void {
-    this.insertChild(groupIndex, newQueryRow());
+    this.insertInto(groupIndex, newQueryNode());
   }
 
   /** add a sub-group as the first child of the group at `groupIndex` */
   addChildGroup(groupIndex: number): void {
-    this.insertChild(groupIndex, newGroupRow());
+    this.insertInto(groupIndex, newGroupNode());
   }
 
   /** remove the row and, for a group, its whole subtree */
   remove(index: number): void {
-    const rows = [...this.rows()];
-    rows.splice(index, subtreeLength(rows, index));
-    this.rows.set(normalizeLevels(rows));
-    this.persist();
-  }
-
-  private appendRoot(row: Omit<FlatReportRow, "level">): void {
-    this.rows.update((rows) => [...rows, { ...row, level: 0 }]);
-    this.persist();
-  }
-
-  private insertChild(
-    groupIndex: number,
-    row: Omit<FlatReportRow, "level">,
-  ): void {
-    const rows = [...this.rows()];
-    const level = rows[groupIndex].level + 1;
-    rows.splice(groupIndex + 1, 0, { ...row, level });
-    this.rows.set(normalizeLevels(rows));
-    this.persist();
-  }
-
-  onDrop(event: CdkDragDrop<FlatReportRow[]>): void {
-    const { previousIndex, currentIndex } = event;
-    if (previousIndex === currentIndex) {
-      return;
-    }
-    let rows = [...this.rows()];
-    const len = subtreeLength(rows, previousIndex);
-    const headerId = rows[previousIndex].uniqueId;
-    // ids of the dragged group's descendants (empty for a query) — they must follow the header
-    const childIds = rows
-      .slice(previousIndex + 1, previousIndex + len)
-      .map((r) => r.uniqueId);
-
-    // move the dragged header to its new position, then pull its subtree back beneath it
-    moveItemInArray(rows, previousIndex, currentIndex);
-    if (childIds.length) {
-      const children = rows.filter((r) => childIds.includes(r.uniqueId));
-      rows = rows.filter((r) => !childIds.includes(r.uniqueId));
-      const headerIndex = rows.findIndex((r) => r.uniqueId === headerId);
-      rows.splice(headerIndex + 1, 0, ...children);
-    }
-
-    // nest according to the row now above the moved subtree, shifting the whole subtree with it
-    const headerIndex = rows.findIndex((r) => r.uniqueId === headerId);
-    const delta =
-      nestingLevelBelow(rows[headerIndex - 1]) - rows[headerIndex].level;
-    for (let i = headerIndex; i < headerIndex + len; i++) {
-      rows[i] = { ...rows[i], level: rows[i].level + delta };
-    }
-
-    this.rows.set(normalizeLevels(rows));
-    this.persist();
-  }
-
-  private updateRow(index: number, patch: Partial<FlatReportRow>): void {
     this.rows.update((rows) =>
-      rows.map((row, i) => (i === index ? { ...row, ...patch } : row)),
+      removeSubtree(rows, index, reportDefinitionTree),
+    );
+    this.persist();
+  }
+
+  onDrop(event: CdkDragDrop<unknown>): void {
+    // how far the row was dragged sideways determines how deep it is nested;
+    // truncated, so that only a full indentation step re-nests (and not slight drift)
+    const levelDelta = Math.trunc(event.distance.x / this.indentPerLevel);
+    this.rows.update((rows) =>
+      moveSubtree(
+        rows,
+        event.previousIndex,
+        event.currentIndex,
+        reportDefinitionTree,
+        { levelDelta },
+      ),
+    );
+    this.persist();
+  }
+
+  private append(node: ReportDefinitionUiNode): void {
+    this.rows.update((rows) => [
+      ...rows,
+      { id: node.uniqueId, level: 0, data: node },
+    ]);
+    this.persist();
+  }
+
+  private insertInto(groupIndex: number, node: ReportDefinitionUiNode): void {
+    this.rows.update((rows) =>
+      insertChild(rows, groupIndex, node, reportDefinitionTree),
+    );
+    this.persist();
+  }
+
+  private updateNode(
+    index: number,
+    patch: Partial<ReportDefinitionUiNode>,
+  ): void {
+    this.rows.update((rows) =>
+      updateRow(rows, index, { ...rows[index].data, ...patch }),
     );
     this.persist();
   }
 
   private persist(): void {
-    const definition = toReportDefinition(rebuildTree(this.rows()));
+    const definition = toReportDefinition(
+      rebuildTree(this.rows(), reportDefinitionTree),
+    );
     const json = JSON.stringify(definition);
     // Ignore no-op writes: a re-emitted (unchanged) value would otherwise re-mark a pristine
     // form dirty. `lastSync` is the value last synced in either direction.

@@ -1,11 +1,9 @@
+import { flattenTree, rebuildTree } from "#src/app/utils/flat-tree/flat-tree";
 import {
-  FlatReportRow,
-  flattenTree,
-  groupNodeIds,
   isGroupNode,
-  normalizeLevels,
-  rebuildTree,
-  subtreeLength,
+  newGroupNode,
+  newQueryNode,
+  reportDefinitionTree,
   toReportDefinition,
   toUiNodes,
 } from "./report-definition-ui-node";
@@ -38,16 +36,10 @@ describe("report-definition-ui-node", () => {
     expect(nodes[1].items[0].uniqueId).not.toBe(nodes[0].uniqueId);
   });
 
-  it("collects the ids of every group (drop target), including nested ones", () => {
-    const nodes = toUiNodes([
-      { query: "q" },
-      { groupTitle: "G", items: [{ groupTitle: "Sub", items: [] }] },
-    ]);
-
-    expect(groupNodeIds(nodes)).toEqual([
-      nodes[1].uniqueId,
-      nodes[1].items[0].uniqueId,
-    ]);
+  it("creates new query and group nodes with distinct ids", () => {
+    expect(isGroupNode(newQueryNode())).toBe(false);
+    expect(isGroupNode(newGroupNode())).toBe(true);
+    expect(newQueryNode().uniqueId).not.toBe(newQueryNode().uniqueId);
   });
 
   it("round-trips a nested definition through flat rows and back", () => {
@@ -59,45 +51,16 @@ describe("report-definition-ui-node", () => {
       },
     ]);
 
-    const flat = flattenTree(nodes);
-    expect(flat.map((r) => [r.isGroup, r.level])).toEqual([
+    const rows = flattenTree(nodes, reportDefinitionTree);
+    expect(rows.map((r) => [isGroupNode(r.data), r.level])).toEqual([
       [false, 0], // a
       [true, 0], // G
       [false, 1], // b
       [true, 1], // Sub
       [false, 2], // c
     ]);
-    expect(toReportDefinition(rebuildTree(flat))).toEqual(
+    expect(toReportDefinition(rebuildTree(rows, reportDefinitionTree))).toEqual(
       toReportDefinition(nodes),
     );
-  });
-
-  it("clamps levels so a row is at most one deeper than the group above it", () => {
-    const rows: FlatReportRow[] = [
-      { uniqueId: "q1", query: "", isGroup: false, level: 2 }, // first row -> forced to 0
-      { uniqueId: "g", groupTitle: "", isGroup: true, level: 3 }, // -> 0
-      { uniqueId: "q2", query: "", isGroup: false, level: 9 }, // under group -> 1
-      { uniqueId: "q3", query: "", isGroup: false, level: 5 }, // under a query -> capped at 1
-    ];
-
-    expect(normalizeLevels(rows).map((r) => r.level)).toEqual([0, 0, 1, 1]);
-  });
-
-  it("measures the subtree length of a group (itself plus its descendants)", () => {
-    const flat = flattenTree(
-      toUiNodes([
-        {
-          groupTitle: "G",
-          items: [
-            { query: "b" },
-            { groupTitle: "Sub", items: [{ query: "c" }] },
-          ],
-        },
-        { query: "after" },
-      ]),
-    );
-
-    expect(subtreeLength(flat, 0)).toBe(4); // G, b, Sub, c
-    expect(subtreeLength(flat, 4)).toBe(1); // "after"
   });
 });

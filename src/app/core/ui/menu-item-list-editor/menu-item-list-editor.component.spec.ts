@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { MenuItemListEditorComponent } from "./menu-item-list-editor.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MenuItemForAdminUi } from "../../admin/admin-menu/menu-item-for-admin-ui";
@@ -110,13 +111,110 @@ describe("MenuItemListEditorComponent", () => {
     component.items.subscribe((val) => emittedValues.push(val));
 
     // Act
-    component.removeItem(item);
+    component.removeItem(0);
 
     // Assert
-    const items = component.items();
-    expect(items.length).toBe(1);
-    expect(items[0]).toBe(secondItem);
+    expect(component.items()).toEqual([secondItem]);
     expect(emittedValues).toEqual([[secondItem]]);
+  });
+
+  describe("drag & drop of the flat, indented list", () => {
+    /** a menu item with the given id and (optional) sub-items */
+    const menuItem = (
+      uniqueId: string,
+      subMenu: MenuItemForAdminUi[] = [],
+    ): MenuItemForAdminUi => ({ uniqueId, label: uniqueId, subMenu });
+
+    /** simulate a drop, `draggedLevels` being how far the item was dragged sideways */
+    const drop = (
+      previousIndex: number,
+      currentIndex: number,
+      draggedLevels = 0,
+    ) =>
+      component.onDrop({
+        previousIndex,
+        currentIndex,
+        distance: { x: draggedLevels * component.indentPerLevel, y: 0 },
+      } as CdkDragDrop<unknown>);
+
+    it("flattens nested items into indented rows", () => {
+      component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
+
+      expect(component.rows().map((r) => [r.id, r.level])).toEqual([
+        ["a", 0],
+        ["a1", 1],
+        ["b", 0],
+      ]);
+      expect(component.hasSubItems(0)).toBe(true);
+      expect(component.hasSubItems(1)).toBe(false);
+    });
+
+    it("moves an item together with its sub-items", () => {
+      component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
+
+      drop(0, 2); // drag "a" to the end; cdk counts the dragged row only
+
+      expect(component.items()).toEqual([
+        menuItem("b"),
+        menuItem("a", [menuItem("a1")]),
+      ]);
+    });
+
+    it("nests an item into the item above when dragged to the right", () => {
+      component.items.set([menuItem("a"), menuItem("b")]);
+
+      drop(1, 1, 1);
+
+      expect(component.items()).toEqual([menuItem("a", [menuItem("b")])]);
+    });
+
+    it("does not re-nest on slight sideways drift while dragging", () => {
+      component.items.set([menuItem("a"), menuItem("b")]);
+
+      component.onDrop({
+        previousIndex: 1,
+        currentIndex: 1,
+        distance: { x: component.indentPerLevel / 2, y: 0 },
+      } as CdkDragDrop<unknown>);
+
+      expect(component.items()).toEqual([menuItem("a"), menuItem("b")]);
+    });
+
+    it("lifts a sub-item out of its parent when dragged to the left", () => {
+      component.items.set([menuItem("a", [menuItem("a1")])]);
+
+      drop(1, 1, -1);
+
+      expect(component.items()).toEqual([menuItem("a"), menuItem("a1")]);
+    });
+
+    it("does not nest items when sub-menus are not allowed", () => {
+      fixture.componentRef.setInput("allowSubMenu", false);
+      component.items.set([menuItem("a"), menuItem("b")]);
+
+      drop(1, 1, 1);
+
+      expect(component.items()).toEqual([menuItem("a"), menuItem("b")]);
+    });
+
+    it("removes an item together with its sub-items", () => {
+      component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
+
+      component.removeItem(0);
+
+      expect(component.items()).toEqual([menuItem("b")]);
+    });
+
+    it("keeps the sub-items when an item itself is edited", () => {
+      component.items.set([menuItem("a", [menuItem("a1")])]);
+
+      // the edit dialog returns the item without its (separately rendered) sub-items
+      component.onItemChange({ ...menuItem("a"), label: "renamed" }, 0);
+
+      expect(component.items()).toEqual([
+        { ...menuItem("a", [menuItem("a1")]), label: "renamed" },
+      ]);
+    });
   });
 
   it("should convert entity menu item to plain format with toPlainMenuItem", () => {
