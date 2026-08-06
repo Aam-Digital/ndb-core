@@ -143,7 +143,7 @@ export class PaginatedDataSource<
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
     // isActive is not available in the database
     if (filter["isActive"]) {
-      filter["inactive"] = filter["isActive"];
+      filter["inactive"] = !filter["isActive"];
       delete filter["isActive"];
     }
     const filterString = JSON.stringify(filter);
