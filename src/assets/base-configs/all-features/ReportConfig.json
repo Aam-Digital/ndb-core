@@ -1,0 +1,41 @@
+[
+  {
+    "_id": "ReportConfig:sql-child-export",
+    "title": "Child Details (SQL export)",
+    "mode": "sql",
+    "reportDefinition": [
+      {
+        "query": "SELECT name, gender, dateOfBirth, phone FROM Child ORDER BY name"
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:sql-child-counts",
+    "title": "Child Counts (SQL, grouped)",
+    "mode": "sql",
+    "reportDefinition": [
+      {
+        "groupTitle": "Children",
+        "items": [
+          {
+            "query": "SELECT count(*) as value FROM Child"
+          },
+          {
+            "query": "SELECT count(*) as value FROM Child WHERE dateOfBirth IS NOT NULL"
+          },
+          {
+            "groupTitle": "by gender",
+            "items": [
+              {
+                "query": "SELECT count(*) as value FROM Child WHERE gender = 'M'"
+              },
+              {
+                "query": "SELECT count(*) as value FROM Child WHERE gender = 'F'"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
