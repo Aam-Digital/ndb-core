@@ -38,6 +38,20 @@ import {
   toUiNodes,
 } from "./report-definition-ui-node";
 
+/** a fresh (empty) query row, without a nesting level */
+function newQueryRow(): Omit<FlatReportRow, "level"> {
+  return { uniqueId: uuid(), query: "", isGroup: false };
+}
+
+/** a fresh (empty) group row, without a nesting level */
+function newGroupRow(): Omit<FlatReportRow, "level"> {
+  return {
+    uniqueId: uuid(),
+    groupTitle: $localize`:ReportConfig:New group`,
+    isGroup: true,
+  };
+}
+
 /**
  * Structured editor for a SQL report's `reportDefinition` tree
  * (`{ query?, groupTitle?, items? }[]`, see {@link ReportDefinitionDto}).
@@ -124,42 +138,21 @@ export class EditReportDefinitionComponent
   }
 
   addQuery(): void {
-    this.rows.update((rows) => [
-      ...rows,
-      { uniqueId: uuid(), query: "", isGroup: false, level: 0 },
-    ]);
-    this.persist();
+    this.appendRoot(newQueryRow());
   }
 
   addGroup(): void {
-    this.rows.update((rows) => [
-      ...rows,
-      {
-        uniqueId: uuid(),
-        groupTitle: $localize`:ReportConfig:New group`,
-        isGroup: true,
-        level: 0,
-      },
-    ]);
-    this.persist();
+    this.appendRoot(newGroupRow());
   }
 
   /** add a query as the first child of the group at `groupIndex` */
   addChildQuery(groupIndex: number): void {
-    this.insertChild(groupIndex, {
-      uniqueId: uuid(),
-      query: "",
-      isGroup: false,
-    });
+    this.insertChild(groupIndex, newQueryRow());
   }
 
   /** add a sub-group as the first child of the group at `groupIndex` */
   addChildGroup(groupIndex: number): void {
-    this.insertChild(groupIndex, {
-      uniqueId: uuid(),
-      groupTitle: $localize`:ReportConfig:New group`,
-      isGroup: true,
-    });
+    this.insertChild(groupIndex, newGroupRow());
   }
 
   /** remove the row and, for a group, its whole subtree */
@@ -167,6 +160,11 @@ export class EditReportDefinitionComponent
     const rows = [...this.rows()];
     rows.splice(index, subtreeLength(rows, index));
     this.rows.set(normalizeLevels(rows));
+    this.persist();
+  }
+
+  private appendRoot(row: Omit<FlatReportRow, "level">): void {
+    this.rows.update((rows) => [...rows, { ...row, level: 0 }]);
     this.persist();
   }
 
