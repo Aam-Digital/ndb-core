@@ -21,6 +21,15 @@ export class PouchdbCorruptionRecoveryService {
   private warningDialogOpen = false;
   private resetDialogOpen = false;
 
+  /**
+   * Shared closing line of both recovery dialogs.
+   * Must stay a getter: this service is in the eagerly imported graph of main.ts, so a
+   * module-level `$localize` would run before `initLanguage()` and never be translated.
+   */
+  private get improvementsPlannedHint(): string {
+    return $localize`:local db corruption dialog improvements hint:We are working on improvements to allow this in the future.`;
+  }
+
   async promptMultiTabWarningDialog(): Promise<void> {
     if (environment.session_type === SessionType.online) {
       return;
@@ -35,9 +44,9 @@ export class PouchdbCorruptionRecoveryService {
         $localize`:multi-tab warning dialog title:Multiple Tabs Open`,
         $localize`:multi-tab warning dialog text:The app is open in multiple tabs, which can break the local database.
 
-Please close the other tabs and try again to avoid local database corruption.
-
-We are working on improvements to allow this in the future.`,
+Please close the other tabs and try again to avoid local database corruption.` +
+          "\n\n" +
+          this.improvementsPlannedHint,
         OkButton,
         false,
       );
@@ -57,8 +66,9 @@ We are working on improvements to allow this in the future.`,
         $localize`:local db corruption dialog title:Local Database Needs Reset`,
         $localize`:local db corruption dialog text:The local database appears corrupted and saving is no longer reliable.
 
-This can happen after using multiple tabs in parallel.
-We are working on improvements to allow this in the future.`,
+This can happen after using multiple tabs in parallel.` +
+          "\n" +
+          this.improvementsPlannedHint,
         CustomYesNoButtons(
           $localize`:local db corruption dialog button reset:Reset Application`,
           $localize`:Confirmation dialog Cancel:Cancel`,

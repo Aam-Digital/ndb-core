@@ -261,7 +261,7 @@ export class MergeAccountSectionComponent implements OnInit {
     ) {
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`:merge account load error title:Warning! User account status unknown`,
-        $localize`:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account. Are you sure you want to continue?`,
+        $localize`:merge account load error:User account information could not be loaded (you may be offline or lack account_manager permissions). Proceeding may leave an orphaned user account.`,
       );
       if (!confirmed) return false;
     }
@@ -270,7 +270,7 @@ export class MergeAccountSectionComponent implements OnInit {
     if (accountsFound.length === 1) {
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`:merge account warning title:Warning! User account(s) found`,
-        $localize`:merge account warning one account:One of the records has a linked user account. This account will remain linked as a login for the merged record.\nAre you sure you want to continue?`,
+        $localize`:merge account warning one account:One of the records has a linked user account. This account will remain linked as a login for the merged record.`,
       );
       if (!confirmed) return false;
     }

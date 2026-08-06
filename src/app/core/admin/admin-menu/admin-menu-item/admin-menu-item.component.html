@@ -33,17 +33,19 @@
             mat-icon-button
             color="accent"
             (click)="editMenuItem(item())"
+            i18n-aria-label
             aria-label="Edit menu item"
           >
-            <fa-icon aria-label="edit" icon="pen"></fa-icon>
+            <fa-icon aria-hidden="true" icon="pen"></fa-icon>
           </button>
 
           <button
             mat-icon-button
             (click)="onDelete(item())"
+            i18n-aria-label
             aria-label="Remove menu item"
           >
-            <fa-icon aria-label="delete" icon="times"></fa-icon>
+            <fa-icon aria-hidden="true" icon="times"></fa-icon>
           </button>
         </div>
       </div>

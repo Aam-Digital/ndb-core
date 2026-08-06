@@ -9,7 +9,7 @@
 </app-hint-box>
 
 <app-view-title [disableBackButton]="true" [displayInPlace]="true">
-  &lt;Name of displayed {{ entityConstructor()?.label }}&gt;
+  <span i18n>&lt;Name of displayed {{ entityConstructor()?.label }}&gt;</span>
 </app-view-title>
 
 <app-admin-tabs
@@ -81,7 +81,7 @@
         i18n
       >
         <fa-icon
-          aria-label="add element"
+          aria-hidden="true"
           icon="plus-circle"
           class="standard-icon-with-text"
         ></fa-icon>

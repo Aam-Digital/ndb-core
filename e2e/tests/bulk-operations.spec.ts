@@ -24,9 +24,7 @@ test("Bulk-edit a field across selected records", async ({ page }) => {
 
   // Enter bulk-actions mode.
   await page.locator("button[mat-icon-button][color='primary']").click();
-  await page
-    .getByRole("menuitem", { name: "bulk actions Bulk Actions" })
-    .click();
+  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
 
   // Select all three rows.
   for (const name of [
@@ -97,9 +95,7 @@ test("Bulk-merge two records combines them into one", async ({ page }) => {
 
   // Enter bulk-actions mode via the list's "additional actions" menu.
   await page.locator("button[mat-icon-button][color='primary']").click();
-  await page
-    .getByRole("menuitem", { name: "bulk actions Bulk Actions" })
-    .click();
+  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
 
   // Selection checkboxes are now visible. Click both target rows.
   await page
@@ -229,9 +225,7 @@ test("Bulk selection follows the rendered order through sorting, filtering and p
   }
 
   await page.locator("button[mat-icon-button][color='primary']").click();
-  await page
-    .getByRole("menuitem", { name: "bulk actions Bulk Actions" })
-    .click();
+  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
   await expect(headerCheckbox).toBeVisible();
 
   // 1. In the list's initial order.

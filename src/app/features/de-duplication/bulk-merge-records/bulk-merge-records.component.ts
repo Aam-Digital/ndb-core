@@ -166,7 +166,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (this.hasDiscardedFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title:Warning! Some file attachments will be lost`,
-        $localize`:Merge confirmation dialog with files/photos:"Record B" contains files or images. Merging currently does not support attachments yet. The merged record will only have the attachments from "record A". Files from "record B" will be lost!\nAre you sure you want to continue?`,
+        $localize`:Merge confirmation dialog with files/photos:"Record B" contains files or images. Merging currently does not support attachments yet. The merged record will only have the attachments from "record A". Files from "record B" will be lost!`,
       );
       if (!fileIgnoreConfirmed) {
         return false;
@@ -176,7 +176,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title:Are you sure you want to merge this?`,
-        $localize`:Merge confirmation dialog:Merging of two records will discard the data that is not selected to be merged. This action cannot be undone. Once the two records are merged, there will be only one record left in the system.\nAre you sure you want to continue?`,
+        $localize`:Merge confirmation dialog:Merging of two records will discard the data that is not selected to be merged. This action cannot be undone. Once the two records are merged, there will be only one record left in the system.`,
       ))
     ) {
       return false;
