@@ -7,6 +7,11 @@ import { CONFIG_DOC_PATH } from "./migrations.js";
 
 const MAP_CONFIG_KEY = "appConfig:map";
 
+/** The part of the app's map config this migration touches. */
+interface MapConfig {
+  countrycodes?: string;
+}
+
 /**
  * Set the map lookup country filter to Germany explicitly.
  *
@@ -42,8 +47,7 @@ export const mapCountrycodesDe: MigrationDefinition = {
       return failedMigrationResult("Config document has no data object");
     }
 
-    const mapConfig = data[MAP_CONFIG_KEY] as
-      Record<string, unknown> | undefined;
+    const mapConfig = data[MAP_CONFIG_KEY] as MapConfig | undefined;
     if (mapConfig?.countrycodes) {
       ctx.log.info(
         `Country filter already set to "${mapConfig.countrycodes}", leaving it unchanged`,
