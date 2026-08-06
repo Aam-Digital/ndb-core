@@ -42,13 +42,8 @@ import {
  * Structured editor for a SQL report's `reportDefinition` tree
  * (`{ query?, groupTitle?, items? }[]`, see {@link ReportDefinitionDto}).
  *
- * The tree is edited as a single flat, indented list ({@link FlatReportRow}): each query is a
- * syntax-highlighted editor and each group a heading. Queries/groups are added directly into a
- * group via its "+" buttons, and any row can be dragged to a new position — where it lands
- * determines its nesting (dropping it under a group nests it in that group), and dragging a
- * group carries its whole subtree. A single flat CdkDropList is used deliberately — nested drop
- * lists cannot reliably move items into/out of sub-groups. For non-"sql" modes the definition
- * is edited as raw JSON.
+ * The editor offers SQL syntax highlighting.
+ * Non-SQL reports can be edited in a JSON editor.
  */
 @DynamicComponent("EditReportDefinition")
 @Component({
