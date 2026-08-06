@@ -77,11 +77,13 @@ export class PaginatedDataSource<
     super();
     effect(() => {
       this.effectiveFilter = this.processFilterForDB(this.dataFilter());
-      this.setRecords();
+      if (this.loadRecordConfig()) {
+        this.setRecords();
+      }
     });
   }
 
-  override async setRecords() {
+  protected override async loadRecords() {
     if (!this.loadRecordConfig()) return [];
 
     const res = await this.entityMapper.findType(

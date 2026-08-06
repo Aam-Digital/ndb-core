@@ -86,7 +86,27 @@ export abstract class EntitiesTableDataSource<
     });
   }
 
-  protected abstract setRecords(): Promise<any>;
+  /** Number of data loads currently in progress (see {@link setRecords}). */
+  private pendingLoads = 0;
+
+  /**
+   * Load the records for the current config/filter/sort/page and set
+   * {@link isLoading} while the (possibly asynchronous, e.g. server-side) load
+   * is in progress, so the table can show a progress indicator.
+   */
+  protected setRecords(): Promise<any> {
+    this.pendingLoads++;
+    this.isLoading.set(true);
+    return this.loadRecords().finally(() => {
+      this.pendingLoads--;
+      if (this.pendingLoads === 0) {
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  /** Actually (re)load the records. Implemented by the concrete data source. */
+  protected abstract loadRecords(): Promise<any>;
 
   /**
    * Load the full set of records (independent of the currently displayed page),

@@ -24,6 +24,25 @@ describe("InMemoryDataSource", () => {
     expect(dataSource).toBeTruthy();
   });
 
+  it("should set isLoading while (re)loading records and clear it once done", async () => {
+    // a fresh data source so we control the load timing
+    const ds = TestBed.runInInjectionContext(
+      () => new InMemoryDataSource<Entity>(),
+    );
+    expect(ds.isLoading()).toBe(false);
+
+    ds.loadRecordConfig.set({ entityCtr: TestEntity });
+    TestBed.tick(); // effect triggers the (async) load
+
+    expect(ds.isLoading()).toBe(true);
+
+    // let the asynchronous load complete
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
+
+    expect(ds.isLoading()).toBe(false);
+  });
+
   it("should add a new entity that was created after the initial loading to the table", async () => {
     const entity = new TestEntity();
 

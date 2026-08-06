@@ -30,7 +30,7 @@
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
-      @if (!recordsDataSource().isLoading()) {
+      @if (entityConstructor()) {
         <app-filter
           class="flex-row gap-regular flex-wrap"
           [filterConfig]="filters()"
