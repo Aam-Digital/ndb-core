@@ -242,15 +242,21 @@ export class AdminEntityFormComponent {
     return (fieldGroups ?? []).reduce((p, c) => p.concat(c.fields ?? []), []);
   }
 
+  /** id of the toolbar's drop list, so that fields can be dragged out of the form again */
+  readonly availableFieldsDropListId = computed(
+    () => `availableFields-${this.uniqueAreaId()}`,
+  );
+
   /**
-   * List of group IDs that are connected to the drag&drop area.
+   * Ids of all drop lists a field can be dragged into: every field group, the area creating a
+   * new group, and the toolbar of fields not used in the form.
    */
   readonly connectedGroups = computed(() => {
     const config = this.config();
     const areaId = this.uniqueAreaId();
 
     if (!config) {
-      return [`newGroupDropArea-${areaId}`];
+      return [`newGroupDropArea-${areaId}`, this.availableFieldsDropListId()];
     }
 
     return [
@@ -258,6 +264,7 @@ export class AdminEntityFormComponent {
         (_, groupIndex) => `${areaId}-group${groupIndex}`,
       ),
       `newGroupDropArea-${areaId}`,
+      this.availableFieldsDropListId(),
     ];
   });
 

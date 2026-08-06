@@ -150,7 +150,7 @@ describe("AdminEntityFormComponent", () => {
       currentIndex,
       previousContainer: { data: from },
       previousIndex,
-    } as Partial<FieldDropEvent> as FieldDropEvent;
+    } as FieldDropEvent;
   }
 
   it("should add new field in view if field config dialog succeeds", async () => {
@@ -280,6 +280,21 @@ describe("AdminEntityFormComponent", () => {
     // the outer list only reorders the groups themselves and needs no target;
     // the two group lists and the toolbar identify where a dropped field goes
     expect(dropListData).toEqual([undefined, 0, 1, undefined, "available"]);
+  });
+
+  it("should connect the toolbar, so fields can be dragged out of the form again", () => {
+    const dropLists = fixture.debugElement
+      .queryAll(By.directive(CdkDropList))
+      .map((el) => el.injector.get(CdkDropList));
+    const toolbar = dropLists.find((list) => list.data === "available");
+    const fieldGroups = dropLists.filter(
+      (list) => typeof list.data === "number",
+    );
+
+    expect(toolbar.id).toBe(component.availableFieldsDropListId());
+    for (const group of fieldGroups) {
+      expect(group.connectedTo).toContain(toolbar.id);
+    }
   });
 
   it("should attach each field to its drag, so a drop knows what was moved", () => {

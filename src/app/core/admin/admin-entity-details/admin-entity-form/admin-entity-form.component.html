@@ -39,11 +39,16 @@
         >
           <!-- FIELD [start] -->
           @for (field of group.fields; track field) {
+            <!--
+              No cdkDragBoundary here: it clamps the pointer to
+              `boundary.right - (previewWidth - grabOffset)`, which for a field-wide preview
+              grabbed at its handle stops short of the toolbar, making it impossible to drag
+              a field out of the form again.
+            -->
             <div
               class="admin-form-field flex-row align-center"
               cdkDrag
               [cdkDragData]="field"
-              cdkDragBoundary=".overall-container"
             >
               <fa-icon
                 icon="grip-vertical"
@@ -114,9 +119,11 @@
     <mat-card-content>
       <div
         cdkDropList
+        [id]="availableFieldsDropListId()"
         (cdkDropListDropped)="drop($event)"
         [cdkDropListData]="availableFieldsTarget"
         [cdkDropListConnectedTo]="connectedGroups()"
+        [cdkDropListDisabled]="isDisabled()"
         class="drop-list"
       >
         <div class="drop-area-hint">
