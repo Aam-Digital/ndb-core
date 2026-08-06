@@ -950,7 +950,7 @@ export class ConfigureEnumPopupComponent {
   private async confirmDiscardChanges(): Promise&lt;boolean&gt; {
     if (!this.hasUnsavedChanges()) return true;
     const confirmed &#x3D; await this.confirmationService.getConfirmation(
-      $localize&#x60;Discard changes?&#x60;,
+      $localize&#x60;:Discard changes header:Discard Changes?&#x60;,
       $localize&#x60;You have unsaved changes. Discard them?&#x60;,
       CustomYesNoButtons($localize&#x60;Discard&#x60;, $localize&#x60;Continue Editing&#x60;),
     );
@@ -1149,7 +1149,7 @@ export class ConfigureEnumPopupComponent {
 
   private showDuplicateSkippedMessage(skipped: number) {
     this.snackBar.open(
-      $localize&#x60;:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped &#x3D;&#x3D;&#x3D; 1 ? &quot;y&quot; : &quot;ies&quot;}.&#x60;,
+      $localize&#x60;:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entries.&#x60;,
       undefined,
       { duration: 3000 },
     );
@@ -1160,7 +1160,7 @@ export class ConfigureEnumPopupComponent {
     const entriesList &#x3D; invalidEntries.map((e) &#x3D;&gt; &#x60;&quot;${e}&quot;&#x60;).join(&quot;, &quot;);
     await this.confirmationService.getConfirmation(
       $localize&#x60;:@@invalidOptionsSkippedTitle:Some entries skipped&#x60;,
-      $localize&#x60;:@@invalidOptionsSkipped:Skipped ${count} entr${count &#x3D;&#x3D;&#x3D; 1 ? &quot;y&quot; : &quot;ies&quot;} without usable letters or numbers for ID: ${entriesList}.&#x60;,
+      $localize&#x60;:@@invalidOptionsSkipped:Skipped ${count} entries without usable letters or numbers for ID: ${entriesList}.&#x60;,
       OkButton,
     );
   }

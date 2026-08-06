@@ -525,8 +525,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="360"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:360</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="363"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:363</a></div>
                         </td>
                     </tr>
 
@@ -1054,10 +1054,13 @@ export class EntityFormService {
           entity,
         );
 
+      const message &#x3D; $localize&#x60;Current user is not permitted to save these changes.&#x60;;
       throw new Error(
         requiredValues
-          ? $localize&#x60;Current user is not permitted to save these changes. Values required by your permissions - ${requiredValues}&#x60;
-          : $localize&#x60;Current user is not permitted to save these changes.&#x60;,
+          ? message +
+              &quot; &quot; +
+              $localize&#x60;Values required by your permissions - ${requiredValues}&#x60;
+          : message,
       );
     }
   }

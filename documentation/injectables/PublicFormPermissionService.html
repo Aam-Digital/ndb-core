@@ -205,6 +205,10 @@ and assists with adding missing permissions.</p>
                                     <span class="modifier">Async</span>
                                 <a href="#hasPublicCreatePermission" >hasPublicCreatePermission</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#missingPublicPermissionWarning" >missingPublicPermissionWarning</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -245,8 +249,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="176"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:176</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="185"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:185</a></div>
                         </td>
                     </tr>
 
@@ -322,8 +326,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="150"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:150</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="159"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:159</a></div>
                         </td>
                     </tr>
 
@@ -392,8 +396,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="166"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:166</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:175</a></div>
                         </td>
                     </tr>
 
@@ -437,8 +441,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:53</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -492,6 +496,76 @@ Returns true if save should proceed, false if cancelled or error.</p>
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="missingPublicPermissionWarning"></a>
+                    <span class="name">
+                        <span ><b>missingPublicPermissionWarning</b></span>
+                        <a href="#missingPublicPermissionWarning"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>missingPublicPermissionWarning(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="32"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:32</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The warning explaining that the &quot;public&quot; role cannot create records of the given type.
+Single source of truth, shared by the inline warning box and the save confirmation dialog.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
 
@@ -525,6 +599,14 @@ export class PublicFormPermissionService {
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
   private readonly sessionInfo &#x3D; inject(SessionSubject);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
+
+  /**
+   * The warning explaining that the &quot;public&quot; role cannot create records of the given type.
+   * Single source of truth, shared by the inline warning box and the save confirmation dialog.
+   */
+  missingPublicPermissionWarning(entityType: string): string {
+    return $localize&#x60;This public form will currently not work for external users without an account because the &quot;public&quot; role does not have permission to create new &quot;${entityType}&quot; records.&#x60;;
+  }
 
   /**
    * Helper method to check if a permission rule subject matches an entity type.
@@ -606,7 +688,8 @@ export class PublicFormPermissionService {
         ];
 
     let dialogText &#x3D;
-      $localize&#x60;This public form will currently not work for external users without an account because the &quot;public&quot; role does not have permission to create new &quot;${entityType}&quot; records.\n\n&#x60; +
+      this.missingPublicPermissionWarning(entityType) +
+      &quot;\n\n&quot; +
       (isAdmin
         ? $localize&#x60;Would you like to add the required permission automatically?&#x60;
         : $localize&#x60;You need an administrator to add the required permissions. Do you still want to save this form?&#x60;);

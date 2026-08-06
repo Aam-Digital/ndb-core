@@ -237,8 +237,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="86"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:86</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:96</a></div>
                         </td>
                     </tr>
 
@@ -318,8 +318,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="24"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:24</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -357,8 +357,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="49"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:49</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="58"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -404,6 +404,15 @@ export class PouchdbCorruptionRecoveryService {
   private warningDialogOpen &#x3D; false;
   private resetDialogOpen &#x3D; false;
 
+  /**
+   * Shared closing line of both recovery dialogs.
+   * Must stay a getter: this service is in the eagerly imported graph of main.ts, so a
+   * module-level &#x60;$localize&#x60; would run before &#x60;initLanguage()&#x60; and never be translated.
+   */
+  private get improvementsPlannedHint(): string {
+    return $localize&#x60;:local db corruption dialog improvements hint:We are working on improvements to allow this in the future.&#x60;;
+  }
+
   async promptMultiTabWarningDialog(): Promise&lt;void&gt; {
     if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
       return;
@@ -418,9 +427,9 @@ export class PouchdbCorruptionRecoveryService {
         $localize&#x60;:multi-tab warning dialog title:Multiple Tabs Open&#x60;,
         $localize&#x60;:multi-tab warning dialog text:The app is open in multiple tabs, which can break the local database.
 
-Please close the other tabs and try again to avoid local database corruption.
-
-We are working on improvements to allow this in the future.&#x60;,
+Please close the other tabs and try again to avoid local database corruption.&#x60; +
+          &quot;\n\n&quot; +
+          this.improvementsPlannedHint,
         OkButton,
         false,
       );
@@ -440,8 +449,9 @@ We are working on improvements to allow this in the future.&#x60;,
         $localize&#x60;:local db corruption dialog title:Local Database Needs Reset&#x60;,
         $localize&#x60;:local db corruption dialog text:The local database appears corrupted and saving is no longer reliable.
 
-This can happen after using multiple tabs in parallel.
-We are working on improvements to allow this in the future.&#x60;,
+This can happen after using multiple tabs in parallel.&#x60; +
+          &quot;\n&quot; +
+          this.improvementsPlannedHint,
         CustomYesNoButtons(
           $localize&#x60;:local db corruption dialog button reset:Reset Application&#x60;,
           $localize&#x60;:Confirmation dialog Cancel:Cancel&#x60;,
