@@ -18,7 +18,8 @@ export interface EntityListConfig {
 
   /**
    * Select what kind of data source is used for the table.
-   * (optional) default is "in-memory"
+   * (optional) default is "paginated" in online-only session and "in-memory" otherwise
+   * see `datasource-resolver.ts`
    */
   dataSource?: DataSourceType;
 
