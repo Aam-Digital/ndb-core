@@ -52,6 +52,14 @@ function newGroupRow(): Omit<FlatReportRow, "level"> {
   };
 }
 
+/** the nesting level a row dropped directly below `above` should take (child of a group, else sibling) */
+function nestingLevelBelow(above: FlatReportRow | undefined): number {
+  if (!above) {
+    return 0;
+  }
+  return above.isGroup ? above.level + 1 : above.level;
+}
+
 /**
  * Structured editor for a SQL report's `reportDefinition` tree
  * (`{ query?, groupTitle?, items? }[]`, see {@link ReportDefinitionDto}).
@@ -203,13 +211,8 @@ export class EditReportDefinitionComponent
 
     // nest according to the row now above the moved subtree, shifting the whole subtree with it
     const headerIndex = rows.findIndex((r) => r.uniqueId === headerId);
-    const above = rows[headerIndex - 1];
-    const targetLevel = !above
-      ? 0
-      : above.isGroup
-        ? above.level + 1
-        : above.level;
-    const delta = targetLevel - rows[headerIndex].level;
+    const delta =
+      nestingLevelBelow(rows[headerIndex - 1]) - rows[headerIndex].level;
     for (let i = headerIndex; i < headerIndex + len; i++) {
       rows[i] = { ...rows[i], level: rows[i].level + delta };
     }
