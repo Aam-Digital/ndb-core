@@ -55,6 +55,8 @@
                   (click)="addChildQuery(i)"
                   matTooltip="Add query to this group"
                   i18n-matTooltip
+                  aria-label="Add query to this group"
+                  i18n-aria-label
                 >
                   <fa-icon icon="plus"></fa-icon>
                 </button>
@@ -64,6 +66,8 @@
                   (click)="addChildGroup(i)"
                   matTooltip="Add sub-group to this group"
                   i18n-matTooltip
+                  aria-label="Add sub-group to this group"
+                  i18n-aria-label
                 >
                   <fa-icon icon="layer-group"></fa-icon>
                 </button>
@@ -76,6 +80,9 @@
                   row.isGroup ? 'Remove group and its contents' : 'Remove query'
                 "
                 i18n-matTooltip
+                [attr.aria-label]="
+                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
+                "
               >
                 <fa-icon icon="trash"></fa-icon>
               </button>
