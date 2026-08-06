@@ -1,0 +1,9 @@
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label>{{ filterConfig().label || filterConfig().name }}</mat-label>
+  <input
+    matInput
+    [formControl]="textControl"
+    i18n-placeholder="placeholder of text filter input"
+    placeholder="filter by text"
+  />
+</mat-form-field>
