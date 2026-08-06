@@ -24,7 +24,7 @@ describe("entities-table-selection util", () => {
     const recordA = TestEntity.create("A");
     const recordB = TestEntity.create("B");
     const recordC = TestEntity.create("C");
-    const selectedRows = [
+    const rows = [
       { record: recordA },
       { record: recordB },
       { record: recordC },
@@ -32,7 +32,7 @@ describe("entities-table-selection util", () => {
 
     const rangeSelected = applyRangeSelection(
       [],
-      selectedRows,
+      rows,
       { start: 0, end: 2 },
       true,
     );
@@ -40,7 +40,7 @@ describe("entities-table-selection util", () => {
 
     const rangeUnselected = applyRangeSelection(
       rangeSelected,
-      selectedRows,
+      rows,
       { start: 1, end: 2 },
       false,
     );
@@ -86,7 +86,7 @@ describe("entities-table-selection util", () => {
 
     const firstClick = updateSelectionFromMouseDown({
       selectedRecords: [],
-      selectedRows: rows,
+      currentPageRows: rows,
       row: rows[0],
       shiftKey: false,
       lastSelectedRow: null,
@@ -96,10 +96,13 @@ describe("entities-table-selection util", () => {
     expect(firstClick.lastSelection).toBe(false);
     expect(firstClick.lastSelectedRow).toBe(rows[0]);
 
+    // row wrappers are re-created whenever filter or sorting change,
+    // so the anchor row has to be matched by its record
+    const newRows = rows.map((row) => ({ ...row }));
     const shiftClick = updateSelectionFromMouseDown({
       selectedRecords: firstClick.selectedRecords,
-      selectedRows: rows,
-      row: rows[2],
+      currentPageRows: newRows,
+      row: newRows[2],
       shiftKey: true,
       lastSelectedRow: firstClick.lastSelectedRow,
       lastSelection: firstClick.lastSelection,

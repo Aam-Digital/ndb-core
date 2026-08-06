@@ -107,7 +107,7 @@ test("View and download attendance report", async ({ page }) => {
   await expect(page.getByRole("columnheader", { name: "Late" })).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "download csv Download" }).click();
+  await page.getByRole("button", { name: "Download", exact: true }).click();
   // export dialog: select CSV format and confirm
   await page.getByRole("radio", { name: "CSV" }).click();
   await page.getByRole("button", { name: "Download", exact: true }).click();

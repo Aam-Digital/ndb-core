@@ -10,7 +10,21 @@ import {
 import { testEntitySubclass } from "../../../core/entity/model/entity.test-utils";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { DefaultDatatype } from "../../../core/entity/default-datatype/default.datatype";
+import { StringDatatype } from "../../../core/basic-datatypes/string/string.datatype";
+import { LongTextDatatype } from "../../../core/basic-datatypes/string/long-text.datatype";
+import { DateOnlyDatatype } from "../../../core/basic-datatypes/date-only/date-only.datatype";
+import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
+import { ConfigurableEnumDatatype } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumService } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
+// qlty-ignore: radarlint-js:typescript:S1874 - Note still declares childrenAttendance with this deprecated datatype
+import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityActionsService } from "../../../core/entity/entity-actions/entity-actions.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../../core/entity/database-entity.decorator";
 
 function createTestModel(): Note {
   const n1 = new Note("2");
@@ -44,7 +58,34 @@ describe("Note", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
+      providers: [
+        EntitySchemaService,
+        // only the datatypes of Note's schema, rather than a whole module
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+        {
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          // qlty-ignore: radarlint-js:typescript:S1874 - Note still declares its childrenAttendance with this deprecated datatype
+          useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
+        // these datatypes only use the services below to resolve referenced records,
+        // which the pure schema transformations under test never do
+        {
+          provide: ConfigurableEnumService,
+          useValue: { getEnumValues: () => [] },
+        },
+        { provide: EntityMapperService, useValue: {} },
+        { provide: EntityActionsService, useValue: {} },
+        { provide: EntityRegistry, useValue: entityRegistry },
+      ],
     });
     entitySchemaService = TestBed.inject(EntitySchemaService);
   }));

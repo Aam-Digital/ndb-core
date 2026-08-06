@@ -14,6 +14,11 @@ import type { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import type { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
 import { ConfigMigration } from "./config-migration";
+import {
+  CONFIG_ENTITY_ROUTE_PREFIX,
+  normalizeRoutePath,
+} from "./dynamic-routing/route-paths";
+import { PREFIX_VIEW_CONFIG } from "./dynamic-routing/view-config.interface";
 
 const migrateEntityDetailsInputEntityType: ConfigMigration = (
   key,
@@ -490,6 +495,130 @@ const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
+/**
+ * Migrate ShortcutDashboard widget `link` values that point to entity routes
+ * to use the runtime `/c/` prefix.
+ *
+ * Extracted here (rather than kept only in ConfigService) so the CLI's
+ * `latest-config-formats` migration can also persist this fix to production
+ * config documents, not just apply it transiently in the running app.
+ */
+export const migrateShortcutDashboardLinks: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data)
+  ) {
+    return configPart;
+  }
+
+  const data = configPart.data;
+  const entityBasePaths = buildEntityBasePaths(data);
+  if (entityBasePaths.size === 0) return configPart;
+
+  for (const dataKey of Object.keys(data)) {
+    if (!dataKey.startsWith(PREFIX_VIEW_CONFIG)) continue;
+    const viewConfig = data[dataKey];
+    if (!Array.isArray(viewConfig?.config?.widgets)) continue;
+    for (const widget of viewConfig.config.widgets) {
+      if (
+        widget.component === "ShortcutDashboard" &&
+        Array.isArray(widget.config?.shortcuts)
+      ) {
+        widget.config.shortcuts = widget.config.shortcuts.map((shortcut: any) =>
+          migrateShortcutItem(shortcut, entityBasePaths),
+        );
+      }
+    }
+  }
+
+  return configPart;
+};
+
+function buildEntityBasePaths(data: Record<string, any>): Set<string> {
+  const paths = new Set<string>();
+  for (const key of Object.keys(data)) {
+    if (!key.startsWith(PREFIX_VIEW_CONFIG)) continue;
+    const path = key.substring(PREFIX_VIEW_CONFIG.length);
+    if (!path || path.includes("/:id")) continue;
+    const viewConfig = data[key];
+    if (viewConfig?.config?.entityType || viewConfig?.config?.entity) {
+      paths.add(path);
+    }
+  }
+  return paths;
+}
+
+function migrateShortcutItem(item: any, entityBasePaths: Set<string>): any {
+  if (!item.link || item.link.startsWith(`/${CONFIG_ENTITY_ROUTE_PREFIX}/`)) {
+    return item;
+  }
+  const normalizedLink = normalizeRoutePath(item.link);
+  const segments = normalizedLink.split("/");
+  for (let i = segments.length; i >= 1; i--) {
+    const base = segments.slice(0, i).join("/");
+    if (entityBasePaths.has(base)) {
+      return {
+        ...item,
+        link: `/${CONFIG_ENTITY_ROUTE_PREFIX}/${normalizedLink}`,
+      };
+    }
+  }
+  return item;
+}
+
+/**
+ * Migrate navigationMenu items that use a hardcoded entity route `link` to the `entityType` format.
+ */
+export const migrateNavigationMenuEntityLinks: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    key !== "" ||
+    !configPart?.data ||
+    typeof configPart.data !== "object" ||
+    Array.isArray(configPart.data) ||
+    !Array.isArray(configPart.data?.navigationMenu?.items)
+  ) {
+    return configPart;
+  }
+
+  configPart.data.navigationMenu.items = migrateNavMenuItems(
+    configPart.data.navigationMenu.items,
+    configPart.data,
+  );
+  return configPart;
+};
+
+function migrateNavMenuItems(items: any[], data: Record<string, any>): any[] {
+  return items.map((item) => {
+    const migrated = migrateNavMenuItem(item, data);
+    if (migrated.subMenu) {
+      migrated.subMenu = migrateNavMenuItems(migrated.subMenu, data);
+    }
+    return migrated;
+  });
+}
+
+function migrateNavMenuItem(item: any, data: Record<string, any>): any {
+  if (!item.link || item.entityType) return item;
+
+  const normalizedPath = normalizeRoutePath(item.link);
+  const viewConfig = data[`${PREFIX_VIEW_CONFIG}${normalizedPath}`];
+  const entityType =
+    viewConfig?.config?.entityType || viewConfig?.config?.entity;
+
+  if (!entityType) return item;
+
+  const { link: _removed, ...rest } = item;
+  return { ...rest, entityType };
+}
+
 const removeExportConfig: ConfigMigration = (key, configPart) => {
   if (
     configPart &&
@@ -531,12 +660,16 @@ export const configMigrations: ConfigMigration[] = [
   removeConfigRoutesMigratedToFixedFeatures,
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,
+  migrateShortcutDashboardLinks,
+  migrateNavigationMenuEntityLinks, // must run last to see all default-added view configs
 ];
 
 /**
  * Apply all config migrations to a plain JSON document.
  * Returns the migrated document as a plain object (no Angular entity re-hydration).
- * Used by the admin CLI; ConfigService wraps this and also applies defaultConfigs.
+ * Used by the admin CLI; ConfigService wraps this and also applies defaultConfigs
+ * (addDefaultNoteDetailsConfig, addDefaultTodoViews) before calling this, so the
+ * migrations above can see those default-added view configs too.
  */
 export function applyConfigMigrations<E>(doc: E): E {
   return JSON.parse(JSON.stringify(doc), (_that, rawValue) => {

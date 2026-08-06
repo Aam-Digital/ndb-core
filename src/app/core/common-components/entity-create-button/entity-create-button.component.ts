@@ -38,6 +38,9 @@ export class EntityCreateButtonComponent<T extends Entity = Entity> {
   /** Whether only an icon button without text should be displayed. */
   iconOnly = input<boolean>(false);
 
+  /** Accessible name for the button when it is rendered as an icon-only button. */
+  readonly addElementLabel = $localize`:Accessible name for icon-only "create new record" button:add element`;
+
   create() {
     const entityType = this.entityType();
     if (!entityType) {

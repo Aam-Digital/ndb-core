@@ -176,7 +176,7 @@ export class EditTextWithAutocompleteComponent
     return (
       !this.valuesChanged() ||
       this.confirmationDialog.getConfirmation(
-        $localize`:Discard the changes made:Discard changes`,
+        $localize`:Discard changes header:Discard Changes?`,
         $localize`Do you want to discard the changes made to '${entity}'?`,
       )
     );

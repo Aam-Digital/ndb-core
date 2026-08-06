@@ -199,6 +199,39 @@ describe("EntitiesTableComponent", () => {
     component.onRowClick({ record: child }, mockEvent);
   });
 
+  it("should shift-select the range of rows as currently displayed", () => {
+    fixture.componentRef.setInput("selectable", true);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", ["name"]);
+    fixture.componentRef.setInput("sortBy", {
+      active: "name",
+      direction: "asc",
+    });
+    fixture.detectChanges();
+
+    const a = TestEntity.create("A");
+    const b = TestEntity.create("B");
+    const c = TestEntity.create("C");
+    const d = TestEntity.create("D");
+    // records are loaded in a different order than they are displayed
+    component.recordsDataSource().allRecords.set([c, a, d, b]);
+    fixture.detectChanges();
+
+    const rows = component.recordsDataSource().renderedRows();
+    expect(rows.map((row) => row.record)).toEqual([a, b, c, d]);
+
+    component.onRowMouseDown(new MouseEvent("mousedown"), rows[1]);
+    const shiftClick = new MouseEvent("mousedown", {
+      shiftKey: true,
+      cancelable: true,
+    });
+    component.onRowMouseDown(shiftClick, rows[3]);
+
+    expect(component.selectedRecords()).toEqual([b, c, d]);
+    // browser text selection has to be suppressed, as it would block scrolling
+    expect(shiftClick.defaultPrevented).toBe(true);
+  });
+
   it("should filter data based on filter definition", () => {
     const c1 = TestEntity.create("Matching");
     c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());

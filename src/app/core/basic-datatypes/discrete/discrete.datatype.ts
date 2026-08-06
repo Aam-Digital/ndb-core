@@ -12,6 +12,7 @@ export abstract class DiscreteDatatype<
   DBType,
 > extends DefaultDatatype<EntityType, DBType> {
   override importConfigComponent = "DiscreteImportConfig";
+  override importConfigDialog = "DiscreteImportDialog";
 
   abstract override transformToDatabaseFormat(
     value,

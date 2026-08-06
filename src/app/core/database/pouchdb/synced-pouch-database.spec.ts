@@ -67,6 +67,7 @@ describe("SyncedPouchDatabase", () => {
   function mockSyncHandler(result: any = {}, shouldReject = false): any {
     const handler = {
       on: vi.fn().mockReturnThis(),
+      cancel: vi.fn(),
       then(onFulfilled, onRejected) {
         const promise = shouldReject
           ? Promise.reject(result)
@@ -330,6 +331,44 @@ describe("SyncedPouchDatabase", () => {
       // stop periodic timer:
       service.liveSyncEnabled = false;
       await vi.advanceTimersByTimeAsync(LONG_SYNC_TIME);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should fail a stalled sync (not complete it) and keep retrying", async () => {
+    vi.useFakeTimers();
+    try {
+      const { mockLocalDb } = mockPouchDatabaseService();
+      // a push that stalls: the thenable never settles on its own and only
+      // resolves when cancel() is called - as PouchDB's replication does.
+      mockLocalDb.sync.mockImplementation(() => {
+        let resolve: (v: any) => void;
+        return {
+          on: vi.fn().mockReturnThis(),
+          cancel: vi.fn(() => resolve?.({})),
+          then: (onFulfilled: any, onRejected: any) =>
+            new Promise((r) => (resolve = r)).then(onFulfilled, onRejected),
+        };
+      });
+      const states: SyncState[] = [];
+      service.localSyncState.subscribe((s) => states.push(s));
+
+      loginState.next(LoginState.LOGGED_IN);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(mockLocalDb.sync).toHaveBeenCalledTimes(1); // first sync starts, then stalls
+
+      await vi.advanceTimersByTimeAsync(
+        service.SYNC_STALL_TIMEOUT + service.SYNC_INTERVAL,
+      );
+
+      // the stalled sync is reported FAILED (not COMPLETED, which would falsely
+      // record a successful sync) and liveSync retries so offline edits still upload
+      expect(states).toContain(SyncState.FAILED);
+      expect(states).not.toContain(SyncState.COMPLETED);
+      expect(mockLocalDb.sync.mock.calls.length).toBeGreaterThan(1);
+
+      await stopPeriodicTimer();
     } finally {
       vi.useRealTimers();
     }

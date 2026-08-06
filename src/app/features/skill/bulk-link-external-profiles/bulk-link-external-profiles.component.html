@@ -17,7 +17,7 @@
 
     <div>
       @if (records?.data?.length > 0) {
-        Matched records: {{ matchedRecordsCount }} /
+        <span i18n>Matched records:</span> {{ matchedRecordsCount }} /
         {{ records.data.length }} ({{
           matchedRecordsCount / records.data.length | percent: "1.0-0"
         }})

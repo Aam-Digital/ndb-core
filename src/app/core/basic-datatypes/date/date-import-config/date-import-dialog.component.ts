@@ -98,7 +98,9 @@ export class DateImportDialogComponent {
       ));
 
     if (confirmed) {
-      this.data.col.additional = this.format.value;
+      // an empty format is a valid choice (dates the system reads on its own), but it has to be
+      // stored as a value so that the column does not count as unconfigured afterwards
+      this.data.col.additional = this.format.value ?? "";
       this.dialog.close();
     }
   }

@@ -3,12 +3,12 @@ import { enableProdMode } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { initEnvironmentConfig } from "./bootstrap-environment";
 import { Logging } from "./app/core/logging/logging.service";
-import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
+import { registerPWAInstallListener } from "./bootstrap-pwa-install";
 import { initLanguage } from "./bootstrap-i18n";
-import { BackupService } from "./app/core/admin/backup/backup.service";
+import { runPendingReset } from "./bootstrap-reset";
 
 // Register before any async operations so the beforeinstallprompt event is not missed
-PwaInstallService.registerPWAInstallListener();
+registerPWAInstallListener();
 
 bootstrap().catch((reason) => {
   Logging.error("Application Bootstrap failed", reason);
@@ -16,7 +16,7 @@ bootstrap().catch((reason) => {
 
 async function bootstrap() {
   // If a reset was requested, delete all databases before PouchDB opens any connections.
-  await BackupService.runPendingReset();
+  await runPendingReset();
 
   await initEnvironmentConfig();
 

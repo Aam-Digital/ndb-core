@@ -33,7 +33,8 @@
           </td>
         </ng-container>
 
-        <tr hidden>
+        <!-- Table header only for assistive technologies like screen readers -->
+        <tr class="visually-hidden">
           <th scope="col" i18n="The label of an entry">Label</th>
           <th scope="col" i18n="A visual aid to understand a progress of sorts">
             Progress Bar
@@ -52,6 +53,6 @@
   </app-dashboard-list-widget>
 
   <button mat-icon-button (click)="showEditComponent()" class="config-panel">
-    <fa-icon aria-label="configure" icon="wrench"></fa-icon>
+    <fa-icon i18n-aria-label aria-label="configure" icon="wrench"></fa-icon>
   </button>
 </div>

@@ -10,6 +10,7 @@ import { SyncStateSubject } from "app/core/session/session-type";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -40,6 +41,7 @@ describe("BackupService", () => {
   afterEach(async () => {
     await db.destroy();
     vi.unstubAllGlobals();
+    sessionStorage.removeItem(RESET_PENDING_KEY);
   });
 
   it("should be created", () => {
@@ -140,52 +142,8 @@ describe("BackupService", () => {
     await service.resetApplication();
 
     expect(localStorage.getItem("someItem")).toBeNull();
-    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBe("1");
+    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBe("1");
     expect(TestBed.inject(LOCATION_TOKEN).pathname).toBe("");
-
-    // Clean up sessionStorage
-    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
-  });
-
-  it("runPendingReset should delete all databases and unregister service workers", async () => {
-    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
-
-    // Stub global indexedDB (not available in jsdom)
-    const mockDbs = [{ name: "db1" }, { name: "db2" }];
-    const deleteDatabase = vi.fn().mockImplementation(() => {
-      const req = { onsuccess: null as any, onerror: null as any };
-      setTimeout(() => req.onsuccess?.());
-      return req as any;
-    });
-    const databases = vi.fn().mockResolvedValue(mockDbs as any);
-    vi.stubGlobal("indexedDB", { databases, deleteDatabase });
-    const unregisterSpy = vi.fn().mockResolvedValue(true);
-    Object.defineProperty(navigator, "serviceWorker", {
-      value: {
-        getRegistrations: vi
-          .fn()
-          .mockResolvedValue([{ unregister: unregisterSpy } as any]),
-      },
-      configurable: true,
-      writable: true,
-    });
-
-    await BackupService.runPendingReset();
-
-    expect(deleteDatabase).toHaveBeenCalledWith("db1");
-    expect(deleteDatabase).toHaveBeenCalledWith("db2");
-    expect(unregisterSpy).toHaveBeenCalled();
-    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
-  });
-
-  it("runPendingReset should do nothing when no reset is pending", async () => {
-    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
-    const databases = vi.fn();
-    vi.stubGlobal("indexedDB", { databases });
-
-    await BackupService.runPendingReset();
-
-    expect(databases).not.toHaveBeenCalled();
   });
 
   function ignoreRevProperty(x) {

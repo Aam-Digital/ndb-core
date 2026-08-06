@@ -32,7 +32,9 @@
           <ul>
             @for (action of item.config.additionalActions; track $index) {
               <li>
-                Link to {{ action.targetType | entityTypeLabel }}:
+                <span i18n
+                  >Link to {{ action.targetType | entityTypeLabel }}:</span
+                >
                 <app-entity-block
                   [entityId]="action.targetId"
                   [linkDisabled]="true"

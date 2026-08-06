@@ -29,7 +29,6 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
-
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { LoadRecordConfig } from "#src/app/core/common-components/entities-table/entities-table-data-source";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/datasource-resolver";

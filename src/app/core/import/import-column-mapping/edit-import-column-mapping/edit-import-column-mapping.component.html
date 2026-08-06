@@ -13,3 +13,7 @@
     <ng-container [appDynamicComponent]="inlineComponentConfig()" />
   }
 </div>
+
+@if (configError(); as error) {
+  <mat-error class="config-error">{{ error }}</mat-error>
+}

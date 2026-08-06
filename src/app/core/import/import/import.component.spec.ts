@@ -122,6 +122,32 @@ describe("ImportComponent", () => {
     expect(component.mappedColumnsCount()).toBe(0);
   });
 
+  it("should block the mapping step while a column still needs its values configured", () => {
+    component.importSettings.set({
+      entityType: "Child",
+      columnMapping: [
+        { column: "x", propertyName: "name" },
+        { column: "y", propertyName: "gender" },
+      ],
+    });
+
+    expect(component.columnsMissingConfig()).toEqual([
+      { column: "y", propertyName: "gender" },
+    ]);
+    expect(component.columnMappingComplete()).toBe(false);
+
+    component.importSettings.set({
+      entityType: "Child",
+      columnMapping: [
+        { column: "x", propertyName: "name" },
+        { column: "y", propertyName: "gender", additional: { values: {} } },
+      ],
+    });
+
+    expect(component.columnsMissingConfig()).toEqual([]);
+    expect(component.columnMappingComplete()).toBe(true);
+  });
+
   async function testApplyColumnMapping(
     appliedMapping: ColumnMapping[],
     expectedMapping: ColumnMapping[],

@@ -117,6 +117,7 @@
         <button
           mat-icon-button
           matIconSuffix
+          i18n-aria-label
           aria-label="Clear"
           (click)="filterString = ''; applyFilter('')"
         >
@@ -160,7 +161,7 @@
     >
       <fa-icon
         class="color-accent standard-icon-with-text"
-        aria-label="add element"
+        aria-hidden="true"
         icon="plus-circle"
       ></fa-icon>
       <span i18n="Add a new entity to a list of multiple entities">
@@ -170,7 +171,7 @@
 
     <button mat-menu-item (click)="openFilterOverlay()">
       <fa-icon
-        aria-label="filter"
+        aria-hidden="true"
         class="color-accent standard-icon-with-text"
         icon="filter"
       >
@@ -191,7 +192,7 @@
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
-      aria-label="download"
+      aria-hidden="true"
       icon="download"
     ></fa-icon>
     <span i18n="Download list contents"> Download </span>
@@ -208,7 +209,7 @@
     >
       <fa-icon
         class="color-accent standard-icon-with-text"
-        aria-label="import file"
+        aria-hidden="true"
         icon="file-import"
       ></fa-icon>
       <span i18n> Import from file </span>
@@ -224,7 +225,7 @@
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
-      aria-label="bulk actions"
+      aria-hidden="true"
       icon="list-check"
     ></fa-icon>
     <span i18n> Bulk Actions </span>

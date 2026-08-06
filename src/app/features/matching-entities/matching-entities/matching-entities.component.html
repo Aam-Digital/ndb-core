@@ -18,7 +18,7 @@
 <div class="margin-bottom-small" #matchComparison>
   <table
     mat-table
-    [dataSource]="resolvedColumns()"
+    [dataSource]="comparisonColumns()"
     class="match-comparison-table mat-elevation-z1"
   >
     @for (side of sideDetails(); track $index; let i = $index) {

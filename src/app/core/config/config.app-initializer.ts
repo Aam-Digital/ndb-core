@@ -26,7 +26,7 @@ export const APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES = provideAppInitializer(
         router.navigateByUrl(url, { skipLocationChange: true });
 
         // Preload all dynamic component chunks in the background for offline availability
-        preloadDynamicComponents(componentRegistry);
+        preloadDynamicComponents(componentRegistry, destroyRef);
       });
   },
 );
@@ -39,7 +39,10 @@ export const APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES = provideAppInitializer(
  * Runs once in an idle callback to avoid blocking the main thread after login.
  */
 let preloadScheduled = false;
-function preloadDynamicComponents(registry: ComponentRegistry) {
+function preloadDynamicComponents(
+  registry: ComponentRegistry,
+  destroyRef: DestroyRef,
+) {
   if (preloadScheduled) {
     return;
   }
@@ -53,9 +56,21 @@ function preloadDynamicComponents(registry: ComponentRegistry) {
     }
   };
 
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(load, { timeout: 10_000 });
-  } else {
-    setTimeout(load, 3_000);
-  }
+  const useIdleCallback = "requestIdleCallback" in window;
+  const handle = useIdleCallback
+    ? requestIdleCallback(load, { timeout: 10_000 })
+    : setTimeout(load, 3_000);
+
+  // Cancel if the app (or, in tests, the TestBed injector) goes away first.
+  // Otherwise this fires seconds later and dynamically imports every registered
+  // component. A unit test is long gone by then, so those imports land after
+  // Vitest tore the environment down and fail an unrelated spec file with
+  // "EnvironmentTeardownError: Cannot load '/chunk-....js' ...".
+  destroyRef.onDestroy(() => {
+    if (useIdleCallback) {
+      cancelIdleCallback(handle as number);
+    } else {
+      clearTimeout(handle as ReturnType<typeof setTimeout>);
+    }
+  });
 }

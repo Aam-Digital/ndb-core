@@ -349,10 +349,13 @@ export class EntityFormService {
           entity,
         );
 
+      const message = $localize`Current user is not permitted to save these changes.`;
       throw new Error(
         requiredValues
-          ? $localize`Current user is not permitted to save these changes. Values required by your permissions - ${requiredValues}`
-          : $localize`Current user is not permitted to save these changes.`,
+          ? message +
+              " " +
+              $localize`Values required by your permissions - ${requiredValues}`
+          : message,
       );
     }
   }

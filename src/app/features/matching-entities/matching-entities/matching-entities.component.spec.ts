@@ -19,6 +19,8 @@ import {
   DatabaseEntity,
   EntityRegistry,
 } from "../../../core/entity/database-entity.decorator";
+import { By } from "@angular/platform-browser";
+import { MatTable } from "@angular/material/table";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -360,7 +362,7 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.lockedMatching()).toBe(false);
   });
 
-  it("should create distance column and publish updates", async () => {
+  it("should create distance column for table and summary view and publish updates", async () => {
     TestEntity.schema.set("address", { dataType: "location" });
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("columns", [[undefined, "distance"]]);
@@ -384,6 +386,11 @@ describe("MatchingEntitiesComponent", () => {
       },
     });
     expect(component.columns()?.[0][1]).toBe("distance");
+    expect(component.comparisonColumns()[0][1]).toBe(distanceColumn);
+    const comparisonTable = fixture.debugElement.query(
+      By.directive(MatTable),
+    ).componentInstance;
+    expect(comparisonTable.dataSource).toEqual(component.comparisonColumns());
 
     let newCoordinates: Coordinates[];
     distanceColumn.additional.compareCoordinates.subscribe(

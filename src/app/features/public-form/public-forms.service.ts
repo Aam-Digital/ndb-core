@@ -196,7 +196,8 @@ export class PublicFormsService {
 
     if (!this.entities.has(formConfig.entity)) {
       Logging.warn(
-        `PublicForm config references unknown entity type "${formConfig.entity}" — skipping. Check this PublicFormConfig.`,
+        "PublicForm config references an unknown entity type — skipping. Check this PublicFormConfig.",
+        { entityType: formConfig.entity },
       );
       return [];
     }

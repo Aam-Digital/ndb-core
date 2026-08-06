@@ -81,7 +81,7 @@ export class EntitiesTableComponent<T extends Entity>
   ) as EntitiesTableSortStore<T>;
   protected readonly selectionStore = inject(
     EntitiesTableSelectionStore,
-  ) as unknown as EntitiesTableSelectionStore<T>;
+  ) as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
   recordsDataSource = input.required<EntitiesTableDataSource<T>>();
@@ -210,8 +210,8 @@ export class EntitiesTableComponent<T extends Entity>
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      sortedRows: this.recordsDataSource().displayedData,
-      getCurrentPageRows: () => this.getCurrentPageRows(),
+      selectableRows: this.recordsDataSource().displayedData,
+      currentPageRows: this.recordsDataSource().renderedRows,
     });
   }
 
@@ -242,6 +242,12 @@ export class EntitiesTableComponent<T extends Entity>
       return;
     }
 
+    if (event.shiftKey) {
+      // stop the browser from also extending its text selection across the rows,
+      // which blocks scrolling until the selection is cleared again
+      event.preventDefault();
+    }
+
     if (this.selectionStore.handleSelectableRowMouseDown(event, row)) {
       this.onRowClick(row, event);
     }
@@ -262,16 +268,5 @@ export class EntitiesTableComponent<T extends Entity>
         ]);
         break;
     }
-  }
-
-  getCurrentPageRows(): TableRow<T>[] {
-    const rows = this.recordsDataSource().data;
-    const paginator = this.recordsDataSource().paginator;
-    if (!paginator) {
-      return rows;
-    }
-
-    const startIndex = paginator.pageIndex * paginator.pageSize;
-    return rows.slice(startIndex, startIndex + paginator.pageSize);
   }
 }

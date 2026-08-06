@@ -6,7 +6,7 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { SortValueFns } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { Subscription } from "rxjs";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
@@ -44,7 +44,16 @@ export abstract class EntitiesTableDataSource<
   sortValueFns = signal<SortValueFns<T>>({});
   allRecords = signal<T[]>([]);
   filteredRecords = signal<T[]>([]);
+  /**
+   * The rows handed to the table as input data, in the order they were loaded.
+   * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
+   */
   displayedData = signal<TableRow<T>[]>([]);
+  /**
+   * The rows as currently rendered by the table:
+   * filtered, sorted and reduced to the current page.
+   */
+  readonly renderedRows = toSignal(this.connect(), { requireSync: true });
   loadRecordConfig = signal<LoadRecordConfig<T>>(undefined);
   isLoading = signal(false);
 

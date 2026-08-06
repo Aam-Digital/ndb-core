@@ -4,7 +4,19 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+// qlty-ignore: radarlint-js:typescript:S1874 - this is the spec of the deprecated datatype itself
+import { EventAttendanceMapDatatype } from "./event-attendance-map.datatype";
+import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
+import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity-actions.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "#src/app/core/entity/database-entity.decorator";
 
 describe("Schema data type: event-attendance-map", () => {
   class TestEntity extends Entity {
@@ -16,7 +28,31 @@ describe("Schema data type: event-attendance-map", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
+      providers: [
+        EntitySchemaService,
+        // only the datatypes used by AttendanceItem's schema, rather than a whole module
+        {
+          provide: DefaultDatatype,
+          // qlty-ignore: radarlint-js:typescript:S1874 - this is the spec of the deprecated datatype itself
+          useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+        {
+          provide: ConfigurableEnumService,
+          useValue: { getEnumValues: () => defaultAttendanceStatusTypes },
+        },
+        // EntityDatatype only uses these to resolve referenced records, which the transformations don't
+        { provide: EntityMapperService, useValue: {} },
+        { provide: EntityActionsService, useValue: {} },
+        { provide: EntityRegistry, useValue: entityRegistry },
+      ],
     });
     entitySchemaService = TestBed.inject(EntitySchemaService);
   }));
