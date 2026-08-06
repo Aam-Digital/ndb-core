@@ -2,8 +2,10 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ListPaginatorComponent } from "./list-paginator.component";
 import { MatTableDataSource } from "@angular/material/table";
-import { PageEvent } from "@angular/material/paginator";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MatPaginatorIntl, PageEvent } from "@angular/material/paginator";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { PaginatedDataSource } from "../data-source/paginated-data-source";
+import { UnknownTotalPaginatorIntl } from "./unknown-total-paginator-intl";
 
 describe("ListPaginatorComponent", () => {
   let component: ListPaginatorComponent<any>;
@@ -11,7 +13,7 @@ describe("ListPaginatorComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListPaginatorComponent, NoopAnimationsModule],
+      imports: [ListPaginatorComponent, MockedTestingModule.withState()],
     }).compileComponents();
   });
 
@@ -63,5 +65,28 @@ describe("ListPaginatorComponent", () => {
     fixture.detectChanges();
 
     expect(newDataSource.paginator).toBe(component.paginator);
+  });
+
+  it("should mark the paginator total as unknown for a PaginatedDataSource with more records", () => {
+    const intl = fixture.debugElement.injector.get(
+      MatPaginatorIntl,
+    ) as UnknownTotalPaginatorIntl;
+    expect(intl).toBeInstanceOf(UnknownTotalPaginatorIntl);
+    // a plain MatTableDataSource always has a known total
+    expect(intl.hasUnknownTotalCount).toBe(false);
+
+    const paginated = TestBed.runInInjectionContext(
+      () => new PaginatedDataSource(),
+    );
+    paginated.hasUnknownTotalCount.set(true);
+    fixture.componentRef.setInput("dataSource", paginated);
+    fixture.detectChanges();
+
+    expect(intl.hasUnknownTotalCount).toBe(true);
+
+    // when the total becomes known again, the flag is reset
+    paginated.hasUnknownTotalCount.set(false);
+    fixture.detectChanges();
+    expect(intl.hasUnknownTotalCount).toBe(false);
   });
 });

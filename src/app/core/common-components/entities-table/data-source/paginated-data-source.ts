@@ -2,7 +2,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { MatSort } from "@angular/material/sort";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatPaginator } from "@angular/material/paginator";
-import { effect } from "@angular/core";
+import { effect, signal } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
@@ -63,6 +63,14 @@ export class PaginatedDataSource<
    * (loaded pages plus at least one more record, if it exists).
    */
   private totalCount = 0;
+
+  /**
+   * Whether the reported total is only a lower bound because there are more
+   * records than have been loaded/counted so far. In this case the paginator
+   * should indicate the total is unknown (e.g. "1 - 10 of 10+").
+   */
+  readonly hasUnknownTotalCount = signal(false);
+
   private effectiveFilter: DataFilter<T> = {};
 
   constructor() {
@@ -82,7 +90,10 @@ export class PaginatedDataSource<
       { skip: this.page.index * this.page.size, limit: this.page.size + 1 },
       this.sortState,
     );
-    // TODO get total amount of elements
+    // an extra record beyond the page size was loaded as a probe:
+    // if it exists, there are more records than we can currently count
+    const hasMoreRecords = res.length > this.page.size;
+    this.hasUnknownTotalCount.set(hasMoreRecords);
     this.totalCount = this.page.size * this.page.index + res.length;
     // `this.allRecords` stays empty
     this.filteredRecords.set(res.slice(0, this.page.size));
