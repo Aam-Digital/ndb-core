@@ -113,4 +113,39 @@ describe("EntityActionsMenuService", () => {
     expect(actions.map((action) => action.action)).toEqual(["healthy-action"]);
     expect(warnSpy).toHaveBeenCalled();
   });
+
+  it("should not break the whole menu when an action factory throws", async () => {
+    const entity = TestEntity.create("Record A");
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+
+    service.registerActions([
+      {
+        action: "static-action",
+        label: "Static",
+        icon: "check",
+        execute: async () => true,
+      },
+    ]);
+    service.registerActionsFactories([
+      () => {
+        throw new Error("Requested item is not registered in EntityRegistry.");
+      },
+      () => [
+        {
+          action: "healthy-factory-action",
+          label: "Healthy Factory",
+          icon: "check",
+          execute: async () => true,
+        },
+      ],
+    ]);
+
+    const actions = await service.getActionsForSingle(entity);
+
+    expect(actions.map((action) => action.action)).toEqual([
+      "static-action",
+      "healthy-factory-action",
+    ]);
+    expect(warnSpy).toHaveBeenCalled();
+  });
 });
