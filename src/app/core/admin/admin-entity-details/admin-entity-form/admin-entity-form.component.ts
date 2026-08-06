@@ -3,7 +3,6 @@ import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
-  transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import {
   ChangeDetectionStrategy,
@@ -49,6 +48,19 @@ import {
   AdminEntityFieldComponent,
   AdminEntityFieldData,
 } from "../admin-entity-field/admin-entity-field.component";
+
+/**
+ * Identifies one of the drop lists a field can be dragged between:
+ * the index of a field group in the form, or the toolbar of fields not used in the form.
+ */
+export type FieldDropTarget = number | "available";
+
+/** A field dragged between the form's field groups and the toolbar of unused fields. */
+type FieldDragDropEvent = CdkDragDrop<
+  FieldDropTarget,
+  FieldDropTarget,
+  ColumnConfig
+>;
 
 @UntilDestroy()
 @Component({
@@ -147,6 +159,9 @@ export class AdminEntityFormComponent {
     id: null,
     label: $localize`:Label drag and drop item:Create Text Block`,
   };
+
+  /** `cdkDropListData` marking the toolbar as the drop target for fields removed from the form */
+  readonly availableFieldsTarget: FieldDropTarget = "available";
 
   searchFilter = new FormControl("");
 
@@ -327,41 +342,44 @@ export class AdminEntityFormComponent {
     return result;
   }
 
-  drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
-    const prevFieldsArray = event.previousContainer.data;
-    const newFieldsArray = event.container.data;
-
-    if (
-      prevFieldsArray[event.previousIndex] === this.createNewFieldPlaceholder
-    ) {
-      this.dropNewField(event);
+  /**
+   * Move a field that was dragged into a field group or back into the toolbar.
+   *
+   * Each drop list carries its identity (a field group's index or "available") as
+   * `cdkDropListData` and each field carries itself as `cdkDragData`, so that the new
+   * `fieldGroups` can be built immutably instead of splicing the arrays CDK hands over.
+   */
+  async drop(event: FieldDragDropEvent) {
+    const target = event.container.data;
+    if (target === "available" && this.isNewFieldPlaceholder(event.item.data)) {
+      // the "create new" placeholders live in the toolbar already
       return;
     }
 
-    if (
-      prevFieldsArray[event.previousIndex] === this.createNewTextPlaceholder
-    ) {
-      this.dropNewText(event);
+    const field = await this.resolveDroppedField(event.item.data);
+    if (!field) {
       return;
     }
 
-    if (event.previousContainer === event.container) {
-      moveItemInArray(newFieldsArray, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        prevFieldsArray,
-        newFieldsArray,
+    this.fieldGroups.update((groups) =>
+      moveFieldBetweenGroups(
+        groups,
+        field,
+        event.previousContainer.data,
         event.previousIndex,
+        target,
         event.currentIndex,
-      );
-    }
-
-    this.fieldGroups.update((g) => [...g]);
+      ),
+    );
   }
 
-  dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
-    moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
-    this.fieldGroups.update((g) => [...g]);
+  /** Reorder the field groups (the form's columns). */
+  dropFieldGroups(event: CdkDragDrop<unknown>) {
+    this.fieldGroups.update((groups) => {
+      const reordered = [...groups];
+      moveItemInArray(reordered, event.previousIndex, event.currentIndex);
+      return reordered;
+    });
   }
 
   /**
@@ -430,25 +448,38 @@ export class AdminEntityFormComponent {
     );
   }
 
-  /**
-   * drop handler specifically for the "create new field" item
-   * @param event
-   * @private
-   */
-  private async dropNewField(
-    event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
-  ) {
-    if (event.container.data === this.availableFields()) {
-      // don't add new field to the available fields that are not in the form yet
-      return;
-    }
+  private isNewFieldPlaceholder(field: ColumnConfig): boolean {
+    return (
+      field === this.createNewFieldPlaceholder ||
+      field === this.createNewTextPlaceholder
+    );
+  }
 
+  /**
+   * The field a drop actually adds to the form: the "create new" placeholders open their config
+   * dialog first (returning undefined if the user cancels), any other field is moved as it is.
+   */
+  private async resolveDroppedField(
+    dragged: ColumnConfig,
+  ): Promise<ColumnConfig | undefined> {
+    if (dragged === this.createNewFieldPlaceholder) {
+      return this.createNewField();
+    }
+    if (dragged === this.createNewTextPlaceholder) {
+      return this.createNewTextBlock();
+    }
+    return dragged;
+  }
+
+  /**
+   * Define a new field through its config dialog and add it to the entity type's schema.
+   * @returns the new field's id, or undefined if the dialog was cancelled
+   */
+  private async createNewField(): Promise<string | undefined> {
     const newField = await this.openFieldConfig({ id: null });
     if (!newField) {
-      return;
+      return undefined;
     }
-
-    const newFieldId = newField.id;
 
     if (this.updateEntitySchema()) {
       this.adminEntityService.updateSchemaField(
@@ -456,65 +487,57 @@ export class AdminEntityFormComponent {
         newField.id,
         newField,
       );
-      // the schema update has added the new field to the available fields already, remove it from there
-      const updatedFields = [...this.availableFields()];
-      updatedFields.splice(updatedFields.indexOf(newFieldId), 1);
-      this.availableFields.set(updatedFields);
     } else {
       // For local-only updates (e.g., public forms), manually update schema
       this.entityType().schema.set(newField.id, newField);
-      const updatedFields = [...this.availableFields()];
-      const fieldIndex = updatedFields.indexOf(newFieldId);
-      if (fieldIndex !== -1) {
-        updatedFields.splice(fieldIndex, 1);
-        this.availableFields.set(updatedFields);
-      }
     }
+    this.addFieldToPreview(newField.id);
 
-    this.dummyForm().formGroup.addControl(newFieldId, new FormControl());
-    this.dummyForm().formGroup.disable();
-    event.container.data.splice(event.currentIndex, 0, newFieldId);
-    this.fieldGroups.update((g) => [...g]); // notify signal of in-place mutation
+    return newField.id;
   }
 
   /**
-   * drop handler specifically for the "create new Text field" item
-   * @param event
-   * @private
+   * Define a new text block through its config dialog.
+   * @returns the new text block, or undefined if the dialog was cancelled
    */
-  private async dropNewText(
-    event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
-  ) {
-    if (event.container.data === this.availableFields()) {
-      // don't add new Text field to the available fields that are not in the form yet
-      return;
-    }
-
+  private async createNewTextBlock(): Promise<FormFieldConfig | undefined> {
     const newTextField = await this.openTextConfig({ id: null });
     if (!newTextField) {
+      return undefined;
+    }
+    this.addFieldToPreview(newTextField.id);
+
+    return newTextField;
+  }
+
+  /** register a newly created field with the preview form, so that it can be rendered */
+  private addFieldToPreview(fieldId: string) {
+    const previewForm = this.dummyForm();
+    if (!previewForm) {
+      return;
+    }
+    previewForm.formGroup.addControl(fieldId, new FormControl());
+    previewForm.formGroup.disable();
+  }
+
+  /** Move the dragged field into a new field group appended to the form. */
+  async dropNewGroup(event: FieldDragDropEvent) {
+    const field = await this.resolveDroppedField(event.item.data);
+    if (!field) {
       return;
     }
 
-    this.dummyForm().formGroup.addControl(newTextField.id, new FormControl());
-    this.dummyForm().formGroup.disable();
-    event.container.data.splice(event.currentIndex, 0, newTextField);
-    this.fieldGroups.update((g) => [...g]);
-
-    // the schema update has added the new Text field to the available fields already, remove it from there
-    this.availableFields.update((fields) =>
-      fields.filter((f) =>
-        typeof f === "string"
-          ? f !== newTextField.id
-          : f.id !== newTextField.id,
-      ),
-    );
-  }
-
-  dropNewGroup(event: CdkDragDrop<any, any>) {
-    const newCol: FieldGroup = { fields: [] };
-    this.fieldGroups.update((groups) => [...groups, newCol]);
-    event.container.data = newCol.fields;
-    this.drop(event);
+    this.fieldGroups.update((groups) => {
+      const withNewGroup: FieldGroup[] = [...groups, { fields: [] }];
+      return moveFieldBetweenGroups(
+        withNewGroup,
+        field,
+        event.previousContainer.data,
+        event.previousIndex,
+        withNewGroup.length - 1,
+        0,
+      );
+    });
   }
 
   removeGroup(i: number) {
@@ -568,4 +591,37 @@ export class AdminEntityFormComponent {
   clearSearch() {
     this.searchFilter.setValue("");
   }
+}
+
+/**
+ * Move `field` from one drop target to another, returning new group objects for the groups that
+ * changed (all others are kept as they are).
+ *
+ * A target of "available" is the toolbar of fields not used in the form: it holds no state of its
+ * own (it is derived from the form's groups), so a field moved there is simply removed from the
+ * form and a field moved from there is simply added.
+ */
+function moveFieldBetweenGroups(
+  groups: FieldGroup[],
+  field: ColumnConfig,
+  from: FieldDropTarget,
+  fromIndex: number,
+  to: FieldDropTarget,
+  toIndex: number,
+): FieldGroup[] {
+  return groups.map((group, index) => {
+    if (index !== from && index !== to) {
+      return group;
+    }
+
+    let fields = group.fields ?? [];
+    if (index === from) {
+      fields = [...fields.slice(0, fromIndex), ...fields.slice(fromIndex + 1)];
+    }
+    if (index === to) {
+      // within the same group, `toIndex` refers to the list without the dragged field
+      fields = [...fields.slice(0, toIndex), field, ...fields.slice(toIndex)];
+    }
+    return { ...group, fields };
+  });
 }

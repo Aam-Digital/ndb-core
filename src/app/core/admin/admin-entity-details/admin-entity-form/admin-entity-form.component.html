@@ -2,7 +2,7 @@
   <!-- FORM PREVIEW -->
   <div
     cdkDropList
-    (cdkDropListDropped)="dropfieldGroups($event, fieldGroups())"
+    (cdkDropListDropped)="dropFieldGroups($event)"
     cdkDropListOrientation="mixed"
     class="flex-grow padding-right-regular drop-list"
     [class.admin-grid-layout]="!fieldsOnlyMode()"
@@ -30,7 +30,7 @@
         <div
           cdkDropList
           [id]="uniqueAreaId() + '-group' + i"
-          [cdkDropListData]="group.fields"
+          [cdkDropListData]="i"
           (cdkDropListDropped)="drop($event)"
           [cdkDropListConnectedTo]="connectedGroups()"
           [cdkDropListDisabled]="isDisabled()"
@@ -42,6 +42,7 @@
             <div
               class="admin-form-field flex-row align-center"
               cdkDrag
+              [cdkDragData]="field"
               cdkDragBoundary=".overall-container"
             >
               <fa-icon
@@ -114,7 +115,7 @@
       <div
         cdkDropList
         (cdkDropListDropped)="drop($event)"
-        [cdkDropListData]="filteredFields()"
+        [cdkDropListData]="availableFieldsTarget"
         [cdkDropListConnectedTo]="connectedGroups()"
         class="drop-list"
       >
@@ -162,6 +163,7 @@
               field === createNewTextPlaceholder
             "
             cdkDrag
+            [cdkDragData]="field"
             cdkDragBoundary="mat-drawer-container"
           >
             <fa-icon
