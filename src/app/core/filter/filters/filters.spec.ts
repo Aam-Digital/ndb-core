@@ -133,17 +133,6 @@ describe("Filters", () => {
     testFilter(filter, [withBracket, withoutBracket], [withBracket]);
   });
 
-  it("should restore text that was split at commas (e.g. from url params) in a string filter", () => {
-    const filter = new StringFilter("name", "Name");
-
-    // url parsing splits param values at "," into multiple selectedOptionValues
-    filter.selectedOptionValues = ["Doe", " John"];
-
-    expect(filter.getFilter()).toEqual({
-      name: { $regex: "Doe, John", $options: "i" },
-    });
-  });
-
   it("should support numbers as options", () => {
     const filter = new SelectableFilter("counts", [], "Counts");
 

@@ -30,10 +30,9 @@ export class StringFilter<T extends Entity> extends Filter<T> {
 
   /**
    * The current search text of this filter.
-   * (URL parsing splits values at "," - join them back to restore the original text)
    */
   getSearchText(): string {
-    return (this.selectedOptionValues ?? []).join(",");
+    return this.selectedOptionValues?.[0] ?? "";
   }
 
   getFilter(): DataFilter<T> {

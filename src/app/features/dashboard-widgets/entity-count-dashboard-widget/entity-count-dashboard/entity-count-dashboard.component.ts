@@ -16,18 +16,15 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
-import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
-import { getEntityRuntimeRoute } from "../../../../core/entity/entity-config.service";
-import { EntityFieldLabelComponent } from "../../../../core/entity/entity-field-label/entity-field-label.component";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import {
-  Entity,
-  EntityConstructor,
-} from "../../../../core/entity/model/entity";
-import { applyUpdate } from "../../../../core/entity/model/entity-update";
-import { groupBy } from "../../../../utils/utils";
+import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
+import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
+import { EntityFieldLabelComponent } from "#src/app/core/entity/entity-field-label/entity-field-label.component";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { applyUpdate } from "#src/app/core/entity/model/entity-update";
+import { groupBy } from "#src/app/utils/utils";
 import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 
 /**
@@ -308,7 +305,7 @@ export class EntityCountDashboardComponent {
     }
 
     const params = {};
-    params[field] = filterId;
+    params[field] = encodeURIComponent(filterId);
 
     this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
       queryParams: params,

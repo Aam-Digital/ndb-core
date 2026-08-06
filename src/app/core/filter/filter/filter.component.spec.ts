@@ -6,6 +6,7 @@ import { defaultInteractionTypes } from "../../config/default-config/default-int
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { StringFilter } from "../filters/stringFilter";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -137,12 +138,11 @@ describe("FilterComponent", () => {
     expect(component.filterSelections()[0].selectedOptionValues[1]).toBe("bar");
   });
 
-  it("should parse url params for option keys that contain commas (#4104)", async () => {
-    // Legacy enum/string option ids can contain a comma. Selected ids are
-    // joined by "," in the url, so a comma inside an id must not be mistaken
-    // for the multi-value separator. Here keys "A" and "B,C" are both valid;
-    // a naive greedy longest-match would parse "A,B,C" as ["A,B","C"] and drop
-    // the valid "B,C" - the values must instead resolve to ["A", "B,C"].
+  it("should parse url params for option values that contain commas", async () => {
+    // Option values may themselves contain a comma. Selected values are
+    // joined by "," in the url, so each value is encoded with
+    // encodeURIComponent before being joined - a "," inside a value is thus
+    // escaped and not mistaken for the multi-value separator.
     // (using a non-schema property so a SelectableFilter with options is generated)
     const e1 = new TestEntity();
     e1["customStatus"] = "A";
@@ -152,7 +152,9 @@ describe("FilterComponent", () => {
     e3["customStatus"] = "B,C";
 
     activatedRouteMock.snapshot = {
-      queryParams: { customStatus: "A,B,C" },
+      queryParams: {
+        customStatus: ["A", "B,C"].map(encodeURIComponent).join(","),
+      },
     };
 
     await setComponentInputs({
@@ -166,6 +168,22 @@ describe("FilterComponent", () => {
       .filterSelections()
       .find((f) => f.name === "customStatus");
     expect(customStatusFilter.selectedOptionValues).toEqual(["A", "B,C"]);
+  });
+
+  it("should encode filter values containing commas before storing them in the url", () => {
+    const tableStateUrl = (component as any).tableStateUrl;
+    const updateFilterParamSpy = vi.spyOn(tableStateUrl, "updateFilterParam");
+    fixture.componentRef.setInput("useUrlQueryParams", true);
+    fixture.detectChanges();
+
+    const filter = new StringFilter("other", "Other");
+    component.filterOptionSelected(filter, ["Doe, John"]);
+
+    expect(updateFilterParamSpy).toHaveBeenCalledWith(
+      "other",
+      encodeURIComponent("Doe, John"),
+      false,
+    );
   });
 
   it("should load url params and set no filter value when empty", async () => {

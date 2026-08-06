@@ -46,7 +46,7 @@ export class StringFilterComponent<E extends Entity> {
       // sync back external changes (e.g. "clear all filters")
       const subscription = filterConfig.selectedOptionChange.subscribe(
         (values) => {
-          this.textControl.setValue((values ?? []).join(","), {
+          this.textControl.setValue(values?.[0] ?? "", {
             emitEvent: false,
           });
         },
