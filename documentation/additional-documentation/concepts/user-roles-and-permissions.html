@@ -289,6 +289,9 @@ Admins edit this document to control what each role can do.</p>
     }
   }
 }</code></pre></div><p>Users can only read Reports linked to one of their assigned projects.</p>
+<blockquote>
+<p><strong>⚠️ Warning:</strong> Conditions do not support the $or operator (or $and, $nor, $not). Instead, you combine multiple separate can rules for the same action and subject to mimic an logical OR condition.</p>
+</blockquote>
 <h3>When permissions change</h3>
 <p>If you change <code>Config:Permissions</code>:</p>
 <ol>
