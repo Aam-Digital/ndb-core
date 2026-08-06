@@ -61,6 +61,19 @@ export class SyncedPouchDatabase extends PouchDatabase {
    */
   SYNC_STALL_TIMEOUT = 300000;
 
+  /**
+   * How far behind the server a client may be for a permission purge to be
+   * considered harmless (ms).
+   *
+   * A purge deletes local docs without syncing them first, so anything edited
+   * locally since the last completed sync is lost. If that window is only a few
+   * sync cycles wide the client had nothing pending and the purge is routine;
+   * beyond it, local edits may have been destroyed and someone has to look.
+   * Set to 10x SYNC_INTERVAL so a client that merely missed a couple of cycles
+   * is not treated as data loss.
+   */
+  PURGE_DATA_LOSS_RISK_THRESHOLD = 300000;
+
   private readonly navigator: Navigator;
   private readonly loginStateSubject: LoginStateSubject;
   private readonly alertService?: AlertService;
@@ -353,16 +366,35 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .filter((id) => !id.startsWith("_design/"));
 
     if (lostPermissionIds.length > 0) {
+      // how far behind the server this client was: local edits made since then are lost
+      const lastSyncCompleted = localStorage.getItem(this.LAST_SYNC_KEY);
+      const syncGapMs = lastSyncCompleted
+        ? Date.now() - new Date(lastSyncCompleted).getTime()
+        : undefined;
+      // An unknown gap cannot be ruled out as data loss, so it is treated as risky.
+      const riskOfDataLoss =
+        syncGapMs === undefined ||
+        Number.isNaN(syncGapMs) ||
+        syncGapMs > this.PURGE_DATA_LOSS_RISK_THRESHOLD;
+
       // deleting local data based on server response - log for traceability of possible data loss.
-      Logging.warn(
-        "sync: purging local docs after server reported lost permissions",
-        {
-          db: this.dbName,
-          count: lostPermissionIds.length,
-          // how far behind the server this client was: local edits made since then are lost
-          lastSyncCompleted: localStorage.getItem(this.LAST_SYNC_KEY),
-        },
-      );
+      // The document count does not measure data loss - the sync gap does: a large purge on a
+      // just-synced client is routine, while a small purge on a stale one can destroy local edits.
+      // Only the latter is raised to error so it reaches alerting.
+      const message =
+        "sync: purging local docs after server reported lost permissions";
+      const context = {
+        db: this.dbName,
+        count: lostPermissionIds.length,
+        lastSyncCompleted,
+        syncGapMs,
+        riskOfDataLoss,
+      };
+      if (riskOfDataLoss) {
+        Logging.error(message, context);
+      } else {
+        Logging.warn(message, context);
+      }
     }
 
     for (const _id of lostPermissionIds) {

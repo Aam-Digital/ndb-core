@@ -10,6 +10,7 @@ import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
+import { Logging } from "../../logging/logging.service";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;
@@ -443,6 +444,62 @@ describe("SyncedPouchDatabase", () => {
 
       expect(purgeSpy).toHaveBeenCalledWith("Child:1");
       expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+
+    it("should log at warn level when the client had just synced (no data at risk)", async () => {
+      const warnSpy = vi.spyOn(Logging, "warn");
+      const errorSpy = vi.spyOn(Logging, "error");
+      localStorage.setItem(service.LAST_SYNC_KEY, new Date().toISOString());
+      vi.spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).mockReturnValue(["Child:1"]);
+
+      await service.sync();
+
+      expect(errorSpy).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("purging local docs"),
+        expect.objectContaining({ count: 1, riskOfDataLoss: false }),
+      );
+    });
+
+    it("should log at error level when the client was stale (local edits may be lost)", async () => {
+      const errorSpy = vi.spyOn(Logging, "error");
+      const staleSync = new Date(
+        Date.now() - service.PURGE_DATA_LOSS_RISK_THRESHOLD - 60000,
+      ).toISOString();
+      localStorage.setItem(service.LAST_SYNC_KEY, staleSync);
+      vi.spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).mockReturnValue(["Child:1"]);
+
+      await service.sync();
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("purging local docs"),
+        expect.objectContaining({ riskOfDataLoss: true }),
+      );
+    });
+
+    it("should log at error level when the last sync time is unknown", async () => {
+      const errorSpy = vi.spyOn(Logging, "error");
+      localStorage.removeItem(service.LAST_SYNC_KEY);
+      vi.spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).mockReturnValue(["Child:1"]);
+
+      await service.sync();
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("purging local docs"),
+        expect.objectContaining({
+          riskOfDataLoss: true,
+          syncGapMs: undefined,
+        }),
+      );
     });
 
     it("should not purge anything if no permissions were lost", async () => {
