@@ -7,7 +7,8 @@ import { SortValueFns } from "#src/app/core/common-components/entities-table/tab
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
-import { Subscription } from "rxjs";
+import { Subject, Subscription } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 
@@ -84,25 +85,50 @@ export abstract class EntitiesTableDataSource<
         this.listenToEntityUpdates();
       }
     });
+
+    // Coalesce the many triggers that fire while a view initializes
+    // (config, default + url-param filters, sort, paginator) into a single load.
+    this.reloadTrigger
+      .pipe(debounceTime(0), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.executeLoad());
   }
 
-  /** Number of data loads currently in progress (see {@link setRecords}). */
-  private pendingLoads = 0;
+  /** Emits whenever a (re)load of the records is requested, see {@link setRecords}. */
+  private readonly reloadTrigger = new Subject<void>();
+  /** Awaiters of the currently scheduled (not yet executed) load. */
+  private pendingReload?: {
+    promise: Promise<any>;
+    resolve: (value: Promise<any>) => void;
+  };
 
   /**
-   * Load the records for the current config/filter/sort/page and set
-   * {@link isLoading} while the (possibly asynchronous, e.g. server-side) load
-   * is in progress, so the table can show a progress indicator.
+   * Request a (re)load of the records for the current config/filter/sort/page.
+   *
+   * All the triggers that fire while a view initializes are debounced into a
+   * single request, so opening a list does not send several redundant DB
+   * requests (and the request already uses the fully resolved filter/sort/page).
+   * {@link isLoading} is set immediately so the table can show a progress
+   * indicator until the load finishes.
+   *
+   * @returns a promise that resolves once the resulting load has completed.
    */
   protected setRecords(): Promise<any> {
-    this.pendingLoads++;
     this.isLoading.set(true);
-    return this.loadRecords().finally(() => {
-      this.pendingLoads--;
-      if (this.pendingLoads === 0) {
-        this.isLoading.set(false);
-      }
-    });
+    if (!this.pendingReload) {
+      let resolve!: (value: Promise<any>) => void;
+      const promise = new Promise((res) => (resolve = res));
+      this.pendingReload = { promise, resolve };
+    }
+    this.reloadTrigger.next();
+    return this.pendingReload.promise;
+  }
+
+  private executeLoad(): void {
+    const reload = this.pendingReload;
+    this.pendingReload = undefined;
+    const load = this.loadRecords().finally(() => this.isLoading.set(false));
+    // let awaiters (e.g. bulk operations) adopt the actual load's outcome
+    reload?.resolve(load);
   }
 
   /** Actually (re)load the records. Implemented by the concrete data source. */
