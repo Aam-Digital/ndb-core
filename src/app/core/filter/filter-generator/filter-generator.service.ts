@@ -20,13 +20,19 @@ import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum
 import { FilterService } from "../filter.service";
 import { defaultDateFilters } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
+import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatype";
 import { DateFilter } from "../filters/dateFilter";
+import { StringFilter } from "../filters/stringFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { DynamicPlaceholderValueService } from "app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { todoDueStatusFilter } from "../../../features/todos/add-default-todo-views";
+import { EmailDatatype } from "../../basic-datatypes/string/email.datatype";
+import { UrlDatatype } from "../../basic-datatypes/string/url.datatype";
 
 @Injectable({
   providedIn: "root",
@@ -134,6 +140,8 @@ export class FilterGeneratorService {
           label,
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
         );
+      } else if (this.isFreeTextField(type, schema)) {
+        filter = new StringFilter(filterConfig.id, label);
       } else if (
         // type: entity reference
         this.entities.has(filterConfig.type) ||
@@ -207,6 +215,33 @@ export class FilterGeneratorService {
         includeEmptyArray,
       ),
     };
+  }
+
+  /**
+   * Whether the field is a free-text field that should be filtered
+   * with a text-search input (see {@link StringFilter}):
+   * dataType "string" or "long-text", edited with a plain text edit component.
+   */
+  private isFreeTextField(type: string, schema: EntitySchemaField): boolean {
+    const stringDataTypes = [
+      StringDatatype,
+      LongTextDatatype,
+      EmailDatatype,
+      UrlDatatype,
+    ];
+
+    const editComponent =
+      schema.editComponent ??
+      this.schemaService.getDatatypeOrDefault(type)?.editComponent;
+
+    return (
+      stringDataTypes.some((dt) => dt.dataType === type) &&
+      stringDataTypes.some(
+        (dt) =>
+          this.schemaService.getDatatypeOrDefault(dt.dataType).editComponent ===
+          editComponent,
+      )
+    );
   }
 
   /**

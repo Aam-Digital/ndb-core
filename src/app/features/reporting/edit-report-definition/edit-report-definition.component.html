@@ -1,0 +1,108 @@
+@if (!isSql()) {
+  <!-- reporting/exporting definitions are edited as raw JSON -->
+  <app-json-editor [formControl]="formControl"></app-json-editor>
+} @else {
+  <div class="flex-column gap-small report-definition">
+    <div
+      class="flex-column gap-small"
+      cdkDropList
+      (cdkDropListDropped)="onDrop($event)"
+    >
+      @for (row of rows(); track row.id; let i = $index) {
+        <div
+          class="report-row"
+          [class.group-row]="row.isGroup"
+          [style.margin-left.px]="row.level * indentPerLevel"
+          cdkDrag
+          [cdkDragData]="row"
+        >
+          <div class="flex-row align-center gap-small">
+            @if (enabled()) {
+              <fa-icon
+                icon="grip-vertical"
+                class="drag-handle"
+                cdkDragHandle
+              ></fa-icon>
+            }
+
+            @if (row.isGroup) {
+              <fa-icon icon="layer-group" class="row-icon"></fa-icon>
+              <input
+                class="group-title-input"
+                type="text"
+                [value]="row.data.groupTitle ?? ''"
+                [disabled]="!enabled()"
+                placeholder="Group title"
+                i18n-placeholder
+                aria-label="Group title"
+                i18n-aria-label
+                (change)="setGroupTitle(i, $event)"
+              />
+            } @else {
+              <app-edit-sql-query
+                class="query-editor"
+                [value]="row.data.query ?? ''"
+                [disabled]="!enabled()"
+                (valueChange)="setQuery(i, $event)"
+              ></app-edit-sql-query>
+            }
+
+            @if (enabled()) {
+              @if (row.isGroup) {
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="addChildQuery(i)"
+                  matTooltip="Add query to this group"
+                  i18n-matTooltip
+                  aria-label="Add query to this group"
+                  i18n-aria-label
+                >
+                  <fa-icon icon="plus"></fa-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="addChildGroup(i)"
+                  matTooltip="Add sub-group to this group"
+                  i18n-matTooltip
+                  aria-label="Add sub-group to this group"
+                  i18n-aria-label
+                >
+                  <fa-icon icon="layer-group"></fa-icon>
+                </button>
+              }
+              <button
+                mat-icon-button
+                type="button"
+                (click)="remove(i)"
+                [matTooltip]="
+                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
+                "
+                i18n-matTooltip
+                [attr.aria-label]="
+                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
+                "
+              >
+                <fa-icon icon="trash"></fa-icon>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (enabled()) {
+      <div class="flex-row gap-small margin-top-x-small">
+        <button mat-stroked-button type="button" (click)="addQuery()">
+          <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add query</span>
+        </button>
+        <button mat-stroked-button type="button" (click)="addGroup()">
+          <fa-icon icon="layer-group" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add group</span>
+        </button>
+      </div>
+    }
+  </div>
+}

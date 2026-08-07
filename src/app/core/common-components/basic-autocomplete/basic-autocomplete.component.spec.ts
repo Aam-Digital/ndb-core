@@ -24,6 +24,12 @@ describe("BasicAutocompleteComponent", () => {
   let loader: HarnessLoader;
   let testControl: FormControl;
   const entityToId = (e: Entity) => e?.getId();
+  const checkedOptionStates = () =>
+    Array.from(
+      document.querySelectorAll<HTMLInputElement>(
+        ".mat-mdc-autocomplete-panel mat-checkbox input",
+      ),
+    ).map((checkbox) => checkbox.checked);
 
   beforeEach(async () => {
     testControl = new FormControl("");
@@ -147,7 +153,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.autocompleteForm.disabled).toBe(true);
   });
 
-  it("should initialize the options in multi select mode", async () => {
+  it("should initialize the options in multi select mode and keep the panel open while selecting", async () => {
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
     fixture.componentRef.setInput("options", [0, 1, 2]);
     fixture.componentRef.setInput("multi", true);
@@ -164,12 +170,118 @@ describe("BasicAutocompleteComponent", () => {
     );
 
     await options[2].click();
-    // When browser is not in foreground, this doesn't happen automatically
-    component.autocomplete()!.openPanel();
+    expect(component.autocomplete()!.panelOpen).toBe(true);
     fixture.detectChanges();
     await options[1].click();
 
     expect(component.value).toEqual([0, 2]);
+    expect(component.autocomplete()!.panelOpen).toBe(true);
+  });
+
+  it("should keep the keyboard navigation on the selected option in multi select mode", async () => {
+    const autocomplete = await loader.getHarness(MatAutocompleteHarness);
+    fixture.componentRef.setInput("options", ["one", "two", "three"]);
+    fixture.componentRef.setInput("multi", true);
+    fixture.detectChanges();
+
+    component.showAutocomplete();
+    component.autocomplete()!.openPanel();
+    const options = await autocomplete.getOptions();
+    await options[1].click();
+    await fixture.whenStable();
+
+    const keyManager = component.autocomplete()!.autocomplete._keyManager;
+    expect(keyManager.activeItem?.value).toEqual(
+      expect.objectContaining({ asValue: "two" }),
+    );
+  });
+
+  it("should close the panel after selecting an option in single select mode", async () => {
+    const autocomplete = await loader.getHarness(MatAutocompleteHarness);
+    fixture.componentRef.setInput("options", ["one", "two"]);
+    fixture.detectChanges();
+
+    component.showAutocomplete();
+    component.autocomplete()!.openPanel();
+    const options = await autocomplete.getOptions();
+    await options[1].click();
+
+    expect(component.value).toBe("two");
+    expect(component.autocomplete()!.panelOpen).toBe(false);
+  });
+
+  it("should keep the typed filter and update the checkboxes while selecting multiple options", async () => {
+    const autocomplete = await loader.getHarness(MatAutocompleteHarness);
+    fixture.componentRef.setInput("options", ["apple", "apricot", "banana"]);
+    fixture.componentRef.setInput("multi", true);
+    fixture.detectChanges();
+
+    component.showAutocomplete();
+    component.autocomplete()!.openPanel();
+    component.autocompleteForm.setValue("ap");
+    fixture.detectChanges();
+
+    const options = await autocomplete.getOptions();
+    await options[0].click();
+    fixture.detectChanges();
+
+    expect(component.value).toEqual(["apple"]);
+    expect(component.autocompleteForm.value).toBe("ap");
+    expect(checkedOptionStates()).toEqual([true, false]);
+
+    // selecting takes the focus out of the search input, which must not end the search mode
+    component.onFocusOut({ relatedTarget: null } as FocusEvent);
+    expect(component.isInSearchMode()).toBe(true);
+
+    await options[1].click();
+    fixture.detectChanges();
+
+    expect(component.value).toEqual(["apple", "apricot"]);
+    expect(checkedOptionStates()).toEqual([true, true]);
+  });
+
+  it("should offer the displayed selection for overwriting when typing a filter after selecting", async () => {
+    const autocomplete = await loader.getHarness(MatAutocompleteHarness);
+    fixture.componentRef.setInput("options", ["one", "two"]);
+    fixture.componentRef.setInput("multi", true);
+    fixture.detectChanges();
+
+    component.showAutocomplete();
+    component.autocomplete()!.openPanel();
+    const options = await autocomplete.getOptions();
+    await options[0].click();
+    await fixture.whenStable();
+
+    // the search input doubles as the display of the selection, so it has to be updated ...
+    const searchInput = component.inputElement()!._elementRef
+      .nativeElement as HTMLInputElement;
+    expect(component.autocompleteForm.value).toBe("one");
+    // ... and its text selected, so the user can type a filter without deleting it first
+    expect(searchInput.selectionStart).toBe(0);
+    expect(searchInput.selectionEnd).toBe("one".length);
+  });
+
+  it("should close the panel and clear the filter when creating a new option in multi select mode", async () => {
+    const createOptionMock = vi.fn().mockResolvedValue("new option");
+    fixture.componentRef.setInput("createOption", createOptionMock);
+    fixture.componentRef.setInput("options", ["existing"]);
+    fixture.componentRef.setInput("multi", true);
+    fixture.componentRef.setInput("display", "chips");
+    fixture.detectChanges();
+
+    component.showAutocomplete();
+    component.autocomplete()!.openPanel();
+    const closePanelSpy = vi.spyOn(component.autocomplete(), "closePanel");
+    component.autocompleteForm.setValue("new option");
+
+    component.select("new option");
+    await fixture.whenStable();
+
+    expect(closePanelSpy).toHaveBeenCalled();
+    expect(component.value).toEqual(["new option"]);
+    // dropdown is open again to continue selecting, with all options available
+    expect(component.autocomplete()!.panelOpen).toBe(true);
+    expect(component.autocompleteForm.value).toBe("");
   });
 
   it("should switch the input when focusing in multi select mode", () => {

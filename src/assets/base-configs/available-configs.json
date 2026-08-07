@@ -120,6 +120,7 @@
       "basic/SiteSettings_global.json",
       "education/PublicFormConfig_example.json",
       "education/ReportConfig.json",
+      "all-features/ReportConfig.json",
       "education/EmailTemplate_birthday.json"
     ],
     "locale": "en-US"

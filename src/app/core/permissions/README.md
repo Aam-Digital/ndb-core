@@ -195,6 +195,8 @@ This allows users to manage only Notes they authored.
 
 Users can only read Reports linked to one of their assigned projects.
 
+> **⚠️ Warning:** Conditions do not support the $or operator (or $and, $nor, $not). Instead, you combine multiple separate can rules for the same action and subject to mimic an logical OR condition.
+
 ### When permissions change
 
 If you change `Config:Permissions`:
