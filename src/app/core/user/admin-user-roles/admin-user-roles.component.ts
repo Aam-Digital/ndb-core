@@ -2,9 +2,10 @@ import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { JsonEditorService } from "../../admin/json-editor/json-editor.service";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../config/config";
-import moment from "moment";
+import { Logging } from "../../logging/logging.service";
+import { DatabaseRules } from "../../permissions/permission-types";
+import { PermissionsConfigService } from "../../permissions/permissions-config.service";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
@@ -23,39 +24,49 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 })
 export class AdminUserRolesComponent {
   private readonly jsonEditorService = inject(JsonEditorService);
-  private readonly entityMapper = inject(EntityMapperService);
+  private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly snackBar = inject(MatSnackBar);
 
   async editPermissions() {
-    const permissionsConfig = await this.entityMapper
-      .load(Config, Config.PERMISSION_KEY)
-      .catch(() => new Config(Config.PERMISSION_KEY, {}));
+    let config: Config<DatabaseRules>;
+    try {
+      config =
+        (await this.permissionsConfig.load()) ??
+        new Config<DatabaseRules>(Config.PERMISSION_KEY, {});
+    } catch (error) {
+      // editing on top of a failed load would overwrite the stored permissions
+      Logging.error("Failed to load permissions config", error);
+      this.showError(
+        $localize`Could not load the permissions. Please try again.`,
+      );
+      return;
+    }
 
     this.jsonEditorService
-      .openJsonEditorDialog(permissionsConfig.data)
+      .openJsonEditorDialog(config.data)
       .subscribe(async (updatedData) => {
         if (!updatedData) return;
 
-        const previousConfigBackup = new Config(
-          Config.PERMISSION_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
-          permissionsConfig.data,
-        );
-        await this.entityMapper.save(previousConfigBackup);
-
-        permissionsConfig.data = updatedData;
-        await this.entityMapper.save(permissionsConfig);
-
-        // Show undo snackbar
-        const snackBarRef = this.snackBar.open(
-          $localize`Permissions updated`,
-          $localize`Undo`,
-          { duration: 8000 },
-        );
-        snackBarRef.onAction().subscribe(async () => {
-          permissionsConfig.data = previousConfigBackup.data;
-          await this.entityMapper.save(permissionsConfig);
-          await this.entityMapper.remove(previousConfigBackup);
-        });
+        try {
+          const backup = await this.permissionsConfig.saveWithBackup(
+            config,
+            updatedData,
+          );
+          this.permissionsConfig.offerUndo(
+            backup,
+            $localize`Permissions updated`,
+          );
+        } catch (error) {
+          // rxjs does not await this handler, so the rejection would be silent
+          Logging.error("Failed to save permissions config", error);
+          this.showError(
+            $localize`Could not save the permissions. Please try again.`,
+          );
+        }
       });
+  }
+
+  private showError(message: string) {
+    this.snackBar.open(message, undefined, { duration: 5000 });
   }
 }

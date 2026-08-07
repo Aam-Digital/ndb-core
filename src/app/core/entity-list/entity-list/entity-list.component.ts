@@ -56,6 +56,7 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
+import { FeaturePermissionBannerComponent } from "../../permissions/feature-permission/feature-permission-banner/feature-permission-banner.component";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
@@ -98,6 +99,7 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
     ViewActionsComponent,
     EntityLoadPipe,
     EntityBulkActionsComponent,
+    FeaturePermissionBannerComponent,
   ],
 })
 @UntilDestroy()
@@ -167,6 +169,12 @@ export class EntityListComponent<T extends Entity> implements OnInit {
    * Whether the list's default row coloring should reflect each entity's color.
    */
   showEntityColor = input<boolean>(false);
+
+  /**
+   * Whether to show the "manage feature permissions" banner for admins on this list.
+   * @see EntityListConfig.managePermissions
+   */
+  managePermissions = input<boolean>(false);
 
   columnsToDisplay: string[];
 

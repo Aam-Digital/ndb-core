@@ -58,6 +58,19 @@ export const RESERVED_RULE_CONFIG_KEYS: string[] = [
 ];
 
 /**
+ * Whether a key in {@link DatabaseRules} carries special semantics instead of
+ * naming a user role, so it must neither be resolved as a role nor rewritten by
+ * a per-role UI. Covers the reserved underscore prefix as well as the legacy
+ * (non-prefixed) spellings of not yet migrated configs.
+ */
+export function isReservedRuleConfigKey(key: string): boolean {
+  return (
+    key.startsWith(RESERVED_ROLE_PREFIX) ||
+    RESERVED_RULE_CONFIG_KEYS.includes(key)
+  );
+}
+
+/**
  * The format of the JSON object which defines the rules for each role.
  * The format is `<user-role>: <array of DatabaseRule>`, meaning for each role an array of rules can be defined.
  * The rules defined in '_default' (legacy 'default') are prepended to any other rules defined for a user.

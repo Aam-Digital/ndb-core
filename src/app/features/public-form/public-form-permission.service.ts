@@ -3,12 +3,11 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { inject, Injectable } from "@angular/core";
 import { Config } from "../../core/config/config";
 import {
-  DatabaseRules,
   DEFAULT_SECTION_KEY,
   LEGACY_PUBLIC_KEY,
   PUBLIC_SECTION_KEY,
 } from "../../core/permissions/permission-types";
-import { SessionSubject } from "../../core/session/auth/session-info";
+import { PermissionsConfigService } from "../../core/permissions/permissions-config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 
 /**
@@ -22,7 +21,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 export class PublicFormPermissionService {
   private readonly alertService = inject(AlertService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly sessionInfo = inject(SessionSubject);
+  private readonly permissionsConfigService = inject(PermissionsConfigService);
   private readonly entityMapper = inject(EntityMapperService);
 
   /**
@@ -60,7 +59,7 @@ export class PublicFormPermissionService {
    */
   async hasPublicCreatePermission(entityType: string): Promise<boolean> {
     try {
-      const permissionsConfig = await this.loadPermissionsConfig();
+      const permissionsConfig = await this.permissionsConfigService.load();
       if (!permissionsConfig?.data) {
         return false; // No permissions config means "public" users have no access
       }
@@ -173,8 +172,7 @@ export class PublicFormPermissionService {
    * @returns boolean true if user can manage permissions
    */
   hasAdminPermission(): boolean {
-    const userRoles = this.sessionInfo.value?.roles || [];
-    return userRoles.includes("admin_app");
+    return this.permissionsConfigService.canManagePermissions();
   }
 
   /**
@@ -183,7 +181,7 @@ export class PublicFormPermissionService {
    * @returns Promise<void>
    */
   async addPublicCreatePermission(entityType: string): Promise<void> {
-    let permissionsConfig = await this.loadPermissionsConfig();
+    let permissionsConfig = await this.permissionsConfigService.load();
 
     const isNewConfig = !permissionsConfig;
     if (!permissionsConfig) {
@@ -261,20 +259,6 @@ export class PublicFormPermissionService {
     // also persist when we only migrated a legacy section (no new rule added)
     if (migratedLegacyPublic || !createExists || !formReadExists) {
       await this.entityMapper.save(permissionsConfig, true);
-    }
-  }
-
-  /**
-   * Loads the permissions configuration from the database.
-   */
-  private async loadPermissionsConfig(): Promise<Config<DatabaseRules> | null> {
-    try {
-      return await this.entityMapper.load<Config<DatabaseRules>>(
-        Config,
-        Config.PERMISSION_KEY,
-      );
-    } catch {
-      return null; // Config doesn't exist yet
     }
   }
 }

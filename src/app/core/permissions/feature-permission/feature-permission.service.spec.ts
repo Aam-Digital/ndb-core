@@ -1,0 +1,448 @@
+import { TestBed } from "@angular/core/testing";
+import { FeaturePermissionService } from "./feature-permission.service";
+import { PermissionsConfigService } from "../permissions-config.service";
+import { Config } from "../../config/config";
+import { DatabaseRules } from "../permission-types";
+
+describe("FeaturePermissionService", () => {
+  let service: FeaturePermissionService;
+  let mockPermissionsConfig: {
+    load: ReturnType<typeof vi.fn>;
+    saveWithBackup: ReturnType<typeof vi.fn>;
+  };
+
+  const ENTITY_TYPE = "EmailTemplate";
+
+  /** make the stored permissions config contain the given rules (null = no config yet) */
+  function mockConfig(data: DatabaseRules | null) {
+    mockPermissionsConfig.load.mockResolvedValue(
+      data === null ? null : new Config(Config.PERMISSION_KEY, data),
+    );
+  }
+
+  /** the rules handed to the shared service to be persisted */
+  function savedPermissions(): DatabaseRules {
+    return mockPermissionsConfig.saveWithBackup.mock.calls.at(-1)[1];
+  }
+
+  beforeEach(() => {
+    mockPermissionsConfig = {
+      load: vi.fn().mockName("PermissionsConfigService.load"),
+      saveWithBackup: vi
+        .fn()
+        .mockName("PermissionsConfigService.saveWithBackup")
+        .mockImplementation((config: Config<DatabaseRules>) =>
+          Promise.resolve(
+            new Config(
+              Config.PERMISSION_KEY + ":2026-08-03_10-00-00",
+              structuredClone(config.data),
+            ),
+          ),
+        ),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        FeaturePermissionService,
+        {
+          provide: PermissionsConfigService,
+          useValue: mockPermissionsConfig,
+        },
+      ],
+    });
+    service = TestBed.inject(FeaturePermissionService);
+  });
+
+  it("should be created", () => {
+    expect(service).toBeTruthy();
+  });
+
+  it("should report an editable no-access row for a role without any rule", async () => {
+    mockConfig({ user_app: [] });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(state.roles).toEqual([
+      { role: "user_app", use: false, manage: false, editable: true },
+    ]);
+    expect(state.hasComplexRules).toBe(false);
+  });
+
+  it("should report an editable no-access row when permissions config does not exist", async () => {
+    mockConfig(null);
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(state.roles).toEqual([
+      { role: "user_app", use: false, manage: false, editable: true },
+    ]);
+  });
+
+  it("should read editable 'use'/'manage' from exact read and manage rules", async () => {
+    mockConfig({
+      user_app: [{ subject: ENTITY_TYPE, action: "read" }],
+      admin_app: [{ subject: ENTITY_TYPE, action: "manage" }],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, [
+      "user_app",
+      "admin_app",
+    ]);
+
+    expect(state.roles).toEqual([
+      { role: "user_app", use: true, manage: false, editable: true },
+      { role: "admin_app", use: false, manage: true, editable: true },
+    ]);
+    expect(state.hasComplexRules).toBe(false);
+  });
+
+  it("should ignore rules for other entity types and actions other than read/manage", async () => {
+    mockConfig({
+      user_app: [
+        { subject: "Child", action: "read" },
+        { subject: ENTITY_TYPE, action: "create" },
+      ],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: false,
+      manage: false,
+      editable: true,
+    });
+    expect(state.hasComplexRules).toBe(false);
+  });
+
+  it("should show effective read-only access granted by a grouped/array subject", async () => {
+    mockConfig({
+      user_app: [{ subject: [ENTITY_TYPE, "Child"], action: "read" }],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: false,
+      editable: false,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
+  it("should show effective read-only access granted by the 'all' wildcard", async () => {
+    mockConfig({ admin_app: [{ subject: "all", action: "manage" }] });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["admin_app"]);
+
+    expect(state.roles[0]).toEqual({
+      role: "admin_app",
+      use: true,
+      manage: true,
+      editable: false,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
+  it("should show conditioned rules as effective but read-only", async () => {
+    mockConfig({
+      user_app: [
+        { subject: ENTITY_TYPE, action: "read", conditions: { active: true } },
+      ],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: false,
+      editable: false,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
+  it("should report no access for a grant revoked by an inverted rule, read-only", async () => {
+    mockConfig({
+      user_app: [
+        { subject: "all", action: "manage" },
+        { subject: ENTITY_TYPE, action: "manage", inverted: true },
+      ],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    // CASL denies this, so reporting the wildcard grant would claim access the role lacks
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: false,
+      manage: false,
+      editable: false,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
+  it("should let a granting rule after an inverted one re-enable access", async () => {
+    mockConfig({
+      user_app: [
+        { subject: ENTITY_TYPE, action: "manage", inverted: true },
+        { subject: "all", action: "manage" },
+      ],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    // CASL applies the last matching rule, so the later grant wins over the deny
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: true,
+      editable: false,
+    });
+  });
+
+  it("should treat an exact '_default' rule as uneditable rather than ignoring it", async () => {
+    mockConfig({
+      _default: [{ subject: ENTITY_TYPE, action: "read" }],
+      user_app: [],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    // the shape alone would look grid-owned, but `_default` is shared by all roles
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: false,
+      editable: false,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
+  it("should apply shared '_default' rules to every role as read-only access", async () => {
+    mockConfig({
+      _default: [{ subject: [ENTITY_TYPE, "Config"], action: "read" }],
+      user_app: [],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: false,
+      editable: false,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
+  it("should still apply the legacy 'default' section of a not yet migrated config", async () => {
+    mockConfig({
+      default: [{ subject: [ENTITY_TYPE, "Config"], action: "read" }],
+      user_app: [],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: false,
+      editable: false,
+    });
+  });
+
+  it("should reflect effective access for the shipped default config shape", async () => {
+    // mirrors src/assets/base-configs/basic/Config_Permissions.json
+    mockConfig({
+      _default: [
+        { subject: ["Config", "SiteSettings"], action: "read" },
+        { subject: ["NotificationConfig"], action: "manage" },
+      ],
+      user_app: [{ subject: "all", action: "manage" }],
+      admin_app: [{ subject: "all", action: "manage" }],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, [
+      "user_app",
+      "admin_app",
+      "assistant_app",
+    ]);
+
+    // the two wildcard roles already have full access -> read-only, both boxes on
+    expect(state.roles[0]).toEqual({
+      role: "user_app",
+      use: true,
+      manage: true,
+      editable: false,
+    });
+    expect(state.roles[1]).toEqual({
+      role: "admin_app",
+      use: true,
+      manage: true,
+      editable: false,
+    });
+    // a custom role without a wildcard rule is editable and starts with no access
+    expect(state.roles[2]).toEqual({
+      role: "assistant_app",
+      use: false,
+      manage: false,
+      editable: true,
+    });
+    expect(state.hasComplexRules).toBe(true);
+  });
+
+  it("should show a [system-default] rule as effective but read-only", async () => {
+    mockConfig({
+      assistant_app: [
+        { subject: ENTITY_TYPE, action: "read", reason: "[system-default]" },
+      ],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["assistant_app"]);
+
+    expect(state.roles[0]).toEqual({
+      role: "assistant_app",
+      use: true,
+      manage: false,
+      editable: false,
+    });
+  });
+
+  it("should add read and/or manage rules for the selected roles", async () => {
+    mockConfig({});
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "user_app", use: true, manage: false },
+      { role: "admin_app", use: true, manage: true },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      user_app: [{ subject: ENTITY_TYPE, action: "read" }],
+      admin_app: [
+        { subject: ENTITY_TYPE, action: "read" },
+        { subject: ENTITY_TYPE, action: "manage" },
+      ],
+    });
+  });
+
+  it("should remove owned rules when a role is unchecked", async () => {
+    mockConfig({ user_app: [{ subject: ENTITY_TYPE, action: "read" }] });
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "user_app", use: false, manage: false },
+    ]);
+
+    // role key removed entirely once it has no remaining rules
+    expect(savedPermissions().user_app).toBeUndefined();
+  });
+
+  it("should preserve rules for other entity types and complex rules", async () => {
+    mockConfig({
+      user_app: [
+        { subject: "Child", action: "read" },
+        { subject: [ENTITY_TYPE, "Note"], action: "read" },
+        { subject: ENTITY_TYPE, action: "read" },
+      ],
+      default: [{ subject: "all", action: "manage" }],
+    });
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "user_app", use: false, manage: true },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      user_app: [
+        { subject: "Child", action: "read" },
+        { subject: [ENTITY_TYPE, "Note"], action: "read" },
+        { subject: ENTITY_TYPE, action: "manage" },
+      ],
+      default: [{ subject: "all", action: "manage" }],
+    });
+  });
+
+  it("should seed a default all-access rule when no config exists yet", async () => {
+    mockConfig(null);
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "user_app", use: true, manage: false },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      _default: [{ subject: "all", action: "manage" }],
+      user_app: [{ subject: ENTITY_TYPE, action: "read" }],
+    });
+  });
+
+  it("should hand the previous config to the shared service so it can back it up", async () => {
+    mockConfig({ user_app: [{ subject: ENTITY_TYPE, action: "read" }] });
+
+    const backup = await service.setPermissions(ENTITY_TYPE, [
+      { role: "user_app", use: false, manage: true },
+    ]);
+
+    const [previousConfig] =
+      mockPermissionsConfig.saveWithBackup.mock.calls.at(-1);
+    expect(previousConfig.data).toEqual({
+      user_app: [{ subject: ENTITY_TYPE, action: "read" }],
+    });
+    expect(backup.getId()).toContain(Config.PERMISSION_KEY + ":");
+  });
+
+  it("should never modify the reserved baseline sections or their legacy spellings", async () => {
+    mockConfig({
+      _default: [{ subject: "all", action: "manage" }],
+      _public: [{ subject: ENTITY_TYPE, action: "read" }],
+      default: [{ subject: "Child", action: "read" }],
+      public: [{ subject: ENTITY_TYPE, action: "read" }],
+    });
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "_default", use: false, manage: true },
+      { role: "_public", use: false, manage: false },
+      { role: "default", use: false, manage: true },
+      { role: "public", use: false, manage: false },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      _default: [{ subject: "all", action: "manage" }],
+      _public: [{ subject: ENTITY_TYPE, action: "read" }],
+      default: [{ subject: "Child", action: "read" }],
+      public: [{ subject: ENTITY_TYPE, action: "read" }],
+    });
+  });
+
+  it("should preserve a [system-default] rule when unchecking a role", async () => {
+    mockConfig({
+      assistant_app: [
+        { subject: ENTITY_TYPE, action: "read", reason: "[system-default]" },
+        { subject: ENTITY_TYPE, action: "read" },
+      ],
+    });
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "assistant_app", use: false, manage: false },
+    ]);
+
+    expect(savedPermissions().assistant_app).toEqual([
+      { subject: ENTITY_TYPE, action: "read", reason: "[system-default]" },
+    ]);
+  });
+
+  it("should list role keys from the config, excluding reserved sections and their legacy spellings", async () => {
+    mockConfig({
+      _default: [{ subject: "all", action: "manage" }],
+      _public: [{ subject: ENTITY_TYPE, action: "read" }],
+      default: [{ subject: "all", action: "manage" }],
+      public: [{ subject: ENTITY_TYPE, action: "read" }],
+      user_app: [],
+      admin_app: [],
+      assistant_app: [{ subject: ENTITY_TYPE, action: "manage" }],
+    });
+
+    const roles = await service.getConfiguredRoleNames();
+
+    expect(roles).toEqual(["user_app", "admin_app", "assistant_app"]);
+  });
+});
