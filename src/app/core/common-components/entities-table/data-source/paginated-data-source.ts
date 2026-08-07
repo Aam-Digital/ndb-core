@@ -5,7 +5,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { effect, signal } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
-import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 
 export class PaginatedDataSource<

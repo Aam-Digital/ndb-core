@@ -45,7 +45,7 @@ import {
   shouldSkipRowInteraction,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
-import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.

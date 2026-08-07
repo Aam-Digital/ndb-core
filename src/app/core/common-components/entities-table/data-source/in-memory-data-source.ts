@@ -9,7 +9,7 @@ import {
   UpdatedEntity,
 } from "#src/app/core/entity/model/entity-update";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 
 /**
  * A data source that loads all data at once and sort/filters/paginates fully in-memory

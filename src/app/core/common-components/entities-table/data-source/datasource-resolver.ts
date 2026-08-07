@@ -6,7 +6,7 @@ import {
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
-import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/entities-table-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { Entity } from "#src/app/core/entity/model/entity";
 
 export function resolveDataSource<T extends Entity>(

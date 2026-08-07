@@ -3,11 +3,11 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
   signal,
   SkipSelf,
   ViewChild,
-  inject,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -18,7 +18,7 @@ import {
 import { MatTableDataSource } from "@angular/material/table";
 import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
 import { UnknownTotalPaginatorIntl } from "./unknown-total-paginator-intl";
-import { LOCAL_STORAGE_TOKEN } from "../../../../utils/di-tokens";
+import { LOCAL_STORAGE_TOKEN } from "#src/app/utils/di-tokens";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

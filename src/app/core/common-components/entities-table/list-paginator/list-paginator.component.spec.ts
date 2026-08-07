@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ListPaginatorComponent } from "./list-paginator.component";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginatorIntl, PageEvent } from "@angular/material/paginator";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { PaginatedDataSource } from "../data-source/paginated-data-source";
 import { UnknownTotalPaginatorIntl } from "./unknown-total-paginator-intl";
 
