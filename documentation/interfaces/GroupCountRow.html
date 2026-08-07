@@ -264,7 +264,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:54</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:51</a></div>
                                 </td>
                             </tr>
 
@@ -308,7 +308,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:59</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:56</a></div>
                                 </td>
                             </tr>
 
@@ -358,7 +358,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:64</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:61</a></div>
                                 </td>
                             </tr>
 
@@ -403,7 +403,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:46</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:43</a></div>
                                 </td>
                             </tr>
 
@@ -447,7 +447,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:53</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:50</a></div>
                                 </td>
                             </tr>
 
@@ -486,7 +486,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:45</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:42</a></div>
                                 </td>
                             </tr>
 
@@ -525,7 +525,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:51</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:48</a></div>
                                 </td>
                             </tr>
 
@@ -560,18 +560,15 @@ import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { Angulartics2Module } from &quot;angulartics2&quot;;
 import { ConfigurableEnumService } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
 import { ConfigurableEnumValue } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.types&quot;;
-import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
-import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
-import { EntityRegistry } from &quot;../../../../core/entity/database-entity.decorator&quot;;
-import { getEntityRuntimeRoute } from &quot;../../../../core/entity/entity-config.service&quot;;
-import { EntityFieldLabelComponent } from &quot;../../../../core/entity/entity-field-label/entity-field-label.component&quot;;
-import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
-import {
-  Entity,
-  EntityConstructor,
-} from &quot;../../../../core/entity/model/entity&quot;;
-import { applyUpdate } from &quot;../../../../core/entity/model/entity-update&quot;;
-import { groupBy } from &quot;../../../../utils/utils&quot;;
+import { DynamicComponent } from &quot;#src/app/core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { DashboardListWidgetComponent } from &quot;#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { getEntityRuntimeRoute } from &quot;#src/app/core/entity/entity-config.service&quot;;
+import { EntityFieldLabelComponent } from &quot;#src/app/core/entity/entity-field-label/entity-field-label.component&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { applyUpdate } from &quot;#src/app/core/entity/model/entity-update&quot;;
+import { groupBy } from &quot;#src/app/utils/utils&quot;;
 import { EntityFieldViewComponent } from &quot;#src/app/core/entity/entity-field-view/entity-field-view.component&quot;;
 
 /**
@@ -852,7 +849,7 @@ export class EntityCountDashboardComponent {
     }
 
     const params &#x3D; {};
-    params[field] &#x3D; filterId;
+    params[field] &#x3D; encodeURIComponent(filterId);
 
     this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
       queryParams: params,

@@ -1122,6 +1122,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/EditRecurringIntervalComponent.html" data-type="entity-link" >EditRecurringIntervalComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/EditReportDefinitionComponent.html" data-type="entity-link" >EditReportDefinitionComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/EditReportModeComponent.html" data-type="entity-link" >EditReportModeComponent</a>
                             </li>
                             <li class="link">
@@ -1473,7 +1476,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ShowFileComponent.html" data-type="entity-link" >ShowFileComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/SqlCodeEditorComponent.html" data-type="entity-link" >SqlCodeEditorComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/SqlV2TableComponent.html" data-type="entity-link" >SqlV2TableComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/StringFilterComponent.html" data-type="entity-link" >StringFilterComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/SubmissionSuccessComponent.html" data-type="entity-link" >SubmissionSuccessComponent</a>
@@ -1806,6 +1815,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/SqsSchema.html" data-type="entity-link" >SqsSchema</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/StringFilter.html" data-type="entity-link" >StringFilter&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
                                 <a href="classes/SyncedPouchDatabase.html" data-type="entity-link" >SyncedPouchDatabase</a>
@@ -2580,6 +2592,15 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/FlattenedReportRow.html" data-type="entity-link" >FlattenedReportRow</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/FlatTreeAdapter.html" data-type="entity-link" >FlatTreeAdapter&lt;T&gt;</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FlatTreeOptions.html" data-type="entity-link" >FlatTreeOptions</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FlatTreeRow.html" data-type="entity-link" >FlatTreeRow&lt;T&gt;</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/FormConfig.html" data-type="entity-link" >FormConfig</a>
                             </li>
                             <li class="link">
@@ -2755,6 +2776,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ReportDefinitionDto.html" data-type="entity-link" >ReportDefinitionDto</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ReportDefinitionUiNode.html" data-type="entity-link" >ReportDefinitionUiNode</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ReportRow.html" data-type="entity-link" >ReportRow</a>

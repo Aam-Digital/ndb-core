@@ -1,0 +1,643 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  FlatTreeRow&lt;T&gt;</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/utils/flat-tree/flat-tree.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>A single row of the flattened tree: one node, with its depth in the tree.</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#data" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">data</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#id" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">id</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#level" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">level</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="data"></a>
+                                <span class="name "><b>data</b>
+                                    <a href="#data">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>data:     <code>T</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>T</code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/utils/flat-tree/flat-tree.ts:22</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>the node itself, without its children (they are rows of their own)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="id"></a>
+                                <span class="name "><b>id</b>
+                                    <a href="#id">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>id:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/utils/flat-tree/flat-tree.ts:18</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>unique, stable id of the node (used for drag &amp; drop tracking)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="level"></a>
+                                <span class="name "><b>level</b>
+                                    <a href="#level">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>level:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/utils/flat-tree/flat-tree.ts:20</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>nesting depth; a row is a child of the nearest preceding row with a smaller level</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface FlatTreeRow&lt;T&gt; {
+  /** unique, stable id of the node (used for drag &amp; drop tracking) */
+  id: string;
+  /** nesting depth; a row is a child of the nearest preceding row with a smaller level */
+  level: number;
+  /** the node itself, without its children (they are rows of their own) */
+  data: T;
+}
+
+/** Maps the generic flat-tree helpers onto a concrete node type. */
+export interface FlatTreeAdapter&lt;T&gt; {
+  /** unique, stable id of a node */
+  id: (node: T) &#x3D;&gt; string;
+  /**
+   * The child nodes of a node, or &#x60;undefined&#x60; if the node cannot have children at all.
+   * Nodes returning an (empty) array can be nested into, others are always leaves.
+   */
+  children: (node: T) &#x3D;&gt; T[] | undefined;
+  /** a copy of the node with the given child nodes */
+  withChildren: (node: T, children: T[]) &#x3D;&gt; T;
+}
+
+/** Options restricting how deep rows may be nested. */
+export interface FlatTreeOptions {
+  /** maximum allowed nesting level; 0 disables nesting entirely (default: unlimited) */
+  maxLevel?: number;
+}
+
+/** Flatten a nested tree into rows (pre-order), carrying the depth as &#x60;level&#x60;. */
+export function flattenTree&lt;T&gt;(
+  nodes: T[] | undefined,
+  adapter: FlatTreeAdapter&lt;T&gt;,
+  level &#x3D; 0,
+): FlatTreeRow&lt;T&gt;[] {
+  const rows: FlatTreeRow&lt;T&gt;[] &#x3D; [];
+  for (const node of nodes ?? []) {
+    const children &#x3D; adapter.children(node);
+    rows.push({
+      id: adapter.id(node),
+      level,
+      // children become rows of their own, so they are cleared on the row&#x27;s own node
+      data: children ? adapter.withChildren(node, []) : node,
+    });
+    rows.push(...flattenTree(children, adapter, level + 1));
+  }
+  return rows;
+}
+
+/** Reconstruct the nested tree from flat rows: each row owns the following rows of greater level. */
+export function rebuildTree&lt;T&gt;(
+  rows: FlatTreeRow&lt;T&gt;[],
+  adapter: FlatTreeAdapter&lt;T&gt;,
+): T[] {
+  const nodes: T[] &#x3D; [];
+  let i &#x3D; 0;
+  while (i &lt; rows.length) {
+    const row &#x3D; rows[i];
+    const length &#x3D; subtreeLength(rows, i);
+    nodes.push(
+      adapter.children(row.data) &#x3D;&#x3D;&#x3D; undefined
+        ? row.data
+        : adapter.withChildren(
+            row.data,
+            rebuildTree(rows.slice(i + 1, i + length), adapter),
+          ),
+    );
+    i +&#x3D; length;
+  }
+  return nodes;
+}
+
+/**
+ * Clamp levels so the flat list always describes a valid tree: the first row is at level 0, every
+ * other row is at most one level deeper than the row above it — and only deeper if that row can
+ * have children at all — and no row is deeper than &#x60;maxLevel&#x60;.
+ */
+export function normalizeLevels&lt;T&gt;(
+  rows: FlatTreeRow&lt;T&gt;[],
+  adapter: FlatTreeAdapter&lt;T&gt;,
+  options?: FlatTreeOptions,
+): FlatTreeRow&lt;T&gt;[] {
+  const normalized: FlatTreeRow&lt;T&gt;[] &#x3D; [];
+  for (const row of rows) {
+    const max &#x3D; maxLevelBelow(
+      normalized[normalized.length - 1],
+      adapter,
+      options,
+    );
+    normalized.push({ ...row, level: Math.max(0, Math.min(row.level, max)) });
+  }
+  return normalized;
+}
+
+/** The deepest level a row directly below &#x60;above&#x60; may have (0 if there is no row above). */
+function maxLevelBelow&lt;T&gt;(
+  above: FlatTreeRow&lt;T&gt; | undefined,
+  adapter: FlatTreeAdapter&lt;T&gt;,
+  options?: FlatTreeOptions,
+): number {
+  if (!above) {
+    return 0;
+  }
+  const level &#x3D; adapter.children(above.data) ? above.level + 1 : above.level;
+  return Math.min(level, options?.maxLevel ?? Number.MAX_SAFE_INTEGER);
+}
+
+/** Number of rows forming the subtree rooted at &#x60;index&#x60; (the row itself plus its descendants). */
+export function subtreeLength&lt;T&gt;(
+  rows: FlatTreeRow&lt;T&gt;[],
+  index: number,
+): number {
+  const base &#x3D; rows[index].level;
+  let end &#x3D; index + 1;
+  while (end &lt; rows.length &amp;&amp; rows[end].level &gt; base) {
+    end++;
+  }
+  return end - index;
+}
+
+/**
+ * Move the subtree rooted at &#x60;previousIndex&#x60; to &#x60;currentIndex&#x60; (as reported by a &#x60;cdkDropList&#x60;,
+ * which only moves the dragged row itself — its descendants follow it here) and re-nest it by
+ * &#x60;levelDelta&#x60; levels, within what the rows it comes to rest between allow.
+ */
+export function moveSubtree&lt;T&gt;(
+  rows: FlatTreeRow&lt;T&gt;[],
+  previousIndex: number,
+  currentIndex: number,
+  adapter: FlatTreeAdapter&lt;T&gt;,
+  options?: FlatTreeOptions &amp; {
+    /** how many levels to nest the row in or out, e.g. from the horizontal drag distance */
+    levelDelta?: number;
+  },
+): FlatTreeRow&lt;T&gt;[] {
+  const length &#x3D; subtreeLength(rows, previousIndex);
+  const dragged &#x3D; rows[previousIndex];
+
+  // move the subtree as a whole; &#x60;currentIndex&#x60; counts the dragged row only, so dropping it
+  // further down has to account for the descendants taken out of the list along with it
+  const moved &#x3D; [...rows];
+  const subtree &#x3D; moved.splice(previousIndex, length);
+  const insertAt &#x3D;
+    currentIndex &lt;&#x3D; previousIndex
+      ? currentIndex
+      : Math.max(previousIndex, currentIndex - length + 1);
+  moved.splice(insertAt, 0, ...subtree);
+
+  // Nest by the dragged distance, but only as deep as the row above allows and not shallower
+  // than the row below: a shallower row would adopt the rows following it as its own children.
+  const maxLevel &#x3D; maxLevelBelow(moved[insertAt - 1], adapter, options);
+  const minLevel &#x3D; Math.min(moved[insertAt + length]?.level ?? 0, maxLevel);
+  const targetLevel &#x3D; Math.max(
+    minLevel,
+    Math.min(dragged.level + (options?.levelDelta ?? 0), maxLevel),
+  );
+  const delta &#x3D; targetLevel - dragged.level;
+  for (let i &#x3D; insertAt; i &lt; insertAt + length; i++) {
+    moved[i] &#x3D; { ...moved[i], level: moved[i].level + delta };
+  }
+
+  return normalizeLevels(moved, adapter, options);
+}
+
+/** Remove the row at &#x60;index&#x60; together with its whole subtree. */
+export function removeSubtree&lt;T&gt;(
+  rows: FlatTreeRow&lt;T&gt;[],
+  index: number,
+  adapter: FlatTreeAdapter&lt;T&gt;,
+  options?: FlatTreeOptions,
+): FlatTreeRow&lt;T&gt;[] {
+  const remaining &#x3D; [...rows];
+  remaining.splice(index, subtreeLength(rows, index));
+  return normalizeLevels(remaining, adapter, options);
+}
+
+/** Insert &#x60;node&#x60; as the first child of the row at &#x60;parentIndex&#x60;. */
+export function insertChild&lt;T&gt;(
+  rows: FlatTreeRow&lt;T&gt;[],
+  parentIndex: number,
+  node: T,
+  adapter: FlatTreeAdapter&lt;T&gt;,
+  options?: FlatTreeOptions,
+): FlatTreeRow&lt;T&gt;[] {
+  const extended &#x3D; [...rows];
+  extended.splice(parentIndex + 1, 0, {
+    id: adapter.id(node),
+    level: rows[parentIndex].level + 1,
+    data: node,
+  });
+  return normalizeLevels(extended, adapter, options);
+}
+
+/** Replace the node of the row at &#x60;index&#x60;, keeping its position and nesting. */
+export function updateRow&lt;T&gt;(
+  rows: FlatTreeRow&lt;T&gt;[],
+  index: number,
+  node: T,
+): FlatTreeRow&lt;T&gt;[] {
+  return rows.map((row, i) &#x3D;&gt; (i &#x3D;&#x3D;&#x3D; index ? { ...row, data: node } : row));
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'FlatTreeRow.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

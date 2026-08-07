@@ -283,7 +283,7 @@ for the admin drag&amp;drop logic.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts:9</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts:10</a></div>
                                 </td>
                             </tr>
 
@@ -322,7 +322,7 @@ for the admin drag&amp;drop logic.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts:8</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts:9</a></div>
                                 </td>
                             </tr>
 
@@ -528,7 +528,8 @@ for the admin drag&amp;drop logic.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityMenuItem, MenuItem } from &quot;../../ui/navigation/menu-item&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { FlatTreeAdapter } from &quot;#src/app/utils/flat-tree/flat-tree&quot;;
+import { EntityMenuItem, MenuItem } from &quot;../../ui/navigation/menu-item&quot;;
 
 /**
  * Extension of MenuItem that includes additional properties
@@ -538,6 +539,16 @@ export interface MenuItemForAdminUi extends MenuItem {
   uniqueId: string;
   subMenu: MenuItemForAdminUi[];
 }
+
+/**
+ * Edit the menu as a flat, indented list (see &#x60;flat-tree&#x60;):
+ * every menu item can hold nested sub-items.
+ */
+export const menuItemTree: FlatTreeAdapter&lt;MenuItemForAdminUi&gt; &#x3D; {
+  id: (item) &#x3D;&gt; item.uniqueId,
+  children: (item) &#x3D;&gt; item.subMenu ?? [],
+  withChildren: (item, subMenu) &#x3D;&gt; ({ ...item, subMenu }),
+};
 
 export class MenuItemForAdminUiNew implements MenuItemForAdminUi {
   constructor(public uniqueId: string) {}
@@ -557,16 +568,6 @@ export function isManualItemWithoutLink(
   item: MenuItem | EntityMenuItem,
 ): boolean {
   return !item.link?.trim() &amp;&amp; !(item as EntityMenuItem).entityType?.trim();
-}
-
-/**
- * True when an item has no destination link and also no nested sub-items.
- */
-export function hasNoLinkAndNoSubItems(item: MenuItemForAdminUi): boolean {
-  return (
-    isManualItemWithoutLink(item) &amp;&amp;
-    (!item.subMenu || item.subMenu.length &#x3D;&#x3D;&#x3D; 0)
-  );
 }
 </code></pre>
     </div>

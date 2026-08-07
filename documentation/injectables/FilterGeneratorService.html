@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -341,7 +341,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import {
   createEmptyValueFilter,
   DataFilter,
@@ -363,13 +363,19 @@ import { ConfigurableEnumService } from &quot;../../basic-datatypes/configurable
 import { FilterService } from &quot;../filter.service&quot;;
 import { defaultDateFilters } from &quot;../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { DateDatatype } from &quot;../../basic-datatypes/date/date.datatype&quot;;
+import { StringDatatype } from &quot;../../basic-datatypes/string/string.datatype&quot;;
+import { LongTextDatatype } from &quot;../../basic-datatypes/string/long-text.datatype&quot;;
 import { DateFilter } from &quot;../filters/dateFilter&quot;;
+import { StringFilter } from &quot;../filters/stringFilter&quot;;
 import { BooleanFilter } from &quot;../filters/booleanFilter&quot;;
 import { ConfigurableEnumFilter } from &quot;../filters/configurableEnumFilter&quot;;
 import { EntityFilter } from &quot;../filters/entityFilter&quot;;
 import { DynamicPlaceholderValueService } from &quot;app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service&quot;;
 import { todoDueStatusFilter } from &quot;../../../features/todos/add-default-todo-views&quot;;
+import { EmailDatatype } from &quot;../../basic-datatypes/string/email.datatype&quot;;
+import { UrlDatatype } from &quot;../../basic-datatypes/string/url.datatype&quot;;
 
 @Injectable({
   providedIn: &quot;root&quot;,
@@ -529,6 +535,8 @@ export class FilterGeneratorService {
           label,
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
         );
+      } else if (this.isFreeTextField(type, schema)) {
+        filter &#x3D; new StringFilter(filterConfig.id, label);
       } else if (
         // type: entity reference
         this.entities.has(filterConfig.type) ||
@@ -589,6 +597,33 @@ export class FilterGeneratorService {
       filters.push(filter);
     }
     return filters;
+  }
+
+  /**
+   * Whether the field is a free-text field that should be filtered
+   * with a text-search input (see {@link StringFilter}):
+   * dataType &quot;string&quot; or &quot;long-text&quot;, edited with a plain text edit component.
+   */
+  private isFreeTextField(type: string, schema: EntitySchemaField): boolean {
+    const stringDataTypes &#x3D; [
+      StringDatatype,
+      LongTextDatatype,
+      EmailDatatype,
+      UrlDatatype,
+    ];
+
+    const editComponent &#x3D;
+      schema.editComponent ??
+      this.schemaService.getDatatypeOrDefault(type)?.editComponent;
+
+    return (
+      stringDataTypes.some((dt) &#x3D;&gt; dt.dataType &#x3D;&#x3D;&#x3D; type) &amp;&amp;
+      stringDataTypes.some(
+        (dt) &#x3D;&gt;
+          this.schemaService.getDatatypeOrDefault(dt.dataType).editComponent &#x3D;&#x3D;&#x3D;
+          editComponent,
+      )
+    );
   }
 
   /**

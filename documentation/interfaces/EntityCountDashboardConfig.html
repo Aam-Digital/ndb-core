@@ -237,7 +237,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:37</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:34</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +281,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:38</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts:35</a></div>
                                 </td>
                             </tr>
 
@@ -310,18 +310,15 @@ import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { Angulartics2Module } from &quot;angulartics2&quot;;
 import { ConfigurableEnumService } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
 import { ConfigurableEnumValue } from &quot;app/core/basic-datatypes/configurable-enum/configurable-enum.types&quot;;
-import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
-import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
-import { EntityRegistry } from &quot;../../../../core/entity/database-entity.decorator&quot;;
-import { getEntityRuntimeRoute } from &quot;../../../../core/entity/entity-config.service&quot;;
-import { EntityFieldLabelComponent } from &quot;../../../../core/entity/entity-field-label/entity-field-label.component&quot;;
-import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
-import {
-  Entity,
-  EntityConstructor,
-} from &quot;../../../../core/entity/model/entity&quot;;
-import { applyUpdate } from &quot;../../../../core/entity/model/entity-update&quot;;
-import { groupBy } from &quot;../../../../utils/utils&quot;;
+import { DynamicComponent } from &quot;#src/app/core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { DashboardListWidgetComponent } from &quot;#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { getEntityRuntimeRoute } from &quot;#src/app/core/entity/entity-config.service&quot;;
+import { EntityFieldLabelComponent } from &quot;#src/app/core/entity/entity-field-label/entity-field-label.component&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { applyUpdate } from &quot;#src/app/core/entity/model/entity-update&quot;;
+import { groupBy } from &quot;#src/app/utils/utils&quot;;
 import { EntityFieldViewComponent } from &quot;#src/app/core/entity/entity-field-view/entity-field-view.component&quot;;
 
 /**
@@ -602,7 +599,7 @@ export class EntityCountDashboardComponent {
     }
 
     const params &#x3D; {};
-    params[field] &#x3D; filterId;
+    params[field] &#x3D; encodeURIComponent(filterId);
 
     this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
       queryParams: params,
