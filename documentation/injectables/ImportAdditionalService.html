@@ -231,7 +231,7 @@ like creating secondary relationship entities.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:38</a></div>
                             </td>
                         </tr>
 
@@ -264,8 +264,8 @@ like creating secondary relationship entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="322"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:322</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="353"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:353</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +360,8 @@ like creating secondary relationship entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="161"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:161</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="192"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:192</a></div>
                         </td>
                     </tr>
 
@@ -442,8 +442,8 @@ linking entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="133"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:133</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="134"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:134</a></div>
                         </td>
                     </tr>
 
@@ -512,8 +512,8 @@ linking entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="142"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:142</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="145"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:145</a></div>
                         </td>
                     </tr>
 
@@ -585,8 +585,8 @@ linking entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="182"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:182</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="213"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:213</a></div>
                         </td>
                     </tr>
 
@@ -659,6 +659,7 @@ import { AttendanceDatatype } from &quot;../../../features/attendance/model/atte
 import { EntityRelationsService } from &quot;../../entity/entity-mapper/entity-relations.service&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
 import { EntityConfigReadyService } from &quot;../../entity/entity-config-ready.service&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
  * Service to handle additional import actions
@@ -772,7 +773,9 @@ export class ImportAdditionalService {
    * @param entityType
    */
   getActionsLinkingFor(entityType: string): AdditionalImportAction[] {
-    return this.linkableEntities.get(entityType) ?? [];
+    return (this.linkableEntities.get(entityType) ?? []).filter((a) &#x3D;&gt;
+      this.hasAllReferencedTypes(a),
+    );
   }
 
   /**
@@ -784,13 +787,41 @@ export class ImportAdditionalService {
     const linkingTypes: AdditionalImportAction[] &#x3D; [];
 
     for (const entityType of this.linkableEntities.keys()) {
-      const matchingActions &#x3D; (
-        this.linkableEntities.get(entityType) ?? []
-      ).filter((a) &#x3D;&gt; a.targetType &#x3D;&#x3D;&#x3D; targetEntityType);
+      const matchingActions &#x3D; (this.linkableEntities.get(entityType) ?? [])
+        .filter((a) &#x3D;&gt; a.targetType &#x3D;&#x3D;&#x3D; targetEntityType)
+        .filter((a) &#x3D;&gt; this.hasAllReferencedTypes(a));
       linkingTypes.push(...matchingActions);
     }
 
     return linkingTypes;
+  }
+
+  /**
+   * Check that every entity type an action refers to is actually registered.
+   *
+   * The types come from the entity config (e.g. a relationship field&#x27;s &#x60;additional&#x60;),
+   * where a renamed or removed type can leave a dangling reference behind.
+   * Looking such a type up throws, so an action referencing one must not be offered at all.
+   */
+  private hasAllReferencedTypes(action: AdditionalImportAction): boolean {
+    const referencedTypes &#x3D; [
+      action.sourceType,
+      ...asArray(action[&quot;targetType&quot;] ?? []),
+      ...asArray(action[&quot;relationshipEntityType&quot;] ?? []),
+    ];
+
+    const unregisteredType &#x3D; referencedTypes.find(
+      (type) &#x3D;&gt; !this.entityRegistry.has(type),
+    );
+    if (unregisteredType) {
+      Logging.warn(
+        &quot;ImportAdditional: skipping action referencing an entity type that is not registered.&quot;,
+        { unregisteredType, action },
+      );
+      return false;
+    }
+
+    return true;
   }
 
   /**
