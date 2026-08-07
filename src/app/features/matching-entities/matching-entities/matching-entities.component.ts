@@ -58,7 +58,7 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { Logging } from "#src/app/core/logging/logging.service";
 
 export interface MatchingSide extends MatchingSideConfig {

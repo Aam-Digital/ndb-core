@@ -2,6 +2,7 @@ import { FilterSelectionOption } from "../filter/filters/filters";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { Sort } from "@angular/material/sort";
 import { unitOfTime } from "moment";
+import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 
 export interface EntityListConfig {
   /**
@@ -14,6 +15,13 @@ export interface EntityListConfig {
    * (optional) This is only used and necessary if EntityListComponent is used directly in config
    */
   entityType?: string;
+
+  /**
+   * Select what kind of data source is used for the table.
+   * (optional) default is "paginated" in online-only session and "in-memory" otherwise
+   * see `datasource-resolver.ts`
+   */
+  dataSource?: DataSourceType;
 
   /**
    * Custom overwrites or additional columns to be displayed in the table.

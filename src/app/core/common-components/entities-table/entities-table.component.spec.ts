@@ -8,7 +8,6 @@ import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { toFormFieldConfig } from "../entity-form/FormConfig";
 import { FilterService } from "../../filter/filter.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { of } from "rxjs";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
@@ -17,7 +16,7 @@ import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -34,11 +33,7 @@ describe("EntitiesTableComponent", () => {
     );
 
     await TestBed.configureTestingModule({
-      imports: [
-        EntitiesTableComponent,
-        CoreTestingModule,
-        NoopAnimationsModule,
-      ],
+      imports: [EntitiesTableComponent, CoreTestingModule],
       providers: [
         { provide: EntitySpecialLoaderService, useValue: undefined },
         InMemoryDataSource,

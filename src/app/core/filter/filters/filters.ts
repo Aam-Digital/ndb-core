@@ -170,7 +170,10 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
       });
 
     if (filters.length === 0) {
-      return {} as DataFilter<T>;
+      return undefined;
+    }
+    if (filters.length === 1) {
+      return filters[0];
     }
     return {
       $or: [...filters],

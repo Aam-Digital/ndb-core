@@ -91,6 +91,13 @@ export abstract class Database {
     throw new Error("purge() is not supported by this database implementation");
   }
 
+  abstract find(
+    prefix: string,
+    query: any,
+    page?: { limit?: number; skip?: number },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<any>;
+
   /**
    * Query data from the database based on a more complex, indexed request.
    *

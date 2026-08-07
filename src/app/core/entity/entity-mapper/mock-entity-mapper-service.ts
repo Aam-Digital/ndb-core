@@ -6,6 +6,8 @@ import { UpdatedEntity } from "../model/entity-update";
 import { Provider } from "@angular/core";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { filter as buildFilterPredicate } from "@ucast/mongo2js";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 export function createEntityMapperSpyObj() {
   return {
@@ -142,6 +144,48 @@ export class MockEntityMapperService extends EntityMapperService {
   ): Promise<T[]> {
     let type = this.getTypeViaRegistry(entityType);
     return this.getAll(type);
+  }
+
+  override async findType<T extends Entity>(
+    entityType: EntityConstructor<T> | string,
+    filter: DataFilter<T> = {},
+    page?: { limit: number; skip: number },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<T[]> {
+    let records = await this.loadType<T>(entityType);
+
+    // filter
+    const predicate = buildFilterPredicate(filter as any);
+    records = records.filter((record) => predicate(record as any));
+
+    // sort
+    if (sort?.prop) {
+      records = this.sortRecords(records, sort.prop, sort.dir);
+    }
+
+    // paginate
+    if (page) {
+      records = records.slice(page.skip, page.skip + page.limit);
+    }
+
+    return records;
+  }
+
+  private sortRecords<T extends Entity>(
+    records: T[],
+    prop: string,
+    dir: "asc" | "desc" = "asc",
+  ): T[] {
+    const direction = dir === "desc" ? -1 : 1;
+    return [...records].sort((a, b) => {
+      const aValue = a[prop];
+      const bValue = b[prop];
+      if (aValue === bValue) return 0;
+      // undefined/null values are always sorted to the end
+      if (aValue === undefined || aValue === null) return 1;
+      if (bValue === undefined || bValue === null) return -1;
+      return (aValue > bValue ? 1 : -1) * direction;
+    });
   }
 
   private getTypeViaRegistry(entityType: EntityConstructor | string): string {

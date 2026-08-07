@@ -57,7 +57,9 @@ export class RelatedTimePeriodEntitiesComponent<
 
   readonly hasCurrentlyActiveEntry = computed(
     () =>
-      this.dataSource.allRecords()?.some((record) => record.isActive) ?? false,
+      this.recordsDataSource()
+        .allRecords()
+        ?.some((record) => record.isActive) ?? false,
   );
 
   constructor() {
@@ -70,7 +72,7 @@ export class RelatedTimePeriodEntitiesComponent<
   override createNewRecordFactory() {
     return () => {
       const newRelation = super.createNewRecordFactory()();
-      const currentData = this.dataSource.allRecords();
+      const currentData = this.recordsDataSource().allRecords();
 
       newRelation.start =
         currentData?.length && currentData[0].end

@@ -58,7 +58,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     }
     return filterObject.$gte || filterObject.$lte
       ? ({ [this.name]: filterObject } as DataFilter<T>)
-      : ({} as DataFilter<T>);
+      : undefined;
   }
 
   getSelectedOption() {

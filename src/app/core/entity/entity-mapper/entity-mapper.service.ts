@@ -30,6 +30,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
 import { EntityActionPermission } from "../../permissions/permission-types";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -84,6 +85,19 @@ export class EntityMapperService {
     const records = await this.dbResolver
       .getDatabase(ctor.DATABASE)
       .getAll(ctor.ENTITY_TYPE + ":");
+    return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+  }
+
+  public async findType<T extends Entity>(
+    entityType: EntityConstructor<T> | string,
+    filter: DataFilter<T>,
+    page?: { limit: number; skip: number },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<T[]> {
+    const ctor = this.resolveConstructor(entityType);
+    const records = await this.dbResolver
+      .getDatabase(ctor.DATABASE)
+      .find(ctor.ENTITY_TYPE, filter, page, sort);
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 

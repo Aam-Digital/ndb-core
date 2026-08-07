@@ -46,7 +46,7 @@ export class RelatedEntitiesWithSummaryComponent<
       string | undefined,
       { count: number; sum: number }
     >();
-    const filteredData = this.dataSource.filteredRecords();
+    const filteredData = this.recordsDataSource().filteredRecords();
 
     filteredData.forEach((m) => {
       const amount = Number(m[summaries.countProperty]);

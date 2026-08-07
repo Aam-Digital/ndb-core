@@ -145,7 +145,9 @@ describe("FilterGeneratorService", () => {
     let comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
-    expect(comparableOptions).toHaveLength(interactionTypes.length);
+
+    // Enum options + empty option
+    expect(comparableOptions).toHaveLength(interactionTypes.length + 1);
     expect(comparableOptions).toEqual(expect.arrayContaining(interactionTypes));
 
     try {
@@ -164,7 +166,7 @@ describe("FilterGeneratorService", () => {
       comparableOptions = filterOptions.options.map((option) => {
         return { key: option.key, label: option.label };
       });
-      expect(comparableOptions).toHaveLength(interactionTypes.length);
+      expect(comparableOptions).toHaveLength(interactionTypes.length + 1);
       expect(comparableOptions).toEqual(
         expect.arrayContaining(interactionTypes),
       );
@@ -184,7 +186,7 @@ describe("FilterGeneratorService", () => {
       comparableOptions = filterOptions.options.map((option) => {
         return { key: option.key, label: option.label };
       });
-      expect(comparableOptions).toHaveLength(interactionTypes.length);
+      expect(comparableOptions).toHaveLength(interactionTypes.length + 1);
       expect(comparableOptions).toEqual(
         expect.arrayContaining(interactionTypes),
       );
@@ -195,9 +197,9 @@ describe("FilterGeneratorService", () => {
         defaultInteractionTypes[2],
       ];
 
-      expect(filter([note], filterOptions.options[1])).toEqual([note]);
       expect(filter([note], filterOptions.options[2])).toEqual([note]);
-      expect(filter([note], filterOptions.options[3])).toEqual([]);
+      expect(filter([note], filterOptions.options[3])).toEqual([note]);
+      expect(filter([note], filterOptions.options[4])).toEqual([]);
     } finally {
       // restore even on a failed assertion, the schema is shared across spec files
       Note.schema.delete("otherEnum");
@@ -274,6 +276,7 @@ describe("FilterGeneratorService", () => {
     expectArrayWithExactContents(comparableOptions, [
       { key: "1", label: "1" },
       { key: "5", label: "5" },
+      { key: EMPTY_FILTER_OPTION_KEY, label: "not defined" },
     ]);
   });
 
