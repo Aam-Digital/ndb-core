@@ -163,7 +163,13 @@ export class PaginatedDataSource<
           { inactive: { $exists: false } },
         ];
         if (filter["$or"]) {
-          filter["or"].push(...isActive);
+          const existingOr = filter["$or"];
+          delete filter["$or"];
+          if (!filter["$and"]) {
+            filter["$and"] = [];
+          }
+          filter["$and"].push({ $or: existingOr });
+          filter["$and"].push({ $or: isActive });
         } else {
           filter["$or"] = isActive;
         }
