@@ -1579,6 +1579,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="directives/DynamicComponentDirective.html" data-type="entity-link" >DynamicComponentDirective</a>
                                 </li>
                                 <li class="link">
+                                    <a href="directives/KeepPanelOpenOnSelectDirective.html" data-type="entity-link" >KeepPanelOpenOnSelectDirective</a>
+                                </li>
+                                <li class="link">
                                     <a href="directives/TemplateTooltipDirective.html" data-type="entity-link" >TemplateTooltipDirective</a>
                                 </li>
                                 <li class="link">
