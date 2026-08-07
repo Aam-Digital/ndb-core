@@ -156,7 +156,21 @@ export class PaginatedDataSource<
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
     // isActive is not available in the database
     if (filter["isActive"]) {
-      filter["inactive"] = { $ne: filter["isActive"] };
+      if (filter["isActive"] === true) {
+        // Only active -> either 'inactive' not set or not 'true'
+        const isActive = [
+          { inactive: { $ne: true } },
+          { inactive: { $exists: false } },
+        ];
+        if (filter["$or"]) {
+          filter["or"].push(...isActive);
+        } else {
+          filter["$or"] = isActive;
+        }
+      } else {
+        // Only inactive -> inactive needs to be 'true'
+        filter["inactive"] = true;
+      }
       delete filter["isActive"];
     }
     const filterString = JSON.stringify(filter);
