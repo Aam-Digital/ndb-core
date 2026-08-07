@@ -1,3 +1,4 @@
+import { FlatTreeAdapter } from "#src/app/utils/flat-tree/flat-tree";
 import { EntityMenuItem, MenuItem } from "../../ui/navigation/menu-item";
 
 /**
@@ -8,6 +9,16 @@ export interface MenuItemForAdminUi extends MenuItem {
   uniqueId: string;
   subMenu: MenuItemForAdminUi[];
 }
+
+/**
+ * Edit the menu as a flat, indented list (see `flat-tree`):
+ * every menu item can hold nested sub-items.
+ */
+export const menuItemTree: FlatTreeAdapter<MenuItemForAdminUi> = {
+  id: (item) => item.uniqueId,
+  children: (item) => item.subMenu ?? [],
+  withChildren: (item, subMenu) => ({ ...item, subMenu }),
+};
 
 export class MenuItemForAdminUiNew implements MenuItemForAdminUi {
   constructor(public uniqueId: string) {}
@@ -27,14 +38,4 @@ export function isManualItemWithoutLink(
   item: MenuItem | EntityMenuItem,
 ): boolean {
   return !item.link?.trim() && !(item as EntityMenuItem).entityType?.trim();
-}
-
-/**
- * True when an item has no destination link and also no nested sub-items.
- */
-export function hasNoLinkAndNoSubItems(item: MenuItemForAdminUi): boolean {
-  return (
-    isManualItemWithoutLink(item) &&
-    (!item.subMenu || item.subMenu.length === 0)
-  );
 }

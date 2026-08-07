@@ -9,7 +9,6 @@ import {
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EditReportDefinitionComponent } from "./edit-report-definition.component";
-import { FlatReportRow } from "./report-definition-ui-node";
 
 /** wire the component to a `reportDefinition` control sitting next to a `mode` control */
 function createWithMode(mode: string): EditReportDefinitionComponent {
@@ -31,10 +30,17 @@ describe("EditReportDefinitionComponent", () => {
   let formGroup: UntypedFormGroup;
 
   const definition = () => formGroup.get("reportDefinition").value;
-  const drop = (previousIndex: number, currentIndex: number) =>
-    component.onDrop({ previousIndex, currentIndex } as CdkDragDrop<
-      FlatReportRow[]
-    >);
+  /** simulate a drop, `draggedLevels` being how far the row was dragged sideways */
+  const drop = (
+    previousIndex: number,
+    currentIndex: number,
+    draggedLevels = 0,
+  ) =>
+    component.onDrop({
+      previousIndex,
+      currentIndex,
+      distance: { x: draggedLevels * component.indentPerLevel, y: 0 },
+    } as CdkDragDrop<unknown>);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -172,5 +178,43 @@ describe("EditReportDefinitionComponent", () => {
     drop(0, 1);
 
     expect(definition()).toEqual([{ query: "b" }, { query: "a" }]);
+  });
+
+  it("nests a query into the group above it when dragged to the right", () => {
+    formGroup
+      .get("reportDefinition")
+      .setValue([{ groupTitle: "G", items: [] }, { query: "a" }]);
+    fixture.detectChanges();
+
+    drop(1, 1, 1); // dragged one indentation step to the right
+
+    expect(definition()).toEqual([
+      { groupTitle: "G", items: [{ query: "a" }] },
+    ]);
+  });
+
+  it("lifts a query out of its group when dragged to the left", () => {
+    formGroup
+      .get("reportDefinition")
+      .setValue([{ groupTitle: "G", items: [{ query: "a" }] }]);
+    fixture.detectChanges();
+
+    drop(1, 1, -1);
+
+    expect(definition()).toEqual([
+      { groupTitle: "G", items: [] },
+      { query: "a" },
+    ]);
+  });
+
+  it("does not nest a query below another query, however far it is dragged", () => {
+    formGroup
+      .get("reportDefinition")
+      .setValue([{ query: "a" }, { query: "b" }]);
+    fixture.detectChanges();
+
+    drop(1, 1, 3);
+
+    expect(definition()).toEqual([{ query: "a" }, { query: "b" }]);
   });
 });
