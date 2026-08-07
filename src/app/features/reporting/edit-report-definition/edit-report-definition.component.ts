@@ -90,11 +90,15 @@ export class EditReportDefinitionComponent
   readonly indentPerLevel = 24;
 
   /** the definition as a flat, indented list of rows (working copy) */
-  readonly rows = signal<FlatTreeRow<ReportDefinitionUiNode>[]>([]);
+  private readonly flatRows = signal<FlatTreeRow<ReportDefinitionUiNode>[]>([]);
+
+  /** the rows as rendered, with the display flags the template needs derived once per change */
+  readonly rows = computed(() =>
+    this.flatRows().map((row) => ({ ...row, isGroup: isGroupNode(row.data) })),
+  );
+
   /** JSON of the last definition synced in either direction, to break the value<->rows loop */
   private lastSync = "";
-
-  protected readonly isGroup = isGroupNode;
 
   constructor() {
     super();
@@ -106,7 +110,7 @@ export class EditReportDefinitionComponent
       const json = JSON.stringify(arr);
       if (json !== this.lastSync) {
         this.lastSync = json;
-        this.rows.set(flattenTree(toUiNodes(arr), reportDefinitionTree));
+        this.flatRows.set(flattenTree(toUiNodes(arr), reportDefinitionTree));
       }
     });
   }
@@ -152,7 +156,7 @@ export class EditReportDefinitionComponent
 
   /** remove the row and, for a group, its whole subtree */
   remove(index: number): void {
-    this.rows.update((rows) =>
+    this.flatRows.update((rows) =>
       removeSubtree(rows, index, reportDefinitionTree),
     );
     this.persist();
@@ -162,7 +166,7 @@ export class EditReportDefinitionComponent
     // how far the row was dragged sideways determines how deep it is nested;
     // truncated, so that only a full indentation step re-nests (and not slight drift)
     const levelDelta = Math.trunc(event.distance.x / this.indentPerLevel);
-    this.rows.update((rows) =>
+    this.flatRows.update((rows) =>
       moveSubtree(
         rows,
         event.previousIndex,
@@ -175,7 +179,7 @@ export class EditReportDefinitionComponent
   }
 
   private append(node: ReportDefinitionUiNode): void {
-    this.rows.update((rows) => [
+    this.flatRows.update((rows) => [
       ...rows,
       { id: node.uniqueId, level: 0, data: node },
     ]);
@@ -183,7 +187,7 @@ export class EditReportDefinitionComponent
   }
 
   private insertInto(groupIndex: number, node: ReportDefinitionUiNode): void {
-    this.rows.update((rows) =>
+    this.flatRows.update((rows) =>
       insertChild(rows, groupIndex, node, reportDefinitionTree),
     );
     this.persist();
@@ -193,7 +197,7 @@ export class EditReportDefinitionComponent
     index: number,
     patch: Partial<ReportDefinitionUiNode>,
   ): void {
-    this.rows.update((rows) =>
+    this.flatRows.update((rows) =>
       updateRow(rows, index, { ...rows[index].data, ...patch }),
     );
     this.persist();
@@ -201,7 +205,7 @@ export class EditReportDefinitionComponent
 
   private persist(): void {
     const definition = toReportDefinition(
-      rebuildTree(this.rows(), reportDefinitionTree),
+      rebuildTree(this.flatRows(), reportDefinitionTree),
     );
     const json = JSON.stringify(definition);
     // Ignore no-op writes: a re-emitted (unchanged) value would otherwise re-mark a pristine

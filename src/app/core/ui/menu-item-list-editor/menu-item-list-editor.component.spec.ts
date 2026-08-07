@@ -40,6 +40,24 @@ describe("MenuItemListEditorComponent", () => {
     fixture.detectChanges();
   });
 
+  /** a menu item with the given id and (optional) sub-items */
+  const menuItem = (
+    uniqueId: string,
+    subMenu: MenuItemForAdminUi[] = [],
+  ): MenuItemForAdminUi => ({ uniqueId, label: uniqueId, subMenu });
+
+  /** simulate a drop, `draggedLevels` being how far the item was dragged sideways */
+  const drop = (
+    previousIndex: number,
+    currentIndex: number,
+    draggedLevels = 0,
+  ) =>
+    component.onDrop({
+      previousIndex,
+      currentIndex,
+      distance: { x: draggedLevels * component.indentPerLevel, y: 0 },
+    } as CdkDragDrop<unknown>);
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -118,103 +136,83 @@ describe("MenuItemListEditorComponent", () => {
     expect(emittedValues).toEqual([[secondItem]]);
   });
 
-  describe("drag & drop of the flat, indented list", () => {
-    /** a menu item with the given id and (optional) sub-items */
-    const menuItem = (
-      uniqueId: string,
-      subMenu: MenuItemForAdminUi[] = [],
-    ): MenuItemForAdminUi => ({ uniqueId, label: uniqueId, subMenu });
+  it("flattens nested items into indented rows", () => {
+    component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
 
-    /** simulate a drop, `draggedLevels` being how far the item was dragged sideways */
-    const drop = (
-      previousIndex: number,
-      currentIndex: number,
-      draggedLevels = 0,
-    ) =>
-      component.onDrop({
-        previousIndex,
-        currentIndex,
-        distance: { x: draggedLevels * component.indentPerLevel, y: 0 },
-      } as CdkDragDrop<unknown>);
+    expect(component.rows().map((r) => [r.id, r.level, r.hasSubItems])).toEqual(
+      [
+        ["a", 0, true],
+        ["a1", 1, false],
+        ["b", 0, false],
+      ],
+    );
+  });
 
-    it("flattens nested items into indented rows", () => {
-      component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
+  it("moves an item together with its sub-items", () => {
+    component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
 
-      expect(component.rows().map((r) => [r.id, r.level])).toEqual([
-        ["a", 0],
-        ["a1", 1],
-        ["b", 0],
-      ]);
-      expect(component.hasSubItems(0)).toBe(true);
-      expect(component.hasSubItems(1)).toBe(false);
-    });
+    drop(0, 2); // drag "a" to the end; cdk counts the dragged row only
 
-    it("moves an item together with its sub-items", () => {
-      component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
+    expect(component.items()).toEqual([
+      menuItem("b"),
+      menuItem("a", [menuItem("a1")]),
+    ]);
+  });
 
-      drop(0, 2); // drag "a" to the end; cdk counts the dragged row only
+  it("nests an item into the item above when dragged to the right", () => {
+    component.items.set([menuItem("a"), menuItem("b")]);
 
-      expect(component.items()).toEqual([
-        menuItem("b"),
-        menuItem("a", [menuItem("a1")]),
-      ]);
-    });
+    drop(1, 1, 1);
 
-    it("nests an item into the item above when dragged to the right", () => {
-      component.items.set([menuItem("a"), menuItem("b")]);
+    expect(component.items()).toEqual([menuItem("a", [menuItem("b")])]);
+  });
 
-      drop(1, 1, 1);
+  it("does not re-nest on slight sideways drift while dragging", () => {
+    component.items.set([menuItem("a"), menuItem("b")]);
 
-      expect(component.items()).toEqual([menuItem("a", [menuItem("b")])]);
-    });
+    component.onDrop({
+      previousIndex: 1,
+      currentIndex: 1,
+      distance: { x: component.indentPerLevel / 2, y: 0 },
+    } as CdkDragDrop<unknown>);
 
-    it("does not re-nest on slight sideways drift while dragging", () => {
-      component.items.set([menuItem("a"), menuItem("b")]);
+    expect(component.items()).toEqual([menuItem("a"), menuItem("b")]);
+  });
 
-      component.onDrop({
-        previousIndex: 1,
-        currentIndex: 1,
-        distance: { x: component.indentPerLevel / 2, y: 0 },
-      } as CdkDragDrop<unknown>);
+  it("lifts a sub-item out of its parent when dragged to the left", () => {
+    component.items.set([menuItem("a", [menuItem("a1")])]);
 
-      expect(component.items()).toEqual([menuItem("a"), menuItem("b")]);
-    });
+    drop(1, 1, -1);
 
-    it("lifts a sub-item out of its parent when dragged to the left", () => {
-      component.items.set([menuItem("a", [menuItem("a1")])]);
+    expect(component.items()).toEqual([menuItem("a"), menuItem("a1")]);
+  });
 
-      drop(1, 1, -1);
+  it("does not nest items when sub-menus are not allowed", () => {
+    fixture.componentRef.setInput("allowSubMenu", false);
+    component.items.set([menuItem("a"), menuItem("b")]);
 
-      expect(component.items()).toEqual([menuItem("a"), menuItem("a1")]);
-    });
+    drop(1, 1, 1);
 
-    it("does not nest items when sub-menus are not allowed", () => {
-      fixture.componentRef.setInput("allowSubMenu", false);
-      component.items.set([menuItem("a"), menuItem("b")]);
+    expect(component.items()).toEqual([menuItem("a"), menuItem("b")]);
+  });
 
-      drop(1, 1, 1);
+  it("removes an item together with its sub-items", () => {
+    component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
 
-      expect(component.items()).toEqual([menuItem("a"), menuItem("b")]);
-    });
+    component.removeItem(0);
 
-    it("removes an item together with its sub-items", () => {
-      component.items.set([menuItem("a", [menuItem("a1")]), menuItem("b")]);
+    expect(component.items()).toEqual([menuItem("b")]);
+  });
 
-      component.removeItem(0);
+  it("keeps the sub-items when an item itself is edited", () => {
+    component.items.set([menuItem("a", [menuItem("a1")])]);
 
-      expect(component.items()).toEqual([menuItem("b")]);
-    });
+    // the edit dialog returns the item without its (separately rendered) sub-items
+    component.onItemChange({ ...menuItem("a"), label: "renamed" }, 0);
 
-    it("keeps the sub-items when an item itself is edited", () => {
-      component.items.set([menuItem("a", [menuItem("a1")])]);
-
-      // the edit dialog returns the item without its (separately rendered) sub-items
-      component.onItemChange({ ...menuItem("a"), label: "renamed" }, 0);
-
-      expect(component.items()).toEqual([
-        { ...menuItem("a", [menuItem("a1")]), label: "renamed" },
-      ]);
-    });
+    expect(component.items()).toEqual([
+      { ...menuItem("a", [menuItem("a1")]), label: "renamed" },
+    ]);
   });
 
   it("should convert entity menu item to plain format with toPlainMenuItem", () => {

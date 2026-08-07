@@ -9,7 +9,6 @@ import {
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EditReportDefinitionComponent } from "./edit-report-definition.component";
-import { isGroupNode } from "./report-definition-ui-node";
 
 /** wire the component to a `reportDefinition` control sitting next to a `mode` control */
 function createWithMode(mode: string): EditReportDefinitionComponent {
@@ -84,13 +83,11 @@ describe("EditReportDefinitionComponent", () => {
       ]);
     fixture.detectChanges();
 
-    expect(component.rows().map((r) => [isGroupNode(r.data), r.level])).toEqual(
-      [
-        [false, 0],
-        [true, 0],
-        [false, 1],
-      ],
-    );
+    expect(component.rows().map((r) => [r.isGroup, r.level])).toEqual([
+      [false, 0],
+      [true, 0],
+      [false, 1],
+    ]);
   });
 
   it("adds a query and a group at the root and persists to the bound control", () => {

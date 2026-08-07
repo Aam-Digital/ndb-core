@@ -5,12 +5,19 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { MenuItemForAdminUi } from "../menu-item-for-admin-ui";
 import { provideRouter } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
+import { MatDialog } from "@angular/material/dialog";
+import { of } from "rxjs";
+import type { Mock } from "vitest";
 
 describe("AdminMenuItemComponent", () => {
   let component: AdminMenuItemComponent;
   let fixture: ComponentFixture<AdminMenuItemComponent>;
+  let mockDialog: { open: Mock };
 
   beforeEach(async () => {
+    mockDialog = {
+      open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }),
+    };
     await TestBed.configureTestingModule({
       imports: [
         AdminMenuItemComponent,
@@ -22,6 +29,7 @@ describe("AdminMenuItemComponent", () => {
           provide: MenuService,
           useValue: { generateMenuItemForEntityType: () => [] },
         },
+        { provide: MatDialog, useValue: mockDialog },
         provideRouter([]),
       ],
     }).compileComponents();
@@ -70,5 +78,18 @@ describe("AdminMenuItemComponent", () => {
     } as MenuItemForAdminUi);
     fixture.componentRef.setInput("hasSubItems", true);
     expect(component.hasNoLinkWarning()).toBe(false);
+  });
+
+  it("should pass the allowEntityLinks value, not the input signal, to the edit dialog", async () => {
+    fixture.componentRef.setInput("allowEntityLinks", false);
+
+    await component.editMenuItem(component.item());
+
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        data: expect.objectContaining({ allowEntityLinks: false }),
+      }),
+    );
   });
 });

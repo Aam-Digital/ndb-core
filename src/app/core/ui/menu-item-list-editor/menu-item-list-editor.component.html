@@ -25,7 +25,7 @@
     >
       <app-admin-menu-item
         [item]="row.data"
-        [hasSubItems]="hasSubItems(i)"
+        [hasSubItems]="row.hasSubItems"
         [allowEntityLinks]="allowEntityLinks()"
         (deleteItem)="removeItem(i)"
         (itemChange)="onItemChange($event, i)"

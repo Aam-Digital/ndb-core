@@ -11,7 +11,7 @@
       @for (row of rows(); track row.id; let i = $index) {
         <div
           class="report-row"
-          [class.group-row]="isGroup(row.data)"
+          [class.group-row]="row.isGroup"
           [style.margin-left.px]="row.level * indentPerLevel"
           cdkDrag
           [cdkDragData]="row"
@@ -25,7 +25,7 @@
               ></fa-icon>
             }
 
-            @if (isGroup(row.data)) {
+            @if (row.isGroup) {
               <fa-icon icon="layer-group" class="row-icon"></fa-icon>
               <input
                 class="group-title-input"
@@ -48,7 +48,7 @@
             }
 
             @if (enabled()) {
-              @if (isGroup(row.data)) {
+              @if (row.isGroup) {
                 <button
                   mat-icon-button
                   type="button"
@@ -77,15 +77,11 @@
                 type="button"
                 (click)="remove(i)"
                 [matTooltip]="
-                  isGroup(row.data)
-                    ? 'Remove group and its contents'
-                    : 'Remove query'
+                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
                 "
                 i18n-matTooltip
                 [attr.aria-label]="
-                  isGroup(row.data)
-                    ? 'Remove group and its contents'
-                    : 'Remove query'
+                  row.isGroup ? 'Remove group and its contents' : 'Remove query'
                 "
               >
                 <fa-icon icon="trash"></fa-icon>

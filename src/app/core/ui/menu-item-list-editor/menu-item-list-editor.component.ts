@@ -60,20 +60,21 @@ export class MenuItemListEditorComponent {
   /** pixels of indentation per nesting level */
   readonly indentPerLevel = 32;
 
-  /** the menu as a flat, indented list of rows */
-  readonly rows = computed<FlatTreeRow<MenuItemForAdminUi>[]>(() =>
-    flattenTree(this.items(), menuItemTree),
-  );
+  /**
+   * The menu as a flat, indented list of rows, each with the display flags the template needs:
+   * an item has sub-items when the row below it is deeper.
+   */
+  readonly rows = computed(() => {
+    const rows = flattenTree(this.items(), menuItemTree);
+    return rows.map((row, index) => ({
+      ...row,
+      hasSubItems: rows[index + 1]?.level > row.level,
+    }));
+  });
 
   private readonly nesting = computed<FlatTreeOptions>(() => ({
     maxLevel: this.allowSubMenu() ? undefined : 0,
   }));
-
-  /** whether the item at `index` has nested sub-items, i.e. the row below it is deeper */
-  hasSubItems(index: number): boolean {
-    const rows = this.rows();
-    return rows[index + 1]?.level > rows[index].level;
-  }
 
   onDrop(event: CdkDragDrop<unknown>): void {
     // how far the item was dragged sideways determines how deep it is nested;
