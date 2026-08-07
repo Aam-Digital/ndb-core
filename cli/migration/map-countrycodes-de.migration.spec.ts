@@ -1,0 +1,97 @@
+import {
+  buildTestContext,
+  type DocStore,
+  runIdempotencyCheck,
+} from "./testing/migration-idempotency.harness.js";
+import { mapCountrycodesDe } from "./map-countrycodes-de.migration.js";
+
+function seedConfig(mapConfig?: Record<string, unknown>): DocStore {
+  return {
+    "app/Config:CONFIG_ENTITY": {
+      _id: "Config:CONFIG_ENTITY",
+      _rev: "1-abc",
+      data: {
+        "appConfig:usage-analytics": { url: "https://example.com" },
+        ...(mapConfig ? { "appConfig:map": mapConfig } : {}),
+      },
+    },
+  };
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function getMapConfig(store: DocStore): any {
+  return (store["app/Config:CONFIG_ENTITY"] as any).data["appConfig:map"];
+}
+
+describe("mapCountrycodesDe migration", () => {
+  it("adds the country filter when the map config does not exist yet", async () => {
+    const store = seedConfig();
+    const ctx = buildTestContext(store, false);
+
+    const result = await mapCountrycodesDe.run(ctx);
+
+    expect(result.changed).toBe(true);
+    expect(result.status).toBe("ok");
+    expect(getMapConfig(store)).toEqual({ countrycodes: "de" });
+    // unrelated config keys stay untouched
+    expect(
+      (store["app/Config:CONFIG_ENTITY"] as any).data[
+        "appConfig:usage-analytics"
+      ],
+    ).toEqual({ url: "https://example.com" });
+  });
+
+  it("keeps other map settings when adding the country filter", async () => {
+    const store = seedConfig({ start: [53.55, 9.99] });
+    const ctx = buildTestContext(store, false);
+
+    const result = await mapCountrycodesDe.run(ctx);
+
+    expect(result.changed).toBe(true);
+    expect(getMapConfig(store)).toEqual({
+      start: [53.55, 9.99],
+      countrycodes: "de",
+    });
+  });
+
+  it("leaves an already configured country filter untouched", async () => {
+    const store = seedConfig({ countrycodes: "in" });
+    const ctx = buildTestContext(store, false);
+
+    const result = await mapCountrycodesDe.run(ctx);
+
+    expect(result.changed).toBe(false);
+    expect(result.status).toBe("no-change");
+    expect(getMapConfig(store)).toEqual({ countrycodes: "in" });
+  });
+
+  it("writes nothing in dry-run mode", async () => {
+    const store = seedConfig();
+    const before = JSON.stringify(store);
+    const ctx = buildTestContext(store, true);
+
+    const result = await mapCountrycodesDe.run(ctx);
+
+    expect(result.status).toBe("dry-run");
+    expect(result.changed).toBe(true);
+    expect(JSON.stringify(store)).toBe(before);
+  });
+
+  it("fails when there is no config document", async () => {
+    const ctx = buildTestContext({}, false);
+
+    const result = await mapCountrycodesDe.run(ctx);
+
+    expect(result.changed).toBe(false);
+    expect(result.status).toBe("failed");
+  });
+
+  it("is idempotent", async () => {
+    const check = await runIdempotencyCheck(mapCountrycodesDe, seedConfig());
+
+    expect(check.firstRunResult.changed).toBe(true);
+    expect(check.secondRunResult.changed).toBe(false);
+    expect(check.secondRunResult.status).toBe("no-change");
+    expect(check.stateAfterSecondRun).toEqual(check.stateAfterFirstRun);
+  });
+});

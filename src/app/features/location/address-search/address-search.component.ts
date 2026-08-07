@@ -22,7 +22,7 @@ import {
 import { MatInput } from "@angular/material/input";
 import { AsyncPipe } from "@angular/common";
 import { merge, of, BehaviorSubject, Subject } from "rxjs";
-import { GeoResult, GeoService } from "../geo.service";
+import { GeoService, OpenStreetMapsSearchResult } from "../geo.service";
 import {
   catchError,
   concatMap,
@@ -76,7 +76,7 @@ export class AddressSearchComponent implements OnInit {
     userInput: string;
   }>();
 
-  filteredOptions = new BehaviorSubject<GeoResult[]>([]);
+  filteredOptions = new BehaviorSubject<OpenStreetMapsSearchResult[]>([]);
   waiting = signal<boolean>(false);
   loading = signal<boolean>(false);
   nothingFound = signal<boolean>(false);
@@ -147,7 +147,9 @@ export class AddressSearchComponent implements OnInit {
     );
   }
 
-  async selectLocation(selected: GeoResult | string | undefined) {
+  async selectLocation(
+    selected: OpenStreetMapsSearchResult | string | undefined,
+  ) {
     let result: GeoLocation;
 
     if (typeof selected === "object") {

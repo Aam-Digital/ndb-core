@@ -53,7 +53,10 @@
       </mat-option>
     }
 
-    @for (option of filteredOptions | async; track option.display_name) {
+    @for (
+      option of filteredOptions | async;
+      track option.place_id ?? option.display_name
+    ) {
       <mat-option [value]="option">
         {{ option.display_name }}
       </mat-option>
