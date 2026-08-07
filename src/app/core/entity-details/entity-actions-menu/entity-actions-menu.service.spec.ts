@@ -146,6 +146,9 @@ describe("EntityActionsMenuService", () => {
       "static-action",
       "healthy-factory-action",
     ]);
-    expect(warnSpy).toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("action factory failed"),
+      expect.objectContaining({ error: expect.any(Error) }),
+    );
   });
 });

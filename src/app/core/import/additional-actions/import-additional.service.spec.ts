@@ -354,7 +354,10 @@ describe("ImportAdditionalService", () => {
     expect(
       actions.some((a) => a["targetType"] === "RemovedEntity"),
     ).toBeFalsy();
-    expect(warnSpy).toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("not registered"),
+      expect.objectContaining({ unregisteredType: "RemovedEntity" }),
+    );
     // building labels for the remaining actions must not hit an unregistered type
     expect(() =>
       actions.map((a) => service.createActionLabel(a)),
