@@ -54,10 +54,14 @@ import {
   ViewportRuler,
 } from "@angular/cdk/scrolling";
 import { EMPTY, fromEvent, merge } from "rxjs";
+import { MatOptionSelectionChange } from "@angular/material/core";
 import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
+import { KeepPanelOpenOnSelectDirective } from "./keep-panel-open-on-select.directive";
 
 // re-export FaDynamicIconComponent to avoid forcing users of BasicAutocompleteComponent to import separately
 export { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
+// re-export for subclasses that reuse BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS
+export { KeepPanelOpenOnSelectDirective } from "./keep-panel-open-on-select.directive";
 
 /**
  * Configuration for a single "Add new [label]" entry in the autocomplete dropdown.
@@ -101,6 +105,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   CdkVirtualScrollViewport,
   CdkVirtualForOf,
   CdkFixedSizeVirtualScroll,
+  KeepPanelOpenOnSelectDirective,
 ];
 
 /**
@@ -643,6 +648,10 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   async createFromConfig(marker: CreateOptionMarker<O>) {
+    // creating an option opens a form of its own, so the dropdown has to give way
+    // (it is kept open when selecting one of the existing options in multi-select mode)
+    this.autocomplete()?.closePanel();
+
     const createdOption = await marker.__createOptionConfig.create(
       marker.__input,
     );
@@ -650,6 +659,13 @@ export class BasicAutocompleteComponent<O, V = O>
       const newOption = this.toSelectableOption(createdOption);
       this._options.push(newOption);
       this.select(newOption);
+
+      if (this.multi()) {
+        // continue selecting further options, with all of them available again
+        this.retainSearchValue = "";
+        this.showAutocomplete();
+        this.autocomplete()?.openPanel();
+      }
     } else {
       this.showAutocomplete();
       this.autocompleteForm.setValue(marker.__input);
@@ -661,13 +677,72 @@ export class BasicAutocompleteComponent<O, V = O>
       option.selected = !option.selected;
       this._selectedOptions.set(this._options.filter((o) => o.selected));
       this.value = this._selectedOptions().map((o) => o.asValue);
-      // re-open autocomplete to select next option
-      setTimeout(() => this.showAutocomplete());
+      this.afterMultiSelectToggle();
     } else {
       this._selectedOptions.set([option]);
       this.value = option.asValue;
       this.isInSearchMode.set(false);
     }
+  }
+
+  /**
+   * The dropdown stays open while selecting several options, so update everything that
+   * Material would otherwise take care of when the panel closes and is opened again.
+   */
+  private afterMultiSelectToggle() {
+    // selecting an option takes the browser focus off the search input, so typing to filter
+    // further would be lost without giving the focus back
+    const inputEl = this.inputElement();
+    inputEl?.focus();
+
+    if (this.effectiveDisplay() === "text" && !this.retainSearchValue) {
+      // the search input doubles as the display of the current selection here, as long as the
+      // user has not typed a filter text. No event, so the visible options are not re-filtered.
+      this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
+      // the autocomplete writes the new value to the input element in a microtask of its own,
+      // which resets any text selection. Select all text after that, so that typing a filter
+      // overwrites the displayed selection instead of being appended to it.
+      queueMicrotask(() =>
+        (inputEl?._elementRef.nativeElement as HTMLInputElement)?.select(),
+      );
+    }
+
+    // the field can grow with the selection (e.g. an additional row of chips)
+    this.updateOpenPanelPosition();
+  }
+
+  /**
+   * Whether the given option is part of the current selection.
+   * Reads the {@link _selectedOptions} signal, so that options rendered in the open dropdown
+   * are updated as soon as the selection changes.
+   */
+  protected isSelected(option: SelectableOption<O, V>): boolean {
+    return this._selectedOptions().includes(option);
+  }
+
+  /**
+   * Apply a selection the user made while the dropdown is kept open for a multi-select field.
+   *
+   * Material only emits its own `optionSelected` output when the panel closes, which is
+   * suppressed for multi-select (see {@link KeepPanelOpenOnSelectDirective}).
+   */
+  protected onOptionSelectionChange(event: MatOptionSelectionChange) {
+    if (!event.isUserInput || !this.multi()) {
+      return;
+    }
+
+    // Material marks the clicked option as selected internally. With the panel staying open
+    // that state would be applied to rows the virtual scroll recycles for other options,
+    // so the selection displayed by the checkboxes is derived from the value only.
+    event.source.deselect(false);
+
+    this.select(event.source.value);
+
+    // Material moves the keyboard navigation back to the first option after each selection.
+    // Keep it on the selected option instead, so the user can continue from there
+    // (this runs after the reset, which is synchronous within Material's keydown handling).
+    const keyManager = this.autocomplete()?.autocomplete?._keyManager;
+    queueMicrotask(() => keyManager?.setActiveItem(event.source));
   }
 
   private toSelectableOption(opt: O): SelectableOption<O, V> {
@@ -683,16 +758,37 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   onFocusOut(event: FocusEvent) {
+    if (this.autocomplete()?.panelOpen) {
+      // clicking an option takes the focus out of the search input, but the user is still
+      // selecting as long as the dropdown is open (see {@link onDropdownClosed})
+      return;
+    }
+
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      if (!this.multi() && this.autocompleteForm.value === "") {
-        this.select(undefined);
-      }
-      this.isInSearchMode.set(false);
-      this.retainSearchValue = "";
+      this.endSearchMode();
     }
   }
+
+  /**
+   * The dropdown closed, which ends the selection unless the field still has the focus
+   * (e.g. after closing the dropdown with the Escape key).
+   */
+  protected onDropdownClosed() {
+    if (!this.focused) {
+      this.endSearchMode();
+    }
+  }
+
+  private endSearchMode() {
+    if (!this.multi() && this.autocompleteForm.value === "") {
+      this.select(undefined);
+    }
+    this.isInSearchMode.set(false);
+    this.retainSearchValue = "";
+  }
+
   override onContainerClick(event: MouseEvent) {
     const target = event.target;
     const clickedOption =
