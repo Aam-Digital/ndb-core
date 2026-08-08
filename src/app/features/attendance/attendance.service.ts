@@ -426,7 +426,7 @@ ${byParticipantChecks}
     );
     const allActivities = ([] as Entity[])
       .concat(...allActivitiesNested)
-      .filter((a) => a.isActive);
+      .filter((a) => !a.inactive);
 
     const allEvents = await this.buildEventsFromActivities(
       allActivities,

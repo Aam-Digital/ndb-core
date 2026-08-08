@@ -52,8 +52,8 @@ export class GroupedChildAttendanceComponent {
             entity.getId(),
           );
         return {
-          active: allActivities.filter((a) => a.isActive),
-          archived: allActivities.filter((a) => !a.isActive),
+          active: allActivities.filter((a) => !a.inactive),
+          archived: allActivities.filter((a) => a.inactive),
         };
       } catch (error) {
         Logging.warn(
