@@ -4,6 +4,10 @@ import { PLACEHOLDERS } from "../../core/entity/schema/entity-schema-field";
 import moment from "moment/moment";
 import { DataFilter } from "../../core/filter/filters/filters";
 import { PrebuiltFilterConfig } from "../../core/entity-list/EntityListConfig";
+import {
+  TODO_COMPLETED_FILTER,
+  TODO_NOT_COMPLETED_FILTER,
+} from "./model/todo-filters";
 
 /**
  * Add default view:note/:id NoteDetails config
@@ -26,7 +30,11 @@ export const addDefaultTodoViews: ConfigMigration = (key, configPart) => {
     // add prebuilt filter to existing list view
     const existingFilters = configData[viewConfigKey].config.filters || [];
     if (!existingFilters.some((f) => f.id === todoDueStatusFilter.id)) {
-      existingFilters.push(JSON.parse(JSON.stringify(todoDueStatusFilter)));
+      // reference the prebuilt filter only, its options are provided by the app
+      existingFilters.push({
+        id: todoDueStatusFilter.id,
+        type: todoDueStatusFilter.type,
+      });
     }
     configData[viewConfigKey].config.filters = existingFilters;
   }
@@ -110,7 +118,7 @@ export const todoDueStatusFilter: PrebuiltFilterConfig<Todo> = {
       label: $localize`:Filter-option for todos:Currently Active`,
       filter: {
         $and: [
-          { isCompleted: false },
+          TODO_NOT_COMPLETED_FILTER,
           {
             $or: [
               {
@@ -138,17 +146,22 @@ export const todoDueStatusFilter: PrebuiltFilterConfig<Todo> = {
     {
       key: "overdue",
       label: $localize`:Filter-option for todos:Overdue`,
-      filter: { isOverdue: true },
+      filter: {
+        $and: [
+          TODO_NOT_COMPLETED_FILTER,
+          { deadline: { $lte: moment().format("YYYY-MM-DD"), $gt: "" } },
+        ],
+      } as DataFilter<Todo>,
     },
     {
       key: "completed",
       label: $localize`:Filter-option for todos:Completed`,
-      filter: { isCompleted: true },
+      filter: TODO_COMPLETED_FILTER,
     },
     {
       key: "open",
       label: $localize`:Filter-option for todos:All Open`,
-      filter: { isCompleted: false },
+      filter: TODO_NOT_COMPLETED_FILTER,
     },
     { key: "any", label: $localize`Any`, filter: {} },
   ],

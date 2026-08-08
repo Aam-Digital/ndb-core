@@ -15,6 +15,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import { DataFilter } from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Todo } from "../model/todo";
+import { TODO_NOT_COMPLETED_FILTER } from "../model/todo-filters";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 
 @DynamicComponent("TodosRelatedToEntity")
@@ -36,7 +37,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   backgroundColorFn = (r: Todo) => {
-    if (!r.isActive) {
+    if (r.completed || r.inactive) {
       return "#e0e0e0";
     } else {
       return r.getColor();
@@ -53,7 +54,10 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   protected override initFilter(): DataFilter<Todo> {
-    return { isActive: true, ...super.initFilter() };
+    // combined with $and because the inherited filter may itself use $or to cover several relation properties
+    return {
+      $and: [TODO_NOT_COMPLETED_FILTER, super.initFilter()],
+    } as DataFilter<Todo>;
   }
 
   showDetails(entity: Todo) {

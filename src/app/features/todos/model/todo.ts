@@ -109,15 +109,6 @@ export class Todo extends Entity {
   })
   completed?: TodoCompletion;
 
-  override get isActive(): boolean {
-    if (this.inactive) {
-      // manual archiving of records takes precedence
-      return false;
-    }
-
-    return !this.completed;
-  }
-
   get isCompleted(): boolean {
     // used for filter
     return !!this.completed;
