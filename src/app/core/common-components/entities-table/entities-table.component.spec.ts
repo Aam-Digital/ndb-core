@@ -8,6 +8,8 @@ import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { toFormFieldConfig } from "../entity-form/FormConfig";
 import { FilterService } from "../../filter/filter.service";
+import { DataFilter } from "../../filter/filters/filters";
+import { NOT_ARCHIVED_FILTER } from "../../filter/not-archived-filter";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { of } from "rxjs";
@@ -296,13 +298,37 @@ describe("EntitiesTableComponent", () => {
   it("should only show active relations by default", async () => {
     const active1 = new Entity();
     active1.inactive = false;
+    // records that were never archived do not have the property at all
+    const neverArchived = new Entity();
     const inactive = new Entity();
     inactive.inactive = true;
 
-    component.recordsDataSource().allRecords.set([active1, inactive]);
+    component
+      .recordsDataSource()
+      .allRecords.set([active1, neverArchived, inactive]);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource().data).toEqual([{ record: active1 }]);
+    expect(component.recordsDataSource().data).toEqual([
+      { record: active1 },
+      { record: neverArchived },
+    ]);
+  });
+
+  it("should keep an $or of the configured filter when hiding archived records", () => {
+    const configuredFilter = {
+      $or: [{ category: "a" }, { category: "b" }],
+    } as DataFilter<Entity>;
+    fixture.componentRef.setInput("filter", configuredFilter);
+    fixture.detectChanges();
+
+    expect(component.effectiveFilter()).toEqual({
+      $and: [NOT_ARCHIVED_FILTER, configuredFilter],
+    });
+
+    component.showInactive.set(true);
+    fixture.detectChanges();
+
+    expect(component.effectiveFilter()).toEqual(configuredFilter);
   });
 
   it("should overwrite entity schema fields with customColumn config", async () => {

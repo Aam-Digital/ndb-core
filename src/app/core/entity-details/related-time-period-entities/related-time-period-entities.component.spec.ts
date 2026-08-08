@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entities.component";
+import {
+  CURRENTLY_ACTIVE_COLOR,
+  RelatedTimePeriodEntitiesComponent,
+} from "./related-time-period-entities.component";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
@@ -133,20 +136,31 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     ).toBe(true);
   });
 
-  it("should show all relations if configured; with active ones being highlighted", async () => {
-    vi.useFakeTimers();
-    try {
-      const loadType = vi.spyOn(entityMapper, "loadType");
-      loadType.mockResolvedValue([active1, active2, inactive]);
+  it("should highlight the currently active relation without hiding the past ones", async () => {
+    const child = new TestEntity();
+    active1.childId = child.getId();
+    inactive.childId = child.getId();
+    const loadType = vi.spyOn(entityMapper, "loadType");
+    loadType.mockResolvedValue([active1, inactive]);
 
-      component.showInactive.set(true);
-      fixture.detectChanges();
-      await vi.advanceTimersByTimeAsync(0);
+    fixture.componentRef.setInput("entity", child);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-      expect(component.backgroundColorFn(active1)).not.toEqual("");
-      expect(component.backgroundColorFn(inactive)).toEqual("");
-    } finally {
-      vi.useRealTimers();
-    }
+    // past entries are not archived, so they stay visible without switching the toggle
+    expect(component.showInactive()).toBeFalsy();
+    expect(component.hasCurrentlyActiveEntry()).toBe(true);
+    expect(component.backgroundColorFn(active1)).toEqual(
+      CURRENTLY_ACTIVE_COLOR,
+    );
+    expect(component.backgroundColorFn(inactive)).toEqual("");
+  });
+
+  it("should keep highlighting independent of the archived status", async () => {
+    active1.inactive = true;
+
+    expect(component.backgroundColorFn(active1)).toEqual(
+      CURRENTLY_ACTIVE_COLOR,
+    );
   });
 });

@@ -56,7 +56,7 @@ export class EditPublicFormRelatedEntitiesComponent
 
   readonly relatedRefFields = computed<FormFieldConfig[]>(() => {
     const entity = this.entity();
-    if (!entity) return [];
+    if (!entity?.["entity"]) return [];
     const entityConstructor = this.entities.get(entity["entity"]);
     if (!entityConstructor) return [];
 

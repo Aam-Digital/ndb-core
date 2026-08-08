@@ -75,7 +75,7 @@ export class BirthdayDashboardComponent {
       for (const property of propertyList) {
         data.push(
           ...entities
-            .filter((entity) => entity.isActive && entity[property])
+            .filter((entity) => !entity.inactive && entity[property])
             .map((entity) => ({
               entity: entity,
               birthday: this.getNextBirthday(entity[property]),

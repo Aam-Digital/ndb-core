@@ -13,6 +13,7 @@ import type { DefaultValueConfig } from "../default-values/default-value-config"
 import type { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import type { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
+import { normalizeQuery } from "../export/query-normalization";
 import { ConfigMigration } from "./config-migration";
 import {
   CONFIG_ENTITY_ROUTE_PREFIX,
@@ -633,6 +634,33 @@ const removeExportConfig: ConfigMigration = (key, configPart) => {
 };
 
 /**
+ * Entities do not provide a calculated "isActive" property anymore.
+ * Report queries selecting on it have to use the equivalent query helpers instead.
+ */
+const migrateIsActiveReportQueries: ConfigMigration = (key, configPart) => {
+  if (key !== "query") {
+    return configPart;
+  }
+
+  return normalizeQuery(configPart);
+};
+
+/**
+ * Older configs contain a full copy of the prebuilt "tasks due" filter,
+ * whose options selected on calculated properties that do not exist anymore.
+ * Drop the stored options so the definition provided by the app is used.
+ */
+const migrateTodoDueStatusFilter: ConfigMigration = (key, configPart) => {
+  if (configPart?.id !== "todo-due-status" || !configPart?.options) {
+    return configPart;
+  }
+
+  delete configPart.options;
+
+  return configPart;
+};
+
+/**
  * All temporary config migrations that fix legacy data formats.
  * Applied by both ConfigService (Angular app) and the admin CLI.
  * Order matters: earlier migrations may produce output consumed by later ones.
@@ -660,6 +688,8 @@ export const configMigrations: ConfigMigration[] = [
   removeConfigRoutesMigratedToFixedFeatures,
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,
+  migrateIsActiveReportQueries,
+  migrateTodoDueStatusFilter,
   migrateShortcutDashboardLinks,
   migrateNavigationMenuEntityLinks, // must run last to see all default-added view configs
 ];
