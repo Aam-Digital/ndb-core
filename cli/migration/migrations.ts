@@ -5,6 +5,7 @@ import { reportConfigSafeIds } from "./reportconfig-safe-ids.migration.js";
 import { permissionsKeyRename } from "./permissions-key-rename.migration.js";
 import { permissionsKeyLegacyCleanup } from "./permissions-key-legacy-cleanup.migration.js";
 import { shortcutDashboardLinkPrefix } from "./shortcut-dashboard-link-prefix.migration.js";
+import { reportQueryIsActive } from "./report-query-isactive.migration.js";
 import type { MigrationDefinition } from "./migration-definition.js";
 
 export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
@@ -21,4 +22,5 @@ export const migrations: MigrationDefinition[] = [
   permissionsKeyRename,
   // permissionsKeyLegacyCleanup,
   shortcutDashboardLinkPrefix,
+  reportQueryIsActive,
 ];

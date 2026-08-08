@@ -87,14 +87,14 @@ describe("FilterService", () => {
   it("should not set properties without a schema", () => {
     const filter = {
       childId: `${TestEntity.ENTITY_TYPE}:some-id`,
-      isActive: false,
+      someUnknownProperty: false,
     } as DataFilter<ChildSchoolRelation>;
 
     const relation = new ChildSchoolRelation();
     service.alignEntityWithFilter(relation, filter);
 
     expect(relation.childId).toEqual(`${TestEntity.ENTITY_TYPE}:some-id`);
-    expect(relation.isActive).toBe(true);
+    expect(relation["someUnknownProperty"]).toBeUndefined();
   });
 
   it("should support filtering dates with day granularity", () => {
