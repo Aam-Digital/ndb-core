@@ -93,4 +93,16 @@ describe("EditPublicFormColumnsComponent", () => {
 
     expect(component.formConfig.fieldGroups).toEqual(newColumnConfig);
   });
+
+  it("should not fail for a config in the multi form format", () => {
+    const multiFormConfig = new PublicFormConfig();
+    multiFormConfig.forms = [
+      { entity: TestEntity.ENTITY_TYPE, columns: testColumns },
+    ];
+    fixture.componentRef.setInput("entity", multiFormConfig);
+    component.entityConstructor = undefined;
+
+    expect(() => component.ngOnInit()).not.toThrow();
+    expect(component.entityConstructor).toBeUndefined();
+  });
 });

@@ -62,7 +62,10 @@ export class EditPublicFormColumnsComponent
   ngOnInit() {
     const entity = this.entity();
     if (entity) {
-      this.entityConstructor = this.entities.get(entity["entity"]);
+      // configs in the multi form format do not hold a top-level entity type
+      this.entityConstructor = entity["entity"]
+        ? this.entities.get(entity["entity"])
+        : undefined;
 
       const publicFormConfig: PublicFormConfig = migratePublicFormConfig({
         columns: this.formControl.getRawValue(),

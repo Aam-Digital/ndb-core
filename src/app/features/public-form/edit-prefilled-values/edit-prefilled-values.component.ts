@@ -101,7 +101,10 @@ export class EditPrefilledValuesComponent
     const entity = this.entity();
     if (!entity) return;
 
-    this.entityConstructor = this.entities.get(entity["entity"]);
+    // configs in the multi form format do not hold a top-level entity type
+    this.entityConstructor = entity["entity"]
+      ? this.entities.get(entity["entity"])
+      : undefined;
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),
