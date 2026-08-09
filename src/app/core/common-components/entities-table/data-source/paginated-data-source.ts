@@ -179,9 +179,45 @@ export class PaginatedDataSource<
       }
       delete filter["isActive"];
     }
+    this.convertToCouchRegex(filter);
+    // Mango queries need `$options: "i"` while CouchDB only supports `$regex: "(?i)..."`
     const filterString = JSON.stringify(filter);
     // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
     const updatedString = filterString.replace(/("\w+)\.id(?=":)/g, "$1");
     return JSON.parse(updatedString);
+  }
+
+  /**
+   * Recursively converts any $regex value in an object to a CouchDB inline (?i) pattern.
+   *
+   * @param {*} node - The query object or value to transform.
+   * @returns {*} The transformed query object.
+   */
+  private convertToCouchRegex(node) {
+    if (node === null || typeof node !== "object") {
+      return node;
+    }
+
+    if (Array.isArray(node)) {
+      return node.map(this.convertToCouchRegex);
+    }
+
+    const result = {};
+
+    for (const [key, value] of Object.entries(node)) {
+      // Strip $options completely
+      if (key === "$options") {
+        continue;
+      }
+
+      // Convert $regex patterns to inline case-insensitive format
+      if (key === "$regex" && typeof value === "string") {
+        result["$regex"] = `(?i)${value}`;
+      } else {
+        result[key] = this.convertToCouchRegex(value);
+      }
+    }
+
+    return result;
   }
 }
