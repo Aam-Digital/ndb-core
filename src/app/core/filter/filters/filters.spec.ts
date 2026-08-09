@@ -97,13 +97,13 @@ describe("Filters", () => {
     const filter = new StringFilter("name", "Name");
 
     filter.selectedOptionValues = [];
-    expect(filter.getFilter()).toEqual({});
+    expect(filter.getFilter()).toEqual(undefined);
 
     filter.selectedOptionValues = [""];
-    expect(filter.getFilter()).toEqual({});
+    expect(filter.getFilter()).toEqual(undefined);
 
     filter.selectedOptionValues = ["   "];
-    expect(filter.getFilter()).toEqual({});
+    expect(filter.getFilter()).toEqual(undefined);
   });
 
   it("should filter records containing the text (case-insensitive) with a string filter", () => {

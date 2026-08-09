@@ -38,7 +38,7 @@ export class StringFilter<T extends Entity> extends Filter<T> {
   getFilter(): DataFilter<T> {
     const searchText = this.getSearchText();
     if (!searchText.trim()) {
-      return {} as DataFilter<T>;
+      return undefined;
     }
 
     return {
