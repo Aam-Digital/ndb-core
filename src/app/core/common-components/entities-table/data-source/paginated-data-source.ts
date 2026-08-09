@@ -155,6 +155,7 @@ export class PaginatedDataSource<
 
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
     // isActive is not available in the database
+    // TODO remove once PR #4238 is done
     if (filter["isActive"]) {
       if (filter["isActive"] === true) {
         // Only active -> either 'inactive' not set or not 'true'
@@ -168,8 +169,7 @@ export class PaginatedDataSource<
           if (!filter["$and"]) {
             filter["$and"] = [];
           }
-          filter["$and"].push({ $or: existingOr });
-          filter["$and"].push({ $or: isActive });
+          filter["$and"].push({ $or: existingOr }, { $or: isActive });
         } else {
           filter["$or"] = isActive;
         }

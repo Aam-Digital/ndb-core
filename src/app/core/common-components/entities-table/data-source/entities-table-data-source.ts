@@ -97,7 +97,9 @@ export abstract class EntitiesTableDataSource<
   private readonly reloadTrigger = new Subject<void>();
   /** Awaiters of the currently scheduled (not yet executed) load. */
   private pendingReload?: {
+    /** Will resolve with the requested data */
     promise: Promise<any>;
+    /** Resolver function for the above promise */
     resolve: (value: Promise<any>) => void;
   };
 

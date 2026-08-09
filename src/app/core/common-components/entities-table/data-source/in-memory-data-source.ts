@@ -63,13 +63,13 @@ export class InMemoryDataSource<
       } else {
         return this.entitySpecialLoader.loadData(loaderMethod);
       }
+    } else {
+      const entityConstructor = this.loadRecordConfig().entityCtr;
+      if (!entityConstructor) {
+        return Promise.resolve([]);
+      }
+      return this.entityMapper.loadType(entityConstructor);
     }
-
-    const entityConstructor = this.loadRecordConfig().entityCtr;
-    if (!entityConstructor) {
-      return Promise.resolve([]);
-    }
-    return this.entityMapper.loadType(entityConstructor);
   }
 
   protected override async processEntityUpdate(
