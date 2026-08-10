@@ -12,7 +12,10 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
+import {
+  combineFilterConditions,
+  DataFilter,
+} from "#src/app/core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Todo } from "../model/todo";
 import { TODO_NOT_COMPLETED_FILTER } from "../model/todo-filters";
@@ -54,10 +57,10 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   protected override initFilter(): DataFilter<Todo> {
-    // combined with $and because the inherited filter may itself use $or to cover several relation properties
-    return {
-      $and: [TODO_NOT_COMPLETED_FILTER, super.initFilter()],
-    } as DataFilter<Todo>;
+    return combineFilterConditions<Todo>(
+      TODO_NOT_COMPLETED_FILTER,
+      super.initFilter(),
+    );
   }
 
   showDetails(entity: Todo) {

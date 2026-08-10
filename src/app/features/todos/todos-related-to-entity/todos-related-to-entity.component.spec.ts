@@ -118,4 +118,15 @@ describe("TodosRelatedToEntityComponent", () => {
     relatedEntitiesSchema.additional = originalRelatedEntitiesAdditional;
     assignedToSchema.additional = originalAssignedToAdditional;
   }));
+
+  it("should not add an empty condition when no relation property resolves", () => {
+    // an empty $and branch would make a database query match no document at all
+    vi.spyOn(component as any, "getProperty").mockReturnValue([]);
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("property", undefined);
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.detectChanges();
+
+    expect(component.filterObj()).toEqual(TODO_NOT_COMPLETED_FILTER);
+  });
 });

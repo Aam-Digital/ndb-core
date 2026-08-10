@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
-import { ConfigurableEnumService } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { FilterService } from "../../../core/filter/filter.service";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { FilterService } from "#src/app/core/filter/filter.service";
 import { Todo } from "./todo";
 import {
   TODO_COMPLETED_FILTER,

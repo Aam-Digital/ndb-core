@@ -1,5 +1,5 @@
 import { Entity } from "../entity/model/entity";
-import { DataFilter } from "./filters/filters";
+import { combineFilterConditions, DataFilter } from "./filters/filters";
 
 /**
  * Select records that are not archived.
@@ -14,20 +14,9 @@ export const NOT_ARCHIVED_FILTER = {
 
 /**
  * Restrict the given filter to records that are not archived.
- *
- * Combined with `$and` instead of merged into the object, because the archived condition uses `$or`
- * and the given filter may already use `$or` itself, for example to cover several relation
- * properties. Merging would silently drop one of them.
- *
- * An empty filter is returned unwrapped, because an empty object as an `$and` branch makes a
- * database query match no document at all.
  */
 export function restrictToNotArchived<T extends Entity>(
-  filter: DataFilter<T>,
+  filter?: DataFilter<T>,
 ): DataFilter<T> {
-  if (!filter || Object.keys(filter).length === 0) {
-    return NOT_ARCHIVED_FILTER as DataFilter<T>;
-  }
-
-  return { $and: [NOT_ARCHIVED_FILTER, filter] } as DataFilter<T>;
+  return combineFilterConditions<T>(NOT_ARCHIVED_FILTER, filter ?? {});
 }

@@ -1,4 +1,4 @@
-import { DataFilter } from "../../../core/filter/filters/filters";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { Todo } from "./todo";
 
 /**

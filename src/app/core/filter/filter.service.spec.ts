@@ -5,7 +5,7 @@ import { defaultInteractionTypes } from "../config/default-config/default-intera
 import { Note } from "../../child-dev-project/notes/model/note";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import moment from "moment";
-import { DataFilter } from "./filters/filters";
+import { DataFilter, Filter } from "./filters/filters";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 
@@ -114,5 +114,20 @@ describe("FilterService", () => {
       date: { $gte: "2022-01-02", $lt: "2022-01-04" },
     } as DataFilter<Note>);
     expect(notes.filter(predicate)).toEqual([n2, n3]);
+  });
+
+  it("should skip filters without a selection when combining them", () => {
+    const asFilter = (filter: DataFilter<Note>) =>
+      ({ getFilter: () => filter }) as Filter<Note>;
+    const selected = { subject: "Test" } as DataFilter<Note>;
+
+    expect(
+      service.combineFilters([asFilter({}), asFilter({})]),
+      "nothing selected",
+    ).toEqual({});
+    expect(
+      service.combineFilters([asFilter({}), asFilter(selected)]),
+      "one of two selected",
+    ).toEqual(selected);
   });
 });
