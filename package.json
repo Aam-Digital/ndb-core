@@ -129,7 +129,7 @@
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-storybook": "^10.5.5",
     "jsdom": "^28.1.0",
-    "jsonc-eslint-parser": "^2.4.2",
+    "jsonc-eslint-parser": "^3.3.0",
     "madge": "^8.0.0",
     "microdiff": "^1.6.0",
     "mockdate": "^3.0.5",
