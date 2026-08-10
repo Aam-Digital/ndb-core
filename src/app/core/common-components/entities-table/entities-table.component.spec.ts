@@ -331,6 +331,13 @@ describe("EntitiesTableComponent", () => {
     expect(component.effectiveFilter()).toEqual(configuredFilter);
   });
 
+  it("should not wrap an empty filter, which a database query would match nothing for", () => {
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.detectChanges();
+
+    expect(component.effectiveFilter()).toEqual(NOT_ARCHIVED_FILTER);
+  });
+
   it("should overwrite entity schema fields with customColumn config", async () => {
     fixture.componentRef.setInput("entityType", TestEntity);
     const customField = {

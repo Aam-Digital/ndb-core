@@ -31,17 +31,17 @@ export class FilterService {
   combineFilters<T extends Entity>(
     entityFilters: EntityFilter<T>[],
   ): DataFilter<T> {
-    if (entityFilters.length === 0) {
+    // filters without a selection contribute nothing and are left out,
+    // because an empty object as an $and branch makes a database query match no document
+    const conditions = entityFilters
+      .map((value: EntityFilter<T>): DataFilter<T> => value.getFilter())
+      .filter((filter) => filter && Object.keys(filter).length > 0);
+
+    if (conditions.length === 0) {
       return {} as DataFilter<T>;
     }
 
-    return {
-      $and: [
-        ...entityFilters.map((value: EntityFilter<T>): DataFilter<T> => {
-          return value.getFilter();
-        }),
-      ],
-    } as unknown as DataFilter<T>;
+    return { $and: conditions } as unknown as DataFilter<T>;
   }
 
   /**
