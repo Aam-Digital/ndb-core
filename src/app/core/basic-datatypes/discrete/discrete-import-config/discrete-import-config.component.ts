@@ -44,7 +44,7 @@ export class DiscreteImportConfigComponent {
     if (!valueMappings) {
       return undefined;
     }
-    return Object.values(valueMappings).filter((v) => v === undefined).length;
+    return Object.values(valueMappings).filter((v) => v == null).length;
   });
 
   readonly badge = computed(() => {

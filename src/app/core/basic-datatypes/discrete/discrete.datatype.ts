@@ -40,8 +40,10 @@ export abstract class DiscreteDatatype<
     }
 
     // If mapping dialog was opened but this specific value was not mapped,
-    // skip the property by returning undefined
-    if (valueMappings[val] === undefined) {
+    // skip the property by returning undefined.
+    // A value without a mapping is marked as null, but can also be missing entirely
+    // in a mapping that was stored before that.
+    if (valueMappings[val] == null) {
       return undefined;
     }
 

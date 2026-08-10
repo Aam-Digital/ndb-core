@@ -63,6 +63,17 @@ describe("DiscreteImportConfigComponent", () => {
     expect(component.tooltip()).toContain("All values");
   });
 
+  it("should count values that are marked as not to be imported", () => {
+    fixture.componentRef.setInput("col", {
+      column: "gender",
+      propertyName: "category",
+      additional: { values: { female: "F", male: null, other: null } },
+    });
+
+    expect(component.badge()).toBe("2");
+    expect(component.tooltip()).toContain("2");
+  });
+
   it("should open dialog and notify with the configured mapping", async () => {
     const onChangeFn = vi.fn();
     const rawData = [{ gender: "male" }, { gender: "female" }];
