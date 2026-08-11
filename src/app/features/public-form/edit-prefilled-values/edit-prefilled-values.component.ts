@@ -85,7 +85,8 @@ export class EditPrefilledValuesComponent
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
 
-  entityConstructor: EntityConstructor;
+  /** not set for configs in the multi form format, which hold no top-level entity type */
+  entityConstructor?: EntityConstructor;
   entitySchemaField: EntitySchemaField;
 
   private readonly entities = inject(EntityRegistry);

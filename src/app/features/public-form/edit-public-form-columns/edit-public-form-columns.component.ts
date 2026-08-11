@@ -48,7 +48,8 @@ export class EditPublicFormColumnsComponent
 
   @ViewChild(AdminEntityFormComponent) entityForm?: AdminEntityFormComponent;
 
-  entityConstructor: EntityConstructor;
+  /** not set for configs in the multi form format, which hold no top-level entity type */
+  entityConstructor?: EntityConstructor;
   formConfig: FormConfig;
   private originalFormConfig: FormConfig;
 

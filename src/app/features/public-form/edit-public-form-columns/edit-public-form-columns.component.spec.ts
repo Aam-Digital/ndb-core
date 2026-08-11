@@ -95,14 +95,25 @@ describe("EditPublicFormColumnsComponent", () => {
   });
 
   it("should not fail for a config in the multi form format", () => {
+    // a fresh fixture, so the multi form config is in place for the first change detection
+    const multiFormFixture = TestBed.createComponent(
+      EditPublicFormColumnsComponent,
+    );
     const multiFormConfig = new PublicFormConfig();
     multiFormConfig.forms = [
       { entity: TestEntity.ENTITY_TYPE, columns: testColumns },
     ];
-    fixture.componentRef.setInput("entity", multiFormConfig);
-    component.entityConstructor = undefined;
+    multiFormFixture.componentRef.setInput("entity", multiFormConfig);
+    setupCustomFormControlEditComponent(
+      multiFormFixture.componentInstance,
+      "testProperty",
+      {},
+      multiFormFixture,
+    );
 
-    expect(() => component.ngOnInit()).not.toThrow();
-    expect(component.entityConstructor).toBeUndefined();
+    expect(() => multiFormFixture.detectChanges()).not.toThrow();
+    expect(
+      multiFormFixture.componentInstance.entityConstructor,
+    ).toBeUndefined();
   });
 });
