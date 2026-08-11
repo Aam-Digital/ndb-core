@@ -30,6 +30,7 @@ type SearchResult = OpenStreetMapsSearchResult & {
     postcode?: string;
     city?: string;
     village?: string;
+    suburb?: string;
     country?: string;
   };
 };
@@ -203,21 +204,51 @@ describe("GeoService", () => {
     expect(formatted.address?.city).toBe("Smallville");
   });
 
-  it("should keep the OpenStreetMap display name when no German country filter is set", () => {
+  it("should format as house number, street, city, postcode and country by default", () => {
     const testResult = createSearchResult(
       {
         road: "Rosemount Buildings",
+        house_number: "35",
         city: "City of Edinburgh",
         postcode: "EH3 8DD",
+        country: "United Kingdom",
       },
-      "Rosemount Buildings, Tollcross, City of Edinburgh, EH3 8DD, United Kingdom",
+      "Rosemount Buildings, Tollcross, City of Edinburgh, Scotland, EH3 8DD, United Kingdom",
     );
 
     const formatted = service.reformatDisplayName(testResult);
 
     expect(formatted.display_name).toBe(
-      "Rosemount Buildings, Tollcross, City of Edinburgh, EH3 8DD, United Kingdom",
+      "35 Rosemount Buildings, City of Edinburgh EH3 8DD, United Kingdom",
     );
+  });
+
+  it("should use the most specific place name available as the city", () => {
+    // an address in a Dublin suburb carries no city, town or village at all
+    const testResult = createSearchResult(
+      {
+        road: "Broadford Avenue",
+        house_number: "63",
+        suburb: "Ballinteer",
+        country: "Ireland",
+      },
+      "63, Broadford Avenue, Broadford, Ballinteer, County Dublin, Ireland",
+    );
+
+    const formatted = service.reformatDisplayName(testResult);
+
+    expect(formatted.display_name).toBe(
+      "63 Broadford Avenue, Ballinteer, Ireland",
+    );
+    expect(formatted.address?.city).toBe("Ballinteer");
+  });
+
+  it("should keep the OpenStreetMap display name if it holds none of our parts", () => {
+    const testResult = createSearchResult({}, "Bayern, Deutschland");
+
+    const formatted = service.reformatDisplayName(testResult);
+
+    expect(formatted.display_name).toBe("Bayern, Deutschland");
   });
 
   it("should use the German format only if the filter is Germany alone", () => {
@@ -226,6 +257,7 @@ describe("GeoService", () => {
       house_number: "42",
       postcode: "12345",
       city: "Berlin",
+      country: "Germany",
     };
 
     setCountrycodes("de");
@@ -238,18 +270,7 @@ describe("GeoService", () => {
     expect(
       service.reformatDisplayName(createSearchResult(address, "raw name"))
         .display_name,
-    ).toBe("raw name");
-  });
-
-  it("should normalize address parts even without the German format", () => {
-    const testResult = createSearchResult(
-      { village: "Smallville" },
-      "Smallville, Ireland",
-    );
-
-    const formatted = service.reformatDisplayName(testResult);
-
-    expect(formatted.address?.city).toBe("Smallville");
+    ).toBe("42 Main St, Berlin 12345, Germany");
   });
 
   it("should normalize address parts on lookup results for PDF templating", async () => {
@@ -316,31 +337,44 @@ describe("GeoService", () => {
   });
 
   it("should compose an address string from structured parts", () => {
-    expect(
-      service.composeAddressFromParts({
-        road: "Main St",
-        house_number: "42",
-        postcode: "12345",
-        city: "Berlin",
-        country: "Germany",
-      }),
-    ).toBe("Main St 42, 12345 Berlin");
+    const parts = {
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    };
+
+    expect(service.composeAddressFromParts(parts)).toBe(
+      "42 Main St, Berlin 12345, Germany",
+    );
+
+    setCountrycodes("de");
+    expect(service.composeAddressFromParts(parts)).toBe(
+      "Main St 42, 12345 Berlin",
+    );
   });
 
   it("should compose the same format as a lookup's display_name, so the two can match", () => {
-    setCountrycodes("de");
-    const lookup = service.reformatDisplayName(
-      createSearchResult({
-        road: "Main St",
-        house_number: "42",
-        postcode: "12345",
-        city: "Berlin",
-        country: "Germany",
-      }),
-    );
+    const address = {
+      road: "Main St",
+      house_number: "42",
+      postcode: "12345",
+      city: "Berlin",
+      country: "Germany",
+    };
 
+    const lookup = service.reformatDisplayName(createSearchResult(address));
     expect(service.composeAddressFromParts(lookup.address)).toBe(
       lookup.display_name,
+    );
+
+    setCountrycodes("de");
+    const germanLookup = service.reformatDisplayName(
+      createSearchResult(address),
+    );
+    expect(service.composeAddressFromParts(germanLookup.address)).toBe(
+      germanLookup.display_name,
     );
   });
 

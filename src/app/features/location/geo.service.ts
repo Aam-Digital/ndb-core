@@ -21,7 +21,11 @@ import {
   map,
   tap,
 } from "rxjs/operators";
-import { enrichGeoLocation, GeoLocation } from "./geo-location";
+import {
+  enrichGeoLocation,
+  GeoLocation,
+  getCityFromAddress,
+} from "./geo-location";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -143,38 +147,57 @@ export class GeoService {
         ),
       );
   }
-  private getCity(addr: OpenStreetMapsSearchResult["address"]): string {
-    return addr.city ?? addr.village ?? addr.town ?? "";
-  }
-
   private formatStreet(addr: OpenStreetMapsSearchResult["address"]): string {
-    if (!addr.road && !addr.house_number) return "";
-    if (addr.road && addr.house_number)
-      return `${addr.road} ${addr.house_number}`;
-    return addr.road || addr.house_number || "";
+    if (!addr.road || !addr.house_number) {
+      return addr.road || addr.house_number || "";
+    }
+    return this.useGermanAddressFormat
+      ? `${addr.road} ${addr.house_number}`
+      : `${addr.house_number} ${addr.road}`;
   }
 
-  private formatPostcodeCity(
+  private formatCityAndPostcode(
     addr: OpenStreetMapsSearchResult["address"],
   ): string {
-    const city = this.getCity(addr);
-    if (addr.postcode && city) return `${addr.postcode} ${city}`;
-    if (addr.postcode) return `${addr.postcode}`;
-    if (city) return city;
-    return "";
+    const city = getCityFromAddress(addr);
+    if (!city || !addr.postcode) {
+      return city || addr.postcode || "";
+    }
+    return this.useGermanAddressFormat
+      ? `${addr.postcode} ${city}`
+      : `${city} ${addr.postcode}`;
   }
 
   /**
-   * Whether our own, shortened address format applies.
-   * It omits the country and only covers street, postcode and city, which is
-   * the German address format specifically, so it only applies to instances
-   * that restrict lookups to Germany. Everywhere else the full name from
-   * OpenStreetMap is kept, which includes the country and is never empty.
+   * Whether the German address format applies, i.e. "Street 12, 12345 City"
+   * without the country. Only instances restricting lookups to Germany use it;
+   * everywhere else the default format applies.
    */
   private get useGermanAddressFormat(): boolean {
     return (
       this.countrycodes?.trim().toLowerCase() === GERMAN_ADDRESS_FORMAT_COUNTRY
     );
+  }
+
+  /**
+   * The address text in whichever format applies:
+   * German instances get "Street 12, 12345 City", everyone else
+   * "12 Street, City 12345, Country".
+   */
+  private formatAddress(addr: OpenStreetMapsSearchResult["address"]): string {
+    const parts = this.useGermanAddressFormat
+      ? [
+          addr.amenity ?? addr.office,
+          this.formatStreet(addr),
+          this.formatCityAndPostcode(addr),
+        ]
+      : [
+          this.formatStreet(addr),
+          this.formatCityAndPostcode(addr),
+          addr.country,
+        ];
+
+    return parts.filter((x) => !!x && x !== "undefined").join(", ");
   }
 
   reformatDisplayName(
@@ -185,23 +208,16 @@ export class GeoService {
       return result;
     }
 
-    // Ensure a normalized `city` field for downstream consumers (use village/town as fallback)
-    const city = this.getCity(addr);
+    // Ensure a normalized `city` field for downstream consumers, since
+    // OpenStreetMap often names the place something other than `city`
+    const city = getCityFromAddress(addr);
     if (city && !addr.city) {
       addr.city = city;
     }
 
-    if (!this.useGermanAddressFormat) {
-      return result;
-    }
-
-    const displayParts = [
-      addr.amenity ?? addr.office,
-      this.formatStreet(addr),
-      this.formatPostcodeCity(addr),
-    ].filter((x) => !!x && x !== "undefined");
-
-    result.display_name = displayParts.join(", ");
+    // Keep OpenStreetMap's own name for results holding none of our parts,
+    // so an entry can never end up without a label
+    result.display_name = this.formatAddress(addr) || result.display_name;
     return result;
   }
 
@@ -250,20 +266,15 @@ export class GeoService {
    * Composes a display address string from a GeoLocation's structured parts
    * (the reverse of what {@link enrichGeoLocation} derives from a lookup).
    *
-   * Deliberately mirrors the format of {@link reformatDisplayName} (street,
-   * then postcode + city) and omits `country`: callers compare the composed
-   * string against a lookup's `display_name` to tell whether the address text
-   * was customized, so the two must be able to match. Without the German
-   * address format the `display_name` is OpenStreetMap's own, which callers
-   * compare against separately.
+   * Deliberately mirrors the format of {@link reformatDisplayName}: callers
+   * compare the composed string against a lookup's `display_name` to tell
+   * whether the address text was customized, so the two must be able to match.
    */
   composeAddressFromParts(location: GeoLocation | undefined): string {
     if (!location) {
       return "";
     }
-    return [this.formatStreet(location), this.formatPostcodeCity(location)]
-      .filter((x) => !!x)
-      .join(", ");
+    return this.formatAddress(location);
   }
 }
 
@@ -281,6 +292,7 @@ export type OpenStreetMapsSearchResult = GeoResult & {
     city?: string;
     village?: string;
     town?: string;
+    municipality?: string;
     postcode?: string;
     country?: string;
     country_code?: string;
