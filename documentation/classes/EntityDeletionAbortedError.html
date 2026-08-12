@@ -196,7 +196,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/entity/entity-actions/entity-delete.service.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/entity/entity-actions/entity-delete.service.ts:21</a></div>
                             </td>
                         </tr>
 
@@ -231,7 +231,6 @@ import {
   UserAdminService,
 } from &quot;../../user/user-admin-service/user-admin.service&quot;;
 import { UserAccount } from &quot;../../user/user-admin-service/user-account&quot;;
-import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 import { itemReferencesId } from &quot;../entity-mapper/entity-relations.service&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { UserAccountActionGuardService } from &quot;../../user/user-admin-service/user-account-action-guard.service&quot;;
@@ -254,7 +253,6 @@ export class EntityDeleteService extends CascadingEntityAction {
   private userAdminService &#x3D; inject(UserAdminService);
   private confirmationDialog &#x3D; inject(ConfirmationDialogService);
   private readonly accountActionGuard &#x3D; inject(UserAccountActionGuardService);
-  private readonly sessionInfo &#x3D; inject(SessionSubject, { optional: true });
 
   /**
    * The actual delete action without user interactions.
@@ -288,12 +286,6 @@ export class EntityDeleteService extends CascadingEntityAction {
   }
 
   private async handleUserAccountDeletion(entity: Entity): Promise&lt;boolean&gt; {
-    const session &#x3D; this.sessionInfo?.value;
-    if (!session?.roles.includes(UserAdminService.ACCOUNT_MANAGER_ROLE)) {
-      // Cannot manage accounts without admin role — skip silently
-      return true;
-    }
-
     let linkedAccount: UserAccount | null;
     try {
       linkedAccount &#x3D; await firstValueFrom(

@@ -222,7 +222,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:94</a></div>
                             </td>
                         </tr>
 
@@ -296,7 +296,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -326,8 +326,10 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Observable } from &quot;rxjs&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject } from &quot;@angular/core&quot;;
+import { Observable } from &quot;rxjs&quot;;
 import { Role, UserAccount } from &quot;./user-account&quot;;
+import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 
 /**
  * Admin functionalities to manage users in an authentication server like Keycloak.
@@ -337,6 +339,20 @@ export abstract class UserAdminService {
    * Users with this role can create and update other accounts.
    */
   static readonly ACCOUNT_MANAGER_ROLE &#x3D; &quot;account_manager&quot;;
+
+  private readonly sessionInfo &#x3D; inject(SessionSubject, { optional: true });
+
+  /**
+   * Whether the current user has the role required to manage accounts
+   * (e.g. list, create, update or delete accounts) on the authentication server.
+   */
+  canManageAccounts(): boolean {
+    return (
+      this.sessionInfo?.value?.roles?.includes(
+        UserAdminService.ACCOUNT_MANAGER_ROLE,
+      ) ?? false
+    );
+  }
 
   /**
    * Get the user account details of the user linked to the given entity.
@@ -419,6 +435,8 @@ export class UserAdminApiError extends Error {
 
   private generateDefaultMessage(status: number) {
     switch (status) {
+      case 403:
+        return $localize&#x60;:User API error:You do not have permission to manage user accounts.&#x60;;
       case 404:
         return $localize&#x60;:User API error:The entry does not exist.&#x60;;
       case 409:
