@@ -24,10 +24,14 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UpdatedEntity } from "../../core/entity/model/entity-update";
 import {
+  DatabaseEntity,
   entityRegistry,
   EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { FileDatatype } from "./file.datatype";
+import { PhotoDatatype } from "./photo.datatype";
+import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../../core/session/session-type";
 import { map } from "rxjs/operators";
@@ -39,6 +43,12 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
 import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
 import { AlertService } from "../../core/alerts/alert.service";
 
+/** a record type whose only attachment field uses the "photo" datatype extending "file" */
+@DatabaseEntity("PhotoOnlyFileTestEntity")
+class PhotoOnlyFileTestEntity extends Entity {
+  @DatabaseField({ dataType: PhotoDatatype.dataType }) picture: string;
+}
+
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
   let mockHttp: any;
@@ -47,6 +57,7 @@ describe("CouchdbFileService", () => {
   let mockAlertService: any;
   let dismiss: Mock;
   let updates: Subject<UpdatedEntity<Entity>>;
+  let receiveUpdates: Mock;
   const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}-attachments`;
   let mockNavigator;
   let registeredEntityForTest = false;
@@ -61,6 +72,7 @@ describe("CouchdbFileService", () => {
       open: vi.fn(),
     };
     updates = new Subject();
+    receiveUpdates = vi.fn().mockReturnValue(updates);
     mockSnackbar = {
       openFromComponent: vi.fn(),
     };
@@ -91,7 +103,7 @@ describe("CouchdbFileService", () => {
         { provide: AlertService, useValue: mockAlertService },
         {
           provide: EntityMapperService,
-          useValue: { receiveUpdates: () => updates },
+          useValue: { receiveUpdates },
         },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
@@ -109,6 +121,8 @@ describe("CouchdbFileService", () => {
           useValue: { getDatabase: () => mockDb },
         },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
+        { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: PhotoDatatype, multi: true },
       ],
     });
     service = TestBed.inject(CouchdbFileService);
@@ -124,6 +138,27 @@ describe("CouchdbFileService", () => {
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should delete the files of a deleted record", async () => {
+    mockHttp.get.mockReturnValue(of({ _rev: "test_rev" }));
+    mockHttp.delete.mockReturnValue(of({ ok: true }));
+
+    updates.next({ entity: new Entity("testId"), type: "remove" });
+    await Promise.resolve();
+
+    expect(mockHttp.delete).toHaveBeenCalledWith(
+      expect.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
+    );
+  });
+
+  it("should watch record types whose only attachment field is a photo", () => {
+    // "photo" is a datatype extending "file", so comparing dataType names misses it
+    receiveUpdates.mockClear();
+
+    TestBed.runInInjectionContext(() => new CouchdbFileService());
+
+    expect(receiveUpdates).toHaveBeenCalledWith(PhotoOnlyFileTestEntity);
   });
 
   it("should add a attachment to a existing document", async () => {

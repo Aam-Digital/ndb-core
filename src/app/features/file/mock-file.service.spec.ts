@@ -10,6 +10,9 @@ import {
 } from "../../core/entity/database-entity.decorator";
 import { SyncStateSubject } from "../../core/session/session-type";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
+import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
+import { FileDatatype } from "./file.datatype";
+import { PhotoDatatype } from "./photo.datatype";
 
 describe("MockFileService", () => {
   let service: MockFileService;
@@ -27,6 +30,10 @@ describe("MockFileService", () => {
           provide: SyncStateSubject,
           useValue: of(SyncState.COMPLETED),
         },
+        // the service checks registered entity types for attachment fields on creation,
+        // which resolves the datatypes of their schema fields
+        { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: PhotoDatatype, multi: true },
       ],
     });
     service = TestBed.inject(MockFileService);
