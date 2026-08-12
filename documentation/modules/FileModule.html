@@ -302,7 +302,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injector, NgModule, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Injector,
+  NgModule,
+  inject,
+  provideAppInitializer,
+} from &quot;@angular/core&quot;;
 import { CouchdbFileService } from &quot;./couchdb-file.service&quot;;
 import { hasRemoteSession } from &quot;../../core/session/session-type&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
@@ -326,6 +331,11 @@ import { PhotoDatatype } from &quot;./photo.datatype&quot;;
     }),
     { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
     { provide: DefaultDatatype, useClass: PhotoDatatype, multi: true },
+    // create the FileService eagerly: its constructor sets up the listener that deletes
+    // the files of deleted records. Without this it is only created once a component
+    // using files is rendered, so deleting a record from other parts of the app
+    // (or right after startup) would leave its files behind.
+    provideAppInitializer(() &#x3D;&gt; void inject(FileService)),
   ],
 })
 export class FileModule {
