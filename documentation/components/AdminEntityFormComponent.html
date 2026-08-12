@@ -710,8 +710,8 @@ If false, the full admin layout with section headers and drag&amp;drop areas is 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="598"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:598</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="599"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:599</a></div>
                         </td>
                     </tr>
 
@@ -892,8 +892,8 @@ If false, the full admin layout with section headers and drag&amp;drop areas is 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="531"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:531</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="532"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:532</a></div>
                         </td>
                     </tr>
 
@@ -961,8 +961,8 @@ If false, the full admin layout with section headers and drag&amp;drop areas is 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="554"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:554</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="555"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:555</a></div>
                         </td>
                     </tr>
 
@@ -1272,8 +1272,8 @@ Otherwise, it opens the field configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="550"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:550</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="551"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:551</a></div>
                         </td>
                     </tr>
 
@@ -1339,8 +1339,8 @@ Otherwise, it opens the field configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="562"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:562</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="563"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:563</a></div>
                         </td>
                     </tr>
 
@@ -1818,7 +1818,7 @@ so all structural changes automatically propagate.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="568" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:568</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="569" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts:569</a></div>
                         </td>
                     </tr>
 
@@ -2348,7 +2348,8 @@ export class AdminEntityFormComponent {
    */
   private async createNewField(): Promise&lt;string | undefined&gt; {
     const newField &#x3D; await this.openFieldConfig({ id: null });
-    if (!newField) {
+    if (!newField?.id) {
+      // without an id there is no field to add
       return undefined;
     }
 
