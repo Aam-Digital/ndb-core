@@ -310,4 +310,50 @@ describe("KeycloakAdminService", () => {
 
     httpTestingController.expectNone((req) => req.url === `${BASE_URL}/users`);
   });
+
+  it("should error without sending a request if createUser is called without account_manager role", async () => {
+    sessionSubject.next({ id: "user", name: "user", roles: [] });
+
+    service.createUser("test-entity-id", "test@example.com", []).subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error).toBeInstanceOf(UserAdminApiError);
+        expect(error.status).toBe(403);
+      },
+    });
+
+    httpTestingController.expectNone((req) => req.url === `${BASE_URL}/users`);
+  });
+
+  it("should error without sending a request if updateUser is called without account_manager role", async () => {
+    sessionSubject.next({ id: "user", name: "user", roles: [] });
+
+    service.updateUser("test-id", { email: "new@example.com" }).subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error).toBeInstanceOf(UserAdminApiError);
+        expect(error.status).toBe(403);
+      },
+    });
+
+    httpTestingController.expectNone(
+      (req) => req.url === `${BASE_URL}/users/test-id`,
+    );
+  });
+
+  it("should error without sending a request if resendInvitation is called without account_manager role", async () => {
+    sessionSubject.next({ id: "user", name: "user", roles: [] });
+
+    service.resendInvitation("test-id").subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error).toBeInstanceOf(UserAdminApiError);
+        expect(error.status).toBe(403);
+      },
+    });
+
+    httpTestingController.expectNone(
+      (req) => req.url === `${BASE_URL}/users/test-id/execute-actions-email`,
+    );
+  });
 });
