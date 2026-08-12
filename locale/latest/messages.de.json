@@ -1621,5 +1621,6 @@
   "2765038467790743178": "Add group",
   "4296542518018293988": "New group",
   "6751342468525805909": "filter by text",
-  "5004481086074659559": "This field does not exist yet, so it has no general settings to reset to. A new field with these settings will be created on the datatype."
+  "5004481086074659559": "This field does not exist yet, so it has no general settings to reset to. A new field with these settings will be created on the datatype.",
+  "5879465512940001929": "You do not have permission to manage user accounts."
 }
