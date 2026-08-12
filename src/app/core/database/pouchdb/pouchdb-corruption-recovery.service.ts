@@ -4,8 +4,7 @@ import {
   CustomYesNoButtons,
   OkButton,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
-import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
+import { LocalDeviceResetService } from "../local-device-reset.service";
 import { Logging } from "../../logging/logging.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
@@ -17,7 +16,7 @@ import { SessionType } from "../../session/session-type";
 @Injectable({ providedIn: "root" })
 export class PouchdbCorruptionRecoveryService {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly location = inject<Location>(LOCATION_TOKEN);
+  private readonly localDeviceReset = inject(LocalDeviceResetService);
   private warningDialogOpen = false;
   private resetDialogOpen = false;
 
@@ -89,8 +88,7 @@ This can happen after using multiple tabs in parallel.` +
     Logging.warn(
       "Resetting application data after suspected local database corruption (user confirmed)",
     );
-    sessionStorage.setItem(RESET_PENDING_KEY, "1");
-    this.location.pathname = "";
+    this.localDeviceReset.markResetPendingAndReload();
   }
 
   handleKnownMultiTabCorruption(err: unknown, logMessage: string): void {

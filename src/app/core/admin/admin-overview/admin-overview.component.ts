@@ -7,6 +7,8 @@ import {
 } from "@angular/core";
 import { AdminSectionStateService } from "./admin-section-state.service";
 import { BackupService } from "../backup/backup.service";
+import { SystemResetService } from "../system-reset/system-reset.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfigService } from "../../config/config.service";
@@ -53,6 +55,8 @@ import { Logging } from "#src/app/core/logging/logging.service";
 })
 export class AdminOverviewComponent {
   private backupService = inject(BackupService);
+  private systemResetService = inject(SystemResetService);
+  private localDeviceResetService = inject(LocalDeviceResetService);
   private downloadService = inject(DownloadService);
   private dbResolver = inject(DatabaseResolverService);
   private confirmationDialog = inject(ConfirmationDialogService);
@@ -235,31 +239,15 @@ export class AdminOverviewComponent {
     return target.files[0];
   }
 
-  /**
-   * Reset the database removing all entities except user accounts.
-   */
-  async clearDatabase() {
-    const restorePoint = await this.backupService.getDatabaseExport();
+  async emptyRecords() {
+    await this.systemResetService.emptyRecords();
+  }
 
-    const confirmed = await this.confirmationDialog.getConfirmation(
-      `Empty complete database?`,
-      `Are you sure you want to clear the database? This will delete all existing records in the database!`,
-    );
+  async resetSystem() {
+    await this.systemResetService.resetSystem();
+  }
 
-    if (!confirmed) {
-      return;
-    }
-
-    await this.backupService.clearDatabase();
-
-    const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
-      duration: 8000,
-    });
-    snackBarRef
-      .onAction()
-      .pipe(untilDestroyed(this))
-      .subscribe(async () => {
-        await this.backupService.restoreData(restorePoint, true);
-      });
+  async resetLocalDevice() {
+    await this.localDeviceResetService.resetLocalDevice();
   }
 }

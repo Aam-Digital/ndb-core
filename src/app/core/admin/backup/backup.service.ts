@@ -2,25 +2,21 @@ import { inject, Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
-import { Logging } from "../../logging/logging.service";
-import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
 
 /**
  * Create and load backups of the database.
+ *
+ * This only reads and writes the raw documents.
+ * For the admin actions to empty or reset a system see the SystemResetService,
+ * for clearing the data cached on the current device see the LocalDeviceResetService.
  */
 @Injectable({
   providedIn: "root",
 })
 export class BackupService {
-  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private dbResolver = inject(DatabaseResolverService);
 
   private db: Database;
-
-  private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly location = inject(LOCATION_TOKEN);
 
   constructor() {
     this.db = this.dbResolver.getDatabase();
@@ -36,19 +32,22 @@ export class BackupService {
   }
 
   /**
-   * Removes all but the config of the database
+   * Removes all but the config of the database.
+   *
+   * This is used to wipe the database before restoring a backup file.
+   * The config is kept so that restoring a backup that does not contain a config
+   * does not leave the system unusable.
+   *
+   * The database indices are removed as well. They are part of the backup that is
+   * restored immediately afterwards, so they do not have to be rebuilt from scratch.
    *
    * @returns Promise<any> a promise that resolves after all remove operations are done
    */
   async clearDatabase(): Promise<void> {
-    const allDocs = await this.db.getAll();
-    for (const row of allDocs) {
-      if (row._id.startsWith(Config.ENTITY_TYPE + ":")) {
-        // skip config in order to not break login!
-        continue;
-      }
-      await this.db.remove(row);
-    }
+    // skip config in order to not break login!
+    await this.db.removeAll(
+      (doc) => !doc._id.startsWith(Config.ENTITY_TYPE + ":"),
+    );
   }
 
   /**
@@ -64,28 +63,5 @@ export class BackupService {
       delete record._rev;
       await this.db.put(record, forceUpdate);
     }
-  }
-
-  async resetApplication() {
-    const choice = await this.confirmationDialog.getConfirmation(
-      $localize`:Reset Application Confirmation:Reset Application`,
-      $localize`:Reset Application Confirmation:Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.`,
-    );
-    if (!choice) {
-      return;
-    }
-
-    // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
-    Logging.warn(
-      "Resetting application: user confirmed deletion of all local data",
-    );
-
-    // Reload the page first to kill all PouchDB connections, in-flight sync,
-    // view indexing, and other async operations. IDB databases are deleted on
-    // the fresh page by `runPendingReset()` (before Angular bootstraps) where no
-    // connections exist, avoiding race conditions with PouchDB's IDB transactions.
-    this.localStorage.clear();
-    sessionStorage.setItem(RESET_PENDING_KEY, "1");
-    this.location.pathname = "";
   }
 }

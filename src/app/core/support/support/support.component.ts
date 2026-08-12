@@ -16,6 +16,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BackupService } from "../../admin/backup/backup.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { SyncStateSubject } from "../../session/session-type";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
@@ -49,6 +50,7 @@ export class SupportComponent implements OnInit {
   private databaseResolver = inject(DatabaseResolverService);
   private http = inject(HttpClient);
   private backupService = inject(BackupService);
+  private localDeviceResetService = inject(LocalDeviceResetService);
   private downloadService = inject(DownloadService);
   private window = inject<Window>(WINDOW_TOKEN);
   protected readonly assistantService = inject(AssistantService);
@@ -209,8 +211,8 @@ export class SupportComponent implements OnInit {
     this.clipboard.copy(JSON.stringify(debugInfo, null, 2));
   }
 
-  async resetApplication() {
-    await this.backupService.resetApplication();
+  async resetLocalDevice() {
+    await this.localDeviceResetService.resetLocalDevice();
   }
 
   async downloadLocalDatabase() {

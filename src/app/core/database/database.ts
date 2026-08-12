@@ -124,6 +124,26 @@ export abstract class Database {
   }
 
   /**
+   * Delete all documents of the database matching the given filter.
+   *
+   * Note that `getAll()` also returns the database's own "_design/..." index
+   * documents, so a filter that does not exclude them deletes the indices as well.
+   * They are only recreated when the app starts up again
+   * (see {@link DatabaseIndexingService}), so only delete them if the calling code
+   * reloads the app or restores the documents immediately afterwards.
+   *
+   * @param shouldDelete filter deciding for each document whether it is deleted
+   * @returns the number of deleted documents
+   */
+  async removeAll(shouldDelete: (doc: any) => boolean): Promise<number> {
+    const docsToDelete = (await this.getAll()).filter(shouldDelete);
+    for (const doc of docsToDelete) {
+      await this.remove(doc);
+    }
+    return docsToDelete.length;
+  }
+
+  /**
    * @returns true if there are no documents in the database
    */
   abstract isEmpty(): Promise<boolean>;
