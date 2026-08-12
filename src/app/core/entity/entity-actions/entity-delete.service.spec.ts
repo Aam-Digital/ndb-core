@@ -169,14 +169,15 @@ describe("EntityDeleteService", () => {
   });
 
   it("should skip account deletion silently if current user lacks account_manager role", async () => {
+    // given: UserAdminService rejects the lookup because the current user cannot manage accounts
     const userEntity = new TestEntity();
     TestEntity.enableUserAccounts = true;
-    mockSessionSubject.next({ id: "session-id", name: "test", roles: [] });
-    mockUserAdminService.getUser.mockReturnValue(of({ id: "kc-user-id" }));
+    mockUserAdminService.getUser.mockReturnValue(
+      throwError(() => new UserAdminApiError(403)),
+    );
 
     await service.deleteEntity(userEntity);
 
-    expect(mockUserAdminService.getUser).not.toHaveBeenCalled();
     expect(mockUserAdminService.deleteUser).not.toHaveBeenCalled();
     expect(mockConfirmationDialog.getConfirmation).not.toHaveBeenCalled();
     TestEntity.enableUserAccounts = false;

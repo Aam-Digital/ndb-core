@@ -116,6 +116,46 @@ describe("DiscreteImportDialogComponent", () => {
     });
   });
 
+  it("should keep values without an assignment when the mapping is saved and reopened", async () => {
+    data.col.additional = {
+      values: { male: "M", female: "F", other: "other" },
+    };
+    component.ngOnInit();
+    component.form.patchValue({ female: undefined, other: undefined });
+
+    await component.save();
+
+    expect(data.col.additional).toEqual({
+      values: { male: "M", female: null, other: null },
+    });
+    // the mapping has to survive being serialized, e.g. when stored with the import history
+    data.col.additional = JSON.parse(JSON.stringify(data.col.additional));
+
+    component.ngOnInit();
+
+    const reopenedValues = component.form.getRawValue();
+    expect(reopenedValues.female).toBeNull();
+    expect(reopenedValues.other).toBeNull();
+  });
+
+  it("should treat a value assigned to unchecked as mapped", async () => {
+    const confirmationSpy = vi.spyOn(
+      TestBed.inject(ConfirmationDialogService),
+      "getConfirmation",
+    );
+    data.entityType = {
+      schema: new Map([["paid", { dataType: "boolean" }]]),
+    } as unknown as typeof TestEntity;
+    data.col = { column: "paid", propertyName: "paid" };
+    data.values = ["yes", "no"];
+
+    component.ngOnInit();
+    await component.save();
+
+    expect(confirmationSpy).not.toHaveBeenCalled();
+    expect(data.col.additional).toEqual({ values: { yes: true, no: false } });
+  });
+
   it("should correctly auto-map numeric CSV values (parsed as numbers) to string enum option IDs", () => {
     const numericEnumOptions = [
       { id: "1a", label: "1a" },

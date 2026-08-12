@@ -14,7 +14,6 @@ import {
   UserAdminService,
 } from "../../user/user-admin-service/user-admin.service";
 import { UserAccount } from "../../user/user-admin-service/user-account";
-import { SessionSubject } from "../../session/auth/session-info";
 import { itemReferencesId } from "../entity-mapper/entity-relations.service";
 import { firstValueFrom } from "rxjs";
 import { UserAccountActionGuardService } from "../../user/user-admin-service/user-account-action-guard.service";
@@ -37,7 +36,6 @@ export class EntityDeleteService extends CascadingEntityAction {
   private userAdminService = inject(UserAdminService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private readonly accountActionGuard = inject(UserAccountActionGuardService);
-  private readonly sessionInfo = inject(SessionSubject, { optional: true });
 
   /**
    * The actual delete action without user interactions.
@@ -71,12 +69,6 @@ export class EntityDeleteService extends CascadingEntityAction {
   }
 
   private async handleUserAccountDeletion(entity: Entity): Promise<boolean> {
-    const session = this.sessionInfo?.value;
-    if (!session?.roles.includes(UserAdminService.ACCOUNT_MANAGER_ROLE)) {
-      // Cannot manage accounts without admin role — skip silently
-      return true;
-    }
-
     let linkedAccount: UserAccount | null;
     try {
       linkedAccount = await firstValueFrom(
