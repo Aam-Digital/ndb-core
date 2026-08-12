@@ -4,20 +4,30 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { DownloadService } from "../../export/download-service/download.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { Config } from "../../config/config";
+import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
+import { SiteSettings } from "../../site-settings/site-settings";
+import { ReportEntity } from "../../../features/reporting/report-config";
+import { PublicFormConfig } from "../../../features/public-form/public-form-config";
 
 describe("AdminAiAgentComponent", () => {
   let component: AdminAiAgentComponent;
   let fixture: ComponentFixture<AdminAiAgentComponent>;
+  let mockEntityMapper: {
+    loadType: ReturnType<typeof vi.fn>;
+    load: ReturnType<typeof vi.fn>;
+  };
+  let mockDownloadService: { triggerDownload: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
-    const mockEntityMapper = {
+    mockEntityMapper = {
       loadType: vi.fn().mockName("EntityMapperService.loadType"),
       load: vi.fn().mockName("EntityMapperService.load"),
     };
     mockEntityMapper.loadType.mockReturnValue(Promise.resolve([]));
     mockEntityMapper.load.mockReturnValue(Promise.resolve(null));
 
-    const mockDownloadService = {
+    mockDownloadService = {
       triggerDownload: vi.fn().mockName("DownloadService.triggerDownload"),
     };
     mockDownloadService.triggerDownload.mockReturnValue(Promise.resolve());
@@ -43,5 +53,50 @@ describe("AdminAiAgentComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("downloads all AI context document sources", async () => {
+    const configDocument = { sentinel: "config" };
+    const permissionsDocument = { sentinel: "permissions" };
+    const configurableEnumDocument = { sentinel: "configurable-enum" };
+    const siteSettingsDocument = { sentinel: "site-settings" };
+    const reportDocument = { sentinel: "report" };
+    const publicFormDocument = { sentinel: "public-form" };
+
+    mockEntityMapper.load.mockImplementation((_entityType, key) =>
+      Promise.resolve(
+        key === Config.CONFIG_KEY ? configDocument : permissionsDocument,
+      ),
+    );
+    mockEntityMapper.loadType.mockImplementation((entityType) => {
+      if (entityType === ConfigurableEnum) {
+        return Promise.resolve([configurableEnumDocument]);
+      }
+      if (entityType === SiteSettings) {
+        return Promise.resolve([siteSettingsDocument]);
+      }
+      if (entityType === ReportEntity) {
+        return Promise.resolve([reportDocument]);
+      }
+      if (entityType === PublicFormConfig) {
+        return Promise.resolve([publicFormDocument]);
+      }
+      return Promise.resolve([]);
+    });
+
+    await component.downloadAiContext();
+
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+      [
+        configDocument,
+        permissionsDocument,
+        configurableEnumDocument,
+        siteSettingsDocument,
+        reportDocument,
+        publicFormDocument,
+      ],
+      "json",
+      expect.any(String),
+    );
   });
 });
