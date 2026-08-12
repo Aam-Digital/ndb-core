@@ -236,7 +236,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/basic-datatypes/discrete/discrete.datatype.ts:57</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/basic-datatypes/discrete/discrete.datatype.ts:59</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +281,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/basic-datatypes/discrete/discrete.datatype.ts:60</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/basic-datatypes/discrete/discrete.datatype.ts:62</a></div>
                                 </td>
                             </tr>
 
@@ -340,8 +340,10 @@ export abstract class DiscreteDatatype&lt;
     }
 
     // If mapping dialog was opened but this specific value was not mapped,
-    // skip the property by returning undefined
-    if (valueMappings[val] &#x3D;&#x3D;&#x3D; undefined) {
+    // skip the property by returning undefined.
+    // A value without a mapping is marked as null, but can also be missing entirely
+    // in a mapping that was stored before that.
+    if (valueMappings[val] &#x3D;&#x3D; null) {
       return undefined;
     }
 

@@ -641,7 +641,7 @@ shown inside the column mapping UI to let users define value-to-value mappings.<
     if (!valueMappings) {
       return undefined;
     }
-    return Object.values(valueMappings).filter((v) &#x3D;&gt; v &#x3D;&#x3D;&#x3D; undefined).length;
+    return Object.values(valueMappings).filter((v) &#x3D;&gt; v &#x3D;&#x3D; null).length;
   })</code>
                     </td>
                 </tr>
@@ -712,7 +712,7 @@ export class DiscreteImportConfigComponent {
     if (!valueMappings) {
       return undefined;
     }
-    return Object.values(valueMappings).filter((v) &#x3D;&gt; v &#x3D;&#x3D;&#x3D; undefined).length;
+    return Object.values(valueMappings).filter((v) &#x3D;&gt; v &#x3D;&#x3D; null).length;
   });
 
   readonly badge &#x3D; computed(() &#x3D;&gt; {

@@ -818,7 +818,7 @@ export class DiscreteImportDialogComponent implements OnInit {
 
   async save() {
     const rawValues &#x3D; this.getValuesInDatabaseFormat(this.form.getRawValue());
-    const allFilled &#x3D; Object.values(rawValues).every((val) &#x3D;&gt; !!val);
+    const allFilled &#x3D; Object.values(rawValues).every((val) &#x3D;&gt; val !&#x3D;&#x3D; null);
     const confirmed &#x3D;
       allFilled ||
       (await this.confirmation.getConfirmation(
@@ -845,13 +845,28 @@ export class DiscreteImportDialogComponent implements OnInit {
    */
   private getValuesInDatabaseFormat(rawValues: any) {
     for (const k in rawValues) {
-      rawValues[k] &#x3D; this.schemaService.valueToDatabaseFormat(
+      const value &#x3D; this.schemaService.valueToDatabaseFormat(
         rawValues[k],
         this.schema,
       );
+      // mark a value the user did not assign explicitly as null, because an empty value is
+      // dropped whenever the mapping is serialized (e.g. stored with the import history),
+      // which loses the information that this value should not be imported at all
+      rawValues[k] &#x3D; this.isAssigned(value) ? value : null;
     }
 
     return rawValues;
+  }
+
+  /**
+   * Whether the given value is a target value the user picked,
+   * which includes deliberately empty values like &#x60;false&#x60; for an unchecked checkbox.
+   */
+  private isAssigned(value: any): boolean {
+    if (Array.isArray(value)) {
+      return value.some((v) &#x3D;&gt; this.isAssigned(v));
+    }
+    return value !&#x3D;&#x3D; undefined &amp;&amp; value !&#x3D;&#x3D; null;
   }
 }
 </code></pre>
