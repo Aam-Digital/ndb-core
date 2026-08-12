@@ -170,6 +170,10 @@ export class KeycloakAdminService extends UserAdminService {
   }
 
   override getUser(userEntityId: string): Observable<UserAccount> {
+    if (!this.canManageAccounts()) {
+      return throwError(() => new UserAdminApiError(403));
+    }
+
     return this.findUserBy({
       q: `exact_username:${userEntityId}`,
     }).pipe(
@@ -273,6 +277,10 @@ export class KeycloakAdminService extends UserAdminService {
    * Fetches all users with their roles.
    */
   getAllUsers(): Observable<UserAccount[]> {
+    if (!this.canManageAccounts()) {
+      return throwError(() => new UserAdminApiError(403));
+    }
+
     return this.findUsersBy({}).pipe(
       switchMap((users) => {
         if (users.length === 0) {

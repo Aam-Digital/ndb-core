@@ -6,19 +6,31 @@ import {
 import { KeycloakAdminService } from "./keycloak-admin.service";
 import { environment } from "../../../../environments/environment.spec";
 import { Role } from "./user-account";
-import { UserAdminApiError } from "./user-admin.service";
+import { UserAdminApiError, UserAdminService } from "./user-admin.service";
 import { Logging } from "app/core/logging/logging.service";
+import { SessionSubject } from "../../session/auth/session-info";
 
 describe("KeycloakAdminService", () => {
   let service: KeycloakAdminService;
   let httpTestingController: HttpTestingController;
+  let sessionSubject: SessionSubject;
 
   const BASE_URL = `${environment.userAdminApi}/admin/realms/${environment.realm}`;
 
   beforeEach(() => {
+    sessionSubject = new SessionSubject();
+    sessionSubject.next({
+      id: "admin",
+      name: "admin",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+    });
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [KeycloakAdminService],
+      providers: [
+        KeycloakAdminService,
+        { provide: SessionSubject, useValue: sessionSubject },
+      ],
     });
 
     service = TestBed.inject(KeycloakAdminService);
@@ -269,5 +281,33 @@ describe("KeycloakAdminService", () => {
         message: "No internet connection",
       }),
     );
+  });
+
+  it("should error without sending a request if the user cannot manage accounts", async () => {
+    sessionSubject.next({ id: "user", name: "user", roles: [] });
+
+    service.getAllUsers().subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error).toBeInstanceOf(UserAdminApiError);
+        expect(error.status).toBe(403);
+      },
+    });
+
+    httpTestingController.expectNone(`${BASE_URL}/users`);
+  });
+
+  it("should error without sending a request if getUser is called without account_manager role", async () => {
+    sessionSubject.next({ id: "user", name: "user", roles: [] });
+
+    service.getUser("some-entity-id").subscribe({
+      next: () => fail("Should have failed"),
+      error: (error) => {
+        expect(error).toBeInstanceOf(UserAdminApiError);
+        expect(error.status).toBe(403);
+      },
+    });
+
+    httpTestingController.expectNone((req) => req.url === `${BASE_URL}/users`);
   });
 });
