@@ -7,8 +7,8 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { Config } from "../../config/config";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
 import { SiteSettings } from "../../site-settings/site-settings";
-import { ReportEntity } from "../../../features/reporting/report-config";
-import { PublicFormConfig } from "../../../features/public-form/public-form-config";
+import { ReportEntity } from "#src/app/features/reporting/report-config";
+import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 
 describe("AdminAiAgentComponent", () => {
   let component: AdminAiAgentComponent;
@@ -19,12 +19,31 @@ describe("AdminAiAgentComponent", () => {
   };
   let mockDownloadService: { triggerDownload: ReturnType<typeof vi.fn> };
 
+  const configurableEnumDocument = { sentinel: "configurable-enum" };
+  const siteSettingsDocument = { sentinel: "site-settings" };
+  const reportDocument = { sentinel: "report" };
+  const publicFormDocument = { sentinel: "public-form" };
+
   beforeEach(async () => {
     mockEntityMapper = {
       loadType: vi.fn().mockName("EntityMapperService.loadType"),
       load: vi.fn().mockName("EntityMapperService.load"),
     };
-    mockEntityMapper.loadType.mockReturnValue(Promise.resolve([]));
+    mockEntityMapper.loadType.mockImplementation((entityType) => {
+      if (entityType === ConfigurableEnum) {
+        return Promise.resolve([configurableEnumDocument]);
+      }
+      if (entityType === SiteSettings) {
+        return Promise.resolve([siteSettingsDocument]);
+      }
+      if (entityType === ReportEntity) {
+        return Promise.resolve([reportDocument]);
+      }
+      if (entityType === PublicFormConfig) {
+        return Promise.resolve([publicFormDocument]);
+      }
+      return Promise.resolve([]);
+    });
     mockEntityMapper.load.mockReturnValue(Promise.resolve(null));
 
     mockDownloadService = {
@@ -58,31 +77,12 @@ describe("AdminAiAgentComponent", () => {
   it("downloads all AI context document sources", async () => {
     const configDocument = { sentinel: "config" };
     const permissionsDocument = { sentinel: "permissions" };
-    const configurableEnumDocument = { sentinel: "configurable-enum" };
-    const siteSettingsDocument = { sentinel: "site-settings" };
-    const reportDocument = { sentinel: "report" };
-    const publicFormDocument = { sentinel: "public-form" };
 
     mockEntityMapper.load.mockImplementation((_entityType, key) =>
       Promise.resolve(
         key === Config.CONFIG_KEY ? configDocument : permissionsDocument,
       ),
     );
-    mockEntityMapper.loadType.mockImplementation((entityType) => {
-      if (entityType === ConfigurableEnum) {
-        return Promise.resolve([configurableEnumDocument]);
-      }
-      if (entityType === SiteSettings) {
-        return Promise.resolve([siteSettingsDocument]);
-      }
-      if (entityType === ReportEntity) {
-        return Promise.resolve([reportDocument]);
-      }
-      if (entityType === PublicFormConfig) {
-        return Promise.resolve([publicFormDocument]);
-      }
-      return Promise.resolve([]);
-    });
 
     await component.downloadAiContext();
 
@@ -90,6 +90,25 @@ describe("AdminAiAgentComponent", () => {
       [
         configDocument,
         permissionsDocument,
+        configurableEnumDocument,
+        siteSettingsDocument,
+        reportDocument,
+        publicFormDocument,
+      ],
+      "json",
+      expect.any(String),
+    );
+  });
+
+  it("omits config and permissions documents that fail to load", async () => {
+    mockEntityMapper.load.mockImplementation(() =>
+      Promise.reject(new Error("document not found")),
+    );
+
+    await component.downloadAiContext();
+
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+      [
         configurableEnumDocument,
         siteSettingsDocument,
         reportDocument,

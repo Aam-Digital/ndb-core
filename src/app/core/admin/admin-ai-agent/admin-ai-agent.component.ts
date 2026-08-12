@@ -7,8 +7,8 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 import { DownloadService } from "../../export/download-service/download.service";
 import { Config } from "../../config/config";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
-import { ReportEntity } from "../../../features/reporting/report-config";
-import { PublicFormConfig } from "../../../features/public-form/public-form-config";
+import { ReportEntity } from "#src/app/features/reporting/report-config";
+import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import moment from "moment";
 import { SiteSettings } from "../../site-settings/site-settings";
 
