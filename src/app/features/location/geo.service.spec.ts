@@ -314,6 +314,24 @@ describe("GeoService", () => {
     expect(mockHttp.get).toHaveBeenCalledTimes(2);
   });
 
+  it("should not cache results of a lookup that started before the filter changed", async () => {
+    vi.useFakeTimers();
+    const term = "Berlin";
+    const pendingResponse = new Subject<SearchResult[]>();
+    mockHttp.get.mockReturnValue(pendingResponse);
+
+    service.lookup(term).subscribe();
+    // the filter changes while the request is still on its way
+    setCountrycodes("de");
+    pendingResponse.next([createSearchResult({ city: "Berlin" })]);
+    pendingResponse.complete();
+
+    service.lookup(term).subscribe();
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(mockHttp.get).toHaveBeenCalledTimes(2);
+  });
+
   it("should return cached result on repeated lookup without additional HTTP request", () => {
     const term = "Berlin";
     const results = [createSearchResult({ city: "Berlin" })];

@@ -92,11 +92,16 @@ export class GeoService {
     // (Nominatim usage policy: max 1 request/sec regardless of success or failure)
     this.lookupQueue$
       .pipe(
-        concatMap(({ term, resolve }) =>
-          concat(
+        concatMap(({ term, resolve }) => {
+          const requestedFilter = this.countrycodes;
+          return concat(
             this.fetchLookup(term).pipe(
               tap((results) => {
-                this.cache.set(term, results);
+                // a filter change during the request already emptied the cache,
+                // so results answering the previous filter must not go back in
+                if (requestedFilter === this.countrycodes) {
+                  this.cache.set(term, results);
+                }
                 resolve.next(results);
                 resolve.complete();
               }),
@@ -106,8 +111,8 @@ export class GeoService {
               }),
             ),
             defer(() => timer(1000).pipe(ignoreElements())),
-          ),
-        ),
+          );
+        }),
       )
       .subscribe();
   }

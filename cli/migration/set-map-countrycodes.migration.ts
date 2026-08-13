@@ -12,6 +12,15 @@ interface MapConfig {
   countrycodes?: string;
 }
 
+const USAGE_EXAMPLE = "migrate run set-map-countrycodes de";
+
+/**
+ * The shape Nominatim expects: ISO 3166-1 alpha-2 codes, comma-separated.
+ * Whether each code names a real country is left to Nominatim, which ignores
+ * the ones it does not know.
+ */
+const COUNTRY_CODES_PATTERN = /^[a-z]{2}(,[a-z]{2})*$/i;
+
 /**
  * Set the country filter for the address lookup, e.g.
  * `migrate run set-map-countrycodes de`.
@@ -33,10 +42,16 @@ export const setMapCountrycodes: MigrationDefinition = {
     "Set the address lookup country filter, e.g. `migrate run set-map-countrycodes de`. Takes a comma-separated list of country codes.",
 
   async run(ctx): Promise<MigrationResult> {
-    const countrycodes = ctx.args[0]?.trim();
-    if (!countrycodes) {
+    if (ctx.args.length !== 1) {
       return failedMigrationResult(
-        "No country code given. Pass it after the migration id, e.g. `migrate run set-map-countrycodes de`",
+        `Expected exactly one country code argument, got ${ctx.args.length}. Write a list as one argument without spaces, e.g. \`${USAGE_EXAMPLE}\``,
+      );
+    }
+
+    const countrycodes = ctx.args[0].trim();
+    if (!COUNTRY_CODES_PATTERN.test(countrycodes)) {
+      return failedMigrationResult(
+        `"${countrycodes}" is not a comma-separated list of two-letter country codes, e.g. \`${USAGE_EXAMPLE}\``,
       );
     }
 

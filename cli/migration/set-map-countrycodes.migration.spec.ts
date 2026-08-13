@@ -74,10 +74,15 @@ describe("setMapCountrycodes migration", () => {
     expect(result.status).toBe("no-change");
   });
 
-  it("fails without touching anything when no country code is given", async () => {
+  it.each([
+    ["no country code", []],
+    ["several arguments instead of one list", ["de", "at"]],
+    ["an empty entry in the list", ["de,,at"]],
+    ["something that is not a country code", ["deu"]],
+  ])("fails without touching anything given %s", async (_case, args) => {
     const store = seedConfig();
     const before = JSON.stringify(store);
-    const ctx = buildTestContext(store, false, []);
+    const ctx = buildTestContext(store, false, args);
 
     const result = await setMapCountrycodes.run(ctx);
 
