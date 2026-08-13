@@ -591,7 +591,8 @@ loads the relevant, specific EditComponent implementation.</p>
         entity.getConstructor(),
       );
     }
-    const result &#x3D; toFormFieldConfig(field);
+    // copy, so that the given config (which may come from the app config) is not changed here
+    const result &#x3D; { ...toFormFieldConfig(field) };
     // add editComponent (because we cannot rely on the entity&#x27;s schema yet for a new field)
     result.editComponent &#x3D;
       result.editComponent ??
@@ -645,7 +646,7 @@ loads the relevant, specific EditComponent implementation.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/entity/entity-field-edit/entity-field-edit.component.ts:92</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/core/entity/entity-field-edit/entity-field-edit.component.ts:93</a></div>
                         </td>
                     </tr>
 
@@ -684,7 +685,7 @@ loads the relevant, specific EditComponent implementation.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="99" class="link-to-prism">src/app/core/entity/entity-field-edit/entity-field-edit.component.ts:99</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/entity/entity-field-edit/entity-field-edit.component.ts:100</a></div>
                         </td>
                     </tr>
 
@@ -780,7 +781,8 @@ export class EntityFieldEditComponent&lt;T extends Entity &#x3D; Entity&gt; {
         entity.getConstructor(),
       );
     }
-    const result &#x3D; toFormFieldConfig(field);
+    // copy, so that the given config (which may come from the app config) is not changed here
+    const result &#x3D; { ...toFormFieldConfig(field) };
     // add editComponent (because we cannot rely on the entity&#x27;s schema yet for a new field)
     result.editComponent &#x3D;
       result.editComponent ??
