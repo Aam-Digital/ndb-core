@@ -101,12 +101,18 @@ function buildSelector(filters: ChangeLogFilters): Record<string, unknown> {
   return selector;
 }
 
-/** Build the query sampling the newest records for the author filter's options. */
+/**
+ * Build the query sampling the newest records for the author filter's options.
+ *
+ * `_id` is projected alongside `user` even though nothing displays it: the
+ * backend derives a document's permission subject from its `_id` and drops any
+ * doc that has none, so projecting `user` alone returns an empty list.
+ */
 export function buildAuthorSampleQuery(): MangoQuery {
   return {
     selector: { timestamp: { $gt: null } },
     sort: [{ timestamp: "desc" }],
-    fields: ["user"],
+    fields: ["_id", "user"],
     limit: AUTHOR_SAMPLE_SIZE,
   };
 }
@@ -119,10 +125,12 @@ export function buildAuthorSampleQuery(): MangoQuery {
  */
 export function toChangeLogEntry(doc: RawAuditDoc): ChangeLogEntry {
   const entityId = doc.entityId ?? "";
+  const by = authorOf(doc) ?? "";
   return {
     id: doc._id,
     at: new Date(doc.timestamp),
-    by: authorOf(doc) ?? "",
+    by,
+    byEntityId: authorEntityId(by),
     action: OPERATION_TO_ACTION[doc.operation] ?? "updated",
     entityId,
     entityType: entityId ? Entity.extractTypeFromId(entityId) : "",
@@ -145,4 +153,13 @@ export function distinctAuthors(docs: RawAuditDoc[]): string[] {
 /** The recorded author's display name, falling back to their id. */
 function authorOf(doc: RawAuditDoc): string | undefined {
   return doc.user?.name ?? doc.user?.id;
+}
+
+/**
+ * The author as an entity id, when the backend recorded one (`User:demo-admin`)
+ * rather than a bare username. Only then can the UI resolve a readable name;
+ * anything else is displayed as the plain text it is.
+ */
+export function authorEntityId(author: string): string | undefined {
+  return author?.includes(":") ? author : undefined;
 }

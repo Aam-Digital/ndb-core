@@ -58,8 +58,17 @@
           [value]="changedByFilter()"
           (valueChange)="setChangedByFilter($event)"
         >
-          @for (author of authors(); track author) {
-            <mat-option [value]="author">{{ author }}</mat-option>
+          @for (author of authors(); track author.value) {
+            <mat-option [value]="author.value">
+              @if (author.entityId) {
+                <app-entity-block
+                  [entityId]="author.entityId"
+                  [linkDisabled]="true"
+                ></app-entity-block>
+              } @else {
+                {{ author.value }}
+              }
+            </mat-option>
           }
         </mat-select>
         @if (changedByFilter()) {
@@ -112,7 +121,12 @@
           </th>
           <td mat-cell *matCellDef="let entry">
             @if (entry.entityId) {
-              <app-entity-block [entityId]="entry.entityId"></app-entity-block>
+              <!-- the raw id as fallback: on a log of deletions, "not available"
+                   alone would hide the one thing the row is about -->
+              <app-entity-block
+                [entityId]="entry.entityId"
+                [showIdEntityId]="true"
+              ></app-entity-block>
             } @else {
               <span>-</span>
             }
@@ -134,7 +148,16 @@
           <th mat-header-cell *matHeaderCellDef i18n="Change log column">
             Changed by
           </th>
-          <td mat-cell *matCellDef="let entry">{{ entry.by || "-" }}</td>
+          <td mat-cell *matCellDef="let entry">
+            @if (entry.byEntityId) {
+              <app-entity-block
+                [entityId]="entry.byEntityId"
+                [showIdEntityId]="true"
+              ></app-entity-block>
+            } @else {
+              <span>{{ entry.by || "-" }}</span>
+            }
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="changedFields">

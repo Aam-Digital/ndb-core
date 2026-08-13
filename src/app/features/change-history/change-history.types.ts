@@ -63,8 +63,16 @@ export interface ChangeLogEntry {
   id: string;
   /** server-set time of the change */
   at: Date;
-  /** authenticated author recorded by the backend (name, or id as fallback) */
+  /**
+   * authenticated author recorded by the backend (name, or id as fallback).
+   * This is the raw recorded value, and what the author filter matches on.
+   */
   by: string;
+  /**
+   * {@link by} as an entity id, when the author was recorded as an app user
+   * record; unset for a plain username, which has no record to resolve.
+   */
+  byEntityId?: string;
   action: ChangeAction;
   /** the changed record's id, e.g. `Child:123` */
   entityId: string;

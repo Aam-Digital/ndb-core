@@ -96,7 +96,11 @@ it("loads the first page and the author options when enabled and permitted", asy
     10,
     0,
   ]);
-  expect(component.authors()).toEqual(["demo-admin", "priya"]);
+  // each option keeps the raw value to filter on, plus the id to resolve a name
+  expect(component.authors()).toEqual([
+    { value: "demo-admin", entityId: undefined },
+    { value: "priya", entityId: undefined },
+  ]);
 });
 
 it("does not query while the feature flag is still loading, then queries once it is on", async () => {

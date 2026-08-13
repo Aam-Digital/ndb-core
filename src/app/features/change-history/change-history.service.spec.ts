@@ -222,6 +222,7 @@ it("returns mapped entries, without a further page when none was found", async (
       id: "AuditRecord:Entity:1:2026-06-03T10:00:00.000Z:1-a",
       at: new Date("2026-06-03T10:00:00.000Z"),
       by: "User:demo",
+      byEntityId: "User:demo",
       action: "updated",
       entityId: "Entity:1",
       entityType: "Entity",
@@ -261,7 +262,8 @@ it("samples recent records for the distinct authors of the filter dropdown", asy
   );
 
   expect(await service.getChangeAuthors()).toEqual(["a", "b"]);
-  expect(lastFindCall()[1].fields).toEqual(["user"]);
+  // _id must stay in the projection or the proxy drops every doc
+  expect(lastFindCall()[1].fields).toEqual(["_id", "user"]);
 });
 
 it("reads the audit feature status from the replication-backend /_features endpoint (lazily)", async () => {

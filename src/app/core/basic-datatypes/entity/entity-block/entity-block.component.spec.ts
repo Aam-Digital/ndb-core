@@ -117,6 +117,21 @@ describe("EntityBlockComponent", () => {
     expect(fixture.nativeElement.textContent).toContain("not available");
   });
 
+  it("shows the raw id instead of 'not available' when asked to", async () => {
+    mockEntityMapper.load.mockRejectedValue(new Error("not found"));
+    fixture.componentRef.setInput("entityId", `${TestEntity.ENTITY_TYPE}:404`);
+    fixture.componentRef.setInput("showIdEntityId", true);
+    fixture.detectChanges();
+
+    await vi.waitFor(() => expect(component.notFound()).toBe(true));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain(
+      `${TestEntity.ENTITY_TYPE}:404`,
+    );
+    expect(fixture.nativeElement.textContent).not.toContain("not available");
+  });
+
   it("renders the not-found fallback instead of throwing when entityId is not a string", async () => {
     // an Entity accidentally bound to [entityId] instead of [entity]: truthy, so it
     // reaches the loader, but not a string, so extractTypeFromId() rejects it.

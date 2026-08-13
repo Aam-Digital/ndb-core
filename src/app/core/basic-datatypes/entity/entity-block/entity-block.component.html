@@ -19,10 +19,14 @@
       class="margin-right-small"
     ></app-fa-dynamic-icon>
 
-    @if (missingEntityType()) {
-      {{ missingEntityType()?.label }}:
+    @if (showIdEntityId()) {
+      {{ entityId() }}
+    } @else {
+      @if (missingEntityType()) {
+        {{ missingEntityType()?.label }}:
+      }
+      <span i18n="Entity block not found message">not available</span>
     }
-    <span i18n="Entity block not found message">not available</span>
   </span>
 } @else {
   <span

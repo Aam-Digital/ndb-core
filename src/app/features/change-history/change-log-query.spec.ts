@@ -1,4 +1,5 @@
 import {
+  buildAuthorSampleQuery,
   buildChangeLogQuery,
   distinctAuthors,
   toChangeLogEntry,
@@ -76,6 +77,7 @@ it("maps an audit doc to a log entry with its entity type and changed fields", (
     id: "AuditRecord:Child:1:2026-06-03T10:00:00.000Z:2-b",
     at: new Date("2026-06-03T10:00:00.000Z"),
     by: "demo-admin",
+    byEntityId: undefined,
     action: "updated",
     entityId: "Child:1",
     entityType: "Child",
@@ -90,6 +92,24 @@ it("falls back to the user id, and to no entity type, when either is missing", (
   expect(entry.by).toBe("kc-9");
   expect(entry.entityId).toBe("");
   expect(entry.entityType).toBe("");
+});
+
+it("keeps _id in the author sample, which the proxy requires to return a doc at all", () => {
+  // the backend drops every doc without an _id from a _find response, so a
+  // projection of just "user" comes back empty
+  expect(buildAuthorSampleQuery().fields).toEqual(["_id", "user"]);
+});
+
+it("exposes an app user author as an entity id, and a plain username as text only", () => {
+  expect(toChangeLogEntry(doc({ user: { name: "User:demo-admin" } })).by).toBe(
+    "User:demo-admin",
+  );
+  expect(
+    toChangeLogEntry(doc({ user: { name: "User:demo-admin" } })).byEntityId,
+  ).toBe("User:demo-admin");
+  expect(toChangeLogEntry(doc({ user: { name: "importer" } })).byEntityId).toBe(
+    undefined,
+  );
 });
 
 it("lists the distinct authors of the sampled records, sorted", () => {

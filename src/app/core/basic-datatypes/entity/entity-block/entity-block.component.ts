@@ -56,6 +56,14 @@ export class EntityBlockComponent {
 
   linkDisabled = input(false);
 
+  /**
+   * Show the raw entity id instead of the generic "not available" when the
+   * referenced record cannot be loaded. Opt-in, for lists where the reader needs
+   * to identify *which* record is gone (e.g. an audit log of deletions) rather
+   * than only that one is missing.
+   */
+  showIdEntityId = input(false);
+
   entityResource = resourceWithRetention({
     params: () => ({ entity: this.entity(), entityId: this.entityId() }),
     loader: async ({ params: { entity, entityId } }) => {

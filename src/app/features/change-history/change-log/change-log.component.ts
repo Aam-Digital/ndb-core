@@ -29,6 +29,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { NotificationTimePipe } from "../../notification/notification-time.pipe";
 import { ChangeHistoryService } from "../change-history.service";
+import { authorEntityId } from "../change-log-query";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
 
 /**
@@ -201,7 +202,12 @@ export class ChangeLogComponent {
   readonly loadError = computed(
     () => this.pageResource.value()?.failed === true,
   );
-  readonly authors = computed(() => this.authorsResource.value() ?? []);
+  readonly authors = computed(() =>
+    (this.authorsResource.value() ?? []).map((value) => ({
+      value,
+      entityId: authorEntityId(value),
+    })),
+  );
 
   /**
    * Length reported to the paginator: everything paged through so far, plus one
