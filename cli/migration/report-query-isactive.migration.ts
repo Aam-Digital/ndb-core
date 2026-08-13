@@ -1,4 +1,4 @@
-import { normalizeQuery } from "../../src/app/core/export/query-normalization.js";
+import { migrateIsActiveQuerySelection } from "../../src/app/core/export/is-active-query-migration.js";
 import type {
   MigrationDefinition,
   MigrationResult,
@@ -40,7 +40,7 @@ export const reportQueryIsActive: MigrationDefinition = {
 
       const before = JSON.stringify(doc);
       const migrated = JSON.parse(before, (key, value) =>
-        key === "query" ? normalizeQuery(value) : value,
+        key === "query" ? migrateIsActiveQuerySelection(value) : value,
       );
       if (JSON.stringify(migrated) === before) {
         continue;

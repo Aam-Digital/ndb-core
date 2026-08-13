@@ -13,7 +13,7 @@ import type { DefaultValueConfig } from "../default-values/default-value-config"
 import type { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import type { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
-import { normalizeQuery } from "../export/query-normalization";
+import { migrateIsActiveQuerySelection } from "../export/is-active-query-migration";
 import { ConfigMigration } from "./config-migration";
 import {
   CONFIG_ENTITY_ROUTE_PREFIX,
@@ -642,7 +642,7 @@ const migrateIsActiveReportQueries: ConfigMigration = (key, configPart) => {
     return configPart;
   }
 
-  return normalizeQuery(configPart);
+  return migrateIsActiveQuerySelection(configPart);
 };
 
 /**
