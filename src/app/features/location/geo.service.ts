@@ -29,6 +29,8 @@ import {
 
 export interface GeoResult extends Coordinates {
   display_name: string;
+  /** Unique id of the place, used to tell apart results sharing a display name */
+  place_id?: number;
 }
 
 /**
@@ -279,8 +281,6 @@ export class GeoService {
 }
 
 export type OpenStreetMapsSearchResult = GeoResult & {
-  /** Unique id of the place in OpenStreetMap, used to distinguish results */
-  place_id?: number;
   address?: {
     amenity?: string;
     office?: string;
