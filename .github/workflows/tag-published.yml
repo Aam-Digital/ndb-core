@@ -24,11 +24,14 @@ jobs:
       build_name: ${{ github.ref_name }}
       # - tag with git tag name
       # - tag with `:master` on pre-release tag builds (tag contains "-master")
-      # - tag with `:stable` for release tags (created via create-release.yml)
+      # - tag with `:stable` and `:latest` for release tags (created via create-release.yml)
+      # (docker/metadata-action's own auto-`latest` is disabled in _build.yaml so it doesn't
+      # apply `:latest` to every tag push regardless of this condition)
       docker_tags: |
         type=ref,event=tag
-        type=raw,value=master,enabled=${{ contains(github.ref_name, '-master') }}
-        type=raw,value=stable,enabled=${{ !contains(github.ref_name, '-') }}
+        type=raw,value=master,enable=${{ contains(github.ref_name, '-master') }}
+        type=raw,value=stable,enable=${{ !contains(github.ref_name, '-') }}
+        type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') }}
 
   sentry-upload-sourcemaps:
     runs-on: ubuntu-latest
