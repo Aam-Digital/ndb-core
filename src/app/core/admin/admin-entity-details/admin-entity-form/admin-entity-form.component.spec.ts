@@ -260,6 +260,30 @@ describe("AdminEntityFormComponent", () => {
     expect(JSON.stringify(testConfig)).toBe(configBefore);
   });
 
+  it("should keep a field that only overwrites some settings unchanged while rendering the preview", async () => {
+    // the preview is rendered before the dummy entity is available,
+    // so the field config must not be completed with details from its schema
+    const partiallyOverwrittenField = {
+      id: "name",
+      displayFullLengthLabel: true,
+    };
+    const previewFixture = TestBed.createComponent(AdminEntityFormComponent);
+    previewFixture.componentRef.setInput("config", {
+      fieldGroups: [{ fields: [partiallyOverwrittenField, "other"] }],
+    });
+    previewFixture.componentRef.setInput("entityType", TestEntity);
+
+    previewFixture.detectChanges();
+    await previewFixture.whenStable();
+
+    expect(previewFixture.componentInstance.fieldGroups()[0].fields[0]).toEqual(
+      {
+        id: "name",
+        displayFullLengthLabel: true,
+      },
+    );
+  });
+
   it("should reorder the field groups", () => {
     component.dropFieldGroups({
       previousIndex: 0,

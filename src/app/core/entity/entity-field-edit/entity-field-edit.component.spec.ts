@@ -59,6 +59,20 @@ describe("EntityFieldEditComponent", () => {
     expect(mockFormService.extendFormFieldConfig).not.toHaveBeenCalled();
   });
 
+  it("should not modify the given field config while extending it without an entity", () => {
+    mockSchemaService.getComponent.mockReturnValue("EditText");
+    const fieldConfig = { id: "testField", displayFullLengthLabel: true };
+    fixture.componentRef.setInput("field", fieldConfig);
+    fixture.componentRef.setInput("entity", undefined);
+
+    expect(component._field().editComponent).toBe("EditText");
+    // the config object comes from the app config and must not be changed here
+    expect(fieldConfig).toEqual({
+      id: "testField",
+      displayFullLengthLabel: true,
+    });
+  });
+
   it("should fall back to the read-only view if the form has no control for the field", () => {
     // e.g. after the entity schema was edited in the admin UI, a configured field
     // can be missing from the already-built formGroup
