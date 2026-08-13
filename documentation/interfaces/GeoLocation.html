@@ -267,7 +267,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/features/location/geo-location.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/features/location/geo-location.ts:39</a></div>
                                 </td>
                             </tr>
 
@@ -311,7 +311,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/features/location/geo-location.ts:13</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/features/location/geo-location.ts:40</a></div>
                                 </td>
                             </tr>
 
@@ -355,7 +355,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/features/location/geo-location.ts:8</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/features/location/geo-location.ts:35</a></div>
                                 </td>
                             </tr>
 
@@ -399,7 +399,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/features/location/geo-location.ts:10</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/features/location/geo-location.ts:37</a></div>
                                 </td>
                             </tr>
 
@@ -443,7 +443,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">src/app/features/location/geo-location.ts:7</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/features/location/geo-location.ts:34</a></div>
                                 </td>
                             </tr>
 
@@ -487,7 +487,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/features/location/geo-location.ts:11</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/features/location/geo-location.ts:38</a></div>
                                 </td>
                             </tr>
 
@@ -531,7 +531,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/features/location/geo-location.ts:9</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/features/location/geo-location.ts:36</a></div>
                                 </td>
                             </tr>
 
@@ -543,6 +543,33 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { OpenStreetMapsSearchResult } from &quot;./geo.service&quot;;
+
+/**
+ * Fields OpenStreetMap may use for the place a person would name as their
+ * town, ordered from the most specific to the widest area.
+ * Many places have no &#x60;city&#x60; at all: an address in a Dublin suburb, for
+ * example, only carries &#x60;suburb&#x60;.
+ */
+const CITY_FIELDS &#x3D; [
+  &quot;city&quot;,
+  &quot;town&quot;,
+  &quot;village&quot;,
+  &quot;suburb&quot;,
+  &quot;municipality&quot;,
+] as const;
+
+type AddressWithCityFields &#x3D; Partial&lt;
+  Record&lt;(typeof CITY_FIELDS)[number], string&gt;
+&gt;;
+
+/**
+ * The most specific place name available for an address.
+ */
+export function getCityFromAddress(
+  address: AddressWithCityFields | undefined,
+): string | undefined {
+  return CITY_FIELDS.map((field) &#x3D;&gt; address?.[field]).find((value) &#x3D;&gt; !!value);
+}
 
 /**
  * A location both as custom string and an optional geo location lookup.
@@ -565,7 +592,6 @@ export function enrichGeoLocation(
   const addr &#x3D; location.geoLookup.address;
   if (!addr) return location;
 
-  const getCity &#x3D; () &#x3D;&gt; addr.city ?? addr.village ?? addr.town ?? undefined;
   const formatPostcode &#x3D; () &#x3D;&gt;
     addr.postcode !&#x3D; null ? String(addr.postcode) : undefined;
 
@@ -574,7 +600,7 @@ export function enrichGeoLocation(
     road: location.road ?? addr.road,
     house_number: location.house_number ?? addr.house_number,
     postcode: location.postcode ?? formatPostcode(),
-    city: location.city ?? getCity(),
+    city: location.city ?? getCityFromAddress(addr),
     country: location.country ?? addr.country,
   };
 }

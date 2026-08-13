@@ -203,6 +203,9 @@
                             <a href="#childrenComponents" title="src/app/child-dev-project/children/children-components.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>childrenComponents</b>&nbsp;&nbsp;&nbsp;(src/.../children-components.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#CITY_FIELDS" title="src/app/features/location/geo-location.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CITY_FIELDS</b>&nbsp;&nbsp;&nbsp;(src/.../geo-location.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#COMPONENT_PERMISSIONS" title="src/app/features/attendance/attendance-permission.guard.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>COMPONENT_PERMISSIONS</b>&nbsp;&nbsp;&nbsp;(src/.../attendance-permission.guard.ts)</span></a>
                         </li>
                         <li>
@@ -342,6 +345,9 @@
                         </li>
                         <li>
                             <a href="#genders" title="src/app/child-dev-project/children/model/genders.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>genders</b>&nbsp;&nbsp;&nbsp;(src/.../genders.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#GERMAN_ADDRESS_FORMAT_COUNTRY" title="src/app/features/location/geo.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>GERMAN_ADDRESS_FORMAT_COUNTRY</b>&nbsp;&nbsp;&nbsp;(src/.../geo.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#heightRangeForAge" title="src/app/child-dev-project/children/demo-data-generators/health-check/height-weight.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>heightRangeForAge</b>&nbsp;&nbsp;&nbsp;(src/.../height-weight.ts)</span></a>
@@ -2625,6 +2631,50 @@ Order matters: the more specific patterns have to run before the plain number.</
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/location/geo-location.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CITY_FIELDS"></a>
+                    <span class="name">
+                        <span ><b>CITY_FIELDS</b></span>
+                        <a href="#CITY_FIELDS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  &quot;city&quot;,
+  &quot;town&quot;,
+  &quot;village&quot;,
+  &quot;suburb&quot;,
+  &quot;municipality&quot;,
+] as const</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Fields OpenStreetMap may use for the place a person would name as their
+town, ordered from the most specific to the widest area.
+Many places have no <code>city</code> at all: an address in a Dublin suburb, for
+example, only carries <code>suburb</code>.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -5991,6 +6041,42 @@ so they are not reported to remote logging.</p>
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/location/geo.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="GERMAN_ADDRESS_FORMAT_COUNTRY"></a>
+                    <span class="name">
+                        <span ><b>GERMAN_ADDRESS_FORMAT_COUNTRY</b></span>
+                        <a href="#GERMAN_ADDRESS_FORMAT_COUNTRY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;de&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Country whose addresses are written as &quot;Street 12, 12345 City&quot;,
+the format <a href="GeoService.reformatDisplayName">GeoService.reformatDisplayName</a> produces.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>

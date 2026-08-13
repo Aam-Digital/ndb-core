@@ -227,7 +227,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/features/location/geo.service.ts:56</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/features/location/geo.service.ts:74</a></div>
                             </td>
                         </tr>
 
@@ -260,8 +260,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="222"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:222</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="280"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:280</a></div>
                         </td>
                     </tr>
 
@@ -270,10 +270,9 @@
                 <td class="col-md-4">
                         <div class="io-description"><p>Composes a display address string from a GeoLocation&#39;s structured parts
 (the reverse of what <a href="../miscellaneous/functions.html#enrichGeoLocation">enrichGeoLocation</a> derives from a lookup).</p>
-<p>Deliberately mirrors the format of <a href="reformatDisplayName">reformatDisplayName</a> (street,
-then postcode + city) and omits <code>country</code>: callers compare the composed
-string against a lookup&#39;s <code>display_name</code> to tell whether the address text
-was customized, so the two must be able to match.</p>
+<p>Deliberately mirrors the format of <a href="reformatDisplayName">reformatDisplayName</a>: callers
+compare the composed string against a lookup&#39;s <code>display_name</code> to tell
+whether the address text was customized, so the two must be able to match.</p>
 </div>
 
                             <div class="io-description">
@@ -334,8 +333,8 @@ was customized, so the two must be able to match.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="207"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:207</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="266"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:266</a></div>
                         </td>
                     </tr>
 
@@ -404,8 +403,8 @@ Provided on the service so callers do not need to import the helper.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="97"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:97</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="125"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:125</a></div>
                         </td>
                     </tr>
 
@@ -479,8 +478,8 @@ Results are cached and requests are throttled to ≤1/sec per Nominatim policy.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="150"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:150</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="210"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:210</a></div>
                         </td>
                     </tr>
 
@@ -546,8 +545,8 @@ Results are cached and requests are throttled to ≤1/sec per Nominatim policy.<
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="176"
-                                    class="link-to-prism">src/app/features/location/geo.service.ts:176</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="235"
+                                    class="link-to-prism">src/app/features/location/geo.service.ts:235</a></div>
                         </td>
                     </tr>
 
@@ -630,11 +629,23 @@ import {
   map,
   tap,
 } from &quot;rxjs/operators&quot;;
-import { enrichGeoLocation, GeoLocation } from &quot;./geo-location&quot;;
+import {
+  enrichGeoLocation,
+  GeoLocation,
+  getCityFromAddress,
+} from &quot;./geo-location&quot;;
 
 export interface GeoResult extends Coordinates {
   display_name: string;
+  /** Unique id of the place, used to tell apart results sharing a display name */
+  place_id?: number;
 }
+
+/**
+ * Country whose addresses are written as &quot;Street 12, 12345 City&quot;,
+ * the format {@link GeoService.reformatDisplayName} produces.
+ */
+const GERMAN_ADDRESS_FORMAT_COUNTRY &#x3D; &quot;de&quot;;
 
 /**
  * A service that uses nominatim to lookup locations {@link https://nominatim.org/}
@@ -647,7 +658,13 @@ export class GeoService {
   private analytics &#x3D; inject(AnalyticsService);
 
   private readonly remoteUrl &#x3D; &quot;/nominatim&quot;;
-  private countrycodes &#x3D; &quot;de&quot;;
+
+  /**
+   * Optional country filter for lookups, only applied if an instance configures one.
+   * Nominatim treats this as a hard filter, so anything outside these countries
+   * is dropped from the results entirely.
+   */
+  private countrycodes?: string;
   private defaultOptions &#x3D; {
     format: &quot;json&quot;,
     addressdetails: 1,
@@ -669,20 +686,30 @@ export class GeoService {
 
     configService.configUpdates.subscribe(() &#x3D;&gt; {
       const config &#x3D; configService.getConfig&lt;MapConfig&gt;(MAP_CONFIG_KEY);
-      if (config?.countrycodes) {
-        this.countrycodes &#x3D; config.countrycodes;
+      if (config?.countrycodes &#x3D;&#x3D;&#x3D; this.countrycodes) {
+        return;
       }
+
+      this.countrycodes &#x3D; config?.countrycodes;
+      // cached results are keyed by search term alone, so they belong to the
+      // previous filter and its address format
+      this.cache.clear();
     });
 
     // Process lookups sequentially with a 1s cooldown after every attempt
     // (Nominatim usage policy: max 1 request/sec regardless of success or failure)
     this.lookupQueue$
       .pipe(
-        concatMap(({ term, resolve }) &#x3D;&gt;
-          concat(
+        concatMap(({ term, resolve }) &#x3D;&gt; {
+          const requestedFilter &#x3D; this.countrycodes;
+          return concat(
             this.fetchLookup(term).pipe(
               tap((results) &#x3D;&gt; {
-                this.cache.set(term, results);
+                // a filter change during the request already emptied the cache,
+                // so results answering the previous filter must not go back in
+                if (requestedFilter &#x3D;&#x3D;&#x3D; this.countrycodes) {
+                  this.cache.set(term, results);
+                }
                 resolve.next(results);
                 resolve.complete();
               }),
@@ -692,8 +719,8 @@ export class GeoService {
               }),
             ),
             defer(() &#x3D;&gt; timer(1000).pipe(ignoreElements())),
-          ),
-        ),
+          );
+        }),
       )
       .subscribe();
   }
@@ -724,7 +751,7 @@ export class GeoService {
         params: {
           ...this.defaultOptions,
           q: searchTerm,
-          countrycodes: this.countrycodes,
+          ...(this.countrycodes ? { countrycodes: this.countrycodes } : {}),
         },
       })
       .pipe(
@@ -735,46 +762,77 @@ export class GeoService {
         ),
       );
   }
-  private getCity(addr: OpenStreetMapsSearchResult[&quot;address&quot;]): string {
-    return addr.city ?? addr.village ?? addr.town ?? &quot;&quot;;
-  }
-
   private formatStreet(addr: OpenStreetMapsSearchResult[&quot;address&quot;]): string {
-    if (!addr.road &amp;&amp; !addr.house_number) return &quot;&quot;;
-    if (addr.road &amp;&amp; addr.house_number)
-      return &#x60;${addr.road} ${addr.house_number}&#x60;;
-    return addr.road || addr.house_number || &quot;&quot;;
+    if (!addr.road || !addr.house_number) {
+      return addr.road || addr.house_number || &quot;&quot;;
+    }
+    return this.useGermanAddressFormat
+      ? &#x60;${addr.road} ${addr.house_number}&#x60;
+      : &#x60;${addr.house_number} ${addr.road}&#x60;;
   }
 
-  private formatPostcodeCity(
+  private formatCityAndPostcode(
     addr: OpenStreetMapsSearchResult[&quot;address&quot;],
   ): string {
-    const city &#x3D; this.getCity(addr);
-    if (addr.postcode &amp;&amp; city) return &#x60;${addr.postcode} ${city}&#x60;;
-    if (addr.postcode) return &#x60;${addr.postcode}&#x60;;
-    if (city) return city;
-    return &quot;&quot;;
+    const city &#x3D; getCityFromAddress(addr);
+    if (!city || !addr.postcode) {
+      return city || addr.postcode || &quot;&quot;;
+    }
+    return this.useGermanAddressFormat
+      ? &#x60;${addr.postcode} ${city}&#x60;
+      : &#x60;${city} ${addr.postcode}&#x60;;
+  }
+
+  /**
+   * Whether the German address format applies, i.e. &quot;Street 12, 12345 City&quot;
+   * without the country. Only instances restricting lookups to Germany use it;
+   * everywhere else the default format applies.
+   */
+  private get useGermanAddressFormat(): boolean {
+    return (
+      this.countrycodes?.trim().toLowerCase() &#x3D;&#x3D;&#x3D; GERMAN_ADDRESS_FORMAT_COUNTRY
+    );
+  }
+
+  /**
+   * The address text in whichever format applies:
+   * German instances get &quot;Street 12, 12345 City&quot;, everyone else
+   * &quot;12 Street, City 12345, Country&quot;.
+   */
+  private formatAddress(addr: OpenStreetMapsSearchResult[&quot;address&quot;]): string {
+    const parts &#x3D; this.useGermanAddressFormat
+      ? [
+          addr.amenity ?? addr.office,
+          this.formatStreet(addr),
+          this.formatCityAndPostcode(addr),
+        ]
+      : [
+          this.formatStreet(addr),
+          this.formatCityAndPostcode(addr),
+          addr.country,
+        ];
+
+    return parts.filter((x) &#x3D;&gt; !!x &amp;&amp; x !&#x3D;&#x3D; &quot;undefined&quot;).join(&quot;, &quot;);
   }
 
   reformatDisplayName(
     result: OpenStreetMapsSearchResult,
   ): OpenStreetMapsSearchResult {
     const addr &#x3D; result?.address;
-    if (addr) {
-      const displayParts &#x3D; [
-        addr.amenity ?? addr.office,
-        this.formatStreet(addr),
-        this.formatPostcodeCity(addr),
-      ].filter((x) &#x3D;&gt; !!x &amp;&amp; x !&#x3D;&#x3D; &quot;undefined&quot;);
-
-      // Ensure a normalized &#x60;city&#x60; field for downstream consumers (use village/town as fallback)
-      const city &#x3D; this.getCity(addr);
-      if (city &amp;&amp; !addr.city) {
-        addr.city &#x3D; city;
-      }
-
-      result.display_name &#x3D; displayParts.join(&quot;, &quot;);
+    if (!addr) {
+      return result;
     }
+
+    // Ensure a normalized &#x60;city&#x60; field for downstream consumers, since
+    // OpenStreetMap often names the place something other than &#x60;city&#x60;
+    const city &#x3D; getCityFromAddress(addr);
+    if (city &amp;&amp; !addr.city) {
+      addr.city &#x3D; city;
+    }
+
+    // Keep OpenStreetMap&#x27;s own name for results holding none of our parts,
+    // so an entry can never end up without a label
+    result.display_name &#x3D; this.formatAddress(addr) || result.display_name;
     return result;
   }
 
@@ -823,18 +881,15 @@ export class GeoService {
    * Composes a display address string from a GeoLocation&#x27;s structured parts
    * (the reverse of what {@link enrichGeoLocation} derives from a lookup).
    *
-   * Deliberately mirrors the format of {@link reformatDisplayName} (street,
-   * then postcode + city) and omits &#x60;country&#x60;: callers compare the composed
-   * string against a lookup&#x27;s &#x60;display_name&#x60; to tell whether the address text
-   * was customized, so the two must be able to match.
+   * Deliberately mirrors the format of {@link reformatDisplayName}: callers
+   * compare the composed string against a lookup&#x27;s &#x60;display_name&#x60; to tell
+   * whether the address text was customized, so the two must be able to match.
    */
   composeAddressFromParts(location: GeoLocation | undefined): string {
     if (!location) {
       return &quot;&quot;;
     }
-    return [this.formatStreet(location), this.formatPostcodeCity(location)]
-      .filter((x) &#x3D;&gt; !!x)
-      .join(&quot;, &quot;);
+    return this.formatAddress(location);
   }
 }
 
@@ -850,6 +905,7 @@ export type OpenStreetMapsSearchResult &#x3D; GeoResult &amp; {
     city?: string;
     village?: string;
     town?: string;
+    municipality?: string;
     postcode?: string;
     country?: string;
     country_code?: string;
