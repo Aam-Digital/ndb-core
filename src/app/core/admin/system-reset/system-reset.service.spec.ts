@@ -25,7 +25,7 @@ import "../../config/config";
 import "../../basic-datatypes/configurable-enum/configurable-enum";
 import "../../site-settings/site-settings";
 import "../../import/import-metadata";
-import "../../../features/reporting/report-config";
+import "#src/app/features/reporting/report-config";
 
 /** a record type that login accounts can be linked to (i.e. holding "user profiles") */
 @DatabaseEntity("SystemResetUserProfileTestEntity")

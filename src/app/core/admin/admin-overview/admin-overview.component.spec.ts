@@ -229,7 +229,7 @@ describe("AdminComponent", () => {
     expect(mockSystemResetService.resetSystem).toHaveBeenCalled();
   });
 
-  it("should delegate resetting the local device to the backup service", async () => {
+  it("should delegate resetting the local device to the local device reset service", async () => {
     await component.resetLocalDevice();
 
     expect(mockLocalDeviceResetService.resetLocalDevice).toHaveBeenCalled();

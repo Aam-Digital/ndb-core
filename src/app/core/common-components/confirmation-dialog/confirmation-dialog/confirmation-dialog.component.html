@@ -13,11 +13,12 @@
         >Type "{{ data.confirmationKeyword }}" to confirm</mat-label
       >
       <input
+        #confirmationInput
         matInput
         cdkFocusInitial
         autocomplete="off"
         [value]="typedConfirmation()"
-        (input)="typedConfirmation.set($any($event.target).value)"
+        (input)="typedConfirmation.set(confirmationInput.value)"
       />
     </mat-form-field>
   }
