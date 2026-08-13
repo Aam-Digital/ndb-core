@@ -21,11 +21,23 @@ import {
   map,
   tap,
 } from "rxjs/operators";
-import { enrichGeoLocation, GeoLocation } from "./geo-location";
+import {
+  enrichGeoLocation,
+  GeoLocation,
+  getCityFromAddress,
+} from "./geo-location";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
+  /** Unique id of the place, used to tell apart results sharing a display name */
+  place_id?: number;
 }
+
+/**
+ * Country whose addresses are written as "Street 12, 12345 City",
+ * the format {@link GeoService.reformatDisplayName} produces.
+ */
+const GERMAN_ADDRESS_FORMAT_COUNTRY = "de";
 
 /**
  * A service that uses nominatim to lookup locations {@link https://nominatim.org/}
@@ -38,7 +50,13 @@ export class GeoService {
   private analytics = inject(AnalyticsService);
 
   private readonly remoteUrl = "/nominatim";
-  private countrycodes = "de";
+
+  /**
+   * Optional country filter for lookups, only applied if an instance configures one.
+   * Nominatim treats this as a hard filter, so anything outside these countries
+   * is dropped from the results entirely.
+   */
+  private countrycodes?: string;
   private defaultOptions = {
     format: "json",
     addressdetails: 1,
@@ -60,20 +78,30 @@ export class GeoService {
 
     configService.configUpdates.subscribe(() => {
       const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
-      if (config?.countrycodes) {
-        this.countrycodes = config.countrycodes;
+      if (config?.countrycodes === this.countrycodes) {
+        return;
       }
+
+      this.countrycodes = config?.countrycodes;
+      // cached results are keyed by search term alone, so they belong to the
+      // previous filter and its address format
+      this.cache.clear();
     });
 
     // Process lookups sequentially with a 1s cooldown after every attempt
     // (Nominatim usage policy: max 1 request/sec regardless of success or failure)
     this.lookupQueue$
       .pipe(
-        concatMap(({ term, resolve }) =>
-          concat(
+        concatMap(({ term, resolve }) => {
+          const requestedFilter = this.countrycodes;
+          return concat(
             this.fetchLookup(term).pipe(
               tap((results) => {
-                this.cache.set(term, results);
+                // a filter change during the request already emptied the cache,
+                // so results answering the previous filter must not go back in
+                if (requestedFilter === this.countrycodes) {
+                  this.cache.set(term, results);
+                }
                 resolve.next(results);
                 resolve.complete();
               }),
@@ -83,8 +111,8 @@ export class GeoService {
               }),
             ),
             defer(() => timer(1000).pipe(ignoreElements())),
-          ),
-        ),
+          );
+        }),
       )
       .subscribe();
   }
@@ -115,7 +143,7 @@ export class GeoService {
         params: {
           ...this.defaultOptions,
           q: searchTerm,
-          countrycodes: this.countrycodes,
+          ...(this.countrycodes ? { countrycodes: this.countrycodes } : {}),
         },
       })
       .pipe(
@@ -126,46 +154,77 @@ export class GeoService {
         ),
       );
   }
-  private getCity(addr: OpenStreetMapsSearchResult["address"]): string {
-    return addr.city ?? addr.village ?? addr.town ?? "";
-  }
-
   private formatStreet(addr: OpenStreetMapsSearchResult["address"]): string {
-    if (!addr.road && !addr.house_number) return "";
-    if (addr.road && addr.house_number)
-      return `${addr.road} ${addr.house_number}`;
-    return addr.road || addr.house_number || "";
+    if (!addr.road || !addr.house_number) {
+      return addr.road || addr.house_number || "";
+    }
+    return this.useGermanAddressFormat
+      ? `${addr.road} ${addr.house_number}`
+      : `${addr.house_number} ${addr.road}`;
   }
 
-  private formatPostcodeCity(
+  private formatCityAndPostcode(
     addr: OpenStreetMapsSearchResult["address"],
   ): string {
-    const city = this.getCity(addr);
-    if (addr.postcode && city) return `${addr.postcode} ${city}`;
-    if (addr.postcode) return `${addr.postcode}`;
-    if (city) return city;
-    return "";
+    const city = getCityFromAddress(addr);
+    if (!city || !addr.postcode) {
+      return city || addr.postcode || "";
+    }
+    return this.useGermanAddressFormat
+      ? `${addr.postcode} ${city}`
+      : `${city} ${addr.postcode}`;
+  }
+
+  /**
+   * Whether the German address format applies, i.e. "Street 12, 12345 City"
+   * without the country. Only instances restricting lookups to Germany use it;
+   * everywhere else the default format applies.
+   */
+  private get useGermanAddressFormat(): boolean {
+    return (
+      this.countrycodes?.trim().toLowerCase() === GERMAN_ADDRESS_FORMAT_COUNTRY
+    );
+  }
+
+  /**
+   * The address text in whichever format applies:
+   * German instances get "Street 12, 12345 City", everyone else
+   * "12 Street, City 12345, Country".
+   */
+  private formatAddress(addr: OpenStreetMapsSearchResult["address"]): string {
+    const parts = this.useGermanAddressFormat
+      ? [
+          addr.amenity ?? addr.office,
+          this.formatStreet(addr),
+          this.formatCityAndPostcode(addr),
+        ]
+      : [
+          this.formatStreet(addr),
+          this.formatCityAndPostcode(addr),
+          addr.country,
+        ];
+
+    return parts.filter((x) => !!x && x !== "undefined").join(", ");
   }
 
   reformatDisplayName(
     result: OpenStreetMapsSearchResult,
   ): OpenStreetMapsSearchResult {
     const addr = result?.address;
-    if (addr) {
-      const displayParts = [
-        addr.amenity ?? addr.office,
-        this.formatStreet(addr),
-        this.formatPostcodeCity(addr),
-      ].filter((x) => !!x && x !== "undefined");
-
-      // Ensure a normalized `city` field for downstream consumers (use village/town as fallback)
-      const city = this.getCity(addr);
-      if (city && !addr.city) {
-        addr.city = city;
-      }
-
-      result.display_name = displayParts.join(", ");
+    if (!addr) {
+      return result;
     }
+
+    // Ensure a normalized `city` field for downstream consumers, since
+    // OpenStreetMap often names the place something other than `city`
+    const city = getCityFromAddress(addr);
+    if (city && !addr.city) {
+      addr.city = city;
+    }
+
+    // Keep OpenStreetMap's own name for results holding none of our parts,
+    // so an entry can never end up without a label
+    result.display_name = this.formatAddress(addr) || result.display_name;
     return result;
   }
 
@@ -214,18 +273,15 @@ export class GeoService {
    * Composes a display address string from a GeoLocation's structured parts
    * (the reverse of what {@link enrichGeoLocation} derives from a lookup).
    *
-   * Deliberately mirrors the format of {@link reformatDisplayName} (street,
-   * then postcode + city) and omits `country`: callers compare the composed
-   * string against a lookup's `display_name` to tell whether the address text
-   * was customized, so the two must be able to match.
+   * Deliberately mirrors the format of {@link reformatDisplayName}: callers
+   * compare the composed string against a lookup's `display_name` to tell
+   * whether the address text was customized, so the two must be able to match.
    */
   composeAddressFromParts(location: GeoLocation | undefined): string {
     if (!location) {
       return "";
     }
-    return [this.formatStreet(location), this.formatPostcodeCity(location)]
-      .filter((x) => !!x)
-      .join(", ");
+    return this.formatAddress(location);
   }
 }
 
@@ -241,6 +297,7 @@ export type OpenStreetMapsSearchResult = GeoResult & {
     city?: string;
     village?: string;
     town?: string;
+    municipality?: string;
     postcode?: string;
     country?: string;
     country_code?: string;
