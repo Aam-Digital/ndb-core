@@ -253,60 +253,24 @@ A <code>groupTitle</code> labels its group row, whose value is the sum of the ro
     }
   ]
 }</code></pre></div><p>In the UI, grouped SQL reports are rendered as a hierarchical report view, while single-query SQL reports are shown as a flat table.</p>
-<h4>Complete sample configs</h4>
-<p>Two full report documents, one per rendering mode, ready to copy into a system for testing
-(these are also the samples used while testing the report admin UI):</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-json">// a flat table: one query, many rows
-{
-  &quot;_id&quot;: &quot;ReportConfig:sql-child-export&quot;,
-  &quot;title&quot;: &quot;Child Details (SQL export)&quot;,
-  &quot;mode&quot;: &quot;sql&quot;,
-  &quot;transformations&quot;: {
-    &quot;startDate&quot;: [&quot;SQL_FROM_DATE&quot;],
-    &quot;endDate&quot;: [&quot;SQL_TO_DATE&quot;]
-  },
-  &quot;reportDefinition&quot;: [
-    {
-      &quot;query&quot;: &quot;SELECT name, gender, dateOfBirth, phone FROM Child ORDER BY name WHERE admissionDate BETWEEN $startDate AND $endDate&quot;
-    }
-  ]
-}</code></pre></div><b>Example :</b><div><pre class="line-numbers"><code class="language-json">// a hierarchical report: nested groups of single-value queries
-{
-  &quot;_id&quot;: &quot;ReportConfig:sql-child-counts&quot;,
-  &quot;title&quot;: &quot;Child Counts (SQL, grouped)&quot;,
-  &quot;mode&quot;: &quot;sql&quot;,
-  &quot;reportDefinition&quot;: [
-    {
-      &quot;groupTitle&quot;: &quot;Children&quot;,
-      &quot;items&quot;: [
-        {
-          &quot;query&quot;: &quot;SELECT count(*) as &#39;Total&#39; FROM Child&quot;
-        },
-        {
-          &quot;query&quot;: &quot;SELECT count(*) as &#39;With date of birth&#39; FROM Child WHERE dateOfBirth IS NOT NULL&quot;
-        },
-        {
-          &quot;groupTitle&quot;: &quot;by gender&quot;,
-          &quot;items&quot;: [
-            {
-              &quot;query&quot;: &quot;SELECT count(*) as &#39;Male&#39; FROM Child WHERE gender = &#39;M&#39;&quot;
-            },
-            {
-              &quot;query&quot;: &quot;SELECT count(*) as &#39;Female&#39; FROM Child WHERE gender = &#39;F&#39;&quot;
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}</code></pre></div><h4>SQL recipes</h4>
+<h4>SQL recipes</h4>
 <p>Useful patterns for common Aam Digital reporting questions.</p>
 <h5>Calculate age from date of birth</h5>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT name,
   (strftime(&#39;%Y&#39;, &#39;now&#39;) - strftime(&#39;%Y&#39;, dateOfBirth))
     - (strftime(&#39;%m-%d&#39;, &#39;now&#39;) &lt; strftime(&#39;%m-%d&#39;, dateOfBirth)) AS age
 FROM Child</code></pre></div><h5>Conditional counting (&quot;COUNT IF&quot;)</h5>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT COUNT(CASE WHEN c.gender = &#39;F&#39; THEN c._id END) AS total_female FROM Child c</code></pre></div><h5>Attendance status of individual participants from EventNote</h5>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT COUNT(CASE WHEN c.gender = &#39;F&#39; THEN c._id END) AS total_female FROM Child c</code></pre></div><h5>Join a linked entity to show a human-readable name</h5>
+<p>A field with <code>dataType: &quot;entity&quot;</code> stores the id of the referenced entity, not its name.
+Join the referenced table to resolve it:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT c.name AS child, s.name AS school
+FROM Child c
+JOIN School s ON s._id = c.schoolId</code></pre></div><h5>Unpack a multi-select (isArray) entity-reference field</h5>
+<p>A field with <code>dataType: &quot;entity&quot;</code> and <code>isArray: true</code> stores a JSON array of ids (e.g. <code>Note.children</code>).
+Unpack it with <code>json_each()</code> and join to resolve each id to a name:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT n.subject AS note, c.name AS participant
+FROM Note n, json_each(n.children) p
+JOIN Child c ON c._id = p.value</code></pre></div><h5>Attendance status of individual participants from EventNote</h5>
 <p><code>childrenAttendance</code> stores one <code>[childId, {status, remarks}]</code> pair per participant as a JSON array,
 which can be unpacked with <a href="https://www.sqlite.org/json1.html#jeach">SQLite&#39;s <code>json_each()</code></a>:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT json_extract(value, &#39;$[0]&#39;) AS participant_id,
