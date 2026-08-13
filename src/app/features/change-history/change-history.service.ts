@@ -7,8 +7,21 @@ import { DatabaseFactoryService } from "../../core/database/database-factory.ser
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
-import { ChangeEvent } from "./change-history.types";
+import {
+  ChangeEvent,
+  ChangeLogEntry,
+  ChangeLogFilters,
+} from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
+import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
+import {
+  AUDIT_TIMESTAMP_INDEX,
+  buildAuthorSampleQuery,
+  buildChangeLogQuery,
+  distinctAuthors,
+  MangoQuery,
+  toChangeLogEntry,
+} from "./change-log-query";
 
 /** CASL subject the audit records are keyed under (see replication-backend #4026). */
 export const AUDIT_RECORD_SUBJECT = "AuditRecord";
@@ -16,6 +29,18 @@ export const AUDIT_RECORD_SUBJECT = "AuditRecord";
 /** Response of the replication-backend central `GET /_features` endpoint. */
 interface AuditFeatureStatus {
   audit: { enabled: boolean };
+}
+
+/** Response of the audit database's `_find` endpoint, as proxied by the backend. */
+interface FindResponse {
+  docs: RawAuditDoc[];
+}
+
+/** One page of the system-wide change log. */
+export interface ChangeLogPage {
+  entries: ChangeLogEntry[];
+  /** whether at least one further page exists after this one */
+  hasMore: boolean;
 }
 
 /**
@@ -33,6 +58,24 @@ export class ChangeHistoryService {
   private readonly dbFactory = inject(DatabaseFactoryService);
   private readonly ability = inject(EntityAbility, { optional: true });
   private readonly httpClient = inject(HttpClient);
+  private readonly authService = inject(KeycloakAuthService, {
+    optional: true,
+  });
+
+  /**
+   * Bumped on every ability update. The ability object is mutated in place when
+   * rules change (permission config edited, session or user switched), so its
+   * "updated" event is the only signal that a permission answer may differ now.
+   */
+  private readonly abilityUpdated = signal(0);
+
+  constructor() {
+    // `on` is guarded rather than assumed: the ability is optional here, and a
+    // test double may only implement the permission check itself
+    this.ability?.on?.("updated", () =>
+      this.abilityUpdated.update((count) => count + 1),
+    );
+  }
 
   /** the derived audit db name, e.g. `app-audit` */
   static auditDbName(): string {
@@ -90,6 +133,9 @@ export class ChangeHistoryService {
 
   private auditDb?: Database;
 
+  /** in-flight or completed creation of the change log's index, attempted once */
+  private indexCreated?: Promise<void>;
+
   private getAuditDb(): Database {
     if (!this.auditDb) {
       this.auditDb = this.dbFactory.createRemoteDatabase(
@@ -111,6 +157,93 @@ export class ChangeHistoryService {
   }
 
   /**
+   * Fetch one page of the system-wide change log, newest first.
+   *
+   * Unlike {@link getHistory}, this cannot go through the audit db's PouchDB
+   * handle: audit `_id`s are keyed by entity id, so `_all_docs` orders by
+   * record, not by time. A Mango query sorted on `timestamp` is used instead,
+   * via the backend's proxied `_find` endpoint (PouchDB has no `find` here:
+   * the `pouchdb-find` plugin is not installed).
+   *
+   * The query asks for one record beyond the page, which is reported as
+   * {@link ChangeLogPage.hasMore} rather than returned, so the caller never
+   * offers a next page that turns out to be empty.
+   *
+   * @throws if the audit database is unavailable or the query is rejected
+   */
+  async queryChangeLog(
+    filters: ChangeLogFilters,
+    pageSize: number,
+    pageIndex = 0,
+  ): Promise<ChangeLogPage> {
+    await this.ensureTimestampIndex();
+    const response = await this.findInAuditDb(
+      buildChangeLogQuery(filters, pageSize, pageIndex),
+    );
+    const docs = response.docs ?? [];
+    return {
+      entries: docs.slice(0, pageSize).map(toChangeLogEntry),
+      hasMore: docs.length > pageSize,
+    };
+  }
+
+  /**
+   * The authors to offer in the change log's "changed by" filter, sampled from
+   * the most recent records (see AUTHOR_SAMPLE_SIZE) since the audit database
+   * holds no index of its authors.
+   */
+  async getChangeAuthors(): Promise<string[]> {
+    await this.ensureTimestampIndex();
+    const response = await this.findInAuditDb(buildAuthorSampleQuery());
+    return distinctAuthors(response.docs ?? []);
+  }
+
+  /**
+   * Create the timestamp index the change log sorts on, once per session.
+   * Creating an existing index is a no-op in CouchDB, so this is safe to repeat
+   * and needs no prior existence check.
+   */
+  private async ensureTimestampIndex(): Promise<void> {
+    this.indexCreated ??= firstValueFrom(
+      this.httpClient.post(
+        `${environment.DB_PROXY_PREFIX}/${ChangeHistoryService.auditDbName()}/_index`,
+        AUDIT_TIMESTAMP_INDEX,
+        { headers: this.auditRequestHeaders() },
+      ),
+    ).then(() => undefined);
+
+    try {
+      await this.indexCreated;
+    } catch (err) {
+      // a failure here is not necessarily fatal: the index may already exist
+      // from an earlier session, in which case the query below still works
+      Logging.debug("could not ensure the audit timestamp index", err);
+      this.indexCreated = undefined;
+    }
+  }
+
+  private findInAuditDb(query: MangoQuery): Promise<FindResponse> {
+    return firstValueFrom(
+      this.httpClient.post<FindResponse>(
+        `${environment.DB_PROXY_PREFIX}/${ChangeHistoryService.auditDbName()}/_find`,
+        query,
+        { headers: this.auditRequestHeaders() },
+      ),
+    );
+  }
+
+  /**
+   * Headers for a direct call to the proxied audit database. The bearer token is
+   * added explicitly because these requests do not go through PouchDB's
+   * authenticating fetch, and no HTTP interceptor supplies it.
+   */
+  private auditRequestHeaders(): Record<string, string> {
+    const headers: Record<string, string> = { "ngsw-bypass": "true" };
+    this.authService?.addAuthHeader(headers);
+    return headers;
+  }
+
+  /**
    * Whether this entity qualifies for a change-history entry at all: any saved
    * record. Internal entities (e.g. PublicFormConfig) are audited too, so they
    * also qualify. This gates the *visibility* of the entry point and is
@@ -129,6 +262,15 @@ export class ChangeHistoryService {
   hasHistoryPermission(): boolean {
     return !!this.ability && this.ability.can("read", AUDIT_RECORD_SUBJECT);
   }
+
+  /**
+   * {@link hasHistoryPermission} as a signal, for long-lived views that must not
+   * keep showing a "no access" state after the user's rules have changed.
+   */
+  readonly hasAuditPermission = computed(() => {
+    this.abilityUpdated();
+    return this.hasHistoryPermission();
+  });
 
   /** Both: the entity qualifies and the user may read its audit data. */
   canViewHistory(entity?: Entity): boolean {

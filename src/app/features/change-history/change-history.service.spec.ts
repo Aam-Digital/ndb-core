@@ -1,7 +1,7 @@
 import { ApplicationRef } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { HttpClient } from "@angular/common/http";
-import { of } from "rxjs";
+import { of, throwError } from "rxjs";
 import {
   AUDIT_RECORD_SUBJECT,
   ChangeHistoryService,
@@ -9,24 +9,54 @@ import {
 import { DatabaseFactoryService } from "../../core/database/database-factory.service";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
+import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
 
 let mockDb: { getAll: ReturnType<typeof vi.fn> };
 let dbFactory: { createRemoteDatabase: ReturnType<typeof vi.fn> };
 let abilityCan: ReturnType<typeof vi.fn>;
+let httpPost: ReturnType<typeof vi.fn>;
+/** fire the ability's "updated" event, as AbilityService does after a rules change */
+let abilityUpdated: () => void;
 
 function setup(docs: any[] = [], canRead = true) {
   mockDb = { getAll: vi.fn().mockResolvedValue(docs) };
   dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
   abilityCan = vi.fn().mockReturnValue(canRead);
+  const abilityListeners: (() => void)[] = [];
+  abilityUpdated = () => abilityListeners.forEach((listener) => listener());
+  httpPost = vi.fn().mockReturnValue(of({ docs: [], bookmark: "bm-next" }));
   TestBed.configureTestingModule({
     providers: [
       ChangeHistoryService,
       { provide: DatabaseFactoryService, useValue: dbFactory },
-      { provide: EntityAbility, useValue: { can: abilityCan } },
-      { provide: HttpClient, useValue: { get: () => of({}) } },
+      {
+        provide: EntityAbility,
+        useValue: {
+          can: abilityCan,
+          on: (_event: string, listener: () => void) => {
+            abilityListeners.push(listener);
+            return () => undefined;
+          },
+        },
+      },
+      {
+        provide: KeycloakAuthService,
+        useValue: {
+          addAuthHeader: (headers: any) =>
+            (headers["Authorization"] = "Bearer t"),
+        },
+      },
+      { provide: HttpClient, useValue: { get: () => of({}), post: httpPost } },
     ],
   });
   return TestBed.inject(ChangeHistoryService);
+}
+
+/** the `_find` call of the last queryChangeLog/getChangeAuthors, skipping `_index` */
+function lastFindCall(): [string, any, any] {
+  return httpPost.mock.calls
+    .filter((call) => call[0].endsWith("/_find"))
+    .at(-1) as [string, any, any];
 }
 
 class InternalEntity extends Entity {
@@ -123,6 +153,115 @@ it("allows viewing history for a saved internal entity (internal entities are au
 it("denies viewing history when no entity is given", () => {
   const service = setup([], true);
   expect(service.canViewHistory(undefined)).toBe(false);
+});
+
+it("re-evaluates the audit permission when the ability rules are updated", () => {
+  const service = setup([], false);
+  expect(service.hasAuditPermission()).toBe(false);
+
+  abilityCan.mockReturnValue(true);
+  // the ability object is mutated in place by AbilityService, so only its
+  // "updated" event tells us the answer may have changed
+  abilityUpdated();
+
+  expect(service.hasAuditPermission()).toBe(true);
+});
+
+it("queries the change log against the audit db's _find endpoint, authenticated", async () => {
+  const service = setup();
+
+  await service.queryChangeLog({ entityType: "Child" }, 10, 2);
+
+  const [url, body, options] = lastFindCall();
+  expect(url).toBe("/db/app-audit/_find");
+  expect(body.skip).toBe(20);
+  expect(body.selector.entityId.$gte).toBe("Child:");
+  expect(options.headers["Authorization"]).toBe("Bearer t");
+});
+
+it("creates the timestamp index once before querying, since sort needs it", async () => {
+  const service = setup();
+
+  await service.queryChangeLog({}, 10);
+  await service.queryChangeLog({}, 10);
+
+  const indexCalls = httpPost.mock.calls.filter((call) =>
+    call[0].endsWith("/_index"),
+  );
+  expect(indexCalls.length).toBe(1);
+  expect(indexCalls[0][0]).toBe("/db/app-audit/_index");
+  expect(indexCalls[0][1].index.fields).toEqual([{ timestamp: "desc" }]);
+});
+
+it("still queries when the index could not be created (it may already exist)", async () => {
+  const service = setup();
+  httpPost.mockImplementation((url: string) =>
+    url.endsWith("/_index")
+      ? throwError(() => new Error("forbidden"))
+      : of({ docs: [rawDoc("2026-06-03T10:00:00.000Z")] }),
+  );
+
+  const page = await service.queryChangeLog({}, 10);
+
+  expect(page.entries.length).toBe(1);
+});
+
+it("returns mapped entries, without a further page when none was found", async () => {
+  const service = setup();
+  httpPost.mockImplementation((url: string) =>
+    url.endsWith("/_find")
+      ? of({ docs: [rawDoc("2026-06-03T10:00:00.000Z")] })
+      : of({}),
+  );
+
+  const page = await service.queryChangeLog({}, 10);
+
+  expect(page.hasMore).toBe(false);
+  expect(page.entries).toEqual([
+    {
+      id: "AuditRecord:Entity:1:2026-06-03T10:00:00.000Z:1-a",
+      at: new Date("2026-06-03T10:00:00.000Z"),
+      by: "User:demo",
+      action: "updated",
+      entityId: "Entity:1",
+      entityType: "Entity",
+      changedFields: ["name"],
+    },
+  ]);
+});
+
+it("reports a further page without returning the record that proved it", async () => {
+  const service = setup();
+  const docs = Array.from({ length: 3 }, (_, i) =>
+    rawDoc(`2026-06-0${i + 1}T10:00:00.000Z`),
+  );
+  httpPost.mockImplementation((url: string) =>
+    url.endsWith("/_find") ? of({ docs }) : of({}),
+  );
+
+  const page = await service.queryChangeLog({}, 2);
+
+  expect(page.entries.length).toBe(2);
+  expect(page.hasMore).toBe(true);
+  expect(lastFindCall()[1].limit).toBe(3);
+});
+
+it("samples recent records for the distinct authors of the filter dropdown", async () => {
+  const service = setup();
+  httpPost.mockImplementation((url: string) =>
+    url.endsWith("/_find")
+      ? of({
+          docs: [
+            { user: { name: "b" } },
+            { user: { name: "a" } },
+            { user: { name: "b" } },
+          ],
+        })
+      : of({}),
+  );
+
+  expect(await service.getChangeAuthors()).toEqual(["a", "b"]);
+  expect(lastFindCall()[1].fields).toEqual(["user"]);
 });
 
 it("reads the audit feature status from the replication-backend /_features endpoint (lazily)", async () => {

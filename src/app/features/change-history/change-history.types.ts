@@ -51,6 +51,45 @@ export interface ChangeEvent {
 }
 
 /**
+ * One row of the system-wide change log: a single audited write, across all
+ * records rather than within one entity's history.
+ *
+ * Carries only what the list displays. The field-level before/after is
+ * deliberately absent: that needs the entity's full replayed state (see
+ * `buildChangeEvents`), which the per-record change-history dialog provides.
+ */
+export interface ChangeLogEntry {
+  /** the audit document `_id` */
+  id: string;
+  /** server-set time of the change */
+  at: Date;
+  /** authenticated author recorded by the backend (name, or id as fallback) */
+  by: string;
+  action: ChangeAction;
+  /** the changed record's id, e.g. `Child:123` */
+  entityId: string;
+  /** the changed record's type prefix, e.g. `Child` */
+  entityType: string;
+  /** names of the fields this write changed; empty for a delete */
+  changedFields: string[];
+}
+
+/**
+ * The active filters of the system-wide change log. An unset property means
+ * "no restriction" on that dimension.
+ */
+export interface ChangeLogFilters {
+  /** entity type prefix, e.g. `Child` */
+  entityType?: string;
+  /** author, matched against the recorded user name */
+  changedBy?: string;
+  /** only changes at or after this time */
+  from?: Date;
+  /** only changes up to this time (the whole day is included) */
+  to?: Date;
+}
+
+/**
  * Explanation for the synthetic "initial snapshot" entry, shown both inline in
  * its diff and as the badge tooltip (single source of truth).
  */

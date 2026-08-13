@@ -1,0 +1,32 @@
+@use "variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+/* the table shell, matching the user-list admin screen */
+.table-container {
+  position: relative;
+  @include mat-elevation.elevation(2);
+  background-color: white;
+  /* five columns do not fit a narrow content area; scroll the table itself
+     rather than clipping the changed-fields column or the whole page */
+  overflow-x: auto;
+}
+
+.table-footer {
+  @include mat-elevation.elevation(1);
+  border-top: colors.$grey-darker solid 2px;
+  background-color: white;
+}
+
+.table {
+  box-shadow: none;
+}
+
+/* enough room for a few field chips side by side; without it every chip wraps
+   onto its own line and the rows grow very tall */
+.changed-fields-cell {
+  min-width: 240px;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
+  justify-content: flex-start;
+}
