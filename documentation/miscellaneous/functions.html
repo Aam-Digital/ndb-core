@@ -293,6 +293,9 @@
                             <a href="#descriptionForDateValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/date-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>descriptionForDateValidator</b>&nbsp;&nbsp;&nbsp;(src/.../date-validators.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#dropEmptyFields" title="src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>dropEmptyFields</b>&nbsp;&nbsp;&nbsp;(src/.../admin-entity-form.component.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#emailValidatorWithMessage" title="src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>emailValidatorWithMessage</b>&nbsp;&nbsp;&nbsp;(src/.../edit-email.component.ts)</span></a>
                         </li>
                         <li>
@@ -8124,6 +8127,197 @@ The entity should also be added to the <a href="databaseEntities">databaseEntiti
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dropEmptyFields"></a>
+                    <span class="name">
+                        <span ><b>dropEmptyFields</b></span>
+                        <a href="#dropEmptyFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>dropEmptyFields(groups)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Remove empty (null / undefined) entries from the groups&#39; field lists.</p>
+<p>These are not a valid <code>ColumnConfig</code> and only ever come from a malformed config, but every
+consumer dereferences them (<code>toFormFieldConfig(field).id</code>) and would throw on the whole editor.
+Dropping them here keeps the rest of the configuration editable so the admin can repair it.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>groups</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="moveFieldBetweenGroups"></a>
+                    <span class="name">
+                        <span ><b>moveFieldBetweenGroups</b></span>
+                        <a href="#moveFieldBetweenGroups"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>moveFieldBetweenGroups(groups, field: <a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self">ColumnConfig</a>, from: <a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self">FieldDropTarget</a>, fromIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, to: <a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self">FieldDropTarget</a>, toIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Move <code>field</code> from one drop target to another, returning new group objects for the groups that
+changed (all others are kept as they are).</p>
+<p>A target of &quot;available&quot; is the toolbar of fields not used in the form: it holds no state of its
+own (it is derived from the form&#39;s groups), so a field moved there is simply removed from the
+form and a field moved from there is simply added.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>groups</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self" >ColumnConfig</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>from</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self" >FieldDropTarget</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fromIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>to</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self" >FieldDropTarget</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>toIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/basic-datatypes/string/edit-email/edit-email.component.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -14423,135 +14617,6 @@ new code. Idempotent and safe to re-run.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>T</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="moveFieldBetweenGroups"></a>
-                    <span class="name">
-                        <span ><b>moveFieldBetweenGroups</b></span>
-                        <a href="#moveFieldBetweenGroups"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>moveFieldBetweenGroups(groups, field: <a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self">ColumnConfig</a>, from: <a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self">FieldDropTarget</a>, fromIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, to: <a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self">FieldDropTarget</a>, toIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Move <code>field</code> from one drop target to another, returning new group objects for the groups that
-changed (all others are kept as they are).</p>
-<p>A target of &quot;available&quot; is the toolbar of fields not used in the form: it holds no state of its
-own (it is derived from the form&#39;s groups), so a field moved there is simply removed from the
-form and a field moved from there is simply added.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>groups</td>
-                                            <td>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>field</td>
-                                            <td>
-                                                            <code><a href="../miscellaneous/typealiases.html#ColumnConfig" target="_self" >ColumnConfig</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>from</td>
-                                            <td>
-                                                            <code><a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self" >FieldDropTarget</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>fromIndex</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>to</td>
-                                            <td>
-                                                            <code><a href="../miscellaneous/typealiases.html#FieldDropTarget" target="_self" >FieldDropTarget</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>toIndex</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup[]</a></code>
 
                         </div>
                             <div class="io-description">
